@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<site>
+  
+  <bannerLeft>
+    <name>Hippo repository 2 project documention</name>
+    <src>http://wiki.hippo.nl/download/userResources/logo</src>
+    <href>http://hippocms.org/</href>
+  </bannerLeft>
+  
+  <body>
+    <links>
+      <item name="Maven" href="http://maven.apache.org/"/>
+      <item name="Apache" href="http://www.apache.org/"/>
+    </links>
+        
+    <menu name="Hippo repository 2 project documention">
+      <item name="Candidate component list" href="/candidate-component-list.html"/>
+      <item name="Supported environments" href="/supported-environments.html"/>
+      <item name="Architecture" href="/architecture.html"/>
+      <item name="Roadmap" href="/roadmap.html"/>
+      <item name="Usecases" href="/use-cases.html"/>
+    </menu>
+    
+  </body>
+  
+</site>
