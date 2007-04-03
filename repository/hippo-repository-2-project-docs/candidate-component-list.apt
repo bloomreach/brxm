@@ -1,0 +1,180 @@
+  ------------------------
+  Candidate Component List
+  ------------------------
+  ------------------------
+
+Candidate component list
+
+  The suffix <<<(HRP)>>> means it was built for the experimental Hippo Repository 2 prototype.
+
+Glue
+
+* Guice
+
+  {{{http://code.google.com/p/google-guice/}Guice}} is a dependency injection framework based on annotations and generics.
+
+** Cons
+
+  * Matches depedencies based on type
+
+  * Mixes configuration with code
+
+* HiveMind
+
+  {{{http://hivemind.apache.org}HiveMind}}
+
+** Cons
+
+  * Metadata-based, so we have to write metadata for non-HiveMind components
+
+* Mulatrecon
+
+  Mulatrecon is a framework that performs two tasks:
+
+  * Creation and glueing of components
+
+  * Class loader management
+
+  []
+
+  It supports layered configurations where higher layers can override definitions of lower layers.
+
+** Pros
+
+  * Use available Java knowledge
+
+  * Components never have to depend on Mulatrecon
+
+  * No metadata needed, i.e. deploy standard JARs
+
+  * Very flexible
+
+* OSGi
+
+  {{{http://www.osgi.org/}OSGi}}
+
+** Pros
+
+  * Very powerful class loading management
+
+** Cons
+
+  * Metadata-based, so we have to write metadata for non-OSGi components
+
+* Spring Framework
+
+  {{{http://www.springframework.org/}Spring Framework}}
+
+** Pros
+
+  * Enormous community
+
+** Cons
+
+  * Strict lifecycle requiring wrappers for many standard components
+
+Security
+
+* Authentication
+
+** Acegi Security
+
+  {{{http://www.acegisecurity.org/}Acegi Security}}
+
+** A-Select
+
+  {{{http://www.a-select.org}A-Select}}
+
+*** Pros
+
+  * HTML-based which allows applications in languages other than Java to login too
+
+  * Pluggable authentication service providers
+
+  * Clusterable
+
+  * Federations
+
+*** Cons
+
+  * Complex
+
+  * Only implemented by Dutch companies and institutions
+
+  * Little to no response on mailing list
+
+** Shibboleth
+
+  {{{http://shibboleth.internet2.edu/}Shibboleth}}
+
+*** Pros
+
+  * Implemented by many organizations
+
+*** Cons
+
+  * Even more complex than A-Select
+
+* Authorization
+
+** Acegi Security
+
+  {{{http://www.acegisecurity.org/}Acegi Security}}
+
+** Java-scripted (HRP)
+
+*** Pros
+
+  * Use available Java knowledge
+
+  * Fine-grained authorization (parameter and return values)
+
+  * Very flexible
+
+Configuration
+
+* Database configuration (HRP)
+
+  The database configuration stores configuration values in a table in the database. One table contains the values for multiple hosts and multiple applications.
+
+  The values can be edited with a special configuration web application. In addition to the input field for a value, the web application also provides help and an explanation of when the value is required for each value.
+
+** Pros
+
+  * Configure multiple hosts from one webapp
+
+  * User friendly configuration editor
+
+** Cons
+
+  * More complex configuration stored on filesystem has to be modified separately
+
+Schema and data
+
+* Schema sync (HRP)
+
+  The schema sync framework makes it easy to write table definitions and migration steps in Java.
+
+** Pros
+
+  * Single definition for multiple databases
+
+  * Controlled and testable migration path
+
+RPC
+
+* Service registry (HRP)
+
+  The service registry is a set of components that allow services to be written without having to deal with transactions and authentication. These <aspects> are added to services by decorating the service registry.
+
+  Please note that the addition of additional protocols can have implications for how the services and their parameter and result objects have to be written.
+
+** Pros
+
+  * Single registry for multiple protocols
+
+  * Supported protocols: RMI, XML-RPC, SOAP
+
+  * <Aspects> can be added by decorating service registries
+
+  * Client code for different protocols almost identical
