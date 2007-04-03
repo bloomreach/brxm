@@ -1,0 +1,6 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+The Hippo CMS and Hippo Repository projects are actively being developed 
+by Hippo BV, situated in Amsterdam, The Netherlands. 
+See www.hippo.nl for more information.
