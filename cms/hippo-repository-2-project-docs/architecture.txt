@@ -1,0 +1,32 @@
+The following requirements and prelimanary choices are taken into account for drafting up an architecture overview for Hippo Repository 2
+
+- Standards based access: JCR/JSR-170 - JSR-283
+- Standards based persistence: JDO or JPA
+- (very) rich/complex object/versioning model support
+- workflow and configurable transformations embedded in the object model interactions (CRUD)
+- authorization on both data and operations
+- pluggable and/or scriptable security, workflow, authorization "rules" through a "public"/standard API
+- integrate/merge (index) meta information from external systems / other respositories
+
+Based on the above list, the following architecture is proposed:
+
+- for client repository access a JCR compliant api (JSR-170 + future JSR-283 enhancements) is provided
+- client access can be local (direct JCR access) or remote
+- for remote access, a remote JCR api protocol will be provided based on rmi
+- for remote access, additionally a webdav and rpc api will be provided
+- the primary query languages will be XPath, SQL and XQuery (JSR-283)
+- for webdav/DASL support, a DASL query translation tool/component will be used (written)
+- the repository JCR (front end) layer will represent a virtual JCR store
+- the virtual JCR engine will be managed in an OSGi environment
+- the virtual JCR engine will provide extension points to plugin workflow, scripting, security/authorization etc. using OSGi
+- for meta data (configuration) information itself, the virtual JCR engine will use a real JCR store (itself)
+- the JCR engine can be "configured" to use one or more "real" JCR based stores
+- the "real" JCR stores are likewise "plugged" into the virtual JCR engine using OSGi
+- real repository data access will *all* and *only* go through the virtual JCR engine
+- external (repository/file) systems must be and can only be plugged into the virtual JCR engine as JCR store,
+  so if they don't provide a (sufficient) JCR api, an JCR adapter needs to be written first
+- for the simplest case, the JCR store used by the virtual JCR engine itself may be plugged in as the (only) "real" data repository
+- complex configuration like mapping different workspaces, groups, users, "domains" etc. onto different "real" JCR stores must be possible
+  features like "backup", "import", "publish" etc. thus might involve multiple backend JCR stores
+- for workflow support, a OSGi and WfMC/BPEL conformant/friendly api will be devised
+- for scripting, Groovy (JSR-241) will be used possibly using a DSL (domain specific language) variant
