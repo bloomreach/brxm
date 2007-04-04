@@ -3,7 +3,9 @@
   ------------
   ------------
   
-The following requirements and prelimanary choices are taken into account for drafting up an architecture overview for Hippo Repository 2
+Requirements and preliminary choices
+  
+  The following requirements and preliminary choices are taken into account for drafting up an architecture overview for Hippo Repository 2
 
   * Standards based access: JCR/JSR-170 - JSR-283
   
@@ -15,11 +17,13 @@ The following requirements and prelimanary choices are taken into account for dr
   
   * authorization on both data and operations
   
-  * pluggable and/or scriptable security, workflow, authorization "rules" through a "public"/standard API
+  * pluggable and/or scriptable security, workflow, authorization "rules" through a "public" and standard API
   
   * integrate/merge (index) meta information from external systems / other respositories
 
-Based on the above list, the following architecture is proposed:
+Proposed architecture
+
+  Based on the above list, the following architecture is proposed:
 
   * for client repository access a JCR compliant api (JSR-170 + future JSR-283 enhancements) is provided
   
@@ -47,13 +51,15 @@ Based on the above list, the following architecture is proposed:
   
   * real repository data access will *all* and *only* go through the virtual JCR engine
   
-  * external (repository/file) systems must be and can only be plugged into the virtual JCR engine as JCR store,
-  so if they don't provide a (sufficient) JCR api, an JCR adapter needs to be written first
+  * the virtual JCR engine will be able to represent "dynamic" JCR hierarchies based on facetted queries whose definition will be stored in its own (metadata) JCR store
+  
+  * external (repository/file) systems must be and can only be plugged into the virtual JCR engine as JCR store,\
+    so if they don't provide a (sufficient) JCR api, an JCR adapter needs to be written first
   
   * for the simplest case, the JCR store used by the virtual JCR engine itself may be plugged in as the (only) "real" data repository
   
-  * complex configuration like mapping different workspaces, groups, users, "domains" etc. onto different "real" JCR stores must be possible
-  features like "backup", "import", "publish" etc. thus might involve multiple backend JCR stores
+  * complex configuration like mapping different workspaces, groups, users, "domains" etc. onto different "real" JCR stores must be possible\
+    features like "backup", "import", "publish" etc. thus might involve multiple backend JCR stores
   
   * for workflow support, a OSGi and WfMC/BPEL conformant/friendly api will be devised
   
