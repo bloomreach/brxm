@@ -48,14 +48,32 @@ Glue
   * No metadata needed, i.e. deploy standard JARs
 
   * Very flexible
+  
+** Cons
+
+   * non-standard
+   
+   * very verbose and complex to manage
+   
+   * no (ui/editor) configuration support
 
 * OSGi
 
-  {{{http://www.osgi.org/}OSGi}}
+  {{{http://www.osgi.org/}OSGi}}\
+  {{{http://cwiki.apache.org/FELIX/index.html/}Felix}}\
+  {{{http://www.knopflerfish.org/}Knopflerfish}}
 
 ** Pros
 
+  * open standard
+  
+  * several open source implementations available (Felix, Knopflerfish)
+  
   * Very powerful class loading management
+  
+  * Eclipse plugins support
+  
+  * Springframework support {{{http://www.springframework.org/osgi/}Spring-OSGi}}
 
 ** Cons
 
@@ -68,10 +86,15 @@ Glue
 ** Pros
 
   * Enormous community
+  
+  * Strong tool support
+  
+  * OSGi support
 
 ** Cons
 
-  * Strict lifecycle requiring wrappers for many standard components
+  * Strict lifecycle requiring wrappers for many standard components\
+    <AD: could you elaborate and why this would be bad?>
 
 Security
 
