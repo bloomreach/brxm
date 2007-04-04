@@ -1,0 +1,59 @@
+  ------------
+  Object Model
+  ------------
+  ------------
+
+  This document advocates for a simple object model to be used within the
+repository.  The more simpler the model, the more configurable and flexible
+the operations possible.
+
+  The repository is based by interpreting the data in the database(s) and
+search indices as one big homogeneous bag of objects.
+
+  Objects are composed of the following elements:
+
+  * An immutable identifier of the object;
+
+  * (Optionally) a reference to a piece of code (read: instance of an Java
+    class, which implements a defined interface), to be invoked;
+
+  * A set of key/value pairs, where a key can either be set to one specific
+    value, or a set of values.  However, within one object space, a key is
+    either defined to have a set of values, or just a single value;
+
+  * Content:
+
+    * The definition of what the content actually contains is not important at
+      this time in the object model.  It can be void (in case of meta
+      objects), a plain or xml text area, a hyperlink, or even a collection of
+      these elements;
+
+    * A to this object model externally interpreted type of the data should
+      actually be made by setting key/value pairs;
+
+    * The content (even when composed of multiple parts) forms one,
+      unstructured piece of information, which --on the interpretation level
+      of the repository-- cannot be split into finer parts.  Updates,
+      retrievals and searches of an object when applied to the content,
+      operate on the content as a whole.
+
+    * The only search operations possible on content are full text searches or
+      exact match.  These operations should been deemed heavy operations.
+      If searching is required on specific properties of the content, it is
+      required that such properties are separately defined as key/value pairs
+      and these should be used in search queries.
+      For the object model itself, the content should be considered
+      non-searchable.
+
+  * An unordered, named set of references to other objects.
+
+  Structure in the object space is obtained by following the links of the
+objects.  Such a link can be direct from one object to another, however this
+should rather be indirect.
+
+  Proposed is to have indirect objects references.  If one document is to
+reference another document, it actually references a object which is invoked
+when the link is followed.  Invoking the link occurs within the context of the
+current search parameter space.
+
+  more...
