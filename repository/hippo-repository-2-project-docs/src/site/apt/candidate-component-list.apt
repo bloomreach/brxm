@@ -5,9 +5,29 @@
 
 Candidate component list
 
+  Below is a list of components that can possibly be used for the implementation of Hippo Repository 2. The list is divided into the following categories:
+
+  * {{Glue}}
+
+  * {{Security}}
+
+    * {{Authentication}}
+
+    * {{Authorization}}
+
+  * {{Configuration}}
+
+  * {{Schema and data}}
+
+  * {{RPC}}
+
+  * {{Search engines}}
+
+  []
+
   The suffix <<<(HRP)>>> means it was built for the experimental Hippo Repository 2 prototype.
 
-Glue
+{Glue}
 
 * Guice
 
@@ -15,7 +35,7 @@ Glue
 
 ** Cons
 
-  * Matches depedencies based on type
+  * Matches dependencies based on static information: type and annotations
 
   * Mixes configuration with code
 
@@ -39,15 +59,21 @@ Glue
 
   It supports layered configurations where higher layers can override definitions of lower layers.
 
+  How components should be created and glued together is defined in scripts written in Java.
+
+  One of the most powerful features of Mulatrecon are the support for adapters. A component can be written without knowledge about its deployment environment. The reverse is also true: a deployment environment can be written without knowledge about future components that will be deployed in it. When a component is deployed, an adapter is written that ensures that the component is supplied with its dependencies.
+
 ** Pros
 
-  * Use available Java knowledge
+  * Leverage existing Java knowledge
 
   * Components never have to depend on Mulatrecon
 
   * No metadata needed, i.e. deploy standard JARs
 
   * Very flexible
+
+  * Overridable allowing extensible applications
 
 ** Cons
 
@@ -99,9 +125,9 @@ Glue
 
     * Wrapper functionality lags behind component functionality. If the wrapper is not developed in-house, it could take a while before the lag has been resolved
 
-Security
+{Security}
 
-* Authentication
+* {Authentication}
 
 ** Acegi Security
 
@@ -141,7 +167,7 @@ Security
 
   * Even more complex than A-Select
 
-* Authorization
+* {Authorization}
 
 ** Acegi Security
 
@@ -149,15 +175,31 @@ Security
 
 ** Java-scripted (HRP)
 
+  This authorization framework bases access on two rules. The second rule is optional:
+
+  * Does the subject have the correct role for the resource that is being accessed?
+
+  * Is the resource in the correct state?
+
+  []
+
+  The rules are written in scripts written in Java.
+
 *** Pros
 
-  * Use available Java knowledge
+  * Leverage existing Java knowledge
 
   * Fine-grained authorization (parameter and return values)
 
   * Very flexible
 
-Configuration
+{Configuration}
+
+  A complex application has many configuration parameters. It must be easy for an administrator to configure the application.
+
+* Commons Configuration
+
+  {{{http://jakarta.apache.org/commons/configuration/}Commons Configuration}}
 
 * Database configuration (HRP)
 
@@ -175,7 +217,9 @@ Configuration
 
   * More complex configuration stored on filesystem has to be modified separately
 
-Schema and data
+{Schema and data}
+
+  Depending on the object model, schema and data must be migrated between releases of an application.
 
 * Schema sync (HRP)
 
@@ -185,15 +229,61 @@ Schema and data
 
   * Single definition for multiple databases
 
+  * All revisions are available all the time
+
   * Controlled and testable migration path
 
-RPC
+  * Configurable table prefixes
+
+** Cons
+
+  * No SQL script, i.e. an application has to be run
+
+  * Migration which skips a number of revisions needs to go through all migration steps that lie between
+
+{RPC}
+
+  Hippo Repository 2 is a server that must be accessible by many client applications. Some access can be done using standard protocols like WebDAV and JCR, but not all functionality can be exposed through these protocols. For functionality that does not fit into standard protocols one or more RPC interfaces are needed.
+
+* Apache Axis
+
+  {{{http://ws.apache.org/axis/}Apache Axis}} is a SOAP implementation.
+
+* Apache XML-RPC
+
+  {{{http://ws.apache.org/xmlrpc/}Apache XML-RPC}}
+
+* Burlap
+
+  {{{http://www.caucho.com/resin-3.0/protocols/burlap.xtp}Burlap}} is a XML-based web services protocol which uses HTTP for transport.
+
+* Hessian
+
+  {{{http://www.caucho.com/resin-3.0/protocols/hessian.xtp}Hessian}} is a binary web services protocol which uses HTTP for transport.
+
+* JBoss Remoting
+
+  {{{http://labs.jboss.org/portal/jbossremoting}JBoss Remoting}}
+
+** Cons
+
+  * Java-specific
 
 * Service registry (HRP)
 
   The service registry is a set of components that allow services to be written without having to deal with transactions and authentication. These <aspects> are added to services by decorating the service registry.
 
-  Please note that the addition of additional protocols can have implications for how the services and their parameter and result objects have to be written.
+  The service registry uses the following implementations for the protocols that it supports:
+
+  * RMI: {{{http://static.springframework.org/spring/docs/2.0.x/reference/remoting.html#remoting-rmi}Spring RMI service exporter}}
+
+  * SOAP: {{{http://xfire.codehaus.org/}XFire}}
+
+  * XML-RPC: {{{http://ws.apache.org/xmlrpc/}Apache XML-RPC}}
+
+  []
+
+  Please note that additional protocols can have implications for how the services and their parameter and result objects have to be written.
 
 ** Pros
 
@@ -204,3 +294,46 @@ RPC
   * <Aspects> can be added by decorating service registries
 
   * Client code for different protocols almost identical
+
+* Spring RMI service exporter
+
+ {{{http://static.springframework.org/spring/docs/2.0.x/reference/remoting.html#remoting-rmi}Spring RMI service exporter}}
+
+** Pros
+
+  * No need to extend interface <<<Remote>>>
+
+  * No need for the RMI compiler
+
+** Cons
+
+  * Exported objects do not implement custom interface
+
+  * Java-specific
+
+
+* Thrift
+
+  {{{http://developers.facebook.com/thrift/}Thrift}}
+
+** Pros
+
+  * Supports multiple programming languages
+
+** Cons
+
+  * Newcomer
+
+* XFire
+
+  {{{http://xfire.codehaus.org}XFire}} is a SOAP implementation.
+
+{Search engines}
+
+* Egothor
+
+  {{{http://www.egothor.org}Egothor}}
+
+* Lucene
+
+  {{{http://lucene.apache.org/java/docs/}Lucene}}
