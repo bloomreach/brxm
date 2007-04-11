@@ -86,6 +86,12 @@ public class Server
         reg.bind(RMI_NAME, remote);
         rmiRepo = remote;
         log.info("RMI Server available on rmi://localhost:"+RMI_PORT+"/"+RMI_NAME);
-        while (true) ;
+        while (true) {
+        	try {
+        		Thread.sleep(100);
+        	} catch (InterruptedException e) {
+        		System.err.println(e);
+        	}
+        }
     }
 }
