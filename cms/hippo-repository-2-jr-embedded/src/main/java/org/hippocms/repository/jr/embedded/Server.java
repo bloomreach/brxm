@@ -22,10 +22,20 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.Value;
+import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
-import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
+import org.apache.jackrabbit.core.config.ConfigurationException;
+import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.RepositoryImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,47 +47,85 @@ public class Server {
     
     private static final Logger log = LoggerFactory.getLogger(Server.class);
     private String workingDir;
+    private JackrabbitRepository repository;
 
-    
-    public Server(String workingDirectory) throws RepositoryException {
-       workingDir = new File(workingDirectory).getAbsolutePath();
-    }
-    
-    
-    public JackrabbitRepository startUp() throws RepositoryException {
+    private void initialize(String workingDirectory) throws RepositoryException {
+        workingDir = new File(workingDirectory).getAbsolutePath();
         InputStream config = getClass().getResourceAsStream("repository.xml");
-        JackrabbitRepository repository = RepositoryImpl.create(RepositoryConfig.create(config, workingDir));
+        repository = RepositoryImpl.create(RepositoryConfig.create(config, workingDir));
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
         log.info("Node type registration support: " + (result != null ? result : "no"));
-        
-        return repository;
     }
-    
-    
-    public Session login(JackrabbitRepository repository) throws RepositoryException {
+    public Server() throws RepositoryException {
+        initialize(".");
+    }
+    public Server(String workingDirectory) throws RepositoryException {
+        initialize(workingDirectory);
+    }
+
+    public Session login() throws RepositoryException {
         Session result = repository.login(new SimpleCredentials("username", "password".toCharArray()));
         log.info("Logged in as " + result.getUserID() + " to a " + repository.getDescriptor(Repository.REP_NAME_DESC)
                 + " repository.");
-        
         return result;
     }
-    
-    
-    public void shutDown(JackrabbitRepository repository) {
+
+    public void close() {
         repository.shutdown();
     }
-    
+
+    private void dump(Node parent, int level) throws RepositoryException {
+        String prefix = "";
+        for (int i = 0; i < level; i++) {
+            prefix += "  ";
+        }
+        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth()
+                + "]");
+        for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
+            Property prop = iter.nextProperty();
+            System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
+            if (prop.getDefinition().isMultiple()) {
+                Value[] values = prop.getValues();
+                System.out.print("[ ");
+                for (int i = 0; i < values.length; i++) {
+                    System.out.println((i > 0 ? ", " : "") + values[i].getString());
+                }
+                System.out.println(" ]");
+            } else {
+                System.out.println(prop.getString());
+            }
+        }
+        for (NodeIterator iter = parent.getNodes(); iter.hasNext();) {
+            Node node = iter.nextNode();
+            if (!node.getPath().equals("/jcr:system")) {
+                dump(node, level + 1);
+            }
+        }
+    }
+    public void dump(Node parent) throws RepositoryException {
+        dump(parent, 0);
+    }
 
     public static void main(String[] args) {
         try {
-            String defaultWorkdir = System.getProperty("user.dir") + System.getProperty("file.separator") + "work";
-            
-            Server server = new Server(args.length > 0 ? args[0] : defaultWorkdir);
-            JackrabbitRepository repository  = server.startUp();
-            Session session = server.login(repository);
-            // do something
-            server.shutDown(repository);
+            Server server = null;
+            if(args.length > 0)
+                server = new Server(args.length > 0 ? args[0] : ".");
+            else
+                server = new Server();
+            Session session = server.login();
 
+            Node root = session.getRootNode();
+            Workspace workspace = session.getWorkspace();
+            NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
+            NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+
+            root.addNode("x");
+            root.addNode("y");
+            root.addNode("z");
+            server.dump(session.getRootNode());
+
+            server.close();
         } catch (RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
