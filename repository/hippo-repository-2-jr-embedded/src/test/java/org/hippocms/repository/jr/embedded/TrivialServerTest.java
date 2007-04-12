@@ -26,77 +26,34 @@ import javax.jcr.Workspace;
 
 import junit.framework.TestCase;
 
-import org.apache.jackrabbit.api.JackrabbitRepository;
-import org.apache.jackrabbit.core.config.ConfigurationException;
-import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-
 /**
  * @version $Id$
  */
 public class TrivialServerTest extends TestCase {
 
     private Server server;
-    private JackrabbitRepository repository;
 
-    public void setUp() throws ConfigurationException, RepositoryException {
-        String workdir = System.getProperty("user.dir") + System.getProperty("file.separator") + "work";
-        server = new Server(workdir);
-        repository = server.startUp();
+    public void setUp() throws RepositoryException {
+        server = new Server();
     }
 
     public void tearDown() {
-        server.shutDown(repository);
+        server.close();
     }
 
     public void test() throws RepositoryException {
-        Session session = server.login(repository);
-
+        Session session = server.login();
         Node root = session.getRootNode();
-        Workspace workspace = session.getWorkspace();
-        NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
-        NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
 
         root.addNode("x");
         root.addNode("y");
         root.addNode("z");
 
-        toStdout(session.getRootNode(), 0);
-        //TODO: add asserts
+        assertNotNull(root.getNode("x"));
+        assertNotNull(root.getNode("y"));
+        assertNotNull(root.getNode("z"));
                 
         session.save();
         session.logout();
     }
-    
-    
-
-    private void toStdout(Node parent, int level) throws RepositoryException {
-        String prefix = "";
-        for (int i = 0; i < level; i++) {
-            prefix += "  ";
-        }
-        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth()
-                + "]");
-        for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
-            Property prop = iter.nextProperty();
-            System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
-            if (prop.getDefinition().isMultiple()) {
-                Value[] values = prop.getValues();
-                System.out.print("[ ");
-                for (int i = 0; i < values.length; i++) {
-                    System.out.println((i > 0 ? ", " : "") + values[i].getString());
-                }
-                System.out.println(" ]");
-            } else {
-                System.out.println(prop.getString());
-            }
-        }
-        for (NodeIterator iter = parent.getNodes(); iter.hasNext();) {
-            Node node = iter.nextNode();
-            if (!node.getPath().equals("/jcr:system")) {
-                toStdout(node, level + 1);
-            }
-        }
-    }
-
 }
