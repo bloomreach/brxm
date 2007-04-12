@@ -31,10 +31,18 @@
   </properties>
   <repositories>
     <repository>
+      <snapshots><enabled>true</enabled></snapshots>
       <id>repository.hippocms.org</id>
       <name>Hippo Repository for Maven2</name>
       <url>http://repository.hippocms.org/maven2/</url>
       <layout>default</layout>	
+    </repository>
+    <repository>
+      <snapshots><enabled>true</enabled></snapshots>
+      <id>day.com</id>
+      <name>Day Repository for JCR</name>
+      <url>http://www.day.com/maven/</url>
+      <layout>legacy</layout>	
     </repository>
   </repositories>
   <dependencyManagement>
