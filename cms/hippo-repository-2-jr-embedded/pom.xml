@@ -232,7 +232,7 @@
         </executions>
         <configuration>
           <mainClass>org.hippocms.repository.jr.embedded.Server</mainClass>
-          <commandlineArgs>${project.build.directory}</commandlineArgs>
+          <commandlineArgs>"${project.build.directory}"</commandlineArgs>
           <cleanupDeamonThreads>false</cleanupDeamonThreads>
         </configuration>
       </plugin>
