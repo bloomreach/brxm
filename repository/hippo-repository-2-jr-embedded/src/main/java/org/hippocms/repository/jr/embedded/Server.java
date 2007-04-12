@@ -50,12 +50,12 @@ public class Server {
     private JackrabbitRepository repository;
     private Session session;
 
-    Server() throws RepositoryException {
-        String workingDir = new File(".").getAbsolutePath();
+    Server(String workingDirectory) throws RepositoryException {
+        String workingDir = new File(workingDirectory).getAbsolutePath();
         InputStream config = getClass().getResourceAsStream("repository.xml");
         repository = RepositoryImpl.create(RepositoryConfig.create(config, workingDir));
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
-        log.info("node type registration support: " + result);
+        log.info("Node type registration support: " + (result!=null?result:"no"));
         session = repository.login(new SimpleCredentials("username", "password".toCharArray()));
         log.info("Logged in as " + session.getUserID() + " to a " + repository.getDescriptor(Repository.REP_NAME_DESC)
                 + " repository.");
@@ -110,7 +110,7 @@ public class Server {
 
     public static void main(String[] args) throws Exception {
         try {
-            Server server = new Server();
+            Server server = new Server(args.length>0 ? args[0] : ".");
             server.test();
         } catch (RepositoryException ex) {
             System.err.println(ex.getMessage());
