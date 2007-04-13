@@ -41,10 +41,10 @@ public class ReviewedActionWorkflowTest extends TestCase {
         try {
             doc.setContent("Quux qux baz bar foo.");
         } catch (Exception e) {
-            fail("It must be allowed to set the content of documents when there are no pending request");
+            fail("It must be allowed to set the content of documents when there are no pending requests");
         }
     }
-    
+
     public void testCanRequestPublicationWithNoPendingRequests() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
@@ -58,7 +58,25 @@ public class ReviewedActionWorkflowTest extends TestCase {
             ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
             workflow.requestPublication(null, null);
         } catch (Exception e) {
-            fail("It must be allowed to request publication when there are no pending request");
+            fail("It must be allowed to request publication when there are no pending requests");
+        }
+    }
+
+    public void testCannotRequestPublicationWithPendingRequests() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(new ReviewedActionsWorkflowFactory());
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        try {
+            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+            workflow.requestPublication(null, null);
+            workflow.requestPublication(null, null);
+            fail("It must not be allowed to request publication when there are pending requests");
+        } catch (Exception e) {
         }
     }
 }
