@@ -22,6 +22,7 @@ public class PublicationRequest {
     private Date requestedPublicationDate;
     private Date requestedUnpublicationDate;
     private String requestor;
+    private String disapprovalReason;
 
     public PublicationRequest(ReviewedActionsWorkflow workflow, Date requestedPublicationDate,
             Date requestedUnpublicationDate) {
@@ -54,5 +55,10 @@ public class PublicationRequest {
 
     public void disapprove(String reason) {
         workflow.clearPendingPublicationRequest();
+        this.disapprovalReason = reason;
+    }
+
+    public String getDisapprovalReason() {
+        return disapprovalReason;
     }
 }

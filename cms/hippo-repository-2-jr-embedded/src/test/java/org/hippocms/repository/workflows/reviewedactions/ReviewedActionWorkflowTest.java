@@ -168,4 +168,25 @@ public class ReviewedActionWorkflowTest extends TestCase {
         assertNull("Disapproving publication request must clear pending request", workflow
                 .getPendingPublicationRequest());
     }
+
+    public void testDisapprovedPublicationRequestHasCorrectReason() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        String disapprovalReason = "Spelling errors.";
+        publicationRequest.disapprove(disapprovalReason);
+
+        assertEquals("Disapproved publication request must have correct reason", disapprovalReason, publicationRequest
+                .getDisapprovalReason());
+    }
 }
