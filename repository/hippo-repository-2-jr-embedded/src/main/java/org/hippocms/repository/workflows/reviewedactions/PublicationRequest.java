@@ -20,6 +20,7 @@ import java.util.Date;
 public class PublicationRequest {
     private Date requestedPublicationDate;
     private Date requestedUnpublicationDate;
+    private String requestor;
 
     public PublicationRequest(Date requestedPublicationDate, Date requestedUnpublicationDate) {
         super();
@@ -34,5 +35,13 @@ public class PublicationRequest {
 
     public Date getRequestedUnpublicationDate() {
         return requestedUnpublicationDate;
+    }
+
+    public String getRequestor() {
+        return requestor;
+    }
+
+    public void setRequestor(String username) {
+        requestor = username;
     }
 }
