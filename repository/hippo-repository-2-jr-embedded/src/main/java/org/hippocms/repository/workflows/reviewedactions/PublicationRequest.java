@@ -19,10 +19,14 @@ import java.util.Date;
 import org.hippocms.repository.model.CurrentUsernameSource;
 
 public class PublicationRequest {
+    private static final int AWAITING_ACTION_STATE_ID = 0;
+    private static final int DISAPPROVED_STATE_ID = 1;
+
     private ReviewedActionsWorkflow workflow;
     private Date requestedPublicationDate;
     private Date requestedUnpublicationDate;
     private String requestor;
+    private int state = AWAITING_ACTION_STATE_ID;
     private String disapprover;
     private String disapprovalReason;
     private CurrentUsernameSource currentUsernameSource;
@@ -57,6 +61,9 @@ public class PublicationRequest {
     }
 
     public void cancel() {
+        if (!isAwaitingAction()) {
+            throw new IllegalStateException("Cannot cancel publication request that has already been processed");
+        }
         workflow.clearPendingPublicationRequest();
     }
 
@@ -64,6 +71,7 @@ public class PublicationRequest {
         workflow.clearPendingPublicationRequest();
         this.disapprovalReason = reason;
         disapprover = currentUsernameSource.getCurrentUsername();
+        state = DISAPPROVED_STATE_ID;
     }
 
     public String getDisapprovalReason() {
@@ -72,5 +80,9 @@ public class PublicationRequest {
 
     public String getDisapprover() {
         return disapprover;
+    }
+
+    private boolean isAwaitingAction() {
+        return state == AWAITING_ACTION_STATE_ID;
     }
 }
