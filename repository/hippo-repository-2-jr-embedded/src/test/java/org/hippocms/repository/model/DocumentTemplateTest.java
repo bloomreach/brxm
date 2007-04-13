@@ -16,6 +16,7 @@
 package org.hippocms.repository.model;
 
 import junit.framework.TestCase;
+import org.hippocms.repository.workflows.mock.MockWorkflowFactory;
 
 public class DocumentTemplateTest extends TestCase {
     public DocumentTemplateTest() {
@@ -29,6 +30,7 @@ public class DocumentTemplateTest extends TestCase {
     public void testCreateDoesNotReturnNull() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
+        docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create("Lorem ipsum");
 
         assertNotNull(document);
@@ -38,6 +40,7 @@ public class DocumentTemplateTest extends TestCase {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
         String documentTitle = "Lorem ipsum";
+        docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create(documentTitle);
 
         assertEquals("Document must have name passed to 'create(...)'", documentTitle, document.getName());
@@ -48,6 +51,7 @@ public class DocumentTemplateTest extends TestCase {
 
         String defaultContent = "Foo bar baz qux quux.";
         docTemplate.setDefaultContent(defaultContent);
+        docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create("Lorem ipsum");
 
         assertEquals("Document must have default content set for document template", defaultContent, document
@@ -57,8 +61,22 @@ public class DocumentTemplateTest extends TestCase {
     public void testCreatedDocumentHasCreatingDocumentTemplate() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
+        docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create("Lorem ipsum");
 
         assertSame("Document must have document template that created it", docTemplate, document.getDocumentTemplate());
+    }
+
+    public void testCreatedDocumentHasWorkflow() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        docTemplate.setWorkflowFactory(createMockWorkflowFactory());
+        Document document = docTemplate.create("Lorem ipsum");
+
+        assertNotNull("Document must have a workflow", document.getWorkflow());
+    }
+
+    private WorkflowFactory createMockWorkflowFactory() {
+        return new MockWorkflowFactory();
     }
 }
