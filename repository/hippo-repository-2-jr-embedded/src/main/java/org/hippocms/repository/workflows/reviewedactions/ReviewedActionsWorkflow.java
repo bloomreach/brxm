@@ -37,6 +37,7 @@ public class ReviewedActionsWorkflow implements Workflow {
         }
         pendingPublicationRequest = new PublicationRequest(this, publicationDate, unpublicationDate);
         pendingPublicationRequest.setRequestor(currentUsernameSource.getCurrentUsername());
+        pendingPublicationRequest.setCurrentUsernameSource(currentUsernameSource);
     }
 
     public PublicationRequest getPendingPublicationRequest() {

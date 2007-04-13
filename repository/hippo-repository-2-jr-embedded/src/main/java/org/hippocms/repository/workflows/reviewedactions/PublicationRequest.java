@@ -16,13 +16,16 @@
 package org.hippocms.repository.workflows.reviewedactions;
 
 import java.util.Date;
+import org.hippocms.repository.model.CurrentUsernameSource;
 
 public class PublicationRequest {
     private ReviewedActionsWorkflow workflow;
     private Date requestedPublicationDate;
     private Date requestedUnpublicationDate;
     private String requestor;
+    private String disapprover;
     private String disapprovalReason;
+    private CurrentUsernameSource currentUsernameSource;
 
     public PublicationRequest(ReviewedActionsWorkflow workflow, Date requestedPublicationDate,
             Date requestedUnpublicationDate) {
@@ -49,6 +52,10 @@ public class PublicationRequest {
         requestor = username;
     }
 
+    public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
+        this.currentUsernameSource = currentUsernameSource;
+    }
+
     public void cancel() {
         workflow.clearPendingPublicationRequest();
     }
@@ -56,9 +63,14 @@ public class PublicationRequest {
     public void disapprove(String reason) {
         workflow.clearPendingPublicationRequest();
         this.disapprovalReason = reason;
+        disapprover = currentUsernameSource.getCurrentUsername();
     }
 
     public String getDisapprovalReason() {
         return disapprovalReason;
+    }
+
+    public String getDisapprover() {
+        return disapprover;
     }
 }
