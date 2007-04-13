@@ -102,7 +102,7 @@ public class DocumentTemplateTest extends TestCase {
         docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create("Lorem ipsum");
 
-        assertEquals("Document must correct creator", currentUsername, document.getCreator());
+        assertEquals("Document must have correct creator", currentUsername, document.getCreator());
     }
 
     private WorkflowFactory createMockWorkflowFactory() {
