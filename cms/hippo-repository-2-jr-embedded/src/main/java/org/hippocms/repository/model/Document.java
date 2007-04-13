@@ -19,6 +19,7 @@ public class Document {
     private String name;
     private String content;
     private DocumentTemplate docTemplate;
+    private Workflow workflow;
 
     public Document() {
         super();
@@ -46,5 +47,13 @@ public class Document {
 
     public void setDocumentTemplate(DocumentTemplate docTemplate) {
         this.docTemplate = docTemplate;
+    }
+
+    public Workflow getWorkflow() {
+        return workflow;
+    }
+
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
     }
 }

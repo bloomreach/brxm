@@ -17,6 +17,7 @@ package org.hippocms.repository.model;
 
 public class DocumentTemplate {
     private String defaultContent;
+    private WorkflowFactory workflowFactory;
 
     public DocumentTemplate() {
         super();
@@ -28,11 +29,16 @@ public class DocumentTemplate {
         result.setName(name);
         result.setContent(defaultContent);
         result.setDocumentTemplate(this);
+        result.setWorkflow(workflowFactory.create(result));
 
         return result;
     }
 
     public void setDefaultContent(String defaultContent) {
         this.defaultContent = defaultContent;
+    }
+
+    public void setWorkflowFactory(WorkflowFactory workflowFactory) {
+        this.workflowFactory = workflowFactory;
     }
 }
