@@ -129,4 +129,23 @@ public class ReviewedActionWorkflowTest extends TestCase {
         assertEquals("Publication requestor of publication request must be correct", publicationRequestorName,
                 publicationRequest.getRequestor());
     }
+
+    public void testPublicationCancellationClearsPendingRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        publicationRequest.cancel();
+
+        assertNull("Cancelling publication request must clear pending request", workflow.getPendingPublicationRequest());
+    }
 }
