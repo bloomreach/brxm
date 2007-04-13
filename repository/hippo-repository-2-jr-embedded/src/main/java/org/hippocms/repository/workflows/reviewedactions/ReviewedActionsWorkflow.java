@@ -16,6 +16,9 @@
 package org.hippocms.repository.workflows.reviewedactions;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
 import org.hippocms.repository.model.Workflow;
@@ -24,6 +27,7 @@ public class ReviewedActionsWorkflow implements Workflow {
     private Document document;
     private PublicationRequest pendingPublicationRequest;
     private CurrentUsernameSource currentUsernameSource;
+    private Set disapprovedPublicationRequests = new HashSet();
 
     public ReviewedActionsWorkflow(Document document) {
         super();
@@ -54,5 +58,21 @@ public class ReviewedActionsWorkflow implements Workflow {
 
     public void clearPendingPublicationRequest() {
         pendingPublicationRequest = null;
+    }
+
+    public int getNumberOfDisapprovedPublicationRequests() {
+        return disapprovedPublicationRequests.size();
+    }
+
+    public Iterator disapprovedPublicationRequestsIterator() {
+        return disapprovedPublicationRequests.iterator();
+    }
+
+    public void addDisapprovedPublicationRequest(PublicationRequest request) {
+        disapprovedPublicationRequests.add(request);
+    }
+
+    public void removeDisapprovedPublicationRequest(PublicationRequest request) {
+        disapprovedPublicationRequests.remove(request);
     }
 }
