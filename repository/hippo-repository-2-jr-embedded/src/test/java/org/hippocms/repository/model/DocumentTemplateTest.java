@@ -37,4 +37,14 @@ public class DocumentTemplateTest extends TestCase
         
         assertNotNull(document);
     }
+    
+    public void testCreatedDocumentHasSpecifiedName()
+    {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+        
+        String documentTitle = "Lorem ipsum";
+        Document document = docTemplate.create(documentTitle);
+        
+        assertEquals("Document must have name passed to 'create(...)'", documentTitle, document.getName());
+    }
 }
