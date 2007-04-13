@@ -89,12 +89,19 @@ public class PublicationRequest {
         return disapprover;
     }
 
+    public void remove() {
+        if (!isDisapproved()) {
+            throw new IllegalStateException("Cannot remove publication request that has not been disapproved");
+        }
+        workflow.removeDisapprovedPublicationRequest(this);
+        state = REMOVED_STATE_ID;
+    }
+
     private boolean isAwaitingAction() {
         return state == AWAITING_ACTION_STATE_ID;
     }
 
-    public void remove() {
-        workflow.removeDisapprovedPublicationRequest(this);
-        state = REMOVED_STATE_ID;
+    private boolean isDisapproved() {
+        return state == DISAPPROVED_STATE_ID;
     }
 }
