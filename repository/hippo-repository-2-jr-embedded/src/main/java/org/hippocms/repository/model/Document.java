@@ -15,22 +15,27 @@
  */
 package org.hippocms.repository.model;
 
-public class Document
-{
+public class Document {
     private String name;
-    
-    public Document()
-    {
+    private String content;
+
+    public Document() {
         super();
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
-    
-    public void setName(String name)
-    {
+
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

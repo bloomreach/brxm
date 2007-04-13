@@ -15,19 +15,23 @@
  */
 package org.hippocms.repository.model;
 
-public class DocumentTemplate
-{
-    public DocumentTemplate()
-    {
+public class DocumentTemplate {
+    private String defaultContent;
+
+    public DocumentTemplate() {
         super();
     }
 
-    public Document create(String name)
-    {
+    public Document create(String name) {
         Document result = new Document();
-        
+
         result.setName(name);
-        
+        result.setContent(defaultContent);
+
         return result;
+    }
+
+    public void setDefaultContent(String defaultContent) {
+        this.defaultContent = defaultContent;
     }
 }
