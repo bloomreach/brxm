@@ -24,6 +24,10 @@ public class DocumentTemplate
 
     public Document create(String name)
     {
-        return new Document();
+        Document result = new Document();
+        
+        result.setName(name);
+        
+        return result;
     }
 }
