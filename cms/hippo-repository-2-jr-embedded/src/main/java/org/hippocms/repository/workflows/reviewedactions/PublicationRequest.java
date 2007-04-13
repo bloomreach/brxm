@@ -51,4 +51,8 @@ public class PublicationRequest {
     public void cancel() {
         workflow.clearPendingPublicationRequest();
     }
+
+    public void disapprove(String reason) {
+        workflow.clearPendingPublicationRequest();
+    }
 }

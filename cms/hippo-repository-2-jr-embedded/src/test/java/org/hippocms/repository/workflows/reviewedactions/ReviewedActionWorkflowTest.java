@@ -148,4 +148,24 @@ public class ReviewedActionWorkflowTest extends TestCase {
 
         assertNull("Cancelling publication request must clear pending request", workflow.getPendingPublicationRequest());
     }
+
+    public void testPublicationDisapprovalClearsPendingRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        publicationRequest.disapprove("Spelling errors.");
+
+        assertNull("Disapproving publication request must clear pending request", workflow
+                .getPendingPublicationRequest());
+    }
 }
