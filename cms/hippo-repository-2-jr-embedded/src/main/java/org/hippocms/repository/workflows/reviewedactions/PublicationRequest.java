@@ -22,6 +22,7 @@ public class PublicationRequest {
     private static final int AWAITING_ACTION_STATE_ID = 0;
     private static final int DISAPPROVED_STATE_ID = 1;
     private static final int CANCELLED_STATE_ID = 2;
+    private static final int REMOVED_STATE_ID = 3;
 
     private ReviewedActionsWorkflow workflow;
     private Date requestedPublicationDate;
@@ -74,6 +75,7 @@ public class PublicationRequest {
             throw new IllegalStateException("Cannot disapprove publication request that has already been processed");
         }
         workflow.clearPendingPublicationRequest();
+        workflow.addDisapprovedPublicationRequest(this);
         this.disapprovalReason = reason;
         disapprover = currentUsernameSource.getCurrentUsername();
         state = DISAPPROVED_STATE_ID;
@@ -89,5 +91,10 @@ public class PublicationRequest {
 
     private boolean isAwaitingAction() {
         return state == AWAITING_ACTION_STATE_ID;
+    }
+
+    public void remove() {
+        workflow.removeDisapprovedPublicationRequest(this);
+        state = REMOVED_STATE_ID;
     }
 }

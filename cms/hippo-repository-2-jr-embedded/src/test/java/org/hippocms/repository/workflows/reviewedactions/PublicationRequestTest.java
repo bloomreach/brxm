@@ -15,6 +15,7 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
+import java.util.Iterator;
 import junit.framework.TestCase;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
@@ -155,5 +156,32 @@ public class PublicationRequestTest extends TestCase {
             fail("Cannot disapprove a cancelled publication request");
         } catch (IllegalStateException e) {
         }
+    }
+
+    public void testDisapprovedPublicationRequestsAreKeptUntilRemoved() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        publicationRequest.disapprove("Spelling errors.");
+
+        assertEquals("A disapproved publication request must be kept until explicitly removed", 1, workflow
+                .getNumberOfDisapprovedPublicationRequests());
+        Iterator iterator = workflow.disapprovedPublicationRequestsIterator();
+        assertSame("The correct disapproved publication request must be kept", publicationRequest, iterator.next());
+
+        publicationRequest.remove();
+
+        assertEquals("A disapproved publication request must be discarded when explicitly removed", 0, workflow
+                .getNumberOfDisapprovedPublicationRequests());
     }
 }
