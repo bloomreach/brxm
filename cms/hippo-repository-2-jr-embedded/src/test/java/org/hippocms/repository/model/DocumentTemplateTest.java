@@ -53,4 +53,12 @@ public class DocumentTemplateTest extends TestCase {
         assertEquals("Document must have default content set for document template", defaultContent, document
                 .getContent());
     }
+
+    public void testCreatedDocumentHasCreatingDocumentTemplate() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        Document document = docTemplate.create("Lorem ipsum");
+
+        assertSame("Document must have document template that created it", docTemplate, document.getDocumentTemplate());
+    }
 }

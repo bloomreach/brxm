@@ -18,6 +18,7 @@ package org.hippocms.repository.model;
 public class Document {
     private String name;
     private String content;
+    private DocumentTemplate docTemplate;
 
     public Document() {
         super();
@@ -37,5 +38,13 @@ public class Document {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public DocumentTemplate getDocumentTemplate() {
+        return docTemplate;
+    }
+
+    public void setDocumentTemplate(DocumentTemplate docTemplate) {
+        this.docTemplate = docTemplate;
     }
 }
