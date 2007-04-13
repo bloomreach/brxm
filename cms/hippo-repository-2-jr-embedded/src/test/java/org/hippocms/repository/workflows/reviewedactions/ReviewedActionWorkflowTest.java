@@ -52,7 +52,9 @@ public class ReviewedActionWorkflowTest extends TestCase {
         CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
         currentUsernameSource.setCurrentUsername("John Doe");
         docTemplate.setCurrentUsernameSource(currentUsernameSource);
-        docTemplate.setWorkflowFactory(new ReviewedActionsWorkflowFactory());
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
         Document doc = docTemplate.create("Lorem ipsum");
 
         try {
@@ -87,7 +89,9 @@ public class ReviewedActionWorkflowTest extends TestCase {
         CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
         currentUsernameSource.setCurrentUsername("John Doe");
         docTemplate.setCurrentUsernameSource(currentUsernameSource);
-        docTemplate.setWorkflowFactory(new ReviewedActionsWorkflowFactory());
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
         Document doc = docTemplate.create("Lorem ipsum");
 
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
@@ -101,5 +105,26 @@ public class ReviewedActionWorkflowTest extends TestCase {
                 publicationRequest.getRequestedPublicationDate());
         assertEquals("Unpublication date in unpublication request must match requested unpublication date",
                 unpublicationDate, publicationRequest.getRequestedUnpublicationDate());
+    }
+
+    public void testPublicationRequestHasCorrectRequestor() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        String publicationRequestorName = "Jane Doe";
+        currentUsernameSource.setCurrentUsername(publicationRequestorName);
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+
+        assertEquals("Publication requestor of publication request must be correct", publicationRequestorName,
+                publicationRequest.getRequestor());
     }
 }

@@ -16,12 +16,14 @@
 package org.hippocms.repository.workflows.reviewedactions;
 
 import java.util.Date;
+import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
 import org.hippocms.repository.model.Workflow;
 
 public class ReviewedActionsWorkflow implements Workflow {
     private Document document;
     private PublicationRequest pendingPublicationRequest;
+    private CurrentUsernameSource currentUsernameSource;
 
     public ReviewedActionsWorkflow(Document document) {
         super();
@@ -34,6 +36,7 @@ public class ReviewedActionsWorkflow implements Workflow {
             throw new IllegalStateException("Cannot start a request when a request is pending");
         }
         pendingPublicationRequest = new PublicationRequest(publicationDate, unpublicationDate);
+        pendingPublicationRequest.setRequestor(currentUsernameSource.getCurrentUsername());
     }
 
     public PublicationRequest getPendingPublicationRequest() {
@@ -42,5 +45,9 @@ public class ReviewedActionsWorkflow implements Workflow {
 
     private boolean hasPendingRequest() {
         return pendingPublicationRequest != null;
+    }
+
+    public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
+        this.currentUsernameSource = currentUsernameSource;
     }
 }

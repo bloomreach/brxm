@@ -15,16 +15,25 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
+import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
 import org.hippocms.repository.model.Workflow;
 import org.hippocms.repository.model.WorkflowFactory;
 
 public class ReviewedActionsWorkflowFactory implements WorkflowFactory {
+    private CurrentUsernameSource currentUsernameSource;
+
     public ReviewedActionsWorkflowFactory() {
         super();
     }
 
     public Workflow create(Document document) {
-        return new ReviewedActionsWorkflow(document);
+        ReviewedActionsWorkflow result = new ReviewedActionsWorkflow(document);
+        result.setCurrentUsernameSource(currentUsernameSource);
+        return result;
+    }
+
+    public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
+        this.currentUsernameSource = currentUsernameSource;
     }
 }
