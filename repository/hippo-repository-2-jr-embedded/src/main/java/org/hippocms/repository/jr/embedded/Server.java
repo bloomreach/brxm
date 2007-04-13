@@ -33,7 +33,6 @@ import javax.jcr.NamespaceRegistry;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.RepositoryImpl;
@@ -41,7 +40,6 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.name.QName;
-import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
