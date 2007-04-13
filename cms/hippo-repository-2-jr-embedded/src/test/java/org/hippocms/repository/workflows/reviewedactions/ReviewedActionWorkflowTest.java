@@ -153,4 +153,21 @@ public class ReviewedActionWorkflowTest extends TestCase {
         assertEquals("Workflow must support multiple disapproved publication requests", 2, workflow
                 .getNumberOfDisapprovedPublicationRequests());
     }
+
+    public void testPublicationClearsPendingPublicationRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        workflow.publish(null, null);
+
+        assertNull("Publication must clear pending publication request", workflow.getPendingPublicationRequest());
+    }
 }
