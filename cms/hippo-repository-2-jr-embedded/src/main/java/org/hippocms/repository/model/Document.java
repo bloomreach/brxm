@@ -65,4 +65,8 @@ public class Document {
     public void setCreator(String username) {
         creator = username;
     }
+
+    public String getModifier() {
+        return null;
+    }
 }
