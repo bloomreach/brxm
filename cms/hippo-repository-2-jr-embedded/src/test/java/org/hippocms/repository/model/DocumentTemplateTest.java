@@ -105,6 +105,20 @@ public class DocumentTemplateTest extends TestCase {
         assertEquals("Document must have correct creator", currentUsername, document.getCreator());
     }
 
+    public void testCreatedDocumentHasNoModifier() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        String currentUsername = "John Doe";
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername(currentUsername);
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(createMockWorkflowFactory());
+        Document document = docTemplate.create("Lorem ipsum");
+
+        assertNull("Document must not have modifier after creation", document.getModifier());
+    }
+
     private WorkflowFactory createMockWorkflowFactory() {
         return new MockWorkflowFactory();
     }
