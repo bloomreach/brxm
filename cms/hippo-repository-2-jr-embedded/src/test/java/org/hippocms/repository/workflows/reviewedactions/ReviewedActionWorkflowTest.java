@@ -189,4 +189,26 @@ public class ReviewedActionWorkflowTest extends TestCase {
         assertEquals("Disapproved publication request must have correct reason", disapprovalReason, publicationRequest
                 .getDisapprovalReason());
     }
+
+    public void testDisapprovedPublicationRequestHasCorrectDisapprover() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        String disapproverName = "Jane Doe";
+        currentUsernameSource.setCurrentUsername(disapproverName);
+        publicationRequest.disapprove("Spelling errors.");
+
+        assertEquals("Disapproved publication request must have correct disapprover", disapproverName,
+                publicationRequest.getDisapprover());
+    }
 }
