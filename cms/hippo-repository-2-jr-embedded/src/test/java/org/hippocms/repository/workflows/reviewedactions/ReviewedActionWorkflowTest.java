@@ -15,6 +15,7 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
+import java.util.Date;
 import junit.framework.TestCase;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
@@ -78,5 +79,27 @@ public class ReviewedActionWorkflowTest extends TestCase {
             fail("It must not be allowed to request publication when there are pending requests");
         } catch (Exception e) {
         }
+    }
+
+    public void testRequestedPublicationDatesAreCopiedToPublicationRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(new ReviewedActionsWorkflowFactory());
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        long now = System.currentTimeMillis();
+        Date publicationDate = new Date(now + 1000);
+        Date unpublicationDate = new Date(now + 2000);
+        workflow.requestPublication(publicationDate, unpublicationDate);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+
+        assertEquals("Publication date in publication request must match requested publication date", publicationDate,
+                publicationRequest.getRequestedPublicationDate());
+        assertEquals("Unpublication date in unpublication request must match requested unpublication date",
+                unpublicationDate, publicationRequest.getRequestedUnpublicationDate());
     }
 }
