@@ -21,6 +21,7 @@ import org.hippocms.repository.model.Workflow;
 
 public class ReviewedActionsWorkflow implements Workflow {
     private Document document;
+    private boolean hasPendingRequest;
 
     public ReviewedActionsWorkflow(Document document) {
         super();
@@ -29,5 +30,9 @@ public class ReviewedActionsWorkflow implements Workflow {
     }
 
     public void requestPublication(Date publicationDate, Date unpublicationDate) {
+        if (hasPendingRequest) {
+            throw new IllegalStateException("Cannot start a request when a request is pending");
+        }
+        hasPendingRequest = true;
     }
 }
