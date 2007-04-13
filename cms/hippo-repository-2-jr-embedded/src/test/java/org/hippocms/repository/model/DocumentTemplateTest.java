@@ -30,6 +30,9 @@ public class DocumentTemplateTest extends TestCase {
     public void testCreateDoesNotReturnNull() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create("Lorem ipsum");
 
@@ -40,6 +43,9 @@ public class DocumentTemplateTest extends TestCase {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
         String documentTitle = "Lorem ipsum";
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create(documentTitle);
 
@@ -51,6 +57,9 @@ public class DocumentTemplateTest extends TestCase {
 
         String defaultContent = "Foo bar baz qux quux.";
         docTemplate.setDefaultContent(defaultContent);
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create("Lorem ipsum");
 
@@ -61,6 +70,9 @@ public class DocumentTemplateTest extends TestCase {
     public void testCreatedDocumentHasCreatingDocumentTemplate() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create("Lorem ipsum");
 
@@ -70,10 +82,27 @@ public class DocumentTemplateTest extends TestCase {
     public void testCreatedDocumentHasWorkflow() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(createMockWorkflowFactory());
         Document document = docTemplate.create("Lorem ipsum");
 
         assertNotNull("Document must have a workflow", document.getWorkflow());
+    }
+
+    public void testCreatedDocumentHasCorrectCreator() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        String currentUsername = "John Doe";
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername(currentUsername);
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(createMockWorkflowFactory());
+        Document document = docTemplate.create("Lorem ipsum");
+
+        assertEquals("Document must correct creator", currentUsername, document.getCreator());
     }
 
     private WorkflowFactory createMockWorkflowFactory() {
