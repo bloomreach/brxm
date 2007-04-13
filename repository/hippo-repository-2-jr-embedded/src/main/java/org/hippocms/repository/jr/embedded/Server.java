@@ -28,6 +28,8 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
+import javax.jcr.NamespaceRegistry;
+//import javax.jcr.NodeTypeManager;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -35,6 +37,11 @@ import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.RepositoryImpl;
+import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
+import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
+import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
+import org.apache.jackrabbit.name.QName;
+import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,16 +124,29 @@ public class Server {
 
             Node root = session.getRootNode();
             Workspace workspace = session.getWorkspace();
+
+            NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
+            nsreg.registerNamespace("hippo", "http://www.hippocms.org/");
+
             NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
             NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+            NodeTypeDef ntd = new NodeTypeDef();
+            ntd.setMixin(false);
+            ntd.setName(new QName("http://www.hippocms.org/","facet"));
+            EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
 
             root.addNode("x");
             root.addNode("y");
             root.addNode("z");
+            Node node = root.addNode("documents", "hippo:facet");
+
             server.dump(session.getRootNode());
 
             server.close();
-        } catch (RepositoryException ex) {
+        } catch(InvalidNodeTypeDefException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch(RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
