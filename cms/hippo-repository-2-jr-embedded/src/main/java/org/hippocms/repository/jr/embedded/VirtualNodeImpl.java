@@ -32,7 +32,7 @@ class VirtualNodeImpl
   }
   Node getParent() throws ItemNotFoundException, AccessDeniedException, RepositoryException {
     if(isVirtual)
-      return actual.getSession().getRootNode().getPath(virtualPath);
+      return actual.getSession().getRootNode().getNode(virtualPath);
     else
       return actual.getParent();
   }
@@ -112,7 +112,7 @@ class VirtualNodeImpl
   }
   Node getNode(String relPath) throws PathNotFoundException, RepositoryException  {
     if(isVirtual) {
-      return actual.getSession.getRootNode().getNode("documents").getNode("all").getNode(relPath);
+      return actual.getSession().getRootNode().getNode("documents").getNode("all").getNode(relPath);
     } else
       return actual.getNode(relPath);
   }
