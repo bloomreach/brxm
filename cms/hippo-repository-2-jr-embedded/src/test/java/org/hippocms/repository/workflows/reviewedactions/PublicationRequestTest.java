@@ -15,77 +15,21 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
-import java.util.Date;
 import junit.framework.TestCase;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
 import org.hippocms.repository.model.DocumentTemplate;
 
-public class ReviewedActionWorkflowTest extends TestCase {
-    public ReviewedActionWorkflowTest() {
+public class PublicationRequestTest extends TestCase {
+    public PublicationRequestTest() {
         super();
     }
 
-    public ReviewedActionWorkflowTest(String name) {
+    public PublicationRequestTest(String name) {
         super(name);
     }
 
-    public void testCanChangeContentWithNoPendingRequests() {
-        DocumentTemplate docTemplate = new DocumentTemplate();
-
-        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
-        currentUsernameSource.setCurrentUsername("John Doe");
-        docTemplate.setCurrentUsernameSource(currentUsernameSource);
-        docTemplate.setWorkflowFactory(new ReviewedActionsWorkflowFactory());
-        Document doc = docTemplate.create("Lorem ipsum");
-
-        try {
-            doc.setContent("Quux qux baz bar foo.");
-        } catch (IllegalStateException e) {
-            fail("It must be allowed to set the content of documents when there are no pending requests");
-        }
-    }
-
-    public void testCanRequestPublicationWithNoPendingRequests() {
-        DocumentTemplate docTemplate = new DocumentTemplate();
-
-        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
-        currentUsernameSource.setCurrentUsername("John Doe");
-        docTemplate.setCurrentUsernameSource(currentUsernameSource);
-        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
-        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
-        docTemplate.setWorkflowFactory(workflowFactory);
-        Document doc = docTemplate.create("Lorem ipsum");
-
-        try {
-            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
-            workflow.requestPublication(null, null);
-        } catch (IllegalStateException e) {
-            fail("It must be allowed to request publication when there are no pending requests");
-        }
-    }
-
-    public void testCannotRequestPublicationWithPendingRequests() {
-        DocumentTemplate docTemplate = new DocumentTemplate();
-
-        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
-        currentUsernameSource.setCurrentUsername("John Doe");
-        docTemplate.setCurrentUsernameSource(currentUsernameSource);
-        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
-        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
-        docTemplate.setWorkflowFactory(workflowFactory);
-        Document doc = docTemplate.create("Lorem ipsum");
-
-        try {
-            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
-            workflow.requestPublication(null, null);
-            workflow.requestPublication(null, null);
-            fail("It must not be allowed to request publication when there are pending requests");
-        } catch (IllegalStateException e) {
-        }
-    }
-
-    public void testRequestedPublicationDatesAreCopiedToPublicationRequest() {
+    public void testPublicationCancellationClearsPendingRequest() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
         CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
@@ -97,36 +41,119 @@ public class ReviewedActionWorkflowTest extends TestCase {
         Document doc = docTemplate.create("Lorem ipsum");
 
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
-        long now = System.currentTimeMillis();
-        Date publicationDate = new Date(now + 1000);
-        Date unpublicationDate = new Date(now + 2000);
-        workflow.requestPublication(publicationDate, unpublicationDate);
-        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
-
-        assertEquals("Publication date in publication request must match requested publication date", publicationDate,
-                publicationRequest.getRequestedPublicationDate());
-        assertEquals("Unpublication date in unpublication request must match requested unpublication date",
-                unpublicationDate, publicationRequest.getRequestedUnpublicationDate());
-    }
-
-    public void testPublicationRequestHasCorrectRequestor() {
-        DocumentTemplate docTemplate = new DocumentTemplate();
-
-        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
-        currentUsernameSource.setCurrentUsername("John Doe");
-        docTemplate.setCurrentUsernameSource(currentUsernameSource);
-        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
-        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
-        docTemplate.setWorkflowFactory(workflowFactory);
-        Document doc = docTemplate.create("Lorem ipsum");
-
-        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
-        String publicationRequestorName = "Jane Doe";
-        currentUsernameSource.setCurrentUsername(publicationRequestorName);
         workflow.requestPublication(null, null);
         PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        publicationRequest.cancel();
 
-        assertEquals("Publication requestor of publication request must be correct", publicationRequestorName,
-                publicationRequest.getRequestor());
+        assertNull("Cancelling publication request must clear pending request", workflow.getPendingPublicationRequest());
+    }
+
+    public void testPublicationDisapprovalClearsPendingRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        publicationRequest.disapprove("Spelling errors.");
+
+        assertNull("Disapproving publication request must clear pending request", workflow
+                .getPendingPublicationRequest());
+    }
+
+    public void testDisapprovedPublicationRequestHasCorrectReason() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        String disapprovalReason = "Spelling errors.";
+        publicationRequest.disapprove(disapprovalReason);
+
+        assertEquals("Disapproved publication request must have correct reason", disapprovalReason, publicationRequest
+                .getDisapprovalReason());
+    }
+
+    public void testDisapprovedPublicationRequestHasCorrectDisapprover() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        String disapproverName = "Jane Doe";
+        currentUsernameSource.setCurrentUsername(disapproverName);
+        publicationRequest.disapprove("Spelling errors.");
+
+        assertEquals("Disapproved publication request must have correct disapprover", disapproverName,
+                publicationRequest.getDisapprover());
+    }
+
+    public void testCannotCancelDisapprovedPublicationRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        publicationRequest.disapprove("Spelling errors.");
+
+        try {
+            publicationRequest.cancel();
+            fail("Cannot cancel a disapproved publication request");
+        } catch (IllegalStateException e) {
+        }
+    }
+
+    public void testCannotDisapproveCancelledPublicationRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        publicationRequest.cancel();
+
+        try {
+            publicationRequest.disapprove("Spelling errors.");
+            fail("Cannot disapprove a cancelled publication request");
+        } catch (IllegalStateException e) {
+        }
     }
 }
