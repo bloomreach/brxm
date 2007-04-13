@@ -16,14 +16,8 @@
 package org.hippocms.repository.jr.embedded;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.Workspace;
-
 import junit.framework.TestCase;
 
 /**
@@ -52,7 +46,7 @@ public class TrivialServerTest extends TestCase {
         assertNotNull(root.getNode("x"));
         assertNotNull(root.getNode("y"));
         assertNotNull(root.getNode("z"));
-                
+
         session.save();
         session.logout();
     }
