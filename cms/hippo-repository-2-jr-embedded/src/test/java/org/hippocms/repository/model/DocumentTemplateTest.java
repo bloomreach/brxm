@@ -17,34 +17,40 @@ package org.hippocms.repository.model;
 
 import junit.framework.TestCase;
 
-public class DocumentTemplateTest extends TestCase
-{
-    public DocumentTemplateTest()
-    {
+public class DocumentTemplateTest extends TestCase {
+    public DocumentTemplateTest() {
         super();
     }
 
-    public DocumentTemplateTest(String name)
-    {
+    public DocumentTemplateTest(String name) {
         super(name);
     }
-    
-    public void testCreateDoesNotReturnNull()
-    {
+
+    public void testCreateDoesNotReturnNull() {
         DocumentTemplate docTemplate = new DocumentTemplate();
-        
+
         Document document = docTemplate.create("Lorem ipsum");
-        
+
         assertNotNull(document);
     }
-    
-    public void testCreatedDocumentHasSpecifiedName()
-    {
+
+    public void testCreatedDocumentHasSpecifiedName() {
         DocumentTemplate docTemplate = new DocumentTemplate();
-        
+
         String documentTitle = "Lorem ipsum";
         Document document = docTemplate.create(documentTitle);
-        
+
         assertEquals("Document must have name passed to 'create(...)'", documentTitle, document.getName());
+    }
+
+    public void testCreatedDocumentHasDefaultContent() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        String defaultContent = "Foo bar baz qux quux.";
+        docTemplate.setDefaultContent(defaultContent);
+        Document document = docTemplate.create("Lorem ipsum");
+
+        assertEquals("Document must have default content set for document template", defaultContent, document
+                .getContent());
     }
 }
