@@ -234,4 +234,27 @@ public class ReviewedActionWorkflowTest extends TestCase {
         } catch (IllegalStateException e) {
         }
     }
+
+    public void testCannotDisapproveCancelledPublicationRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestPublication(null, null);
+        PublicationRequest publicationRequest = workflow.getPendingPublicationRequest();
+        publicationRequest.cancel();
+
+        try {
+            publicationRequest.disapprove("Spelling errors.");
+            fail("Cannot disapprove a cancelled publication request");
+        } catch (IllegalStateException e) {
+        }
+    }
 }
