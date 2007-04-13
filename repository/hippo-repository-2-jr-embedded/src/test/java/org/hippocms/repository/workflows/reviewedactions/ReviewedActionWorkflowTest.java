@@ -41,7 +41,7 @@ public class ReviewedActionWorkflowTest extends TestCase {
 
         try {
             doc.setContent("Quux qux baz bar foo.");
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
             fail("It must be allowed to set the content of documents when there are no pending requests");
         }
     }
@@ -60,7 +60,7 @@ public class ReviewedActionWorkflowTest extends TestCase {
         try {
             ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
             workflow.requestPublication(null, null);
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
             fail("It must be allowed to request publication when there are no pending requests");
         }
     }
@@ -71,7 +71,9 @@ public class ReviewedActionWorkflowTest extends TestCase {
         CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
         currentUsernameSource.setCurrentUsername("John Doe");
         docTemplate.setCurrentUsernameSource(currentUsernameSource);
-        docTemplate.setWorkflowFactory(new ReviewedActionsWorkflowFactory());
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
         Document doc = docTemplate.create("Lorem ipsum");
 
         try {
@@ -79,7 +81,7 @@ public class ReviewedActionWorkflowTest extends TestCase {
             workflow.requestPublication(null, null);
             workflow.requestPublication(null, null);
             fail("It must not be allowed to request publication when there are pending requests");
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
         }
     }
 
