@@ -27,6 +27,7 @@ public class DocumentTemplate {
 
         result.setName(name);
         result.setContent(defaultContent);
+        result.setDocumentTemplate(this);
 
         return result;
     }
