@@ -44,4 +44,21 @@ public class ReviewedActionWorkflowTest extends TestCase {
             fail("It must be allowed to set the content of documents when there are no pending request");
         }
     }
+    
+    public void testCanRequestPublicationWithNoPendingRequests() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(new ReviewedActionsWorkflowFactory());
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        try {
+            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+            workflow.requestPublication(null, null);
+        } catch (Exception e) {
+            fail("It must be allowed to set the content of documents when there are no pending request");
+        }
+    }
 }
