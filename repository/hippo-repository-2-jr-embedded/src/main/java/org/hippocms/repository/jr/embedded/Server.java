@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class Server {
-    
+
     private static final Logger log = LoggerFactory.getLogger(Server.class);
     private String workingDir;
     private JackrabbitRepository repository;
@@ -63,9 +63,11 @@ public class Server {
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
         log.info("Node type registration support: " + (result != null ? result : "no"));
     }
+
     public Server() throws RepositoryException {
         initialize(".");
     }
+
     public Server(String workingDirectory) throws RepositoryException {
         initialize(workingDirectory);
     }
@@ -109,6 +111,7 @@ public class Server {
             }
         }
     }
+
     public void dump(Node parent) throws RepositoryException {
         dump(parent, 0);
     }
@@ -116,7 +119,7 @@ public class Server {
     public static void main(String[] args) {
         try {
             Server server = null;
-            if(args.length > 0)
+            if (args.length > 0)
                 server = new Server(args.length > 0 ? args[0] : ".");
             else
                 server = new Server();
@@ -132,7 +135,7 @@ public class Server {
             NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
             NodeTypeDef ntd = new NodeTypeDef();
             ntd.setMixin(false);
-            ntd.setName(new QName("http://www.hippocms.org/","facet"));
+            ntd.setName(new QName("http://www.hippocms.org/", "facet"));
             EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
 
             root.addNode("x");
@@ -143,10 +146,10 @@ public class Server {
             server.dump(session.getRootNode());
 
             server.close();
-        } catch(InvalidNodeTypeDefException ex) {
+        } catch (InvalidNodeTypeDefException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
