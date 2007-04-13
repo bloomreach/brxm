@@ -18,13 +18,16 @@ package org.hippocms.repository.workflows.reviewedactions;
 import java.util.Date;
 
 public class PublicationRequest {
+    private ReviewedActionsWorkflow workflow;
     private Date requestedPublicationDate;
     private Date requestedUnpublicationDate;
     private String requestor;
 
-    public PublicationRequest(Date requestedPublicationDate, Date requestedUnpublicationDate) {
+    public PublicationRequest(ReviewedActionsWorkflow workflow, Date requestedPublicationDate,
+            Date requestedUnpublicationDate) {
         super();
 
+        this.workflow = workflow;
         this.requestedPublicationDate = requestedPublicationDate;
         this.requestedUnpublicationDate = requestedUnpublicationDate;
     }
@@ -43,5 +46,9 @@ public class PublicationRequest {
 
     public void setRequestor(String username) {
         requestor = username;
+    }
+
+    public void cancel() {
+        workflow.clearPendingPublicationRequest();
     }
 }

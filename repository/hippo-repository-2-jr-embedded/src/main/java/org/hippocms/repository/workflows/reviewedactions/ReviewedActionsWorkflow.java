@@ -35,7 +35,7 @@ public class ReviewedActionsWorkflow implements Workflow {
         if (hasPendingRequest()) {
             throw new IllegalStateException("Cannot start a request when a request is pending");
         }
-        pendingPublicationRequest = new PublicationRequest(publicationDate, unpublicationDate);
+        pendingPublicationRequest = new PublicationRequest(this, publicationDate, unpublicationDate);
         pendingPublicationRequest.setRequestor(currentUsernameSource.getCurrentUsername());
     }
 
@@ -49,5 +49,9 @@ public class ReviewedActionsWorkflow implements Workflow {
 
     public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
         this.currentUsernameSource = currentUsernameSource;
+    }
+
+    public void clearPendingPublicationRequest() {
+        pendingPublicationRequest = null;
     }
 }
