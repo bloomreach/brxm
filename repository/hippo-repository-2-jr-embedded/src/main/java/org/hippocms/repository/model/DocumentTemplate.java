@@ -28,9 +28,10 @@ public class DocumentTemplate {
         Document result = new Document();
 
         result.setName(name);
-        result.setContent(defaultContent);
+        result.setInitialContent(defaultContent);
         result.setDocumentTemplate(this);
         result.setWorkflow(workflowFactory.create(result));
+        result.setCurrentUsernameSource(currentUsernameSource);
         result.setCreator(currentUsernameSource.getCurrentUsername());
 
         return result;

@@ -20,7 +20,9 @@ public class Document {
     private String content;
     private DocumentTemplate docTemplate;
     private Workflow workflow;
+    private CurrentUsernameSource currentUsernameSource;
     private String creator;
+    private String modifier;
 
     public Document() {
         super();
@@ -38,8 +40,13 @@ public class Document {
         return content;
     }
 
+    public void setInitialContent(String content) {
+        this.content = content;
+    }
+
     public void setContent(String content) {
         this.content = content;
+        modifier = currentUsernameSource.getCurrentUsername();
     }
 
     public DocumentTemplate getDocumentTemplate() {
@@ -58,6 +65,10 @@ public class Document {
         this.workflow = workflow;
     }
 
+    public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
+        this.currentUsernameSource = currentUsernameSource;
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -67,6 +78,6 @@ public class Document {
     }
 
     public String getModifier() {
-        return null;
+        return modifier;
     }
 }
