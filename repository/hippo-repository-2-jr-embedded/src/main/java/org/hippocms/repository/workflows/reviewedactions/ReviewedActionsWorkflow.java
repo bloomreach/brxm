@@ -15,6 +15,7 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
+import java.util.Date;
 import org.hippocms.repository.model.Document;
 import org.hippocms.repository.model.Workflow;
 
@@ -25,5 +26,8 @@ public class ReviewedActionsWorkflow implements Workflow {
         super();
 
         this.document = document;
+    }
+
+    public void requestPublication(Date publicationDate, Date unpublicationDate) {
     }
 }
