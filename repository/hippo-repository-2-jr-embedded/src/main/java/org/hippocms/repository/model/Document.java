@@ -20,6 +20,7 @@ public class Document {
     private String content;
     private DocumentTemplate docTemplate;
     private Workflow workflow;
+    private String creator;
 
     public Document() {
         super();
@@ -55,5 +56,13 @@ public class Document {
 
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String username) {
+        creator = username;
     }
 }
