@@ -170,4 +170,23 @@ public class ReviewedActionWorkflowTest extends TestCase {
 
         assertNull("Publication must clear pending publication request", workflow.getPendingPublicationRequest());
     }
+
+    public void testCanRequestDeletionWithNoPendingRequests() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        try {
+            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+            workflow.requestDeletion();
+        } catch (IllegalStateException e) {
+            fail("It must be allowed to request deletion when there are no pending requests");
+        }
+    }
 }
