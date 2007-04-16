@@ -17,4 +17,6 @@ package org.hippocms.repository.model;
 
 public interface PublicationServiceProvider {
     void publish(String name, String content);
+
+    void remove(String name);
 }
