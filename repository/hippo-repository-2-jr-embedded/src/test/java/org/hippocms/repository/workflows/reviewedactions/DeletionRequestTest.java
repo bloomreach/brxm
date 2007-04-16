@@ -183,4 +183,26 @@ public class DeletionRequestTest extends TestCase {
         assertEquals("A disapproved deletion request must be discarded when explicitly removed", 0, workflow
                 .getNumberOfDisapprovedDeletionRequests());
     }
+
+    public void testCannotRemoveDeletionRequestAwaitingAction() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestDeletion();
+        DeletionRequest deletionRequest = workflow.getPendingDeletionRequest();
+
+        try {
+            deletionRequest.remove();
+            fail("Cannot remove a deletion request awaiting action");
+        } catch (IllegalStateException e) {
+        }
+    }
 }

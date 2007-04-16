@@ -66,10 +66,6 @@ public class DeletionRequest {
         state = CANCELLED_STATE_ID;
     }
 
-    private boolean isAwaitingAction() {
-        return state == AWAITING_ACTION_STATE_ID;
-    }
-
     public String getDisapprovalReason() {
         return disapprovalReason;
     }
@@ -79,6 +75,17 @@ public class DeletionRequest {
     }
 
     public void remove() {
+        if (!isDisapproved()) {
+            throw new IllegalStateException("Cannot remove publication request that has not been disapproved");
+        }
         workflow.removeDisapprovedDeletionRequest(this);
+    }
+
+    private boolean isAwaitingAction() {
+        return state == AWAITING_ACTION_STATE_ID;
+    }
+
+    private boolean isDisapproved() {
+        return state == DISAPPROVED_STATE_ID;
     }
 }
