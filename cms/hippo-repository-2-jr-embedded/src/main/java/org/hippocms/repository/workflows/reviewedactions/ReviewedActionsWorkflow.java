@@ -118,5 +118,8 @@ public class ReviewedActionsWorkflow implements Workflow {
 
     public void delete() {
         clearPendingDeletionRequest();
+        if (document.isPublished()) {
+            document.unpublish();
+        }
     }
 }

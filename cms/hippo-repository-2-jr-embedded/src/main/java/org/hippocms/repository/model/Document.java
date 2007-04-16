@@ -25,6 +25,7 @@ public class Document {
     private CurrentUsernameSource currentUsernameSource;
     private String creator;
     private String modifier;
+    private boolean isPublished;
 
     public Document() {
         super();
@@ -89,5 +90,19 @@ public class Document {
             PublicationServiceProvider publicationSp = (PublicationServiceProvider) publicationSpsIterator.next();
             publicationSp.publish(name, content);
         }
+        isPublished = true;
+    }
+
+    public boolean isPublished() {
+        return isPublished;
+    }
+
+    public void unpublish() {
+        Iterator publicationSpsIterator = docTemplate.publicationServiceProvidersIterator();
+        while (publicationSpsIterator.hasNext()) {
+            PublicationServiceProvider publicationSp = (PublicationServiceProvider) publicationSpsIterator.next();
+            publicationSp.remove(name);
+        }
+        isPublished = false;
     }
 }
