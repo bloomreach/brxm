@@ -15,6 +15,8 @@
  */
 package org.hippocms.repository.model;
 
+import java.util.Iterator;
+
 public class Document {
     private String name;
     private String content;
@@ -79,5 +81,13 @@ public class Document {
 
     public String getModifier() {
         return modifier;
+    }
+
+    public void publish() {
+        Iterator publicationSpsIterator = docTemplate.publicationServiceProvidersIterator();
+        while (publicationSpsIterator.hasNext()) {
+            PublicationServiceProvider publicationSp = (PublicationServiceProvider) publicationSpsIterator.next();
+            publicationSp.publish(name, content);
+        }
     }
 }

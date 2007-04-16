@@ -15,10 +15,15 @@
  */
 package org.hippocms.repository.model;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 public class DocumentTemplate {
     private String defaultContent;
     private WorkflowFactory workflowFactory;
     private CurrentUsernameSource currentUsernameSource;
+    private Set publicationServiceProviders = new HashSet();
 
     public DocumentTemplate() {
         super();
@@ -47,5 +52,13 @@ public class DocumentTemplate {
 
     public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
         this.currentUsernameSource = currentUsernameSource;
+    }
+
+    public Iterator publicationServiceProvidersIterator() {
+        return publicationServiceProviders.iterator();
+    }
+
+    public void addPublicationServiceProvider(PublicationServiceProvider publicationSp) {
+        publicationServiceProviders.add(publicationSp);
     }
 }
