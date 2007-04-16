@@ -122,4 +122,8 @@ public class ReviewedActionsWorkflow implements Workflow {
             document.unpublish();
         }
     }
+
+    public void unpublish() {
+        document.unpublish();
+    }
 }
