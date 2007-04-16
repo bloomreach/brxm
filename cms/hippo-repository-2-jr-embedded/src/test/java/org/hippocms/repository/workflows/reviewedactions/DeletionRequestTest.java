@@ -15,7 +15,6 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
-import java.util.Iterator;
 import junit.framework.TestCase;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
@@ -47,5 +46,24 @@ public class DeletionRequestTest extends TestCase {
         deletionRequest.cancel();
 
         assertNull("Cancelling deletion request must clear pending request", workflow.getPendingDeletionRequest());
+    }
+
+    public void testDeletionDisapprovalClearsPendingRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestDeletion();
+        DeletionRequest deletionRequest = workflow.getPendingDeletionRequest();
+        deletionRequest.disapprove("Too important.");
+
+        assertNull("Disapproving deletion request must clear pending request", workflow.getPendingDeletionRequest());
     }
 }
