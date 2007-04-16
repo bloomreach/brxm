@@ -34,6 +34,10 @@ public class DeletionRequest {
         this.workflow = workflow;
     }
 
+    public String getRequestor() {
+        return requestor;
+    }
+
     public void setRequestor(String username) {
         requestor = username;
     }
