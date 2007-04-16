@@ -99,8 +99,16 @@ public class ReviewedActionsWorkflow implements Workflow {
         disapprovedDeletionRequests.add(request);
     }
 
+    public void removeDisapprovedDeletionRequest(DeletionRequest request) {
+        disapprovedDeletionRequests.remove(request);
+    }
+
     public int getNumberOfDisapprovedDeletionRequests() {
         return disapprovedDeletionRequests.size();
+    }
+
+    public Iterator disapprovedDeletionRequestsIterator() {
+        return disapprovedDeletionRequests.iterator();
     }
 
     public void clearPendingDeletionRequest() {

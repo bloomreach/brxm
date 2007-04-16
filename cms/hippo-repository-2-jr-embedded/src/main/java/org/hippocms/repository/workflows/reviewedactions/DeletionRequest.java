@@ -77,4 +77,8 @@ public class DeletionRequest {
     public String getDisapprover() {
         return disapprover;
     }
+
+    public void remove() {
+        workflow.removeDisapprovedDeletionRequest(this);
+    }
 }

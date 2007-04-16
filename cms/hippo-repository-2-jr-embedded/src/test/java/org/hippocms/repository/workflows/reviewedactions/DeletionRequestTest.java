@@ -15,6 +15,7 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
+import java.util.Iterator;
 import junit.framework.TestCase;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
@@ -154,5 +155,32 @@ public class DeletionRequestTest extends TestCase {
             fail("Cannot disapprove a cancelled deletion request");
         } catch (IllegalStateException e) {
         }
+    }
+
+    public void testDisapprovedDeletionRequestsAreKeptUntilRemoved() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestDeletion();
+        DeletionRequest deletionRequest = workflow.getPendingDeletionRequest();
+        deletionRequest.disapprove("Too important.");
+
+        assertEquals("A disapproved deletion request must be kept until explicitly removed", 1, workflow
+                .getNumberOfDisapprovedDeletionRequests());
+        Iterator iterator = workflow.disapprovedDeletionRequestsIterator();
+        assertSame("The correct disapproved deletion request must be kept", deletionRequest, iterator.next());
+
+        deletionRequest.remove();
+
+        assertEquals("A disapproved deletion request must be discarded when explicitly removed", 0, workflow
+                .getNumberOfDisapprovedDeletionRequests());
     }
 }
