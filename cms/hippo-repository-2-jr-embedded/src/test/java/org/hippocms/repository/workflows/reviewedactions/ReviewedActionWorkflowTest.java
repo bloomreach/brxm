@@ -254,4 +254,21 @@ public class ReviewedActionWorkflowTest extends TestCase {
         assertEquals("Deletion requestor of deletion request must be correct", deletionRequestorName, deletionRequest
                 .getRequestor());
     }
+
+    public void testDeletionClearsPendingDeletionRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestDeletion();
+        workflow.delete();
+
+        assertNull("Deletion must clear pending deletion request", workflow.getPendingDeletionRequest());
+    }
 }
