@@ -54,7 +54,7 @@ public class ReviewedActionsWorkflow implements Workflow {
     }
 
     private boolean hasPendingRequest() {
-        return pendingPublicationRequest != null;
+        return pendingPublicationRequest != null || pendingDeletionRequest != null;
     }
 
     public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
@@ -82,6 +82,9 @@ public class ReviewedActionsWorkflow implements Workflow {
     }
 
     public void requestDeletion() {
+        if (hasPendingRequest()) {
+            throw new IllegalStateException("Cannot start a request when a request is pending");
+        }
         pendingDeletionRequest = new DeletionRequest(this);
         pendingDeletionRequest.setRequestor(currentUsernameSource.getCurrentUsername());
         pendingDeletionRequest.setCurrentUsernameSource(currentUsernameSource);
