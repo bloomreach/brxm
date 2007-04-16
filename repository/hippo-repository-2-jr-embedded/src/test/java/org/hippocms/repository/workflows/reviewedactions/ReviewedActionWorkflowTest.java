@@ -233,4 +233,25 @@ public class ReviewedActionWorkflowTest extends TestCase {
         assertEquals("Workflow must support multiple disapproved deletion requests", 2, workflow
                 .getNumberOfDisapprovedDeletionRequests());
     }
+
+    public void testDeletionRequestHasCorrectRequestor() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        String deletionRequestorName = "Jane Doe";
+        currentUsernameSource.setCurrentUsername(deletionRequestorName);
+        workflow.requestDeletion();
+        DeletionRequest deletionRequest = workflow.getPendingDeletionRequest();
+
+        assertEquals("Deletion requestor of deletion request must be correct", deletionRequestorName, deletionRequest
+                .getRequestor());
+    }
 }
