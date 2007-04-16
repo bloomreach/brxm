@@ -189,4 +189,24 @@ public class ReviewedActionWorkflowTest extends TestCase {
             fail("It must be allowed to request deletion when there are no pending requests");
         }
     }
+
+    public void testCannotRequestDeletionWithPendingRequests() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        try {
+            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+            workflow.requestDeletion();
+            workflow.requestDeletion();
+            fail("It must not be allowed to request deletion when there are pending requests");
+        } catch (IllegalStateException e) {
+        }
+    }
 }
