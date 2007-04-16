@@ -66,4 +66,25 @@ public class DeletionRequestTest extends TestCase {
 
         assertNull("Disapproving deletion request must clear pending request", workflow.getPendingDeletionRequest());
     }
+
+    public void testDisapprovedDeletionRequestHasCorrectReason() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestDeletion();
+        DeletionRequest deletionRequest = workflow.getPendingDeletionRequest();
+        String disapprovalReason = "Too important.";
+        deletionRequest.disapprove(disapprovalReason);
+
+        assertEquals("Disapproved deletion request must have correct reason", disapprovalReason, deletionRequest
+                .getDisapprovalReason());
+    }
 }
