@@ -17,9 +17,11 @@ package org.hippocms.repository.workflows.reviewedactions;
 
 import java.util.Date;
 import junit.framework.TestCase;
+import org.easymock.MockControl;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
 import org.hippocms.repository.model.DocumentTemplate;
+import org.hippocms.repository.model.PublicationServiceProvider;
 
 public class ReviewedActionWorkflowTest extends TestCase {
     public ReviewedActionWorkflowTest() {
@@ -287,5 +289,30 @@ public class ReviewedActionWorkflowTest extends TestCase {
         workflow.publish(null, null);
 
         assertNotNull("Publication must not clear pending deletion request", workflow.getPendingDeletionRequest());
+    }
+
+    public void testPublicationSendsContentToPublicationSps() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+        String name = "Lorem ipsum";
+        String content = "Foo bar baz qux quux.";
+        mockSp.publish(name, content);
+        spMockControl.replay();
+        docTemplate.addPublicationServiceProvider(mockSp);
+
+        Document doc = docTemplate.create(name);
+        doc.setContent(content);
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.publish(null, null);
+
+        spMockControl.verify();
     }
 }

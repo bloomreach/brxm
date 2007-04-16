@@ -48,6 +48,7 @@ public class ReviewedActionsWorkflow implements Workflow {
 
     public void publish(Date publicationDate, Date unpublicationDate) {
         pendingPublicationRequest = null;
+        document.publish();
     }
 
     public PublicationRequest getPendingPublicationRequest() {
