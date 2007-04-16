@@ -106,4 +106,8 @@ public class ReviewedActionsWorkflow implements Workflow {
     public void clearPendingDeletionRequest() {
         pendingDeletionRequest = null;
     }
+
+    public void delete() {
+        clearPendingDeletionRequest();
+    }
 }
