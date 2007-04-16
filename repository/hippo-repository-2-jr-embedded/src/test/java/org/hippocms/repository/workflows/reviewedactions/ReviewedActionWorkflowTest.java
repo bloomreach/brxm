@@ -316,7 +316,7 @@ public class ReviewedActionWorkflowTest extends TestCase {
         spMockControl.verify();
     }
 
-    public void testDeletionDoesNotRemoveDocumentFromPublicationSps() {
+    public void testDeletionDoesNotRemoveUnpublishedDocumentFromPublicationSps() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
         CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
