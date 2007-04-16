@@ -58,6 +58,9 @@ public class DeletionRequest {
     }
 
     public void cancel() {
+        if (!isAwaitingAction()) {
+            throw new IllegalStateException("Cannot cancel deletion request that has already been processed");
+        }
         workflow.clearPendingDeletionRequest();
     }
 

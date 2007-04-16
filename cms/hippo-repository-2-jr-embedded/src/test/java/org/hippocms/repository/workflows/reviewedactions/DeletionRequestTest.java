@@ -109,4 +109,27 @@ public class DeletionRequestTest extends TestCase {
         assertEquals("Disapproved deletion request must have correct disapprover", disapproverName, deletionRequest
                 .getDisapprover());
     }
+
+    public void testCannotCancelDisapprovedDeletionRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestDeletion();
+        DeletionRequest deletionRequest = workflow.getPendingDeletionRequest();
+        deletionRequest.disapprove("Too important.");
+
+        try {
+            deletionRequest.cancel();
+            fail("Cannot cancel a disapproved deletion request");
+        } catch (IllegalStateException e) {
+        }
+    }
 }
