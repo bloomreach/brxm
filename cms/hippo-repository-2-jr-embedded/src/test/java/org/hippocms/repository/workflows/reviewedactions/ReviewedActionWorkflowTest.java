@@ -391,4 +391,34 @@ public class ReviewedActionWorkflowTest extends TestCase {
 
         spMockControl.verify();
     }
+
+    public void testCannotUnpublishAnUnpublishedDocument() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+        String name = "Lorem ipsum";
+        String content = "Foo bar baz qux quux.";
+        mockSp.publish(name, content);
+        mockSp.remove(name);
+        spMockControl.replay();
+        docTemplate.addPublicationServiceProvider(mockSp);
+
+        Document doc = docTemplate.create(name);
+        doc.setContent(content);
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.publish(null, null);
+        workflow.unpublish();
+        try {
+            workflow.unpublish();
+            fail("Cannot unpublish a document that has not been published");
+        } catch (IllegalStateException e) {
+        }
+    }
 }
