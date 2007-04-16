@@ -20,6 +20,7 @@ import org.hippocms.repository.model.CurrentUsernameSource;
 public class DeletionRequest {
     private static final int AWAITING_ACTION_STATE_ID = 0;
     private static final int DISAPPROVED_STATE_ID = 1;
+    private static final int CANCELLED_STATE_ID = 2;
 
     private ReviewedActionsWorkflow workflow;
     private String requestor;
@@ -62,6 +63,7 @@ public class DeletionRequest {
             throw new IllegalStateException("Cannot cancel deletion request that has already been processed");
         }
         workflow.clearPendingDeletionRequest();
+        state = CANCELLED_STATE_ID;
     }
 
     private boolean isAwaitingAction() {
