@@ -26,6 +26,7 @@ import org.hippocms.repository.model.Workflow;
 public class ReviewedActionsWorkflow implements Workflow {
     private Document document;
     private PublicationRequest pendingPublicationRequest;
+    private DeletionRequest pendingDeletionRequest;
     private CurrentUsernameSource currentUsernameSource;
     private Set disapprovedPublicationRequests = new HashSet();
 
@@ -78,5 +79,11 @@ public class ReviewedActionsWorkflow implements Workflow {
 
     public void removeDisapprovedPublicationRequest(PublicationRequest request) {
         disapprovedPublicationRequests.remove(request);
+    }
+
+    public void requestDeletion() {
+        pendingDeletionRequest = new DeletionRequest(this);
+        pendingDeletionRequest.setRequestor(currentUsernameSource.getCurrentUsername());
+        pendingDeletionRequest.setCurrentUsernameSource(currentUsernameSource);
     }
 }
