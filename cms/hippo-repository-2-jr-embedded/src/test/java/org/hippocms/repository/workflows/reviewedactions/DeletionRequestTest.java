@@ -205,4 +205,27 @@ public class DeletionRequestTest extends TestCase {
         } catch (IllegalStateException e) {
         }
     }
+
+    public void testCannotRemoveCancelledDeletionRequest() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestDeletion();
+        DeletionRequest deletionRequest = workflow.getPendingDeletionRequest();
+        deletionRequest.cancel();
+
+        try {
+            deletionRequest.remove();
+            fail("Cannot remove a cancelled deletion request");
+        } catch (IllegalStateException e) {
+        }
+    }
 }
