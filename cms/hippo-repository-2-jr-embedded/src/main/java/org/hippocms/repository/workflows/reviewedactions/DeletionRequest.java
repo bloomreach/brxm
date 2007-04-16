@@ -57,6 +57,10 @@ public class DeletionRequest {
         state = DISAPPROVED_STATE_ID;
     }
 
+    public void cancel() {
+        workflow.clearPendingDeletionRequest();
+    }
+
     private boolean isAwaitingAction() {
         return state == AWAITING_ACTION_STATE_ID;
     }
