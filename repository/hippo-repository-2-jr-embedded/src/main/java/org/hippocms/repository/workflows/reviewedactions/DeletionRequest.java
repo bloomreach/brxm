@@ -19,6 +19,7 @@ import org.hippocms.repository.model.CurrentUsernameSource;
 
 public class DeletionRequest {
     private static final int AWAITING_ACTION_STATE_ID = 0;
+    private static final int DISAPPROVED_STATE_ID = 1;
 
     private ReviewedActionsWorkflow workflow;
     private String requestor;
@@ -39,5 +40,20 @@ public class DeletionRequest {
 
     public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
         this.currentUsernameSource = currentUsernameSource;
+    }
+
+    public void disapprove(String reason) {
+        if (!isAwaitingAction()) {
+            throw new IllegalStateException("Cannot disapprove deletion request that has already been processed");
+        }
+        workflow.clearPendingDeletionRequest();
+        workflow.addDisapprovedDeletionRequest(this);
+        this.disapprovalReason = reason;
+        disapprover = currentUsernameSource.getCurrentUsername();
+        state = DISAPPROVED_STATE_ID;
+    }
+
+    private boolean isAwaitingAction() {
+        return state == AWAITING_ACTION_STATE_ID;
     }
 }

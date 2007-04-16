@@ -209,4 +209,28 @@ public class ReviewedActionWorkflowTest extends TestCase {
         } catch (IllegalStateException e) {
         }
     }
+
+    public void testCanHaveMultipleDisapprovedDeletionRequests() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+
+        workflow.requestDeletion();
+        DeletionRequest firstDeletionRequest = workflow.getPendingDeletionRequest();
+        firstDeletionRequest.disapprove("First disapproval.");
+
+        workflow.requestDeletion();
+        DeletionRequest secondDeletionRequest = workflow.getPendingDeletionRequest();
+        secondDeletionRequest.disapprove("Second disapproval.");
+
+        assertEquals("Workflow must support multiple disapproved deletion requests", 2, workflow
+                .getNumberOfDisapprovedDeletionRequests());
+    }
 }

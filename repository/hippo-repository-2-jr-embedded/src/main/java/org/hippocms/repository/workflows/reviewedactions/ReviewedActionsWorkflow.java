@@ -29,6 +29,7 @@ public class ReviewedActionsWorkflow implements Workflow {
     private DeletionRequest pendingDeletionRequest;
     private CurrentUsernameSource currentUsernameSource;
     private Set disapprovedPublicationRequests = new HashSet();
+    private Set disapprovedDeletionRequests = new HashSet();
 
     public ReviewedActionsWorkflow(Document document) {
         super();
@@ -88,5 +89,21 @@ public class ReviewedActionsWorkflow implements Workflow {
         pendingDeletionRequest = new DeletionRequest(this);
         pendingDeletionRequest.setRequestor(currentUsernameSource.getCurrentUsername());
         pendingDeletionRequest.setCurrentUsernameSource(currentUsernameSource);
+    }
+
+    public DeletionRequest getPendingDeletionRequest() {
+        return pendingDeletionRequest;
+    }
+
+    public void addDisapprovedDeletionRequest(DeletionRequest request) {
+        disapprovedDeletionRequests.add(request);
+    }
+
+    public int getNumberOfDisapprovedDeletionRequests() {
+        return disapprovedDeletionRequests.size();
+    }
+
+    public void clearPendingDeletionRequest() {
+        pendingDeletionRequest = null;
     }
 }
