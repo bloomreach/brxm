@@ -64,4 +64,8 @@ public class DeletionRequest {
     private boolean isAwaitingAction() {
         return state == AWAITING_ACTION_STATE_ID;
     }
+
+    public String getDisapprovalReason() {
+        return disapprovalReason;
+    }
 }
