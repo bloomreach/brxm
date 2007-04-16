@@ -68,4 +68,8 @@ public class DeletionRequest {
     public String getDisapprovalReason() {
         return disapprovalReason;
     }
+
+    public String getDisapprover() {
+        return disapprover;
+    }
 }

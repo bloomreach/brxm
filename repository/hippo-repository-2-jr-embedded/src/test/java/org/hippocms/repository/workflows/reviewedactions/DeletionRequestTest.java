@@ -87,4 +87,26 @@ public class DeletionRequestTest extends TestCase {
         assertEquals("Disapproved deletion request must have correct reason", disapprovalReason, deletionRequest
                 .getDisapprovalReason());
     }
+
+    public void testDisapprovedDeletionRequestHasCorrectDisapprover() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        Document doc = docTemplate.create("Lorem ipsum");
+
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.requestDeletion();
+        DeletionRequest deletionRequest = workflow.getPendingDeletionRequest();
+        String disapproverName = "Jane Doe";
+        currentUsernameSource.setCurrentUsername(disapproverName);
+        deletionRequest.disapprove("Too important.");
+
+        assertEquals("Disapproved deletion request must have correct disapprover", disapproverName, deletionRequest
+                .getDisapprover());
+    }
 }
