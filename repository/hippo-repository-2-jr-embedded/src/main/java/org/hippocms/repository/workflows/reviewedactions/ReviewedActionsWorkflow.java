@@ -124,6 +124,9 @@ public class ReviewedActionsWorkflow implements Workflow {
     }
 
     public void unpublish() {
+        if (!document.isPublished()) {
+            throw new IllegalStateException("Cannot unpublish a document that is not published");
+        }
         document.unpublish();
     }
 }
