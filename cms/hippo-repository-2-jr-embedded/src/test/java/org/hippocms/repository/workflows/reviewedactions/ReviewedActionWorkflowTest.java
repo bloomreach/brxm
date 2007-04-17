@@ -16,14 +16,17 @@
 package org.hippocms.repository.workflows.reviewedactions;
 
 import java.util.Date;
-import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
 import org.hippocms.repository.model.DocumentTemplate;
 import org.hippocms.repository.model.PublicationServiceProvider;
+import org.hippocms.repository.model.Scheduler;
+import org.hippocms.repository.model.mock.MockScheduler;
+import org.jmock.Mock;
+import org.jmock.MockObjectTestCase;
 
-public class ReviewedActionWorkflowTest extends TestCase {
+public class ReviewedActionWorkflowTest extends MockObjectTestCase {
     private static final long SECONDS_IN_A_DAY = 86400000;
 
     public ReviewedActionWorkflowTest() {
@@ -432,6 +435,7 @@ public class ReviewedActionWorkflowTest extends TestCase {
         docTemplate.setCurrentUsernameSource(currentUsernameSource);
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        workflowFactory.setScheduler(new MockScheduler());
         docTemplate.setWorkflowFactory(workflowFactory);
         MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
         PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
@@ -481,6 +485,7 @@ public class ReviewedActionWorkflowTest extends TestCase {
         docTemplate.setCurrentUsernameSource(currentUsernameSource);
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        workflowFactory.setScheduler(new MockScheduler());
         docTemplate.setWorkflowFactory(workflowFactory);
         MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
         PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
@@ -505,6 +510,7 @@ public class ReviewedActionWorkflowTest extends TestCase {
         docTemplate.setCurrentUsernameSource(currentUsernameSource);
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        workflowFactory.setScheduler(new MockScheduler());
         docTemplate.setWorkflowFactory(workflowFactory);
         MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
         PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
@@ -518,5 +524,32 @@ public class ReviewedActionWorkflowTest extends TestCase {
         workflow.publish(null, unpublicationDate);
 
         spMockControl.verify();
+    }
+
+    public void testScheduledPublicationCreatesPublicationTask() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+
+        Date publicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY);
+        Mock mockScheduler = mock(Scheduler.class);
+        mockScheduler.expects(once()).method("schedule").with(eq(publicationDate), NOT_NULL).will(returnValue("1"));
+        Scheduler scheduler = (Scheduler) mockScheduler.proxy();
+        workflowFactory.setScheduler(scheduler);
+
+        docTemplate.setWorkflowFactory(workflowFactory);
+        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+        spMockControl.replay();
+        docTemplate.addPublicationServiceProvider(mockSp);
+
+        Document doc = docTemplate.create("Lorem ipsum");
+        doc.setContent("Foo bar baz qux quux.");
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.publish(publicationDate, null);
     }
 }
