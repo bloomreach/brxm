@@ -609,4 +609,35 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.publish(null, unpublicationDate);
     }
+
+    public void testScheduledUnpublicationCreatesUnpublicationTaskIfPublishedInTheFuture() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+
+        Date publicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY);
+        Date unpublicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY * 2);
+        Mock mockScheduler = mock(Scheduler.class);
+        mockScheduler.expects(once()).method("schedule").with(eq(publicationDate), NOT_NULL).will(returnValue("1"));
+        mockScheduler.expects(once()).method("schedule").with(eq(unpublicationDate), NOT_NULL).will(returnValue("2"));
+        Scheduler scheduler = (Scheduler) mockScheduler.proxy();
+        workflowFactory.setScheduler(scheduler);
+
+        docTemplate.setWorkflowFactory(workflowFactory);
+        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+        String name = "Lorem ipsum";
+        String content = "Foo bar baz qux quux.";
+        spMockControl.replay();
+        docTemplate.addPublicationServiceProvider(mockSp);
+
+        Document doc = docTemplate.create(name);
+        doc.setContent(content);
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.publish(publicationDate, unpublicationDate);
+    }
 }
