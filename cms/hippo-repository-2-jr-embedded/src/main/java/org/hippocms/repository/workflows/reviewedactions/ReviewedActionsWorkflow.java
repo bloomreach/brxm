@@ -32,6 +32,7 @@ public class ReviewedActionsWorkflow implements Workflow {
     private Scheduler scheduler;
     private Set disapprovedPublicationRequests = new HashSet();
     private Set disapprovedDeletionRequests = new HashSet();
+    private String scheduledPublicationTaskId;
 
     public ReviewedActionsWorkflow(Document document) {
         super();
@@ -59,7 +60,7 @@ public class ReviewedActionsWorkflow implements Workflow {
                 document.publish();
             } else if (publicationDate != null
                     && (unpublicationDate == null || publicationDate.before(unpublicationDate))) {
-                scheduler.schedule(publicationDate, new PublicationTask(document));
+                scheduledPublicationTaskId = scheduler.schedule(publicationDate, new PublicationTask(document));
             }
 
             if (unpublicationDate != null && unpublicationDate.getTime() > currentTime) {
@@ -149,5 +150,9 @@ public class ReviewedActionsWorkflow implements Workflow {
             throw new IllegalStateException("Cannot unpublish a document that is not published");
         }
         document.unpublish();
+    }
+
+    public void cancelPublicationTask() {
+        scheduler.cancel(scheduledPublicationTaskId);
     }
 }
