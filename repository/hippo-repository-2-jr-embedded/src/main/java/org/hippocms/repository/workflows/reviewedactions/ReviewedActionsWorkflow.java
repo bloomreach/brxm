@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
+import org.hippocms.repository.model.Scheduler;
 import org.hippocms.repository.model.Workflow;
 
 public class ReviewedActionsWorkflow implements Workflow {
@@ -28,6 +29,7 @@ public class ReviewedActionsWorkflow implements Workflow {
     private PublicationRequest pendingPublicationRequest;
     private DeletionRequest pendingDeletionRequest;
     private CurrentUsernameSource currentUsernameSource;
+    private Scheduler scheduler;
     private Set disapprovedPublicationRequests = new HashSet();
     private Set disapprovedDeletionRequests = new HashSet();
 
@@ -52,6 +54,8 @@ public class ReviewedActionsWorkflow implements Workflow {
         if ((publicationDate == null || currentTime >= publicationDate.getTime())
                 && (unpublicationDate == null || currentTime <= unpublicationDate.getTime())) {
             document.publish();
+        } else {
+            scheduler.schedule(publicationDate, new PublicationTask());
         }
     }
 
@@ -65,6 +69,10 @@ public class ReviewedActionsWorkflow implements Workflow {
 
     public void setCurrentUsernameSource(CurrentUsernameSource currentUsernameSource) {
         this.currentUsernameSource = currentUsernameSource;
+    }
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
     public void clearPendingPublicationRequest() {
