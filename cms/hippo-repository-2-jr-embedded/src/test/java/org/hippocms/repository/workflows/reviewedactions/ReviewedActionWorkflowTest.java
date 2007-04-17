@@ -24,6 +24,8 @@ import org.hippocms.repository.model.DocumentTemplate;
 import org.hippocms.repository.model.PublicationServiceProvider;
 
 public class ReviewedActionWorkflowTest extends TestCase {
+    private static final long SECONDS_IN_A_DAY = 86400000;
+
     public ReviewedActionWorkflowTest() {
         super();
     }
@@ -420,5 +422,28 @@ public class ReviewedActionWorkflowTest extends TestCase {
             fail("Cannot unpublish a document that has not been published");
         } catch (IllegalStateException e) {
         }
+    }
+
+    public void testScheduledPublicationDoesNotSendDocumentToPublicationSpsImmediatly() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+        docTemplate.setWorkflowFactory(workflowFactory);
+        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+        spMockControl.replay();
+        docTemplate.addPublicationServiceProvider(mockSp);
+
+        Document doc = docTemplate.create("Lorem ipsum");
+        doc.setContent("Foo bar baz qux quux.");
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        Date publicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY);
+        workflow.publish(publicationDate, null);
+
+        spMockControl.verify();
     }
 }
