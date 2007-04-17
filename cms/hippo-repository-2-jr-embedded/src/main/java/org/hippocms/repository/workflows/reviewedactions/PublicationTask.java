@@ -15,11 +15,18 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
+import org.hippocms.repository.model.Document;
+
 public class PublicationTask implements Runnable {
-    public PublicationTask() {
+    private Document document;
+
+    public PublicationTask(Document document) {
         super();
+
+        this.document = document;
     }
 
     public void run() {
+        document.publish();
     }
 }
