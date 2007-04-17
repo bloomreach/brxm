@@ -16,7 +16,6 @@
 package org.hippocms.repository.workflows.reviewedactions;
 
 import java.util.Date;
-import org.easymock.MockControl;
 import org.hippocms.repository.model.CurrentUsernameSource;
 import org.hippocms.repository.model.Document;
 import org.hippocms.repository.model.DocumentTemplate;
@@ -305,20 +304,18 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+
+        Mock spMock = mock(PublicationServiceProvider.class);
         String name = "Lorem ipsum";
         String content = "Foo bar baz qux quux.";
-        mockSp.publish(name, content);
-        spMockControl.replay();
+        spMock.expects(once()).method("publish").with(eq(name), eq(content));
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create(name);
         doc.setContent(content);
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.publish(null, null);
-
-        spMockControl.verify();
     }
 
     public void testDeletionDoesNotRemoveUnpublishedDocumentFromPublicationSps() {
@@ -330,17 +327,15 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        spMockControl.replay();
+
+        Mock spMock = mock(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
         doc.setContent("Foo bar baz qux quux.");
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.delete();
-
-        spMockControl.verify();
     }
 
     public void testDeletionRemovesPublishedDocumentFromPublicationSps() {
@@ -352,13 +347,13 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+
+        Mock spMock = mock(PublicationServiceProvider.class);
         String name = "Lorem ipsum";
         String content = "Foo bar baz qux quux.";
-        mockSp.publish(name, content);
-        mockSp.remove(name);
-        spMockControl.replay();
+        spMock.expects(once()).method("publish").with(eq(name), eq(content));
+        spMock.expects(once()).method("remove").with(eq(name));
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create(name);
@@ -366,8 +361,6 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.publish(null, null);
         workflow.delete();
-
-        spMockControl.verify();
     }
 
     public void testUnpublicationRemovesDocumentFromPublicationSps() {
@@ -379,13 +372,13 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+
+        Mock spMock = mock(PublicationServiceProvider.class);
         String name = "Lorem ipsum";
         String content = "Foo bar baz qux quux.";
-        mockSp.publish(name, content);
-        mockSp.remove(name);
-        spMockControl.replay();
+        spMock.expects(once()).method("publish").with(eq(name), eq(content));
+        spMock.expects(once()).method("remove").with(eq(name));
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create(name);
@@ -393,8 +386,6 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.publish(null, null);
         workflow.unpublish();
-
-        spMockControl.verify();
     }
 
     public void testCannotUnpublishAnUnpublishedDocument() {
@@ -406,13 +397,13 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+
+        Mock spMock = mock(PublicationServiceProvider.class);
         String name = "Lorem ipsum";
         String content = "Foo bar baz qux quux.";
-        mockSp.publish(name, content);
-        mockSp.remove(name);
-        spMockControl.replay();
+        spMock.expects(once()).method("publish").with(eq(name), eq(content));
+        spMock.expects(once()).method("remove").with(eq(name));
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create(name);
@@ -437,9 +428,9 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         workflowFactory.setScheduler(new MockScheduler());
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        spMockControl.replay();
+
+        Mock spMock = mock(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
@@ -447,8 +438,6 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         Date publicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY);
         workflow.publish(publicationDate, null);
-
-        spMockControl.verify();
     }
 
     public void testScheduledPublicationSendsDocumentToPublicationSpsImmediatlyIfPublicationDateInThePast() {
@@ -460,12 +449,12 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+
+        Mock spMock = mock(PublicationServiceProvider.class);
         String name = "Lorem ipsum";
         String content = "Foo bar baz qux quux.";
-        mockSp.publish(name, content);
-        spMockControl.replay();
+        spMock.expects(once()).method("publish").with(eq(name), eq(content));
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create(name);
@@ -473,8 +462,6 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         Date publicationDate = new Date(System.currentTimeMillis() - SECONDS_IN_A_DAY);
         workflow.publish(publicationDate, null);
-
-        spMockControl.verify();
     }
 
     public void testScheduledPublicationDoesNotSendDocumentToPublicationSpsIfUnpublicationBeforePublication() {
@@ -487,9 +474,9 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         workflowFactory.setScheduler(new MockScheduler());
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        spMockControl.replay();
+
+        Mock spMock = mock(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
@@ -498,8 +485,6 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         Date publicationDate = new Date(System.currentTimeMillis());
         Date unpublicationDate = new Date(System.currentTimeMillis() - SECONDS_IN_A_DAY);
         workflow.publish(publicationDate, unpublicationDate);
-
-        spMockControl.verify();
     }
 
     public void testScheduledPublicationDoesNotSendDocumentToPublicationSpsIfUnpublicationDateInThePast() {
@@ -512,9 +497,8 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setCurrentUsernameSource(currentUsernameSource);
         workflowFactory.setScheduler(new MockScheduler());
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        spMockControl.replay();
+        Mock spMock = mock(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
@@ -522,8 +506,6 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         Date unpublicationDate = new Date(System.currentTimeMillis() - SECONDS_IN_A_DAY);
         workflow.publish(null, unpublicationDate);
-
-        spMockControl.verify();
     }
 
     public void testScheduledPublicationCreatesPublicationTask() {
@@ -542,9 +524,8 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setScheduler(scheduler);
 
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        spMockControl.replay();
+        Mock spMock = mock(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
@@ -567,9 +548,8 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setScheduler(scheduler);
 
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        spMockControl.replay();
+        Mock spMock = mock(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
@@ -596,12 +576,11 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setScheduler(scheduler);
 
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+        Mock spMock = mock(PublicationServiceProvider.class);
         String name = "Lorem ipsum";
         String content = "Foo bar baz qux quux.";
-        mockSp.publish(name, content);
-        spMockControl.replay();
+        spMock.expects(this.once()).method("publish").with(eq(name), eq(content));
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create(name);
@@ -628,9 +607,8 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setScheduler(scheduler);
 
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        spMockControl.replay();
+        Mock spMock = mock(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
@@ -653,9 +631,8 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setScheduler(scheduler);
 
         docTemplate.setWorkflowFactory(workflowFactory);
-        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        spMockControl.replay();
+        Mock spMock = mock(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
         docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
