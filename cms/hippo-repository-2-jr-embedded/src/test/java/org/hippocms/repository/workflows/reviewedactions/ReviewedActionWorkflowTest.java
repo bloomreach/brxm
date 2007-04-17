@@ -552,4 +552,31 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.publish(publicationDate, null);
     }
+
+    public void testScheduledPublicationDoesNotCreatePublicationTaskIfUnpublicationBeforePublication() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+
+        Mock mockScheduler = mock(Scheduler.class);
+        Scheduler scheduler = (Scheduler) mockScheduler.proxy();
+        workflowFactory.setScheduler(scheduler);
+
+        docTemplate.setWorkflowFactory(workflowFactory);
+        MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
+        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
+        spMockControl.replay();
+        docTemplate.addPublicationServiceProvider(mockSp);
+
+        Document doc = docTemplate.create("Lorem ipsum");
+        doc.setContent("Foo bar baz qux quux.");
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        Date publicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY);
+        Date unpublicationDate = new Date(System.currentTimeMillis());
+        workflow.publish(publicationDate, unpublicationDate);
+    }
 }
