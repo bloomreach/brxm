@@ -16,17 +16,41 @@
 package org.hippocms.repository.model.mock;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.hippocms.repository.model.Scheduler;
 
 public class MockScheduler implements Scheduler {
+    private static int nextId;
+    private Map tasks = new HashMap();
+
     public MockScheduler() {
         super();
     }
 
     public String schedule(Date time, Runnable task) {
-        return "1";
+        String result = String.valueOf(getNextId());
+        tasks.put(result, task);
+        return result;
     }
 
     public void cancel(String taskId) {
+        tasks.remove(taskId);
+    }
+
+    public void runAllTasks() {
+        Iterator tasksIterator = tasks.values().iterator();
+        while (tasksIterator.hasNext()) {
+            Runnable task = (Runnable) tasksIterator.next();
+            task.run();
+        }
+        tasks.clear();
+    }
+
+    private static synchronized int getNextId() {
+        int result = nextId;
+        nextId += 1;
+        return result;
     }
 }
