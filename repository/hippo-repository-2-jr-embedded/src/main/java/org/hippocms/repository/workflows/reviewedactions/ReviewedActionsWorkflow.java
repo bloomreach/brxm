@@ -54,12 +54,12 @@ public class ReviewedActionsWorkflow implements Workflow {
         if ((publicationDate == null || currentTime >= publicationDate.getTime())
                 && (unpublicationDate == null || currentTime <= unpublicationDate.getTime())) {
             document.publish();
-
-            if (unpublicationDate != null && unpublicationDate.getTime() > currentTime) {
-                scheduler.schedule(unpublicationDate, new UnpublicationTask());
-            }
         } else if (publicationDate != null && (unpublicationDate == null || publicationDate.before(unpublicationDate))) {
             scheduler.schedule(publicationDate, new PublicationTask());
+        }
+
+        if (unpublicationDate != null && unpublicationDate.getTime() > currentTime) {
+            scheduler.schedule(unpublicationDate, new UnpublicationTask());
         }
     }
 
