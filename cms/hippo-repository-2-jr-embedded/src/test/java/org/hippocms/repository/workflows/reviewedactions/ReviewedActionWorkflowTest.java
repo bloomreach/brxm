@@ -630,13 +630,11 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         docTemplate.setWorkflowFactory(workflowFactory);
         MockControl spMockControl = MockControl.createControl(PublicationServiceProvider.class);
         PublicationServiceProvider mockSp = (PublicationServiceProvider) spMockControl.getMock();
-        String name = "Lorem ipsum";
-        String content = "Foo bar baz qux quux.";
         spMockControl.replay();
         docTemplate.addPublicationServiceProvider(mockSp);
 
-        Document doc = docTemplate.create(name);
-        doc.setContent(content);
+        Document doc = docTemplate.create("Lorem ipsum");
+        doc.setContent("Foo bar baz qux quux.");
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.publish(publicationDate, unpublicationDate);
     }
