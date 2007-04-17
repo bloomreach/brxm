@@ -15,11 +15,18 @@
  */
 package org.hippocms.repository.workflows.reviewedactions;
 
+import org.hippocms.repository.model.Document;
+
 public class UnpublicationTask implements Runnable {
-    public UnpublicationTask() {
+    private Document document;
+
+    public UnpublicationTask(Document document) {
         super();
+
+        this.document = document;
     }
 
     public void run() {
+        document.unpublish();
     }
 }
