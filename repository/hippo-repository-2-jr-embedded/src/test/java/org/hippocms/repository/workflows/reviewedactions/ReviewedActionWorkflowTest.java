@@ -575,8 +575,8 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         Document doc = docTemplate.create("Lorem ipsum");
         doc.setContent("Foo bar baz qux quux.");
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
-        Date publicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY);
-        Date unpublicationDate = new Date(System.currentTimeMillis());
+        Date publicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY * 2);
+        Date unpublicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY);
         workflow.publish(publicationDate, unpublicationDate);
     }
 
