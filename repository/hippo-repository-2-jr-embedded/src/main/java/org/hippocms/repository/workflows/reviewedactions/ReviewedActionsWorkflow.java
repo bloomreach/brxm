@@ -50,16 +50,21 @@ public class ReviewedActionsWorkflow implements Workflow {
 
     public void publish(Date publicationDate, Date unpublicationDate) {
         pendingPublicationRequest = null;
-        long currentTime = System.currentTimeMillis();
-        if ((publicationDate == null || currentTime >= publicationDate.getTime())
-                && (unpublicationDate == null || currentTime <= unpublicationDate.getTime())) {
-            document.publish();
-        } else if (publicationDate != null && (unpublicationDate == null || publicationDate.before(unpublicationDate))) {
-            scheduler.schedule(publicationDate, new PublicationTask());
-        }
+        boolean isValidDateRange = publicationDate == null || unpublicationDate == null
+                || (publicationDate.before(unpublicationDate));
+        if (isValidDateRange) {
+            long currentTime = System.currentTimeMillis();
+            if ((publicationDate == null || currentTime >= publicationDate.getTime())
+                    && (unpublicationDate == null || currentTime <= unpublicationDate.getTime())) {
+                document.publish();
+            } else if (publicationDate != null
+                    && (unpublicationDate == null || publicationDate.before(unpublicationDate))) {
+                scheduler.schedule(publicationDate, new PublicationTask());
+            }
 
-        if (unpublicationDate != null && unpublicationDate.getTime() > currentTime) {
-            scheduler.schedule(unpublicationDate, new UnpublicationTask());
+            if (unpublicationDate != null && unpublicationDate.getTime() > currentTime) {
+                scheduler.schedule(unpublicationDate, new UnpublicationTask());
+            }
         }
     }
 
