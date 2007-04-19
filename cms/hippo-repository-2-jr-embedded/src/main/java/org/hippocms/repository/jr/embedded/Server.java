@@ -29,7 +29,15 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.NamespaceRegistry;
-//import javax.jcr.NodeTypeManager;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
+import javax.jcr.PropertyType;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -37,9 +45,17 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
+import org.apache.jackrabbit.core.nodetype.NodeDef;
+import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
+import org.apache.jackrabbit.core.nodetype.PropDef;
+import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
+import org.apache.jackrabbit.core.nodetype.InvalidConstraintException;
+import org.apache.jackrabbit.core.nodetype.ValueConstraint;
+import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.name.QName;
+import org.apache.jackrabbit.util.name.NamespaceMapping;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +65,15 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class Server {
+    
+    public final static String NS_URI = "http://www.hippocms.org/";
+    public final static String NS_PREFIX = "hippo";
+
+    private final static QName NODE_FACETSEARCH = new QName(NS_URI, "facetsearch");
+    private final static QName NODE_FACETRESULT = new QName(NS_URI, "facetresult");
+    private final static QName PROP_DOCBASE     = new QName(NS_URI, "docbase");
+    private final static QName PROP_FACETS      = new QName(NS_URI, "facets");
+    private final static QName PROP_SEARCH      = new QName(NS_URI, "search");
 
     private static final Logger log = LoggerFactory.getLogger(Server.class);
     private String workingDir;
@@ -61,11 +86,9 @@ public class Server {
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
         log.info("Node type registration support: " + (result != null ? result : "no"));
     }
-
     public Server() throws RepositoryException {
         initialize(".");
     }
-
     public Server(String workingDirectory) throws RepositoryException {
         initialize(workingDirectory);
     }
@@ -74,20 +97,19 @@ public class Server {
         Session result = repository.login(new SimpleCredentials("username", "password".toCharArray()));
         log.info("Logged in as " + result.getUserID() + " to a " + repository.getDescriptor(Repository.REP_NAME_DESC)
                 + " repository.");
-        return result;
+        return new VirtualSessionImpl(result);
     }
 
     public void close() {
         repository.shutdown();
     }
 
-    private void dump(Node parent, int level) throws RepositoryException {
+    private static void dump(Node parent, int level) throws RepositoryException {
         String prefix = "";
         for (int i = 0; i < level; i++) {
             prefix += "  ";
         }
-        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth()
-                + "]");
+        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth() + "]");
         for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
             System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
@@ -95,7 +117,7 @@ public class Server {
                 Value[] values = prop.getValues();
                 System.out.print("[ ");
                 for (int i = 0; i < values.length; i++) {
-                    System.out.println((i > 0 ? ", " : "") + values[i].getString());
+                    System.out.print((i > 0 ? ", " : "") + values[i].getString());
                 }
                 System.out.println(" ]");
             } else {
@@ -109,45 +131,173 @@ public class Server {
             }
         }
     }
-
-    public void dump(Node parent) throws RepositoryException {
+    public static void dump(Node parent) throws RepositoryException {
         dump(parent, 0);
     }
 
     public static void main(String[] args) {
         try {
             Server server = null;
-            if (args.length > 0)
+            if(args.length > 0)
                 server = new Server(args.length > 0 ? args[0] : ".");
             else
                 server = new Server();
             Session session = server.login();
 
-            Node root = session.getRootNode();
+            Node docs, node, root = session.getRootNode();
             Workspace workspace = session.getWorkspace();
 
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
-            nsreg.registerNamespace("hippo", "http://www.hippocms.org/");
-
+            try {
+              nsreg.registerNamespace(NS_PREFIX, NS_URI);
+            } catch(javax.jcr.NamespaceException ex) {
+              log.warn(ex.getMessage());
+            }
             NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
             NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+            try {
+              ntreg.unregisterNodeType(NODE_FACETSEARCH);
+            } catch(NoSuchNodeTypeException ex) {
+              // save to ignore
+            }
+            try {
+              ntreg.unregisterNodeType(NODE_FACETRESULT);
+            } catch(NoSuchNodeTypeException ex) {
+              // save to ignore
+            }
+
             NodeTypeDef ntd = new NodeTypeDef();
             ntd.setMixin(false);
-            ntd.setName(new QName("http://www.hippocms.org/", "facet"));
-            EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
+            ntd.setName(NODE_FACETRESULT);
+            try {
+              EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
+            } catch(javax.jcr.NamespaceException ex) {
+              log.warn(ex.getMessage());
+            }
 
-            root.addNode("x");
-            root.addNode("y");
-            root.addNode("z");
-            Node node = root.addNode("documents", "hippo:facet");
+            PropDefImpl pd;
+            PropDef[] pds = new PropDef[3];
+            pds[0] = pd = new PropDefImpl();
+            pd.setName(PROP_DOCBASE);
+            pd.setRequiredType(PropertyType.STRING);
+            pd.setMandatory(true);
+            pd.setAutoCreated(false);
+            pd.setMultiple(false);
+            pd.setProtected(false);
+            pd.setDeclaringNodeType(NODE_FACETSEARCH);
+            pds[1] = pd = new PropDefImpl();
+            pd.setName(PROP_FACETS);
+            pd.setRequiredType(PropertyType.STRING);
+            pd.setMandatory(true);
+            pd.setAutoCreated(false);
+            pd.setMultiple(true);
+            pd.setProtected(false);
+            pd.setDeclaringNodeType(NODE_FACETSEARCH);
+            pds[2] = pd = new PropDefImpl();
+            pd.setName(PROP_SEARCH);
+            pd.setRequiredType(PropertyType.STRING);
+            pd.setMandatory(false);
+            pd.setAutoCreated(false);
+            pd.setMultiple(true);
+            pd.setProtected(false);
+            pd.setDeclaringNodeType(NODE_FACETSEARCH);
 
+            NodeDefImpl nd;
+            NodeDef[] nds = new NodeDef[2];
+            nds[0] = nd = new NodeDefImpl();
+            nd.setName(new QName("", "resultset"));
+            nd.setRequiredPrimaryTypes(new QName[]{NODE_FACETRESULT});
+            nd.setDefaultPrimaryType(NODE_FACETRESULT);
+            nd.setProtected(false);
+            nd.setAllowsSameNameSiblings(true);
+            nd.setDeclaringNodeType(NODE_FACETSEARCH);
+            nds[1] = nd = new NodeDefImpl();
+            nd.setName(new QName("", "*"));
+            nd.setRequiredPrimaryTypes(new QName[]{NODE_FACETSEARCH});
+            nd.setDefaultPrimaryType(NODE_FACETSEARCH);
+            nd.setProtected(false);
+            nd.setAllowsSameNameSiblings(true);
+            nd.setDeclaringNodeType(NODE_FACETSEARCH);
+
+            ntd = new NodeTypeDef();
+            ntd.setMixin(false);
+            ntd.setPropertyDefs(pds);
+            ntd.setChildNodeDefs(nds);
+            ntd.setName(NODE_FACETSEARCH);
+            try {
+              EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
+            } catch(javax.jcr.NamespaceException ex) {
+              log.warn(ex.getMessage());
+            }
+
+            docs = root.addNode("navigation");
+            node = docs.addNode("byproduct","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "product", "brand" });
+            node.setProperty("hippo:docbase", "documents");
+	    // node.setProperty("hippo:search", new String[] { "has='ambilight'" });
+            docs = root.addNode("documents");
+            node = docs.addNode("42PF9831D");
+            node.addMixin("mix:referenceable");
+            node.setProperty("product","television");
+            node.setProperty("brand","philips");
+            node = docs.addNode("Bravia");
+            node.addMixin("mix:referenceable");
+            node.setProperty("product","television");
+            node.setProperty("brand","sony");
+            node = docs.addNode("DVP-FX810");
+            node.addMixin("mix:referenceable");
+            node.setProperty("product","dvdplayer");
+            node.setProperty("brand","sony");
+            session.save();
+            root = session.getRootNode();
+            node = root.getNode("documents/42PF9831D");
+            String uuid;
+            if(!node.isNodeType("mix:referenceable")) {
+              uuid = "";
+              System.out.println("UUID NOT SUPPORTED");
+            } else
+              uuid = node.getUUID();
+            System.out.println("\nEntire tree:");
             server.dump(session.getRootNode());
 
+            System.out.println("\nTelevisions:");
+            node = root.getNode("navigation/byproduct/television/resultset");
+            for(NodeIterator iter=node.getNodes(); iter.hasNext(); ) {
+              node = iter.nextNode();
+              server.dump(node);
+            }
+
+            System.out.println("\nTelevisions by Philips:");
+            node = root.getNode("navigation/byproduct/television/philips/resultset");
+            boolean found = false;
+            for(NodeIterator iter=node.getNodes(); iter.hasNext(); ) {
+              node = iter.nextNode();
+              try {
+                if(uuid.equals(node.getUUID()))
+                  found = true;
+              } catch(UnsupportedRepositoryOperationException ex) {
+              }
+              server.dump(node);
+            }
+            System.out.println(found ? "FOUND" : "NOT FOUND");
+
+            if(false) {
+              node = root.getNode("navigation/free/product[facet='television']/brand[facet='philips']");
+              found = false;
+              for(NodeIterator iter=node.getNodes(); iter.hasNext(); ) {
+                node = iter.nextNode();
+                if(uuid.equals(node.getUUID()))
+                  found = true;
+                server.dump(node);
+              }
+              System.out.println(found ? "FOUND" : "NOT FOUND");
+            }
+
             server.close();
-        } catch (InvalidNodeTypeDefException ex) {
+        } catch(InvalidNodeTypeDefException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
-        } catch (RepositoryException ex) {
+        } catch(RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
