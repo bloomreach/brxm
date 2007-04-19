@@ -25,6 +25,9 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeImpl;
@@ -52,13 +55,13 @@ class VirtualNodeImpl
     session = actual.getSession();
     isVirtual = false;
     this.actual = actual;
-  }
-  protected VirtualNodeImpl(Node actual, String path, String name) throws RepositoryException {
-    session = actual.getSession();
-    isVirtual   = true;
-    this.actual = actual;
-    this.path = path;
-    this.name = name;
+    /*
+    if(actual.isNodeType("hippo:facetsearch")) {
+      System.out.println("BERRY "+actual.getPath());
+      children = new HashMap();
+      properties = new HashMap();
+    }
+    */
   }
   protected VirtualNodeImpl(Session session, String nodeTypeName, String path, String name) throws RepositoryException {
     this.session = session;
@@ -73,6 +76,58 @@ class VirtualNodeImpl
   protected void addNode(String path, Node node) {
     children.put(path, node);
   }
+  boolean instantiated = false;
+  private void instantiate() throws RepositoryException {
+    if(instantiated)
+      return;
+    /*
+     * The XPath defined for JCR-170 lacks the possibility to select distinct nodes.
+     */
+    addNode("resultset", (Node)null);
+    QueryManager qmngr = session.getWorkspace().getQueryManager();
+    Node node = (actual != null ? actual : this);
+    String searchquery = null;
+    Value[] searchClauses = new Value[0];
+    try {
+      if(node.getProperty("hippo:search") != null)
+        searchClauses = node.getProperty("hippo:search").getValues();
+    } catch(PathNotFoundException ex) {
+      // safe to ignore
+    }
+    for(int i=0; i<searchClauses.length; i++) {
+      if(searchquery != null)
+        searchquery += ",";
+      else
+        searchquery = "";
+      searchquery += searchClauses[i].getString();
+    }
+    Value[] facets = node.getProperty("hippo:facets").getValues();
+    if(facets.length > 0) {
+      if(searchquery != null)
+        searchquery += ",";
+      else
+        searchquery = "";
+      searchquery += "@" + facets[0].getString();
+    }
+    if(searchquery != null)
+      searchquery = "[" + searchquery + "]";
+    else
+      searchquery = "";
+    searchquery = node.getProperty("hippo:docbase").getString() + "/node()" + searchquery;
+    if(facets.length > 0)
+      searchquery += "/@" + facets[0].getString();
+    //System.out.println("QUERY "+searchquery);
+    Query facetValuesQuery = qmngr.createQuery(searchquery, Query.XPATH); 
+    QueryResult facetValuesResult = facetValuesQuery.execute();
+    Set facetValuesSet = new HashSet();
+    for(RowIterator iter=facetValuesResult.getRows(); iter.hasNext(); ) {
+      facetValuesSet.add(iter.nextRow().getValues()[0].getString());
+    }
+    for(Iterator iter = facetValuesSet.iterator(); iter.hasNext(); ) {
+      addNode((String) iter.next(), (Node)null);
+    }
+  }
+
   class PropertyImpl implements Property {
     String name;
     Value single;
@@ -302,19 +357,27 @@ class VirtualNodeImpl
     Iterator iter;
     int position;
     NodeIteratorImpl() {
-      iter = children.values().iterator();
+      iter = children.entrySet().iterator();
       position = 0;
     }
     public boolean hasNext() {
       return iter.hasNext();
     }
     public Object next() {
+      Map.Entry entry = (Map.Entry) iter.next();
       ++position;
-      return iter.next();
+      Object rtValue = entry.getValue();
+      if(rtValue == null) {
+        try {
+          rtValue = getNode((String) entry.getKey());
+        } catch(RepositoryException ex) {
+          return null;
+        }
+      }
+      return rtValue;
     }
     public Node nextNode() {
-      ++position;
-      return (Node) iter.next();
+      return (Node) next();
     }
     public void remove() {
       throw new UnsupportedOperationException();
@@ -335,11 +398,46 @@ class VirtualNodeImpl
       return position;
     }
   }
+  class WrappingNodeIteratorImpl implements NodeIterator {
+    NodeIterator iter;
+    WrappingNodeIteratorImpl(NodeIterator superiter) {
+      iter = superiter;
+    }
+    public boolean hasNext() {
+      return iter.hasNext();
+    }
+    public Object next() {
+      try {
+        return new VirtualNodeImpl(iter.nextNode());
+      } catch(RepositoryException ex) {
+        throw new NoSuchElementException();
+      }
+    }
+    public Node nextNode() {
+      try {
+        return new VirtualNodeImpl(iter.nextNode());
+      } catch(RepositoryException ex) {
+        throw new NoSuchElementException();
+      }
+    }
+    public void remove() {
+      iter.remove();
+    }
+    public void skip(long skipNum) {
+      iter.skip(skipNum);
+    }
+    public long getSize() {
+      return iter.getSize();
+    }
+    public long getPosition() {
+      return iter.getPosition();
+    }
+  }
   class PropertyIteratorImpl implements PropertyIterator {
     Iterator iter;
     int position;
     PropertyIteratorImpl() {
-      iter = children.values().iterator();
+      iter = properties.values().iterator();
       position = 0;
     }
     public boolean hasNext() {
@@ -382,7 +480,10 @@ class VirtualNodeImpl
     return actual.getAncestor(depth);
   }
   public int getDepth() throws ItemNotFoundException, RepositoryException {
-    return actual.getDepth();
+    if(actual != null)
+      return actual.getDepth();
+    else
+      return 0;
   }
   public String getName() throws RepositoryException {
     if(actual == null) {
@@ -551,9 +652,11 @@ class VirtualNodeImpl
   }
   public NodeIterator getNodes() throws RepositoryException {
     if(children != null) {
+      if(isNodeType("hippo:facetsearch"))
+        instantiate();
       return this . new NodeIteratorImpl();
     } else
-      return actual.getNodes();
+      return this . new WrappingNodeIteratorImpl(actual.getNodes());
   }
   public NodeIterator getNodes(String namePattern) throws RepositoryException {
     return actual.getNodes(namePattern);

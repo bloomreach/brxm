@@ -17,6 +17,15 @@ package org.hippocms.repository.jr.embedded;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.rmi.Naming;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -56,6 +65,7 @@ import org.apache.jackrabbit.core.nodetype.ValueConstraint;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.name.QName;
 import org.apache.jackrabbit.util.name.NamespaceMapping;
+import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +79,9 @@ public class Server {
     public final static String NS_URI = "http://www.hippocms.org/";
     public final static String NS_PREFIX = "hippo";
 
+    public static final int RMI_PORT = 1099;
+    public static final String RMI_NAME = "jr-standalone";
+
     private final static QName NODE_FACETSEARCH = new QName(NS_URI, "facetsearch");
     private final static QName NODE_FACETRESULT = new QName(NS_URI, "facetresult");
     private final static QName PROP_DOCBASE     = new QName(NS_URI, "docbase");
@@ -78,6 +91,7 @@ public class Server {
     private static final Logger log = LoggerFactory.getLogger(Server.class);
     private String workingDir;
     private JackrabbitRepository repository;
+    private Remote rmiRepository;
 
     private void initialize(String workingDirectory) throws RepositoryException {
         initializeRepository(workingDirectory);
@@ -198,7 +212,14 @@ public class Server {
     }
 
     public void close() {
-        repository.shutdown();
+      if(repository != null) {
+        try {
+          repository.shutdown();
+        } catch(Exception ex) {
+          // ignore;
+        }
+        repository = null;
+      }
     }
 
     private static void dump(Node parent, int level) throws RepositoryException {
@@ -209,16 +230,20 @@ public class Server {
         System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth() + "]");
         for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
-            System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
-            if (prop.getDefinition().isMultiple()) {
+            try {
+              System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
+              if(prop.getDefinition().isMultiple()) {
                 Value[] values = prop.getValues();
                 System.out.print("[ ");
                 for (int i = 0; i < values.length; i++) {
-                    System.out.print((i > 0 ? ", " : "") + values[i].getString());
+                  System.out.print((i > 0 ? ", " : "") + values[i].getString());
                 }
                 System.out.println(" ]");
-            } else {
+              } else {
                 System.out.println(prop.getString());
+              }
+            } catch(Exception ex) {
+              System.out.println(prefix + "| unsupported");
             }
         }
         for (NodeIterator iter = parent.getNodes(); iter.hasNext();) {
@@ -232,6 +257,37 @@ public class Server {
         dump(parent, 0);
     }
 
+
+    public void run() throws RemoteException, AlreadyBoundException {
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+          public void run() {
+            close();
+            if(rmiRepository != null) {
+              rmiRepository = null;
+              try {
+                Naming.unbind(RMI_NAME);
+              }
+              catch (Exception e) {
+                // ignore
+              }
+            }
+          }
+        });
+      Remote remote = new ServerAdapterFactory().getRemoteRepository(repository);
+      System.setProperty("java.rmi.server.useCodebaseOnly", "true");
+      Registry registry = LocateRegistry.createRegistry(RMI_PORT);
+      registry.bind(RMI_NAME, remote);
+      rmiRepository = remote;
+      log.info("RMI Server available on rmi://localhost:"+RMI_PORT+"/"+RMI_NAME);
+      for(;;) {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException ex) {
+          System.err.println(ex);
+        }
+      }
+    }
+
     public static void main(String[] args) {
         try {
             Server server = null;
@@ -240,7 +296,6 @@ public class Server {
             else
                 server = new Server();
             Session session = server.login();
-            Workspace workspace = session.getWorkspace();
 
             Node docs, node, root = session.getRootNode();
             docs = root.addNode("navigation");
@@ -261,6 +316,9 @@ public class Server {
             node.addMixin("mix:referenceable");
             node.setProperty("product","dvdplayer");
             node.setProperty("brand","sony");
+            node = docs.addNode("hondepoep");
+            node.addMixin("mix:referenceable");
+            node.setProperty("product","dvdplayer");
             session.save();
             root = session.getRootNode();
             node = root.getNode("documents/42PF9831D");
@@ -270,7 +328,7 @@ public class Server {
               System.out.println("UUID NOT SUPPORTED");
             } else
               uuid = node.getUUID();
-            System.out.println("\nEntire tree:");
+            System.out.println("\nEntire tree: "+session.getRootNode().getClass().getName());
             server.dump(session.getRootNode());
 
             System.out.println("\nTelevisions:");
@@ -306,7 +364,14 @@ public class Server {
               System.out.println(found ? "FOUND" : "NOT FOUND");
             }
 
+            server.run();
             server.close();
+        } catch(RemoteException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch(AlreadyBoundException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
         } catch(RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
