@@ -45,7 +45,6 @@ class VirtualNodeImpl
   protected String primaryNodeTypeName;
   protected String path;
   protected String name;
-  int nodetype;
 
   protected Map children = null;
   protected Map properties = null;

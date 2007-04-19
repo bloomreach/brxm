@@ -80,71 +80,20 @@ public class Server {
     private JackrabbitRepository repository;
 
     private void initialize(String workingDirectory) throws RepositoryException {
+        initializeRepository(workingDirectory);
+        initializeNodeTypes();
+    }
+    private void initializeRepository(String workingDirectory) throws RepositoryException {
         workingDir = new File(workingDirectory).getAbsolutePath();
         InputStream config = getClass().getResourceAsStream("repository.xml");
         repository = RepositoryImpl.create(RepositoryConfig.create(config, workingDir));
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
         log.info("Node type registration support: " + (result != null ? result : "no"));
-    }
-    public Server() throws RepositoryException {
-        initialize(".");
-    }
-    public Server(String workingDirectory) throws RepositoryException {
-        initialize(workingDirectory);
-    }
 
-    public Session login() throws RepositoryException {
-        Session result = repository.login(new SimpleCredentials("username", "password".toCharArray()));
-        log.info("Logged in as " + result.getUserID() + " to a " + repository.getDescriptor(Repository.REP_NAME_DESC)
-                + " repository.");
-        return new VirtualSessionImpl(result);
     }
-
-    public void close() {
-        repository.shutdown();
-    }
-
-    private static void dump(Node parent, int level) throws RepositoryException {
-        String prefix = "";
-        for (int i = 0; i < level; i++) {
-            prefix += "  ";
-        }
-        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth() + "]");
-        for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
-            Property prop = iter.nextProperty();
-            System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
-            if (prop.getDefinition().isMultiple()) {
-                Value[] values = prop.getValues();
-                System.out.print("[ ");
-                for (int i = 0; i < values.length; i++) {
-                    System.out.print((i > 0 ? ", " : "") + values[i].getString());
-                }
-                System.out.println(" ]");
-            } else {
-                System.out.println(prop.getString());
-            }
-        }
-        for (NodeIterator iter = parent.getNodes(); iter.hasNext();) {
-            Node node = iter.nextNode();
-            if (!node.getPath().equals("/jcr:system")) {
-                dump(node, level + 1);
-            }
-        }
-    }
-    public static void dump(Node parent) throws RepositoryException {
-        dump(parent, 0);
-    }
-
-    public static void main(String[] args) {
-        try {
-            Server server = null;
-            if(args.length > 0)
-                server = new Server(args.length > 0 ? args[0] : ".");
-            else
-                server = new Server();
-            Session session = server.login();
-
-            Node docs, node, root = session.getRootNode();
+    private void initializeNodeTypes() throws RepositoryException {
+      Session session = login();
+      try {
             Workspace workspace = session.getWorkspace();
 
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
@@ -229,7 +178,71 @@ public class Server {
             } catch(javax.jcr.NamespaceException ex) {
               log.warn(ex.getMessage());
             }
+            session.save();
+        } catch(InvalidNodeTypeDefException ex) {
+            throw new RepositoryException("Could not preload repository with hippo node types", ex);
+        }
+    }
+    public Server() throws RepositoryException {
+        initialize(".");
+    }
+    public Server(String workingDirectory) throws RepositoryException {
+        initialize(workingDirectory);
+    }
 
+    public Session login() throws RepositoryException {
+        Session result = repository.login(new SimpleCredentials("username", "password".toCharArray()));
+        log.info("Logged in as " + result.getUserID() + " to a " + repository.getDescriptor(Repository.REP_NAME_DESC)
+                + " repository.");
+        return new VirtualSessionImpl(result);
+    }
+
+    public void close() {
+        repository.shutdown();
+    }
+
+    private static void dump(Node parent, int level) throws RepositoryException {
+        String prefix = "";
+        for (int i = 0; i < level; i++) {
+            prefix += "  ";
+        }
+        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth() + "]");
+        for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
+            Property prop = iter.nextProperty();
+            System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
+            if (prop.getDefinition().isMultiple()) {
+                Value[] values = prop.getValues();
+                System.out.print("[ ");
+                for (int i = 0; i < values.length; i++) {
+                    System.out.print((i > 0 ? ", " : "") + values[i].getString());
+                }
+                System.out.println(" ]");
+            } else {
+                System.out.println(prop.getString());
+            }
+        }
+        for (NodeIterator iter = parent.getNodes(); iter.hasNext();) {
+            Node node = iter.nextNode();
+            if (!node.getPath().equals("/jcr:system")) {
+                dump(node, level + 1);
+            }
+        }
+    }
+    public static void dump(Node parent) throws RepositoryException {
+        dump(parent, 0);
+    }
+
+    public static void main(String[] args) {
+        try {
+            Server server = null;
+            if(args.length > 0)
+                server = new Server(args.length > 0 ? args[0] : ".");
+            else
+                server = new Server();
+            Session session = server.login();
+            Workspace workspace = session.getWorkspace();
+
+            Node docs, node, root = session.getRootNode();
             docs = root.addNode("navigation");
             node = docs.addNode("byproduct","hippo:facetsearch");
             node.setProperty("hippo:facets", new String[] { "product", "brand" });
@@ -294,9 +307,6 @@ public class Server {
             }
 
             server.close();
-        } catch(InvalidNodeTypeDefException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
         } catch(RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
