@@ -159,4 +159,8 @@ public class ReviewedActionsWorkflow implements Workflow {
     public void cancelPublicationTask() {
         scheduler.cancel(scheduledPublicationTaskId);
     }
+
+    public void cancelUnpublicationTask() {
+        scheduler.cancel(scheduledUnpublicationTaskId);
+    }
 }
