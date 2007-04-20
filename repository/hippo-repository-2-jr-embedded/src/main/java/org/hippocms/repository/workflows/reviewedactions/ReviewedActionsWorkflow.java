@@ -150,7 +150,7 @@ public class ReviewedActionsWorkflow implements Workflow {
         if (!document.isPublished()) {
             throw new IllegalStateException("Cannot unpublish a document that is not published");
         }
-        if (scheduledPublicationTaskId == null) {
+        if (scheduledPublicationTaskId == null && scheduledUnpublicationTaskId != null) {
             scheduler.cancel(scheduledUnpublicationTaskId);
         }
         document.unpublish();
