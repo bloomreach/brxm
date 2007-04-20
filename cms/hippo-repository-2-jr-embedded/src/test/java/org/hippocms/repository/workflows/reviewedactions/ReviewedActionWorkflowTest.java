@@ -701,4 +701,35 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflow.publish(null, unpublicationDate);
         workflow.unpublish();
     }
+
+    public void testUnpublicationDoesNotCancelPendingUnpublicationTaskIfPendingPublication() {
+        DocumentTemplate docTemplate = new DocumentTemplate();
+
+        CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
+        currentUsernameSource.setCurrentUsername("John Doe");
+        docTemplate.setCurrentUsernameSource(currentUsernameSource);
+        ReviewedActionsWorkflowFactory workflowFactory = new ReviewedActionsWorkflowFactory();
+        workflowFactory.setCurrentUsernameSource(currentUsernameSource);
+
+        Mock schedulerMock = mock(Scheduler.class);
+        Scheduler scheduler = (Scheduler) schedulerMock.proxy();
+        Date publicationDate = new Date(System.currentTimeMillis() + SECONDS_IN_A_DAY);
+        String publicationTaskId = "1";
+        schedulerMock.expects(once()).method("schedule").with(eq(publicationDate), NOT_NULL).will(
+                returnValue(publicationTaskId));
+        Date unpublicationDate = new Date(System.currentTimeMillis() + 2 * SECONDS_IN_A_DAY);
+        String unpublicationTaskId = "2";
+        schedulerMock.expects(once()).method("schedule").with(eq(unpublicationDate), NOT_NULL).will(
+                returnValue(unpublicationTaskId));
+        workflowFactory.setScheduler(scheduler);
+
+        docTemplate.setWorkflowFactory(workflowFactory);
+
+        Document doc = docTemplate.create("Lorem ipsum");
+        doc.setContent("Foo bar baz qux quux.");
+        ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
+        workflow.publish(null, null);
+        workflow.publish(publicationDate, unpublicationDate);
+        workflow.unpublish();
+    }
 }
