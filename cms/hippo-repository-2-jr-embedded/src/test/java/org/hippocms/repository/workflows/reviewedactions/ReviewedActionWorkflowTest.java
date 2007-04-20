@@ -645,7 +645,7 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflow.publish(publicationDate, unpublicationDate);
     }
 
-    public void testCancellingPublicasionTaskRemovesTaskFromScheduler() {
+    public void testCancellingPublicationTaskRemovesTaskFromScheduler() {
         DocumentTemplate docTemplate = new DocumentTemplate();
 
         CurrentUsernameSource currentUsernameSource = new CurrentUsernameSource();
@@ -663,9 +663,6 @@ public class ReviewedActionWorkflowTest extends MockObjectTestCase {
         workflowFactory.setScheduler(scheduler);
 
         docTemplate.setWorkflowFactory(workflowFactory);
-        Mock spMock = mock(PublicationServiceProvider.class);
-        PublicationServiceProvider mockSp = (PublicationServiceProvider) spMock.proxy();
-        docTemplate.addPublicationServiceProvider(mockSp);
 
         Document doc = docTemplate.create("Lorem ipsum");
         doc.setContent("Foo bar baz qux quux.");
