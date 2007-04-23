@@ -46,40 +46,42 @@ class VirtualNodeImpl
   protected boolean isQuery;
   protected Node actual;
   protected String primaryNodeTypeName;
-  protected String path;
   protected String name;
+  protected String path;
+  protected int depth;
 
   protected Map children = null;
   protected Map properties = null;
-  protected VirtualNodeImpl(Node actual) throws RepositoryException {
+  protected VirtualNodeImpl(Node actual, String path, int depth) throws RepositoryException {
     session = actual.getSession();
-    isVirtual = false;
+    isVirtual   = false;
     this.actual = actual;
-    /*
+    this.path   = path;
+    this.depth  = depth;
     if(actual.isNodeType("hippo:facetsearch")) {
-      System.out.println("BERRY "+actual.getPath());
       children = new HashMap();
       properties = new HashMap();
     }
-    */
   }
-  protected VirtualNodeImpl(Session session, String nodeTypeName, String path, String name) throws RepositoryException {
+  protected VirtualNodeImpl(Session session, String nodeTypeName, String path, String name, int depth) throws RepositoryException {
     this.session = session;
     primaryNodeTypeName = nodeTypeName;
     isVirtual   = true;
     this.actual = null;
-    this.path = path;
-    this.name = name;
+    this.path   = path;
+    this.name   = name;
+    this.depth  = depth;
     children = new HashMap();
     properties = new HashMap();
   }
-  protected void addNode(String path, Node node) {
-    children.put(path, node);
+  protected void addNode(String name, Node node) {
+    children.put(name, node);
   }
   boolean instantiated = false;
   private void instantiate() throws RepositoryException {
     if(instantiated)
       return;
+    instantiated = true;
     /*
      * The XPath defined for JCR-170 lacks the possibility to select distinct nodes.
      */
@@ -108,53 +110,93 @@ class VirtualNodeImpl
       else
         searchquery = "";
       searchquery += "@" + facets[0].getString();
-    }
-    if(searchquery != null)
-      searchquery = "[" + searchquery + "]";
-    else
-      searchquery = "";
-    searchquery = node.getProperty("hippo:docbase").getString() + "/node()" + searchquery;
-    if(facets.length > 0)
+      if(searchquery != null)
+        searchquery = "[" + searchquery + "]";
+      else
+        searchquery = "";
+      searchquery = node.getProperty("hippo:docbase").getString() + "/node()" + searchquery;
       searchquery += "/@" + facets[0].getString();
-    //System.out.println("QUERY "+searchquery);
-    Query facetValuesQuery = qmngr.createQuery(searchquery, Query.XPATH); 
-    QueryResult facetValuesResult = facetValuesQuery.execute();
-    Set facetValuesSet = new HashSet();
-    for(RowIterator iter=facetValuesResult.getRows(); iter.hasNext(); ) {
-      facetValuesSet.add(iter.nextRow().getValues()[0].getString());
-    }
-    for(Iterator iter = facetValuesSet.iterator(); iter.hasNext(); ) {
-      addNode((String) iter.next(), (Node)null);
+      Query facetValuesQuery = qmngr.createQuery(searchquery, Query.XPATH); 
+      QueryResult facetValuesResult = facetValuesQuery.execute();
+      Set facetValuesSet = new HashSet();
+      for(RowIterator iter=facetValuesResult.getRows(); iter.hasNext(); ) {
+        facetValuesSet.add(iter.nextRow().getValues()[0].getString());
+      }
+      for(Iterator iter = facetValuesSet.iterator(); iter.hasNext(); ) {
+        //System.out.println("      "+iter.next());
+        addNode((String) iter.next(), (Node)null);
+      }
     }
   }
 
   class PropertyImpl implements Property {
     String name;
+    int type;
     Value single;
     Value[] multi;
+    PropertyDefinitionImpl propertyDefintion;
+
+    class PropertyDefinitionImpl implements PropertyDefinition {
+      public int getRequiredType() {
+        return PropertyType.UNDEFINED;
+      }
+      public String[] getValueConstraints() {
+        return null;
+      }
+      public Value[] getDefaultValues() {
+        return null;
+      }
+      public boolean isMultiple() {
+        return (multi != null);
+      }
+      public NodeType getDeclaringNodeType() {
+        // FIXME
+        return null;
+      }
+      public String getName() {
+        return "*";
+      }
+      public boolean isAutoCreated() {
+        return false;
+      }
+      public boolean isMandatory() {
+        return false;
+      }
+      public int getOnParentVersion() {
+        return OnParentVersionAction.COPY;
+      }
+      public boolean isProtected() {
+        return false;
+      }
+    }
+
     public PropertyImpl(String name, Value value)
       throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException
     {
       this.name = name;
       setValue(value);
+      propertyDefintion = this . new PropertyDefinitionImpl();
     }
     public PropertyImpl(String name, String value)
       throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException
     {
       this.name = name;
       setValue(value);
+      propertyDefintion = this . new PropertyDefinitionImpl();
     }
     public PropertyImpl(String name, String[] values)
       throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException
     {
       this.name = name;
       setValue(values);
+      propertyDefintion = this . new PropertyDefinitionImpl();
     }
     public PropertyImpl(String name, Value[] values)
       throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException
     {
       this.name = name;
       setValue(values);
+      propertyDefintion = this . new PropertyDefinitionImpl();
     }
     public void setValue(Value value)
       throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException
@@ -266,37 +308,42 @@ class VirtualNodeImpl
     public Node getNode()
       throws ValueFormatException, RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      return VirtualNodeImpl.this;
     }
     public long getLength()
       throws ValueFormatException, RepositoryException
     {
       if(multi == null)
-        throw new ValueFormatException("single value property");
-      return multi.length;
+        throw new ValueFormatException("multi value property");
+      return -1;
     }
     public long[] getLengths()
       throws ValueFormatException, RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      if(multi == null)
+        throw new ValueFormatException("single value property");
+      long[] rtvalue = new long[multi.length];
+      for(int i=0; i<multi.length; i++)
+        rtvalue[i] = -1;
+      return rtvalue;
     }
     public PropertyDefinition getDefinition()
       throws RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      return propertyDefintion;
     }
     public int getType()
       throws RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      return type;
     }
 
     public String getPath()
       throws RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      return VirtualNodeImpl.this.getPath() + "/@" + getName();
     }
-    public java.lang.String getName()
+    public String getName()
       throws RepositoryException
     {
       return name;
@@ -304,17 +351,17 @@ class VirtualNodeImpl
     public Item getAncestor(int depth)
       throws ItemNotFoundException, AccessDeniedException, RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      return VirtualNodeImpl.this.getAncestor(depth - 1);
     }
     public Node getParent()
       throws ItemNotFoundException, AccessDeniedException, RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      return VirtualNodeImpl.this;
     }
     public int getDepth()
       throws RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      return VirtualNodeImpl.this.getDepth() + 1;
     }
     public Session getSession()
       throws RepositoryException
@@ -331,28 +378,27 @@ class VirtualNodeImpl
       return false;
     }
     public boolean isSame(Item otherItem) throws RepositoryException {
-      throw new RepositoryException("Not supported");
+      return otherItem == this;
     }
     public void accept(ItemVisitor visitor) throws RepositoryException {
-      throw new RepositoryException("Not supported");
+      visitor.visit(this);
     }
     public void save()
       throws AccessDeniedException, ItemExistsException, ConstraintViolationException, InvalidItemStateException,
              ReferentialIntegrityException, VersionException, LockException, NoSuchNodeTypeException, RepositoryException
     {
-      throw new RepositoryException("Not supported");
     }
     public void refresh(boolean keepChanges)
       throws InvalidItemStateException, RepositoryException
     {
-      throw new RepositoryException("Not supported");
     }
     public void remove()
       throws VersionException, LockException, ConstraintViolationException, RepositoryException
     {
-      throw new RepositoryException("Not supported");
+      properties.remove(name);
     }
   }
+
   class NodeIteratorImpl implements NodeIterator {
     Iterator iter;
     int position;
@@ -408,14 +454,16 @@ class VirtualNodeImpl
     }
     public Object next() {
       try {
-        return new VirtualNodeImpl(iter.nextNode());
+        Node node = iter.nextNode();
+        return new VirtualNodeImpl(node, getChildPath(node.getName()), depth+1);
       } catch(RepositoryException ex) {
         throw new NoSuchElementException();
       }
     }
     public Node nextNode() {
       try {
-        return new VirtualNodeImpl(iter.nextNode());
+        Node node = iter.nextNode();
+        return new VirtualNodeImpl(node, getChildPath(node.getName()), depth+1);
       } catch(RepositoryException ex) {
         throw new NoSuchElementException();
       }
@@ -471,7 +519,6 @@ class VirtualNodeImpl
     }
   }
 
-
   public void accept(ItemVisitor visitor) throws RepositoryException {
     actual.accept(visitor);
   }
@@ -480,10 +527,7 @@ class VirtualNodeImpl
     return actual.getAncestor(depth);
   }
   public int getDepth() throws ItemNotFoundException, RepositoryException {
-    if(actual != null)
-      return actual.getDepth();
-    else
-      return 0;
+    return depth;
   }
   public String getName() throws RepositoryException {
     if(actual == null) {
@@ -493,15 +537,15 @@ class VirtualNodeImpl
   }
   public Node getParent() throws ItemNotFoundException, AccessDeniedException, RepositoryException {
     if(isVirtual)
-      return session.getRootNode().getNode(path);
+      return session.getRootNode().getNode(path); // FIXME
     else
       return actual.getParent();
   }
   public String getPath() throws RepositoryException {
-    if(isVirtual)
-      return path + "/" + name;
-    else
-      return actual.getPath();
+    return path;
+  }
+  public String getChildPath(String name) throws RepositoryException {
+    return getPath() + "/" + name;
   }
   public Session getSession() throws RepositoryException {
     if(actual == null) {
@@ -531,15 +575,16 @@ class VirtualNodeImpl
     actual.save();
   }
 
-
   public void addMixin(String mixinName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, ReferentialIntegrityException, RepositoryException {
     actual.addMixin(mixinName);
   }
   public Node addNode(String relPath) throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException {
-    return new VirtualNodeImpl(actual.addNode(relPath));
+    Node node = actual.addNode(relPath);
+    return new VirtualNodeImpl(node, getChildPath(relPath), node.getDepth());
   }
   public Node addNode(String relPath, String primaryNodeTypeName) throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, RepositoryException {
-    return new VirtualNodeImpl(actual.addNode(relPath,primaryNodeTypeName));
+    Node node = actual.addNode(relPath, primaryNodeTypeName);
+    return new VirtualNodeImpl(node, getChildPath(relPath), node.getDepth());
   }
   public boolean canAddMixin(String mixinName) throws NoSuchNodeTypeException, RepositoryException {
     return actual.canAddMixin(mixinName);
@@ -577,7 +622,7 @@ class VirtualNodeImpl
   public Node getNode(String relPath) throws PathNotFoundException, RepositoryException  {
     if(isNodeType("hippo:facetsearch")) {
       if(relPath.equals("resultset")) {
-        VirtualNodeImpl child = new VirtualNodeImpl(session, "hippo:facetresult", getName(), relPath);
+        VirtualNodeImpl child = new VirtualNodeImpl(session, "hippo:facetresult", getChildPath(relPath), relPath, depth+1);
         String searchquery = null;
         Value[] searchClauses = new Value[0];
         try {
@@ -608,19 +653,24 @@ class VirtualNodeImpl
         //child.setProperty("resultCount", count);
         return child;
       } else {
-        VirtualNodeImpl child = new VirtualNodeImpl(session, "hippo:facetsearch", getName(), relPath);
+        VirtualNodeImpl child = new VirtualNodeImpl(session, "hippo:facetsearch", getChildPath(relPath), relPath, depth+1);
         Value[] facets = getProperty("hippo:facets").getValues();
-        Value[] newFacets = new Value[facets.length-1];
-        System.arraycopy(facets,1,newFacets,0,facets.length-1);
+        Value[] newFacets = new Value[Math.max(0,facets.length-1)];
+        if(facets.length > 0)
+          System.arraycopy(facets,1,newFacets,0,facets.length-1);
         Value[] search = new Value[0];
         try {
           search = getProperty("hippo:search").getValues();
         } catch(PathNotFoundException ex) {
           // safe to ignore
         }
-        Value[] newSearch = new Value[search.length+1];
-        System.arraycopy(search,0,newSearch,0,search.length);
-        newSearch[search.length] = session.getValueFactory().createValue("@" + facets[0].getString() + "='" + relPath + "'");
+        Value[] newSearch;
+        if(facets.length > 0) {
+          newSearch = new Value[search.length+1];
+          System.arraycopy(search,0,newSearch,0,search.length);
+          newSearch[search.length] = session.getValueFactory().createValue("@" + facets[0].getString() + "='" + relPath + "'");
+        } else
+          newSearch = (Value[]) search.clone();
         child.setProperty("hippo:docbase",getProperty("hippo:docbase").getString());
         child.setProperty("hippo:facets",newFacets);
         child.setProperty("hippo:search",newSearch);
@@ -629,7 +679,7 @@ class VirtualNodeImpl
     } else {
       try {
         Node target = actual.getNode(relPath);
-        return new VirtualNodeImpl(target);
+        return new VirtualNodeImpl(target, getChildPath(relPath), getDepth()+1);
       } catch(PathNotFoundException ex) {
         SessionImpl session = (SessionImpl) this.session;
         try {
@@ -642,7 +692,7 @@ class VirtualNodeImpl
             node = node.getNode(elements[i].getName().getLocalName());
           }
           if(!(node instanceof VirtualNodeImpl))
-            node = new VirtualNodeImpl(node);
+            node = new VirtualNodeImpl(node, getChildPath(relPath), getDepth()+1);
           return node;
         } catch(NameException ex2) {
           throw ex;
@@ -651,6 +701,7 @@ class VirtualNodeImpl
     }
   }
   public NodeIterator getNodes() throws RepositoryException {
+    System.out.println("BERRY#getnodes");
     if(children != null) {
       if(isNodeType("hippo:facetsearch"))
         instantiate();
@@ -659,6 +710,7 @@ class VirtualNodeImpl
       return this . new WrappingNodeIteratorImpl(actual.getNodes());
   }
   public NodeIterator getNodes(String namePattern) throws RepositoryException {
+    System.out.println("BERRY#getnodes(pattern)");
     return actual.getNodes(namePattern);
   }
   public Item getPrimaryItem() throws ItemNotFoundException, RepositoryException {
@@ -668,15 +720,18 @@ class VirtualNodeImpl
     return actual.getPrimaryNodeType();
   }
   public PropertyIterator getProperties() throws RepositoryException {
+    System.out.println("BERRY#getprops");
     if(actual == null) {
       return this . new PropertyIteratorImpl();
     } else
       return actual.getProperties();
   }
   public PropertyIterator getProperties(String namePattern) throws RepositoryException {
+    System.out.println("BERRY#getprop("+namePattern+")");
     return actual.getProperties(namePattern);
   }
   public Property getProperty(String relPath) throws PathNotFoundException, RepositoryException {
+    System.out.println("BERRY#getprop("+relPath+")");
     if(actual == null) {
       return (Property) properties.get(relPath);
     } else
@@ -692,14 +747,17 @@ class VirtualNodeImpl
     return actual.getVersionHistory();
   }
   public boolean hasNode(String relPath) throws RepositoryException {
+    System.out.println("BERRY#hasnode("+relPath+")");
     if(actual == null) {
       return children.containsKey(relPath);
     } else
       return actual.hasNode(relPath);
   }
   public boolean hasNodes() throws RepositoryException {
+    System.out.println("BERRY#hasnodes");
     if(actual == null) {
-      return !children.isEmpty();
+      return true;
+      //FIXME return !children.isEmpty();
     } else
       return actual.hasNodes();
   }

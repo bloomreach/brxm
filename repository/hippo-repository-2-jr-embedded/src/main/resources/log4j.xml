@@ -42,7 +42,7 @@
     <!-- ====================================================================== -->
 
     <root>
-        <level value="warn" />
+        <level value="debug" />
         <appender-ref ref="console"/>
         <appender-ref ref="error"/>
     </root>

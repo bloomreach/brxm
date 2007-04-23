@@ -36,12 +36,20 @@ import javax.jcr.nodetype.*;
  */
 class VirtualSessionImpl implements Session
 {
+  protected Repository repository;
   protected Session actual;
   VirtualSessionImpl(Session actual) {
     this.actual = actual;
   }
+  VirtualSessionImpl(Session session, Repository repository) {
+    this.actual = session;
+    this.repository = repository;
+  }
   public Repository getRepository() {
-    return actual.getRepository();
+    if(repository != null)
+      return repository;
+    else
+      return actual.getRepository();
   }
   public String getUserID() {
     return actual.getUserID();
@@ -59,16 +67,19 @@ class VirtualSessionImpl implements Session
     return new VirtualSessionImpl(actual.impersonate(credentials));
   }
   public Node getRootNode() throws RepositoryException {
-    return new VirtualNodeImpl(actual.getRootNode());
+    Node root = actual.getRootNode();
+    return new VirtualNodeImpl(root, "", 0);
   }
   public Node getNodeByUUID(String uuid) throws ItemNotFoundException, RepositoryException {
-    return new VirtualNodeImpl(actual.getNodeByUUID(uuid));
+    Node node = actual.getNodeByUUID(uuid);
+    return new VirtualNodeImpl(node, node.getPath(), node.getDepth());
   }
   public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
     Item item = actual.getItem(absPath);
-    if(item.isNode())
-      return new VirtualNodeImpl((Node)item);
-    else
+    if(item.isNode()) {
+      Node node = (Node) item;
+      return new VirtualNodeImpl(node, node.getPath(), node.getDepth());
+    } else
       return item;
   }
   public boolean itemExists(String absPath) throws RepositoryException {
