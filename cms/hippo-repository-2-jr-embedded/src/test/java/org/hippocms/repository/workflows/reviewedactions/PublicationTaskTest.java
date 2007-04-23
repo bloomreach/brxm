@@ -88,6 +88,6 @@ public class PublicationTaskTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.publish(publicationDate, null);
 
-        workflow.cancelPublicationTask();
+        workflow.cancelScheduledPublication();
     }
 }

@@ -156,11 +156,11 @@ public class ReviewedActionsWorkflow implements Workflow {
         document.unpublish();
     }
 
-    public void cancelPublicationTask() {
+    public void cancelScheduledPublication() {
         scheduler.cancel(scheduledPublicationTaskId);
     }
 
-    public void cancelUnpublicationTask() {
+    public void cancelScheduledUnpublication() {
         scheduler.cancel(scheduledUnpublicationTaskId);
     }
 }

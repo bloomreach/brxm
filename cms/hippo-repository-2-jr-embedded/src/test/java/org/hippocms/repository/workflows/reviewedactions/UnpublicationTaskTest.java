@@ -90,6 +90,6 @@ public class UnpublicationTaskTest extends MockObjectTestCase {
         ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) doc.getWorkflow();
         workflow.publish(null, unpublicationDate);
 
-        workflow.cancelUnpublicationTask();
+        workflow.cancelScheduledUnpublication();
     }
 }
