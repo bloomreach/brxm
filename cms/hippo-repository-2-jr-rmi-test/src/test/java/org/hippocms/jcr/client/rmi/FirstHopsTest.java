@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 Hippo
+ * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License"); 
  * you may not use this file except in compliance with the License. 
@@ -20,44 +20,56 @@ import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import junit.framework.TestCase;
+
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import junit.framework.TestCase;
 
 /**
  * @version $Id$
  *
  */
 public class FirstHopsTest extends TestCase {
-    
+
+    // ---------------------------------------------------- Constants
+    private static final String JCR_REPOSITORY = "jackrabbit.repository";
+    private static final String JCR_WORKSPACE = "default";
+    private static final String JCR_USER = "username";
+    private static final String JCR_PASS = "password";
+
+    private static final String JCR_RMI_HOST = "localhost";
+    private static final String JCR_RMI_PORT = "port";
+    private static final String JCR_RMI_URL = "rmi://" + JCR_RMI_HOST + ":" + JCR_RMI_PORT + "/" + JCR_REPOSITORY;
+
+    //  ----------------------------------------------------
     private static final Logger log = LoggerFactory.getLogger(FirstHopsTest.class);
-    
+
     public void testFirstHop() throws Exception {
         ClientRepositoryFactory factory = new ClientRepositoryFactory();
-        Repository repository = factory.getRepository("rmi://localhost:1099/jr-standalone");
-        assertNotNull( repository );
+        Repository repository = factory.getRepository(JCR_RMI_URL);
+        assertNotNull(repository);
         Session session = repository.login();
-        assertNotNull( session );
+        assertNotNull(session);
         try {
             String user = session.getUserID();
             String name = repository.getDescriptor(Repository.REP_NAME_DESC);
-            assertEquals("anonymous",user);
-            assertEquals("Jackrabbit",name);
+            assertEquals("anonymous", user);
+            assertEquals("Jackrabbit", name);
             log.info("FirstHop: Logged in as " + user + " to a " + name + " repository.");
         } finally {
             session.logout();
         }
     }
-    
+
     public void testSecondHop() throws Exception {
         ClientRepositoryFactory factory = new ClientRepositoryFactory();
-        Repository repository = factory.getRepository("rmi://localhost:1099/jr-standalone");
-        assertNotNull( repository );
-        Session session = repository.login(new SimpleCredentials("username", "password".toCharArray()));
-        assertNotNull( session );
+        Repository repository = factory.getRepository(JCR_RMI_URL);
+        assertNotNull(repository);
+        Session session = repository.login(new SimpleCredentials(JCR_USER, JCR_PASS.toCharArray()));
+        assertNotNull(session);
         try {
+
             Node root = session.getRootNode();
 
             // Store content
@@ -69,13 +81,14 @@ public class FirstHopsTest extends TestCase {
             // Retrieve content
             Node node = root.getNode("hello/world");
             assertNotNull(node);
-            assertEquals("/hello/world",node.getPath());
-            assertEquals("Hello, World!",node.getProperty("message").getString());
-            log.info("SecondHop: "+node.getProperty("message").getString());
+            assertEquals("/hello/world", node.getPath());
+            assertEquals("Hello, World!", node.getProperty("message").getString());
+            log.info("SecondHop: " + node.getProperty("message").getString());
 
             // Remove content
             root.getNode("hello").remove();
             session.save();
+
         } finally {
             session.logout();
         }
