@@ -150,6 +150,9 @@ public class Webdav2JCRDumper implements Plugin {
                 }
 
                 javax.jcr.Node current = parent.addNode(nodeName);
+                
+
+                current.addMixin("mix:referenceable");
 
                 String contentLengthAsString = webdavNode.getProperty("DAV:", "getcontentlength").getPropertyAsString();
                 int contentLength = Integer.parseInt(contentLengthAsString);
