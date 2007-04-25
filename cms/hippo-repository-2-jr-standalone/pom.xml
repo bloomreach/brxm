@@ -27,7 +27,7 @@
   <name>Hippo Repository 2.0 JackRabbit Standalone Application</name>
   
   <properties>
-    <jackrabbit.version>1.3-r529494</jackrabbit.version>
+    <jackrabbit.version>1.4-SNAPSHOT</jackrabbit.version>
   </properties>
   <dependencyManagement>
     <dependencies>
