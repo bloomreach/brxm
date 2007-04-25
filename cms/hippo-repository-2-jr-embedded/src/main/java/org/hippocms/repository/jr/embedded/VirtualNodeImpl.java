@@ -114,7 +114,7 @@ class VirtualNodeImpl
         searchquery = "[" + searchquery + "]";
       else
         searchquery = "";
-      searchquery = node.getProperty("hippo:docbase").getString() + "/node()" + searchquery;
+      searchquery = node.getProperty("hippo:docbase").getString() + "//node()" + searchquery;
       searchquery += "/@" + facets[0].getString();
       Query facetValuesQuery = qmngr.createQuery(searchquery, Query.XPATH); 
       QueryResult facetValuesResult = facetValuesQuery.execute();
@@ -643,7 +643,7 @@ class VirtualNodeImpl
           searchquery = "";
         Workspace workspace = getSession().getWorkspace();
         QueryManager qmngr = workspace.getQueryManager();
-        Query query = qmngr.createQuery(getProperty("hippo:docbase").getString()+"/node()"+searchquery, Query.XPATH);
+        Query query = qmngr.createQuery(getProperty("hippo:docbase").getString()+"//node()"+searchquery, Query.XPATH);
         QueryResult qresult = query.execute();
         int count = 0;
         for(NodeIterator iter=qresult.getNodes(); iter.hasNext(); count++) {
