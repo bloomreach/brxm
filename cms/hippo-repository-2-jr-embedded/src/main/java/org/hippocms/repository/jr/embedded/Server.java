@@ -278,6 +278,7 @@ public class Server {
                 server = new Server(args.length > 0 ? args[0] : ".");
             else
                 server = new Server();
+            
             Session session = server.login();
 
             Node docs, node, root = session.getRootNode();
@@ -300,7 +301,7 @@ public class Server {
             //node.setProperty("product",new String[] { "television", "dvdplayer" });
             node.setProperty("product","dvdplayer");
             node.setProperty("brand","sony");
-            node = docs.addNode("hondepoep");
+            node = docs.addNode("spoon");
             node.addMixin("mix:referenceable");
             node.setProperty("product","dvdplayer");
             session.save();
@@ -350,8 +351,8 @@ public class Server {
               System.out.println(found ? "FOUND" : "NOT FOUND");
             }
 
+            
             session.logout();
-
             server.run();
             server.close();
         } catch(RemoteException ex) {
