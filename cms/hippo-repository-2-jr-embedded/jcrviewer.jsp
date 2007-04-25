@@ -58,7 +58,7 @@
   javax.jcr.Session repositorySession = (javax.jcr.Session) session.getAttribute("session");
   //if(repositoryConnection == null || repositorySession == null) {
     org.apache.jackrabbit.rmi.client.ClientRepositoryFactory repositoryFactory = new org.apache.jackrabbit.rmi.client.ClientRepositoryFactory();
-    repositoryConnection = repositoryFactory.getRepository("rmi://localhost:1099/jr-standalone");
+    repositoryConnection = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
     repositorySession = repositoryConnection.login(new SimpleCredentials("username", "password".toCharArray()));
     session.setAttribute("repository", repositoryConnection);
     session.setAttribute("session", repositorySession);
