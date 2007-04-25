@@ -17,6 +17,9 @@ package org.hippocms.repository.jr;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
@@ -35,9 +38,12 @@ import nl.hippo.webdav.batchprocessor.PluginConfiguration;
 import nl.hippo.webdav.batchprocessor.WebdavBatchProcessor;
 import nl.hippo.webdav.batchprocessor.WebdavBatchProcessorException;
 
+import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.webdav.lib.Property;
 import org.apache.webdav.lib.PropertyName;
+
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 public class Webdav2JCRDumper implements Plugin {
 
@@ -51,6 +57,14 @@ public class Webdav2JCRDumper implements Plugin {
     private static final String JCR_PASS = "jcr.rmi.pass";
     private static final String JCR_PATH = "jcr.path";
 
+    /* DAV::creationate = 2006-12-18T14:24:53Z */
+    private static final SimpleDateFormat CREATIONDATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    /* hippo::publicationDate = 20040124 */
+    private static final SimpleDateFormat PUBLICATIONDATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+
+    /* hippo::documentdate = 20040124 */
+    private static final SimpleDateFormat DOCUMENTDATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     
     // ---------------------------------------------------- Instance variables
     // rmi
@@ -153,14 +167,14 @@ public class Webdav2JCRDumper implements Plugin {
                 
 
                 current.addMixin("mix:referenceable");
+                current.setProperty("published", false);
 
                 String contentLengthAsString = webdavNode.getProperty("DAV:", "getcontentlength").getPropertyAsString();
                 int contentLength = Integer.parseInt(contentLengthAsString);
 
                 if (contentLength > 0) {
                     byte[] content = webdavNode.getContents();
-                    Value value = valueFactory.createValue(new ByteArrayInputStream(content));
-                    current.setProperty("content", value);
+                    current.setProperty("content", valueFactory.createValue(new ByteArrayInputStream(content)));
                 }
 
                 // Add metadata properties
@@ -171,8 +185,53 @@ public class Webdav2JCRDumper implements Plugin {
                     if (!webdavPropertyNamespace.equals("DAV:")) {
                         String name = webdavPropertyName.getLocalName();
                         Property webdavProperty = webdavNode.getProperty(webdavPropertyNamespace, name);
-                        Value value = valueFactory.createValue(webdavProperty.getPropertyAsString());
-                        current.setProperty(name, value);
+                        if (name.equals("publicationDate")) {
+                            current.setProperty("published", true);
+                            try {
+                                Date d = new Date();
+                                d = PUBLICATIONDATE_FORMAT.parse(webdavProperty.getPropertyAsString());
+                                Calendar c = Calendar.getInstance();
+                                c.setTime(d);
+                                current.setProperty("publicationdate", c);
+                            } catch (java.text.ParseException e) {
+                            }
+                            
+                        } else if (name.equals("documentdate")) { 
+                            try {
+                                Date d = new Date();
+                                d = DOCUMENTDATE_FORMAT.parse(webdavProperty.getPropertyAsString());
+                                Calendar c = Calendar.getInstance();
+                                c.setTime(d);
+                                current.setProperty("documentdate", c);
+                                current.setProperty("year", c.get(Calendar.YEAR));
+                                current.setProperty("month", 1 + c.get(Calendar.MONTH));
+                                current.setProperty("day", c.get(Calendar.DAY_OF_MONTH));
+                            } catch (java.text.ParseException e) {
+                            }
+                        } else {
+                            Value value = valueFactory.createValue(webdavProperty.getPropertyAsString());
+                            current.setProperty(name, value);
+                        }
+                    } else {
+                        /*
+                        String name = webdavPropertyName.getLocalName();
+                        if (name.equals("creationdate")) {
+                            Property webdavProperty = webdavNode.getProperty(webdavPropertyNamespace, name);
+                            Date d = new Date();
+                            try
+                            {
+                                d = CREATIONDATE_FORMAT.parse(webdavProperty.getPropertyAsString());
+                                Calendar c = Calendar.getInstance();
+                                c.setTime(d);
+                                current.setProperty("year", c.get(Calendar.YEAR));
+                                current.setProperty("month", 1 + c.get(Calendar.MONTH));
+                                current.setProperty("day", c.get(Calendar.DAY_OF_MONTH));
+                            } catch (java.text.ParseException e) {
+                            }
+                            
+                        }
+                        */
+                        
                     }
                 }
             } else {

@@ -1,4 +1,4 @@
-# Copyright 2001-2006 Hippo (www.hippo.nl)
+# Copyright 2007 Hippo (www.hippo.nl)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ Edit the plugin.properties file according to your own settings.
 
 Step 2. Run
 
-$ mvn compile exec:java
+$ mvn -Dexec.args="plugin.properties" compile exec:java
 
 => The repository content is copied from the configured repo1 to the repo2
 The repo2 content is dumped to the console (only useful for debugging) 
