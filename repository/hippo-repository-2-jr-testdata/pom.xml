@@ -23,12 +23,12 @@
 
   <groupId>org.hippocms</groupId>
   <artifactId>hippo-webdav-2-jcr-testdata</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.01.00-dev</version>
   <name>Hippo Repository 2 testdata tool</name>
   
   <properties>
     <jackrabbit.version>1.3-r529494</jackrabbit.version>
-    <hippo.repository.version>1.0-SNAPSHOT</hippo.repository.version>
+    <!-- hippo.repository.version>1.0-SNAPSHOT</hippo.repository.version -->
   </properties>
   
   <repositories>
@@ -154,7 +154,8 @@
         </executions>
         <configuration>
           <mainClass>nl.hippo.webdav.batchprocessor.WebdavBatchProcessorMain</mainClass>
-          <commandlineArgs>plugin.properties</commandlineArgs>
+          <!-- use: mvn -Dexec.args="plugin.properties" exec:java --> 
+          <!-- commandlineArgs>plugin.properties</commandlineArgs -->
           <cleanupDeamonThreads>false</cleanupDeamonThreads>
         </configuration>
       </plugin>
