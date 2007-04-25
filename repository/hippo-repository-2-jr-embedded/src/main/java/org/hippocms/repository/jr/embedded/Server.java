@@ -17,56 +17,42 @@ package org.hippocms.repository.jr.embedded;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.AlreadyBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
-import javax.jcr.NamespaceRegistry;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.Row;
-import javax.jcr.query.RowIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
-import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
-import org.apache.jackrabbit.core.nodetype.NodeDef;
-import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
-import org.apache.jackrabbit.core.nodetype.PropDef;
-import org.apache.jackrabbit.core.nodetype.PropDefImpl;
+import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
-import org.apache.jackrabbit.core.nodetype.InvalidConstraintException;
-import org.apache.jackrabbit.core.nodetype.ValueConstraint;
-import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.core.nodetype.NodeDef;
+import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
+import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
+import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.nodetype.PropDef;
+import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.name.QName;
-import org.apache.jackrabbit.util.name.NamespaceMapping;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +66,7 @@ public class Server {
     public final static String NS_PREFIX = "hippo";
 
     public static final int RMI_PORT = 1099;
-    public static final String RMI_NAME = "jr-standalone";
+    public static final String RMI_NAME = "jackrabbit.repository";
 
     private final static QName NODE_FACETSEARCH = new QName(NS_URI, "facetsearch");
     private final static QName NODE_FACETRESULT = new QName(NS_URI, "facetresult");
