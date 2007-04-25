@@ -701,7 +701,6 @@ class VirtualNodeImpl
     }
   }
   public NodeIterator getNodes() throws RepositoryException {
-    System.out.println("BERRY#getnodes");
     if(children != null) {
       if(isNodeType("hippo:facetsearch"))
         instantiate();
@@ -710,7 +709,6 @@ class VirtualNodeImpl
       return this . new WrappingNodeIteratorImpl(actual.getNodes());
   }
   public NodeIterator getNodes(String namePattern) throws RepositoryException {
-    System.out.println("BERRY#getnodes(pattern)");
     return actual.getNodes(namePattern);
   }
   public Item getPrimaryItem() throws ItemNotFoundException, RepositoryException {
@@ -720,18 +718,15 @@ class VirtualNodeImpl
     return actual.getPrimaryNodeType();
   }
   public PropertyIterator getProperties() throws RepositoryException {
-    System.out.println("BERRY#getprops");
     if(actual == null) {
       return this . new PropertyIteratorImpl();
     } else
       return actual.getProperties();
   }
   public PropertyIterator getProperties(String namePattern) throws RepositoryException {
-    System.out.println("BERRY#getprop("+namePattern+")");
     return actual.getProperties(namePattern);
   }
   public Property getProperty(String relPath) throws PathNotFoundException, RepositoryException {
-    System.out.println("BERRY#getprop("+relPath+")");
     if(actual == null) {
       return (Property) properties.get(relPath);
     } else
@@ -747,14 +742,12 @@ class VirtualNodeImpl
     return actual.getVersionHistory();
   }
   public boolean hasNode(String relPath) throws RepositoryException {
-    System.out.println("BERRY#hasnode("+relPath+")");
     if(actual == null) {
       return children.containsKey(relPath);
     } else
       return actual.hasNode(relPath);
   }
   public boolean hasNodes() throws RepositoryException {
-    System.out.println("BERRY#hasnodes");
     if(actual == null) {
       return true;
       //FIXME return !children.isEmpty();
