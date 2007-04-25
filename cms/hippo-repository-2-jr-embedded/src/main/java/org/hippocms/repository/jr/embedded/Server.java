@@ -283,10 +283,79 @@ public class Server {
 
             Node docs, node, root = session.getRootNode();
             docs = root.addNode("navigation");
+
+            node = docs.addNode("bySourceTest1","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("bySourceTest2","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source", "section" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("bySourceTest3","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source", "section", "type" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("bySourceTest4","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source", "section", "type", "author" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("bySourceTest5","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source", "year", "month", "day", "author" });
+            node.setProperty("hippo:docbase", "files");
+            
+            node = docs.addNode("bySourceTest6","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source", "author", "year", "month", "day" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("bySourceTest7","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source", "documentdate", "section" });
+            node.setProperty("hippo:docbase", "files");
+            
+
+            node = docs.addNode("bySectionSource","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "section", "source", "year", "month", "author", "type" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("bySectionDate","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "section", "year", "month", "source", "author", "type" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("bySourceSection","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source", "section", "year", "month", "author", "type" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("bySourceDate","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "source", "year", "month", "section", "author", "type" });
+            node.setProperty("hippo:docbase", "files");
+
+            
+            
+            node = docs.addNode("byAuthorDate","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "author", "year", "month", "section", "source", "type" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("byAuthorSource","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "author", "section", "source", "year", "month", "type" });
+            node.setProperty("hippo:docbase", "files");
+            
+
+            node = docs.addNode("byDateAuthor","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "year", "month", "day", "author", "section", "source", "type" });
+            node.setProperty("hippo:docbase", "files");
+
+            node = docs.addNode("byDateSection","hippo:facetsearch");
+            node.setProperty("hippo:facets", new String[] { "year", "month", "day", "section", "source", "author", "type" });
+            node.setProperty("hippo:docbase", "files");
+
+            /*
+            Node docs, node, root = session.getRootNode();
+            docs = root.addNode("navigation");
             node = docs.addNode("byproduct","hippo:facetsearch");
             node.setProperty("hippo:facets", new String[] { "product", "brand" });
             node.setProperty("hippo:docbase", "documents");
-	    // node.setProperty("hippo:search", new String[] { "has='ambilight'" });
+	        // node.setProperty("hippo:search", new String[] { "has='ambilight'" });
+            
             docs = root.addNode("documents");
             node = docs.addNode("42PF9831D");
             node.addMixin("mix:referenceable");
@@ -337,8 +406,6 @@ public class Server {
             }
             System.out.println(found ? "FOUND" : "NOT FOUND");
 
-            session.save();
-
             if(false) {
               node = root.getNode("navigation/free/product[facet='television']/brand[facet='philips']");
               found = false;
@@ -350,8 +417,10 @@ public class Server {
               }
               System.out.println(found ? "FOUND" : "NOT FOUND");
             }
-
             
+            */
+
+            session.save();
             session.logout();
             server.run();
             server.close();
