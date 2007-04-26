@@ -15,6 +15,8 @@
  */
 package org.hippocms.repository.jr.embedded;
 
+import java.io.File;
+import java.io.IOException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,8 +29,11 @@ public class TrivialServerTest extends TestCase {
 
     private Server server;
 
-    public void setUp() throws RepositoryException {
-        server = new Server();
+    public void setUp() throws RepositoryException, IOException {
+        File repoDir = File.createTempFile("repo", "", new File(System.getProperty("user.dir")));
+        repoDir.delete();
+        repoDir.mkdirs();
+        server = new Server(repoDir.getPath());
     }
 
     public void tearDown() {

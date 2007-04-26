@@ -20,6 +20,7 @@ import java.lang.String;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.apache.jackrabbit.core.XASession;
 import org.xml.sax.SAXException;
 import org.xml.sax.ContentHandler;
 import java.security.AccessControlException;
@@ -29,19 +30,20 @@ import javax.jcr.query.*;
 import javax.jcr.version.*;
 import javax.jcr.lock.*;
 import javax.jcr.nodetype.*;
+import javax.transaction.xa.XAResource;
 
 /**
  * @version $Id$
  *
  */
-class VirtualSessionImpl implements Session
+class VirtualSessionImpl implements XASession
 {
   protected Repository repository;
-  protected Session actual;
-  VirtualSessionImpl(Session actual) {
+  protected XASession actual;
+  VirtualSessionImpl(XASession actual) {
     this.actual = actual;
   }
-  VirtualSessionImpl(Session session, Repository repository) {
+  VirtualSessionImpl(XASession session, Repository repository) {
     this.actual = session;
     this.repository = repository;
   }
@@ -64,7 +66,7 @@ class VirtualSessionImpl implements Session
     return actual.getWorkspace();
   }
   public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
-    return new VirtualSessionImpl(actual.impersonate(credentials));
+    return new VirtualSessionImpl((XASession) actual.impersonate(credentials));
   }
   public Node getRootNode() throws RepositoryException {
     Node root = actual.getRootNode();
@@ -159,5 +161,8 @@ class VirtualSessionImpl implements Session
   }
   public void removeLockToken(String lt) {
     actual.removeLockToken(lt);
+  }
+  public XAResource getXAResource() {
+    return actual.getXAResource();
   }
 }

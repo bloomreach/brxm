@@ -41,6 +41,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.RepositoryImpl;
+import org.apache.jackrabbit.core.XASession;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -195,7 +196,7 @@ public class Server {
         Session result = repository.login(new SimpleCredentials("username", "password".toCharArray()));
         log.info("Logged in as " + result.getUserID() + " to a " + repository.getDescriptor(Repository.REP_NAME_DESC)
                 + " repository.");
-        return new VirtualSessionImpl(result);
+        return new VirtualSessionImpl((XASession) result);
     }
 
     public void close() {
