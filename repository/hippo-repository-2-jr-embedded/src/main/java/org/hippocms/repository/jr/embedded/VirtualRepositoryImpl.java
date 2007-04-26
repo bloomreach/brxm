@@ -21,6 +21,7 @@ import javax.jcr.Session;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.XASession;
 
 public class VirtualRepositoryImpl
   implements Repository
@@ -37,15 +38,15 @@ public class VirtualRepositoryImpl
   }
   public Session login(Credentials credentials, String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException
   {
-    return new VirtualSessionImpl(actual.login(credentials, workspaceName), this);
+    return new VirtualSessionImpl((XASession) actual.login(credentials, workspaceName), this);
   }
   public Session login(Credentials credentials) throws LoginException, RepositoryException {
-    return new VirtualSessionImpl(actual.login(credentials), this);
+    return new VirtualSessionImpl((XASession) actual.login(credentials), this);
   }
   public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
-    return new VirtualSessionImpl(actual.login(workspaceName), this);
+    return new VirtualSessionImpl((XASession) actual.login(workspaceName), this);
   }
   public Session login() throws LoginException, RepositoryException {
-    return new VirtualSessionImpl(actual.login(), this);
+    return new VirtualSessionImpl((XASession) actual.login(), this);
   }
 }
