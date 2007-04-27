@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.IOException;
+
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -44,6 +46,13 @@ import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.NamespaceException;
+import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.ItemExistsException;
+import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.lock.LockException;
+import javax.jcr.version.VersionException;
+import javax.jcr.nodetype.ConstraintViolationException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.RepositoryImpl;
@@ -159,78 +168,43 @@ public class Server {
           }
           session.save();
 
-          /* FIXME:
-           * The following should be implemented as an XML file which is by default imported
-           * at startup when the navigation node is not present.
-           */
-          Node node, docs = session.getRootNode().addNode("navigation");
-
-          node = docs.addNode("bySourceTest1","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("bySourceTest2","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source", "section" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("bySourceTest3","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source", "section", "type" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("bySourceTest4","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source", "section", "type", "author" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("bySourceTest5","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source", "year", "month", "day", "author" });
-          node.setProperty("hippo:docbase", "files");
-            
-          node = docs.addNode("bySourceTest6","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source", "author", "year", "month", "day" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("bySourceTest7","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source", "documentdate", "section" });
-          node.setProperty("hippo:docbase", "files");
-          
-          node = docs.addNode("bySectionSource","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "section", "source", "year", "month", "author", "type" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("bySectionDate","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "section", "year", "month", "source", "author", "type" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("bySourceSection","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source", "section", "year", "month", "author", "type" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("bySourceDate","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "source", "year", "month", "section", "author", "type" });
-          node.setProperty("hippo:docbase", "files");
-            
-          node = docs.addNode("byAuthorDate","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "author", "year", "month", "section", "source", "type" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("byAuthorSource","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "author", "section", "source", "year", "month", "type" });
-          node.setProperty("hippo:docbase", "files");
-            
-          node = docs.addNode("byDateAuthor","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "year", "month", "day", "author", "section", "source", "type" });
-          node.setProperty("hippo:docbase", "files");
-
-          node = docs.addNode("byDateSection","hippo:facetsearch");
-          node.setProperty("hippo:facets", new String[] { "year", "month", "day", "section", "source", "author", "type" });
-          node.setProperty("hippo:docbase", "files");
-          session.save();
-          /* end of FIXME */
-
         } catch(ParseException ex) {
           throw new RepositoryException("Could not preload repository with hippo node types", ex);
         } catch(InvalidNodeTypeDefException ex) {
           throw new RepositoryException("Could not preload repository with hippo node types", ex);
+        }
+
+        if(!session.getRootNode().hasNode("navigation")) {
+          log.info("Loading initial content");
+          try {
+            InputStream in = getClass().getResourceAsStream("content.xml");
+            session.importXML("/", in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+          } catch(IOException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+          } catch(PathNotFoundException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+          } catch(ItemExistsException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+          } catch(ConstraintViolationException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+          } catch(VersionException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+          } catch(InvalidSerializedDataException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+          } catch(LockException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+          } catch(RepositoryException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+          }
+          session.save();
         }
     }
     public Server() throws RepositoryException {
@@ -268,10 +242,25 @@ public class Server {
 
     public void close() {
       if(jackrabbitRepository != null) {
+        Session session = null;
+        try {
+          session = login();
+          java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
+          session.exportSystemView("/navigation", out, false, false);
+        } catch(IOException ex) {
+          System.err.println(ex.getMessage());
+          ex.printStackTrace(System.err);
+        } catch(RepositoryException ex) {
+          System.err.println(ex.getMessage());
+          ex.printStackTrace(System.err);
+        } finally {
+          if(session != null)
+            session.logout();
+        }
         try {
           jackrabbitRepository.shutdown();
         } catch(Exception ex) {
-          // ignore;
+          // ignore
         }
         repository = null;
       }
