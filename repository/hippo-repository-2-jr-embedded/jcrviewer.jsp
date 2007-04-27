@@ -108,8 +108,8 @@
 </PRE>
 
 <%
-  repositorySession.save();
-  repositorySession.logout();
+    repositorySession.save();
+    repositorySession.logout();
 %>
 
 </DIV>
