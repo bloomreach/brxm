@@ -1,0 +1,14 @@
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.hippocms.org/'>
+[hippo:facetresult]
++ * multiple
+
+[hippo:facetsearch]
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
+- hippo:search (string) multiple
++ hippo:resultset (hippo:facetresult) = hippo:facetresult mandatory autocreated
++ * (hippo:facetsearch) = hippo:facetsearch multiple

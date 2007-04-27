@@ -15,8 +15,13 @@
  */
 package org.hippocms.repository.jr.embedded;
 
+import java.util.List;
+import java.util.Iterator;
+
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -38,6 +43,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.RepositoryImpl;
@@ -52,6 +58,8 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.nodetype.PropDefImpl;
+import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
+import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 import org.apache.jackrabbit.name.QName;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
@@ -74,14 +82,8 @@ public class Server {
     public final static String NS_URI = "http://www.hippocms.org/";
     public final static String NS_PREFIX = "hippo";
 
-    public static final int RMI_PORT = 1099;
-    public static final String RMI_NAME = "jackrabbit.repository";
-
-    private final static QName NODE_FACETSEARCH = new QName(NS_URI, "facetsearch");
-    private final static QName NODE_FACETRESULT = new QName(NS_URI, "facetresult");
-    private final static QName PROP_DOCBASE     = new QName(NS_URI, "docbase");
-    private final static QName PROP_FACETS      = new QName(NS_URI, "facets");
-    private final static QName PROP_SEARCH      = new QName(NS_URI, "search");
+    public static int RMI_PORT = 1099;
+    public static String RMI_NAME = "jackrabbit.repository";
 
     private String systemUsername = "username";
     private String systemPassword = "password";
@@ -117,95 +119,119 @@ public class Server {
           } catch(javax.jcr.NamespaceException ex) {
             log.warn(ex.getMessage());
           }
+
+          String cndName = "repository.cnd";
+          InputStream cndStream = getClass().getResourceAsStream(cndName);
+          BufferedReader cndInput = new BufferedReader(new InputStreamReader(cndStream));
+          CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
+          List ntdList = cndReader.getNodeTypeDefs();
           NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
           NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
-          try {
-            try {
-              ntreg.unregisterNodeType(NODE_FACETSEARCH);
-            } catch(NoSuchNodeTypeException ex) {
-              // save to ignore
+          boolean progress;
+          do {
+            progress = false;
+            for(Iterator iter=ntdList.iterator(); iter.hasNext(); ) {
+              NodeTypeDef ntd = (NodeTypeDef) iter.next();
+              try {
+                ntreg.unregisterNodeType(ntd.getName());
+                progress = true;
+              } catch(NoSuchNodeTypeException ex) {
+                // save to ignore
+              }
             }
+          } while(progress);
+          for(Iterator iter=ntdList.iterator(); iter.hasNext(); ) {
+            NodeTypeDef ntd = (NodeTypeDef) iter.next();
             try {
-              ntreg.unregisterNodeType(NODE_FACETRESULT);
-            } catch(NoSuchNodeTypeException ex) {
-              // save to ignore
+              try {
+                EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
+              } catch(NamespaceException ex) {
+                log.warn(ex.getMessage());
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+              }
+            } catch(RepositoryException ex) {
+              if(ex.getMessage().equals("not yet implemented")) {
+                log.warn("cannot override typing; hoping they are equivalent");
+              } else
+                throw ex;
             }
-
-            NodeTypeDef ntd = new NodeTypeDef();
-            ntd.setMixin(false);
-            ntd.setName(NODE_FACETRESULT);
-            try {
-              EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
-            } catch(javax.jcr.NamespaceException ex) {
-              log.warn(ex.getMessage());
-            }
-
-            PropDefImpl pd;
-            PropDef[] pds = new PropDef[3];
-            pds[0] = pd = new PropDefImpl();
-            pd.setName(PROP_DOCBASE);
-            pd.setRequiredType(PropertyType.STRING);
-            pd.setMandatory(true);
-            pd.setAutoCreated(false);
-            pd.setMultiple(false);
-            pd.setProtected(false);
-            pd.setDeclaringNodeType(NODE_FACETSEARCH);
-            pds[1] = pd = new PropDefImpl();
-            pd.setName(PROP_FACETS);
-            pd.setRequiredType(PropertyType.STRING);
-            pd.setMandatory(true);
-            pd.setAutoCreated(false);
-            pd.setMultiple(true);
-            pd.setProtected(false);
-            pd.setDeclaringNodeType(NODE_FACETSEARCH);
-            pds[2] = pd = new PropDefImpl();
-            pd.setName(PROP_SEARCH);
-            pd.setRequiredType(PropertyType.STRING);
-            pd.setMandatory(false);
-            pd.setAutoCreated(false);
-            pd.setMultiple(true);
-            pd.setProtected(false);
-            pd.setDeclaringNodeType(NODE_FACETSEARCH);
-
-            NodeDefImpl nd;
-            NodeDef[] nds = new NodeDef[2];
-            nds[0] = nd = new NodeDefImpl();
-            nd.setName(new QName("", "resultset"));
-            nd.setRequiredPrimaryTypes(new QName[]{NODE_FACETRESULT});
-            nd.setDefaultPrimaryType(NODE_FACETRESULT);
-            nd.setProtected(false);
-            nd.setAllowsSameNameSiblings(true);
-            nd.setDeclaringNodeType(NODE_FACETSEARCH);
-            nds[1] = nd = new NodeDefImpl();
-            nd.setName(new QName("", "*"));
-            nd.setRequiredPrimaryTypes(new QName[]{NODE_FACETSEARCH});
-            nd.setDefaultPrimaryType(NODE_FACETSEARCH);
-            nd.setProtected(false);
-            nd.setAllowsSameNameSiblings(true);
-            nd.setDeclaringNodeType(NODE_FACETSEARCH);
-
-            ntd = new NodeTypeDef();
-            ntd.setMixin(false);
-            ntd.setPropertyDefs(pds);
-            ntd.setChildNodeDefs(nds);
-            ntd.setName(NODE_FACETSEARCH);
-            try {
-              EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
-            } catch(javax.jcr.NamespaceException ex) {
-              log.warn(ex.getMessage());
-              System.err.println(ex.getMessage());
-              ex.printStackTrace(System.err);
-            }
-          } catch(RepositoryException ex) {
-            if(ex.getMessage().equals("not yet implemented")) {
-              log.warn("cannot override typing; hoping they are equivalent");
-            } else
-              throw ex;
           }
           session.save();
-      } catch(InvalidNodeTypeDefException ex) {
-        throw new RepositoryException("Could not preload repository with hippo node types", ex);
-      }
+
+          /* FIXME:
+           * The following should be implemented as an XML file which is by default imported
+           * at startup when the navigation node is not present.
+           */
+          Node node, docs = session.getRootNode().addNode("navigation");
+
+          node = docs.addNode("bySourceTest1","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("bySourceTest2","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source", "section" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("bySourceTest3","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source", "section", "type" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("bySourceTest4","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source", "section", "type", "author" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("bySourceTest5","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source", "year", "month", "day", "author" });
+          node.setProperty("hippo:docbase", "files");
+            
+          node = docs.addNode("bySourceTest6","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source", "author", "year", "month", "day" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("bySourceTest7","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source", "documentdate", "section" });
+          node.setProperty("hippo:docbase", "files");
+          
+          node = docs.addNode("bySectionSource","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "section", "source", "year", "month", "author", "type" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("bySectionDate","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "section", "year", "month", "source", "author", "type" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("bySourceSection","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source", "section", "year", "month", "author", "type" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("bySourceDate","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "source", "year", "month", "section", "author", "type" });
+          node.setProperty("hippo:docbase", "files");
+            
+          node = docs.addNode("byAuthorDate","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "author", "year", "month", "section", "source", "type" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("byAuthorSource","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "author", "section", "source", "year", "month", "type" });
+          node.setProperty("hippo:docbase", "files");
+            
+          node = docs.addNode("byDateAuthor","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "year", "month", "day", "author", "section", "source", "type" });
+          node.setProperty("hippo:docbase", "files");
+
+          node = docs.addNode("byDateSection","hippo:facetsearch");
+          node.setProperty("hippo:facets", new String[] { "year", "month", "day", "section", "source", "author", "type" });
+          node.setProperty("hippo:docbase", "files");
+          session.save();
+          /* end of FIXME */
+
+        } catch(ParseException ex) {
+          throw new RepositoryException("Could not preload repository with hippo node types", ex);
+        } catch(InvalidNodeTypeDefException ex) {
+          throw new RepositoryException("Could not preload repository with hippo node types", ex);
+        }
     }
     public Server() throws RepositoryException {
         initialize(".");

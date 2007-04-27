@@ -27,12 +27,14 @@ public class WorkflowImpl
   public WorkflowImpl() {
   }
   public void doAction1() throws Exception, RemoteException {
+    System.err.println("\n\nBERRY#doAction1\n\n");
     if(hasAction2 == true) {
       throw new Exception("action1 cannot be invoked when action2 has been performed");
     }
     hasAction1 = true;
   }
   public void doAction2() throws RemoteException {
+    System.err.println("\n\nBERRY#doAction2\n\n");
     hasAction2 = true;
   }
 

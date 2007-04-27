@@ -34,7 +34,6 @@ public class WorkflowTest extends TestCase {
   private static  String NODENAME = "documentWithWorkflow";
   private Server server;
 
-  /*
   public void setUp() throws RepositoryException {
     server = new Server("rmi://localhost:1099/jackrabbit.repository");
   }
@@ -119,5 +118,4 @@ public class WorkflowTest extends TestCase {
     assertFalse(node.getProperty("HasAction2").getBoolean());
     commonEnd(session);
   }
-  */
 }
