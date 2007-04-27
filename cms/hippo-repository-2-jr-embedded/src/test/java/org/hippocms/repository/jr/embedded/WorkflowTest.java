@@ -21,9 +21,9 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import junit.framework.TestCase;
 
-import org.hippocms.repository.jr.decoration.WorkspaceDecorator;
-import org.hippocms.repository.jr.decoration.NodeDecorator;
-import org.hippocms.repository.jr.decoration.Workflow;
+import org.hippocms.repository.jr.servicing.WorkspaceDecorator;
+import org.hippocms.repository.jr.servicing.NodeDecorator;
+import org.hippocms.repository.jr.servicing.Workflow;
 
 /**
  * @version $Id$
