@@ -56,14 +56,14 @@ import org.apache.jackrabbit.name.QName;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 
-import org.hippocms.repository.jr.decoration.HippoDecoratorFactory;
+import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.hippocms.repository.jr.decoration.WorkspaceDecorator;
-import org.hippocms.repository.jr.decoration.NodeDecorator;
-import org.hippocms.repository.jr.decoration.Workflow;
+import org.hippocms.repository.jr.servicing.WorkspaceDecorator;
+import org.hippocms.repository.jr.servicing.NodeDecorator;
+import org.hippocms.repository.jr.servicing.Workflow;
 
 /**
  * @version $Id$
@@ -89,7 +89,7 @@ public class Server {
     private static final Logger log = LoggerFactory.getLogger(Server.class);
     private String workingDir;
     private JackrabbitRepository jackrabbitRepository;
-    private HippoDecoratorFactory hippoRepositoryFactory;
+    private ServicingDecoratorFactory hippoRepositoryFactory;
     private Remote rmiRepository;
     protected Repository repository;
 
@@ -104,7 +104,7 @@ public class Server {
 
         repository = new VirtualRepositoryImpl(repository);
 
-        hippoRepositoryFactory = new HippoDecoratorFactory();
+        hippoRepositoryFactory = new ServicingDecoratorFactory();
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
 
         Session session = login();
@@ -215,7 +215,7 @@ public class Server {
           try {
             ClientRepositoryFactory factory = new ClientRepositoryFactory();
             repository = factory.getRepository(location);
-            hippoRepositoryFactory = new HippoDecoratorFactory();
+            hippoRepositoryFactory = new ServicingDecoratorFactory();
             repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
           } catch(RemoteException ex) {
             // FIXME
