@@ -17,6 +17,7 @@ package org.hippocms.repository.jr.embedded;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.Properties;
 
 import java.io.File;
 import java.io.InputStream;
@@ -32,6 +33,21 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAResource;
+
+import com.atomikos.icatch.config.TSInitInfo;
+import com.atomikos.icatch.config.UserTransactionService;
+import com.atomikos.icatch.config.UserTransactionServiceImp;
+import com.atomikos.icatch.jta.UserTransactionManager;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -87,6 +103,7 @@ import org.hippocms.repository.jr.servicing.ClientServicesAdapterFactory;
  *
  */
 public class Server {
+  public static boolean testclause = true;
     
     public final static String NS_URI = "http://www.hippocms.org/";
     public final static String NS_PREFIX = "hippo";
@@ -103,9 +120,39 @@ public class Server {
     private ServicingDecoratorFactory hippoRepositoryFactory;
     private Remote rmiRepository;
     protected Repository repository;
+    private UserTransactionService uts;
 
-    private void initialize(String workingDirectory) throws RepositoryException {
+    private void initializeConfiguration(String workingDirectory) throws RepositoryException {
         workingDir = new File(workingDirectory).getAbsolutePath();
+    }
+    private void initializeTransactions() throws RepositoryException {
+        // FIXME: bring these properties into resource
+        uts = new UserTransactionServiceImp();
+        TSInitInfo initInfo = uts.createTSInitInfo();
+        Properties initProperties = new Properties();
+        initProperties.setProperty("com.atomikos.icatch.service",
+                                   "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
+        initProperties.setProperty("com.atomikos.icatch.console_file_name", "tm.out");
+        initProperties.setProperty("com.atomikos.icatch.console_file_limit", "-1");
+        initProperties.setProperty("com.atomikos.icatch.console_file_count", "1");
+        initProperties.setProperty("com.atomikos.icatch.checkpoint_interval", "500");
+        initProperties.setProperty("com.atomikos.icatch.output_dir", workingDir);
+        initProperties.setProperty("com.atomikos.icatch.log_base_dir", workingDir);
+        initProperties.setProperty("com.atomikos.icatch.log_base_name", "tmlog");
+        initProperties.setProperty("com.atomikos.icatch.max_actives", "50");
+        initProperties.setProperty("com.atomikos.icatch.max_timeout", "60000");
+        initProperties.setProperty("com.atomikos.icatch.tm_unique_name", "tm");
+        initProperties.setProperty("com.atomikos.icatch.serial_jta_transactions", "true");
+        initProperties.setProperty("com.atomikos.icatch.automatic_resource_registration", "true");
+        initProperties.setProperty("com.atomikos.icatch.console_log_level", "WARN");
+        initProperties.setProperty("com.atomikos.icatch.enable_logging", "true");
+        initInfo.setProperties(initProperties);
+        uts.init(initInfo);
+    }
+    private void initialize(String workingDirectory) throws RepositoryException {
+        initializeConfiguration(workingDirectory);
+        initializeTransactions();
+
         InputStream config = getClass().getResourceAsStream("repository.xml");
         jackrabbitRepository = RepositoryImpl.create(RepositoryConfig.create(config, workingDir));
         repository = jackrabbitRepository;
@@ -208,11 +255,13 @@ public class Server {
         }
     }
     public Server() throws RepositoryException {
-        initialize(".");
+        initialize(new File(System.getProperty("user.dir")).getAbsolutePath());
     }
     public Server(String location) throws RepositoryException {
         if(location.startsWith("rmi://")) {
           try {
+            initializeConfiguration(location);
+            initializeTransactions();
             ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory();
             ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
             repository = repositoryFactory.getRepository(location);
@@ -270,6 +319,10 @@ public class Server {
         } catch(Exception ex) {
           // ignore
         }
+      }
+      if(uts != null) {
+        uts.shutdownWait();
+        uts = null;
       }
       repository = null;
     }

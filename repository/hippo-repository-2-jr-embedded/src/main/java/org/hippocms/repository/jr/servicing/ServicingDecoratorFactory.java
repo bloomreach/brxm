@@ -21,7 +21,7 @@ public class ServicingDecoratorFactory
   implements DecoratorFactory
 {
     protected WeakHashMap<Repository,RepositoryDecorator> repositoryDecorators;
-    protected WeakHashMap<Session,SessionDecorator> sessionDecorators;
+    protected WeakHashMap<Session,ServicingSessionImpl> sessionDecorators;
     protected WeakHashMap<Workspace,ServicingWorkspaceImpl> workspaceDecorators;
     //protected WeakHashMap<Node,ServicingNodeImpl> nodeDecorators;
     //protected WeakHashMap<Property,PropertyDecorator> propertyDecorators;
@@ -37,7 +37,7 @@ public class ServicingDecoratorFactory
 
     public ServicingDecoratorFactory() {
         repositoryDecorators = new WeakHashMap<Repository,RepositoryDecorator>();
-        sessionDecorators = new WeakHashMap<Session,SessionDecorator>();
+        sessionDecorators = new WeakHashMap<Session,ServicingSessionImpl>();
         workspaceDecorators = new WeakHashMap<Workspace,ServicingWorkspaceImpl>();
         //nodeDecorators = new WeakHashMap<Node,ServicingNodeImpl>();
         //propertyDecorators = new WeakHashMap<Property,PropertyDecorator>();
@@ -62,7 +62,7 @@ public class ServicingDecoratorFactory
     }
     public Session getSessionDecorator(Repository repository, Session session) {
         if(!sessionDecorators.containsKey(session)) {
-            SessionDecorator wrapper = new SessionDecorator(this, repository, session);
+            ServicingSessionImpl wrapper = new ServicingSessionImpl(this, repository, session);
             sessionDecorators.put(session, wrapper);
             return wrapper;
         } else

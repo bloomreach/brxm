@@ -15,17 +15,25 @@
  */
 package org.hippocms.repository.jr.servicing;
 
+import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.Node;
 
 import org.apache.jackrabbit.rmi.client.ClientAdapterFactory;
+import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory
   implements LocalServicingAdapterFactory
 {
+    public Session getSession(Repository repository, RemoteSession remote) {
+      if(remote instanceof RemoteServicingSession)
+        return new ClientServicingSession(repository, (RemoteServicingSession)remote, this);
+      else
+        return super.getSession(repository, remote);
+    }
     public Workspace getWorkspace(Session session, RemoteWorkspace remote) {
       if(remote instanceof RemoteServicingWorkspace)
         return new ClientServicingWorkspace(session, (RemoteServicingWorkspace)remote, this);

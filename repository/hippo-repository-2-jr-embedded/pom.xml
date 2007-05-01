@@ -27,7 +27,7 @@
   <name>Hippo Repository 2.0 JackRabbit Standalone Application</name>
   
   <properties>
-    <jackrabbit.version>1.3-r529494</jackrabbit.version>
+    <jackrabbit.version>1.3</jackrabbit.version>
   </properties>
   
   <repositories>
@@ -44,6 +44,13 @@
       <name>Day Repository for JCR</name>
       <url>http://www.day.com/maven/</url>
       <layout>legacy</layout>
+    </repository>
+    <repository>
+      <!-- For the Atomikos JARs -->
+      <id>logicblaze.deps</id>
+      <url>http://repo.logicblaze.com/maven2-all</url>
+      <snapshots><enabled>true</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
     </repository>
   </repositories>
  
@@ -230,25 +237,21 @@
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
       <version>3.1.4</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions</artifactId>
       <version>3.1.4</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
       <version>3.1.4</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>atomikos-util</artifactId>
       <version>3.1.4</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -277,6 +280,7 @@
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
+            <exclude>**/WorkflowTest.java</exclude>
             <exclude>**/BasicTest.java</exclude>
             <exclude>**/FacettedNavigationTest.java</exclude>
             <exclude>**/BusinessMethodsTest.java</exclude>
