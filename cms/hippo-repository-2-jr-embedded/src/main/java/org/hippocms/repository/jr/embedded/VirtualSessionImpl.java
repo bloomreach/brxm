@@ -32,6 +32,22 @@ import javax.jcr.lock.*;
 import javax.jcr.nodetype.*;
 import javax.transaction.xa.XAResource;
 
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAResource;
+
+// FIXME: depend only on JTA, not on Atomikos
+import com.atomikos.icatch.config.TSInitInfo;
+import com.atomikos.icatch.config.UserTransactionService;
+import com.atomikos.icatch.config.UserTransactionServiceImp;
+import com.atomikos.icatch.jta.UserTransactionManager;
+
 /**
  * @version $Id$
  *
@@ -40,12 +56,33 @@ class VirtualSessionImpl implements XASession
 {
   protected Repository repository;
   protected XASession actual;
-  VirtualSessionImpl(XASession actual) {
-    this.actual = actual;
+  protected UserTransactionManager utm = null;
+  private void initialize() throws RepositoryException {
+    try {
+      utm = new UserTransactionManager();
+      utm.setStartupTransactionService(false);
+      utm.init();
+    } catch(SystemException ex) {
+      throw new RepositoryException("cannot initialize transaction manager", ex);
+    }
   }
-  VirtualSessionImpl(XASession session, Repository repository) {
+  public UserTransactionManager getUserTransactionManager() {
+    return utm;
+  }
+  VirtualSessionImpl(XASession actual) throws RepositoryException {
+    this.actual = actual;
+    initialize();
+  }
+  VirtualSessionImpl(XASession session, Repository repository) throws RepositoryException {
     this.actual = session;
     this.repository = repository;
+    initialize();
+  }
+  protected void finalize() {
+    if(utm != null) {
+      utm.close();
+      utm = null;
+    }
   }
   public Repository getRepository() {
     if(repository != null)

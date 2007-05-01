@@ -30,6 +30,15 @@ import org.hippocms.repository.jr.servicing.ServicingWorkspace;
 import org.hippocms.repository.jr.servicing.ServicingNode;
 import org.hippocms.repository.jr.servicing.Workflow;
 
+import org.apache.jackrabbit.core.XASession;
+
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.SystemException;
+import javax.transaction.xa.XAResource;
+// FIXME: depend only on JTA, not on Atomikos
+import com.atomikos.icatch.jta.UserTransactionManager;
+
 /**
  * @version $Id$
  */
@@ -39,18 +48,23 @@ public class WorkflowTest extends TestCase {
   private static  String NODENAME = "documentWithWorkflow";
   private Server backgroundServer;
   private Server server;
+  private boolean startService = true;
 
   protected void setUp() throws Exception {
-    backgroundServer = new Server();
-    backgroundServer.run(true);
-    Thread.sleep(3000);
+    if(startService) {
+      backgroundServer = new Server();
+      backgroundServer.run(true);
+      Thread.sleep(3000);
+    }
     server = new Server("rmi://localhost:1099/jackrabbit.repository");
   }
 
   protected void tearDown() throws Exception {
     server.close();
-    backgroundServer.close();
-    Thread.sleep(3000);
+    if(startService) {
+      backgroundServer.close();
+      Thread.sleep(3000);
+    }
   }
 
   private Session commonStart() throws Exception {
@@ -114,19 +128,42 @@ public class WorkflowTest extends TestCase {
   }
 
   public void testFailingWorkflow() throws Exception {
-    Session session = commonStart();
-    Node node = session.getRootNode().getNode(NODENAME);
-    Workflow workflow = ((ServicingNode)node).getWorkflow();
-    assertFalse(node.getProperty("HasAction1").getBoolean());
     try {
-      workflow.doAction2();
-      workflow.doAction1();
-      session.save();
-      fail("workflow should have failed");
-    } catch(Exception ex) {
+      Session session = commonStart();
+      Node node = session.getRootNode().getNode(NODENAME);
+
+      UserTransactionManager utm = new UserTransactionManager();
+      utm.setStartupTransactionService(false);
+      utm.init();
+
+      TransactionManager tm = utm;
+      tm.begin();
+      Transaction tx = tm.getTransaction();
+      XAResource sessionXARes = ((XASession)session).getXAResource();
+      tx.enlistResource(sessionXARes);
+
+      Workflow workflow = ((ServicingNode)node).getWorkflow();
+      assertFalse(node.getProperty("HasAction1").getBoolean());
+      try {
+        workflow.doAction2();
+        session.save();
+        workflow.doAction1();
+        session.save();
+        fail("workflow should have failed");
+        tx.commit();
+      } catch(Exception ex) {
+        // if(tx.getStatus() == Status.STATUS_ACTIVE || tx.getStatus() == Status.STATUS_UNKNOWN) {
+        tx.rollback();
+        //}
+        // tx.delistResource(sessionXARes, XAResource.TMSUCCESS);
+      }
+      session.refresh(false);
+      node = session.getRootNode().getNode(NODENAME);
+      assertFalse(node.getProperty("HasAction1").getBoolean());
+      assertFalse(node.getProperty("HasAction2").getBoolean());
+      commonEnd(session);
+    } catch(SystemException ex) {
+      throw new RepositoryException("cannot initialize transaction manager", ex);
     }
-    assertFalse(node.getProperty("HasAction1").getBoolean());
-    assertFalse(node.getProperty("HasAction2").getBoolean());
-    commonEnd(session);
   }
 }

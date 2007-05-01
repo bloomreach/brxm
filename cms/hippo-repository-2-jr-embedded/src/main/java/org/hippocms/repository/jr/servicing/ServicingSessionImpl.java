@@ -46,15 +46,21 @@ import javax.jcr.version.VersionException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.jackrabbit.core.XASession;
+
+import javax.transaction.xa.XAResource;
+
 /**
  */
-public class SessionDecorator implements Session {
+public class ServicingSessionImpl
+  implements ServicingSession
+{
 
     protected final DecoratorFactory factory;
 
     protected final Repository repository;
 
-    protected final Session session;
+    public final Session session;
 
     /**
      * @param factory
@@ -62,11 +68,14 @@ public class SessionDecorator implements Session {
      *                   session decorator.
      * @param session
      */
-    public SessionDecorator(
-            DecoratorFactory factory, Repository repository, Session session) {
+    public ServicingSessionImpl(DecoratorFactory factory, Repository repository, Session session) {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
+    }
+
+    public XAResource getXAResource() {
+        return ((XASession)session).getXAResource();
     }
 
     /** {@inheritDoc} */
