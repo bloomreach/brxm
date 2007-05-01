@@ -74,13 +74,13 @@ import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 
 import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
+import org.hippocms.repository.jr.servicing.ServerServicingAdapterFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.hippocms.repository.jr.servicing.WorkspaceDecorator;
-import org.hippocms.repository.jr.servicing.NodeDecorator;
 import org.hippocms.repository.jr.servicing.Workflow;
+import org.hippocms.repository.jr.servicing.ClientServicesAdapterFactory;
 
 /**
  * @version $Id$
@@ -144,7 +144,7 @@ public class Server {
               try {
                 ntreg.unregisterNodeType(ntd.getName());
                 progress = true;
-              } catch(NoSuchNodeTypeException ex) {
+              } catch(RepositoryException ex) {
                 // save to ignore
               }
             }
@@ -171,7 +171,7 @@ public class Server {
         } catch(ParseException ex) {
           throw new RepositoryException("Could not preload repository with hippo node types", ex);
         } catch(InvalidNodeTypeDefException ex) {
-          throw new RepositoryException("Could not preload repository with hippo node types", ex);
+          log.error("Could not preload repository with hippo node types: "+ex.getMessage());
         }
 
         if(!session.getRootNode().hasNode("navigation")) {
@@ -213,10 +213,9 @@ public class Server {
     public Server(String location) throws RepositoryException {
         if(location.startsWith("rmi://")) {
           try {
-            ClientRepositoryFactory factory = new ClientRepositoryFactory();
-            repository = factory.getRepository(location);
-            hippoRepositoryFactory = new ServicingDecoratorFactory();
-            repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
+            ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory();
+            ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
+            repository = repositoryFactory.getRepository(location);
           } catch(RemoteException ex) {
             // FIXME
           } catch(NotBoundException ex) {
@@ -258,41 +257,45 @@ public class Server {
             session.logout();
         }
         try {
+          if(rmiRepository != null) {
+            rmiRepository = null;
+            try {
+              Naming.unbind(RMI_NAME);
+            } catch(Exception ex) {
+              // ignore
+            }
+          }
           jackrabbitRepository.shutdown();
+          jackrabbitRepository = null;
         } catch(Exception ex) {
           // ignore
         }
-        repository = null;
       }
+      repository = null;
     }
 
-    public void run() throws RemoteException, AlreadyBoundException {
+    static Registry registry = null;
+    public void run(boolean background) throws RemoteException, AlreadyBoundException {
       Runtime.getRuntime().addShutdownHook(new Thread() {
           public void run() {
             close();
-            if(rmiRepository != null) {
-              rmiRepository = null;
-              try {
-                Naming.unbind(RMI_NAME);
-              }
-              catch (Exception e) {
-                // ignore
-              }
-            }
           }
         });
-      Remote remote = new ServerAdapterFactory().getRemoteRepository(repository);
+      Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
       System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-      Registry registry = LocateRegistry.createRegistry(RMI_PORT);
+      if(registry == null)
+        registry = LocateRegistry.createRegistry(RMI_PORT);
       registry.bind(RMI_NAME, remote);
       rmiRepository = remote;
       log.info("RMI Server available on rmi://localhost:"+RMI_PORT+"/"+RMI_NAME);
-      for(;;) {
-        try {
-          Thread.sleep(333);
-        } catch (InterruptedException ex) {
-          System.err.println(ex);
-        }
+      if(!background) {
+        for(;;) {
+            try {
+              Thread.sleep(333);
+            } catch (InterruptedException ex) {
+              System.err.println(ex);
+            }
+          }
       }
     }
 
@@ -303,7 +306,7 @@ public class Server {
                 server = new Server(args.length > 0 ? args[0] : ".");
             else
                 server = new Server();
-            server.run();
+            server.run(false);
             server.close();
         } catch(RemoteException ex) {
             System.err.println(ex.getMessage());

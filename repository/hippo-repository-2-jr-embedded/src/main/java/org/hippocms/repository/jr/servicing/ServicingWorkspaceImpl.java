@@ -43,8 +43,8 @@ import org.xml.sax.ContentHandler;
 /**
  * Simple workspace decorator.
  */
-public class WorkspaceDecorator extends AbstractDecorator
-  implements Workspace
+public class ServicingWorkspaceImpl extends AbstractDecorator
+  implements ServicingWorkspace
 {
     final static String CVS_ID = "$Id$";
 
@@ -59,8 +59,7 @@ public class WorkspaceDecorator extends AbstractDecorator
      * @param session
      * @param workspace
      */
-    public WorkspaceDecorator(
-            DecoratorFactory factory, Session session, Workspace workspace) {
+    public ServicingWorkspaceImpl(DecoratorFactory factory, Session session, Workspace workspace) {
         super(factory, session);
         this.workspace = workspace;
         servicesManager = new ServicesManagerImpl(session);

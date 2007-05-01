@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 
 import org.apache.jackrabbit.rmi.server.RemoteAdapterFactory;
 
-public interface ServicingRemoteAdapterFactory extends RemoteAdapterFactory {
+public interface RemoteServicingAdapterFactory extends RemoteAdapterFactory {
   public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager)
     throws RemoteException;
 }

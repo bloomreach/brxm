@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -47,11 +49,15 @@ public class ServicesManagerImpl
     usedWorkflows = new LinkedList<Entry>();
   }
   public Workflow getWorkflow(Node node) throws RepositoryException {
-    WorkflowImpl workflow = new WorkflowImpl();
-    workflow.setAction1(node.getProperty("HasAction1").getBoolean());
-    workflow.setAction2(node.getProperty("HasAction2").getBoolean());
-    usedWorkflows.add(new Entry(workflow, node));
-    return workflow;
+    try {
+      WorkflowImpl workflow = new WorkflowImpl();
+      workflow.setAction1(node.getProperty("HasAction1").getBoolean());
+      workflow.setAction2(node.getProperty("HasAction2").getBoolean());
+      usedWorkflows.add(new Entry(workflow, node));
+      return workflow;
+    } catch(RemoteException ex) {
+      throw new RepositoryException("workflow inaccessible", ex);
+    }
   }
   void save(WorkflowImpl workflow, Node node) throws RepositoryException {
     node.setProperty("HasAction1",workflow.getAction1());

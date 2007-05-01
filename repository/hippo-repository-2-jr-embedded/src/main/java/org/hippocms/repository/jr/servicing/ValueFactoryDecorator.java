@@ -91,6 +91,6 @@ public class ValueFactoryDecorator
      * @inheritDoc
      */
     public Value createValue(Node value) throws RepositoryException {
-        return valueFactory.createValue(NodeDecorator.unwrap(value));
+        return valueFactory.createValue(ServicingNodeImpl.unwrap(value));
     }
 }

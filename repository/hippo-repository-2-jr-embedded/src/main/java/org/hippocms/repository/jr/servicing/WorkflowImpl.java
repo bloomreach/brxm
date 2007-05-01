@@ -18,23 +18,29 @@ package org.hippocms.repository.jr.servicing;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
-public class WorkflowImpl
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class WorkflowImpl extends UnicastRemoteObject
   implements Workflow
 {
+  private static final Logger log = LoggerFactory.getLogger(WorkflowImpl.class);
+
   boolean hasAction1 = false;
   boolean hasAction2 = false;
-  public WorkflowImpl() {
+  public WorkflowImpl() throws RemoteException {
   }
   public void doAction1() throws Exception, RemoteException {
-    System.err.println("\n\nBERRY#doAction1\n\n");
+    log.info("ACTION 1 CALLED");
     if(hasAction2 == true) {
       throw new Exception("action1 cannot be invoked when action2 has been performed");
     }
     hasAction1 = true;
   }
   public void doAction2() throws RemoteException {
-    System.err.println("\n\nBERRY#doAction2\n\n");
+    log.info("ACTION 2 CALLED");
     hasAction2 = true;
   }
 
