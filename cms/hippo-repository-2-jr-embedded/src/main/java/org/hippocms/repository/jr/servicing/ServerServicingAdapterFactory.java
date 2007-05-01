@@ -17,23 +17,32 @@ package org.hippocms.repository.jr.servicing;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.Node;
 import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
+import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
-public class ServicingServerAdapterFactory extends ServerAdapterFactory
-                                                   implements ServicingRemoteAdapterFactory
+public class ServerServicingAdapterFactory extends ServerAdapterFactory
+  implements RemoteServicingAdapterFactory
 {
-  public ServicingServerAdapterFactory() {
+  public ServerServicingAdapterFactory() {
   }
-  public RemoteWorkspace getRemoteWorkspace(Workspace workspace)
-    throws RemoteException {
-    return new ServicingServerWorkspace((WorkspaceDecorator)workspace, this);
+  public RemoteWorkspace getRemoteWorkspace(Workspace workspace) throws RemoteException {
+    if(workspace instanceof ServicingWorkspaceImpl)
+      return new ServerServicingWorkspace((ServicingWorkspaceImpl)workspace, this);
+    else
+      return super.getRemoteWorkspace(workspace);
   }
-  public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager)
-    throws RemoteException {
+  public RemoteNode getRemoteNode(Node node) throws RemoteException {
+    if(node instanceof ServicingNodeImpl)
+      return new ServerServicingNode((ServicingNodeImpl)node, this);
+    else
+      return super.getRemoteNode(node);
+  }
+  public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager) throws RemoteException {
     return new ServerServicesManager(servicesManager, this);
   }
 }

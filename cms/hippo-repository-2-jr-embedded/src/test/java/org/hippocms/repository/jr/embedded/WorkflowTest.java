@@ -19,10 +19,15 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
-import junit.framework.TestCase;
 
-import org.hippocms.repository.jr.servicing.WorkspaceDecorator;
-import org.hippocms.repository.jr.servicing.NodeDecorator;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import java.rmi.RemoteException;
+import java.rmi.AlreadyBoundException;
+
+import org.hippocms.repository.jr.servicing.ServicingWorkspace;
+import org.hippocms.repository.jr.servicing.ServicingNode;
 import org.hippocms.repository.jr.servicing.Workflow;
 
 /**
@@ -32,17 +37,23 @@ public class WorkflowTest extends TestCase {
   private final static String SVN_ID = "$Id$";
 
   private static  String NODENAME = "documentWithWorkflow";
+  private Server backgroundServer;
   private Server server;
 
-  public void setUp() throws RepositoryException {
+  protected void setUp() throws Exception {
+    backgroundServer = new Server();
+    backgroundServer.run(true);
+    Thread.sleep(3000);
     server = new Server("rmi://localhost:1099/jackrabbit.repository");
   }
 
-  public void tearDown() {
+  protected void tearDown() throws Exception {
     server.close();
+    backgroundServer.close();
+    Thread.sleep(3000);
   }
 
-  private Session commonStart() throws RepositoryException {
+  private Session commonStart() throws Exception {
     Session session = server.login();
     Node node, root = session.getRootNode();
     assertNotNull(session);
@@ -52,7 +63,7 @@ public class WorkflowTest extends TestCase {
     session.save();
     return session;
   }
-  private void commonEnd(Session session) throws RepositoryException {
+  private void commonEnd(Session session) throws Exception {
     session.save();
     Node root = session.getRootNode();
     Node node = root.getNode(NODENAME);
@@ -62,18 +73,19 @@ public class WorkflowTest extends TestCase {
     session.logout();
   }
 
-  public void testGetWorkflow() throws RepositoryException {
+  public void testGetWorkflow() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
     assertNotNull(node);
-    Workflow workflow = ((NodeDecorator)node).getWorkflow();
+    Workflow workflow = ((ServicingNode)node).getWorkflow();
     assertNotNull(workflow);
     commonEnd(session);
   }
-  public void testBasicWorkflow() throws RepositoryException {
+
+  public void testBasicWorkflow() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
-    Workflow workflow = ((NodeDecorator)node).getWorkflow();
+    Workflow workflow = ((ServicingNode)node).getWorkflow();
     assertFalse(node.getProperty("HasAction1").getBoolean());
     try {
       workflow.doAction1();
@@ -84,11 +96,10 @@ public class WorkflowTest extends TestCase {
     assertTrue(node.getProperty("HasAction1").getBoolean());
     commonEnd(session);
   }
-
-  public void testCompoundWorkflow() throws RepositoryException {
+  public void testCompoundWorkflow() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
-    Workflow workflow = ((NodeDecorator)node).getWorkflow();
+    Workflow workflow = ((ServicingNode)node).getWorkflow();
     assertFalse(node.getProperty("HasAction1").getBoolean());
     try {
       workflow.doAction1();
@@ -102,10 +113,10 @@ public class WorkflowTest extends TestCase {
     commonEnd(session);
   }
 
-  public void testFailingWorkflow() throws RepositoryException {
+  public void testFailingWorkflow() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
-    Workflow workflow = ((NodeDecorator)node).getWorkflow();
+    Workflow workflow = ((ServicingNode)node).getWorkflow();
     assertFalse(node.getProperty("HasAction1").getBoolean());
     try {
       workflow.doAction2();

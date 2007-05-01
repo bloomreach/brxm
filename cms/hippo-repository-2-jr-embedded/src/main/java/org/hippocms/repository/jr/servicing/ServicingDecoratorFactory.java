@@ -22,8 +22,8 @@ public class ServicingDecoratorFactory
 {
     protected WeakHashMap<Repository,RepositoryDecorator> repositoryDecorators;
     protected WeakHashMap<Session,SessionDecorator> sessionDecorators;
-    protected WeakHashMap<Workspace,WorkspaceDecorator> workspaceDecorators;
-    //protected WeakHashMap<Node,NodeDecorator> nodeDecorators;
+    protected WeakHashMap<Workspace,ServicingWorkspaceImpl> workspaceDecorators;
+    //protected WeakHashMap<Node,ServicingNodeImpl> nodeDecorators;
     //protected WeakHashMap<Property,PropertyDecorator> propertyDecorators;
     //protected WeakHashMap<Lock,LockDecorator> lockDecorators;
     //protected WeakHashMap<Version,VersionDecorator> versionDecorators;
@@ -38,8 +38,8 @@ public class ServicingDecoratorFactory
     public ServicingDecoratorFactory() {
         repositoryDecorators = new WeakHashMap<Repository,RepositoryDecorator>();
         sessionDecorators = new WeakHashMap<Session,SessionDecorator>();
-        workspaceDecorators = new WeakHashMap<Workspace,WorkspaceDecorator>();
-        //nodeDecorators = new WeakHashMap<Node,NodeDecorator>();
+        workspaceDecorators = new WeakHashMap<Workspace,ServicingWorkspaceImpl>();
+        //nodeDecorators = new WeakHashMap<Node,ServicingNodeImpl>();
         //propertyDecorators = new WeakHashMap<Property,PropertyDecorator>();
         //lockDecorators = new WeakHashMap<Lock,LockDecorator>();
         //versionDecorators = new WeakHashMap<Version,VersionDecorator>();
@@ -70,7 +70,7 @@ public class ServicingDecoratorFactory
     }
     public Workspace getWorkspaceDecorator(Session session, Workspace workspace) {
         if(!workspaceDecorators.containsKey(workspace)) {
-          WorkspaceDecorator wrapper = new WorkspaceDecorator(this, session, workspace);
+            ServicingWorkspaceImpl wrapper = new ServicingWorkspaceImpl(this, session, workspace);
             workspaceDecorators.put(workspace, wrapper);
             return wrapper;
         } else
@@ -82,10 +82,10 @@ public class ServicingDecoratorFactory
         } else if (node instanceof VersionHistory) {
             return getVersionHistoryDecorator(session, (VersionHistory) node);
         } else {
-            return new NodeDecorator(this, session, node);
+            return new ServicingNodeImpl(this, session, node);
             /*
             if(!nodeDecorators.containsKey(node)) {
-                NodeDecorator wrapper = new NodeDecorator(this, session, node);
+                ServicingNodeImpl wrapper = new ServicingNodeImpl(this, session, node);
                 nodeDecorators.put(node, wrapper);
                 return wrapper;
             } else

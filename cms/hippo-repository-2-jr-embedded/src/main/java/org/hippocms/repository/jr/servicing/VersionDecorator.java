@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 /**
  */
-public class VersionDecorator extends NodeDecorator implements Version {
+public class VersionDecorator extends ServicingNodeImpl implements Version {
 
     protected final Version version;
 

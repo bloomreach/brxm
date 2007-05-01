@@ -28,7 +28,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 
 /**
  */
-public class VersionHistoryDecorator extends NodeDecorator
+public class VersionHistoryDecorator extends ServicingNodeImpl
         implements VersionHistory {
 
     protected final VersionHistory versionHistory;

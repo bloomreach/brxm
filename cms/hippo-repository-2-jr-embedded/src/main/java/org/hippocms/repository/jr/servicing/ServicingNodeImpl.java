@@ -46,32 +46,24 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 
-public class NodeDecorator extends ItemDecorator implements Node {
-
+public class ServicingNodeImpl extends ItemDecorator
+  implements ServicingNode
+{
     protected Node node;
 
-    public NodeDecorator(DecoratorFactory factory, Session session, Node node) {
+    public ServicingNodeImpl(DecoratorFactory factory, Session session, Node node) {
         super(factory, session, node);
         this.node = node;
     }
 
-    /**
-     * Returns the underlying <code>Node</code> of the <code>node</code>
-     * that decorates it. Unwrapping <code>null</code> returns <code>null</code>.
-     *
-     * @param node decorates the underlying node.
-     * @return the underlying node.
-     * @throws IllegalStateException if <code>node</code> is not of type
-     *                               {@link NodeDecorator}.
-     */
     public static Node unwrap(Node node) {
         if (node == null) {
             return null;
         }
-        if (node instanceof NodeDecorator) {
-            node = (Node) ((NodeDecorator) node).unwrap();
+        if (node instanceof ServicingNodeImpl) {
+            node = (Node) ((ServicingNodeImpl) node).unwrap();
         } else {
-            throw new IllegalStateException("node is not of type NodeDecorator");
+            throw new IllegalStateException("node is not of type ServicingNodeImpl");
         }
         return node;
     }
@@ -242,7 +234,7 @@ public class NodeDecorator extends ItemDecorator implements Node {
     public Property setProperty(String name, Node value)
             throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, NodeDecorator.unwrap(value));
+        Property prop = node.setProperty(name, ServicingNodeImpl.unwrap(value));
         return factory.getPropertyDecorator(session, prop);
     }
 
@@ -581,7 +573,7 @@ public class NodeDecorator extends ItemDecorator implements Node {
     }
 
     public Workflow getWorkflow() throws RepositoryException {
-        return ((WorkspaceDecorator)getSession().getWorkspace()).getServicesManager().getWorkflow(this);
+        return ((ServicingWorkspaceImpl)getSession().getWorkspace()).getServicesManager().getWorkflow(this);
     }
 
 }

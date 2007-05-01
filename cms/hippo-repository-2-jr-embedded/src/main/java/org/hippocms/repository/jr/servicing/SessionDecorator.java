@@ -177,7 +177,7 @@ public class SessionDecorator implements Session {
     public void save() throws AccessDeniedException,
             ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
-        WorkspaceDecorator wsp = (WorkspaceDecorator)getWorkspace();
+        ServicingWorkspaceImpl wsp = (ServicingWorkspaceImpl)getWorkspace();
         wsp.getServicesManager().save();
         session.save();
     }

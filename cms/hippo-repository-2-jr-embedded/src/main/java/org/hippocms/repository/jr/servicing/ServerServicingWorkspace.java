@@ -23,9 +23,11 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 
-public class ServicingServerWorkspace extends ServerWorkspace {
-  private WorkspaceDecorator workspace;
-  public ServicingServerWorkspace(WorkspaceDecorator workspace, ServicingRemoteAdapterFactory factory)
+public class ServerServicingWorkspace extends ServerWorkspace
+  implements RemoteServicingWorkspace
+{
+  private ServicingWorkspaceImpl workspace;
+  public ServerServicingWorkspace(ServicingWorkspaceImpl workspace, RemoteServicingAdapterFactory factory)
     throws RemoteException
   {
     super(workspace, factory);
@@ -36,7 +38,7 @@ public class ServicingServerWorkspace extends ServerWorkspace {
   {
     try {
       ServicesManager servicesManager = workspace.getServicesManager();
-      return ((ServicingRemoteAdapterFactory)getFactory()).getRemoteServicesManager(servicesManager);
+      return ((RemoteServicingAdapterFactory)getFactory()).getRemoteServicesManager(servicesManager);
     } catch(RepositoryException ex) {
       throw getRepositoryException(ex);
     }

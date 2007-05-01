@@ -20,25 +20,20 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.rmi.server.ServerObject;
+import org.apache.jackrabbit.rmi.server.ServerNode;
+import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
-public class ServerServicesManager extends ServerObject
-  implements RemoteServicesManager
+public class ServerServicingNode extends ServerNode
+  implements RemoteServicingNode
 {
-  private ServicesManager servicesManager;
-  public ServerServicesManager(ServicesManager manager, RemoteServicingAdapterFactory factory)
+  private ServicingNodeImpl node;
+  public ServerServicingNode(ServicingNodeImpl node, RemoteServicingAdapterFactory factory)
     throws RemoteException
   {
-    super(factory);
-    this.servicesManager = manager;
+    super(node, factory);
+    this.node = node;
   }
-  public Workflow getWorkflow(String absPath)
-    throws RepositoryException, RemoteException {
-    try {
-      Node node = servicesManager.getSession().getRootNode().getNode(absPath);
-      return servicesManager.getWorkflow(node);
-    } catch (RepositoryException ex) {
-      throw getRepositoryException(ex);
-    }
+  public Workflow getWorkflow() throws RepositoryException, RemoteException {
+    return node.getWorkflow();
   }
 }
