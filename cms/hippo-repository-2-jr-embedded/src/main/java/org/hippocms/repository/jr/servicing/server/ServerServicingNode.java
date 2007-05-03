@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.servicing.server;
 
 import java.rmi.RemoteException;
 
@@ -22,6 +22,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerNode;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
+
+import org.hippocms.repository.jr.servicing.Service;
+import org.hippocms.repository.jr.servicing.ServicingNodeImpl;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingNode;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
 
 public class ServerServicingNode extends ServerNode
   implements RemoteServicingNode
@@ -33,7 +38,7 @@ public class ServerServicingNode extends ServerNode
     super(node, factory);
     this.node = node;
   }
-  public Workflow getWorkflow() throws RepositoryException, RemoteException {
-    return node.getWorkflow();
+  public Service getService() throws RepositoryException, RemoteException {
+    return node.getService();
   }
 }

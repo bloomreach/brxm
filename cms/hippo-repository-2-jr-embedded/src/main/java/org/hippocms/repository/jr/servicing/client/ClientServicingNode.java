@@ -14,31 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.servicing.client;
 
 import java.rmi.RemoteException;
 
 import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.rmi.client.ClientWorkspace;
+import org.apache.jackrabbit.rmi.client.ClientNode;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
-public class ClientServicingWorkspace extends ClientWorkspace
-  implements ServicingWorkspace
+import org.hippocms.repository.jr.servicing.Service;
+import org.hippocms.repository.jr.servicing.ServicingNode;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingNode;
+
+public class ClientServicingNode extends ClientNode
+  implements ServicingNode
 {
-    private Session session;
-    private RemoteServicingWorkspace remote;
-    public ClientServicingWorkspace(Session session, RemoteServicingWorkspace remote,
-                                    LocalServicingAdapterFactory factory) {
+    private RemoteServicingNode remote;
+    public ClientServicingNode(Session session, RemoteServicingNode remote, LocalServicingAdapterFactory factory) {
         super(session, remote, factory);
-        this.session = session;
         this.remote = remote;
     }
-    public ServicesManager getServicesManager() throws RepositoryException {
+    public Service getService() throws RepositoryException {
         try {
-            RemoteServicesManager manager = remote.getServicesManager();
-            return ((LocalServicingAdapterFactory)getFactory()).getServicesManager(session, manager);
+            Service service = remote.getService();
+            return service;
         } catch(RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }

@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.servicing.remote;
 
+import java.io.Serializable;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
+import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
-public interface RemoteServicingWorkspace extends RemoteWorkspace {
-    public RemoteServicesManager getServicesManager() throws RepositoryException, RemoteException;
+import org.hippocms.repository.jr.servicing.Service;
+
+public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
+    public Service getService() throws RepositoryException, RemoteException;
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.servicing.client;
 
 import java.rmi.RemoteException;
 
@@ -28,6 +28,9 @@ import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
+
+import org.hippocms.repository.jr.servicing.ServicingSession;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingSession;
 
 public class ClientServicingSession extends ClientSession
   implements ServicingSession, XAResource

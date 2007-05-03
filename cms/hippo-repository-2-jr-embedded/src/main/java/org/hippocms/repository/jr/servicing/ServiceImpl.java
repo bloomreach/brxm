@@ -23,14 +23,14 @@ import java.rmi.server.UnicastRemoteObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WorkflowImpl extends UnicastRemoteObject
-  implements Workflow
+public class ServiceImpl extends UnicastRemoteObject
+  implements Service
 {
-  private static final Logger log = LoggerFactory.getLogger(WorkflowImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(ServiceImpl.class);
 
   boolean hasAction1 = false;
   boolean hasAction2 = false;
-  public WorkflowImpl() throws RemoteException {
+  public ServiceImpl() throws RemoteException {
   }
   public void doAction1() throws Exception, RemoteException {
     log.info("ACTION 1 CALLED");

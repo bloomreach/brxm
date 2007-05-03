@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.servicing.client;
 
 import java.rmi.RemoteException;
 
@@ -26,7 +26,13 @@ import javax.jcr.query.QueryManager;
 import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 
-public class ClientServicesManager extends ClientObject implements ServicesManager {
+import org.hippocms.repository.jr.servicing.Service;
+import org.hippocms.repository.jr.servicing.ServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+
+public class ClientServicesManager extends ClientObject
+  implements ServicesManager
+{
     private Session session;
     private RemoteServicesManager remote;
     public ClientServicesManager(Session session, RemoteServicesManager remote, LocalServicingAdapterFactory factory) {
@@ -35,9 +41,9 @@ public class ClientServicesManager extends ClientObject implements ServicesManag
         this.remote = remote;
     }
 
-    public Workflow getWorkflow(Node node) throws RepositoryException {
+    public Service getService(Node node) throws RepositoryException {
         try {
-            return remote.getWorkflow(node.getPath());
+            return remote.getService(node.getPath());
         } catch(RemoteException ex) {
             throw new RemoteRuntimeException(ex);
         }

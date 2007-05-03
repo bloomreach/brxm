@@ -572,8 +572,8 @@ public class ServicingNodeImpl extends ItemDecorator
         return node.isLocked();
     }
 
-    public Workflow getWorkflow() throws RepositoryException {
-        return ((ServicingWorkspaceImpl)getSession().getWorkspace()).getServicesManager().getWorkflow(this);
+    public Service getService() throws RepositoryException {
+        return ((ServicingWorkspaceImpl)getSession().getWorkspace()).getServicesManager().getService(this);
     }
 
 }
