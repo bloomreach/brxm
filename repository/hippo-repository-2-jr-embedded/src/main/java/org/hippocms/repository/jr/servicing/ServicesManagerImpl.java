@@ -35,41 +35,41 @@ public class ServicesManagerImpl
   implements ServicesManager
 {
   class Entry {
-    WorkflowImpl workflow;
+    ServiceImpl service;
     Node node;
-    Entry(WorkflowImpl workflow, Node node) {
-      this.workflow = workflow;
-      this.node     = node;
+    Entry(ServiceImpl service, Node node) {
+      this.service = service;
+      this.node    = node;
     }
   }
   Session session;
-  private List<Entry> usedWorkflows;
+  private List<Entry> usedServices;
   public ServicesManagerImpl(Session session) {
     this.session = session;
-    usedWorkflows = new LinkedList<Entry>();
+    usedServices = new LinkedList<Entry>();
   }
-  public Workflow getWorkflow(Node node) throws RepositoryException {
+  public Service getService(Node node) throws RepositoryException {
     try {
-      WorkflowImpl workflow = new WorkflowImpl();
-      workflow.setAction1(node.getProperty("HasAction1").getBoolean());
-      workflow.setAction2(node.getProperty("HasAction2").getBoolean());
-      usedWorkflows.add(new Entry(workflow, node));
-      return workflow;
+      ServiceImpl service = new ServiceImpl();
+      service.setAction1(node.getProperty("HasAction1").getBoolean());
+      service.setAction2(node.getProperty("HasAction2").getBoolean());
+      usedServices.add(new Entry(service, node));
+      return service;
     } catch(RemoteException ex) {
-      throw new RepositoryException("workflow inaccessible", ex);
+      throw new RepositoryException("service inaccessible", ex);
     }
   }
-  void save(WorkflowImpl workflow, Node node) throws RepositoryException {
-    node.setProperty("HasAction1",workflow.getAction1());
-    node.setProperty("HasAction2",workflow.getAction2());
+  void save(ServiceImpl service, Node node) throws RepositoryException {
+    node.setProperty("HasAction1",service.getAction1());
+    node.setProperty("HasAction2",service.getAction2());
   }
   public void save() throws RepositoryException {
-    for(Iterator<Entry> iter = usedWorkflows.iterator(); iter.hasNext(); ) {
+    for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
       Entry entry = iter.next();
-      save(entry.workflow, entry.node);
+      save(entry.service, entry.node);
     }
-    // FIXME: this assumes that Workflows are no longer used after a session.save()
-    usedWorkflows.clear();
+    // FIXME: this assumes that Services are no longer used after a session.save()
+    usedServices.clear();
   }
   public Session getSession() throws RepositoryException {
     return session;

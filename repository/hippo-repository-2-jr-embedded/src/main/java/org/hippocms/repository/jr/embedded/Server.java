@@ -89,14 +89,13 @@ import org.apache.jackrabbit.name.QName;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 
-import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
-import org.hippocms.repository.jr.servicing.ServerServicingAdapterFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.hippocms.repository.jr.servicing.Workflow;
-import org.hippocms.repository.jr.servicing.ClientServicesAdapterFactory;
+import org.hippocms.repository.jr.servicing.Service;
+import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
+import org.hippocms.repository.jr.servicing.client.ClientServicesAdapterFactory;
+import org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory;
 
 /**
  * @version $Id$

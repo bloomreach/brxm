@@ -22,5 +22,5 @@ import javax.jcr.RepositoryException;
 public interface ServicingNode
   extends Node
 {
-    public Workflow getWorkflow() throws RepositoryException;
+    public Service getService() throws RepositoryException;
 }

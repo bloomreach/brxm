@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.servicing.remote;
 
 import java.rmi.RemoteException;
 
-import org.apache.jackrabbit.rmi.server.RemoteAdapterFactory;
+import javax.jcr.RepositoryException;
 
-public interface RemoteServicingAdapterFactory extends RemoteAdapterFactory {
-  public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager)
-    throws RemoteException;
+import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
+
+public interface RemoteServicingWorkspace extends RemoteWorkspace {
+    public RemoteServicesManager getServicesManager() throws RepositoryException, RemoteException;
 }

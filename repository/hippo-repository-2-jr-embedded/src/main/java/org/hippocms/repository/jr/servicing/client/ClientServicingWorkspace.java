@@ -14,28 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.servicing.client;
 
 import java.rmi.RemoteException;
 
 import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.rmi.client.ClientNode;
+import org.apache.jackrabbit.rmi.client.ClientWorkspace;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
-public class ClientServicingNode extends ClientNode
-  implements ServicingNode
+import org.hippocms.repository.jr.servicing.ServicesManager;
+import org.hippocms.repository.jr.servicing.ServicingWorkspace;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+
+public class ClientServicingWorkspace extends ClientWorkspace
+  implements ServicingWorkspace
 {
-    private RemoteServicingNode remote;
-    public ClientServicingNode(Session session, RemoteServicingNode remote, LocalServicingAdapterFactory factory) {
+    private Session session;
+    private RemoteServicingWorkspace remote;
+    public ClientServicingWorkspace(Session session, RemoteServicingWorkspace remote,
+                                    LocalServicingAdapterFactory factory) {
         super(session, remote, factory);
+        this.session = session;
         this.remote = remote;
     }
-    public Workflow getWorkflow() throws RepositoryException {
+    public ServicesManager getServicesManager() throws RepositoryException {
         try {
-            Workflow workflow = remote.getWorkflow();
-            return workflow;
+            RemoteServicesManager manager = remote.getServicesManager();
+            return ((LocalServicingAdapterFactory)getFactory()).getServicesManager(session, manager);
         } catch(RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }

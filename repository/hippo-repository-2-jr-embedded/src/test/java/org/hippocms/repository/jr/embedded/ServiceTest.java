@@ -28,7 +28,7 @@ import java.rmi.AlreadyBoundException;
 
 import org.hippocms.repository.jr.servicing.ServicingWorkspace;
 import org.hippocms.repository.jr.servicing.ServicingNode;
-import org.hippocms.repository.jr.servicing.Workflow;
+import org.hippocms.repository.jr.servicing.Service;
 
 import org.apache.jackrabbit.core.XASession;
 
@@ -42,10 +42,10 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 /**
  * @version $Id$
  */
-public class WorkflowTest extends TestCase {
+public class ServiceTest extends TestCase {
   private final static String SVN_ID = "$Id$";
 
-  private static  String NODENAME = "documentWithWorkflow";
+  private static  String NODENAME = "documentWithService";
   private Server backgroundServer;
   private Server server;
   private boolean startService = true;
@@ -87,22 +87,22 @@ public class WorkflowTest extends TestCase {
     session.logout();
   }
 
-  public void testGetWorkflow() throws Exception {
+  public void testGetService() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
     assertNotNull(node);
-    Workflow workflow = ((ServicingNode)node).getWorkflow();
-    assertNotNull(workflow);
+    Service service = ((ServicingNode)node).getService();
+    assertNotNull(service);
     commonEnd(session);
   }
 
-  public void testBasicWorkflow() throws Exception {
+  public void testBasicService() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
-    Workflow workflow = ((ServicingNode)node).getWorkflow();
+    Service service = ((ServicingNode)node).getService();
     assertFalse(node.getProperty("HasAction1").getBoolean());
     try {
-      workflow.doAction1();
+      service.doAction1();
       session.save();
     } catch(Exception ex) {
       fail();
@@ -110,14 +110,14 @@ public class WorkflowTest extends TestCase {
     assertTrue(node.getProperty("HasAction1").getBoolean());
     commonEnd(session);
   }
-  public void testCompoundWorkflow() throws Exception {
+  public void testCompoundService() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
-    Workflow workflow = ((ServicingNode)node).getWorkflow();
+    Service service = ((ServicingNode)node).getService();
     assertFalse(node.getProperty("HasAction1").getBoolean());
     try {
-      workflow.doAction1();
-      workflow.doAction2();
+      service.doAction1();
+      service.doAction2();
       session.save();
     } catch(Exception ex) {
       fail();
@@ -127,7 +127,7 @@ public class WorkflowTest extends TestCase {
     commonEnd(session);
   }
 
-  public void testFailingWorkflow() throws Exception {
+  public void testFailingService() throws Exception {
     try {
       Session session = commonStart();
       Node node = session.getRootNode().getNode(NODENAME);
@@ -142,14 +142,14 @@ public class WorkflowTest extends TestCase {
       XAResource sessionXARes = ((XASession)session).getXAResource();
       tx.enlistResource(sessionXARes);
 
-      Workflow workflow = ((ServicingNode)node).getWorkflow();
+      Service service = ((ServicingNode)node).getService();
       assertFalse(node.getProperty("HasAction1").getBoolean());
       try {
-        workflow.doAction2();
+        service.doAction2();
         session.save();
-        workflow.doAction1();
+        service.doAction1();
         session.save();
-        fail("workflow should have failed");
+        fail("service should have failed");
         tx.commit();
       } catch(Exception ex) {
         // if(tx.getStatus() == Status.STATUS_ACTIVE || tx.getStatus() == Status.STATUS_UNKNOWN) {

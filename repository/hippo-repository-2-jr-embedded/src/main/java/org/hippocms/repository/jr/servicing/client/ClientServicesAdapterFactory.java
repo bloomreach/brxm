@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.servicing.client;
 
 import javax.jcr.Repository;
 import javax.jcr.Session;
@@ -24,6 +24,12 @@ import org.apache.jackrabbit.rmi.client.ClientAdapterFactory;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
+
+import org.hippocms.repository.jr.servicing.ServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingSession;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingNode;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory
   implements LocalServicingAdapterFactory
