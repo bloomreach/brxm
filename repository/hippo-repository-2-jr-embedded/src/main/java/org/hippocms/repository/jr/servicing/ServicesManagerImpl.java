@@ -44,26 +44,39 @@ public class ServicesManagerImpl
   }
   Session session;
   private List<Entry> usedServices;
+  ClassLoader classloader;
   public ServicesManagerImpl(Session session) {
     this.session = session;
     usedServices = new LinkedList<Entry>();
+    classloader = getClass().getClassLoader();
   }
   public Service getService(Node node) throws RepositoryException {
+    return getService(node, null);
+  }
+  public Service getService(Node node, String serviceName) throws RepositoryException {
+    if(serviceName == null)
+      serviceName = "";
     try {
-      ServiceImpl service = new ServiceImpl();
-      service.setAction1(node.getProperty("HasAction1").getBoolean());
-      service.setAction2(node.getProperty("HasAction2").getBoolean());
+      ServiceImpl service = (ServiceImpl) classloader.loadClass(serviceName).newInstance();
+      // FIXME: service.setAction1(node.getProperty("HasAction1").getBoolean());
       usedServices.add(new Entry(service, node));
       return service;
+    } catch(IllegalAccessException ex) {
+      throw new RepositoryException("service unavailable", ex);
+    } catch(ClassNotFoundException ex) {
+      throw new RepositoryException("service unavailable", ex);
+    } catch(InstantiationException ex) {
+      throw new RepositoryException("service unavailable", ex);
+      /*
     } catch(RemoteException ex) {
       throw new RepositoryException("service inaccessible", ex);
+      */
     }
   }
   void save(ServiceImpl service, Node node) throws RepositoryException {
-    node.setProperty("HasAction1",service.getAction1());
-    node.setProperty("HasAction2",service.getAction2());
+    // FIXME: node.setProperty("HasAction2",service.getAction2());
   }
-  public void save() throws RepositoryException {
+  void save() throws RepositoryException {
     for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
       Entry entry = iter.next();
       save(entry.service, entry.node);

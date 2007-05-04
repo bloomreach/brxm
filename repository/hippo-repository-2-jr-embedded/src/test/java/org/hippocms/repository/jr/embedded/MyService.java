@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.jr.embedded;
 
-import java.io.Serializable;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface Service extends Remote, Serializable
+import org.hippocms.repository.jr.servicing.Service;
+
+public interface MyService extends Service
 {
+  public void doAction1() throws Exception, RemoteException;
+  public void doAction2() throws Exception, RemoteException;
 }

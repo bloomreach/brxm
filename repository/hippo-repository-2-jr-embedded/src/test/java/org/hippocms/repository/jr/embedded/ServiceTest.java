@@ -91,7 +91,7 @@ public class ServiceTest extends TestCase {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
     assertNotNull(node);
-    Service service = ((ServicingNode)node).getService();
+    MyService service = (MyService) ((ServicingNode)node).getService();
     assertNotNull(service);
     commonEnd(session);
   }
@@ -99,7 +99,7 @@ public class ServiceTest extends TestCase {
   public void testBasicService() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
-    Service service = ((ServicingNode)node).getService();
+    MyService service = (MyService) ((ServicingNode)node).getService();
     assertFalse(node.getProperty("HasAction1").getBoolean());
     try {
       service.doAction1();
@@ -113,7 +113,7 @@ public class ServiceTest extends TestCase {
   public void testCompoundService() throws Exception {
     Session session = commonStart();
     Node node = session.getRootNode().getNode(NODENAME);
-    Service service = ((ServicingNode)node).getService();
+    MyService service = (MyService) ((ServicingNode)node).getService();
     assertFalse(node.getProperty("HasAction1").getBoolean());
     try {
       service.doAction1();
@@ -142,7 +142,7 @@ public class ServiceTest extends TestCase {
       XAResource sessionXARes = ((XASession)session).getXAResource();
       tx.enlistResource(sessionXARes);
 
-      Service service = ((ServicingNode)node).getService();
+      MyService service = (MyService) ((ServicingNode)node).getService();
       assertFalse(node.getProperty("HasAction1").getBoolean());
       try {
         service.doAction2();

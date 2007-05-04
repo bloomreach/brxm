@@ -48,6 +48,13 @@ public class ClientServicesManager extends ClientObject
             throw new RemoteRuntimeException(ex);
         }
     }
+    public Service getService(Node node, String serviceName) throws RepositoryException {
+        try {
+            return remote.getService(node.getPath(), serviceName);
+        } catch(RemoteException ex) {
+            throw new RemoteRuntimeException(ex);
+        }
+    }
     public Session getSession() throws RepositoryException {
         return session;
     }

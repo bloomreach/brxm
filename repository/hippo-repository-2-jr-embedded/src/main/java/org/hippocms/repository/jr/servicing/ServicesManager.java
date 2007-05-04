@@ -22,6 +22,6 @@ import javax.jcr.RepositoryException;
 public interface ServicesManager
 {
   public Service getService(Node node) throws RepositoryException;
+  public Service getService(Node node, String serviceName) throws RepositoryException;
   public Session getSession() throws RepositoryException;
-  public void save() throws RepositoryException;
 }

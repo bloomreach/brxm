@@ -46,4 +46,13 @@ public class ServerServicesManager extends ServerObject
       throw getRepositoryException(ex);
     }
   }
+  public Service getService(String absPath, String serviceName)
+    throws RepositoryException, RemoteException {
+    try {
+      Node node = servicesManager.getSession().getRootNode().getNode(absPath);
+      return servicesManager.getService(node, serviceName);
+    } catch (RepositoryException ex) {
+      throw getRepositoryException(ex);
+    }
+  }
 }
