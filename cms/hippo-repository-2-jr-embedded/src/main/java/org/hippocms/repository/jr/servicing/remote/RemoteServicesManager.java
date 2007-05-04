@@ -25,4 +25,6 @@ import org.hippocms.repository.jr.servicing.Service;
 public interface RemoteServicesManager extends Remote {
   public Service getService(String absPath)
     throws RepositoryException, RemoteException;
+  public Service getService(String absPath, String serviceName)
+    throws RepositoryException, RemoteException;
 }

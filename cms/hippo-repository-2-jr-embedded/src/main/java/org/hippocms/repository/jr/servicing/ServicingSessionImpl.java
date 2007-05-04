@@ -187,7 +187,7 @@ public class ServicingSessionImpl
             ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
         ServicingWorkspaceImpl wsp = (ServicingWorkspaceImpl)getWorkspace();
-        wsp.getServicesManager().save();
+        ((ServicesManagerImpl)wsp.getServicesManager()).save();
         session.save();
     }
 
