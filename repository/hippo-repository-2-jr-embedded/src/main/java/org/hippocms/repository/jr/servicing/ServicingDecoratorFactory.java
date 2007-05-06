@@ -10,6 +10,7 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.ValueFactory;
 import javax.jcr.ItemVisitor;
+import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.QueryManager;
@@ -17,9 +18,16 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.lock.Lock;
 
+import org.apache.jackrabbit.core.XASession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ServicingDecoratorFactory
   implements DecoratorFactory
 {
+    private static final Logger log = LoggerFactory.getLogger(ServicingDecoratorFactory.class);
+
     protected WeakHashMap<Repository,RepositoryDecorator> repositoryDecorators;
     protected WeakHashMap<Session,ServicingSessionImpl> sessionDecorators;
     protected WeakHashMap<Workspace,ServicingWorkspaceImpl> workspaceDecorators;
@@ -62,7 +70,18 @@ public class ServicingDecoratorFactory
     }
     public Session getSessionDecorator(Repository repository, Session session) {
         if(!sessionDecorators.containsKey(session)) {
-            ServicingSessionImpl wrapper = new ServicingSessionImpl(this, repository, session);
+            ServicingSessionImpl wrapper;
+            if(session instanceof XASession) {
+                try {
+                    wrapper = new ServicingSessionImpl(this, repository, (XASession)session);
+                    sessionDecorators.put(session, wrapper);
+                    return wrapper;
+                } catch(RepositoryException ex) {
+                    log.error("cannot compose transactional session, reverting to regular session");
+                    // fall through
+                }
+            }
+            wrapper = new ServicingSessionImpl(this, repository, session);
             sessionDecorators.put(session, wrapper);
             return wrapper;
         } else
@@ -82,6 +101,33 @@ public class ServicingDecoratorFactory
         } else if (node instanceof VersionHistory) {
             return getVersionHistoryDecorator(session, (VersionHistory) node);
         } else {
+            try {
+                return new ServicingNodeImpl(this, session, node, node.getPath(), node.getDepth());
+            } catch(RepositoryException ex) {
+                log.error("cannot compose virtual node, reverting to regular node");
+            }
+            return new ServicingNodeImpl(this, session, node);
+            /*
+            if(!nodeDecorators.containsKey(node)) {
+                ServicingNodeImpl wrapper = new ServicingNodeImpl(this, session, node);
+                nodeDecorators.put(node, wrapper);
+                return wrapper;
+            } else
+                return nodeDecorators.get(node);
+            */
+        }
+    }
+    public Node getNodeDecorator(Session session, Node node, String path, int depth) {
+        if (node instanceof Version) {
+            return getVersionDecorator(session, (Version) node, path, depth);
+        } else if (node instanceof VersionHistory) {
+            return getVersionHistoryDecorator(session, (VersionHistory) node, path, depth);
+        } else {
+            try {
+                return new ServicingNodeImpl(this, session, node, path, depth);
+            } catch(RepositoryException ex) {
+                log.error("cannot compose virtual node, reverting to regular node");
+            }
             return new ServicingNodeImpl(this, session, node);
             /*
             if(!nodeDecorators.containsKey(node)) {
@@ -126,9 +172,38 @@ public class ServicingDecoratorFactory
             return versionDecorators.get(version);
         */
     }
+    public Version getVersionDecorator(Session session, Version version, String path, int depth) {
+        return new VersionDecorator(this, session, version);
+        /*
+        if(!versionDecorators.containsKey(version)) {
+            VersionDecorator wrapper = new VersionDecorator(this, session, version, path, depth);
+            versionDecorators.put(version, wrapper);
+            return wrapper;
+        } else
+            return versionDecorators.get(version);
+        */
+    }
     public VersionHistory getVersionHistoryDecorator(Session session,
                                                      VersionHistory versionHistory) {
         return new VersionHistoryDecorator(this, session, versionHistory);
+        /*
+        if(!versionHistoryDecorators.containsKey(versionHistory)) {
+            VersionHistoryDecorator wrapper = new VersionHistoryDecorator(this, session, versionHistory);
+            versionHistoryDecorators.put(versionHistory, wrapper);
+            return wrapper;
+        } else
+            return versionHistoryDecorators.get(versionHistory);
+        */
+    }
+    public VersionHistory getVersionHistoryDecorator(Session session,
+                                                     VersionHistory versionHistory,
+                                                     String path, int depth) {
+        try {
+            return new VersionHistoryDecorator(this, session, versionHistory, path, depth);
+        } catch(RepositoryException ex) {
+            log.error("cannot compose virtual node, reverting to regular node");
+            return new VersionHistoryDecorator(this, session, versionHistory);
+        }
         /*
         if(!versionHistoryDecorators.containsKey(versionHistory)) {
             VersionHistoryDecorator wrapper = new VersionHistoryDecorator(this, session, versionHistory);

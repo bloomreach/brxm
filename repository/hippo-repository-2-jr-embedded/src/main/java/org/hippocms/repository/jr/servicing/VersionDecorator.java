@@ -35,6 +35,14 @@ public class VersionDecorator extends ServicingNodeImpl implements Version {
         this.version = version;
     }
 
+    public VersionDecorator(DecoratorFactory factory,
+                            Session session,
+                            Version version,
+                            String path, int depth) throws RepositoryException {
+        super(factory, session, version, path, depth);
+        this.version = version;
+    }
+
     /**
      * Returns the underlying <code>Version</code> of the <code>version</code>
      * that decorates it. Unwrapping <code>null</code> returns <code>null</code>.
