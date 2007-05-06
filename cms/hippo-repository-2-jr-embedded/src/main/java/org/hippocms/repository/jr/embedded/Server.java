@@ -159,8 +159,6 @@ public class Server {
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
         log.info("Node type registration support: " + (result != null ? result : "no"));
 
-        repository = new VirtualRepositoryImpl(repository);
-
         hippoRepositoryFactory = new ServicingDecoratorFactory();
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
 

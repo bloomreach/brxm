@@ -1,12 +1,11 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2007 Hippo
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +15,14 @@
  */
 package org.hippocms.repository.jr.servicing;
 
+import java.lang.Object;
+import java.lang.String;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.apache.jackrabbit.core.XASession;
+import org.xml.sax.SAXException;
+import org.xml.sax.ContentHandler;
 import java.security.AccessControlException;
 
 import javax.jcr.AccessDeniedException;
@@ -43,35 +47,67 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.apache.jackrabbit.core.XASession;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import org.apache.jackrabbit.core.XASession;
-
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
+
+// FIXME: depend only on JTA, not on Atomikos
+import com.atomikos.icatch.config.TSInitInfo;
+import com.atomikos.icatch.config.UserTransactionService;
+import com.atomikos.icatch.config.UserTransactionServiceImp;
+import com.atomikos.icatch.jta.UserTransactionManager;
 
 /**
  */
 public class ServicingSessionImpl
-  implements ServicingSession
+  implements ServicingSession, XASession
 {
+    private final static String SVN_ID = "$Id$";
 
     protected final DecoratorFactory factory;
 
     protected final Repository repository;
 
-    public final Session session;
+    protected final Session session;
 
-    /**
-     * @param factory
-     * @param repository the repository (decorator) that was used to create the
-     *                   session decorator.
-     * @param session
-     */
-    public ServicingSessionImpl(DecoratorFactory factory, Repository repository, Session session) {
+    protected UserTransactionManager utm = null;
+
+    public UserTransactionManager getUserTransactionManager() {
+        return utm;
+    }
+    ServicingSessionImpl(DecoratorFactory factory, Repository repository, Session session) {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
+    }
+    ServicingSessionImpl(DecoratorFactory factory, Repository repository, XASession session) throws RepositoryException {
+        this.factory = factory;
+        this.repository = repository;
+        this.session = session;
+        try {
+            utm = new UserTransactionManager();
+            utm.setStartupTransactionService(false);
+            utm.init();
+        } catch(SystemException ex) {
+            throw new RepositoryException("cannot initialize transaction manager", ex);
+        }
+    }
+    protected void finalize() {
+        if(utm != null) {
+            utm.close();
+            utm = null;
+        }
     }
 
     public XAResource getXAResource() {

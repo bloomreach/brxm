@@ -40,6 +40,14 @@ public class VersionHistoryDecorator extends ServicingNodeImpl
         this.versionHistory = versionHistory;
     }
 
+    public VersionHistoryDecorator(DecoratorFactory factory,
+                                   Session session,
+                                   VersionHistory versionHistory,
+                                   String path, int depth) throws RepositoryException {
+        super(factory, session, versionHistory, path, depth);
+        this.versionHistory = versionHistory;
+    }
+
     /**
      * @inheritDoc
      */

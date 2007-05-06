@@ -20,6 +20,7 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RangeIterator;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
@@ -39,6 +40,8 @@ public class DecoratingRangeIterator
     /** The underlying iterator. */
     protected final RangeIterator iterator;
 
+    protected final ServicingNodeImpl parent;
+
     /**
      * Creates a decorating iterator.
      *
@@ -50,6 +53,14 @@ public class DecoratingRangeIterator
             DecoratorFactory factory, Session session, RangeIterator iterator) {
         super(factory, session);
         this.iterator = iterator;
+        this.parent = null;
+    }
+
+    public DecoratingRangeIterator(
+            DecoratorFactory factory, Session session, RangeIterator iterator, ServicingNodeImpl parent) {
+        super(factory, session);
+        this.iterator = iterator;
+        this.parent = parent;
     }
 
     /**
@@ -108,7 +119,14 @@ public class DecoratingRangeIterator
         } else if (object instanceof VersionHistory) {
             return factory.getVersionHistoryDecorator(session, (VersionHistory) object);
         } else if (object instanceof Node) {
-            return factory.getNodeDecorator(session, (Node) object);
+            if(parent != null) {
+                try {
+                    return factory.getNodeDecorator(session, (Node) object, parent.getChildPath(parent.getName()), parent.depth+1);
+                } catch(RepositoryException ex) {
+                    throw new UnsupportedOperationException("Decorator became invalid for " + object);
+                }
+            } else
+                return factory.getNodeDecorator(session, (Node) object);
         } else if (object instanceof Property) {
             return factory.getPropertyDecorator(session, (Property) object);
         } else if (object instanceof Item) {

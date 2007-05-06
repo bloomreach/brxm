@@ -42,6 +42,11 @@ public class DecoratingNodeIterator extends DecoratingRangeIterator
         super(factory, session, iterator);
     }
 
+    public DecoratingNodeIterator(
+            DecoratorFactory factory, Session session, NodeIterator iterator, ServicingNodeImpl parent) {
+        super(factory, session, iterator, parent);
+    }
+
     /**
      * Decorates and returns the next node from the underlying node iterator.
      *

@@ -233,6 +233,8 @@
       <version>1.2.0</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- FIXME: should not be reliant on atomikos, but on general JTA -->
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
@@ -256,6 +258,7 @@
   </dependencies>
 
   <build>
+    <defaultGoal>compile</defaultGoal>
     <plugins> 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -325,7 +328,7 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+   </plugins>
   </build>
 
 </project>
