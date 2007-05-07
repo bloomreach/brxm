@@ -16,7 +16,11 @@ installation.  Also copy the JARs:
   jackrabbit-jcr-rmi-1.3-r529494.jar
   jcr-1.0.jar
 from your maven 2 repository into the "common/lib/" directory of your
-Tomcat installation.
+Tomcat installation.  For the newest installment, also build the software
+using "mvn package" and copy the file
+  hippo-repository-2-jr-embedded-1.01.00-dev.jar
+from the target directory to the "common/lib/" directory of your Tomcat.
+
 Restart tomcat and access the JCR viewer URL (most of the cases this will
 be http://localhost:8080/jcrviewer.jsp).
 
