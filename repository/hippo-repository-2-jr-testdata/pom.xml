@@ -83,13 +83,11 @@
     
     
     <!-- Hippo repository-->
-    <!--
     <dependency>
       <groupId>org.hippocms</groupId>
       <artifactId>hippo-repository-2-jr-embedded</artifactId>
-      <version>${hippo.repository.version}</version>
+      <version>1.01.00-dev</version>
     </dependency>
-    -->
     
     <!-- For logging -->
     <dependency>
