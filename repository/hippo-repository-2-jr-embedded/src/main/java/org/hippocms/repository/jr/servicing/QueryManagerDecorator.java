@@ -25,8 +25,7 @@ import javax.jcr.Session;
 
 /**
  */
-public class QueryManagerDecorator
-        extends AbstractDecorator implements QueryManager {
+public class QueryManagerDecorator extends AbstractDecorator implements QueryManager {
 
     protected final QueryManager manager;
 
@@ -38,10 +37,8 @@ public class QueryManagerDecorator
     /**
      * @inheritDoc
      */
-    public Query createQuery(String statement, String language)
-            throws InvalidQueryException, RepositoryException {
-        return factory.getQueryDecorator(session,
-                manager.createQuery(statement, language));
+    public Query createQuery(String statement, String language) throws InvalidQueryException, RepositoryException {
+        return factory.getQueryDecorator(session, manager.createQuery(statement, language));
     }
 
     /**

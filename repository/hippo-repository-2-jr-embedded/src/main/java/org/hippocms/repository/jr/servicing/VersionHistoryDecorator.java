@@ -28,22 +28,17 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 
 /**
  */
-public class VersionHistoryDecorator extends ServicingNodeImpl
-        implements VersionHistory {
+public class VersionHistoryDecorator extends ServicingNodeImpl implements VersionHistory {
 
     protected final VersionHistory versionHistory;
 
-    public VersionHistoryDecorator(DecoratorFactory factory,
-                                   Session session,
-                                   VersionHistory versionHistory) {
+    public VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {
         super(factory, session, versionHistory);
         this.versionHistory = versionHistory;
     }
 
-    public VersionHistoryDecorator(DecoratorFactory factory,
-                                   Session session,
-                                   VersionHistory versionHistory,
-                                   String path, int depth) throws RepositoryException {
+    public VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory,
+            String path, int depth) throws RepositoryException {
         super(factory, session, versionHistory, path, depth);
         this.versionHistory = versionHistory;
     }
@@ -89,9 +84,8 @@ public class VersionHistoryDecorator extends ServicingNodeImpl
     /**
      * @inheritDoc
      */
-    public void addVersionLabel(String versionName,
-                                String label,
-                                boolean moveLabel) throws VersionException, RepositoryException {
+    public void addVersionLabel(String versionName, String label, boolean moveLabel) throws VersionException,
+            RepositoryException {
         versionHistory.addVersionLabel(versionName, label, moveLabel);
     }
 
@@ -112,8 +106,7 @@ public class VersionHistoryDecorator extends ServicingNodeImpl
     /**
      * @inheritDoc
      */
-    public boolean hasVersionLabel(Version version, String label)
-            throws VersionException, RepositoryException {
+    public boolean hasVersionLabel(Version version, String label) throws VersionException, RepositoryException {
         return versionHistory.hasVersionLabel(VersionDecorator.unwrap(version), label);
     }
 
@@ -127,18 +120,15 @@ public class VersionHistoryDecorator extends ServicingNodeImpl
     /**
      * @inheritDoc
      */
-    public String[] getVersionLabels(Version version)
-            throws VersionException, RepositoryException {
+    public String[] getVersionLabels(Version version) throws VersionException, RepositoryException {
         return versionHistory.getVersionLabels(VersionDecorator.unwrap(version));
     }
 
     /**
      * @inheritDoc
      */
-    public void removeVersion(String versionName)
-            throws ReferentialIntegrityException, AccessDeniedException,
-            UnsupportedRepositoryOperationException, VersionException,
-            RepositoryException {
+    public void removeVersion(String versionName) throws ReferentialIntegrityException, AccessDeniedException,
+            UnsupportedRepositoryOperationException, VersionException, RepositoryException {
         versionHistory.removeVersion(versionName);
     }
 

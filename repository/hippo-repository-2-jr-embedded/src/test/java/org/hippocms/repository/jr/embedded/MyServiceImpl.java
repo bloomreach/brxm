@@ -25,25 +25,24 @@ import org.slf4j.LoggerFactory;
 
 import org.hippocms.repository.jr.servicing.ServiceImpl;
 
-public class MyServiceImpl extends ServiceImpl
-  implements MyService
-{
-  private boolean hasAction1;
-  private boolean hasAction2;
+public class MyServiceImpl extends ServiceImpl implements MyService {
+    private boolean hasAction1;
+    private boolean hasAction2;
 
-  public MyServiceImpl() throws RemoteException {
-    super();
-  }
-
-  public void doAction1() throws Exception, RemoteException {
-    log.info("ACTION 1 CALLED");
-    if(hasAction2 == true) {
-      throw new Exception("action1 cannot be invoked when action2 has been performed");
+    public MyServiceImpl() throws RemoteException {
+        super();
     }
-    hasAction1 = true;
-  }
-  public void doAction2() throws RemoteException {
-    log.info("ACTION 2 CALLED");
-    hasAction2 = true;
-  }
+
+    public void doAction1() throws Exception, RemoteException {
+        log.info("ACTION 1 CALLED");
+        if (hasAction2 == true) {
+            throw new Exception("action1 cannot be invoked when action2 has been performed");
+        }
+        hasAction1 = true;
+    }
+
+    public void doAction2() throws RemoteException {
+        log.info("ACTION 2 CALLED");
+        hasAction2 = true;
+    }
 }

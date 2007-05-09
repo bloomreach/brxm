@@ -20,8 +20,6 @@ import javax.jcr.Node;
 import javax.jcr.Workspace;
 import javax.jcr.RepositoryException;
 
-public interface ServicingWorkspace
-  extends Workspace
-{
+public interface ServicingWorkspace extends Workspace {
     public ServicesManager getServicesManager() throws RepositoryException;
 }

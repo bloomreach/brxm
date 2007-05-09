@@ -22,8 +22,6 @@ import org.apache.jackrabbit.rmi.client.LocalAdapterFactory;
 import org.hippocms.repository.jr.servicing.ServicesManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
 
-public interface LocalServicingAdapterFactory
-  extends LocalAdapterFactory
-{
+public interface LocalServicingAdapterFactory extends LocalAdapterFactory {
     public ServicesManager getServicesManager(Session session, RemoteServicesManager remote);
 }

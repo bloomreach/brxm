@@ -38,7 +38,6 @@ public class ItemDecorator extends AbstractDecorator implements Item {
      */
     protected final Item item;
 
-
     public ItemDecorator(DecoratorFactory factory, Session session, Item item) {
         super(factory, session);
         this.item = item;
@@ -96,15 +95,13 @@ public class ItemDecorator extends AbstractDecorator implements Item {
     }
 
     /** {@inheritDoc} */
-    public Item getAncestor(int depth) throws ItemNotFoundException,
-            AccessDeniedException, RepositoryException {
+    public Item getAncestor(int depth) throws ItemNotFoundException, AccessDeniedException, RepositoryException {
         Item ancestor = item.getAncestor(depth);
         return factory.getItemDecorator(session, ancestor);
     }
 
     /** {@inheritDoc} */
-    public Node getParent() throws ItemNotFoundException,
-            AccessDeniedException, RepositoryException {
+    public Node getParent() throws ItemNotFoundException, AccessDeniedException, RepositoryException {
         Node parent = item.getParent();
         return factory.getNodeDecorator(session, parent);
     }
@@ -140,28 +137,24 @@ public class ItemDecorator extends AbstractDecorator implements Item {
     }
 
     /** {@inheritDoc} */
-    public void save() throws AccessDeniedException,
-            ConstraintViolationException, InvalidItemStateException,
-            ReferentialIntegrityException, VersionException, LockException,
-            RepositoryException {
+    public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
+            ReferentialIntegrityException, VersionException, LockException, RepositoryException {
         item.save();
     }
 
     /** {@inheritDoc} */
-    public void refresh(boolean keepChanges) throws InvalidItemStateException,
-            RepositoryException {
+    public void refresh(boolean keepChanges) throws InvalidItemStateException, RepositoryException {
         item.refresh(keepChanges);
     }
 
     /** {@inheritDoc} */
-    public void remove() throws VersionException, LockException,
-            RepositoryException {
+    public void remove() throws VersionException, LockException, RepositoryException {
         item.remove();
     }
 
     public boolean equals(Object obj) {
         if (obj instanceof ItemDecorator) {
-            ItemDecorator other = (ItemDecorator)obj;
+            ItemDecorator other = (ItemDecorator) obj;
             return item.equals(other.unwrap());
         }
         return false;

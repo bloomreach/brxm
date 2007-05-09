@@ -24,26 +24,26 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-public class Utilities
-{
+public class Utilities {
     private static void dump(Node parent, int level) throws RepositoryException {
         String prefix = "";
         for (int i = 0; i < level; i++) {
             prefix += "  ";
         }
-        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth() + "]");
+        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth()
+                + "]");
         for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
             System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
-            if(prop.getDefinition().isMultiple()) {
-              Value[] values = prop.getValues();
-              System.out.print("[ ");
-              for (int i = 0; i < values.length; i++) {
-                System.out.print((i > 0 ? ", " : "") + values[i].getString());
-              }
-              System.out.println(" ]");
+            if (prop.getDefinition().isMultiple()) {
+                Value[] values = prop.getValues();
+                System.out.print("[ ");
+                for (int i = 0; i < values.length; i++) {
+                    System.out.print((i > 0 ? ", " : "") + values[i].getString());
+                }
+                System.out.println(" ]");
             } else {
-              System.out.println(prop.getString());
+                System.out.println(prop.getString());
             }
         }
         for (NodeIterator iter = parent.getNodes(); iter.hasNext();) {
@@ -53,6 +53,7 @@ public class Utilities
             }
         }
     }
+
     public static void dump(Node node) throws RepositoryException {
         dump(node, 0);
     }

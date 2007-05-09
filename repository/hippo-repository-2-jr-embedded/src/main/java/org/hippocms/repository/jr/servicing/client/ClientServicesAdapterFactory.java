@@ -31,28 +31,29 @@ import org.hippocms.repository.jr.servicing.remote.RemoteServicingSession;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingNode;
 
-public class ClientServicesAdapterFactory extends ClientAdapterFactory
-  implements LocalServicingAdapterFactory
-{
+public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
     public Session getSession(Repository repository, RemoteSession remote) {
-      if(remote instanceof RemoteServicingSession)
-        return new ClientServicingSession(repository, (RemoteServicingSession)remote, this);
-      else
-        return super.getSession(repository, remote);
+        if (remote instanceof RemoteServicingSession)
+            return new ClientServicingSession(repository, (RemoteServicingSession) remote, this);
+        else
+            return super.getSession(repository, remote);
     }
+
     public Workspace getWorkspace(Session session, RemoteWorkspace remote) {
-      if(remote instanceof RemoteServicingWorkspace)
-        return new ClientServicingWorkspace(session, (RemoteServicingWorkspace)remote, this);
-      else
-        return super.getWorkspace(session, remote);
+        if (remote instanceof RemoteServicingWorkspace)
+            return new ClientServicingWorkspace(session, (RemoteServicingWorkspace) remote, this);
+        else
+            return super.getWorkspace(session, remote);
     }
+
     public Node getNode(Session session, RemoteNode remote) {
-      if(remote instanceof RemoteServicingNode)
-        return new ClientServicingNode(session, (RemoteServicingNode)remote, this);
-      else
-        return super.getNode(session, remote);
+        if (remote instanceof RemoteServicingNode)
+            return new ClientServicingNode(session, (RemoteServicingNode) remote, this);
+        else
+            return super.getNode(session, remote);
     }
+
     public ServicesManager getServicesManager(Session session, RemoteServicesManager remote) {
-      return new ClientServicesManager(session, remote, this);
+        return new ClientServicesManager(session, remote, this);
     }
 }

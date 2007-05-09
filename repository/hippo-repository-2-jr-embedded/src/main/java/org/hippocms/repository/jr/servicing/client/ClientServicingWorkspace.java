@@ -29,22 +29,22 @@ import org.hippocms.repository.jr.servicing.ServicingWorkspace;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
 
-public class ClientServicingWorkspace extends ClientWorkspace
-  implements ServicingWorkspace
-{
+public class ClientServicingWorkspace extends ClientWorkspace implements ServicingWorkspace {
     private Session session;
     private RemoteServicingWorkspace remote;
+
     public ClientServicingWorkspace(Session session, RemoteServicingWorkspace remote,
-                                    LocalServicingAdapterFactory factory) {
+            LocalServicingAdapterFactory factory) {
         super(session, remote, factory);
         this.session = session;
         this.remote = remote;
     }
+
     public ServicesManager getServicesManager() throws RepositoryException {
         try {
             RemoteServicesManager manager = remote.getServicesManager();
-            return ((LocalServicingAdapterFactory)getFactory()).getServicesManager(session, manager);
-        } catch(RemoteException ex) {
+            return ((LocalServicingAdapterFactory) getFactory()).getServicesManager(session, manager);
+        } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
     }

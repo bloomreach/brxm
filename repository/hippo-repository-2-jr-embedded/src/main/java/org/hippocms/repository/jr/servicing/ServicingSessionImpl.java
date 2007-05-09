@@ -70,9 +70,7 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 
 /**
  */
-public class ServicingSessionImpl
-  implements ServicingSession, XASession
-{
+public class ServicingSessionImpl implements ServicingSession, XASession {
     private final static String SVN_ID = "$Id$";
 
     protected final DecoratorFactory factory;
@@ -86,11 +84,13 @@ public class ServicingSessionImpl
     public UserTransactionManager getUserTransactionManager() {
         return utm;
     }
+
     ServicingSessionImpl(DecoratorFactory factory, Repository repository, Session session) {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
     }
+
     ServicingSessionImpl(DecoratorFactory factory, Repository repository, XASession session) throws RepositoryException {
         this.factory = factory;
         this.repository = repository;
@@ -99,19 +99,20 @@ public class ServicingSessionImpl
             utm = new UserTransactionManager();
             utm.setStartupTransactionService(false);
             utm.init();
-        } catch(SystemException ex) {
+        } catch (SystemException ex) {
             throw new RepositoryException("cannot initialize transaction manager", ex);
         }
     }
+
     protected void finalize() {
-        if(utm != null) {
+        if (utm != null) {
             utm.close();
             utm = null;
         }
     }
 
     public XAResource getXAResource() {
-        return ((XASession)session).getXAResource();
+        return ((XASession) session).getXAResource();
     }
 
     /** {@inheritDoc} */
@@ -157,8 +158,7 @@ public class ServicingSessionImpl
      *
      * @return decorated session
      */
-    public Session impersonate(Credentials credentials) throws LoginException,
-            RepositoryException {
+    public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
         Session newSession = session.impersonate(credentials);
         return factory.getSessionDecorator(repository, newSession);
     }
@@ -180,8 +180,7 @@ public class ServicingSessionImpl
      *
      * @return decorated node
      */
-    public Node getNodeByUUID(String uuid) throws ItemNotFoundException,
-            RepositoryException {
+    public Node getNodeByUUID(String uuid) throws ItemNotFoundException, RepositoryException {
         Node node = session.getNodeByUUID(uuid);
         return factory.getNodeDecorator(this, node);
     }
@@ -194,8 +193,7 @@ public class ServicingSessionImpl
      *
      * @return decorated item, property, or node
      */
-    public Item getItem(String absPath) throws PathNotFoundException,
-            RepositoryException {
+    public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
         Item item = session.getItem(absPath);
         return factory.getItemDecorator(this, item);
     }
@@ -210,20 +208,18 @@ public class ServicingSessionImpl
     /**
      * Forwards the method call to the underlying session.
      */
-    public void move(String srcAbsPath, String destAbsPath) throws
-            ItemExistsException, PathNotFoundException, VersionException,
-            RepositoryException {
+    public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException,
+            VersionException, RepositoryException {
         session.move(srcAbsPath, destAbsPath);
     }
 
     /**
      * Forwards the method call to the underlying session.
      */
-    public void save() throws AccessDeniedException,
-            ConstraintViolationException, InvalidItemStateException,
+    public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
-        ServicingWorkspaceImpl wsp = (ServicingWorkspaceImpl)getWorkspace();
-        ((ServicesManagerImpl)wsp.getServicesManager()).save();
+        ServicingWorkspaceImpl wsp = (ServicingWorkspaceImpl) getWorkspace();
+        ((ServicesManagerImpl) wsp.getServicesManager()).save();
         session.save();
     }
 
@@ -244,28 +240,24 @@ public class ServicingSessionImpl
     /**
      * Forwards the method call to the underlying session.
      */
-    public void checkPermission(String absPath, String actions)
-            throws AccessControlException, RepositoryException {
+    public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
         session.checkPermission(absPath, actions);
     }
 
     /**
      * Forwards the method call to the underlying session.
      */
-    public ContentHandler getImportContentHandler(
-            String parentAbsPath, int uuidBehaviour)
-            throws PathNotFoundException, ConstraintViolationException,
-            VersionException, LockException, RepositoryException {
+    public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehaviour)
+            throws PathNotFoundException, ConstraintViolationException, VersionException, LockException,
+            RepositoryException {
         return session.getImportContentHandler(parentAbsPath, uuidBehaviour);
     }
 
     /**
      * Forwards the method call to the underlying session.
      */
-    public void importXML(
-            String parentAbsPath, InputStream in, int uuidBehaviour)
-            throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, VersionException,
+    public void importXML(String parentAbsPath, InputStream in, int uuidBehaviour) throws IOException,
+            PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException,
             InvalidSerializedDataException, LockException, RepositoryException {
         session.importXML(parentAbsPath, in, uuidBehaviour);
     }
@@ -273,20 +265,15 @@ public class ServicingSessionImpl
     /**
      * Forwards the method call to the underlying session.
      */
-    public void exportSystemView(
-            String absPath, ContentHandler contentHandler,
-            boolean binaryAsLink, boolean noRecurse)
+    public void exportSystemView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
-        session.exportSystemView(
-                absPath, contentHandler, binaryAsLink, noRecurse);
+        session.exportSystemView(absPath, contentHandler, binaryAsLink, noRecurse);
     }
 
     /**
      * Forwards the method call to the underlying session.
      */
-    public void exportSystemView(
-            String absPath, OutputStream out,
-            boolean binaryAsLink, boolean noRecurse)
+    public void exportSystemView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException {
         session.exportSystemView(absPath, out, binaryAsLink, noRecurse);
     }
@@ -294,20 +281,15 @@ public class ServicingSessionImpl
     /**
      * Forwards the method call to the underlying session.
      */
-    public void exportDocumentView(
-            String absPath, ContentHandler contentHandler,
-            boolean binaryAsLink, boolean noRecurse)
-            throws PathNotFoundException, SAXException, RepositoryException {
-        session.exportDocumentView(
-                absPath, contentHandler, binaryAsLink, noRecurse);
+    public void exportDocumentView(String absPath, ContentHandler contentHandler, boolean binaryAsLink,
+            boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException {
+        session.exportDocumentView(absPath, contentHandler, binaryAsLink, noRecurse);
     }
 
     /**
      * Forwards the method call to the underlying session.
      */
-    public void exportDocumentView(
-            String absPath, OutputStream out,
-            boolean binaryAsLink, boolean noRecurse) 
+    public void exportDocumentView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException {
         session.exportDocumentView(absPath, out, binaryAsLink, noRecurse);
     }
@@ -315,8 +297,7 @@ public class ServicingSessionImpl
     /**
      * Forwards the method call to the underlying session.
      */
-    public void setNamespacePrefix(String prefix, String uri)
-            throws NamespaceException, RepositoryException {
+    public void setNamespacePrefix(String prefix, String uri) throws NamespaceException, RepositoryException {
         session.setNamespacePrefix(prefix, uri);
     }
 
@@ -330,16 +311,14 @@ public class ServicingSessionImpl
     /**
      * Forwards the method call to the underlying session.
      */
-    public String getNamespaceURI(String prefix) throws NamespaceException,
-            RepositoryException {
+    public String getNamespaceURI(String prefix) throws NamespaceException, RepositoryException {
         return session.getNamespaceURI(prefix);
     }
 
     /**
      * Forwards the method call to the underlying session.
      */
-    public String getNamespacePrefix(String uri) throws NamespaceException,
-            RepositoryException {
+    public String getNamespacePrefix(String uri) throws NamespaceException, RepositoryException {
         return session.getNamespacePrefix(uri);
     }
 
@@ -371,8 +350,7 @@ public class ServicingSessionImpl
         session.removeLockToken(lt);
     }
 
-    public ValueFactory getValueFactory()
-            throws UnsupportedRepositoryOperationException, RepositoryException {
+    public ValueFactory getValueFactory() throws UnsupportedRepositoryOperationException, RepositoryException {
         return factory.getValueFactoryDecorator(this, session.getValueFactory());
     }
 

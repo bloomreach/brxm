@@ -43,9 +43,7 @@ import org.xml.sax.ContentHandler;
 /**
  * Simple workspace decorator.
  */
-public class ServicingWorkspaceImpl extends AbstractDecorator
-  implements ServicingWorkspace
-{
+public class ServicingWorkspaceImpl extends AbstractDecorator implements ServicingWorkspace {
     final static String CVS_ID = "$Id$";
 
     /** The underlying workspace instance. */
@@ -80,19 +78,16 @@ public class ServicingWorkspaceImpl extends AbstractDecorator
     /**
      * Forwards the method call to the underlying workspace.
      */
-    public void copy(String srcAbsPath, String destAbsPath)
-            throws ConstraintViolationException, VersionException,
-            AccessDeniedException, PathNotFoundException, ItemExistsException,
-            LockException, RepositoryException {
+    public void copy(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
+            AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         workspace.copy(srcAbsPath, destAbsPath);
     }
 
     /**
      * Forwards the method call to the underlying workspace.
      */
-    public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath)
-            throws NoSuchWorkspaceException, ConstraintViolationException,
-            VersionException, AccessDeniedException, PathNotFoundException,
+    public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath) throws NoSuchWorkspaceException,
+            ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException,
             ItemExistsException, LockException, RepositoryException {
         workspace.copy(srcWorkspace, srcAbsPath, destAbsPath);
     }
@@ -100,31 +95,26 @@ public class ServicingWorkspaceImpl extends AbstractDecorator
     /**
      * Forwards the method call to the underlying workspace.
      */
-    public void clone(String srcWorkspace, String srcAbsPath,
-            String destAbsPath, boolean removeExisting)
-            throws NoSuchWorkspaceException, ConstraintViolationException,
-            VersionException, AccessDeniedException, PathNotFoundException,
-            ItemExistsException, LockException, RepositoryException {
+    public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting)
+            throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException,
+            PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         workspace.clone(srcWorkspace, srcAbsPath, destAbsPath, removeExisting);
     }
 
     /**
      * Forwards the method call to the underlying workspace.
      */
-    public void move(String srcAbsPath, String destAbsPath)
-            throws ConstraintViolationException, VersionException,
-            AccessDeniedException, PathNotFoundException, ItemExistsException,
-            LockException, RepositoryException {
+    public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
+            AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         workspace.move(srcAbsPath, destAbsPath);
     }
 
     /**
      * Forwards the method call to the underlying workspace.
      */
-    public void restore(Version[] versions, boolean removeExisting)
-            throws ItemExistsException,
-            UnsupportedRepositoryOperationException, VersionException,
-            LockException, InvalidItemStateException, RepositoryException {
+    public void restore(Version[] versions, boolean removeExisting) throws ItemExistsException,
+            UnsupportedRepositoryOperationException, VersionException, LockException, InvalidItemStateException,
+            RepositoryException {
         Version[] tmp = new Version[versions.length];
         for (int i = 0; i < versions.length; i++) {
             tmp[i] = VersionDecorator.unwrap(versions[i]);
@@ -140,7 +130,7 @@ public class ServicingWorkspaceImpl extends AbstractDecorator
     }
 
     public ServicesManager getServicesManager() throws RepositoryException {
-      return servicesManager;
+        return servicesManager;
     }
 
     /**
@@ -160,8 +150,8 @@ public class ServicingWorkspaceImpl extends AbstractDecorator
     /**
      * Forwards the method call to the underlying workspace.
      */
-    public ObservationManager getObservationManager() throws
-            UnsupportedRepositoryOperationException, RepositoryException {
+    public ObservationManager getObservationManager() throws UnsupportedRepositoryOperationException,
+            RepositoryException {
         return workspace.getObservationManager();
     }
 
@@ -175,20 +165,17 @@ public class ServicingWorkspaceImpl extends AbstractDecorator
     /**
      * Forwards the method call to the underlying workspace.
      */
-    public ContentHandler getImportContentHandler(
-            String parentAbsPath, int uuidBehaviour)
-            throws PathNotFoundException, ConstraintViolationException,
-            VersionException, LockException, RepositoryException {
+    public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehaviour)
+            throws PathNotFoundException, ConstraintViolationException, VersionException, LockException,
+            RepositoryException {
         return workspace.getImportContentHandler(parentAbsPath, uuidBehaviour);
     }
 
     /**
      * Forwards the method call to the underlying workspace.
      */
-    public void importXML(
-            String parentAbsPath, InputStream in, int uuidBehaviour)
-            throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, InvalidSerializedDataException,
+    public void importXML(String parentAbsPath, InputStream in, int uuidBehaviour) throws IOException,
+            PathNotFoundException, ItemExistsException, ConstraintViolationException, InvalidSerializedDataException,
             LockException, RepositoryException {
         workspace.importXML(parentAbsPath, in, uuidBehaviour);
     }

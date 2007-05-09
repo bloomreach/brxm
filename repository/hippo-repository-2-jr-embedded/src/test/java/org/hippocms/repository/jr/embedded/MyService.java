@@ -19,8 +19,8 @@ import java.rmi.RemoteException;
 
 import org.hippocms.repository.jr.servicing.Service;
 
-public interface MyService extends Service
-{
-  public void doAction1() throws Exception, RemoteException;
-  public void doAction2() throws Exception, RemoteException;
+public interface MyService extends Service {
+    public void doAction1() throws Exception, RemoteException;
+
+    public void doAction2() throws Exception, RemoteException;
 }

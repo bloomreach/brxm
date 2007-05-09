@@ -29,13 +29,22 @@ import javax.transaction.xa.Xid;
 
 public interface RemoteServicingSession extends RemoteSession, Remote, Serializable {
     public void commit(Xid xid, boolean onePhase) throws RemoteException;
+
     public void end(Xid xid, int flags) throws RemoteException;
+
     public void forget(Xid xid) throws RemoteException;
+
     public int getTransactionTimeout() throws RemoteException;
+
     public boolean isSameRM(XAResource xares) throws RemoteException;
+
     public int prepare(Xid xid) throws RemoteException;
+
     public Xid[] recover(int flag) throws RemoteException;
+
     public void rollback(Xid xid) throws RemoteException;
+
     public boolean setTransactionTimeout(int seconds) throws RemoteException;
+
     public void start(Xid xid, int flags) throws RemoteException;
 }

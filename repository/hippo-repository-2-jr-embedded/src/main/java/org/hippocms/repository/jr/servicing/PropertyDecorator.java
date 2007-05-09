@@ -35,9 +35,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
 
     protected final Property property;
 
-    public PropertyDecorator(DecoratorFactory factory,
-                             Session session,
-                             Property property) {
+    public PropertyDecorator(DecoratorFactory factory, Session session, Property property) {
         super(factory, session, property);
         this.property = property;
     }
@@ -45,8 +43,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(Value value)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(Value value) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(value);
     }
@@ -54,8 +51,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(Value[] values)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(Value[] values) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(values);
     }
@@ -63,8 +59,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(String s)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(String s) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(s);
     }
@@ -72,8 +67,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(String[] strings)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(String[] strings) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(strings);
     }
@@ -81,8 +75,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(InputStream inputStream)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(InputStream inputStream) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(inputStream);
     }
@@ -90,8 +83,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(long l)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(long l) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(l);
     }
@@ -99,8 +91,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(double v)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(double v) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(v);
     }
@@ -108,8 +99,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(Calendar calendar)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(Calendar calendar) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(calendar);
     }
@@ -117,8 +107,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(boolean b)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(boolean b) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(b);
     }
@@ -126,8 +115,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     /**
      * @inheritDoc
      */
-    public void setValue(Node node)
-            throws ValueFormatException, VersionException, LockException,
+    public void setValue(Node node) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         property.setValue(ServicingNodeImpl.unwrap(node));
     }

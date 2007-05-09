@@ -24,8 +24,7 @@ import javax.jcr.Session;
 
 /**
  */
-public class ItemVisitorDecorator
-        extends AbstractDecorator implements ItemVisitor {
+public class ItemVisitorDecorator extends AbstractDecorator implements ItemVisitor {
 
     protected final ItemVisitor visitor;
 

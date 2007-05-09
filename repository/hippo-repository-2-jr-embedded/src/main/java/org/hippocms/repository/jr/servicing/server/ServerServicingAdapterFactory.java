@@ -34,30 +34,32 @@ import org.hippocms.repository.jr.servicing.ServicingWorkspaceImpl;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
 
-public class ServerServicingAdapterFactory extends ServerAdapterFactory
-  implements RemoteServicingAdapterFactory
-{
-  public ServerServicingAdapterFactory() {
-  }
-  public RemoteSession getRemoteSession(Session session) throws RemoteException {
-    if(session instanceof ServicingSessionImpl)
-      return new ServerServicingSession((ServicingSessionImpl)session, this);
-    else
-      return super.getRemoteSession(session);
-  }
-  public RemoteWorkspace getRemoteWorkspace(Workspace workspace) throws RemoteException {
-    if(workspace instanceof ServicingWorkspaceImpl)
-      return new ServerServicingWorkspace((ServicingWorkspaceImpl)workspace, this);
-    else
-      return super.getRemoteWorkspace(workspace);
-  }
-  public RemoteNode getRemoteNode(Node node) throws RemoteException {
-    if(node instanceof ServicingNodeImpl)
-      return new ServerServicingNode((ServicingNodeImpl)node, this);
-    else
-      return super.getRemoteNode(node);
-  }
-  public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager) throws RemoteException {
-    return new ServerServicesManager(servicesManager, this);
-  }
+public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
+    public ServerServicingAdapterFactory() {
+    }
+
+    public RemoteSession getRemoteSession(Session session) throws RemoteException {
+        if (session instanceof ServicingSessionImpl)
+            return new ServerServicingSession((ServicingSessionImpl) session, this);
+        else
+            return super.getRemoteSession(session);
+    }
+
+    public RemoteWorkspace getRemoteWorkspace(Workspace workspace) throws RemoteException {
+        if (workspace instanceof ServicingWorkspaceImpl)
+            return new ServerServicingWorkspace((ServicingWorkspaceImpl) workspace, this);
+        else
+            return super.getRemoteWorkspace(workspace);
+    }
+
+    public RemoteNode getRemoteNode(Node node) throws RemoteException {
+        if (node instanceof ServicingNodeImpl)
+            return new ServerServicingNode((ServicingNodeImpl) node, this);
+        else
+            return super.getRemoteNode(node);
+    }
+
+    public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager) throws RemoteException {
+        return new ServerServicesManager(servicesManager, this);
+    }
 }

@@ -102,8 +102,8 @@ import org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory
  *
  */
 public class Server {
-  public static boolean testclause = true;
-    
+    public static boolean testclause = true;
+
     public final static String NS_URI = "http://www.hippocms.org/";
     public final static String NS_PREFIX = "hippo";
 
@@ -124,13 +124,14 @@ public class Server {
     private void initializeConfiguration(String workingDirectory) throws RepositoryException {
         workingDir = new File(workingDirectory).getAbsolutePath();
     }
+
     private void initializeTransactions() throws RepositoryException {
         // FIXME: bring these properties into resource
         uts = new UserTransactionServiceImp();
         TSInitInfo initInfo = uts.createTSInitInfo();
         Properties initProperties = new Properties();
         initProperties.setProperty("com.atomikos.icatch.service",
-                                   "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
+                "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
         initProperties.setProperty("com.atomikos.icatch.console_file_name", "tm.out");
         initProperties.setProperty("com.atomikos.icatch.console_file_limit", "-1");
         initProperties.setProperty("com.atomikos.icatch.console_file_count", "1");
@@ -148,6 +149,7 @@ public class Server {
         initInfo.setProperties(initProperties);
         uts.init(initInfo);
     }
+
     private void initialize(String workingDirectory) throws RepositoryException {
         initializeConfiguration(workingDirectory);
         initializeTransactions();
@@ -164,111 +166,113 @@ public class Server {
 
         Session session = login();
         try {
-          Workspace workspace = session.getWorkspace();
+            Workspace workspace = session.getWorkspace();
 
-          NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
-          try {
-            nsreg.registerNamespace(NS_PREFIX, NS_URI);
-          } catch(javax.jcr.NamespaceException ex) {
-            log.warn(ex.getMessage());
-          }
-
-          String cndName = "repository.cnd";
-          InputStream cndStream = getClass().getResourceAsStream(cndName);
-          BufferedReader cndInput = new BufferedReader(new InputStreamReader(cndStream));
-          CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
-          List ntdList = cndReader.getNodeTypeDefs();
-          NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
-          NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
-          boolean progress;
-          do {
-            progress = false;
-            for(Iterator iter=ntdList.iterator(); iter.hasNext(); ) {
-              NodeTypeDef ntd = (NodeTypeDef) iter.next();
-              try {
-                ntreg.unregisterNodeType(ntd.getName());
-                progress = true;
-              } catch(RepositoryException ex) {
-                // save to ignore
-              }
-            }
-          } while(progress);
-          for(Iterator iter=ntdList.iterator(); iter.hasNext(); ) {
-            NodeTypeDef ntd = (NodeTypeDef) iter.next();
+            NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
             try {
-              try {
-                EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
-              } catch(NamespaceException ex) {
+                nsreg.registerNamespace(NS_PREFIX, NS_URI);
+            } catch (javax.jcr.NamespaceException ex) {
                 log.warn(ex.getMessage());
+            }
+
+            String cndName = "repository.cnd";
+            InputStream cndStream = getClass().getResourceAsStream(cndName);
+            BufferedReader cndInput = new BufferedReader(new InputStreamReader(cndStream));
+            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
+            List ntdList = cndReader.getNodeTypeDefs();
+            NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
+            NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+            boolean progress;
+            do {
+                progress = false;
+                for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+                    NodeTypeDef ntd = (NodeTypeDef) iter.next();
+                    try {
+                        ntreg.unregisterNodeType(ntd.getName());
+                        progress = true;
+                    } catch (RepositoryException ex) {
+                        // save to ignore
+                    }
+                }
+            } while (progress);
+            for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+                NodeTypeDef ntd = (NodeTypeDef) iter.next();
+                try {
+                    try {
+                        EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
+                    } catch (NamespaceException ex) {
+                        log.warn(ex.getMessage());
+                        System.err.println(ex.getMessage());
+                        ex.printStackTrace(System.err);
+                    }
+                } catch (RepositoryException ex) {
+                    if (ex.getMessage().equals("not yet implemented")) {
+                        log.warn("cannot override typing; hoping they are equivalent");
+                    } else
+                        throw ex;
+                }
+            }
+            session.save();
+
+        } catch (ParseException ex) {
+            throw new RepositoryException("Could not preload repository with hippo node types", ex);
+        } catch (InvalidNodeTypeDefException ex) {
+            log.error("Could not preload repository with hippo node types: " + ex.getMessage());
+        }
+
+        if (!session.getRootNode().hasNode("navigation")) {
+            log.info("Loading initial content");
+            try {
+                InputStream in = getClass().getResourceAsStream("content.xml");
+                session.importXML("/", in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+            } catch (IOException ex) {
                 System.err.println(ex.getMessage());
                 ex.printStackTrace(System.err);
-              }
-            } catch(RepositoryException ex) {
-              if(ex.getMessage().equals("not yet implemented")) {
-                log.warn("cannot override typing; hoping they are equivalent");
-              } else
-                throw ex;
+            } catch (PathNotFoundException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (ItemExistsException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (ConstraintViolationException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (VersionException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (InvalidSerializedDataException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (LockException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (RepositoryException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
             }
-          }
-          session.save();
-
-        } catch(ParseException ex) {
-          throw new RepositoryException("Could not preload repository with hippo node types", ex);
-        } catch(InvalidNodeTypeDefException ex) {
-          log.error("Could not preload repository with hippo node types: "+ex.getMessage());
-        }
-
-        if(!session.getRootNode().hasNode("navigation")) {
-          log.info("Loading initial content");
-          try {
-            InputStream in = getClass().getResourceAsStream("content.xml");
-            session.importXML("/", in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
-          } catch(IOException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-          } catch(PathNotFoundException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-          } catch(ItemExistsException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-          } catch(ConstraintViolationException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-          } catch(VersionException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-          } catch(InvalidSerializedDataException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-          } catch(LockException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-          } catch(RepositoryException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-          }
-          session.save();
+            session.save();
         }
     }
+
     public Server() throws RepositoryException {
         initialize(new File(System.getProperty("user.dir")).getAbsolutePath());
     }
+
     public Server(String location) throws RepositoryException {
-        if(location.startsWith("rmi://")) {
-          try {
-            initializeConfiguration(location);
-            initializeTransactions();
-            ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory();
-            ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
-            repository = repositoryFactory.getRepository(location);
-          } catch(RemoteException ex) {
-            // FIXME
-          } catch(NotBoundException ex) {
-            // FIXME
-          } catch(MalformedURLException ex) {
-            // FIXME
-          }
+        if (location.startsWith("rmi://")) {
+            try {
+                initializeConfiguration(location);
+                initializeTransactions();
+                ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory();
+                ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
+                repository = repositoryFactory.getRepository(location);
+            } catch (RemoteException ex) {
+                // FIXME
+            } catch (NotBoundException ex) {
+                // FIXME
+            } catch (MalformedURLException ex) {
+                // FIXME
+            }
         } else {
             initialize(location);
         }
@@ -276,7 +280,7 @@ public class Server {
 
     public Session login() throws RepositoryException {
         Session session = null;
-        if(systemUsername != null)
+        if (systemUsername != null)
             session = repository.login(new SimpleCredentials(systemUsername, systemPassword.toCharArray()));
         else
             session = repository.login();
@@ -286,85 +290,86 @@ public class Server {
     }
 
     public void close() {
-      if(jackrabbitRepository != null) {
-        Session session = null;
-        try {
-          session = login();
-          java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
-          session.exportSystemView("/navigation", out, false, false);
-        } catch(IOException ex) {
-          System.err.println(ex.getMessage());
-          ex.printStackTrace(System.err);
-        } catch(RepositoryException ex) {
-          System.err.println(ex.getMessage());
-          ex.printStackTrace(System.err);
-        } finally {
-          if(session != null)
-            session.logout();
-        }
-        try {
-          if(rmiRepository != null) {
-            rmiRepository = null;
+        if (jackrabbitRepository != null) {
+            Session session = null;
             try {
-              Naming.unbind(RMI_NAME);
-            } catch(Exception ex) {
-              // ignore
+                session = login();
+                java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
+                session.exportSystemView("/navigation", out, false, false);
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (RepositoryException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } finally {
+                if (session != null)
+                    session.logout();
             }
-          }
-          jackrabbitRepository.shutdown();
-          jackrabbitRepository = null;
-        } catch(Exception ex) {
-          // ignore
+            try {
+                if (rmiRepository != null) {
+                    rmiRepository = null;
+                    try {
+                        Naming.unbind(RMI_NAME);
+                    } catch (Exception ex) {
+                        // ignore
+                    }
+                }
+                jackrabbitRepository.shutdown();
+                jackrabbitRepository = null;
+            } catch (Exception ex) {
+                // ignore
+            }
         }
-      }
-      if(uts != null) {
-        uts.shutdownWait();
-        uts = null;
-      }
-      repository = null;
+        if (uts != null) {
+            uts.shutdownWait();
+            uts = null;
+        }
+        repository = null;
     }
 
     static Registry registry = null;
+
     public void run(boolean background) throws RemoteException, AlreadyBoundException {
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-          public void run() {
-            close();
-          }
-        });
-      Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
-      System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-      if(registry == null)
-        registry = LocateRegistry.createRegistry(RMI_PORT);
-      registry.bind(RMI_NAME, remote);
-      rmiRepository = remote;
-      log.info("RMI Server available on rmi://localhost:"+RMI_PORT+"/"+RMI_NAME);
-      if(!background) {
-        for(;;) {
-            try {
-              Thread.sleep(333);
-            } catch (InterruptedException ex) {
-              System.err.println(ex);
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                close();
             }
-          }
-      }
+        });
+        Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
+        System.setProperty("java.rmi.server.useCodebaseOnly", "true");
+        if (registry == null)
+            registry = LocateRegistry.createRegistry(RMI_PORT);
+        registry.bind(RMI_NAME, remote);
+        rmiRepository = remote;
+        log.info("RMI Server available on rmi://localhost:" + RMI_PORT + "/" + RMI_NAME);
+        if (!background) {
+            for (;;) {
+                try {
+                    Thread.sleep(333);
+                } catch (InterruptedException ex) {
+                    System.err.println(ex);
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
         try {
             Server server = null;
-            if(args.length > 0)
+            if (args.length > 0)
                 server = new Server(args.length > 0 ? args[0] : ".");
             else
                 server = new Server();
             server.run(false);
             server.close();
-        } catch(RemoteException ex) {
+        } catch (RemoteException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
-        } catch(AlreadyBoundException ex) {
+        } catch (AlreadyBoundException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }

@@ -24,8 +24,7 @@ import javax.jcr.Session;
 
 /**
  */
-public class QueryResultDecorator
-        extends AbstractDecorator implements QueryResult {
+public class QueryResultDecorator extends AbstractDecorator implements QueryResult {
 
     protected final QueryResult result;
 
