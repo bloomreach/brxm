@@ -19,8 +19,6 @@ package org.hippocms.repository.jr.servicing;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-public interface ServicingNode
-  extends Node
-{
+public interface ServicingNode extends Node {
     public Service getService() throws RepositoryException;
 }

@@ -34,8 +34,7 @@ import javax.jcr.version.VersionHistory;
  * and best effort is made to decorate the objects returned by the
  * {@link #next() next()} method.
  */
-public class DecoratingRangeIterator
-        extends AbstractDecorator implements RangeIterator {
+public class DecoratingRangeIterator extends AbstractDecorator implements RangeIterator {
 
     /** The underlying iterator. */
     protected final RangeIterator iterator;
@@ -49,15 +48,14 @@ public class DecoratingRangeIterator
      * @param session decorated session
      * @param iterator underlying iterator
      */
-    public DecoratingRangeIterator(
-            DecoratorFactory factory, Session session, RangeIterator iterator) {
+    public DecoratingRangeIterator(DecoratorFactory factory, Session session, RangeIterator iterator) {
         super(factory, session);
         this.iterator = iterator;
         this.parent = null;
     }
 
-    public DecoratingRangeIterator(
-            DecoratorFactory factory, Session session, RangeIterator iterator, ServicingNodeImpl parent) {
+    public DecoratingRangeIterator(DecoratorFactory factory, Session session, RangeIterator iterator,
+            ServicingNodeImpl parent) {
         super(factory, session);
         this.iterator = iterator;
         this.parent = parent;
@@ -119,10 +117,11 @@ public class DecoratingRangeIterator
         } else if (object instanceof VersionHistory) {
             return factory.getVersionHistoryDecorator(session, (VersionHistory) object);
         } else if (object instanceof Node) {
-            if(parent != null) {
+            if (parent != null) {
                 try {
-                    return factory.getNodeDecorator(session, (Node) object, parent.getChildPath(parent.getName()), parent.depth+1);
-                } catch(RepositoryException ex) {
+                    return factory.getNodeDecorator(session, (Node) object, parent.getChildPath(parent.getName()),
+                            parent.depth + 1);
+                } catch (RepositoryException ex) {
                     throw new UnsupportedOperationException("Decorator became invalid for " + object);
                 }
             } else

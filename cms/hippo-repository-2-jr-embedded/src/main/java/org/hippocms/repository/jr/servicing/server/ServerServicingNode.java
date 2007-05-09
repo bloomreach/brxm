@@ -28,17 +28,15 @@ import org.hippocms.repository.jr.servicing.ServicingNodeImpl;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingNode;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
 
-public class ServerServicingNode extends ServerNode
-  implements RemoteServicingNode
-{
-  private ServicingNodeImpl node;
-  public ServerServicingNode(ServicingNodeImpl node, RemoteServicingAdapterFactory factory)
-    throws RemoteException
-  {
-    super(node, factory);
-    this.node = node;
-  }
-  public Service getService() throws RepositoryException, RemoteException {
-    return node.getService();
-  }
+public class ServerServicingNode extends ServerNode implements RemoteServicingNode {
+    private ServicingNodeImpl node;
+
+    public ServerServicingNode(ServicingNodeImpl node, RemoteServicingAdapterFactory factory) throws RemoteException {
+        super(node, factory);
+        this.node = node;
+    }
+
+    public Service getService() throws RepositoryException, RemoteException {
+        return node.getService();
+    }
 }

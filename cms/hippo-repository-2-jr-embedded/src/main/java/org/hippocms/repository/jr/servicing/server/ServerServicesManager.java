@@ -27,32 +27,29 @@ import org.hippocms.repository.jr.servicing.ServicesManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
 
-public class ServerServicesManager extends ServerObject
-  implements RemoteServicesManager
-{
-  private ServicesManager servicesManager;
-  public ServerServicesManager(ServicesManager manager, RemoteServicingAdapterFactory factory)
-    throws RemoteException
-  {
-    super(factory);
-    this.servicesManager = manager;
-  }
-  public Service getService(String absPath)
-    throws RepositoryException, RemoteException {
-    try {
-      Node node = servicesManager.getSession().getRootNode().getNode(absPath);
-      return servicesManager.getService(node);
-    } catch (RepositoryException ex) {
-      throw getRepositoryException(ex);
+public class ServerServicesManager extends ServerObject implements RemoteServicesManager {
+    private ServicesManager servicesManager;
+
+    public ServerServicesManager(ServicesManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
+        super(factory);
+        this.servicesManager = manager;
     }
-  }
-  public Service getService(String absPath, String serviceName)
-    throws RepositoryException, RemoteException {
-    try {
-      Node node = servicesManager.getSession().getRootNode().getNode(absPath);
-      return servicesManager.getService(node, serviceName);
-    } catch (RepositoryException ex) {
-      throw getRepositoryException(ex);
+
+    public Service getService(String absPath) throws RepositoryException, RemoteException {
+        try {
+            Node node = servicesManager.getSession().getRootNode().getNode(absPath);
+            return servicesManager.getService(node);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
     }
-  }
+
+    public Service getService(String absPath, String serviceName) throws RepositoryException, RemoteException {
+        try {
+            Node node = servicesManager.getSession().getRootNode().getNode(absPath);
+            return servicesManager.getService(node, serviceName);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
 }

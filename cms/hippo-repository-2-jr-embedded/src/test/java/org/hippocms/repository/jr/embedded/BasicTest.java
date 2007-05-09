@@ -25,26 +25,26 @@ import junit.framework.TestCase;
  * @version $Id$
  */
 public class BasicTest extends TestCase {
-  private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
-  public void testBasics() {
-    Server server = null;
-    try {
-      server = new Server("rmi://localhost:1099/jackrabbit.repository");
-      assertNotNull(server);
-      Session session = server.login();
-      assertNotNull(session);
-      Node root = session.getRootNode();
-      assertNotNull(root);
-      session.save();
-      session.logout();
-    } catch(RepositoryException ex) {
-      fail("unexpected repository exception "+ex.getMessage());
-    } finally {
-      if(server != null) {
-        server.close();
-        server = null;
-      }
+    public void testBasics() {
+        Server server = null;
+        try {
+            server = new Server("rmi://localhost:1099/jackrabbit.repository");
+            assertNotNull(server);
+            Session session = server.login();
+            assertNotNull(session);
+            Node root = session.getRootNode();
+            assertNotNull(root);
+            session.save();
+            session.logout();
+        } catch (RepositoryException ex) {
+            fail("unexpected repository exception " + ex.getMessage());
+        } finally {
+            if (server != null) {
+                server.close();
+                server = null;
+            }
+        }
     }
-  }
 }

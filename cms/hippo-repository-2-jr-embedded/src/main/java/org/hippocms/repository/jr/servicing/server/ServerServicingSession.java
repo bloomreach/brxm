@@ -32,85 +32,92 @@ import org.hippocms.repository.jr.servicing.remote.RemoteServicingSession;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
 import org.hippocms.repository.jr.servicing.ServicingSessionImpl;
 
-public class ServerServicingSession extends ServerSession
-  implements RemoteServicingSession
-{
+public class ServerServicingSession extends ServerSession implements RemoteServicingSession {
     private ServicingSessionImpl session;
+
     public ServerServicingSession(ServicingSessionImpl session, RemoteServicingAdapterFactory factory)
-      throws RemoteException
-    {
-      super(session, factory);
-      this.session = session;
+            throws RemoteException {
+        super(session, factory);
+        this.session = session;
     }
 
     public void commit(Xid xid, boolean onePhase) throws RemoteException {
-      try {
-        ((XASession)session).getXAResource().commit(xid, onePhase);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            ((XASession) session).getXAResource().commit(xid, onePhase);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public void end(Xid xid, int flags) throws RemoteException {
-      try {
-        ((XASession)session).getXAResource().end(xid, flags);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            ((XASession) session).getXAResource().end(xid, flags);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public void forget(Xid xid) throws RemoteException {
-      try {
-        ((XASession)session).getXAResource().forget(xid);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            ((XASession) session).getXAResource().forget(xid);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public int getTransactionTimeout() throws RemoteException {
-      try {
-        return ((XASession)session).getXAResource().getTransactionTimeout();
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            return ((XASession) session).getXAResource().getTransactionTimeout();
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public boolean isSameRM(XAResource xares) throws RemoteException {
-      try {
-        return ((XASession)session).getXAResource().isSameRM(xares);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            return ((XASession) session).getXAResource().isSameRM(xares);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public int prepare(Xid xid) throws RemoteException {
-      try {
-        return ((XASession)session).getXAResource().prepare(xid);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            return ((XASession) session).getXAResource().prepare(xid);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public Xid[] recover(int flag) throws RemoteException {
-      try {
-        return ((XASession)session).getXAResource().recover(flag);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            return ((XASession) session).getXAResource().recover(flag);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public void rollback(Xid xid) throws RemoteException {
-      try {
-        ((XASession)session).getXAResource().rollback(xid);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            ((XASession) session).getXAResource().rollback(xid);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public boolean setTransactionTimeout(int seconds) throws RemoteException {
-      try {
-        return ((XASession)session).getXAResource().setTransactionTimeout(seconds);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            return ((XASession) session).getXAResource().setTransactionTimeout(seconds);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
+
     public void start(Xid xid, int flags) throws RemoteException {
-      try {
-        ((XASession)session).getXAResource().start(xid, flags);
-      } catch(XAException ex) {
-        throw new RemoteException(ex.getMessage());
-      }
+        try {
+            ((XASession) session).getXAResource().start(xid, flags);
+        } catch (XAException ex) {
+            throw new RemoteException(ex.getMessage());
+        }
     }
 }

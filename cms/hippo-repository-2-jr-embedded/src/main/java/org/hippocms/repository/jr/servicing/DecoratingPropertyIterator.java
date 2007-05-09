@@ -22,8 +22,7 @@ import javax.jcr.Property;
 
 /**
  */
-public class DecoratingPropertyIterator extends DecoratingRangeIterator
-        implements PropertyIterator {
+public class DecoratingPropertyIterator extends DecoratingRangeIterator implements PropertyIterator {
 
     /**
      * Creates a decorating property iterator.
@@ -32,9 +31,7 @@ public class DecoratingPropertyIterator extends DecoratingRangeIterator
      * @param session decorated session
      * @param iterator underlying property iterator
      */
-    public DecoratingPropertyIterator(DecoratorFactory factory,
-                 Session session,
-                 PropertyIterator iterator) {
+    public DecoratingPropertyIterator(DecoratorFactory factory, Session session, PropertyIterator iterator) {
         super(factory, session, iterator);
     }
 

@@ -27,8 +27,7 @@ import java.io.InputStream;
 
 /**
  */
-public class ValueFactoryDecorator
-        extends AbstractDecorator implements ValueFactory {
+public class ValueFactoryDecorator extends AbstractDecorator implements ValueFactory {
 
     protected final ValueFactory valueFactory;
 
@@ -47,8 +46,7 @@ public class ValueFactoryDecorator
     /**
      * @inheritDoc
      */
-    public Value createValue(String value, int type)
-            throws ValueFormatException {
+    public Value createValue(String value, int type) throws ValueFormatException {
         return valueFactory.createValue(value, type);
     }
 

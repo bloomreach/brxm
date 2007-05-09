@@ -19,9 +19,10 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
-public interface ServicesManager
-{
-  public Service getService(Node node) throws RepositoryException;
-  public Service getService(Node node, String serviceName) throws RepositoryException;
-  public Session getSession() throws RepositoryException;
+public interface ServicesManager {
+    public Service getService(Node node) throws RepositoryException;
+
+    public Service getService(Node node, String serviceName) throws RepositoryException;
+
+    public Session getSession() throws RepositoryException;
 }

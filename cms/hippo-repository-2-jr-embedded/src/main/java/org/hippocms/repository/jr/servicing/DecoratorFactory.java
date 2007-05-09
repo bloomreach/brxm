@@ -140,8 +140,7 @@ public interface DecoratorFactory {
      * @param versionHistory the underlying version history instance
      * @return version history decorator
      */
-    VersionHistory getVersionHistoryDecorator(Session session,
-                                              VersionHistory versionHistory);
+    VersionHistory getVersionHistoryDecorator(Session session, VersionHistory versionHistory);
 
     /**
      * Creates a query manager decorator.

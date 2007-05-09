@@ -29,24 +29,21 @@ import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
 
-public class ServerServicingWorkspace extends ServerWorkspace
-  implements RemoteServicingWorkspace
-{
-  private ServicingWorkspaceImpl workspace;
-  public ServerServicingWorkspace(ServicingWorkspaceImpl workspace, RemoteServicingAdapterFactory factory)
-    throws RemoteException
-  {
-    super(workspace, factory);
-    this.workspace = workspace;
-  }
-  public RemoteServicesManager getServicesManager()
-    throws RemoteException, RepositoryException
-  {
-    try {
-      ServicesManager servicesManager = workspace.getServicesManager();
-      return ((RemoteServicingAdapterFactory)getFactory()).getRemoteServicesManager(servicesManager);
-    } catch(RepositoryException ex) {
-      throw getRepositoryException(ex);
+public class ServerServicingWorkspace extends ServerWorkspace implements RemoteServicingWorkspace {
+    private ServicingWorkspaceImpl workspace;
+
+    public ServerServicingWorkspace(ServicingWorkspaceImpl workspace, RemoteServicingAdapterFactory factory)
+            throws RemoteException {
+        super(workspace, factory);
+        this.workspace = workspace;
     }
-  }
+
+    public RemoteServicesManager getServicesManager() throws RemoteException, RepositoryException {
+        try {
+            ServicesManager servicesManager = workspace.getServicesManager();
+            return ((RemoteServicingAdapterFactory) getFactory()).getRemoteServicesManager(servicesManager);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
 }

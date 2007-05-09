@@ -22,6 +22,5 @@ import org.apache.jackrabbit.rmi.server.RemoteAdapterFactory;
 import org.hippocms.repository.jr.servicing.ServicesManager;
 
 public interface RemoteServicingAdapterFactory extends RemoteAdapterFactory {
-  public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager)
-    throws RemoteException;
+    public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager) throws RemoteException;
 }

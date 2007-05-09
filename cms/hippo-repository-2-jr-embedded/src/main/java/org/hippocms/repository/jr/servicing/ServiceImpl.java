@@ -23,13 +23,11 @@ import java.rmi.server.UnicastRemoteObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceImpl extends UnicastRemoteObject
-  implements Service
-{
-  private static final Logger logger = LoggerFactory.getLogger(Service.class);
-  protected Logger log;
+public class ServiceImpl extends UnicastRemoteObject implements Service {
+    private static final Logger logger = LoggerFactory.getLogger(Service.class);
+    protected Logger log;
 
-  public ServiceImpl() throws RemoteException {
-    log = logger;
-  }
+    public ServiceImpl() throws RemoteException {
+        log = logger;
+    }
 }

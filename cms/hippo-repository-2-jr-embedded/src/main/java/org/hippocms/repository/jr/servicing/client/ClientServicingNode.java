@@ -28,19 +28,19 @@ import org.hippocms.repository.jr.servicing.Service;
 import org.hippocms.repository.jr.servicing.ServicingNode;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingNode;
 
-public class ClientServicingNode extends ClientNode
-  implements ServicingNode
-{
+public class ClientServicingNode extends ClientNode implements ServicingNode {
     private RemoteServicingNode remote;
+
     public ClientServicingNode(Session session, RemoteServicingNode remote, LocalServicingAdapterFactory factory) {
         super(session, remote, factory);
         this.remote = remote;
     }
+
     public Service getService() throws RepositoryException {
         try {
             Service service = remote.getService();
             return service;
-        } catch(RemoteException ex) {
+        } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
     }

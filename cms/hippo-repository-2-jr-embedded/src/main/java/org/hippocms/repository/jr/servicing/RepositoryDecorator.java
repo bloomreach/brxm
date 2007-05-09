@@ -32,8 +32,7 @@ public class RepositoryDecorator implements Repository {
 
     private Repository repository;
 
-    public RepositoryDecorator(
-            DecoratorFactory factory, Repository repository) {
+    public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
         this.factory = factory;
         this.repository = repository;
     }
@@ -58,10 +57,10 @@ public class RepositoryDecorator implements Repository {
      *
      * @return decorated session
      */
-    public Session login(Credentials credentials, String workspaceName) throws
-            LoginException, NoSuchWorkspaceException, RepositoryException {
+    public Session login(Credentials credentials, String workspaceName) throws LoginException,
+            NoSuchWorkspaceException, RepositoryException {
         Session session = repository.login(credentials, workspaceName);
-        return factory.getSessionDecorator(this, session); 
+        return factory.getSessionDecorator(this, session);
     }
 
     /**
@@ -70,8 +69,7 @@ public class RepositoryDecorator implements Repository {
      * @return decorated session
      * @see #login(Credentials, String)
      */
-    public Session login(Credentials credentials) throws LoginException,
-            NoSuchWorkspaceException, RepositoryException {
+    public Session login(Credentials credentials) throws LoginException, NoSuchWorkspaceException, RepositoryException {
         return login(credentials, null);
     }
 
@@ -81,8 +79,7 @@ public class RepositoryDecorator implements Repository {
      * @return decorated session
      * @see #login(Credentials, String)
      */
-    public Session login(String workspaceName) throws LoginException,
-            NoSuchWorkspaceException, RepositoryException {
+    public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
         return login(null, workspaceName);
     }
 
@@ -92,8 +89,7 @@ public class RepositoryDecorator implements Repository {
      * @return decorated session
      * @see #login(Credentials, String)
      */
-    public Session login() throws LoginException, NoSuchWorkspaceException,
-            RepositoryException {
+    public Session login() throws LoginException, NoSuchWorkspaceException, RepositoryException {
         return login(null, null);
     }
 

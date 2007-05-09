@@ -22,8 +22,7 @@ import javax.jcr.Session;
 
 /**
  */
-public class DecoratingVersionIterator extends DecoratingRangeIterator
-        implements VersionIterator {
+public class DecoratingVersionIterator extends DecoratingRangeIterator implements VersionIterator {
 
     /**
      * Creates a decorating version iterator.
@@ -32,9 +31,7 @@ public class DecoratingVersionIterator extends DecoratingRangeIterator
      * @param session decorated session
      * @param iterator underlying version iterator
      */
-    public DecoratingVersionIterator(DecoratorFactory factory,
-                 Session session,
-                 VersionIterator iterator) {
+    public DecoratingVersionIterator(DecoratorFactory factory, Session session, VersionIterator iterator) {
         super(factory, session, iterator);
     }
 

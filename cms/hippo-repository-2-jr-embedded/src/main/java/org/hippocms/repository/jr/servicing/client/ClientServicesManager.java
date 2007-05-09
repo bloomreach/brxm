@@ -30,11 +30,10 @@ import org.hippocms.repository.jr.servicing.Service;
 import org.hippocms.repository.jr.servicing.ServicesManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
 
-public class ClientServicesManager extends ClientObject
-  implements ServicesManager
-{
+public class ClientServicesManager extends ClientObject implements ServicesManager {
     private Session session;
     private RemoteServicesManager remote;
+
     public ClientServicesManager(Session session, RemoteServicesManager remote, LocalServicingAdapterFactory factory) {
         super(factory);
         this.session = session;
@@ -44,20 +43,23 @@ public class ClientServicesManager extends ClientObject
     public Service getService(Node node) throws RepositoryException {
         try {
             return remote.getService(node.getPath());
-        } catch(RemoteException ex) {
+        } catch (RemoteException ex) {
             throw new RemoteRuntimeException(ex);
         }
     }
+
     public Service getService(Node node, String serviceName) throws RepositoryException {
         try {
             return remote.getService(node.getPath(), serviceName);
-        } catch(RemoteException ex) {
+        } catch (RemoteException ex) {
             throw new RemoteRuntimeException(ex);
         }
     }
+
     public Session getSession() throws RepositoryException {
         return session;
     }
+
     public void save() throws RepositoryException {
     }
 }
