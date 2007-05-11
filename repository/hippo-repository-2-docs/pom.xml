@@ -29,7 +29,7 @@
   
   <name>Hippo Repository 2 Documentation</name>
   <description>Hippo Repository 2 Technical Documentation</description>
-  <artifactId>hippo-repository-2-documentation</artifactId>
+  <artifactId>hippo-repository-2-docs</artifactId>
   
   
   <scm>
