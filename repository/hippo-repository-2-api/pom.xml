@@ -29,6 +29,7 @@
 
   <name>Hippo Repository 2 API</name>
   <description>Hippo Repository 2 specific extensions to the JCR API</description>
+  <artifactId>hippo-repository-2-api</artifactId>
 
   
   <scm>
