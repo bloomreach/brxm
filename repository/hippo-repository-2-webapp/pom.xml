@@ -18,27 +18,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
   http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
-  
+
+
   <parent>
     <groupId>org.hippocms</groupId>
     <artifactId>hippo-repository-2</artifactId>
     <version>1.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
-  
-  <name>Hippo Repository 2 Documentation</name>
-  <description>Hippo Repository 2 Technical Documentation</description>
-  <artifactId>hippo-repository-2-documentation</artifactId>
-  
+
+  <name>Hippo Repository 2 Webapp</name>
+  <description>Hippo Repository 2 Simple Webapplicaiton</description>
+  <artifactId>hippo-repository-2-webapp</artifactId>
+
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-docs</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-docs</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-docs</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-webapp</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-webapp</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-webapp</url>
   </scm>
-  
-  <dependencies>
-  </dependencies>
-  
+
 </project>
