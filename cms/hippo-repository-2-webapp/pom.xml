@@ -38,4 +38,21 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-webapp</url>
   </scm>
 
+  <dependencies>
+    <!-- Hippo repository-->
+    <dependency>
+      <groupId>org.hippocms</groupId>
+      <artifactId>hippo-repository-2-jr-core</artifactId>
+      <version>1.01.00-dev</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr-rmi</artifactId>
+    </dependency>
+  </dependencies>
 </project>
