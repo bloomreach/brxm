@@ -51,7 +51,7 @@
   
   <properties>
     <!-- Default Build Properties -->
-    <maven.test.skip>true</maven.test.skip>
+    <maven.test.skip>false</maven.test.skip>
 
     <!-- Versions -->
     <jackrabbit.version>1.3</jackrabbit.version>
@@ -90,6 +90,15 @@
       <name>Hippo Repository for Maven2</name>
       <url>http://repository.hippocms.org/maven2/</url>
       <layout>default</layout>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>legacy-repository.hippocms.org</id>
+      <name>Hippo Repository for Maven 1.X</name>
+      <url>http://repository.hippocms.org/maven/</url>
+      <layout>legacy</layout>
     </repository>
     <repository>
       <snapshots>
