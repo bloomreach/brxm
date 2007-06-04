@@ -77,15 +77,13 @@ import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 import org.hippocms.repository.jr.servicing.client.ClientServicesAdapterFactory;
 
-class RemoteHippoRepository extends HippoRepository
-{
-  private final static String SVN = "$Id$";
+class RemoteHippoRepository extends HippoRepository {
+    private final static String SVN = "$Id$";
 
-  RemoteHippoRepository(String location)
-    throws MalformedURLException, NotBoundException, RemoteException, RepositoryException
-  {
-    ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory();
-    ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
-    repository = repositoryFactory.getRepository(location);
-  }
+    RemoteHippoRepository(String location) throws MalformedURLException, NotBoundException, RemoteException,
+            RepositoryException {
+        ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory();
+        ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
+        repository = repositoryFactory.getRepository(location);
+    }
 }

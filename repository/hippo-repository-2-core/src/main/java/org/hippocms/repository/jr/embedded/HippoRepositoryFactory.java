@@ -24,55 +24,60 @@ import java.rmi.RemoteException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 
-public class HippoRepositoryFactory
-{
-  private final static String SVN = "$Id$";
+public class HippoRepositoryFactory {
+    private final static String SVN = "$Id$";
 
-  static String defaultLocation = null;
-  static HippoRepository defaultRepository = null;
-  public static void setDefaultRepository(String location) {
-    defaultLocation = location;
-    defaultRepository = null;
-  }
-  public static void setDefaultRepository(HippoRepository repository) {
-    defaultLocation = null;
-    defaultRepository = repository;
-  }
-  public HippoRepositoryFactory() {
-  }
-  public static HippoRepository getHippoRepository() throws RepositoryException {
-    if(defaultRepository != null) {
-      return defaultRepository;
-    } else if(defaultLocation != null) {
-      defaultRepository = getHippoRepository(defaultLocation);
-      return defaultRepository;
+    static String defaultLocation = null;
+    static HippoRepository defaultRepository = null;
+
+    public static void setDefaultRepository(String location) {
+        defaultLocation = location;
+        defaultRepository = null;
     }
-    return new LocalHippoRepository();
-  }
-  public static HippoRepository getHippoRepository(String location) throws RepositoryException {
-    if(defaultRepository != null && (location.equals(defaultRepository.getLocation()) ||
-                                     location.equals("file:"+defaultRepository.getLocation())))
-      return defaultRepository;
-    else if(defaultRepository == null && (location.equals(defaultLocation) ||
-                                          location.equals("file:"+defaultLocation)))
-      return getHippoRepository();
-    if(location.startsWith("rmi://")) {
-      try {
-        return new RemoteHippoRepository(location);
-      } catch (RemoteException ex) {
-        return null;
-        // FIXME
-      } catch (NotBoundException ex) {
-        return null;
-        // FIXME
-      } catch (MalformedURLException ex) {
-        return null;
-        // FIXME
-      }
-    } else if(location.startsWith("file:")) {
-      System.out.println("HERE "+location.substring(5));
-      return new LocalHippoRepository(location.substring(5));
-    } else
-      return new LocalHippoRepository(location);
-  }
+
+    public static void setDefaultRepository(HippoRepository repository) {
+        defaultLocation = null;
+        defaultRepository = repository;
+    }
+
+    public HippoRepositoryFactory() {
+    }
+
+    public static HippoRepository getHippoRepository() throws RepositoryException {
+        if (defaultRepository != null) {
+            return defaultRepository;
+        } else if (defaultLocation != null) {
+            defaultRepository = getHippoRepository(defaultLocation);
+            return defaultRepository;
+        }
+        return new LocalHippoRepository();
+    }
+
+    public static HippoRepository getHippoRepository(String location) throws RepositoryException {
+        if (defaultRepository != null
+                && (location.equals(defaultRepository.getLocation()) || location.equals("file:"
+                        + defaultRepository.getLocation())))
+            return defaultRepository;
+        else if (defaultRepository == null
+                && (location.equals(defaultLocation) || location.equals("file:" + defaultLocation)))
+            return getHippoRepository();
+        if (location.startsWith("rmi://")) {
+            try {
+                return new RemoteHippoRepository(location);
+            } catch (RemoteException ex) {
+                return null;
+                // FIXME
+            } catch (NotBoundException ex) {
+                return null;
+                // FIXME
+            } catch (MalformedURLException ex) {
+                return null;
+                // FIXME
+            }
+        } else if (location.startsWith("file:")) {
+            System.out.println("HERE " + location.substring(5));
+            return new LocalHippoRepository(location.substring(5));
+        } else
+            return new LocalHippoRepository(location);
+    }
 }

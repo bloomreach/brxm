@@ -55,10 +55,10 @@ public class BasicTest extends TestCase {
                     repositoryClient = null;
                 }
             } catch (Exception ex) {
-              if(firstException == null) {
-                firstException = ex;
-                exceptionOccurred = true;
-              }
+                if (firstException == null) {
+                    firstException = ex;
+                    exceptionOccurred = true;
+                }
             }
             try {
                 if (repositoryServer != null) {
@@ -66,13 +66,13 @@ public class BasicTest extends TestCase {
                     repositoryServer = null;
                 }
             } catch (Exception ex) {
-              if(firstException == null) {
-                firstException = ex;
-                exceptionOccurred = true;
-              }
+                if (firstException == null) {
+                    firstException = ex;
+                    exceptionOccurred = true;
+                }
             }
-            if(exceptionOccurred)
-              throw firstException;
+            if (exceptionOccurred)
+                throw firstException;
         }
     }
 }

@@ -89,74 +89,75 @@ import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 import org.hippocms.repository.jr.servicing.client.ClientServicesAdapterFactory;
 import org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory;
 
-public class HippoRepositoryServer extends LocalHippoRepository
-{
-  public static int RMI_PORT = 1099;
-  public static String RMI_NAME = "jackrabbit.repository";
+public class HippoRepositoryServer extends LocalHippoRepository {
+    public static int RMI_PORT = 1099;
+    public static String RMI_NAME = "jackrabbit.repository";
 
-  static Registry registry = null;
-  private Remote rmiRepository;
+    static Registry registry = null;
+    private Remote rmiRepository;
 
-  public HippoRepositoryServer() throws RepositoryException {
-    super();
-  }
-  public HippoRepositoryServer(String location) throws RepositoryException {
-    super(location);
-  }
-  public void close() {
-    if (rmiRepository != null) {
-      rmiRepository = null;
-      try {
-        Naming.unbind(RMI_NAME);
-      } catch (Exception ex) {
-        // ignore
-      }
+    public HippoRepositoryServer() throws RepositoryException {
+        super();
     }
-    super.close();
-  }
-  
-  public void run(boolean background) throws RemoteException, AlreadyBoundException {
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-        public void run() {
-          close();
+
+    public HippoRepositoryServer(String location) throws RepositoryException {
+        super(location);
+    }
+
+    public void close() {
+        if (rmiRepository != null) {
+            rmiRepository = null;
+            try {
+                Naming.unbind(RMI_NAME);
+            } catch (Exception ex) {
+                // ignore
+            }
         }
-      });
-    Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
-    System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-    if (registry == null)
-      registry = LocateRegistry.createRegistry(RMI_PORT);
-    registry.bind(RMI_NAME, remote);
-    rmiRepository = remote;
-    log.info("RMI Server available on rmi://localhost:" + RMI_PORT + "/" + RMI_NAME);
-    if (!background) {
-      for (;;) {
+        super.close();
+    }
+
+    public void run(boolean background) throws RemoteException, AlreadyBoundException {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                close();
+            }
+        });
+        Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
+        System.setProperty("java.rmi.server.useCodebaseOnly", "true");
+        if (registry == null)
+            registry = LocateRegistry.createRegistry(RMI_PORT);
+        registry.bind(RMI_NAME, remote);
+        rmiRepository = remote;
+        log.info("RMI Server available on rmi://localhost:" + RMI_PORT + "/" + RMI_NAME);
+        if (!background) {
+            for (;;) {
+                try {
+                    Thread.sleep(333);
+                } catch (InterruptedException ex) {
+                    System.err.println(ex);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
         try {
-          Thread.sleep(333);
-        } catch (InterruptedException ex) {
-          System.err.println(ex);
+            HippoRepositoryServer server = null;
+            if (args.length > 0)
+                server = new HippoRepositoryServer(args.length > 0 ? args[0] : ".");
+            else
+                server = new HippoRepositoryServer();
+            server.run(false);
+            server.close();
+        } catch (RemoteException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch (AlreadyBoundException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch (RepositoryException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
         }
-      }
     }
-  }
-
-  public static void main(String[] args) {
-    try {
-      HippoRepositoryServer server = null;
-      if (args.length > 0)
-        server = new HippoRepositoryServer(args.length > 0 ? args[0] : ".");
-      else
-        server = new HippoRepositoryServer();
-      server.run(false);
-      server.close();
-    } catch(RemoteException ex) {
-      System.err.println(ex.getMessage());
-      ex.printStackTrace(System.err);
-    } catch(AlreadyBoundException ex) {
-      System.err.println(ex.getMessage());
-      ex.printStackTrace(System.err);
-    } catch(RepositoryException ex) {
-      System.err.println(ex.getMessage());
-      ex.printStackTrace(System.err);
-    }
-  }
 }

@@ -48,25 +48,27 @@ public class TestServiceImpl extends ServiceImpl implements TestService {
         hasAction2 = true;
     }
 
-  public void setMyContent(String content) {
-    if(object == null)
-      object = new TestServiceObject();
-    object.setMyContent(content);
-  }
-  public String getMyContent() {
-    if(object != null)
-      return object.getMyContent();
-    else
-      return null;
-  }
-  public boolean hasAction(int which) {
-    switch(which) {
-    case 1:
-      return hasAction1;
-    case 2:
-      return hasAction2;
-    default:
-      return false;
+    public void setMyContent(String content) {
+        if (object == null)
+            object = new TestServiceObject();
+        object.setMyContent(content);
     }
-  }
+
+    public String getMyContent() {
+        if (object != null)
+            return object.getMyContent();
+        else
+            return null;
+    }
+
+    public boolean hasAction(int which) {
+        switch (which) {
+        case 1:
+            return hasAction1;
+        case 2:
+            return hasAction2;
+        default:
+            return false;
+        }
+    }
 }
