@@ -24,37 +24,45 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import java.io.PrintStream;
+
 public class Utilities {
-    private static void dump(Node parent, int level) throws RepositoryException {
+    private static void dump(Node node, int level) throws RepositoryException {
+      dump(System.out, node, level);
+    }
+    private static void dump(PrintStream out, Node parent, int level) throws RepositoryException {
         String prefix = "";
         for (int i = 0; i < level; i++) {
             prefix += "  ";
         }
-        System.out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth()
+        out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth()
                 + "]");
         for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
-            System.out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
+            out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
             if (prop.getDefinition().isMultiple()) {
                 Value[] values = prop.getValues();
-                System.out.print("[ ");
+                out.print("[ ");
                 for (int i = 0; i < values.length; i++) {
-                    System.out.print((i > 0 ? ", " : "") + values[i].getString());
+                    out.print((i > 0 ? ", " : "") + values[i].getString());
                 }
-                System.out.println(" ]");
+                out.println(" ]");
             } else {
-                System.out.println(prop.getString());
+                out.println(prop.getString());
             }
         }
         for (NodeIterator iter = parent.getNodes(); iter.hasNext();) {
             Node node = iter.nextNode();
             if (!node.getPath().equals("/jcr:system")) {
-                dump(node, level + 1);
+                dump(out, node, level + 1);
             }
         }
     }
 
     public static void dump(Node node) throws RepositoryException {
         dump(node, 0);
+    }
+    public static void dump(PrintStream ps, Node node) throws RepositoryException {
+        dump(ps, node, 0);
     }
 }

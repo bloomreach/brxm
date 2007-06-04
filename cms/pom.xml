@@ -67,7 +67,7 @@
     <commons-httpclient.version>3.0</commons-httpclient.version>
     <concurrent.version>1.3.4</concurrent.version>
     <javax.jcr.version>1.0</javax.jcr.version>
-    <org.apache.geronimo.specs.version>1.0.1</org.apache.geronimo.specs.version>
+    <org.apache.geronimo.specs.version>1.0.1B</org.apache.geronimo.specs.version>
     <org.apache.derby.version>10.2.1.6</org.apache.derby.version>
     <org.apache.lucene.version>2.0.0</org.apache.lucene.version>
     <org.slf4j.version>1.3.0</org.slf4j.version>
@@ -373,7 +373,7 @@
     <developer>
       <name>(Berry) A.W. van Halderen</name>
       <id>bvanhalderen</id>
-      <email/>
+      <email>b.vanhalderen@hippo.nl</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -402,4 +402,4 @@
     </developer>
   </developers>
 
-</project>
+</project>

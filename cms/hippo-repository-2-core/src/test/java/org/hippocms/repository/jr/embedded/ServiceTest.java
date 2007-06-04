@@ -46,17 +46,18 @@ public class ServiceTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
     private static String NODENAME = "documentWithService";
-    private Server backgroundServer;
-    private Server server;
+
+    private HippoRepositoryServer backgroundServer;
+    private HippoRepository server;
     private boolean startService = true;
 
     protected void setUp() throws Exception {
         if (startService) {
-            backgroundServer = new Server();
+            backgroundServer = new HippoRepositoryServer();
             backgroundServer.run(true);
             Thread.sleep(3000);
         }
-        server = new Server("rmi://localhost:1099/jackrabbit.repository");
+        server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
     }
 
     protected void tearDown() throws Exception {

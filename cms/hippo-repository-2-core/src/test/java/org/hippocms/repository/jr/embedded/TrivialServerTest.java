@@ -27,13 +27,10 @@ import junit.framework.TestCase;
  */
 public class TrivialServerTest extends TestCase {
 
-    private Server server;
+    private HippoRepository server;
 
     public void setUp() throws RepositoryException, IOException {
-        File repoDir = File.createTempFile("repo", "", new File(System.getProperty("user.dir")));
-        repoDir.delete();
-        repoDir.mkdirs();
-        server = new Server(repoDir.getPath());
+        server = HippoRepositoryFactory.getHippoRepository();
     }
 
     public void tearDown() {

@@ -15,10 +15,11 @@
   limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
   http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
   
   <parent>
     <groupId>org.hippocms</groupId>
@@ -38,8 +39,24 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-migration-tool</url>
   </scm>
   
-  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+
   <dependencies>
+
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+        <version>1.0</version>
+      </dependency>
     
     <!-- JCR API -->
     <dependency>
