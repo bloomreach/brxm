@@ -33,11 +33,12 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 import org.apache.jackrabbit.core.XASession;
-import org.hippocms.repository.jr.embedded.Server;
+import org.hippocms.repository.jr.embedded.HippoRepository;
+import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
 import org.jmock.MockObjectTestCase;
 
 public class BusinessMethodsTest extends MockObjectTestCase {
-    private Server server;
+    private HippoRepository server;
     private UserTransactionService uts;
     private UserTransactionManager utm;
 
@@ -53,7 +54,7 @@ public class BusinessMethodsTest extends MockObjectTestCase {
         File repoDir = File.createTempFile("repo", "", new File(System.getProperty("user.dir")));
         repoDir.delete();
         repoDir.mkdirs();
-        server = new Server(repoDir.getPath());
+        server = HippoRepositoryFactory.getHippoRepository();
 
         uts = new UserTransactionServiceImp();
         TSInitInfo initInfo = uts.createTSInitInfo();

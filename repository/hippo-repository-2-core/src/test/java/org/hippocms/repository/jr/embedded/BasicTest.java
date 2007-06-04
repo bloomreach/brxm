@@ -27,12 +27,18 @@ import junit.framework.TestCase;
 public class BasicTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
-    public void testBasics() {
-        Server server = null;
+    public void testBasics() throws Exception {
+        Exception firstException = null;
+        HippoRepositoryServer repositoryServer = null;
+        HippoRepository repositoryClient = null;
         try {
-            server = new Server("rmi://localhost:1099/jackrabbit.repository");
-            assertNotNull(server);
-            Session session = server.login();
+            repositoryServer = new HippoRepositoryServer();
+            assertNotNull(repositoryServer);
+            repositoryServer.run(true);
+            Thread.sleep(3000);
+            repositoryClient = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
+            assertNotNull(repositoryClient);
+            Session session = repositoryClient.login();
             assertNotNull(session);
             Node root = session.getRootNode();
             assertNotNull(root);
@@ -40,11 +46,33 @@ public class BasicTest extends TestCase {
             session.logout();
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
+            firstException = ex;
         } finally {
-            if (server != null) {
-                server.close();
-                server = null;
+            boolean exceptionOccurred = false;
+            try {
+                if (repositoryClient != null) {
+                    repositoryClient.close();
+                    repositoryClient = null;
+                }
+            } catch (Exception ex) {
+              if(firstException == null) {
+                firstException = ex;
+                exceptionOccurred = true;
+              }
             }
+            try {
+                if (repositoryServer != null) {
+                    repositoryServer.close();
+                    repositoryServer = null;
+                }
+            } catch (Exception ex) {
+              if(firstException == null) {
+                firstException = ex;
+                exceptionOccurred = true;
+              }
+            }
+            if(exceptionOccurred)
+              throw firstException;
         }
     }
 }

@@ -74,12 +74,10 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.ContentHandler;
 
-import org.apache.jackrabbit.core.XASession;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.ItemId;
@@ -890,8 +888,8 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                 Node n = node.getNode(relPath);
                 return factory.getNodeDecorator(session, n, getChildPath(relPath), getDepth() + 1);
             } catch (PathNotFoundException ex) {
-                SessionImpl session = (SessionImpl) this.session;
                 try {
+                    SessionImpl session = (SessionImpl) this.session;
                     Path p = session.getQPath(relPath);
                     Path.PathElement[] elements = p.getElements();
                     Node node = this;
@@ -903,6 +901,8 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                     if (!(node instanceof ServicingNodeImpl))
                         node = new ServicingNodeImpl(factory, session, node, getChildPath(relPath), getDepth() + 1);
                     return node;
+                } catch (ClassCastException ex2) {
+                    throw ex;
                 } catch (NameException ex2) {
                     throw ex;
                 }
