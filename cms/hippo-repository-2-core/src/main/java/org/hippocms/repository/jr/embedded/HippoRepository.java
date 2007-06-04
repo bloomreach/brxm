@@ -98,91 +98,98 @@ import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 import org.hippocms.repository.jr.servicing.client.ClientServicesAdapterFactory;
 import org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory;
 
-public abstract class HippoRepository
-{
-  private static UserTransactionService uts = null;
+public abstract class HippoRepository {
+    private static UserTransactionService uts = null;
 
-  protected Repository repository;
-  protected static final Logger log = LoggerFactory.getLogger(HippoRepository.class);
+    protected Repository repository;
+    protected static final Logger log = LoggerFactory.getLogger(HippoRepository.class);
 
-  private String systemUsername = "username";
-  private String systemPassword = "password";
+    private String systemUsername = "username";
+    private String systemPassword = "password";
 
-  private void initialize() {
-    // FIXME: bring these properties into resource
-    if(uts == null) { // FIXME not thread safe
-      uts = new UserTransactionServiceImp();
-      TSInitInfo initInfo = uts.createTSInitInfo();
-      Properties initProperties = new Properties();
-      initProperties.setProperty("com.atomikos.icatch.service",
-                                 "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
-      initProperties.setProperty("com.atomikos.icatch.console_file_name", "tm.out");
-      initProperties.setProperty("com.atomikos.icatch.console_file_limit", "-1");
-      initProperties.setProperty("com.atomikos.icatch.console_file_count", "1");
-      initProperties.setProperty("com.atomikos.icatch.checkpoint_interval", "500");
-      initProperties.setProperty("com.atomikos.icatch.output_dir", getWorkingDirectory());
-      initProperties.setProperty("com.atomikos.icatch.log_base_dir", getWorkingDirectory());
-      initProperties.setProperty("com.atomikos.icatch.log_base_name", "tmlog");
-      initProperties.setProperty("com.atomikos.icatch.max_actives", "50");
-      initProperties.setProperty("com.atomikos.icatch.max_timeout", "60000");
-      initProperties.setProperty("com.atomikos.icatch.tm_unique_name", "tm");
-      initProperties.setProperty("com.atomikos.icatch.serial_jta_transactions", "true");
-      initProperties.setProperty("com.atomikos.icatch.automatic_resource_registration", "true");
-      initProperties.setProperty("com.atomikos.icatch.console_log_level", "WARN");
-      initProperties.setProperty("com.atomikos.icatch.enable_logging", "true");
-      initInfo.setProperties(initProperties);
-      uts.init(initInfo);
+    private void initialize() {
+        // FIXME: bring these properties into resource
+        if (uts == null) { // FIXME not thread safe
+            uts = new UserTransactionServiceImp();
+            TSInitInfo initInfo = uts.createTSInitInfo();
+            Properties initProperties = new Properties();
+            initProperties.setProperty("com.atomikos.icatch.service",
+                    "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
+            initProperties.setProperty("com.atomikos.icatch.console_file_name", "tm.out");
+            initProperties.setProperty("com.atomikos.icatch.console_file_limit", "-1");
+            initProperties.setProperty("com.atomikos.icatch.console_file_count", "1");
+            initProperties.setProperty("com.atomikos.icatch.checkpoint_interval", "500");
+            initProperties.setProperty("com.atomikos.icatch.output_dir", getWorkingDirectory());
+            initProperties.setProperty("com.atomikos.icatch.log_base_dir", getWorkingDirectory());
+            initProperties.setProperty("com.atomikos.icatch.log_base_name", "tmlog");
+            initProperties.setProperty("com.atomikos.icatch.max_actives", "50");
+            initProperties.setProperty("com.atomikos.icatch.max_timeout", "60000");
+            initProperties.setProperty("com.atomikos.icatch.tm_unique_name", "tm");
+            initProperties.setProperty("com.atomikos.icatch.serial_jta_transactions", "true");
+            initProperties.setProperty("com.atomikos.icatch.automatic_resource_registration", "true");
+            initProperties.setProperty("com.atomikos.icatch.console_log_level", "WARN");
+            initProperties.setProperty("com.atomikos.icatch.enable_logging", "true");
+            initInfo.setProperties(initProperties);
+            uts.init(initInfo);
+        }
     }
-  }
-  private String workingDirectory;
-  protected HippoRepository() {
-    workingDirectory = new File(System.getProperty("user.dir")).getAbsolutePath();
-    initialize();
-  }
-  protected HippoRepository(String workingDirectory) {
-    if(workingDirectory == null || workingDirectory.equals(""))
-      throw new NullPointerException();
-    this.workingDirectory = new File(workingDirectory).getAbsolutePath();
-    initialize();
-  }
-  protected String getWorkingDirectory() {
-    return workingDirectory;
-  }
-  protected String getLocation() {
-    return workingDirectory;
-  }
 
-  public Session login() throws LoginException, RepositoryException {
-    if(systemUsername != null)
-      return login(systemUsername, systemPassword);
-    else
-      return login(null);
-  }
-  public Session login(String username, String password) throws LoginException, RepositoryException {
-    if(username != null && !username.equals(""))
-      return login(new SimpleCredentials(systemUsername, systemPassword.toCharArray()));
-    else
-      return login(systemUsername, systemPassword);
-  }
-  public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
-    Session session = null;
-    if(credentials == null)
-      session = repository.login();
-    else
-      session = repository.login(credentials);
-    if(session != null)
-      log.info("Logged in as " + session.getUserID() + " to a " + repository.getDescriptor(Repository.REP_NAME_DESC)
-               + " repository.");
-    else if(credentials == null)
-      log.error("Failed to login to repository with no credentials");
-    else
-      log.error("Failed to login to repository with credentials "+credentials.toString());
-    return session;
-  }
-  public void close() {
-    if (uts != null) {
-      uts.shutdownWait();
-      uts = null;
+    private String workingDirectory;
+
+    protected HippoRepository() {
+        workingDirectory = new File(System.getProperty("user.dir")).getAbsolutePath();
+        initialize();
     }
-  }
+
+    protected HippoRepository(String workingDirectory) {
+        if (workingDirectory == null || workingDirectory.equals(""))
+            throw new NullPointerException();
+        this.workingDirectory = new File(workingDirectory).getAbsolutePath();
+        initialize();
+    }
+
+    protected String getWorkingDirectory() {
+        return workingDirectory;
+    }
+
+    protected String getLocation() {
+        return workingDirectory;
+    }
+
+    public Session login() throws LoginException, RepositoryException {
+        if (systemUsername != null)
+            return login(systemUsername, systemPassword);
+        else
+            return login(null);
+    }
+
+    public Session login(String username, String password) throws LoginException, RepositoryException {
+        if (username != null && !username.equals(""))
+            return login(new SimpleCredentials(systemUsername, systemPassword.toCharArray()));
+        else
+            return login(systemUsername, systemPassword);
+    }
+
+    public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
+        Session session = null;
+        if (credentials == null)
+            session = repository.login();
+        else
+            session = repository.login(credentials);
+        if (session != null)
+            log.info("Logged in as " + session.getUserID() + " to a "
+                    + repository.getDescriptor(Repository.REP_NAME_DESC) + " repository.");
+        else if (credentials == null)
+            log.error("Failed to login to repository with no credentials");
+        else
+            log.error("Failed to login to repository with credentials " + credentials.toString());
+        return session;
+    }
+
+    public void close() {
+        if (uts != null) {
+            uts.shutdownWait();
+            uts = null;
+        }
+    }
 }

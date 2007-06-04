@@ -28,15 +28,15 @@ import java.io.PrintStream;
 
 public class Utilities {
     private static void dump(Node node, int level) throws RepositoryException {
-      dump(System.out, node, level);
+        dump(System.out, node, level);
     }
+
     private static void dump(PrintStream out, Node parent, int level) throws RepositoryException {
         String prefix = "";
         for (int i = 0; i < level; i++) {
             prefix += "  ";
         }
-        out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth()
-                + "]");
+        out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth() + "]");
         for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
             out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
@@ -62,6 +62,7 @@ public class Utilities {
     public static void dump(Node node) throws RepositoryException {
         dump(node, 0);
     }
+
     public static void dump(PrintStream ps, Node node) throws RepositoryException {
         dump(ps, node, 0);
     }

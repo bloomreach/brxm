@@ -98,399 +98,420 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import org.hippocms.repository.jr.embedded.HippoRepository;
 import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
 
-class FieldManagerImpl extends AbstractFieldManager
-{
-  private StateManager sm;
-  private Session session;
-  private Node node;
-  FieldManagerImpl(StateManager sm, Session session, Node node) {
-    this.sm = sm;
-    this.session = session;
-    this.node = node;
-  }
-  FieldManagerImpl(StateManager sm, Session session) {
-    this.sm = sm;
-    this.session = session;
-    this.node = null;
-  }
-  public void storeBooleanField(int fieldNumber, boolean value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      try {
-        node.setProperty(field, value);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex,value);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
+class FieldManagerImpl extends AbstractFieldManager {
+    private StateManager sm;
+    private Session session;
+    private Node node;
+
+    FieldManagerImpl(StateManager sm, Session session, Node node) {
+        this.sm = sm;
+        this.session = session;
+        this.node = node;
     }
-  }
-  public boolean fetchBooleanField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        return node.getProperty(field).getBoolean();
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return false;
-  }
-  public void storeCharField(int fieldNumber, char value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      try {
-        node.setProperty(field, value);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex,value);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
+
+    FieldManagerImpl(StateManager sm, Session session) {
+        this.sm = sm;
+        this.session = session;
+        this.node = null;
     }
-  }
-  public char fetchCharField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        return node.getProperty(field).getString().charAt(0);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return ' ';
-  }
-  public void storeByteField(int fieldNumber, byte value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      try {
-        node.setProperty(field, value);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex,value);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
-    }
-  }
-  public short fetchShortField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        return (short) node.getProperty(field).getLong();
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return 0;
-  }
-  public void storeIntField(int fieldNumber, int value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      try {
-        node.setProperty(field, value);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex,value);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
-    }
-  }
-  public int fetchIntField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        return (int) node.getProperty(field).getLong();
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return 0;
-  }
-  public void storeLongField(int fieldNumber, long value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      try {
-        node.setProperty(field, value);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex,value);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
-    }
-  }
-  public long fetchLongField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        return node.getProperty(field).getLong();
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return 0L;
-  }
-  public void storeFloatField(int fieldNumber, float value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      try {
-        node.setProperty(field, value);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex,value);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
-    }
-  }
-  public float fetchFloatField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        return (float) node.getProperty(field).getDouble();
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return 0.0F;
-  }
-  public void storeDoubleField(int fieldNumber, double value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      try {
-        node.setProperty(field, value);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex,value);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
-    }
-  }
-  public double fetchDoubleField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        return node.getProperty(field).getDouble();
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return 0.0;
-  }
-  public void storeStringField(int fieldNumber, String value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      try {
-        node.setProperty(field, value);
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex,value);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
-    }
-  }
-  public String fetchStringField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        return node.getProperty(field).getString();
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return "";
-  }
-  public void storeObjectField(int fieldNumber, Object value) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(value == null)
-      throw new NullPointerException();
-    StateManager valueSM = sm.getObjectManager().findStateManager((PersistenceCapable)value);
-    if(valueSM == null) { // If not already persisted
-      PersistenceCapable pc = (PersistenceCapable) value;
-      if(pc == null)
-        throw new NullPointerException();
-      try {
-        Node child = node.addNode(field);
-        child.addMixin("mix:referenceable"); // FIXME: should be either per node type definition or not necessary at all
-        Object id = new JCROID(child.getUUID());
-        StateManager pcSM = StateManagerFactory.newStateManagerForPersistentClean(sm.getObjectManager(), id, pc);
-        pcSM.provideFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(pcSM, session, child));
-      } catch(ItemExistsException ex) {
-        try {
-          throw new JPOXDataStoreException("ItemExistsException", ex, node.getPath()+"/"+field);
-        } catch(RepositoryException ex2) {
-          throw new JPOXDataStoreException("ItemExistsException", ex);
+
+    public void storeBooleanField(int fieldNumber, boolean value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            try {
+                node.setProperty(field, value);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
         }
-      } catch(NoSuchNodeTypeException ex) {
-        try{
-          throw new JPOXDataStoreException("NoSuchNodeTypeException", ex, node.getPath()+"/"+field);
-        } catch(RepositoryException ex2) {
-          throw new JPOXDataStoreException("ItemExistsException", ex);
-        }
-      } catch(UnsupportedRepositoryOperationException ex) {
-        throw new JPOXDataStoreException("UnsupportedRepositoryOperationException", ex);
-      } catch(PathNotFoundException ex) {
-        throw new JPOXDataStoreException("PathNotFoundException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex,value);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex,value);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex,value);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex,value);
-      }
     }
-  }
-  public Object fetchObjectField(int fieldNumber) {
-    String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-    if(field != null) {
-      JCROID oid = (JCROID) sm.getExternalObjectId(null);
-      try {
-        Node node = oid.getNode(session);
-        Node child = node.getNode(field);
-        Object id = new JCROID(child.getUUID());
-        Class clazz = sm.getClassMetaData().getField(fieldNumber).getType();
-        StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
-        //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));
-        return pcSM.getObject();
-      } catch(ValueFormatException ex) {
-        throw new JPOXDataStoreException("ValueFormatException",ex);
-      } catch(VersionException ex) {
-        throw new JPOXDataStoreException("VersionException",ex);
-      } catch(ConstraintViolationException ex) {
-        throw new JPOXDataStoreException("ConstraintViolationException",ex);
-      } catch(LockException ex) {
-        throw new JPOXDataStoreException("LockException",ex);
-      } catch(RepositoryException ex) {
-        throw new JPOXDataStoreException("RepositoryException",ex);
-      }
-    } else
-      return null;
-  }
+
+    public boolean fetchBooleanField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                return node.getProperty(field).getBoolean();
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return false;
+    }
+
+    public void storeCharField(int fieldNumber, char value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            try {
+                node.setProperty(field, value);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+
+    public char fetchCharField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                return node.getProperty(field).getString().charAt(0);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return ' ';
+    }
+
+    public void storeByteField(int fieldNumber, byte value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            try {
+                node.setProperty(field, value);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+
+    public short fetchShortField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                return (short) node.getProperty(field).getLong();
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return 0;
+    }
+
+    public void storeIntField(int fieldNumber, int value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            try {
+                node.setProperty(field, value);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+
+    public int fetchIntField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                return (int) node.getProperty(field).getLong();
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return 0;
+    }
+
+    public void storeLongField(int fieldNumber, long value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            try {
+                node.setProperty(field, value);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+
+    public long fetchLongField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                return node.getProperty(field).getLong();
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return 0L;
+    }
+
+    public void storeFloatField(int fieldNumber, float value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            try {
+                node.setProperty(field, value);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+
+    public float fetchFloatField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                return (float) node.getProperty(field).getDouble();
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return 0.0F;
+    }
+
+    public void storeDoubleField(int fieldNumber, double value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            try {
+                node.setProperty(field, value);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+
+    public double fetchDoubleField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                return node.getProperty(field).getDouble();
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return 0.0;
+    }
+
+    public void storeStringField(int fieldNumber, String value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            try {
+                node.setProperty(field, value);
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex, value);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+
+    public String fetchStringField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                return node.getProperty(field).getString();
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return "";
+    }
+
+    public void storeObjectField(int fieldNumber, Object value) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (value == null)
+            throw new NullPointerException();
+        StateManager valueSM = sm.getObjectManager().findStateManager((PersistenceCapable) value);
+        if (valueSM == null) { // If not already persisted
+            PersistenceCapable pc = (PersistenceCapable) value;
+            if (pc == null)
+                throw new NullPointerException();
+            try {
+                Node child = node.addNode(field);
+                child.addMixin("mix:referenceable"); // FIXME: should be either per node type definition or not necessary at all
+                Object id = new JCROID(child.getUUID());
+                StateManager pcSM = StateManagerFactory
+                        .newStateManagerForPersistentClean(sm.getObjectManager(), id, pc);
+                pcSM.provideFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(pcSM, session,
+                        child));
+            } catch (ItemExistsException ex) {
+                try {
+                    throw new JPOXDataStoreException("ItemExistsException", ex, node.getPath() + "/" + field);
+                } catch (RepositoryException ex2) {
+                    throw new JPOXDataStoreException("ItemExistsException", ex);
+                }
+            } catch (NoSuchNodeTypeException ex) {
+                try {
+                    throw new JPOXDataStoreException("NoSuchNodeTypeException", ex, node.getPath() + "/" + field);
+                } catch (RepositoryException ex2) {
+                    throw new JPOXDataStoreException("ItemExistsException", ex);
+                }
+            } catch (UnsupportedRepositoryOperationException ex) {
+                throw new JPOXDataStoreException("UnsupportedRepositoryOperationException", ex);
+            } catch (PathNotFoundException ex) {
+                throw new JPOXDataStoreException("PathNotFoundException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex, value);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex, value);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex, value);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex, value);
+            }
+        }
+    }
+
+    public Object fetchObjectField(int fieldNumber) {
+        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        if (field != null) {
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            try {
+                Node node = oid.getNode(session);
+                Node child = node.getNode(field);
+                Object id = new JCROID(child.getUUID());
+                Class clazz = sm.getClassMetaData().getField(fieldNumber).getType();
+                StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
+                //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));
+                return pcSM.getObject();
+            } catch (ValueFormatException ex) {
+                throw new JPOXDataStoreException("ValueFormatException", ex);
+            } catch (VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch (ConstraintViolationException ex) {
+                throw new JPOXDataStoreException("ConstraintViolationException", ex);
+            } catch (LockException ex) {
+                throw new JPOXDataStoreException("LockException", ex);
+            } catch (RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+        } else
+            return null;
+    }
 }

@@ -17,15 +17,17 @@ package org.hippocms.repository.workflows;
 
 import java.io.Serializable;
 
-public class TestServiceObject
-{
-  public String content;
-  public TestServiceObject() {
-  }
-  public void setMyContent(String content) {
-    this.content = content;
-  }
-  public String getMyContent() {
-    return content;
-  }
+public class TestServiceObject {
+    public String content;
+
+    public TestServiceObject() {
+    }
+
+    public void setMyContent(String content) {
+        this.content = content;
+    }
+
+    public String getMyContent() {
+        return content;
+    }
 }

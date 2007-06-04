@@ -70,27 +70,28 @@ import org.slf4j.LoggerFactory;
 
 import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 
-class LocalHippoRepository extends HippoRepository
-{
-  private final static String SVN = "$Id$";
+class LocalHippoRepository extends HippoRepository {
+    private final static String SVN = "$Id$";
 
-  public final static String NS_URI = "http://www.hippocms.org/";
-  public final static String NS_PREFIX = "hippo";
-  private JackrabbitRepository jackrabbitRepository = null;
-  private ServicingDecoratorFactory hippoRepositoryFactory;
+    public final static String NS_URI = "http://www.hippocms.org/";
+    public final static String NS_PREFIX = "hippo";
+    private JackrabbitRepository jackrabbitRepository = null;
+    private ServicingDecoratorFactory hippoRepositoryFactory;
 
-  public LocalHippoRepository() throws RepositoryException {
-    super();
-    initialize();
-  }
-  public LocalHippoRepository(String location) throws RepositoryException {
-    super(location);
-    initialize();
-  }
-  private void initialize() throws RepositoryException {
-    InputStream config = getClass().getResourceAsStream("repository.xml");
-    jackrabbitRepository = RepositoryImpl.create(RepositoryConfig.create(config, getWorkingDirectory()));
-    repository = jackrabbitRepository;
+    public LocalHippoRepository() throws RepositoryException {
+        super();
+        initialize();
+    }
+
+    public LocalHippoRepository(String location) throws RepositoryException {
+        super(location);
+        initialize();
+    }
+
+    private void initialize() throws RepositoryException {
+        InputStream config = getClass().getResourceAsStream("repository.xml");
+        jackrabbitRepository = RepositoryImpl.create(RepositoryConfig.create(config, getWorkingDirectory()));
+        repository = jackrabbitRepository;
 
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
         log.info("Node type registration support: " + (result != null ? result : "no"));
@@ -187,35 +188,36 @@ class LocalHippoRepository extends HippoRepository
             session.save();
         }
     }
-  public synchronized void close() {
-    Session session = null;
-    if(repository != null) {
-      try {
-        session = login();
-        java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
-        session.exportSystemView("/navigation", out, false, false);
-      } catch (IOException ex) {
-        System.err.println(ex.getMessage());
-        ex.printStackTrace(System.err);
-      } catch (RepositoryException ex) {
-        System.err.println(ex.getMessage());
-        ex.printStackTrace(System.err);
-      } finally {
-        if(session != null)
-          session.logout();
-      }
-    }
 
-    if(jackrabbitRepository != null) {
-      try {
-        jackrabbitRepository.shutdown();
-        jackrabbitRepository = null;
-      } catch (Exception ex) {
-        // ignore
-      }
-    }
-    repository = null;
+    public synchronized void close() {
+        Session session = null;
+        if (repository != null) {
+            try {
+                session = login();
+                java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
+                session.exportSystemView("/navigation", out, false, false);
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (RepositoryException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } finally {
+                if (session != null)
+                    session.logout();
+            }
+        }
 
-    super.close();
-  }
+        if (jackrabbitRepository != null) {
+            try {
+                jackrabbitRepository.shutdown();
+                jackrabbitRepository = null;
+            } catch (Exception ex) {
+                // ignore
+            }
+        }
+        repository = null;
+
+        super.close();
+    }
 }
