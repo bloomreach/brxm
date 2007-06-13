@@ -122,10 +122,21 @@
     </repository>
   </repositories>
 
-
   <build>
     <plugins>
-      <!-- Use Java 1.5 -->
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.</directory>
+              <includes>
+                <include>**/*~</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
       <plugin>
         <inherited>true</inherited>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -146,12 +157,13 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Generate aggregate Javadocs -->
       <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <source>1.4</source>
           <aggregate>true</aggregate>
+          <source>1.5</source>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
@@ -160,7 +172,6 @@
       </plugin>
     </plugins>
   </build>
-
 
   <mailingLists>
     <mailingList>
@@ -337,8 +348,7 @@
     <name>Hippo</name>
     <url>http://www.hippo.nl/</url>
   </organization>
-  
-  
+    
   <developers>
     <developer>
       <name>Arje Cahn</name>
@@ -401,5 +411,45 @@
       <timezone>+1</timezone>
     </developer>
   </developers>
+
+  <reporting>
+    <!-- outputDirectory>target/site</outputDirectory -->
+    <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+          <source>1.5</source>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <!-- artifactId>maven-surefire-plugin</artifactId -->
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>     
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 
 </project>
