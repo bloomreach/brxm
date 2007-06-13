@@ -31,7 +31,7 @@
   <name>Hippo Repository 2 Core</name>
   <description>Hippo Repository 2 Core module</description>
   <groupId>org.hippocms</groupId>
-  <artifactId>hippo-repository-2-jr-core</artifactId>
+  <artifactId>hippo-repository-2-core</artifactId>
   <version>1.01.00-dev</version>
 
   <scm>

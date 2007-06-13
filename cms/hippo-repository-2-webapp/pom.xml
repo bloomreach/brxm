@@ -58,7 +58,7 @@
     <!-- Hippo repository-->
     <dependency>
       <groupId>org.hippocms</groupId>
-      <artifactId>hippo-repository-2-jr-core</artifactId>
+      <artifactId>hippo-repository-2-core</artifactId>
       <version>1.01.00-dev</version>
     </dependency>
     
