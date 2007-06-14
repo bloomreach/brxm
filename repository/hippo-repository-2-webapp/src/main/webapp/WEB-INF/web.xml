@@ -24,16 +24,16 @@
 	    <display-name>Hippo Repository 2 Browser</display-name>
 	    
 	    <filter>
-	      <filter-name>BrowserApplication</filter-name>
+	    	<filter-name>RepositoryBrowser</filter-name>
 	      <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
 	      <init-param>
 	        <param-name>applicationClassName</param-name>
-	        <param-value>org.hippocms.repository.webapp.BrowserApplication</param-value>
+	        <param-value>org.hippocms.repository.webapp.RepositoryBrowser</param-value>
 	      </init-param>
 	    </filter>
 	    
 	    <filter-mapping>
-	      <filter-name>BrowserApplication</filter-name>
+	    	<filter-name>RepositoryBrowser</filter-name>
 	      <url-pattern>/browser/*</url-pattern>
 	    </filter-mapping>
 	    
