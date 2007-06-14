@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app id="repository-server">
+  <display-name>Hippo Repository 2 Server</display-name>
+  <description>hippo-repository-2-server</description>
+  <context-param>
+    <param-name>repository-address</param-name>
+    <param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
+    <description>The address of the repository</description>
+  </context-param>
+  <servlet>
+    <servlet-name>RepositoryServlet</servlet-name>
+    <servlet-class>org.hippocms.repository.jr.embedded.RepositoryServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>TestServlet</servlet-name>
+    <servlet-class>org.hippocms.repository.jr.embedded.TestServlet</servlet-class>
+    <init-param>
+      <param-name>bind-address</param-name>
+      <param-value>rmi://localhost:1099/test</param-value>
+      <description>Which address to listen for requests</description>
+    </init-param>
+    <init-param>
+      <param-name>call-address</param-name>
+      <param-value>rmi://localhost:1099/test</param-value>
+      <description>Which address to send requests to</description>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RepositoryServlet</servlet-name>
+    <url-pattern>/repository/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TestServlet</servlet-name>
+    <url-pattern>/test/*</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>
