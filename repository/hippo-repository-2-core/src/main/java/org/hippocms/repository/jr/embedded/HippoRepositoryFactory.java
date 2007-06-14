@@ -75,7 +75,6 @@ public class HippoRepositoryFactory {
                 // FIXME
             }
         } else if (location.startsWith("file:")) {
-            System.out.println("HERE " + location.substring(5));
             return new LocalHippoRepository(location.substring(5));
         } else
             return new LocalHippoRepository(location);

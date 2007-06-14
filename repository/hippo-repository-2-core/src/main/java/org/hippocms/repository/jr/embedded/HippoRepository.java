@@ -102,7 +102,7 @@ public abstract class HippoRepository {
     private static UserTransactionService uts = null;
 
     protected Repository repository;
-    protected static final Logger log = LoggerFactory.getLogger(HippoRepository.class);
+    protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
 
     private String systemUsername = "username";
     private String systemPassword = "password";

@@ -158,6 +158,7 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>1.3.0</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -231,11 +232,11 @@
  
   <dependencies>
 
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>1.0</version>
-      </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
@@ -247,13 +248,21 @@
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <version>1.4.0</version>
+      <scope>test</scope>
     </dependency>
     <!-- JCR-683: Use jcl104-over-slf4j instead of the commons-logging -->
     <!-- dependency excluded above                                     -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl104-over-slf4j</artifactId>
+      <version>1.4.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
