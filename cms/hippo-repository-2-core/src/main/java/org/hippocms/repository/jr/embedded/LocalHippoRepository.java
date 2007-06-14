@@ -109,7 +109,6 @@ class LocalHippoRepository extends HippoRepository {
             } catch (javax.jcr.NamespaceException ex) {
                 log.warn(ex.getMessage());
             }
-
             String cndName = "repository.cnd";
             InputStream cndStream = getClass().getResourceAsStream(cndName);
             BufferedReader cndInput = new BufferedReader(new InputStreamReader(cndStream));
@@ -187,6 +186,7 @@ class LocalHippoRepository extends HippoRepository {
             }
             session.save();
         }
+Utilities.dump(System.err, session.getRootNode());
     }
 
     public synchronized void close() {
