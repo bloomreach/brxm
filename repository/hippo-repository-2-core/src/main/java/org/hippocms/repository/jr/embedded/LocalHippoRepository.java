@@ -73,7 +73,7 @@ import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 class LocalHippoRepository extends HippoRepository {
     private final static String SVN = "$Id$";
 
-    public final static String NS_URI = "http://www.hippocms.org/";
+    public final static String NS_URI = "http://www.hippocms.org/nt/1.0";
     public final static String NS_PREFIX = "hippo";
     private JackrabbitRepository jackrabbitRepository = null;
     private ServicingDecoratorFactory hippoRepositoryFactory;
@@ -109,43 +109,8 @@ class LocalHippoRepository extends HippoRepository {
             } catch (javax.jcr.NamespaceException ex) {
                 log.warn(ex.getMessage());
             }
-            String cndName = "repository.cnd";
-            InputStream cndStream = getClass().getResourceAsStream(cndName);
-            BufferedReader cndInput = new BufferedReader(new InputStreamReader(cndStream));
-            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
-            List ntdList = cndReader.getNodeTypeDefs();
-            NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
-            NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
-            boolean progress;
-            do {
-                progress = false;
-                for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
-                    NodeTypeDef ntd = (NodeTypeDef) iter.next();
-                    try {
-                        ntreg.unregisterNodeType(ntd.getName());
-                        progress = true;
-                    } catch (RepositoryException ex) {
-                        // save to ignore
-                    }
-                }
-            } while (progress);
-            for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
-                NodeTypeDef ntd = (NodeTypeDef) iter.next();
-                try {
-                    try {
-                        EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
-                    } catch (NamespaceException ex) {
-                        log.warn(ex.getMessage());
-                        System.err.println(ex.getMessage());
-                        ex.printStackTrace(System.err);
-                    }
-                } catch (RepositoryException ex) {
-                    if (ex.getMessage().equals("not yet implemented")) {
-                        log.warn("cannot override typing; hoping they are equivalent");
-                    } else
-                        throw ex;
-                }
-            }
+            createNodeTypesFromFile(workspace, "repository.cnd");
+            //createNodeTypesFromFile(workspace, "newsmodel.cnd");
             session.save();
 
         } catch (ParseException ex) {
@@ -185,6 +150,56 @@ class LocalHippoRepository extends HippoRepository {
                 ex.printStackTrace(System.err);
             }
             session.save();
+        }
+    }
+
+    private void createNodeTypesFromFile(Workspace workspace, String cndName) throws ParseException, RepositoryException, InvalidNodeTypeDefException {
+
+        log.info("Loading initial nodeTypes from: " + cndName);
+        
+        InputStream cndStream = getClass().getResourceAsStream(cndName);
+        BufferedReader cndInput = new BufferedReader(new InputStreamReader(cndStream));
+        CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
+        List ntdList = cndReader.getNodeTypeDefs();
+        NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
+        NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+        /*
+        boolean progress;
+        do {
+            progress = false;
+            for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+                NodeTypeDef ntd = (NodeTypeDef) iter.next();
+                try {
+                    ntreg.unregisterNodeType(ntd.getName());
+                    progress = true;
+                } catch (RepositoryException ex) {
+                    // save to ignore
+                }
+            }
+        } while (progress);
+        */
+        
+        for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+            NodeTypeDef ntd = (NodeTypeDef) iter.next();
+            try {
+                ntreg.unregisterNodeType(ntd.getName());
+            } catch (RepositoryException ex) {
+                // save to ignore
+            }
+            try {
+                try {
+                    EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
+                } catch (NamespaceException ex) {
+                    log.warn(ex.getMessage());
+                    System.err.println(ex.getMessage());
+                    ex.printStackTrace(System.err);
+                }
+            } catch (RepositoryException ex) {
+                if (ex.getMessage().equals("not yet implemented")) {
+                    log.warn("cannot override typing; hoping they are equivalent");
+                } else
+                    throw ex;
+            }
         }
     }
 
