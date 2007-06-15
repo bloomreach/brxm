@@ -15,35 +15,50 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!DOCTYPE web-app
-	  PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-	  "http://java.sun.com/dtd/web-app_2_3.dtd">
-	  
-	  <web-app id="repository-browser">
-	    
-	    <display-name>Hippo Repository 2 Browser</display-name>
-	    
-	    <filter>
-	    	<filter-name>RepositoryBrowser</filter-name>
-	      <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-	      <init-param>
-	        <param-name>applicationClassName</param-name>
-	        <param-value>org.hippocms.repository.webapp.RepositoryBrowser</param-value>
-	      </init-param>
-	    </filter>
-	    
-	    <filter-mapping>
-	    	<filter-name>RepositoryBrowser</filter-name>
-	      <url-pattern>/browser/*</url-pattern>
-	    </filter-mapping>
-	    
-	    <session-config>
-	      <session-timeout>5</session-timeout>
-	    </session-config>
-	    
-	    <welcome-file-list>
-	      <welcome-file>index.html</welcome-file>
-	    </welcome-file-list>
-	    
-	  </web-app>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	id="repository-browser">
+
+	<display-name>Hippo Repository 2 Browser</display-name>
+
+	<context-param>
+		<param-name>configuration</param-name>
+		<param-value>development</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.apache.portals.bridges.common.ServletContextProvider</param-name>
+		<param-value>org.apache.jetspeed.portlet.ServletContextProviderImpl</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.apache.portals.bridges.common.PortletResourceURLFactory</param-name>
+		<param-value>org.apache.jetspeed.portlet.PortletResourceURLFactoryImpl</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>RepositoryBrowser</filter-name>
+		<filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+		<init-param>
+			<param-name>applicationClassName</param-name>
+			<param-value>org.hippocms.repository.webapp.RepositoryBrowser</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>RepositoryBrowser</filter-name>
+		<url-pattern>/browser/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+
+	<session-config>
+		<session-timeout>5</session-timeout>
+	</session-config>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>
 	  
