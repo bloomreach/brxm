@@ -133,6 +133,7 @@
   </dependencies>
 
   <build>
+    <defaultGoal>package</defaultGoal>
     <resources>
       <resource>
         <filtering>false</filtering>

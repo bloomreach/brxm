@@ -186,7 +186,6 @@ class LocalHippoRepository extends HippoRepository {
             }
             session.save();
         }
-Utilities.dump(System.err, session.getRootNode());
     }
 
     public synchronized void close() {
