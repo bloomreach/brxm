@@ -22,17 +22,20 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableMultiLineLabel;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree.LinkType;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
+import org.apache.wicket.model.CompoundPropertyModel;
 
 public class TreeView extends WebPage implements ITreeStateListener {
 
     private static final long serialVersionUID = 1L;
     
     private MultiLineLabel properties;
+    private AjaxEditableMultiLineLabel content;
 
     public TreeView() throws MalformedURLException, ClassCastException, RemoteException, NotBoundException,
             LoginException, RepositoryException {
@@ -80,6 +83,10 @@ public class TreeView extends WebPage implements ITreeStateListener {
         //Initialize and add Properties view
         properties = new MultiLineLabel("properties", ""); 
         add(properties);
+        content = new AjaxEditableMultiLineLabel("content", new CompoundPropertyModel(this));
+        content.setRows(30);
+        content.setCols(150);
+        add(content);
     }
 
     private void addChildren(DefaultMutableTreeNode treeNode) throws RepositoryException {
@@ -111,7 +118,7 @@ public class TreeView extends WebPage implements ITreeStateListener {
     }
 
     public void nodeCollapsed(TreeNode node) {
-    }
+    }       
 
     public void nodeSelected(TreeNode node) {
         if (node != null) {
@@ -119,22 +126,30 @@ public class TreeView extends WebPage implements ITreeStateListener {
             Node jcrNode = (Node) treeNode.getUserObject();
 
             StringBuffer text = new StringBuffer();
+            StringBuffer contentText = new StringBuffer();
+            
             try {
                 for (PropertyIterator iter = jcrNode.getProperties(); iter.hasNext();) {
                     Property prop = iter.nextProperty();
-
-                    text.append(prop.getPath() + " = ");
-                    if (prop.getDefinition().isMultiple()) {
-                        Value[] values = prop.getValues();
-                        text.append("[ ");
-                        for (int i = 0; i < values.length; i++) {
-                            text.append((i > 0 ? ", " : "") + values[i].getString());
-                        }
-                        text.append(" ]");
-                    } else {
-                        text.append(prop.getString());
+                    if (prop.getName().equals("content"))
+                    {
+                        contentText.append(prop.getString());
                     }
-                    text.append("\n");
+                    else
+                    {
+                        text.append(prop.getPath() + " = ");
+                        if (prop.getDefinition().isMultiple()) {
+                            Value[] values = prop.getValues();
+                            text.append("[ ");
+                            for (int i = 0; i < values.length; i++) {
+                                text.append((i > 0 ? ", " : "") + values[i].getString());
+                            }
+                            text.append(" ]");
+                        } else {
+                            text.append(prop.getString());
+                        }
+                        text.append("\n");
+                    }
                 }
             } catch (ValueFormatException e) {
                 text.append(e.getMessage());
@@ -143,8 +158,8 @@ public class TreeView extends WebPage implements ITreeStateListener {
             } catch (RepositoryException e) {
                 text.append(e.getMessage());
             }
-            
             properties.setModelObject(text.toString());
+            content.setModelObject(contentText.toString());
         }
     }
 
