@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import javax.jcr.ItemExistsException;
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -30,20 +32,27 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.RowIterator;
+import javax.jcr.version.VersionException;
 
 import nl.hippo.webdav.batchprocessor.Configuration;
+import nl.hippo.webdav.batchprocessor.OperationOnDeletedNodeException;
 import nl.hippo.webdav.batchprocessor.Plugin;
 import nl.hippo.webdav.batchprocessor.PluginConfiguration;
+import nl.hippo.webdav.batchprocessor.ProcessingException;
 import nl.hippo.webdav.batchprocessor.WebdavBatchProcessor;
 import nl.hippo.webdav.batchprocessor.WebdavBatchProcessorException;
 
-import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.webdav.lib.Property;
 import org.apache.webdav.lib.PropertyName;
-
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 public class Webdav2JCRDumper implements Plugin {
 
@@ -57,6 +66,29 @@ public class Webdav2JCRDumper implements Plugin {
     private static final String JCR_PASS = "jcr.rmi.pass";
     private static final String JCR_PATH = "jcr.path";
 
+    private static final String DAV_NAMESPACE = "DAV:";
+    private static final String HIPPO_NAMESPACE = "http://hippo.nl/cms/1.0";
+
+    // subnode of the rootnode that contains the authors
+    private static final String AUTHOR_NODE = "authors";
+    private static final String AUTHOR_NODETYPE = "hippo:author";
+    private static final String AUTHOR_ID_PROPERTY = "authorID";
+
+    // subnode of the rootnode that contains the sections
+    private static final String SECTION_NODE = "sections";
+    private static final String SECTION_NODETYPE = "hippo:section";
+    private static final String SECTION_ID_PROPERTY = "sectionID";
+
+    // subnode of the rootnode that contains the categories
+    private static final String CATEGORY_NODE = "catagories";
+    private static final String CATEGORY_NODETYPE = "hippo:catagory";
+    private static final String CATEGORY_ID_PROPERTY = "catagoryId";
+
+    // subnode of the rootnode that contains the magazines
+    private static final String MAGAZINE_NODE = "magazines";
+    private static final String MAGAZINE_NODETYPE = "hippo:magazine";
+    private static final String MAGAZINE_ID_PROPERTY = "magazineId";
+
     /* DAV::creationate = 2006-12-18T14:24:53Z */
     private static final SimpleDateFormat CREATIONDATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
@@ -65,7 +97,7 @@ public class Webdav2JCRDumper implements Plugin {
 
     /* hippo::documentdate = 20040124 */
     private static final SimpleDateFormat DOCUMENTDATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
-    
+
     // ---------------------------------------------------- Instance variables
     // rmi
     private String rmiHost;
@@ -148,92 +180,24 @@ public class Webdav2JCRDumper implements Plugin {
         if (webdavNode.getUri().equals(webdavRootUri)) {
             return;
         }
-        
+
         try {
             //System.out.println("Converting WebDAV node: " + webdavNode.getUri() + " => " + jcrParentPath + "/" + nodeName);
             System.out.append('.');
-            
+
             javax.jcr.Node parent = (javax.jcr.Node) session.getItem(jcrParentPath);
 
             // Add content property
             if (!webdavNode.isCollection()) {
 
-                // Overwrite existing nodes
-                if (parent.hasNode(nodeName)) {
-                    parent.getNode(nodeName).remove();
-                }
+                Property typeProp = webdavNode.getProperty(HIPPO_NAMESPACE, "type");
 
-                javax.jcr.Node current = parent.addNode(nodeName);
-                
+                //if (typeProp != null && typeProp.getPropertyAsString().equals("newsarticle")) {
+                    convertNewsArticleToJCR(webdavNode, nodeName, parent);
+                //} else {
+                //    convertNodeToJCR(webdavNode, nodeName, parent);
+                //}
 
-                current.addMixin("mix:referenceable");
-                current.setProperty("published", false);
-
-                String contentLengthAsString = webdavNode.getProperty("DAV:", "getcontentlength").getPropertyAsString();
-                int contentLength = Integer.parseInt(contentLengthAsString);
-
-                if (contentLength > 0) {
-                    byte[] content = webdavNode.getContents();
-                    current.setProperty("content", valueFactory.createValue(new ByteArrayInputStream(content)));
-                }
-
-                // Add metadata properties
-                Iterator webdavPropertyNames = webdavNode.propertyNamesIterator();
-                while (webdavPropertyNames.hasNext()) {
-                    PropertyName webdavPropertyName = (PropertyName) webdavPropertyNames.next();
-                    String webdavPropertyNamespace = webdavPropertyName.getNamespaceURI();
-                    if (!webdavPropertyNamespace.equals("DAV:")) {
-                        String name = webdavPropertyName.getLocalName();
-                        Property webdavProperty = webdavNode.getProperty(webdavPropertyNamespace, name);
-                        if (name.equals("publicationDate")) {
-                            current.setProperty("published", true);
-                            try {
-                                Date d = new Date();
-                                d = PUBLICATIONDATE_FORMAT.parse(webdavProperty.getPropertyAsString());
-                                Calendar c = Calendar.getInstance();
-                                c.setTime(d);
-                                current.setProperty("publicationdate", c);
-                            } catch (java.text.ParseException e) {
-                            }
-                            
-                        } else if (name.equals("documentdate")) { 
-                            try {
-                                Date d = new Date();
-                                d = DOCUMENTDATE_FORMAT.parse(webdavProperty.getPropertyAsString());
-                                Calendar c = Calendar.getInstance();
-                                c.setTime(d);
-                                current.setProperty("documentdate", c);
-                                current.setProperty("year", c.get(Calendar.YEAR));
-                                current.setProperty("month", 1 + c.get(Calendar.MONTH));
-                                current.setProperty("day", c.get(Calendar.DAY_OF_MONTH));
-                            } catch (java.text.ParseException e) {
-                            }
-                        } else {
-                            Value value = valueFactory.createValue(webdavProperty.getPropertyAsString());
-                            current.setProperty(name, value);
-                        }
-                    } else {
-                        /*
-                        String name = webdavPropertyName.getLocalName();
-                        if (name.equals("creationdate")) {
-                            Property webdavProperty = webdavNode.getProperty(webdavPropertyNamespace, name);
-                            Date d = new Date();
-                            try
-                            {
-                                d = CREATIONDATE_FORMAT.parse(webdavProperty.getPropertyAsString());
-                                Calendar c = Calendar.getInstance();
-                                c.setTime(d);
-                                current.setProperty("year", c.get(Calendar.YEAR));
-                                current.setProperty("month", 1 + c.get(Calendar.MONTH));
-                                current.setProperty("day", c.get(Calendar.DAY_OF_MONTH));
-                            } catch (java.text.ParseException e) {
-                            }
-                            
-                        }
-                        */
-                        
-                    }
-                }
             } else {
                 // create 'collection' nodes if they don't exist
                 if (!parent.hasNode(nodeName)) {
@@ -256,25 +220,164 @@ public class Webdav2JCRDumper implements Plugin {
         }
     }
 
+    private void convertNodeToJCR(nl.hippo.webdav.batchprocessor.Node webdavNode, String nodeName, javax.jcr.Node parent)
+            throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException,
+            LockException, RepositoryException, NoSuchNodeTypeException, ValueFormatException, ProcessingException,
+            OperationOnDeletedNodeException, NumberFormatException, IOException {
+
+        // Overwrite existing nodes
+        if (parent.hasNode(nodeName)) {
+            parent.getNode(nodeName).remove();
+        }
+
+        // Create the new JCR node
+        javax.jcr.Node current = parent.addNode(nodeName);
+
+        current.addMixin("mix:referenceable");
+        current.setProperty("published", false);
+
+        String contentLengthAsString = webdavNode.getProperty(DAV_NAMESPACE, "getcontentlength").getPropertyAsString();
+        int contentLength = Integer.parseInt(contentLengthAsString);
+
+        if (contentLength > 0) {
+            byte[] content = webdavNode.getContents();
+            current.setProperty("content", valueFactory.createValue(new ByteArrayInputStream(content)));
+        }
+
+        // Add metadata properties
+        Iterator webdavPropertyNames = webdavNode.propertyNamesIterator();
+        while (webdavPropertyNames.hasNext()) {
+            PropertyName webdavPropertyName = (PropertyName) webdavPropertyNames.next();
+            String webdavPropertyNamespace = webdavPropertyName.getNamespaceURI();
+            if (webdavPropertyNamespace.equals(HIPPO_NAMESPACE)) {
+                String name = webdavPropertyName.getLocalName();
+                Property webdavProperty = webdavNode.getProperty(webdavPropertyNamespace, name);
+
+                if (name.equals("publicationDate")) {
+                    current.setProperty("published", true);
+                    current.setProperty("publicationdate", getCalendarFromProperty(webdavProperty, PUBLICATIONDATE_FORMAT));
+
+                } else if (name.equals("documentdate")) {
+                    Calendar c = getCalendarFromProperty(webdavProperty, DOCUMENTDATE_FORMAT);
+                    current.setProperty("documentdate", c);
+                    current.setProperty("year", c.get(Calendar.YEAR));
+                    current.setProperty("month", 1 + c.get(Calendar.MONTH));
+                    current.setProperty("day", c.get(Calendar.DAY_OF_MONTH));
+                } else {
+                    Value value = valueFactory.createValue(webdavProperty.getPropertyAsString());
+                    current.setProperty(name, value);
+                }
+            } else {
+                /*
+                 String name = webdavPropertyName.getLocalName();
+                 if (name.equals("creationdate")) {
+                 Property webdavProperty = webdavNode.getProperty(webdavPropertyNamespace, name);
+                 Date d = new Date();
+                 try
+                 {
+                 d = CREATIONDATE_FORMAT.parse(webdavProperty.getPropertyAsString());
+                 Calendar c = Calendar.getInstance();
+                 c.setTime(d);
+                 current.setProperty("year", c.get(Calendar.YEAR));
+                 current.setProperty("month", 1 + c.get(Calendar.MONTH));
+                 current.setProperty("day", c.get(Calendar.DAY_OF_MONTH));
+                 } catch (java.text.ParseException e) {
+                 }
+                 
+                 }
+                 */
+
+            }
+        }
+    }
+
+    private void convertNewsArticleToJCR(nl.hippo.webdav.batchprocessor.Node webdavNode, String nodeName,
+            javax.jcr.Node parent) throws ItemExistsException, PathNotFoundException, VersionException,
+            ConstraintViolationException, LockException, RepositoryException, NoSuchNodeTypeException,
+            ValueFormatException, ProcessingException, OperationOnDeletedNodeException, NumberFormatException,
+            IOException {
+
+        // Overwrite existing nodes
+        if (parent.hasNode(nodeName)) {
+            parent.getNode(nodeName).remove();
+        }
+        
+        long id = 1 + getMaxId("hippo:newsArticle");
+        
+        // Create the new JCR node
+        javax.jcr.Node newsArticle = parent.addNode(nodeName,"hippo:newsArticle");
+
+        newsArticle.setProperty("hippo:id", id);
+        
+        //newsArticle.addMixin("mix:referenceable");
+        //newsArticle.setProperty("published", false);
+
+        
+        // Body
+        String contentLengthAsString = webdavNode.getProperty(DAV_NAMESPACE, "getcontentlength").getPropertyAsString();
+        int contentLength = Integer.parseInt(contentLengthAsString);
+        if (contentLength > 0) {
+            // Create the new JCR body node
+            javax.jcr.Node body = newsArticle.addNode("body", "hippo:body");
+            
+            byte[] content = webdavNode.getContents();
+            body.setProperty("page", valueFactory.createValue(new ByteArrayInputStream(content)));
+
+            Property captionProp = webdavNode.getProperty(HIPPO_NAMESPACE, "caption");
+            body.setProperty("title", captionProp.getPropertyAsString());
+
+            // TODO: get summary from content
+            // TODO: get locale?
+        }
+
+        
+        Property prop;
+        
+        // Author 
+        prop = webdavNode.getProperty(HIPPO_NAMESPACE, "author");
+        id = getIdOrCreate(prop.getPropertyAsString(), AUTHOR_NODETYPE, AUTHOR_NODE);
+        newsArticle.setProperty(AUTHOR_ID_PROPERTY, id);
+        
+        // Section
+        prop = webdavNode.getProperty(HIPPO_NAMESPACE, "section");
+        id = getIdOrCreate(prop.getPropertyAsString(), SECTION_NODETYPE, SECTION_NODE);
+        newsArticle.setProperty(SECTION_ID_PROPERTY, id);
+
+        // Magazine
+        prop = webdavNode.getProperty(HIPPO_NAMESPACE, "source");
+        id = getIdOrCreate(prop.getPropertyAsString(), MAGAZINE_NODETYPE, MAGAZINE_NODE);
+        newsArticle.setProperty(MAGAZINE_ID_PROPERTY, id);
+        
+
+        // Newsdate
+        prop = webdavNode.getProperty(HIPPO_NAMESPACE, "documentdate");
+        if (prop != null) {
+            newsArticle.setProperty("hippo:newsDate", getCalendarFromProperty(prop, DOCUMENTDATE_FORMAT));
+        }
+        
+        // Publication
+        prop = webdavNode.getProperty(HIPPO_NAMESPACE, "publicationdate");
+        if (prop != null) {
+            newsArticle.setProperty("hippo:published", true);
+            newsArticle.setProperty("hippo:publicationDate", getCalendarFromProperty(prop, PUBLICATIONDATE_FORMAT));
+        }
+
+        
+        // TODO: Category
+        // TODO: Imageset
+        // TODO: Links
+        // TODO: Relations
+        
+        
+
+    }
+
     public boolean requiresNodeOrderPreservation() {
         return true;
     }
 
     public void postprocess() {
         session.logout();
-        //        try {
-        //            //TODO: Implement createBackup(file) and restoreBackup(file) in Hippo repo2 server.
-        //            //server.createBackup(dumpFile);
-        //            
-        //            //For the time being just dump the repo contents to the console to verify that it works.
-        //            //Node root = session.getRootNode();
-        //            //server.dump(root);
-        //            
-        //            
-        //            //server.close();
-        //        } catch (RepositoryException e) {
-        //            e.printStackTrace();
-        //        }
     }
 
     private String parentPath(String uri) {
@@ -299,12 +402,12 @@ public class Webdav2JCRDumper implements Plugin {
             javax.jcr.Node node = (javax.jcr.Node) session.getRootNode();
             String currentPath = "";
 
-            StringTokenizer st = new StringTokenizer(jcrPath, "/"); 
-            
+            StringTokenizer st = new StringTokenizer(jcrPath, "/");
+
             while (st.hasMoreTokens()) {
-                
+
                 String nodeName = st.nextToken();
-                
+
                 if (nodeName == null || "".endsWith(nodeName)) {
                     continue;
                 }
@@ -316,7 +419,7 @@ public class Webdav2JCRDumper implements Plugin {
                     System.out.println("Added node for jcrPath: " + currentPath);
                 }
                 currentPath += "/" + nodeName;
-                
+
                 // shift to child node 
                 node = node.getNode(nodeName);
             }
@@ -328,6 +431,88 @@ public class Webdav2JCRDumper implements Plugin {
         }
     }
 
+    private Calendar getCalendarFromProperty(Property webdavProperty, SimpleDateFormat dateFormat) {
+        Date d;
+        try {
+            d = dateFormat.parse(webdavProperty.getPropertyAsString());
+        } catch (java.text.ParseException e) {
+            // use now if the date can't be parsed
+            d = new Date();
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(d);
+        return c;
+    }
+    
+    private long getIdOrCreate(String name, String nodeType, String baseNode) throws RepositoryException {
+        long id = getId(name, nodeType);
+        // id has contraint >0 
+        if (id < 0) {
+            id = createIdNode(name, nodeType, baseNode);
+        }
+        return id;
+    }
+
+    private long getId(String name, String nodeType) {
+        long id = -1;
+        String sql = "SELECT hippo:id FROM " + nodeType + " WHERE  hippo:name = '" + name + "'";
+        try {
+            Query q = session.getWorkspace().getQueryManager().createQuery(sql, Query.SQL);
+            QueryResult result = q.execute();
+            RowIterator it = result.getRows();
+            if (it.hasNext()) {
+                Value idValue = it.nextRow().getValue("hippo:id");
+                if (idValue != null ) {
+                    id = idValue.getLong();
+                }
+            }
+        } catch (RepositoryException e) {
+            System.err.println(e);
+        }
+
+        return id;
+    }
+    
+    private long createIdNode(String name, String nodeType, String baseNode) throws RepositoryException {
+        long id = 1 + getMaxId(nodeType);
+
+        checkAndCreateFolderNode(baseNode);
+        javax.jcr.Node parent = session.getRootNode().getNode(baseNode);
+        javax.jcr.Node author = parent.addNode(name, nodeType);
+
+        author.setProperty("hippo:id", id);
+        author.setProperty("hippo:name", name);
+
+        return id;
+        
+    }
+    
+    private void checkAndCreateFolderNode(String nodeName) throws RepositoryException {
+        if (!session.getRootNode().hasNode(nodeName)) {
+            session.getRootNode().addNode(nodeName, "nt:folder");
+        }
+    }
+    
+    private long getMaxId(String nodeType) {
+        long id = 0;
+        
+        String sql = "SELECT hippo:id FROM " + nodeType + " ORDER BY hippo:id DESC";
+        try {
+            Query q = session.getWorkspace().getQueryManager().createQuery(sql, Query.SQL);
+            QueryResult result = q.execute();
+            RowIterator it = result.getRows();
+            if (it.hasNext()) {
+                Value idValue = it.nextRow().getValue("hippo:id");
+                if (idValue != null ) {
+                    id = idValue.getLong();
+                }
+            }
+        } catch (RepositoryException e) {
+            System.err.println(e);
+        }
+        return id;
+    }
+    
     private void printConfig(Configuration config) {
         System.out.println("******************************************************");
         System.out.println("******************************************************");
