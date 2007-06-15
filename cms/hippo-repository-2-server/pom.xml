@@ -30,6 +30,7 @@
   <name>Hippo Repository 2 Server</name>
   <description>Hippo Repository 2 Standalone Server</description>
   <artifactId>hippo-repository-2-server</artifactId>
+  <packaging>war</packaging>
 
   
   <scm>
@@ -102,6 +103,7 @@
   </dependencies>
 
   <build>
+    <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>

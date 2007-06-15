@@ -54,12 +54,11 @@ public class HippoRepositoryFactory {
     }
 
     public static HippoRepository getHippoRepository(String location) throws RepositoryException {
-        if (defaultRepository != null
-                && (location.equals(defaultRepository.getLocation()) || location.equals("file:"
-                        + defaultRepository.getLocation())))
+        if (defaultRepository != null && (location.equals(defaultRepository.getLocation()) ||
+                                          location.equals("file:" + defaultRepository.getLocation())))
             return defaultRepository;
-        else if (defaultRepository == null
-                && (location.equals(defaultLocation) || location.equals("file:" + defaultLocation)))
+        else if (defaultRepository == null && (location.equals(defaultLocation) ||
+                                               location.equals("file:" + defaultLocation)))
             return getHippoRepository();
         if (location.startsWith("rmi://")) {
             try {
