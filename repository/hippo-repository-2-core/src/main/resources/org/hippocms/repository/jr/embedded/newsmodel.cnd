@@ -1,0 +1,102 @@
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.hippocms.org/nt/1.0'>
+
+
+// Unique contraints on hippo:Id's?
+// verionable rules
+// lastModified[By,Date]
+
+
+[hippo:body]
+- hippo:locale (string) 
+  = 'en-gb'
+  mandatory 
+  multiple
+- hippo:summary (string)
+- hippo:page (string)
+- hippo:title (string)
+
+[hippo:illustration]
+- hippo:imageSetId
+  mandatory
++ hippo:altText
+
+[hippo:newsArticle]
+- hippo:id (long) 
+//  > [(0,)]
+  mandatory
+- hippo:categoryId (long) 
+  mandatory 
+  multiple
+- hippo:newsArticleId (long) 
+  multiple
+- hippo:magzineId (long) 
+  mandatory 
+  multiple
+- hippo:sectionId (long) 
+  mandatory
+- hippo:authorId (long) 
+  mandatory
+- hippo:published (boolean)
+  = false
+  mandatory
+- hippo:publicationDate (date)
+- hippo:newsDate (date)
++ hippo:body (hippo:body) = hippo:body
+  mandatory 
+  autocreated
+  multiple
++ hippo:illustration (hippo:illustration) = hippo:illustration
+
+
+
+[hippo:section]
+- hippo:id (long) 
+  mandatory
+- hippo:name (string)
+  mandatory
+
+[hippo:category]
+- hippo:id (long) 
+  mandatory
+- hippo:name (string)
+  mandatory
+
+[hippo:magazine]
+- hippo:id (long) 
+  mandatory
+- hippo:name (string)
+  mandatory
+
+
+
+[hippo:imageSet]
+- hippo:id (long) 
+  mandatory
++ hippo:image
+  mandatory
+
+[hippo:image] > nt:resource
+- hippo:src (string) 
+  mandatory
++ hippo:altText
+  mandatory
+
+[hippo:altText]
+- hippo:locale (string)  
+  = 'en-gb'
+  mandatory 
+  multiple
+- hippo:text (string) 
+  mandatory
+
+
+[hippo:author]
+- hippo:id (long)  
+  > (0,)
+  mandatory
+- hippo:name (string)
+- hippo:email (string)
