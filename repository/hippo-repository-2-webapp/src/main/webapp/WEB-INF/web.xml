@@ -15,9 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-	id="repository-browser">
+<web-app>
 
 	<display-name>Hippo Repository 2 Browser</display-name>
 
@@ -61,4 +59,3 @@
 	</welcome-file-list>
 
 </web-app>
-	  
