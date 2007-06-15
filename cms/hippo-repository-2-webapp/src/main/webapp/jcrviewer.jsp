@@ -9,6 +9,9 @@
 <%@page import="javax.jcr.RepositoryException" %>
 <%@page import="javax.jcr.SimpleCredentials" %>
 <%@page import="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory" %>
+<%@page import="org.hippocms.repository.jr.embedded.HippoRepository" %>
+<%@page import="org.hippocms.repository.jr.embedded.HippoRepositoryFactory" %>
+<%@page import="org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory" %>
 
 <%!
    public Node dumpTree(JspWriter out, javax.jcr.Node parent, int level, String targetPath)
@@ -54,18 +57,17 @@
 <DIV ALIGN="left"><PRE>
 
 <%
-  javax.jcr.Repository repositoryConnection = (javax.jcr.Repository) session.getAttribute("repository");
+  HippoRepository repositoryConnection = (HippoRepository) session.getAttribute("repository");
   javax.jcr.Session repositorySession = (javax.jcr.Session) session.getAttribute("session");
   //if(repositoryConnection == null || repositorySession == null) {
-    org.apache.jackrabbit.rmi.client.ClientRepositoryFactory repositoryFactory = new org.apache.jackrabbit.rmi.client.ClientRepositoryFactory();
-    repositoryConnection = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
-    repositorySession = repositoryConnection.login(new SimpleCredentials("username", "password".toCharArray()));
+    repositoryConnection = new HippoRepositoryFactory().getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
+    repositorySession = repositoryConnection.login();
     session.setAttribute("repository", repositoryConnection);
     session.setAttribute("session", repositorySession);
   //}
 
   String username = repositorySession.getUserID();
-  String location = repositoryConnection.getDescriptor(Repository.REP_NAME_DESC);
+  String location = repositorySession.getRepository().getDescriptor(Repository.REP_NAME_DESC);
   String path = (String) request.getParameter("path");
   if(path == null)
     path = "";
