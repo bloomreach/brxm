@@ -25,12 +25,14 @@ import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree.LinkType;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
 
 public class TreeView extends WebPage implements ITreeStateListener {
 
     private static final long serialVersionUID = 1L;
+    
+    private MultiLineLabel properties;
 
     public TreeView() throws MalformedURLException, ClassCastException, RemoteException, NotBoundException,
             LoginException, RepositoryException {
@@ -74,6 +76,10 @@ public class TreeView extends WebPage implements ITreeStateListener {
 
         //Add the treeComponent to the webPage
         add(tree);
+        
+        //Initialize and add Properties view
+        properties = new MultiLineLabel("properties", ""); 
+        add(properties);
     }
 
     private void addChildren(DefaultMutableTreeNode treeNode) throws RepositoryException {
@@ -117,7 +123,7 @@ public class TreeView extends WebPage implements ITreeStateListener {
                 for (PropertyIterator iter = jcrNode.getProperties(); iter.hasNext();) {
                     Property prop = iter.nextProperty();
 
-                    text.append(prop.getPath() + " [name=" + prop.getName() + "] = ");
+                    text.append(prop.getPath() + " = ");
                     if (prop.getDefinition().isMultiple()) {
                         Value[] values = prop.getValues();
                         text.append("[ ");
@@ -128,6 +134,7 @@ public class TreeView extends WebPage implements ITreeStateListener {
                     } else {
                         text.append(prop.getString());
                     }
+                    text.append("\n");
                 }
             } catch (ValueFormatException e) {
                 text.append(e.getMessage());
@@ -136,8 +143,8 @@ public class TreeView extends WebPage implements ITreeStateListener {
             } catch (RepositoryException e) {
                 text.append(e.getMessage());
             }
-//            System.out.println(text.toString());
-//            add(new Label("properties", text.toString()));
+            
+            properties.setModelObject(text.toString());
         }
     }
 
