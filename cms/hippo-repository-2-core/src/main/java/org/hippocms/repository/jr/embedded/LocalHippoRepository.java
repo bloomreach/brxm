@@ -110,7 +110,7 @@ class LocalHippoRepository extends HippoRepository {
                 log.warn(ex.getMessage());
             }
             createNodeTypesFromFile(workspace, "repository.cnd");
-            //createNodeTypesFromFile(workspace, "newsmodel.cnd");
+            createNodeTypesFromFile(workspace, "newsmodel.cnd");
             session.save();
 
         } catch (ParseException ex) {
