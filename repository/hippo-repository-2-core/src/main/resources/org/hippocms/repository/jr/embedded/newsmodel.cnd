@@ -5,98 +5,87 @@
 <hippo='http://www.hippocms.org/nt/1.0'>
 
 
-// Unique contraints on hippo:Id's?
-// verionable rules
-// lastModified[By,Date]
+// TODO: 
+// - (Unique) contraints on hippo:id's?
+// - verioning rules
 
+// alttext nodetype is usde by illustration so put it _before_ illustration
+[hippo:altText]
+- hippo:locale (string)
+  multiple mandatory
+- hippo:text (string)
 
-[hippo:body]
-- hippo:locale (string) 
-  = 'en-gb'
-  mandatory 
-  multiple
-- hippo:summary (string)
-- hippo:page (string)
-- hippo:title (string)
+// link nodetype is used by newsArticle so put it _before_ newsArticle
+[hippo:link]
+- hippo:href (String)
+- hippo:text (string)
 
+// illustration nodetype is used by newsArticle so put it _before_ newsArticle
 [hippo:illustration]
 - hippo:imageSetId
-  mandatory
 + hippo:altText
+
+// body nodetype is used by newsArticle so put it _before_ newsArticle
+[hippo:body]
+- hippo:locale (string)
+  multiple mandatory
+- hippo:title (string)
+  primary
+- hippo:summary (string)
+- hippo:page (string)
+- hippo:review (string)
 
 [hippo:newsArticle]
 - hippo:id (long) 
 //  > [(0,)]
-  mandatory
-- hippo:categoryId (long) 
-  mandatory 
+- hippo:categoryId (long)
   multiple
 - hippo:newsArticleId (long) 
   multiple
-- hippo:magzineId (long) 
-  mandatory 
+- hippo:magzineId (long)
   multiple
-- hippo:sectionId (long) 
-  mandatory
-- hippo:authorId (long) 
-  mandatory
+- hippo:sectionId (long)
+- hippo:authorId (long)
 - hippo:published (boolean)
   = false
-  mandatory
 - hippo:publicationDate (date)
 - hippo:newsDate (date)
 + hippo:body (hippo:body) = hippo:body
-  mandatory 
-  autocreated
+  multiple
++ hippo:link (hippo:link) = hippo:link
   multiple
 + hippo:illustration (hippo:illustration) = hippo:illustration
 
-
-
-[hippo:section]
-- hippo:id (long) 
-  mandatory
-- hippo:name (string)
-  mandatory
-
-[hippo:category]
-- hippo:id (long) 
-  mandatory
-- hippo:name (string)
-  mandatory
-
-[hippo:magazine]
-- hippo:id (long) 
-  mandatory
-- hippo:name (string)
-  mandatory
-
-
-
-[hippo:imageSet]
-- hippo:id (long) 
-  mandatory
-+ hippo:image
-  mandatory
-
-[hippo:image] > nt:resource
-- hippo:src (string) 
-  mandatory
-+ hippo:altText
-  mandatory
-
-[hippo:altText]
-- hippo:locale (string)  
-  = 'en-gb'
-  mandatory 
-  multiple
-- hippo:text (string) 
-  mandatory
-
-
 [hippo:author]
-- hippo:id (long)  
-  > (0,)
-  mandatory
+- hippo:id (long)
 - hippo:name (string)
 - hippo:email (string)
+
+[hippo:section]
+- hippo:id (long)
+- hippo:name (string)
+
+[hippo:category]
+- hippo:id (long)
+- hippo:name (string)
+
+[hippo:magazine]
+- hippo:id (long)
+- hippo:name (string)
+
+// image nodetype is used by imageSet so put it _before_ imageset
+[hippo:image]
+- hippo:src (string)
+- hippo:size (string)
+- hippo:contentType (string)
+
+[hippo:imageSet]
+- hippo:id (long)
+  mandatory
+- hippo:description (string)
+  primary
++ hippo:altText
++ * (hippo:image) = hippo:image
+  multiple
+
+
