@@ -25,10 +25,11 @@ public class Browser extends WebPage {
         ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
         repository = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
 
+        // Add form with markup id setter so it can be updated via ajax
         BrowserForm form = new BrowserForm("form");
         add(form);
+        form.setOutputMarkupId(true);
     }
-
 
     private class BrowserForm extends Form {
         private static final long serialVersionUID = 1L;
@@ -40,12 +41,16 @@ public class Browser extends WebPage {
             super(id);
 
             Session session = repository.login(new SimpleCredentials("username", "password".toCharArray()));
-            
-            properties = new PropertiesPanel("propertiesPanel");
+
+            properties = new PropertiesPanel("propertiesPanel", this);
             add(properties);
-            
-            tree = new TreePanel("treePanel", (NodeEditor)properties, session.getRootNode());
-            add(tree);       
+
+            tree = new TreePanel("treePanel", (NodeEditor) properties, session.getRootNode());
+            add(tree);
+        }
+
+        protected void onSubmit() {
+            System.out.println("Submit!");
         }
 
     }

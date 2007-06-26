@@ -1,15 +1,32 @@
-<html xmlns:wicket>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <b>Properties</b>
     <table border="1">
       <tr>
-        <td>Name</td>
-        <td>Value</td>
+        <th>
+          <b>Name</b>
+        </th>
+        <th>
+          <b>Value</b>
+        </th>
       </tr>
       <tr wicket:id="properties">
-        <td><span wicket:id="name">Property name goes here</span></td>
-        <td><span wicket:id="value">Property value goes here</span></td>
+        <td>
+          <span wicket:id="name">Property name goes here</span>
+        </td>
+        <td>
+          <span wicket:id="value">Property value goes here</span>
+        </td>
       </tr>
-    </table>  
+    </table>
+    <table>
+      <tr>
+        <td>
+          <input type="submit" wicket:id="save" value="save"/>
+        </td>
+      </tr>
+    </table>
   </wicket:panel>
 </html>

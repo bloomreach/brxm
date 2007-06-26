@@ -9,8 +9,7 @@ public class Main extends WebApplication {
 
     protected void init() {
         super.init();
-        // disable ajax debugging mode for the time being.
-        getDebugSettings().setAjaxDebugModeEnabled(false);
+        getDebugSettings().setAjaxDebugModeEnabled(true);
     }
 
     public Class getHomePage() {
