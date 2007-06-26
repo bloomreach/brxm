@@ -20,7 +20,7 @@ public class TreePanel extends Panel implements ITreeStateListener {
     private static final long serialVersionUID = 1L;
     private transient NodeEditor editor;
 
-    public TreePanel(String id, NodeEditor editor, Node rootNode) throws RepositoryException  {
+    public TreePanel(String id, NodeEditor editor, Node rootNode) throws RepositoryException {
 
         super(id);
         this.editor = editor;
@@ -39,11 +39,13 @@ public class TreePanel extends Panel implements ITreeStateListener {
             protected String renderNode(TreeNode node) {
                 DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
                 Node jcrNode = (Node) treeNode.getUserObject();
-                String result;
-                try {
-                    result = jcrNode.getName();
-                } catch (RepositoryException e) {
-                    result = e.getMessage();
+                String result = "null";
+                if (jcrNode != null) {
+                    try {
+                        result = jcrNode.getName();
+                    } catch (RepositoryException e) {
+                        result = e.getMessage();
+                    }
                 }
                 return result;
             }
@@ -79,7 +81,6 @@ public class TreePanel extends Panel implements ITreeStateListener {
     }
 
     public void nodeCollapsed(TreeNode node) {
-        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
         Enumeration children = node.children();
         while (children.hasMoreElements()) {
             DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
@@ -115,5 +116,5 @@ public class TreePanel extends Panel implements ITreeStateListener {
             }
         }
     }
-    
+
 }
