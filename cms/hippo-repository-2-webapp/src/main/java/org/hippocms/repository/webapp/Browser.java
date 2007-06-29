@@ -12,47 +12,26 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
 
 public class Browser extends WebPage {
     private static final long serialVersionUID = 1L;
-
-    private transient Repository repository;
+    
+    private PropertiesPanel properties;
+    private TreePanel tree;
 
     public Browser() throws LoginException, RepositoryException, MalformedURLException, ClassCastException,
             RemoteException, NotBoundException {
 
         ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
-        repository = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
+        Repository repository = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
+        Session jcrSession = repository.login(new SimpleCredentials("username", "password".toCharArray()));
+        
+        properties = new PropertiesPanel("propertiesPanel", jcrSession);
+        add(properties);
 
-        // Add form with markup id setter so it can be updated via ajax
-        BrowserForm form = new BrowserForm("form");
-        add(form);
-        form.setOutputMarkupId(true);
+        tree = new TreePanel("treePanel", properties.getNodeEditor(), jcrSession.getRootNode());
+        add(tree);
     }
 
-    private class BrowserForm extends Form {
-        private static final long serialVersionUID = 1L;
-
-        private PropertiesPanel properties;
-        private TreePanel tree;
-
-        public BrowserForm(String id) throws LoginException, RepositoryException {
-            super(id);
-
-            Session session = repository.login(new SimpleCredentials("username", "password".toCharArray()));
-
-            properties = new PropertiesPanel("propertiesPanel", this);
-            add(properties);
-
-            tree = new TreePanel("treePanel", (NodeEditor) properties, session.getRootNode());
-            add(tree);
-        }
-
-        protected void onSubmit() {
-            System.out.println("Submit!");
-        }
-
-    }
 
 }
