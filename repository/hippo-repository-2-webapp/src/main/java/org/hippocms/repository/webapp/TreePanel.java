@@ -1,5 +1,8 @@
 package org.hippocms.repository.webapp;
 
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Enumeration;
 
 import javax.jcr.Node;
@@ -18,15 +21,18 @@ import org.apache.wicket.markup.html.tree.ITreeStateListener;
 public class TreePanel extends Panel implements ITreeStateListener {
 
     private static final long serialVersionUID = 1L;
-    private transient NodeEditor editor;
+    private NodeEditor editor;
 
-    public TreePanel(String id, NodeEditor editor, Node rootNode) throws RepositoryException {
+    public TreePanel(String id, NodeEditor editor, Node rootNode) throws RepositoryException, MalformedURLException,
+            ClassCastException, RemoteException, NotBoundException {
 
         super(id);
         this.editor = editor;
-
-        // Create the root node and add expand it.
+        
+        // Wrap the jcr rootnode in a wicket treenode
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
+        
+        //Expand the root node
         expandNode(root);
 
         // Create the treeModel based on the root node
@@ -92,7 +98,7 @@ public class TreePanel extends Panel implements ITreeStateListener {
         if (node != null) {
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
             Node jcrNode = (Node) treeNode.getUserObject();
-            editor.renderNode(jcrNode);
+            editor.setNode(jcrNode);
         }
     }
 

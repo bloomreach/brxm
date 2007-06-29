@@ -4,6 +4,6 @@ import javax.jcr.Node;
 
 public interface NodeEditor {
 
-    void renderNode(Node jcrNode);
+    void setNode(Node jcrNode);
 
 }
