@@ -1,8 +1,20 @@
-package org.hippocms.repository.webapp;
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.hippocms.repository.webapp.tree;
 
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.Enumeration;
 
 import javax.jcr.Node;
@@ -17,21 +29,21 @@ import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree.LinkType;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
+import org.hippocms.repository.webapp.node.INodeEditor;
 
 public class TreePanel extends Panel implements ITreeStateListener {
 
     private static final long serialVersionUID = 1L;
-    private NodeEditor editor;
+    private INodeEditor editor;
 
-    public TreePanel(String id, NodeEditor editor, Node rootNode) throws RepositoryException, MalformedURLException,
-            ClassCastException, RemoteException, NotBoundException {
+    public TreePanel(String id, INodeEditor editor, Node jcrRoot) throws RepositoryException {
 
         super(id);
         this.editor = editor;
-        
-        // Wrap the jcr rootnode in a wicket treenode
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
-        
+
+        // Wrap the jcr root node in a wicket treenode model
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(jcrRoot);
+
         //Expand the root node
         expandNode(root);
 
@@ -98,6 +110,7 @@ public class TreePanel extends Panel implements ITreeStateListener {
         if (node != null) {
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
             Node jcrNode = (Node) treeNode.getUserObject();
+
             editor.setNode(jcrNode);
         }
     }
@@ -117,9 +130,9 @@ public class TreePanel extends Panel implements ITreeStateListener {
         Node jcrNode = (Node) treeNode.getUserObject();
         for (NodeIterator iter = jcrNode.getNodes(); iter.hasNext();) {
             Node node = iter.nextNode();
-            if (node.getPath().indexOf("/jcr:system") == -1) {
-                treeNode.add(new DefaultMutableTreeNode(node));
-            }
+            //if (node.getPath().indexOf("/jcr:system") == -1) {
+            treeNode.add(new DefaultMutableTreeNode(node));
+            //}
         }
     }
 

@@ -1,36 +1,41 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippocms.repository.webapp;
 
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-
-import javax.jcr.LoginException;
-import javax.jcr.Repository;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
-import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.wicket.markup.html.WebPage;
+import org.hippocms.repository.webapp.node.NodePanel;
+import org.hippocms.repository.webapp.tree.TreePanel;
 
 public class Browser extends WebPage {
     private static final long serialVersionUID = 1L;
     
-    private PropertiesPanel properties;
-    private TreePanel tree;
+    private NodePanel nodePanel;
+    private TreePanel treePanel;
 
-    public Browser() throws LoginException, RepositoryException, MalformedURLException, ClassCastException,
-            RemoteException, NotBoundException {
+    public Browser() throws RepositoryException {
+       
+        nodePanel = new NodePanel("nodePanel");
+        add(nodePanel);
 
-        ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
-        Repository repository = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
-        Session jcrSession = repository.login(new SimpleCredentials("username", "password".toCharArray()));
-        
-        properties = new PropertiesPanel("propertiesPanel", jcrSession);
-        add(properties);
-
-        tree = new TreePanel("treePanel", properties.getNodeEditor(), jcrSession.getRootNode());
-        add(tree);
+        Node root = JcrSessionLocator.getSession().getRootNode();
+        treePanel = new TreePanel("treePanel", nodePanel.getNodeEditor(), root);
+        add(treePanel);
     }
 
 
