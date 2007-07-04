@@ -175,7 +175,7 @@
       <name>Hippo Repository 2 Dev List</name>
       <subscribe>hipporepos-dev-subscribe@lists.hippocms.org</subscribe>
       <unsubscribe>announce-unsubscribe@lists.hippocms.org</unsubscribe>
-      <post>hippporepos-dev@lists.hippoforge.org</post>
+      <post>hipporepos-dev@lists.hippoforge.org</post>
       <archive>http://lists.hippoforge.org/mailman/listinfo/hipporepos-dev/</archive>
     </mailingList>
   </mailingLists>
