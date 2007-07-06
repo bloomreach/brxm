@@ -593,7 +593,11 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     }
 
     public String getChildPath(String name) throws RepositoryException {
-        return getPath() + "/" + name;
+        String path = getPath();
+        if (path.endsWith("/"))
+            return path + name;
+        else
+            return path + "/" + name;
     }
 
     public Session getSession() throws RepositoryException {
