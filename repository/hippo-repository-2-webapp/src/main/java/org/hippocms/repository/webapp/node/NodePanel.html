@@ -15,9 +15,13 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <form wicket:id="form" id="form">
-      <table border="1">
+    <form wicket:id="editor" id="editor">
+      <table border="1" width="99%">
         <tr>
+          <th>
+            <div wicket:id="dialog"/>
+            <a wicket:id="new">new</a>
+          </th>          
           <th>
             <b>Name</b>
           </th>
@@ -26,6 +30,9 @@
           </th>
         </tr>
         <tr wicket:id="properties">
+          <td align="center">
+            <a wicket:id="delete">delete</a>
+          </td>
           <td>
             <span wicket:id="name">Property name goes here</span>
           </td>
@@ -33,12 +40,7 @@
             <span wicket:id="value">Property value goes here</span>
           </td>
         </tr>
-        <tr>
-          <td>
-            <input type="submit" wicket:id="save" value="save"/>
-          </td>
-        </tr>
-      </table>
+        </table>
     </form>
   </wicket:panel>
 </html>

@@ -16,21 +16,23 @@
 package org.hippocms.repository.webapp.node;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.html.tree.ITreeStateListener;
+import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public class NodePanel extends Panel {
     private static final long serialVersionUID = 1L;
 
-    private NodeForm form;
+    private NodeEditor editor;
 
     public NodePanel(String id) {
         super(id);
-        form = new NodeForm("form");
-        form.setOutputMarkupId(true);
-        add(form);
+        editor = new NodeEditor("editor", new JcrNodeModel());
+        editor.setOutputMarkupId(true);
+        add(editor);
     }
 
-    public INodeEditor getNodeEditor() {
-        return (INodeEditor) form;
+    public ITreeStateListener getTreeStateListener() {
+        return (ITreeStateListener) editor;
     }
 
 

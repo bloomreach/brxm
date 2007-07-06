@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebApplication;
 
 public class Main extends WebApplication {
@@ -38,32 +39,34 @@ public class Main extends WebApplication {
     protected void init() {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(true);
-
-        try {
-            ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
-            Repository repository = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
-            jcrSession = repository.login(new SimpleCredentials("username", "password".toCharArray()));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        } catch (LoginException e) {
-            e.printStackTrace();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
     }
 
     public Class getHomePage() {
         return Browser.class;
     }
 
-    public Session getSession() {
-        return jcrSession;
+    public static Session getSession() {
+        Main main = (Main) RequestCycle.get().getApplication();
+        if (main.jcrSession == null) {
+            try {
+                ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
+                Repository repository = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
+                main.jcrSession = repository.login(new SimpleCredentials("username", "password".toCharArray()));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (NotBoundException e) {
+                e.printStackTrace();
+            } catch (LoginException e) {
+                e.printStackTrace();
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
+        }       
+        return main.jcrSession;
     }
 
 }

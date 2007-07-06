@@ -15,7 +15,6 @@
  */
 package org.hippocms.repository.webapp;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.WebPage;
@@ -24,19 +23,17 @@ import org.hippocms.repository.webapp.tree.TreePanel;
 
 public class Browser extends WebPage {
     private static final long serialVersionUID = 1L;
-    
+
     private NodePanel nodePanel;
     private TreePanel treePanel;
 
     public Browser() throws RepositoryException {
-       
         nodePanel = new NodePanel("nodePanel");
         add(nodePanel);
 
-        Node root = JcrSessionLocator.getSession().getRootNode();
-        treePanel = new TreePanel("treePanel", nodePanel.getNodeEditor(), root);
+        treePanel = new TreePanel("treePanel", "/");
+        treePanel.addTreeStateListener(nodePanel.getTreeStateListener());
         add(treePanel);
     }
-
 
 }
