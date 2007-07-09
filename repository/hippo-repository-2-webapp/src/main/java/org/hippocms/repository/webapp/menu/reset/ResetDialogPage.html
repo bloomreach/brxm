@@ -14,27 +14,10 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <table border="1" width="99%" align="center">
-      <tr>
-        <td>
-          <b>Name:</b>
-        </td>
-        <td>
-          <span wicket:id="name">New property name goes here</span>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <b>Value:</b>
-        </td>
-        <td>
-          <span wicket:id="value">New property value goes here</span>
-        </td>
-      </tr>
-      </table>
-      <hr/>
-      <table width="50%">
+  <body>
+    <span wicket:id="changes">Here goes a message whether there are pending changes or not</span>
+    <hr/>
+    <table width="50%">
       <tr>
         <td>
           <a wicket:id="ok">OK</a>
@@ -44,5 +27,5 @@
         </td>
       </tr>      
     </table>
-  </wicket:panel>
+  </body>
 </html>

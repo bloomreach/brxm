@@ -24,7 +24,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree.LinkType;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
@@ -32,41 +31,28 @@ import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public class TreePanel extends Panel implements ITreeStateListener {
     private static final long serialVersionUID = 1L;
-    
-    private Tree tree;
 
-    public TreePanel(String id, String rootPath) throws RepositoryException {
+    private TreeView tree;
 
+    public TreePanel(String id, String rootPath) {
         super(id);
 
-        // Wrap the jcr root node model in a treenode model
         JcrNodeModel root = new JcrNodeModel(rootPath);
-
-        //Expand the root node
         expandNode(root);
 
-        // Create the treeModel based on the root node
         TreeModel treeModel = new DefaultTreeModel(root);
-
-        // Create the treeComponent based on the treeModel
         tree = new TreeView("tree", treeModel);
-        
-        // Collapse the treeComponent
         tree.getTreeState().collapseAll();
-
-        // Add behaviour to the treeComponent
-        addTreeStateListener(this);
-
-        // Disable ajax links for the time being
-        tree.setLinkType(LinkType.REGULAR);
+        tree.addTreeStateListener(this);
+        tree.setLinkType(LinkType.AJAX);
 
         add(tree);
     }
-    
-    public void addTreeStateListener(ITreeStateListener listener) {
-        tree.getTreeState().addTreeStateListener(listener);
-    }
 
+    public TreeView getTree() {
+        return tree;
+    }
+    
     // ITreeStateListener
 
     public void nodeExpanded(TreeNode node) {
@@ -76,27 +62,14 @@ public class TreePanel extends Panel implements ITreeStateListener {
         Enumeration children = node.children();
         while (children.hasMoreElements()) {
             JcrNodeModel child = (JcrNodeModel) children.nextElement();
-            try {
-                expandNode(child);
-            } catch (RepositoryException e) {
-                System.out.println("Exception while expanding node " + e.getMessage());
-            }
+            expandNode(child);
         }
     }
 
     public void nodeCollapsed(TreeNode node) {
-        Enumeration children = node.children();
-        while (children.hasMoreElements()) {
-            JcrNodeModel child = (JcrNodeModel) children.nextElement();
-            child.removeAllChildren();
-        }
     }
 
     public void nodeSelected(TreeNode node) {
-//        if (node != null) {
-//            JcrNodeModel treeNode = (JcrNodeModel) node;
-//            editor.setNode(treeNode.getNode());
-//        }
     }
 
     public void nodeUnselected(TreeNode node) {
@@ -110,13 +83,17 @@ public class TreePanel extends Panel implements ITreeStateListener {
 
     // privates
 
-    private void expandNode(JcrNodeModel treeNode) throws RepositoryException {
-        Node jcrNode = treeNode.getNode();
-        for (NodeIterator iter = jcrNode.getNodes(); iter.hasNext();) {
-            Node node = iter.nextNode();
-            //if (node.getPath().indexOf("/jcr:system") == -1) {
-            treeNode.add(new JcrNodeModel(node));
-            //}
+    private void expandNode(JcrNodeModel parentNodeModel) {
+        Node parentNode = parentNodeModel.getNode();
+        try {
+            for (NodeIterator iter = parentNode.getNodes(); iter.hasNext();) {
+                Node childNode = iter.nextNode();
+                JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
+                parentNodeModel.add(childNodeModel);
+            }
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

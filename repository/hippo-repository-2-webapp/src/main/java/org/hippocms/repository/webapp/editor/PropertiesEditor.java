@@ -1,6 +1,5 @@
-package org.hippocms.repository.webapp.node;
+package org.hippocms.repository.webapp.editor;
 
-import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
@@ -37,11 +36,13 @@ public class PropertiesEditor extends DataView {
         }
     }
 
+    // privates
+
     private Component deleteLink(String id, final JcrPropertyModel model) throws RepositoryException {
         Component result = null;
         if (model.getProperty().getDefinition().isProtected()) {
-            result = new Label(id, "");
-            
+            result = new Label(id, "(protected)");
+
         } else {
             result = new AjaxLink(id, model) {
                 private static final long serialVersionUID = 1L;
@@ -49,16 +50,13 @@ public class PropertiesEditor extends DataView {
                 public void onClick(AjaxRequestTarget target) {
                     try {
                         Property prop = model.getProperty();
-                        Node node = prop.getParent();
                         prop.remove();
-                        node.save();
                     } catch (RepositoryException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    NodeEditor form = (NodeEditor) findParent(NodeEditor.class);
-                    form.save();
-                    target.addComponent(form);
+                    NodeEditor editor = (NodeEditor) findParent(NodeEditor.class);
+                    target.addComponent(editor);
                 }
             };
         }
@@ -73,33 +71,25 @@ public class PropertiesEditor extends DataView {
     private Component propertyValueRenderer(String id, JcrPropertyModel model) throws RepositoryException {
         Property prop = model.getProperty();
 
-        Component result = null;
-        if (prop.getDefinition().isProtected()) {
-            result = new Label(id, model);
+        Component editor;
+        if (prop.getDefinition().isMultiple()) {
+            editor = new Label(id, new Model("Multivalue property, not nupported yet"));
         } else {
-            if (prop.getValue().getString().contains("\n")) {
-                result = new AjaxEditableMultiLineLabel(id, model) {
-                    private static final long serialVersionUID = 1L;
-
-                    protected void onSubmit(AjaxRequestTarget target) {
-                        super.onSubmit(target);
-                        NodeEditor form = (NodeEditor) findParent(NodeEditor.class);
-                        form.save();
-                    }
-                };
+            if (prop.getDefinition().isProtected()) {
+                editor = new Label(id, prop.getString());
             } else {
-                result = new AjaxEditableLabel(id, model) {
-                    private static final long serialVersionUID = 1L;
-
-                    protected void onSubmit(AjaxRequestTarget target) {
-                        super.onSubmit(target);
-                        NodeEditor form = (NodeEditor) findParent(NodeEditor.class);
-                        form.save();
-                    }
-                };
+                String valueStr = prop.getString();
+                if (valueStr.contains("\n")) {
+                    AjaxEditableMultiLineLabel label = new AjaxEditableMultiLineLabel(id, model);
+                    label.setCols(80);
+                    label.setRows(25);
+                    editor = label;
+                } else {
+                    editor = new AjaxEditableLabel(id, model);
+                }
             }
         }
-        return result;
+        return editor;
     }
 
 }
