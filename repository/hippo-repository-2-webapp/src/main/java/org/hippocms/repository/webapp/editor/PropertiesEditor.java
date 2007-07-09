@@ -88,7 +88,7 @@ public class PropertiesEditor extends DataView {
 
         Component editor;
         if (prop.getDefinition().isMultiple()) {
-            editor = new Label(id, new Model("Multivalue property, not nupported yet"));
+            editor = new Label(id, new Model("Multivalue property, not supported yet"));
         } else {
             if (prop.getDefinition().isProtected()) {
                 editor = new Label(id, prop.getString());

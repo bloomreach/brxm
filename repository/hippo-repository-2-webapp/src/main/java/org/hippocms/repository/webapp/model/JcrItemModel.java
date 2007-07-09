@@ -53,7 +53,6 @@ public class JcrItemModel extends LoadableDetachableModel {
         Item result = null;
         try {
             result = (Item) Main.getSession().getItem(path);
-            //System.out.println("load: " + path);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

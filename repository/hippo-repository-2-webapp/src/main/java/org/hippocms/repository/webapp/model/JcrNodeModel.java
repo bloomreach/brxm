@@ -55,11 +55,13 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
     }
 
     public void setNode(Node node) {
-        try {
-            itemModel = new JcrItemModel(node.getPath());
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (node != null) {
+            try {
+                itemModel = new JcrItemModel(node.getPath());
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -67,11 +69,13 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
 
     public boolean isLeaf() {
         boolean result = true;
-        try {
-            result = !getNode().hasNodes();
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (getNode() != null) {
+            try {
+                result = !getNode().hasNodes();
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         return result;
     }
@@ -100,7 +104,7 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
         List list = new ArrayList();
         try {
             PropertyIterator it = getNode().getProperties();
-            it.skip(first);            
+            it.skip(first);
             for (int i = 0; i < count; i++) {
                 list.add(it.nextProperty());
             }

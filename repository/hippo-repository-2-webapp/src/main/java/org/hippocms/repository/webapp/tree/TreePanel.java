@@ -49,21 +49,23 @@ public class TreePanel extends Panel implements ITreeStateListener {
     public TreeView getTree() {
         return tree;
     }
-    
+
     // ITreeStateListener
 
     public void nodeExpanded(TreeNode treeNodeModel) {
         JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
-        Node node = nodeModel.getNode();        
-        try {
-            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-                Node childNode = iter.nextNode();
-                JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
-                nodeModel.add(childNodeModel);
+        Node node = nodeModel.getNode();
+        if (node != null) {
+            try {
+                for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                    Node childNode = iter.nextNode();
+                    JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
+                    nodeModel.add(childNodeModel);
+                }
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
