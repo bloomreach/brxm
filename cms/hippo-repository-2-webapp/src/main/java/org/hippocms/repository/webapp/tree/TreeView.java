@@ -55,6 +55,8 @@ public class TreeView extends Tree {
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
         Browser browser = (Browser) findParent(Browser.class);
         NodeEditor editor = browser.getEditorPanel().getEditor();
+        
+        editor.setModel((JcrNodeModel) treeNode);
         target.addComponent(editor);
     }
 

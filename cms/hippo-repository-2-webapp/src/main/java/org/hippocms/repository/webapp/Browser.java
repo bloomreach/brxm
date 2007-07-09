@@ -19,6 +19,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.hippocms.repository.webapp.editor.EditorPanel;
+import org.hippocms.repository.webapp.model.JcrNodeModel;
 import org.hippocms.repository.webapp.tree.TreePanel;
 
 public class Browser extends WebPage {
@@ -31,12 +32,13 @@ public class Browser extends WebPage {
 
     public Browser() throws RepositoryException {
         setOutputMarkupId(true);
+        
+        JcrNodeModel root = new JcrNodeModel(ROOT);
 
-        editorPanel = new EditorPanel("editorPanel", ROOT);
+        editorPanel = new EditorPanel("editorPanel", root);
         add(editorPanel);
 
-        treePanel = new TreePanel("treePanel", ROOT);
-        treePanel.getTree().addTreeStateListener(editorPanel.getEditor());
+        treePanel = new TreePanel("treePanel", root);
         add(treePanel);
     }
 
