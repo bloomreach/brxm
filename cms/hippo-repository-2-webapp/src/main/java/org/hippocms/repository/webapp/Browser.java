@@ -18,22 +18,42 @@ package org.hippocms.repository.webapp;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.WebPage;
-import org.hippocms.repository.webapp.node.NodePanel;
+import org.hippocms.repository.webapp.editor.EditorPanel;
 import org.hippocms.repository.webapp.tree.TreePanel;
 
 public class Browser extends WebPage {
     private static final long serialVersionUID = 1L;
 
-    private NodePanel nodePanel;
+    public static final String ROOT = "/";
+    
+    private EditorPanel editorPanel;
     private TreePanel treePanel;
 
     public Browser() throws RepositoryException {
-        nodePanel = new NodePanel("nodePanel");
-        add(nodePanel);
+        setOutputMarkupId(true);
 
-        treePanel = new TreePanel("treePanel", "/");
-        treePanel.addTreeStateListener(nodePanel.getTreeStateListener());
+        editorPanel = new EditorPanel("editorPanel", ROOT);
+        add(editorPanel);
+
+        treePanel = new TreePanel("treePanel", ROOT);
+        treePanel.getTree().addTreeStateListener(editorPanel.getEditor());
         add(treePanel);
+    }
+
+    public void setEditorPanel(EditorPanel editorPanel) {
+        this.editorPanel = editorPanel;
+    }
+
+    public EditorPanel getEditorPanel() {
+        return editorPanel;
+    }
+
+    public void setTreePanel(TreePanel treePanel) {
+        this.treePanel = treePanel;
+    }
+
+    public TreePanel getTreePanel() {
+        return treePanel;
     }
 
 }

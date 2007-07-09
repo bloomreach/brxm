@@ -43,11 +43,12 @@ public class Main extends WebApplication {
 
     public Class getHomePage() {
         return Browser.class;
+        //return SimpleTreePage.class;
     }
 
     public static Session getSession() {
         Main main = (Main) RequestCycle.get().getApplication();
-        if (main.jcrSession == null) {
+        if (main.jcrSession == null || !main.jcrSession.isLive()) {
             try {
                 ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
                 Repository repository = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
@@ -65,7 +66,7 @@ public class Main extends WebApplication {
             } catch (RepositoryException e) {
                 e.printStackTrace();
             }
-        }       
+        }
         return main.jcrSession;
     }
 

@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.webapp.node;
+package org.hippocms.repository.webapp.editor;
 
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.html.tree.ITreeStateListener;
-import org.hippocms.repository.webapp.model.JcrNodeModel;
+import org.hippocms.repository.webapp.model.JcrPropertiesDataProvider;
 
-public class NodePanel extends Panel {
+public class EditorPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
     private NodeEditor editor;
 
-    public NodePanel(String id) {
+    public EditorPanel(String id, String path) {
         super(id);
-        editor = new NodeEditor("editor", new JcrNodeModel());
+        editor = new NodeEditor("editor", new JcrPropertiesDataProvider(path));
         editor.setOutputMarkupId(true);
         add(editor);
     }
 
-    public ITreeStateListener getTreeStateListener() {
-        return (ITreeStateListener) editor;
+    public NodeEditor getEditor() {
+        return editor;
     }
-
 
 }
