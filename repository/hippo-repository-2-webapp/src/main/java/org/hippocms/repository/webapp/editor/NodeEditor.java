@@ -15,8 +15,6 @@
  */
 package org.hippocms.repository.webapp.editor;
 
-import javax.jcr.Node;
-
 import org.apache.wicket.markup.html.form.Form;
 import org.hippocms.repository.webapp.menu.Menu;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
@@ -28,10 +26,6 @@ public class NodeEditor extends Form {
         super(id, model);
         add(new PropertiesEditor("properties", model));
         add(new Menu("menu", this, model));
-    }
-
-    public Node getNode() {
-        return (Node) getModelObject();
     }
 
     public void setModel(JcrNodeModel model) {

@@ -15,8 +15,6 @@
  */
 package org.hippocms.repository.webapp.tree;
 
-import java.util.Enumeration;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -34,15 +32,15 @@ public class TreePanel extends Panel implements ITreeStateListener {
 
     private TreeView tree;
 
-    public TreePanel(String id, JcrNodeModel model) {
+    public TreePanel(String id, JcrNodeModel rootNodeModel) {
         super(id);
 
-        TreeModel treeModel = new DefaultTreeModel(model);
-        expandNode(model);
+        TreeModel treeModel = new DefaultTreeModel(rootNodeModel);
 
         tree = new TreeView("tree", treeModel);
         tree.getTreeState().collapseAll();
-        tree.addTreeStateListener(this);
+        tree.getTreeState().addTreeStateListener(this);
+        tree.getTreeState().expandNode(rootNodeModel);
         tree.setLinkType(LinkType.AJAX);
 
         add(tree);
@@ -54,46 +52,39 @@ public class TreePanel extends Panel implements ITreeStateListener {
     
     // ITreeStateListener
 
-    public void nodeExpanded(TreeNode node) {
-        if (node == null) {
+    public void nodeExpanded(TreeNode treeNodeModel) {
+        JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
+        Node node = nodeModel.getNode();        
+        try {
+            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                Node childNode = iter.nextNode();
+                JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
+                nodeModel.add(childNodeModel);
+            }
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void nodeCollapsed(TreeNode treeNodeModel) {
+        if (treeNodeModel == null) {
             return;
         }
-        Enumeration children = node.children();
-        while (children.hasMoreElements()) {
-            JcrNodeModel child = (JcrNodeModel) children.nextElement();
-            expandNode(child);
-        }
+        JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
+        nodeModel.removeAllChildren();
     }
 
-    public void nodeCollapsed(TreeNode node) {
+    public void nodeSelected(TreeNode treeNodeModel) {
     }
 
-    public void nodeSelected(TreeNode node) {
-    }
-
-    public void nodeUnselected(TreeNode node) {
+    public void nodeUnselected(TreeNode treeNodeModel) {
     }
 
     public void allNodesExpanded() {
     }
 
     public void allNodesCollapsed() {
-    }
-
-    // privates
-
-    private void expandNode(JcrNodeModel parentNodeModel) {
-        Node parentNode = parentNodeModel.getNode();
-        try {
-            for (NodeIterator iter = parentNode.getNodes(); iter.hasNext();) {
-                Node childNode = iter.nextNode();
-                JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
-                parentNodeModel.add(childNodeModel);
-            }
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
 }

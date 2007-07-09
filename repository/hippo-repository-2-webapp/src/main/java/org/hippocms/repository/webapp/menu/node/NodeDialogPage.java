@@ -15,6 +15,8 @@
  */
 package org.hippocms.repository.webapp.menu.node;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippocms.repository.webapp.menu.AbstractDialogPage;
@@ -33,6 +35,13 @@ public class NodeDialogPage extends AbstractDialogPage {
     }
 
     public void ok() {
+        NodeDialogPage page = (NodeDialogPage) getPage();
+        try {
+            model.getNode().addNode(page.getName());
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void cancel() {
