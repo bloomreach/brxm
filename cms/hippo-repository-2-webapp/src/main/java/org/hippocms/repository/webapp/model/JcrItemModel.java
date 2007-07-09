@@ -25,10 +25,6 @@ public class JcrItemModel extends LoadableDetachableModel {
         super(item);
         try {
             this.path = item.getPath();
-            // FIXME: temporary hack to work around HREPTWO-28
-            while (path.startsWith("//")) {
-                path = path.substring(1);
-            }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
