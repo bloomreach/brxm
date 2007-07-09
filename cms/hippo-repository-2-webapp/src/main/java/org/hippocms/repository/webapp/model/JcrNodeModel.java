@@ -63,7 +63,20 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
         }
     }
 
-    // IWrapModel
+    // Override DefaultMutableTreeNode
+
+    public boolean isLeaf() {
+        boolean result = true;
+        try {
+            result = !getNode().hasNodes();
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // Implement IWrapModel
 
     public IModel getWrappedModel() {
         return itemModel;
@@ -80,9 +93,9 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
     public void detach() {
         itemModel.detach();
     }
-    
-    //IDataProvider
-    
+
+    // Implement IDataProvider
+
     public Iterator iterator(int first, int count) {
         List list = new ArrayList();
         try {

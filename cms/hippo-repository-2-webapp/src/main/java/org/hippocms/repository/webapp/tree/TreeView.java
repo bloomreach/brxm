@@ -22,7 +22,6 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
-import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.hippocms.repository.webapp.Browser;
 import org.hippocms.repository.webapp.editor.NodeEditor;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
@@ -46,10 +45,6 @@ public class TreeView extends Tree {
             }
         }
         return result;
-    }
-
-    public void addTreeStateListener(ITreeStateListener listener) {
-        getTreeState().addTreeStateListener(listener);
     }
        
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
