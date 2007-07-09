@@ -16,16 +16,16 @@
 package org.hippocms.repository.webapp.editor;
 
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippocms.repository.webapp.model.JcrPropertiesDataProvider;
+import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public class EditorPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
     private NodeEditor editor;
 
-    public EditorPanel(String id, String path) {
+    public EditorPanel(String id, JcrNodeModel model) {
         super(id);
-        editor = new NodeEditor("editor", new JcrPropertiesDataProvider(path));
+        editor = new NodeEditor("editor", model);
         editor.setOutputMarkupId(true);
         add(editor);
     }

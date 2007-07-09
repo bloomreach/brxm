@@ -34,13 +34,12 @@ public class TreePanel extends Panel implements ITreeStateListener {
 
     private TreeView tree;
 
-    public TreePanel(String id, String rootPath) {
+    public TreePanel(String id, JcrNodeModel model) {
         super(id);
 
-        JcrNodeModel root = new JcrNodeModel(rootPath);
-        expandNode(root);
+        TreeModel treeModel = new DefaultTreeModel(model);
+        expandNode(model);
 
-        TreeModel treeModel = new DefaultTreeModel(root);
         tree = new TreeView("tree", treeModel);
         tree.getTreeState().collapseAll();
         tree.addTreeStateListener(this);
