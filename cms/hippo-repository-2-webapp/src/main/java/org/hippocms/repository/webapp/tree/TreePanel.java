@@ -19,10 +19,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree.LinkType;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
@@ -30,25 +28,16 @@ import org.hippocms.repository.webapp.model.JcrNodeModel;
 public class TreePanel extends Panel implements ITreeStateListener {
     private static final long serialVersionUID = 1L;
 
-    private TreeView tree;
-
-    public TreePanel(String id, JcrNodeModel rootNodeModel) {
+    public TreePanel(String id, JcrNodeModel model) {
         super(id);
-
-        TreeModel treeModel = new DefaultTreeModel(rootNodeModel);
-
-        tree = new TreeView("tree", treeModel);
-        tree.getTreeState().collapseAll();
+        
+        DefaultTreeModel treeModel = new DefaultTreeModel(model);        
+        TreeView tree = new TreeView("tree", treeModel);
         tree.getTreeState().addTreeStateListener(this);
-        tree.getTreeState().expandNode(rootNodeModel);
-        tree.setLinkType(LinkType.AJAX);
-
+        tree.getTreeState().expandNode((TreeNode)model.getRoot());
         add(tree);
     }
 
-    public TreeView getTree() {
-        return tree;
-    }
 
     // ITreeStateListener
 

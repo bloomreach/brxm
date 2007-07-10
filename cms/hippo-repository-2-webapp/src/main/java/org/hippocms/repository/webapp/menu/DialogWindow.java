@@ -15,33 +15,34 @@
  */
 package org.hippocms.repository.webapp.menu;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 
-public abstract class AbstractDialogPage extends WebPage {
+public class DialogWindow extends ModalWindow {
+    private static final long serialVersionUID = 1L;
 
-    public AbstractDialogPage(final AbstractDialog dialog) {
-        add(new AjaxLink("ok") {
-            private static final long serialVersionUID = 1L;
-            public void onClick(AjaxRequestTarget target) {
-                ok();
-                dialog.close(target);
-            }
-        });
+    protected DialogWindow(String id, final Component targetComponent, String title) {
+        super(id);       
+        setTitle(title);
+        setCookieName(id);
         
-        add(new AjaxLink("cancel") {
+        setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
-            public void onClick(AjaxRequestTarget target) {
-                cancel();
-                dialog.close(target);
+            public void onClose(AjaxRequestTarget target) {
+                target.addComponent(targetComponent);
             }
         });
     }
-    
-    
-    protected abstract void ok();
 
-    protected abstract void cancel();
-    
+    public AjaxLink dialogLink(String id) {
+        return new AjaxLink(id) {
+            private static final long serialVersionUID = 1L;
+            public void onClick(AjaxRequestTarget target) {
+                show(target);
+            }
+        };
+    }
+
 }

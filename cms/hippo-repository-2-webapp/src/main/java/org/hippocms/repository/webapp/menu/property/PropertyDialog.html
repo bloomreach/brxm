@@ -13,8 +13,8 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">	
-  <body>
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:extend>	
     <ul>
       <li>
         <b>Name: </b>
@@ -22,17 +22,12 @@
           <span wicket:id="name"/>
         </fieldset>
       </li>
+      <li>
+        <b>Value: </b>
+        <fieldset>
+          <span wicket:id="value"/>
+        </fieldset>
+      </li>
     </ul>
-    <hr/>
-    <table width="50%">
-      <tr>
-        <td>
-          <a wicket:id="ok">OK</a>
-        </td>
-        <td>
-          <a wicket:id="cancel">Cancel</a>
-        </td>
-      </tr>      
-    </table>
-  </body>
+  </wicket:extend>
 </html>

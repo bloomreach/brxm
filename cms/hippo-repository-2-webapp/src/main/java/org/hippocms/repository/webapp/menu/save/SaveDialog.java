@@ -15,16 +15,44 @@
  */
 package org.hippocms.repository.webapp.menu.save;
 
-import org.apache.wicket.Component;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.markup.html.basic.Label;
+import org.hippocms.repository.webapp.Main;
 import org.hippocms.repository.webapp.menu.AbstractDialog;
+import org.hippocms.repository.webapp.menu.DialogWindow;
+import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public class SaveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public SaveDialog(String id, Component targetComponent) {
-        super(id, targetComponent);
-        setTitle("Save all pending changes");
-        setCookieName(id);
+    public SaveDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
+        super(dialogWindow, model);
+        Label label;
+        try {
+            boolean changes = Main.getSession().hasPendingChanges();
+            if (changes) {
+                label = new Label("message", "There are pending changes");
+            } else {
+                label = new Label("message", "There are no pending changes");
+            }
+        } catch (RepositoryException e) {
+            label = new Label("message", "exception: " + e.getMessage());
+        }
+        add(label);
     }
+    
+    public void ok() {
+        try {
+            Main.getSession().save();
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void cancel() {
+    }
+
 
 }

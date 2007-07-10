@@ -15,17 +15,46 @@
  */
 package org.hippocms.repository.webapp.menu.node;
 
-import org.apache.wicket.Component;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippocms.repository.webapp.menu.AbstractDialog;
+import org.hippocms.repository.webapp.menu.DialogWindow;
+import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public class NodeDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public NodeDialog(String id, Component targetComponent) {
-        super(id, targetComponent);
-        setTitle("Add a new Node");
-        setCookieName(id);
-    }
+    private String name;
  
+    public NodeDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
+        super(dialogWindow, model);
+        add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
+        if (model.getNode() == null) {
+            ok.setVisible(false);
+        }
+    }
+
+    public void ok() {
+        NodeDialog page = (NodeDialog) getPage();
+        try {
+            model.getNode().addNode(page.getName());
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void cancel() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

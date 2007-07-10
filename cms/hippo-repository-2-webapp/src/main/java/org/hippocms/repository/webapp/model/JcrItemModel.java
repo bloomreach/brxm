@@ -46,6 +46,15 @@ public class JcrItemModel extends LoadableDetachableModel {
         }
     }
 
+    // Bean properties
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
 
     // LoadableDetachableModel
 
