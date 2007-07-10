@@ -105,9 +105,11 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
         try {
             if (getNode() != null) {
                 PropertyIterator it = getNode().getProperties();
-                it.skip(first);
-                for (int i = 0; i < count; i++) {
-                    list.add(it.nextProperty());
+                if (it.getSize() > 0) {
+                    it.skip(first);
+                    for (int i = 0; i < count; i++) {
+                        list.add(it.nextProperty());
+                    }
                 }
             }
         } catch (RepositoryException e) {
