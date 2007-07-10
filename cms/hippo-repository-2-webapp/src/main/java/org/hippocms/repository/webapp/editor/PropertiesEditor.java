@@ -41,13 +41,19 @@ public class PropertiesEditor extends DataView {
 
     protected void populateItem(Item item) {
         JcrPropertyModel model = (JcrPropertyModel) item.getModel();
-        try {
-            item.add(deleteLink("delete", model));
-            item.add(propertyNameRenderer("name", model));
-            item.add(propertyValueRenderer("value", model));
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (model.getProperty() != null) {
+            try {
+                item.add(deleteLink("delete", model));
+                item.add(propertyNameRenderer("name", model));
+                item.add(propertyValueRenderer("value", model));
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else {
+            item.add(new Label("delete", "null"));
+            item.add(new Label("name", "null"));
+            item.add(new Label("value", "null"));            
         }
     }
 
