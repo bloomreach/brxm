@@ -18,15 +18,14 @@ package org.hippocms.repository.webapp.menu;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.PropertyModel;
+import org.hippocms.repository.webapp.menu.delete.DeleteDialog;
 import org.hippocms.repository.webapp.menu.node.NodeDialog;
-import org.hippocms.repository.webapp.menu.node.NodeDialogPage;
 import org.hippocms.repository.webapp.menu.property.PropertyDialog;
-import org.hippocms.repository.webapp.menu.property.PropertyDialogPage;
 import org.hippocms.repository.webapp.menu.reset.ResetDialog;
-import org.hippocms.repository.webapp.menu.reset.ResetDialogPage;
 import org.hippocms.repository.webapp.menu.save.SaveDialog;
-import org.hippocms.repository.webapp.menu.save.SaveDialogPage;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public class Menu extends Panel {
@@ -36,45 +35,58 @@ public class Menu extends Panel {
         super(id);
         setOutputMarkupId(true);
 
-        final NodeDialog nodeDialog = new NodeDialog("node-dialog", target);
+        final DialogWindow nodeDialog = new DialogWindow("node-dialog", target, "Add a new Node");
         nodeDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new NodeDialogPage(nodeDialog, model);
+                return new NodeDialog(nodeDialog, model);
             }
         });
         add(nodeDialog);
         add(nodeDialog.dialogLink("node-dialog-link"));
 
-        final PropertyDialog propertyDialog = new PropertyDialog("property-dialog", target);
+        final DialogWindow deleteDialog = new DialogWindow("delete-dialog", target, "Delete selected node");
+        deleteDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new DeleteDialog(deleteDialog, model);
+            }
+        });
+        add(deleteDialog);
+        add(deleteDialog.dialogLink("delete-dialog-link"));
+
+        final DialogWindow propertyDialog = new DialogWindow("property-dialog", target, "Add a new Property");
         propertyDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new PropertyDialogPage(propertyDialog, model);
+                return new PropertyDialog(propertyDialog, model);
             }
         });
         add(propertyDialog);
         add(propertyDialog.dialogLink("property-dialog-link"));
 
-        final SaveDialog saveDialog = new SaveDialog("save-dialog", target);
+        final DialogWindow saveDialog = new DialogWindow("save-dialog", target, "Save Session");
         saveDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new SaveDialogPage(saveDialog);
+                return new SaveDialog(saveDialog, model);
             }
         });
         add(saveDialog);
         add(saveDialog.dialogLink("save-dialog-link"));
 
-        final ResetDialog resetDialog = new ResetDialog("reset-dialog", target);
+        final DialogWindow resetDialog = new DialogWindow("reset-dialog", target, "Refresh Session (undo changes)");
         resetDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
-
             public Page createPage() {
-                return new ResetDialogPage(resetDialog);
+                return new ResetDialog(resetDialog, model);
             }
         });
         add(resetDialog);
         add(resetDialog.dialogLink("reset-dialog-link"));
+        
+        
+        add(new Label("path", new PropertyModel(model, "path")));
     }
+
 }

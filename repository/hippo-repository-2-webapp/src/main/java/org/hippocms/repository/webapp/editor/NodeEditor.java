@@ -16,7 +16,6 @@
 package org.hippocms.repository.webapp.editor;
 
 import org.apache.wicket.markup.html.form.Form;
-import org.hippocms.repository.webapp.menu.Menu;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public class NodeEditor extends Form {
@@ -24,8 +23,8 @@ public class NodeEditor extends Form {
 
     public NodeEditor(String id, final JcrNodeModel model) {
         super(id, model);
-        add(new PropertiesEditor("properties", model));
-        add(new Menu("menu", this, model));
+        setOutputMarkupId(true);
+        add(new PropertiesEditor("properties", model));   
     }
 
     public void setModel(JcrNodeModel model) {

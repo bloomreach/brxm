@@ -24,13 +24,18 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.hippocms.repository.webapp.Browser;
 import org.hippocms.repository.webapp.editor.NodeEditor;
+import org.hippocms.repository.webapp.menu.Menu;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public class TreeView extends Tree {
     private static final long serialVersionUID = 1L;
 
-    public TreeView(String id, TreeModel model) {
-        super(id, model);
+    public TreeView(String id, TreeModel treeModel) {
+        super(id, treeModel);
+        
+        setLinkType(LinkType.AJAX);
+        getTreeState().setAllowSelectMultiple(false);
+        getTreeState().collapseAll();
     }
 
     protected String renderNode(TreeNode treeNode) {
@@ -50,9 +55,13 @@ public class TreeView extends Tree {
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
         Browser browser = (Browser) findParent(Browser.class);
         NodeEditor editor = browser.getEditorPanel().getEditor();
+        Menu menu = browser.getMenu();
         
         editor.setModel((JcrNodeModel) treeNode);
         target.addComponent(editor);
+        
+        menu.setModel((JcrNodeModel) treeNode);
+        target.addComponent(menu);      
     }
 
 }

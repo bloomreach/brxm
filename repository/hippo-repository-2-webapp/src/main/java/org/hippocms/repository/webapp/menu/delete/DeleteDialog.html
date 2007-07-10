@@ -13,19 +13,8 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">
-  <body>
-    <span wicket:id="changes">Here goes a message whether there are pending changes or not</span>
-    <hr/>
-    <table width="50%">
-      <tr>
-        <td>
-          <a wicket:id="ok">OK</a>
-        </td>
-        <td>
-          <a wicket:id="cancel">Cancel</a>
-        </td>
-      </tr>      
-    </table>
-  </body>
+<html xmlns:wicket="http://wicket.apache.org/">	
+  <wicket:extend>
+    <span wicket:id="message"></span>
+  </wicket:extend>
 </html>

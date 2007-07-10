@@ -103,10 +103,12 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
     public Iterator iterator(int first, int count) {
         List list = new ArrayList();
         try {
-            PropertyIterator it = getNode().getProperties();
-            it.skip(first);
-            for (int i = 0; i < count; i++) {
-                list.add(it.nextProperty());
+            if (getNode() != null) {
+                PropertyIterator it = getNode().getProperties();
+                it.skip(first);
+                for (int i = 0; i < count; i++) {
+                    list.add(it.nextProperty());
+                }
             }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
@@ -130,7 +132,9 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
     public int size() {
         int result = 0;
         try {
-            result = new Long(getNode().getProperties().getSize()).intValue();
+            if (getNode() != null) {
+                result = new Long(getNode().getProperties().getSize()).intValue();
+            }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

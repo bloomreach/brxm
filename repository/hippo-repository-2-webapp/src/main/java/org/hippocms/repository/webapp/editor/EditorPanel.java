@@ -25,8 +25,8 @@ public class EditorPanel extends Panel {
 
     public EditorPanel(String id, JcrNodeModel model) {
         super(id);
+        setOutputMarkupId(true);
         editor = new NodeEditor("editor", model);
-        editor.setOutputMarkupId(true);
         add(editor);
     }
 
