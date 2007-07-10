@@ -194,8 +194,33 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      * @return decorated item, property, or node
      */
     public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
+      try {
         Item item = session.getItem(absPath);
         return factory.getItemDecorator(this, item);
+      } catch (PathNotFoundException ex) {
+        try {
+          Node node = getRootNode();
+          org.apache.jackrabbit.name.Path p = ((org.apache.jackrabbit.core.SessionImpl)session).getQPath(absPath);
+          org.apache.jackrabbit.name.Path.PathElement[] elements = p.getElements();
+          if (elements.length < 2)
+            throw ex;
+          for (int i = 1; i < elements.length - 1; i++) {
+            node = node.getNode(elements[i].getName().getLocalName());
+          }
+          try {
+            node = node.getNode(elements[elements.length-1].getName().getLocalName());
+            if (!(node instanceof ServicingNodeImpl))
+              node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1);
+            return node;
+          } catch(PathNotFoundException ex2) {
+            return node.getProperty(elements[elements.length-1].getName().getLocalName());
+          }
+        } catch (ClassCastException ex2) {
+          throw ex;
+        } catch (org.apache.jackrabbit.name.NameException ex2) {
+          throw ex;
+        }
+      }
     }
 
     /**
