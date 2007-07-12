@@ -55,16 +55,6 @@ public class JcrPropertyModel extends AbstractWrapModel implements IDataProvider
     //  IDataProvider implementation for use in DataViews
     // (subclasses of org.apache.wicket.markup.repeater.data.DataViewBase)
 
-    private class IndexedValue {
-        private Value value;
-        private int index;
-        IndexedValue(Value value, int index) {
-            this.index = index;
-            this.value = value;
-        }
-        
-    }
-
     public Iterator iterator(int first, int count) {
         List list = new ArrayList();
         try {
@@ -72,10 +62,10 @@ public class JcrPropertyModel extends AbstractWrapModel implements IDataProvider
             if (prop.getDefinition().isMultiple()) {
                 Value[] values = prop.getValues();
                 for (int i = 0; i < values.length; i++) {
-                    list.add(new IndexedValue(values[i], i));
+                    list.add(new IndexedValue(values[i].getString(), i));
                 }
             } else {
-                list.add(new IndexedValue(prop.getValue(), 0));
+                list.add(new IndexedValue(prop.getValue().getString(), 0));
             }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
@@ -86,14 +76,7 @@ public class JcrPropertyModel extends AbstractWrapModel implements IDataProvider
 
     public IModel model(Object object) {
         IndexedValue indexedValue = (IndexedValue) object;
-        JcrValueModel result = null;
-        try {
-            result = new JcrValueModel(indexedValue.index, indexedValue.value.getString(), this);
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return result;
+        return new JcrValueModel(indexedValue.index, indexedValue.value, this);
     }
 
     public int size() {
@@ -108,6 +91,16 @@ public class JcrPropertyModel extends AbstractWrapModel implements IDataProvider
             e.printStackTrace();
         }
         return result;
+    }
+
+    private class IndexedValue {
+        private String value;
+        private int index;
+
+        IndexedValue(String value, int index) {
+            this.index = index;
+            this.value = value;
+        }
     }
 
 }

@@ -19,13 +19,17 @@
             <ul>
                 <li wicket:id="properties">
                     <b><span wicket:id="name">Property name</span></b>
-                    <a wicket:id="delete">(delete)</a>
+                    <sup><a wicket:id="delete">(delete)</a></sup>                    
                     <table>
                         <tr>
                             <td wicket:id="values">
                                 <fieldset>
                                     <span wicket:id="value"></span>
+                                    <sup><a wicket:id="remove">X</a></sup>
                                 </fieldset>
+                            </td>
+                            <td>
+                                <sup><a wicket:id="add">(add)</a></sup>
                             </td>
                         </tr>
                     </table>

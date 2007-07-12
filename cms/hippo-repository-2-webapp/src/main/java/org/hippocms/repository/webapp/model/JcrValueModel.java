@@ -18,6 +18,10 @@ public class JcrValueModel extends Model {
         this.index = index;
         this.value = value;
     }
+    
+    public int getIndex() {
+        return index;
+    }
 
     public Object getObject() {
         return value;
