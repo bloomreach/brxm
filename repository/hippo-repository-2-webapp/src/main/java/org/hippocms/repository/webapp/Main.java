@@ -43,7 +43,6 @@ public class Main extends WebApplication {
 
     public Class getHomePage() {
         return Browser.class;
-        //return SimpleTreePage.class;
     }
 
     public static Session getSession() {

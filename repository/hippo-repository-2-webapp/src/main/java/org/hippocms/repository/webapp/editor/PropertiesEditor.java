@@ -17,6 +17,7 @@ package org.hippocms.repository.webapp.editor;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -43,6 +44,11 @@ public class PropertiesEditor extends DataView {
                 item.add(deleteLink("delete", model));
                 item.add(new Label("name", model.getProperty().getName()));
                 item.add(new PropertyValueEditor("values", model));
+                if (model.getProperty().getDefinition().isMultiple()) {
+                    item.add(addLink("add", model));
+                } else {
+                    item.add(new Label("add", ""));
+                }
             } catch (RepositoryException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -50,7 +56,8 @@ public class PropertiesEditor extends DataView {
         } else {
             item.add(new Label("delete", "null"));
             item.add(new Label("name", "null"));
-            item.add(new Label("values", "null"));            
+            item.add(new Label("values", "null"));
+            item.add(new Label("add", "null"));
         }
     }
 
@@ -79,5 +86,29 @@ public class PropertiesEditor extends DataView {
         }
         return result;
     }
+    
+    private AjaxLink addLink(String id, final JcrPropertyModel model) {
+        return new AjaxLink(id, model) {
+            private static final long serialVersionUID = 1L;
+            public void onClick(AjaxRequestTarget target) {
+                try {
+                    Property prop = model.getProperty();
+                    Value[] oldValues = prop.getValues();
+                    String[] newValues = new String[oldValues.length+1];
+                    for (int i = 0; i < oldValues.length; i++) {
+                        newValues[i] = oldValues[i].getString();
+                    }
+                    newValues[oldValues.length] = "...";
+                    prop.setValue(newValues);
+                } catch (RepositoryException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                NodeEditor editor = (NodeEditor) findParent(NodeEditor.class);
+                target.addComponent(editor);
+            }
+        };
+    }
+    
 
 }
