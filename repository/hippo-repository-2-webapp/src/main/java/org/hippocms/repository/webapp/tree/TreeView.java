@@ -51,7 +51,10 @@ public class TreeView extends Tree {
         }
         return result;
     }
-       
+      
+    //Looking up the components which need to be updated this way is ugly,
+    //reintroduce listeners
+    
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
         Browser browser = (Browser) findParent(Browser.class);
         NodeEditor editor = browser.getEditorPanel().getEditor();

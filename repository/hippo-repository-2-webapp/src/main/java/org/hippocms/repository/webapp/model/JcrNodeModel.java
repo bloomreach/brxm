@@ -32,6 +32,7 @@ import org.apache.wicket.model.IWrapModel;
 public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, IDataProvider {
     private static final long serialVersionUID = 1L;
 
+    // The Item model that is wrapped by this model using the IWrapmodel interface
     private JcrItemModel itemModel;
 
     // Constructors
@@ -48,7 +49,7 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
         itemModel = new JcrItemModel(node);
     }
 
-    // The wrapped jcr Node object
+    // The wrapped jcr Node object, convenience methods and not part of an api
 
     public Node getNode() {
         return (Node) itemModel.getObject();
@@ -65,8 +66,9 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
         }
     }
 
-    // Override DefaultMutableTreeNode
-
+    // Override DefaultMutableTreeNode, called when used as a TreeNode
+    // by a subclass of org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree
+    
     public boolean isLeaf() {
         boolean result = true;
         if (getNode() != null) {
@@ -80,25 +82,20 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
         return result;
     }
 
-    // Implement IWrapModel
+    // Implement IWrapModel, all IModel calls done by wicket components 
+    // (subclasses of org.apache.wicket.Component) are redirected to this wrapped model. 
 
     public IModel getWrappedModel() {
         return itemModel;
     }
-
+    
+    // This takes care that bean property calls on the wrapped model are wired through
     public Object getObject() {
         return itemModel.getObject();
     }
 
-    public void setObject(Object object) {
-        itemModel.setObject(object);
-    }
-
-    public void detach() {
-        itemModel.detach();
-    }
-
-    // Implement IDataProvider
+    // IDataProvider implementation for use in DataViews
+    // (subclasses of org.apache.wicket.markup.repeater.data.DataViewBase)
 
     public Iterator iterator(int first, int count) {
         List list = new ArrayList();
@@ -121,14 +118,7 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
 
     public IModel model(Object object) {
         Property prop = (Property) object;
-        JcrPropertyModel result = null;
-        try {
-            result = new JcrPropertyModel(prop.getPath());
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return result;
+        return new JcrPropertyModel(prop);
     }
 
     public int size() {
@@ -142,6 +132,15 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
             e.printStackTrace();
         }
         return result;
+    }
+    
+    // Empty implementation of the 'write' methods of IModel,
+    // all model calls are redirected to the wrapped model. 
+    
+    public void setObject(Object object) {
+    }
+
+    public void detach() {
     }
 
 }
