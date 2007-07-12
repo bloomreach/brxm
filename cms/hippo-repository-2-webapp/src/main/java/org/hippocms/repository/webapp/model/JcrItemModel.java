@@ -26,15 +26,7 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     private String path;
 
-    // constructors
-
-    public JcrItemModel() {
-        this.path = "/";
-    }
-
-    public JcrItemModel(String path) {
-        this.path = path;
-    }
+    // constructor
 
     public JcrItemModel(Item item) {
         super(item);
