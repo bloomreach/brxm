@@ -35,15 +35,7 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
     // The Item model that is wrapped by this model using the IWrapmodel interface
     private JcrItemModel itemModel;
 
-    // Constructors
-
-    public JcrNodeModel() {
-        itemModel = new JcrItemModel();
-    }
-
-    public JcrNodeModel(String path) {
-        itemModel = new JcrItemModel(path);
-    }
+    // Constructor
 
     public JcrNodeModel(Node node) {
         itemModel = new JcrItemModel(node);
@@ -57,12 +49,7 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
 
     public void setNode(Node node) {
         if (node != null) {
-            try {
-                itemModel = new JcrItemModel(node.getPath());
-            } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            itemModel = new JcrItemModel(node);
         }
     }
 
