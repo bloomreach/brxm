@@ -19,6 +19,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableMultiLineLabel;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.PropertyModel;
 import org.hippocms.repository.webapp.menu.AbstractDialog;
 import org.hippocms.repository.webapp.menu.DialogWindow;
@@ -29,9 +30,19 @@ public class PropertyDialog extends AbstractDialog {
 
     private String name;
     private String value;
+    private Boolean isMultiple = Boolean.FALSE;
 
     public PropertyDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
         super(dialogWindow, model);
+        add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
+            private static final long serialVersionUID = 1L;
+            protected boolean wantOnSelectionChangedNotifications() {
+                return true;
+            }
+            protected void onSelectionChanged(Object newSelection) {
+                PropertyDialog.this.isMultiple = (Boolean)newSelection;
+            }
+        });
         add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
         add(new AjaxEditableMultiLineLabel("value", new PropertyModel(this, "value")));
         if (model.getNode() == null) {
@@ -42,7 +53,11 @@ public class PropertyDialog extends AbstractDialog {
     public void ok() {
         PropertyDialog page = (PropertyDialog) getPage();
         try {
-            model.getNode().setProperty(page.getName(), page.getValue());
+            if (isMultiple.booleanValue()) {
+                model.getNode().setProperty(page.getName(), new String[] {page.getValue()});
+            } else {
+                model.getNode().setProperty(page.getName(), page.getValue());
+            }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -66,6 +81,14 @@ public class PropertyDialog extends AbstractDialog {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public void setMultiple(Boolean isMultiple) {
+        this.isMultiple = isMultiple;
+    }
+
+    public Boolean isMultiple() {
+        return isMultiple;
     }
 
 }
