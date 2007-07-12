@@ -15,47 +15,80 @@
  */
 package org.hippocms.repository.webapp.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.AbstractWrapModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.IWrapModel;
 
-public class JcrPropertyModel implements IWrapModel {
+public class JcrPropertyModel extends AbstractWrapModel implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
+    //  The Item model that is wrapped by this model using the IWrapmodel interface
     private JcrItemModel itemModel;
 
-    public JcrPropertyModel(String path) {
-        itemModel = new JcrItemModel(path);
+    //  Constructor
+
+    public JcrPropertyModel(Property prop) {
+        itemModel = new JcrItemModel(prop);
     }
-    
-    // The wrapped jcr Property object
-    
+
+    // The wrapped jcr Property object, convenience method and not part of an api
+
     public Property getProperty() {
         return (Property) itemModel.getObject();
     }
-    
-    public void setProperty(Property property) {
-        try {
-            itemModel = new JcrItemModel(property.getPath());
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }         
-    }
 
-    //  IWrapModel
+    // Implement IWrapModel, all IModel calls done by wicket components 
+    // (subclasses of org.apache.wicket.Component) are redirected to this wrapped model.  
 
     public IModel getWrappedModel() {
         return itemModel;
     }
 
-    public Object getObject() {
-        String result = null;
+    //  IDataProvider implementation for use in DataViews
+    // (subclasses of org.apache.wicket.markup.repeater.data.DataViewBase)
+
+    private class IndexedValue {
+        private Value value;
+        private int index;
+        IndexedValue(Value value, int index) {
+            this.index = index;
+            this.value = value;
+        }
+        
+    }
+
+    public Iterator iterator(int first, int count) {
+        List list = new ArrayList();
         try {
             Property prop = getProperty();
-            result = prop.getValue().getString();
+            if (prop.getDefinition().isMultiple()) {
+                Value[] values = prop.getValues();
+                for (int i = 0; i < values.length; i++) {
+                    list.add(new IndexedValue(values[i], i));
+                }
+            } else {
+                list.add(new IndexedValue(prop.getValue(), 0));
+            }
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return list.iterator();
+    }
+
+    public IModel model(Object object) {
+        IndexedValue indexedValue = (IndexedValue) object;
+        JcrValueModel result = null;
+        try {
+            result = new JcrValueModel(indexedValue.index, indexedValue.value.getString(), this);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -63,18 +96,18 @@ public class JcrPropertyModel implements IWrapModel {
         return result;
     }
 
-    public void setObject(Object object) {
+    public int size() {
+        int result = 1;
         try {
             Property prop = getProperty();
-            prop.setValue(object.toString());
+            if (prop.getDefinition().isMultiple()) {
+                result = prop.getValues().length;
+            }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    public void detach() {
-        itemModel.detach();      
+        return result;
     }
 
 }

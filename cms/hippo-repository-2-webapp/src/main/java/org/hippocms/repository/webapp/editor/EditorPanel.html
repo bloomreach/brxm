@@ -20,9 +20,15 @@
                 <li wicket:id="properties">
                     <b><span wicket:id="name">Property name</span></b>
                     <a wicket:id="delete">(delete)</a>
-                    <fieldset>
-                        <span wicket:id="value">Property value</span>
-                    </fieldset>
+                    <table>
+                        <tr>
+                            <td wicket:id="values">
+                                <fieldset>
+                                    <span wicket:id="value"></span>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
                     <br/>
                 </li>
             </ul>
