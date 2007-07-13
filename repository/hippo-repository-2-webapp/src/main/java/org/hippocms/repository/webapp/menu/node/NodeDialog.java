@@ -27,10 +27,12 @@ public class NodeDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private String name;
+    private String type;
  
     public NodeDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
         super(dialogWindow, model);
         add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
+        add(new AjaxEditableLabel("type", new PropertyModel(this, "type")));
         if (model.getNode() == null) {
             ok.setVisible(false);
         }
@@ -38,7 +40,7 @@ public class NodeDialog extends AbstractDialog {
 
     public void ok() throws RepositoryException {
         NodeDialog page = (NodeDialog) getPage();
-        model.getNode().addNode(page.getName());
+        model.getNode().addNode(page.getName(), page.getType());
     }
 
     public void cancel() {
@@ -50,6 +52,14 @@ public class NodeDialog extends AbstractDialog {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 
 }
