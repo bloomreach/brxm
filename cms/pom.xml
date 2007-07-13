@@ -98,6 +98,10 @@
       <layout>legacy</layout>
     </repository>
     <repository>
+      <id>CodeHaus</id>
+      <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
+    </repository>
+    <repository>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -164,6 +168,7 @@
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
+            <link>http://lucene.zones.apache.org:8080/hudson/job/Lucene-Nightly/javadoc/index.html</link>
           </links>
         </configuration>
       </plugin>
@@ -448,6 +453,7 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
     </plugins>
+
   </reporting>
 
 </project>
