@@ -15,9 +15,13 @@
  */
 package org.hippocms.repository.webapp.menu;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.PropertyModel;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
 
 public abstract class AbstractDialog extends WebPage {
@@ -25,19 +29,30 @@ public abstract class AbstractDialog extends WebPage {
     protected AjaxLink ok;
     protected AjaxLink cancel;
     protected JcrNodeModel model;
-    
+
+    private String exception = "";
+
     public AbstractDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
         this.model = model;
-        
+
+        final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
+        exceptionLabel.setOutputMarkupId(true);
+        add(exceptionLabel);
+
         ok = new AjaxLink("ok") {
             private static final long serialVersionUID = 1L;
             public void onClick(AjaxRequestTarget target) {
-                ok();
-                dialogWindow.close(target);
+                try {
+                    ok();
+                    dialogWindow.close(target);
+                } catch (Exception e) {
+                    setException(e.getMessage());
+                    target.addComponent(exceptionLabel);
+                }
             }
         };
         add(ok);
-        
+
         cancel = new AjaxLink("cancel") {
             private static final long serialVersionUID = 1L;
             public void onClick(AjaxRequestTarget target) {
@@ -47,10 +62,17 @@ public abstract class AbstractDialog extends WebPage {
         };
         add(cancel);
     }
-    
-    
-    protected abstract void ok();
+
+    public void setException(String exception) {
+        this.exception = exception;
+    }
+
+    public String getException() {
+        return exception;
+    }
+
+    protected abstract void ok() throws RepositoryException;
 
     protected abstract void cancel();
-    
+
 }

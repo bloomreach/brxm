@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -61,8 +62,9 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
         if (getNode() != null) {
             try {
                 result = !getNode().hasNodes();
+            } catch (InvalidItemStateException e) {
+                // This can happen after a node has been deleted and the tree hasn't been refreshed yet
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -96,8 +98,9 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
                     }
                 }
             }
+        } catch (InvalidItemStateException e) {
+            // This can happen after a node has been deleted and the tree hasn't been refreshed yet
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return list.iterator();
@@ -114,8 +117,9 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
             if (getNode() != null) {
                 result = new Long(getNode().getProperties().getSize()).intValue();
             }
+        } catch (InvalidItemStateException e) {
+            // This can happen after a node has been deleted and the tree hasn't been refreshed yet
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return result;

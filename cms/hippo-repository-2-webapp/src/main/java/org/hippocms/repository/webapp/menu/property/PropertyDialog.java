@@ -50,17 +50,16 @@ public class PropertyDialog extends AbstractDialog {
         }
     }
 
-    public void ok() {
+    public void ok() throws RepositoryException {
         PropertyDialog page = (PropertyDialog) getPage();
-        try {
-            if (isMultiple.booleanValue()) {
-                model.getNode().setProperty(page.getName(), new String[] {page.getValue()});
-            } else {
-                model.getNode().setProperty(page.getName(), page.getValue());
+        if (isMultiple.booleanValue()) {
+            String value = page.getValue();
+            if (value == null || value.equals("")) {
+                value = "...";
             }
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            model.getNode().setProperty(page.getName(), new String[] { value });
+        } else {
+            model.getNode().setProperty(page.getName(), page.getValue());
         }
     }
 
