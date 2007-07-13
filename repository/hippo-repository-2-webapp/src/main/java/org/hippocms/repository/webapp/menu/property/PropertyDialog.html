@@ -14,7 +14,10 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>	
+  <wicket:extend>
+    <p>
+      <b>Multi value:</b><input type="checkbox" wicket:id="isMultiple"/>
+    </p>	
     <ul>
       <li>
         <b>Name: </b>
@@ -29,8 +32,5 @@
         </fieldset>
       </li>
     </ul>
-    <p>
-      Multi value:<input type="checkbox" wicket:id="isMultiple"/>
-    </p>
   </wicket:extend>
 </html>

@@ -34,32 +34,21 @@ public class DeleteDialog extends AbstractDialog {
         }
     }
 
-    public void ok() {
-        try {
-            if (model.getNode() != null) {
-                model.getNode().remove();
-            }
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    public void ok() throws RepositoryException {
+        if (model.getNode() != null) {
+            model.getNode().remove();
         }
     }
 
     public void cancel() {
     }
 
-    public String getMessage() {
-        String msg;
+    public String getMessage()  {
         try {
-            if (model.getNode() == null) {
-                msg = "Allready deleted";
-            } else {
-                msg = "Delete " + model.getNode().getPath();
-            }
+            return "Delete " + model.getNode().getPath();
         } catch (RepositoryException e) {
-            msg = e.getMessage();
+            return "";
         }
-        return msg;
     }
 
     public void setMessage(String message) {

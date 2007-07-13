@@ -41,14 +41,9 @@ public class SaveDialog extends AbstractDialog {
         }
         add(label);
     }
-    
-    public void ok() {
-        try {
-            Main.getSession().save();
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
+    public void ok() throws RepositoryException {
+        Main.getSession().save();
     }
 
     public void cancel() {

@@ -41,14 +41,9 @@ public class ResetDialog extends AbstractDialog {
         }
         add(label);
     }
-    
-    public void ok() {
-        try {
-            Main.getSession().refresh(false);
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
+    public void ok() throws RepositoryException {
+        Main.getSession().refresh(false);
     }
 
     public void cancel() {

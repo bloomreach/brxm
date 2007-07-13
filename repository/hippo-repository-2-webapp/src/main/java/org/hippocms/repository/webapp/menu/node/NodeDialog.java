@@ -36,14 +36,9 @@ public class NodeDialog extends AbstractDialog {
         }
     }
 
-    public void ok() {
+    public void ok() throws RepositoryException {
         NodeDialog page = (NodeDialog) getPage();
-        try {
-            model.getNode().addNode(page.getName());
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        model.getNode().addNode(page.getName());
     }
 
     public void cancel() {
