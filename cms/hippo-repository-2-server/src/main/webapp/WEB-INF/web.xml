@@ -5,26 +5,16 @@
   <description>hippo-repository-2-server</description>
   <context-param>
     <param-name>repository-address</param-name>
-    <param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
+    <param-value>jackrabbit.repository</param-value>
     <description>The address of the repository</description>
   </context-param>
   <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
     <servlet-class>org.hippocms.repository.jr.embedded.RepositoryServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>TestServlet</servlet-name>
-    <servlet-class>org.hippocms.repository.jr.embedded.TestServlet</servlet-class>
     <init-param>
-      <param-name>bind-address</param-name>
-      <param-value>rmi://localhost:1099/test</param-value>
-      <description>Which address to listen for requests</description>
-    </init-param>
-    <init-param>
-      <param-name>call-address</param-name>
-      <param-value>rmi://localhost:1099/test</param-value>
-      <description>Which address to send requests to</description>
+      <param-name>repository-directory</param-name>
+      <param-value>WEB-INF/storage</param-value>
+      <description>The location where to store files</description>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -32,10 +22,9 @@
     <servlet-name>RepositoryServlet</servlet-name>
     <url-pattern>/repository/*</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>TestServlet</servlet-name>
-    <url-pattern>/test/*</url-pattern>
-  </servlet-mapping>
+  <session-config>
+    <session-timeout>5</session-timeout>
+  </session-config>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.jsp</welcome-file>
