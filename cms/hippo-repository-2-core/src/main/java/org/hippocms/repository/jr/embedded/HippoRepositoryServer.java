@@ -31,6 +31,7 @@ import java.rmi.NotBoundException;
 import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.ConnectException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -117,6 +118,41 @@ public class HippoRepositoryServer extends LocalHippoRepository {
     }
 
     public void run(boolean background) throws RemoteException, AlreadyBoundException {
+        run(null, background);
+    }
+
+    public void run(String name, boolean background) throws RemoteException, AlreadyBoundException {
+        if (name == null || name.equals(""))
+            name = "rmi://localhost:1099/jackrabbit.repository";
+        String host = null;
+        int port = 0;
+        if (name.startsWith("rmi://")) {
+            if (name.indexOf('/', 6) >= 0) {
+                if (name.indexOf(':', 6) >= 0 && name.indexOf(':', 6) < name.indexOf('/', 6)) {
+                    port = Integer.parseInt(name.substring(name.indexOf(':', 6) + 1, name.indexOf('/', name.indexOf(
+                            ':', 6) + 1)));
+                    host = name.substring(6, name.indexOf(':', 6));
+                } else
+                    host = name.substring(6, name.indexOf('/', 6));
+                name = name.substring(name.indexOf('/', 6) + 1);
+            } else
+                name = name.substring(6);
+        }
+        if (registry == null) {
+            if (host != null) {
+                if (port > 0)
+                    registry = LocateRegistry.getRegistry(host, port);
+                else
+                    registry = LocateRegistry.getRegistry(host);
+            } else {
+                if (port > 0)
+                    registry = LocateRegistry.getRegistry(port);
+                else
+                    registry = LocateRegistry.getRegistry();
+            }
+            if (log.isDebugEnabled())
+                log.debug("Using rmiregistry on " + host + " port " + port);
+        }
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 close();
@@ -124,11 +160,17 @@ public class HippoRepositoryServer extends LocalHippoRepository {
         });
         Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
         System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-        if (registry == null)
-            registry = LocateRegistry.createRegistry(RMI_PORT);
-        registry.bind(RMI_NAME, remote);
+
+        try {
+            registry.bind(name, remote);
+        } catch (ConnectException ex) {
+            registry = LocateRegistry.createRegistry(port > 0 ? port : 1099);
+            log.info("Started embedded rmiregistry " + (host != null ? "on " + host : "")
+                    + (port > 0 ? " port " + port : ""));
+            registry.bind(name, remote);
+        }
         rmiRepository = remote;
-        log.info("RMI Server available on rmi://localhost:" + RMI_PORT + "/" + RMI_NAME);
+        log.info("RMI Server available on " + name);
         if (!background) {
             for (;;) {
                 try {

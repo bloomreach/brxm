@@ -25,6 +25,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.rmi.RemoteException;
+import java.rmi.Naming;
+import java.net.MalformedURLException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -51,27 +53,58 @@ public class RepositoryServlet extends HttpServlet {
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
     HippoRepository repository;
     String bindingAddress;
+    String storageLocation;
 
     public RepositoryServlet() {
+        storageLocation = null;
     }
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         try {
-            Context ctx = new InitialContext();
-            repository = HippoRepositoryFactory.getHippoRepository();
+            storageLocation = config.getInitParameter("repository-directory");
+            if (storageLocation != null && !storageLocation.equals("")) {
+                if (!storageLocation.startsWith("/") && !storageLocation.startsWith("file:")) {
+                    storageLocation = config.getServletContext().getRealPath(storageLocation);
+                    if (storageLocation == null)
+                        throw new ServletException("Cannot determin repository location " + storageLocation);
+                }
+                repository = HippoRepositoryFactory.getHippoRepository(storageLocation);
+            } else {
+                storageLocation = null;
+                repository = HippoRepositoryFactory.getHippoRepository();
+            }
             HippoRepositoryFactory.setDefaultRepository(repository);
             Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository.repository);
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
             bindingAddress = config.getInitParameter("repository-address");
-            if (bindingAddress == null)
+            if (bindingAddress == null || bindingAddress.equals(""))
+                bindingAddress = config.getServletContext().getInitParameter("repository-address");
+            if (bindingAddress == null || bindingAddress.equals(""))
                 bindingAddress = "rmi://localhost:1099/jackrabbit.repository";
-            ctx.rebind(bindingAddress, remote); // java.rmi.Naming.rebind("DB1", db);
-            log.info("RMI Server " + config.getServletName() + " available on " + bindingAddress);
-        } catch (NamingException ex) {
-            log.error("Cannot bind to address " + bindingAddress, ex);
-            System.err.println("NamingException: " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            try {
+                Context ctx = new InitialContext();
+                ctx.rebind(bindingAddress, remote);
+                log.info("Server " + config.getServletName() + " available in context on " + bindingAddress);
+            } catch (NamingException ex) {
+                log.error("Cannot bind to address " + bindingAddress, ex);
+                System.err.println("NamingException: " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
+            /*
+             try {
+             Naming.rebind(bindingAddress, remote);
+             log.info("Server " + config.getServletName() + " available using RMI on " + bindingAddress);
+             } catch (MalformedURLException ex) {
+             log.error("Cannot bind to address " + bindingAddress, ex);
+             System.err.println("MalformedURLException: " + ex.getMessage());
+             ex.printStackTrace(System.err);
+             } catch (RemoteException ex) {
+             log.error("Generic remoting exception ", ex);
+             System.err.println("RemoteException: " + ex.getMessage());
+             ex.printStackTrace(System.err);
+             }
+             */
         } catch (RemoteException ex) {
             log.error("Generic remoting exception ", ex);
             System.err.println("RemoteException: " + ex.getMessage());
@@ -113,7 +146,6 @@ public class RepositoryServlet extends HttpServlet {
                 } else {
                     if (path.startsWith("/"))
                         path = path.substring(1);
-                    //writer.println("Accessing node <code>"+path+"</code>");
                     writer.print("Accessing node <code>");
                     String currentPath = "";
                     String previousPath = "";

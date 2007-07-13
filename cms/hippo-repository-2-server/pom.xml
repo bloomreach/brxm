@@ -19,7 +19,6 @@
   http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-
   <parent>
     <groupId>org.hippocms</groupId>
     <artifactId>hippo-repository-2</artifactId>
@@ -31,13 +30,19 @@
   <description>Hippo Repository 2 Standalone Server</description>
   <artifactId>hippo-repository-2-server</artifactId>
   <packaging>war</packaging>
-
   
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-server</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-server</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-server</url>
   </scm>
+
+  <repositories>
+    <repository>
+      <id>CodeHaus</id>
+      <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
+    </repository>
+  </repositories>
 
   <dependencyManagement>
     <dependencies>
@@ -100,6 +105,19 @@
       <artifactId>log4j</artifactId>
       <version>1.2.13</version>
     </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.0</version>
+    </dependency>
+
+    <!-- The following are only needed for JDK1.4 -->
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <version>1.3.03</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -133,6 +151,24 @@
           </execution>
         </executions>
       </plugin>
+<!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>retrotranslator-maven-plugin</artifactId>
+        <version>1.0-alpha-2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>translate-war</goal>
+            </goals>
+            <configuration>
+              <classifier>jdk1.4</classifier>
+              <attach>true</attach>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -147,6 +183,16 @@
           <mainClass>org.hippocms.repository.jr.embedded.HippoRepositoryServer</mainClass>
           <commandlineArgs>"${project.build.directory}"</commandlineArgs>
           <cleanupDeamonThreads>false</cleanupDeamonThreads>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <configuration>
+          <contextPath>/</contextPath>
+          <!-- webApp>${project.build.directory}/${project.build.finalName}</webApp -->
+          <!-- webApp>${project.build.directory}/${project.build.finalName}.war</webApp -->
+          <webApp>${project.build.directory}/hippo-repository-2-server-1.01.00-dev-jdk1.4</webApp>
         </configuration>
       </plugin>
    </plugins>

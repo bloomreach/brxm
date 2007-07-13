@@ -49,8 +49,15 @@ public class Main extends WebApplication {
         Main main = (Main) RequestCycle.get().getApplication();
         if (main.jcrSession == null || !main.jcrSession.isLive()) {
             try {
+                /* Obtain address of remote repository, in ServletConfig, ServletContext, or default address */
+                String address = main.getInitParameter("repository-address");
+                if (address == null || address.equals(""))
+                    address = main.getServletContext().getInitParameter("repository-address");
+                if (address == null || address.equals(""))
+                    address = "rmi://localhost:1099/jackrabbit.repository";
+
                 ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
-                Repository repository = repositoryFactory.getRepository("rmi://localhost:1099/jackrabbit.repository");
+                Repository repository = repositoryFactory.getRepository(address);
                 main.jcrSession = repository.login(new SimpleCredentials("username", "password".toCharArray()));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
