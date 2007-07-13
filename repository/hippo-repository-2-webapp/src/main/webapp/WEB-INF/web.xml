@@ -19,6 +19,11 @@
 	<display-name>Hippo Repository 2 Browser</display-name>
 
 	<context-param>
+		<param-name>repository-address</param-name>
+		<param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
+	</context-param>
+
+	<context-param>
 		<param-name>configuration</param-name>
 		<param-value>development</param-value>
 	</context-param>

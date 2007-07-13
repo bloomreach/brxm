@@ -80,7 +80,7 @@ public class TestServlet extends HttpServlet {
             Context ctx = new InitialContext();
             Test test = (Test) ctx.lookup(callingAddress);
             int randValue = test.test(666);
-            writer.println("  Called test service over RMI and got value " + randValue + ".<br>");
+            writer.println("  Called test service using context and got value " + randValue + ".<br>");
             writer.println("  Test service is of class: " + test.getClass().getName());
         } catch (NamingException ex) {
             writer.println("  Error while retrieving service:<br><pre>" + ex.getMessage() + "</pre>");
