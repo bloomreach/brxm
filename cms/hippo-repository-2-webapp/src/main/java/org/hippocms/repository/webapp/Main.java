@@ -15,23 +15,13 @@
  */
 package org.hippocms.repository.webapp;
 
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-
-import javax.jcr.LoginException;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-
-import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Request;
+import org.apache.wicket.Response;
+import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.hippocms.repository.webapp.model.JcrSessionProvider;
 
 public class Main extends WebApplication {
-
-    private Session jcrSession;
 
     public Main() {
     }
@@ -45,35 +35,19 @@ public class Main extends WebApplication {
         return Browser.class;
     }
 
-    public static Session getSession() {
-        Main main = (Main) RequestCycle.get().getApplication();
-        if (main.jcrSession == null || !main.jcrSession.isLive()) {
-            try {
-                /* Obtain address of remote repository, in ServletConfig, ServletContext, or default address */
-                String address = main.getInitParameter("repository-address");
-                if (address == null || address.equals(""))
-                    address = main.getServletContext().getInitParameter("repository-address");
-                if (address == null || address.equals(""))
-                    address = "rmi://localhost:1099/jackrabbit.repository";
+    public Session newSession(Request request, Response response) {
+        return new JcrSessionProvider(this, request, getRepositoryAddress());
+    }
 
-                ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
-                Repository repository = repositoryFactory.getRepository(address);
-                main.jcrSession = repository.login(new SimpleCredentials("username", "password".toCharArray()));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (ClassCastException e) {
-                e.printStackTrace();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            } catch (NotBoundException e) {
-                e.printStackTrace();
-            } catch (LoginException e) {
-                e.printStackTrace();
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            }
+    public String getRepositoryAddress() {
+        String address = getInitParameter("repository-address");
+        if (address == null || address.equals("")) {
+            address = getServletContext().getInitParameter("repository-address");
         }
-        return main.jcrSession;
+        if (address == null || address.equals("")) {
+            address = "rmi://localhost:1099/jackrabbit.repository";
+        }
+        return address;
     }
 
 }
