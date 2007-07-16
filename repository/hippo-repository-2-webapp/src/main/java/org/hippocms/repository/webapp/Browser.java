@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.hippocms.repository.webapp.editor.EditorPanel;
 import org.hippocms.repository.webapp.menu.Menu;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
+import org.hippocms.repository.webapp.model.JcrSessionProvider;
 import org.hippocms.repository.webapp.tree.TreePanel;
 
 public class Browser extends WebPage {
@@ -34,7 +35,8 @@ public class Browser extends WebPage {
     public Browser() throws RepositoryException {
         setOutputMarkupId(true);
         
-        Node root = Main.getSession().getRootNode();
+        JcrSessionProvider sessionProvider = (JcrSessionProvider)getSession();
+        Node root = sessionProvider.getSession().getRootNode();
         JcrNodeModel model = new JcrNodeModel(root);
 
         treePanel = new TreePanel("treePanel", model);

@@ -18,10 +18,10 @@ package org.hippocms.repository.webapp.menu.save;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippocms.repository.webapp.Main;
 import org.hippocms.repository.webapp.menu.AbstractDialog;
 import org.hippocms.repository.webapp.menu.DialogWindow;
 import org.hippocms.repository.webapp.model.JcrNodeModel;
+import org.hippocms.repository.webapp.model.JcrSessionProvider;
 
 public class SaveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -30,7 +30,8 @@ public class SaveDialog extends AbstractDialog {
         super(dialogWindow, model);
         Label label;
         try {
-            boolean changes = Main.getSession().hasPendingChanges();
+            JcrSessionProvider sessionProvider = (JcrSessionProvider)getSession();
+            boolean changes = sessionProvider.getSession().hasPendingChanges();
             if (changes) {
                 label = new Label("message", "There are pending changes");
             } else {
@@ -43,7 +44,8 @@ public class SaveDialog extends AbstractDialog {
     }
 
     public void ok() throws RepositoryException {
-        Main.getSession().save();
+        JcrSessionProvider sessionProvider = (JcrSessionProvider)getSession();
+        sessionProvider.getSession().save();
     }
 
     public void cancel() {

@@ -18,8 +18,8 @@ package org.hippocms.repository.webapp.model;
 import javax.jcr.Item;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippocms.repository.webapp.Main;
 
 public class JcrItemModel extends LoadableDetachableModel {
     private static final long serialVersionUID = 1L;
@@ -43,7 +43,8 @@ public class JcrItemModel extends LoadableDetachableModel {
     protected Object load() {
         Item result = null;
         try {
-            result = (Item) Main.getSession().getItem(path);
+            JcrSessionProvider sessionProvider = (JcrSessionProvider)Session.get();
+            result = sessionProvider.getSession().getItem(path);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
