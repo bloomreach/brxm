@@ -15,59 +15,36 @@
  */
 package org.hippocms.repository.jr.embedded;
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.Properties;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
+import java.util.List;
 
+import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.ItemExistsException;
+import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.Repository;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.Value;
 import javax.jcr.Workspace;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.NamespaceException;
-import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.lock.LockException;
-import javax.jcr.version.VersionException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.XASession;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
-import org.apache.jackrabbit.core.nodetype.NodeDef;
-import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.nodetype.PropDef;
-import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
-import org.apache.jackrabbit.name.QName;
-import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
-import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 
 class LocalHippoRepository extends HippoRepository {
@@ -107,7 +84,7 @@ class LocalHippoRepository extends HippoRepository {
      */
     private String getRepositoryPath() {
         String path = System.getProperty("repo.path");
-
+        
         if (path == null || "".equals(path)) {
             path = getWorkingDirectory();
         } else if (path.charAt(0) == '.') {
