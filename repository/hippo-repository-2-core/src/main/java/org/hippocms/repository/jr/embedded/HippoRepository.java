@@ -15,88 +15,21 @@
  */
 package org.hippocms.repository.jr.embedded;
 
-import java.util.List;
-import java.util.Iterator;
+import java.io.File;
 import java.util.Properties;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-
-import java.net.MalformedURLException;
-import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
-import java.rmi.Naming;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
-
-import com.atomikos.icatch.config.TSInitInfo;
-import com.atomikos.icatch.config.UserTransactionService;
-import com.atomikos.icatch.config.UserTransactionServiceImp;
-import com.atomikos.icatch.jta.UserTransactionManager;
-
-import javax.jcr.NamespaceRegistry;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
+import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.Value;
-import javax.jcr.Workspace;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.NamespaceException;
-import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.lock.LockException;
-import javax.jcr.version.VersionException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.LoginException;
-
-import org.apache.jackrabbit.api.JackrabbitRepository;
-import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.XASession;
-import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
-import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
-import org.apache.jackrabbit.core.nodetype.NodeDef;
-import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
-import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.nodetype.PropDef;
-import org.apache.jackrabbit.core.nodetype.PropDefImpl;
-import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
-import org.apache.jackrabbit.core.nodetype.compact.ParseException;
-import org.apache.jackrabbit.name.QName;
-import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
-import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.hippocms.repository.jr.servicing.Service;
-import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
-import org.hippocms.repository.jr.servicing.client.ClientServicesAdapterFactory;
-import org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory;
+import com.atomikos.icatch.config.TSInitInfo;
+import com.atomikos.icatch.config.UserTransactionService;
+import com.atomikos.icatch.config.UserTransactionServiceImp;
 
 public abstract class HippoRepository {
     private static UserTransactionService uts = null;
