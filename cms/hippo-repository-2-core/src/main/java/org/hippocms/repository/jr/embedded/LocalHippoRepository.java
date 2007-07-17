@@ -88,9 +88,38 @@ class LocalHippoRepository extends HippoRepository {
         initialize();
     }
 
+    protected String getLocation() {
+        // TODO Auto-generated method stub
+        return super.getLocation();
+    }
+    
+    protected Object clone() throws CloneNotSupportedException {
+        // TODO Auto-generated method stub
+        return super.clone();
+    }
+    
+    /**
+     * Construct the repository path, default getWorkingDirectory() is used.
+     * If the system property repo.path can be used to override the default.
+     * If repo.path starts with a '.' then the path is taken relative to the
+     * getWorkingDirectory().
+     * @return The absolute path to the file repository
+     */
+    private String getRepositoryPath() {
+        String path = System.getProperty("repo.path");
+
+        if (path == null || "".equals(path)) {
+            path = getWorkingDirectory();
+        } else if (path.charAt(0) == '.') {
+            // relative path
+            path = getWorkingDirectory() + System.getProperty("file.separator") + path;
+        }
+        return path;
+    }
+    
     private void initialize() throws RepositoryException {
         InputStream config = getClass().getResourceAsStream("repository.xml");
-        jackrabbitRepository = RepositoryImpl.create(RepositoryConfig.create(config, getWorkingDirectory()));
+        jackrabbitRepository = RepositoryImpl.create(RepositoryConfig.create(config, getRepositoryPath()));
         repository = jackrabbitRepository;
 
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
