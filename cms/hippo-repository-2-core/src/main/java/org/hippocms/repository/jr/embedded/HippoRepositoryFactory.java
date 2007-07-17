@@ -15,13 +15,10 @@
  */
 package org.hippocms.repository.jr.embedded;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
@@ -46,7 +43,8 @@ public class HippoRepositoryFactory {
     public static HippoRepository getHippoRepository() throws RepositoryException {
         if (defaultRepository != null) {
             return defaultRepository;
-        } else if (defaultLocation != null) {
+        } 
+        if (defaultLocation != null) {
             defaultRepository = getHippoRepository(defaultLocation);
             return defaultRepository;
         }
@@ -54,12 +52,17 @@ public class HippoRepositoryFactory {
     }
 
     public static HippoRepository getHippoRepository(String location) throws RepositoryException {
-        if (defaultRepository != null && (location.equals(defaultRepository.getLocation()) ||
-                                          location.equals("file:" + defaultRepository.getLocation())))
+        // strip
+        if (location.startsWith("file:")) {
+            location = location.substring(5);
+        }
+        
+        // already configured?
+        if (defaultRepository != null && location.equals(defaultRepository.getLocation())) {
             return defaultRepository;
-        else if (defaultRepository == null && (location.equals(defaultLocation) ||
-                                               location.equals("file:" + defaultLocation)))
-            return getHippoRepository();
+        } 
+        
+        // remote
         if (location.startsWith("rmi://")) {
             try {
                 return new RemoteHippoRepository(location);
@@ -73,9 +76,12 @@ public class HippoRepositoryFactory {
                 return null;
                 // FIXME
             }
-        } else if (location.startsWith("file:")) {
-            return new LocalHippoRepository(location.substring(5));
-        } else
-            return new LocalHippoRepository(location);
+        }
+        
+        // local
+        if (defaultRepository == null && location.equals(defaultLocation)) {
+            return getHippoRepository();
+        }
+        return new LocalHippoRepository(location);
     }
 }
