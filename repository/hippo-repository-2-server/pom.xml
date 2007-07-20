@@ -192,7 +192,7 @@
           <contextPath>/</contextPath>
           <!-- webApp>${project.build.directory}/${project.build.finalName}</webApp -->
           <!-- webApp>${project.build.directory}/${project.build.finalName}.war</webApp -->
-          <webApp>${project.build.directory}/hippo-repository-2-server-1.01.00-dev-jdk1.4</webApp>
+          <!--webApp>${project.build.directory}/hippo-repository-2-server-1.01.00-dev-jdk1.4</webApp-->
         </configuration>
       </plugin>
    </plugins>
