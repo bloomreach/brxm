@@ -27,7 +27,13 @@
      String name = parent.getName();
      if(name.equals(""))
        name = "/";
-     out.println(prefix + "<a href=\"jcrviewer.jsp?path=" + parent.getPath() + "\">"+ ((ServicingNode) parent).getDisplayName() + "</a>");
+     out.print( prefix + "<a href=\"jcrviewer.jsp?path=" + parent.getPath() + "\">" ); 
+     out.print( ((ServicingNode) parent).getDisplayName() );
+     if (parent.hasProperty("hippo:count")) {
+       out.print(" [" + parent.getProperty("hippo:count").getLong() +"]");
+     }
+                 
+     	out.println("</a>");
      if(targetPath.startsWith(parent.getPath())) {
        for(javax.jcr.NodeIterator iter = parent.getNodes(); iter.hasNext();) {
          Node node = iter.nextNode();
