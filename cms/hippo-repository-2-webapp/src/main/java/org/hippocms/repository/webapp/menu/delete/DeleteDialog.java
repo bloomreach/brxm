@@ -27,7 +27,10 @@ public class DeleteDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     public DeleteDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+        super();
+        init(dialogWindow, model);
+        dialogWindow.setTitle("Delete selected node");
+        
         add(new Label("message", new PropertyModel(this, "message")));
         if (model.getNode() == null) {
             ok.setVisible(false);

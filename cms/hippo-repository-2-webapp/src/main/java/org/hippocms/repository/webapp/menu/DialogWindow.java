@@ -15,23 +15,25 @@
  */
 package org.hippocms.repository.webapp.menu;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.hippocms.repository.webapp.Browser;
+import org.hippocms.repository.webapp.editor.NodeEditor;
 
 public class DialogWindow extends ModalWindow {
     private static final long serialVersionUID = 1L;
 
-    protected DialogWindow(String id, final Component targetComponent, String title) {
-        super(id);       
-        setTitle(title);
+    public DialogWindow(String id) {
+        super(id);
         setCookieName(id);
-        
+
         setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
-                target.addComponent(targetComponent);
+                Browser browser = (Browser) findParent(Browser.class);
+                NodeEditor editor = browser.getEditorPanel().getEditor();
+                target.addComponent(editor);
             }
         });
     }

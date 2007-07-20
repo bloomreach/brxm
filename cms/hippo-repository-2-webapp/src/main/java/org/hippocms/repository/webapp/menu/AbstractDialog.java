@@ -31,8 +31,11 @@ public abstract class AbstractDialog extends WebPage {
     protected JcrNodeModel model;
 
     private String exception = "";
-
-    public AbstractDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
+    
+    public AbstractDialog() {        
+    }
+    
+    public void init(final DialogWindow dialogWindow, JcrNodeModel model) {
         this.model = model;
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
