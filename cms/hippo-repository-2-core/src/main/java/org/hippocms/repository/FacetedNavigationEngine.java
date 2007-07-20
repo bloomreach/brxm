@@ -35,7 +35,7 @@ with the remainder of the repository other than set-up.<p>
 
 The main responsibility of the search engine is to return a facet key-value
 count for a authorized faceted query.
-Given a result set after a query, the faceted kay-value count is an
+Given a result set after a query, the faceted key-value count is an
 enumeration of the number of matching documents per facet key-value pair.<p>
 
 The query result set starting off with, is split into multiple parts:
@@ -49,7 +49,7 @@ of the query.</dd>
 <dd>When browsing through a faceted search, certain choices which part of the
 search tree is displayed are being made by the user.  Each time the user fixes
 a facet-key to a certain value, the result set is limited to the documents
-which that facet.</dd>
+with that facet.</dd>
 <dt>Authorization query</dt>
 <dd>Even when the faceted search query is the same, the result set of the
 query may be different if the query is performed with different authorization
