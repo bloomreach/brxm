@@ -20,4 +20,6 @@ import javax.jcr.RepositoryException;
 
 public interface ServicingNode extends Node {
     public Service getService() throws RepositoryException;
+    
+    public String getDisplayName() throws RepositoryException;
 }

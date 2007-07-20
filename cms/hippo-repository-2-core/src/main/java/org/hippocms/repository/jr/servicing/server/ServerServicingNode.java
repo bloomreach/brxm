@@ -17,11 +17,9 @@ package org.hippocms.repository.jr.servicing.server;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerNode;
-import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 import org.hippocms.repository.jr.servicing.Service;
 import org.hippocms.repository.jr.servicing.ServicingNodeImpl;
@@ -38,5 +36,9 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
 
     public Service getService() throws RepositoryException, RemoteException {
         return node.getService();
+    }
+
+    public String getDisplayName() throws RepositoryException, RemoteException {
+        return node.getDisplayName();
     }
 }

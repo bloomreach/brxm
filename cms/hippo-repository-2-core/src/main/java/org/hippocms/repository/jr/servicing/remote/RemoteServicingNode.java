@@ -27,4 +27,6 @@ import org.hippocms.repository.jr.servicing.Service;
 
 public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
     public Service getService() throws RepositoryException, RemoteException;
+
+    public String getDisplayName() throws RepositoryException, RemoteException;
 }
