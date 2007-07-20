@@ -30,7 +30,10 @@ public class NodeDialog extends AbstractDialog {
     private String type;
  
     public NodeDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+        super();
+        init(dialogWindow, model);
+        dialogWindow.setTitle("Add a new Node");
+        
         add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
         add(new AjaxEditableLabel("type", new PropertyModel(this, "type")));
         if (model.getNode() == null) {

@@ -27,7 +27,10 @@ public class ResetDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     public ResetDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+        super();
+        init(dialogWindow, model);
+        dialogWindow.setTitle("Refresh Session (undo changes)");
+        
         Label label;
         try {
             JcrSessionProvider sessionProvider = (JcrSessionProvider)getSession();

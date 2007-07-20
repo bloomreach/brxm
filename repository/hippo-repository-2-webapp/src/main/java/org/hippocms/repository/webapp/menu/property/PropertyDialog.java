@@ -33,7 +33,10 @@ public class PropertyDialog extends AbstractDialog {
     private Boolean isMultiple = Boolean.FALSE;
 
     public PropertyDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+        super();
+        init(dialogWindow, model);
+        dialogWindow.setTitle("Add a new Property");
+        
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
             private static final long serialVersionUID = 1L;
             protected boolean wantOnSelectionChangedNotifications() {

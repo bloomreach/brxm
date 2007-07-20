@@ -27,7 +27,10 @@ public class SaveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     public SaveDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+        super();
+        init(dialogWindow, model);
+        dialogWindow.setTitle("Save Session");
+        
         Label label;
         try {
             JcrSessionProvider sessionProvider = (JcrSessionProvider)getSession();

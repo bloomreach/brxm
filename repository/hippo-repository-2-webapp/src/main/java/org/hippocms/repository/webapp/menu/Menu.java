@@ -15,7 +15,6 @@
  */
 package org.hippocms.repository.webapp.menu;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
@@ -31,11 +30,11 @@ import org.hippocms.repository.webapp.model.JcrNodeModel;
 public class Menu extends Panel {
     private static final long serialVersionUID = 1L;
 
-    public Menu(String id, Component target, final JcrNodeModel model) {
+    public Menu(String id, final JcrNodeModel model) {
         super(id);
         setOutputMarkupId(true);
 
-        final DialogWindow nodeDialog = new DialogWindow("node-dialog", target, "Add a new Node");
+        final DialogWindow nodeDialog = new DialogWindow("node-dialog");
         nodeDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -45,7 +44,7 @@ public class Menu extends Panel {
         add(nodeDialog);
         add(nodeDialog.dialogLink("node-dialog-link"));
 
-        final DialogWindow deleteDialog = new DialogWindow("delete-dialog", target, "Delete selected node");
+        final DialogWindow deleteDialog = new DialogWindow("delete-dialog");
         deleteDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -55,7 +54,7 @@ public class Menu extends Panel {
         add(deleteDialog);
         add(deleteDialog.dialogLink("delete-dialog-link"));
 
-        final DialogWindow propertyDialog = new DialogWindow("property-dialog", target, "Add a new Property");
+        final DialogWindow propertyDialog = new DialogWindow("property-dialog");
         propertyDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -65,7 +64,7 @@ public class Menu extends Panel {
         add(propertyDialog);
         add(propertyDialog.dialogLink("property-dialog-link"));
 
-        final DialogWindow saveDialog = new DialogWindow("save-dialog", target, "Save Session");
+        final DialogWindow saveDialog = new DialogWindow("save-dialog");
         saveDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -75,7 +74,7 @@ public class Menu extends Panel {
         add(saveDialog);
         add(saveDialog.dialogLink("save-dialog-link"));
 
-        final DialogWindow resetDialog = new DialogWindow("reset-dialog", target, "Refresh Session (undo changes)");
+        final DialogWindow resetDialog = new DialogWindow("reset-dialog");
         resetDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {

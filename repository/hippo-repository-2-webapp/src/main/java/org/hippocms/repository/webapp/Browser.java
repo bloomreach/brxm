@@ -45,7 +45,7 @@ public class Browser extends WebPage {
         editorPanel = new EditorPanel("editorPanel", model);
         add(editorPanel);
         
-        menu = new Menu("menu", editorPanel, model); 
+        menu = new Menu("menu", model); 
         add(menu);
     }
 
