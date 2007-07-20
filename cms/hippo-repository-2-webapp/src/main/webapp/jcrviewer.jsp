@@ -8,6 +8,7 @@
 <%@page import="javax.jcr.Session" %>
 <%@page import="javax.jcr.RepositoryException" %>
 <%@page import="javax.jcr.SimpleCredentials" %>
+<%@page import="org.hippocms.repository.jr.servicing.ServicingNode" %>
 <%@page import="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory" %>
 <%@page import="org.hippocms.repository.jr.embedded.HippoRepository" %>
 <%@page import="org.hippocms.repository.jr.embedded.HippoRepositoryFactory" %>
@@ -26,7 +27,7 @@
      String name = parent.getName();
      if(name.equals(""))
        name = "/";
-     out.println(prefix + "<a href=\"jcrviewer.jsp?path=" + parent.getPath() + "\">"+ name + "</a>");
+     out.println(prefix + "<a href=\"jcrviewer.jsp?path=" + parent.getPath() + "\">"+ ((ServicingNode) parent).getDisplayName() + "</a>");
      if(targetPath.startsWith(parent.getPath())) {
        for(javax.jcr.NodeIterator iter = parent.getNodes(); iter.hasNext();) {
          Node node = iter.nextNode();
