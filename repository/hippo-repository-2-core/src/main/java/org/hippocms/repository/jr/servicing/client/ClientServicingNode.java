@@ -43,4 +43,12 @@ public class ClientServicingNode extends ClientNode implements ServicingNode {
             throw new RemoteRepositoryException(ex);
         }
     }
+
+    public String getDisplayName() throws RepositoryException {
+        try {
+            return remote.getDisplayName();
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
 }

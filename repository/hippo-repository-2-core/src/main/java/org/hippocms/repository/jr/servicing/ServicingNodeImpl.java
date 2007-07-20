@@ -15,25 +15,19 @@
  */
 package org.hippocms.repository.jr.servicing;
 
-import java.lang.Object;
-import java.lang.String;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.AccessControlException;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
+import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.ItemVisitor;
+import javax.jcr.MergeException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -41,15 +35,12 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
+import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ItemVisitor;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.jcr.ReferentialIntegrityException;
-import javax.jcr.MergeException;
-import javax.jcr.Workspace;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -57,44 +48,25 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.RowIterator;
+import javax.jcr.version.OnParentVersionAction;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.version.OnParentVersionAction;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.RowIterator;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
-import org.xml.sax.SAXException;
-import org.xml.sax.ContentHandler;
-
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.NodeImpl;
-import org.apache.jackrabbit.core.ItemId;
-import org.apache.jackrabbit.core.HierarchyManagerImpl;
 import org.apache.jackrabbit.core.SessionImpl;
-import org.apache.jackrabbit.name.Path;
 import org.apache.jackrabbit.name.NameException;
+import org.apache.jackrabbit.name.Path;
 
-// FIXME: depend only on JTA, not on Atomikos
-import com.atomikos.icatch.config.TSInitInfo;
-import com.atomikos.icatch.config.UserTransactionService;
-import com.atomikos.icatch.config.UserTransactionServiceImp;
-import com.atomikos.icatch.jta.UserTransactionManager;
 
 public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     final static private String SVN_ID = "$Id$";
 
+    private final static String FACET_RESULTSET = "resultset";
+    private final static char FACET_SEPARATOR = '#';
+    
     protected Node node;
     protected Session session;
     protected boolean isVirtual;
@@ -103,8 +75,10 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     protected String name;
     protected String path;
     protected int depth;
+    protected long resultNodeCount = -1L;
     protected Map children = null;
     protected Map properties = null;
+    protected Map facetValuesMap = null;
 
     protected ServicingNodeImpl(DecoratorFactory factory, Session session, Node node) {
         super(factory, session, node);
@@ -151,64 +125,155 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         properties = new HashMap();
     }
 
+    
     /* begin of virtual node implementation */
     protected void addNode(String name, Node node) {
         children.put(name, node);
-    }
+    }    
 
     private boolean instantiated = false;
 
-    private void instantiate() throws RepositoryException {
-        if (instantiated)
+    /**
+     * Instantiate the resultset
+     * @throws RepositoryException
+     */
+    private void instantiateResults() throws RepositoryException {
+        if (instantiated) {
             return;
+        }
         instantiated = true;
-        /*
-         * The XPath defined for JCR-170 lacks the possibility to select distinct nodes.
-         */
-        addNode("resultset", (Node) null);
-        QueryManager qmngr = session.getWorkspace().getQueryManager();
+
         Node node = (this.node != null ? this.node : this);
-        String searchquery = null;
-        Value[] searchClauses = new Value[0];
-        try {
-            if (node.getProperty("hippo:search") != null)
-                searchClauses = node.getProperty("hippo:search").getValues();
-        } catch (PathNotFoundException ex) {
-            // safe to ignore
+
+        StringBuffer searchquery = getSearchQuery(node);
+        //System.out.println("Query results: " + searchquery.toString());
+
+        Query facetValuesQuery = session.getWorkspace().getQueryManager().createQuery(searchquery.toString(),
+                Query.XPATH);
+        QueryResult facetValuesResult = facetValuesQuery.execute();
+
+        for (NodeIterator iter = facetValuesResult.getNodes(); iter.hasNext();) {
+            Node resultNode = (Node) iter.next();
+            addNode(resultNode.getName(), resultNode);
         }
-        for (int i = 0; i < searchClauses.length; i++) {
-            if (searchquery != null)
-                searchquery += ",";
-            else
-                searchquery = "";
-            searchquery += searchClauses[i].getString();
+    }
+    
+    /**
+     * Instantiate the list with facets
+     * @throws RepositoryException
+     */
+    private void instantiateFacets() throws RepositoryException {
+        if (instantiated) {
+            return;
         }
+        instantiated = true;
+
+        Node node = (this.node != null ? this.node : this);
+
+        addNode(FACET_RESULTSET, (Node) null);
+
+        StringBuffer searchquery = getSearchQuery(node);
+
         Value[] facets = node.getProperty("hippo:facets").getValues();
         if (facets.length > 0) {
-            if (searchquery != null)
-                searchquery += ",";
-            else
-                searchquery = "";
-            searchquery += "@" + facets[0].getString();
-            if (searchquery != null)
-                searchquery = "[" + searchquery + "]";
-            else
-                searchquery = "";
-            searchquery = node.getProperty("hippo:docbase").getString() + "//node()" + searchquery;
-            searchquery += "/@" + facets[0].getString();
-            Query facetValuesQuery = qmngr.createQuery(searchquery, Query.XPATH);
-            QueryResult facetValuesResult = facetValuesQuery.execute();
-            Set facetValuesSet = new HashSet();
-            for (RowIterator iter = facetValuesResult.getRows(); iter.hasNext();) {
-                facetValuesSet.add(iter.nextRow().getValues()[0].getString());
+
+            // search for the facet values, not the nodes
+            String facet = facets[0].getString();
+            if (facet.indexOf(FACET_SEPARATOR) != -1) {
+                facet = facet.substring(0, facet.indexOf(FACET_SEPARATOR));
             }
-            for (Iterator iter = facetValuesSet.iterator(); iter.hasNext();) {
-                //System.out.println("      "+iter.next());
+            searchquery.append("/@");
+            searchquery.append(facet);
+
+            //System.out.println("Query facets: " + searchquery.toString());
+
+            buildFacetMap(searchquery.toString());
+            for (Iterator iter = facetValuesMap.keySet().iterator(); iter.hasNext();) {
                 addNode((String) iter.next(), (Node) null);
             }
         }
     }
 
+    /**
+     * Get the xpath expression based on the facets and searches of the node
+     * @param node The current node
+     * @return The xpath expression 
+     * @throws RepositoryException
+     */
+    private StringBuffer getSearchQuery(Node node) throws RepositoryException {
+        StringBuffer searchquery = new StringBuffer("");
+
+        if (node == null) {
+            return searchquery;
+        }
+
+        // Build searchquery from hippo:search multivalues
+        Value[] searchClauses = new Value[0];
+        try {
+            if (node.getProperty("hippo:search") != null) {
+                searchClauses = node.getProperty("hippo:search").getValues();
+            }
+        } catch (PathNotFoundException ex) {
+            // safe to ignore
+        }
+
+        String clause;
+        for (int i = 0; i < searchClauses.length; i++) {
+            if (searchquery.length() > 0) {
+                searchquery.append(",");
+            }
+
+            // check for xpath separator
+            clause = searchClauses[i].getString();
+            if (clause.indexOf(FACET_SEPARATOR) != -1) {
+                clause = clause.substring(0, clause.indexOf(FACET_SEPARATOR));
+            }
+            //System.out.println("Clause: " + clause);
+            searchquery.append(clause);
+        }
+
+        Value[] facets = node.getProperty("hippo:facets").getValues();
+        if (facets.length > 0) {
+
+            String facet = facets[0].getString();
+            if (facet.indexOf(FACET_SEPARATOR) != -1) {
+                facet = facet.substring(0, facet.indexOf(FACET_SEPARATOR));
+            }
+
+            if (searchquery.length() > 0) {
+                searchquery.append(",");
+            }
+            searchquery.append("@");
+            //System.out.println("Facet: @" + facet);
+            searchquery.append(facet);
+        }
+        searchquery.insert(0, node.getProperty("hippo:docbase").getString() + "//node()" + "[");
+        searchquery.append("]");
+
+        return searchquery;
+    }
+    
+    private void buildFacetMap(String xPath) throws RepositoryException {
+        Query facetValuesQuery = session.getWorkspace().getQueryManager().createQuery(xPath, Query.XPATH);        QueryResult facetValuesResult = facetValuesQuery.execute();
+        facetValuesMap = new HashMap();
+        
+        long count = 0L;
+        resultNodeCount = 0L;
+        for (RowIterator iter = facetValuesResult.getRows(); iter.hasNext();) {
+            String facetValue = iter.nextRow().getValues()[0].getString();
+            if (facetValuesMap.containsKey(facetValue)) {
+                // facet value already exists in map, increase count
+                count = 1 + (Long) facetValuesMap.get(facetValue);
+                facetValuesMap.put(facetValue, count);
+            } else {
+                // a new facet value, set count to 1
+                facetValuesMap.put(facetValue,1L);
+            }
+            resultNodeCount++;
+        }
+    }
+    
+    
     class PropertyImpl implements Property {
         String name;
         int type;
@@ -573,6 +638,52 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public int getDepth() throws ItemNotFoundException, RepositoryException {
         return depth;
     }
+    
+    public String getDisplayName() throws RepositoryException {
+        if (isVirtual) {
+            
+            // hippo:authorId#//element(*,hippo:author)[hippo:id=?]/@hippo:name
+            // just return the resultset
+            if (getName().equals(FACET_RESULTSET)) {
+                return FACET_RESULTSET;
+            }
+            
+            // the last search is the current one
+            Value[] searches = getProperty("hippo:search").getValues();
+            if (searches.length == 0) {
+                return getName();
+            }
+            String search = searches[searches.length-1].getString();
+                
+            // check for search seperator
+            if (search.indexOf(FACET_SEPARATOR) == -1) {
+                return getName();
+            }
+            
+            // check for sql parameter '?'
+            String xpath = search.substring(search.indexOf(FACET_SEPARATOR)+1);
+            if (xpath.indexOf('?') == -1) {
+                return getName();
+            }
+                
+            // construct query
+            xpath = xpath.substring(0,xpath.indexOf('?')) + getName() + xpath.substring(xpath.indexOf('?')+1);
+            
+            //System.out.println("DsplayName xpath: " + xpath);
+            Query query = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
+            
+            // execute
+            QueryResult result = query.execute();
+            RowIterator iter = result.getRows();
+            if (iter.hasNext()) {
+                return iter.nextRow().getValues()[0].getString();
+            } else {
+                return getName();
+            }
+        } else {
+            return getName();
+        }
+    }
 
     public String getName() throws RepositoryException {
         if (node == null) {
@@ -828,38 +939,26 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
      */
     public Node getNode(String relPath) throws PathNotFoundException, RepositoryException {
         if (isNodeType("hippo:facetsearch")) {
-            if (relPath.equals("resultset")) {
+            if (relPath.equals(FACET_RESULTSET)) {
                 ServicingNodeImpl child = new ServicingNodeImpl(factory, session, "hippo:facetresult",
                         getChildPath(relPath), relPath, depth + 1);
-                String searchquery = null;
-                Value[] searchClauses = new Value[0];
                 try {
-                    searchClauses = getProperty("hippo:search").getValues();
+                    Value[] search = getProperty("hippo:search").getValues();
+                    child.setProperty("hippo:search", search);
+                } catch (PathNotFoundException ex) {
+                    // safe to ignore
+                }                
+                try {
+                    Value[] facets = getProperty("hippo:facets").getValues();
+                    child.setProperty("hippo:facets", facets);
                 } catch (PathNotFoundException ex) {
                     // safe to ignore
                 }
-                for (int i = 0; i < searchClauses.length; i++) {
-                    if (searchquery != null)
-                        searchquery += ",";
-                    else
-                        searchquery = "";
-                    searchquery += searchClauses[i].getString();
+
+                child.setProperty("hippo:docbase", getProperty("hippo:docbase").getString());
+                if (resultNodeCount > -1) {
+                    child.setProperty("hippo:count", resultNodeCount);
                 }
-                if (searchquery != null)
-                    searchquery = "[" + searchquery + "]";
-                else
-                    searchquery = "";
-                Workspace workspace = getSession().getWorkspace();
-                QueryManager qmngr = workspace.getQueryManager();
-                Query query = qmngr.createQuery(getProperty("hippo:docbase").getString() + "//node()" + searchquery,
-                        Query.XPATH);
-                QueryResult qresult = query.execute();
-                int count = 0;
-                for (NodeIterator iter = qresult.getNodes(); iter.hasNext(); count++) {
-                    Node node = iter.nextNode();
-                    child.addNode(node.getName(), node);
-                }
-                //child.setProperty("resultCount", count);
                 return child;
             } else {
                 ServicingNodeImpl child = new ServicingNodeImpl(factory, session, "hippo:facetsearch",
@@ -878,13 +977,27 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                 if (facets.length > 0) {
                     newSearch = new Value[search.length + 1];
                     System.arraycopy(search, 0, newSearch, 0, search.length);
-                    newSearch[search.length] = session.getValueFactory().createValue(
+                    
+                    // check for xpath separator
+                    if (facets[0].getString().indexOf(FACET_SEPARATOR) == -1) {
+                        newSearch[search.length] = session.getValueFactory().createValue(
                             "@" + facets[0].getString() + "='" + relPath + "'");
-                } else
+                    } else {
+                        newSearch[search.length] = session.getValueFactory().createValue(
+                                "@" + facets[0].getString().substring(0,facets[0].getString().indexOf(FACET_SEPARATOR)) +
+                                "='" + relPath + "'" + facets[0].getString().substring(facets[0].getString().indexOf(FACET_SEPARATOR)));
+                    }
+                } else {
                     newSearch = (Value[]) search.clone();
+                }
                 child.setProperty("hippo:docbase", getProperty("hippo:docbase").getString());
                 child.setProperty("hippo:facets", newFacets);
                 child.setProperty("hippo:search", newSearch);
+                
+                if (facetValuesMap != null && facetValuesMap.containsKey(child.getName())) {
+                    child.setProperty("hippo:count", (Long) facetValuesMap.get(child.getName()));
+                }
+                
                 return child;
             }
         } else {
@@ -917,13 +1030,17 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     /**
      * @inheritDoc
      */
-    public NodeIterator getNodes() throws RepositoryException {
+    public NodeIterator getNodes() throws RepositoryException {        
         if (children != null) {
-            if (isNodeType("hippo:facetsearch"))
-                instantiate();
+            if (isNodeType("hippo:facetsearch")) {
+                instantiateFacets();
+            } else if (isNodeType("hippo:facetresult")) {
+                instantiateResults();
+            }
             return this.new NodeIteratorImpl();
-        } else
+        } else {
             return new DecoratingNodeIterator(factory, session, node.getNodes(), this);
+        }
     }
 
     /**
