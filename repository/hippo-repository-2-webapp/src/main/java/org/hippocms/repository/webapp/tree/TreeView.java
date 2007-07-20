@@ -22,6 +22,7 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
+import org.hippocms.repository.jr.servicing.ServicingNode;
 import org.hippocms.repository.webapp.Browser;
 import org.hippocms.repository.webapp.editor.NodeEditor;
 import org.hippocms.repository.webapp.menu.Menu;
@@ -44,7 +45,11 @@ public class TreeView extends Tree {
         String result = "null";
         if (node != null) {
             try {
-                result = node.getName();
+                ServicingNode sNode = (ServicingNode)node;
+                result = sNode.getDisplayName();
+                if (node.hasProperty("hippo:count")) {
+                    result += " [" + node.getProperty("hippo:count").getLong() + "]";
+                }
             } catch (RepositoryException e) {
                 result = e.getMessage();
             }

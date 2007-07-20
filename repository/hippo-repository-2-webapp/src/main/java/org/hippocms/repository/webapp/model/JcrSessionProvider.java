@@ -1,12 +1,12 @@
 package org.hippocms.repository.webapp.model;
 
-import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 
-import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.wicket.Application;
 import org.apache.wicket.Request;
 import org.apache.wicket.protocol.http.WebSession;
+import org.hippocms.repository.jr.embedded.HippoRepository;
+import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
 
 public class JcrSessionProvider extends WebSession {
     private static final long serialVersionUID = 1L;
@@ -22,8 +22,7 @@ public class JcrSessionProvider extends WebSession {
     public javax.jcr.Session getSession()  {
         if (jcrSession == null || !jcrSession.isLive()) {
             try {
-                ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory();
-                Repository repository = repositoryFactory.getRepository(address);
+                HippoRepository repository = HippoRepositoryFactory.getHippoRepository(address);
                 jcrSession = repository.login(new SimpleCredentials("username", "password".toCharArray()));
             } catch (Exception e) {
                 e.printStackTrace();
