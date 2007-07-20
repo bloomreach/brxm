@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import org.hippocms.repository.jr.embedded.HippoRepository;
 import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippocms.repository.jr.servicing.ServicingNode;
 import org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory;
 
 import javax.jcr.RepositoryException;
@@ -163,8 +164,14 @@ public class RepositoryServlet extends HttpServlet {
                 writer.println("    <ul>");
                 for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
-                    writer.println("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath()
-                            + "/" + child.getPath() + "/" + "\">" + child.getName() + "</a>");
+                    writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath()
+                            + "/" + child.getPath() + "/" + "\">");
+                    if (child.hasProperty("hippo:count")) {
+                        writer.print(((ServicingNode) child).getDisplayName() + " [" + child.getProperty("hippo:count").getLong() +"]");
+                    } else {
+                        writer.print(((ServicingNode) child).getDisplayName());
+                    }
+                    writer.println("</a>");
                 }
                 for (PropertyIterator iter = node.getProperties(); iter.hasNext();) {
                     Property prop = iter.nextProperty();
