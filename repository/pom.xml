@@ -41,9 +41,9 @@
     <module>hippo-repository-2-api</module>
     <module>hippo-repository-2-core</module>
     <module>hippo-repository-2-server</module>
-    <module>hippo-repository-2-client</module>
     <module>hippo-repository-2-migration-tool</module>
     <module>hippo-repository-2-workflow</module>
+    <module>hippo-repository-2-frontend</module>
     <module>hippo-repository-2-webapp</module>
     <module>hippo-repository-2-docs</module>
   </modules>

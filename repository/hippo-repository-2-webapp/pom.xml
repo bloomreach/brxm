@@ -21,7 +21,6 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-
   <parent>
     <groupId>org.hippocms</groupId>
     <artifactId>hippo-repository-2</artifactId>
@@ -30,7 +29,7 @@
   </parent>
 
   <name>Hippo Repository 2 Webapp</name>
-  <description>Hippo Repository 2 Simple Webapplicaiton</description>
+  <description>Hippo Repository 2 Simple Webapp</description>
   <artifactId>hippo-repository-2-webapp</artifactId>
   <packaging>war</packaging>
 
@@ -40,11 +39,6 @@
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-webapp</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-webapp</url>
   </scm>
-
-  <properties>
-    <!--1.3.0-incubating-SNAPSHOT == svn revision 546022 of http://svn.apache.org/repos/asf/incubator/wicket/trunk-->
-    <wicket.version>1.3.0-incubating-SNAPSHOT</wicket.version>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -61,104 +55,39 @@
     </dependencies>
   </dependencyManagement>
 
-
   <dependencies>
-
+    <dependency>
+      <groupId>org.hippocms</groupId>
+      <artifactId>hippo-repository-2-frontend</artifactId>
+      <version>1.01.00-dev</version>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.3.0</version>
     </dependency>
-
-    <!-- Hippo repository-->
-    <dependency>
-      <groupId>org.hippocms</groupId>
-      <artifactId>hippo-repository-2-core</artifactId>
-      <version>1.01.00-dev</version>
-    </dependency>
-
-    <!-- JCR reference implementation-->
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-jcr-rmi</artifactId>
-    </dependency>
-
-    <!-- wicket web gui toolkit-->
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket</artifactId>
-      <version>${wicket.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-extensions</artifactId>
-      <version>${wicket.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-jmx</artifactId>
-      <version>${wicket.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-spring-annot</artifactId>
-      <version>${wicket.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-auth-roles</artifactId>
-      <version>${wicket.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-datetime</artifactId>
-      <version>${wicket.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-velocity</artifactId>
-      <version>${wicket.version}</version>
-    </dependency>
-
-    <!--commons-->
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.4</version>
-    </dependency>
-
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
+    <testResources>
+      <testResource>
         <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
+        <directory>${basedir}/test/java</directory>
         <includes>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
+          <include>**</include>
         </includes>
-      </resource>
-    </resources>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <configuration>
-          
+        <configuration>         
           <scanIntervalSeconds>1</scanIntervalSeconds>
-          
           <scanTargetPatterns>        
             <scanTargetPattern>    
               <directory>${basedir}/src/main/java</directory>
@@ -167,11 +96,8 @@
               </includes>
             </scanTargetPattern>
           </scanTargetPatterns>
-        </configuration>
-        
+        </configuration>    
       </plugin>
-
     </plugins>
   </build>
-  
 </project>
