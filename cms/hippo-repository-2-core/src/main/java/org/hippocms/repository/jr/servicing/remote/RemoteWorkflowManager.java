@@ -37,4 +37,5 @@ public interface RemoteWorkflowManager
 {
   public WorkflowDescriptor getWorkflowDescriptor(String category, String node) throws RepositoryException, RemoteException;
   public Workflow getWorkflow(String category, String node) throws RepositoryException, RemoteException;
+  public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException, RemoteException;
 }

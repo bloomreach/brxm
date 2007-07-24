@@ -40,31 +40,35 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.JDOHelper;
 import javax.jdo.Transaction;
 
+import org.jpox.PersistenceManagerFactoryImpl;
 import org.jpox.store.OID; 
 
 import org.hippocms.repository.pojo.JCROID;
+import org.hippocms.repository.pojo.StoreManagerImpl;
 import org.hippocms.repository.jr.servicing.Document;
 
 public class DocumentManagerImpl
   implements DocumentManager
 {
   Session session;
-  PersistenceManager pm;
+  PersistenceManagerFactory pmf;
   public DocumentManagerImpl(Session session) {
     try {
       this.session = session;
       Properties properties = new Properties();
       InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
       properties.load(istream);
-      properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir")); // FIXME
-      PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory(properties);
-      pm = pmf.getPersistenceManager();
+      properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
+      pmf = JDOHelper.getPersistenceManagerFactory(properties);
+      StoreManagerImpl sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
+      sm.setSession(session);
     } catch(IOException ex) {
       // FIXME
     }
   }
   public Document getDocument(String category, String identifier) throws RepositoryException {
     try {
+      PersistenceManager pm = pmf.getPersistenceManager();
       String uuid = session.getRootNode().getNode("files").getNode(category).getNode(identifier).getUUID();
       Document obj = (Document) pm.getObjectById(new JCROID(uuid));
       return obj;

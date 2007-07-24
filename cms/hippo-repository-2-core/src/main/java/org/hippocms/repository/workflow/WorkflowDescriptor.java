@@ -21,6 +21,8 @@
  */
 package org.hippocms.repository.workflow;
 
+import java.io.Serializable;
+
 import javax.jcr.Session;
 import javax.jcr.Node;
 import javax.jcr.Workspace;
@@ -31,6 +33,7 @@ import javax.jcr.RepositoryException;
 import org.hippocms.repository.jr.servicing.WorkflowManager;
 
 public class WorkflowDescriptor
+  implements Serializable
 {
   String category;
   String nodeAbsPath;
@@ -55,7 +58,7 @@ public class WorkflowDescriptor
   public String getDisplayName() {
     return displayName;
   }
-  public String getRenderName() {
+  public String getRendererName() {
     return rendererName;
   }
 }
