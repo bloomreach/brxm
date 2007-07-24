@@ -27,12 +27,16 @@ import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
+import org.hippocms.repository.jr.servicing.DocumentManager;
 import org.hippocms.repository.jr.servicing.ServicesManager;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
 import org.hippocms.repository.jr.servicing.ServicingSessionImpl;
 import org.hippocms.repository.jr.servicing.ServicingNodeImpl;
 import org.hippocms.repository.jr.servicing.ServicingWorkspaceImpl;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
+import org.hippocms.repository.jr.servicing.remote.RemoteDocumentManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteWorkflowManager;
 
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
     public ServerServicingAdapterFactory() {
@@ -59,7 +63,15 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
             return super.getRemoteNode(node);
     }
 
+    public RemoteDocumentManager getRemoteDocumentManager(DocumentManager documentManager) throws RemoteException {
+        return new ServerDocumentManager(documentManager, this);
+    }
+
     public RemoteServicesManager getRemoteServicesManager(ServicesManager servicesManager) throws RemoteException {
         return new ServerServicesManager(servicesManager, this);
+    }
+
+    public RemoteWorkflowManager getRemoteWorkflowManager(WorkflowManager workflowManager) throws RemoteException {
+        return new ServerWorkflowManager(workflowManager, this);
     }
 }

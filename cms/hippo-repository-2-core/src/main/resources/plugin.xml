@@ -1,4 +1,4 @@
-<plugin id="org.hippocms.repository.workflows.reviewedactions" name="JPOX JCR" provider-name="JPOX">
+<plugin id="org.hippocms.repository.workflow.reviewedactions" name="JPOX JCR" provider-name="JPOX">
   <extension point="org.jpox.store_manager">
     <store-manager class-name="org.hippocms.repository.pojo.StoreManagerImpl" key="jcr"/>
   </extension>

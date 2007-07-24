@@ -23,11 +23,15 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 
+import org.hippocms.repository.jr.servicing.DocumentManager;
 import org.hippocms.repository.jr.servicing.ServicesManager;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
 import org.hippocms.repository.jr.servicing.ServicingWorkspaceImpl;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
+import org.hippocms.repository.jr.servicing.remote.RemoteDocumentManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteWorkflowManager;
 
 public class ServerServicingWorkspace extends ServerWorkspace implements RemoteServicingWorkspace {
     private ServicingWorkspaceImpl workspace;
@@ -38,10 +42,28 @@ public class ServerServicingWorkspace extends ServerWorkspace implements RemoteS
         this.workspace = workspace;
     }
 
+    public RemoteDocumentManager getDocumentManager() throws RemoteException, RepositoryException {
+        try {
+            DocumentManager documentManager = workspace.getDocumentManager();
+            return ((RemoteServicingAdapterFactory) getFactory()).getRemoteDocumentManager(documentManager);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
     public RemoteServicesManager getServicesManager() throws RemoteException, RepositoryException {
         try {
             ServicesManager servicesManager = workspace.getServicesManager();
             return ((RemoteServicingAdapterFactory) getFactory()).getRemoteServicesManager(servicesManager);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
+    public RemoteWorkflowManager getWorkflowManager() throws RemoteException, RepositoryException {
+        try {
+            WorkflowManager workflowManager = workspace.getWorkflowManager();
+            return ((RemoteServicingAdapterFactory) getFactory()).getRemoteWorkflowManager(workflowManager);
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }

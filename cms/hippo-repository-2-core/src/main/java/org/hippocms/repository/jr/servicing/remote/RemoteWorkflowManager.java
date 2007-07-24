@@ -1,4 +1,10 @@
 /*
+  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
+  work has proceeded to a stable level, at which time this comment
+  will be removed.  -- Berry
+*/
+
+/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -15,14 +21,20 @@
  */
 package org.hippocms.repository.jr.servicing.remote;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import javax.jcr.Session;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
+import org.hippocms.repository.jr.servicing.Service;
+import org.hippocms.repository.workflow.Workflow;
+import org.hippocms.repository.workflow.WorkflowDescriptor;
 
-public interface RemoteServicingWorkspace extends RemoteWorkspace {
-    public RemoteDocumentManager getDocumentManager() throws RepositoryException, RemoteException;
-    public RemoteServicesManager getServicesManager() throws RepositoryException, RemoteException;
-    public RemoteWorkflowManager getWorkflowManager() throws RepositoryException, RemoteException;
+public interface RemoteWorkflowManager
+  extends Remote
+{
+  public WorkflowDescriptor getWorkflowDescriptor(String category, String node) throws RepositoryException, RemoteException;
+  public Workflow getWorkflow(String category, String node) throws RepositoryException, RemoteException;
 }

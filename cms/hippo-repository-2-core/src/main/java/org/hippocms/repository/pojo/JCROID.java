@@ -170,7 +170,7 @@ public class JCROID implements OID {
     }
 
     public String getPcClass() {
-        return "org.hippocms.repository.workflows.TestServiceImpl";
+        return "org.hippocms.repository.workflow.TestServiceImpl";
     }
 
     public boolean equals(Object obj) {

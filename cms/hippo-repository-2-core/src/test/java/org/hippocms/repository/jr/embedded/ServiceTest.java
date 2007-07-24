@@ -39,9 +39,6 @@ import javax.transaction.xa.XAResource;
 // FIXME: depend only on JTA, not on Atomikos
 import com.atomikos.icatch.jta.UserTransactionManager;
 
-/**
- * @version $Id$
- */
 public class ServiceTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 

@@ -1,4 +1,10 @@
 /*
+  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
+  work has proceeded to a stable level, at which time this comment
+  will be removed.  -- Berry
+*/
+
+/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -13,14 +19,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.workflow;
 
-import javax.jcr.Node;
-import javax.jcr.Workspace;
-import javax.jcr.RepositoryException;
+import java.rmi.RemoteException;
 
-public interface ServicingWorkspace extends Workspace {
-    public DocumentManager getDocumentManager() throws RepositoryException;
-    public ServicesManager getServicesManager() throws RepositoryException;
-    public WorkflowManager getWorkflowManager() throws RepositoryException;
+import org.hippocms.repository.jr.servicing.ServiceImpl;
+
+public abstract class WorkflowImpl extends ServiceImpl implements Workflow
+{
+  protected WorkflowContext context;
+  public WorkflowImpl() throws RemoteException {
+  }
+  final void setWorkflowContext(WorkflowContext context) {
+    this.context = context;
+  }
 }

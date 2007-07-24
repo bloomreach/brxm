@@ -23,10 +23,14 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.rmi.client.ClientWorkspace;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
+import org.hippocms.repository.jr.servicing.DocumentManager;
 import org.hippocms.repository.jr.servicing.ServicesManager;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
 import org.hippocms.repository.jr.servicing.ServicingWorkspace;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
+import org.hippocms.repository.jr.servicing.remote.RemoteDocumentManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteWorkflowManager;
 
 public class ClientServicingWorkspace extends ClientWorkspace implements ServicingWorkspace {
     private Session session;
@@ -39,10 +43,28 @@ public class ClientServicingWorkspace extends ClientWorkspace implements Servici
         this.remote = remote;
     }
 
+    public DocumentManager getDocumentManager() throws RepositoryException {
+        try {
+            RemoteDocumentManager manager = remote.getDocumentManager();
+            return ((LocalServicingAdapterFactory) getFactory()).getDocumentManager(session, manager);
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+
     public ServicesManager getServicesManager() throws RepositoryException {
         try {
             RemoteServicesManager manager = remote.getServicesManager();
             return ((LocalServicingAdapterFactory) getFactory()).getServicesManager(session, manager);
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+
+    public WorkflowManager getWorkflowManager() throws RepositoryException {
+        try {
+            RemoteWorkflowManager manager = remote.getWorkflowManager();
+            return ((LocalServicingAdapterFactory) getFactory()).getWorkflowManager(session, manager);
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
