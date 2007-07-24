@@ -25,8 +25,12 @@ import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
+import org.hippocms.repository.jr.servicing.DocumentManager;
 import org.hippocms.repository.jr.servicing.ServicesManager;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteDocumentManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteWorkflowManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingSession;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingNode;
@@ -53,7 +57,15 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
             return super.getNode(session, remote);
     }
 
+    public DocumentManager getDocumentManager(Session session, RemoteDocumentManager remote) {
+        return new ClientDocumentManager(session, remote, this);
+    }
+
     public ServicesManager getServicesManager(Session session, RemoteServicesManager remote) {
         return new ClientServicesManager(session, remote, this);
+    }
+
+    public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote) {
+        return new ClientWorkflowManager(session, remote, this);
     }
 }

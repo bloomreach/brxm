@@ -19,9 +19,15 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.LocalAdapterFactory;
 
+import org.hippocms.repository.jr.servicing.DocumentManager;
 import org.hippocms.repository.jr.servicing.ServicesManager;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteDocumentManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteWorkflowManager;
 
 public interface LocalServicingAdapterFactory extends LocalAdapterFactory {
+    public DocumentManager getDocumentManager(Session session, RemoteDocumentManager remote);
     public ServicesManager getServicesManager(Session session, RemoteServicesManager remote);
+    public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote);
 }

@@ -76,8 +76,8 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     protected String path;
     protected int depth;
     protected long resultNodeCount = -1L;
-    protected Map children = null;
-    protected Map properties = null;
+    protected Map<String,Node> children = null;
+    protected Map<String,Property> properties = null;
     protected Map facetValuesMap = null;
 
     protected ServicingNodeImpl(DecoratorFactory factory, Session session, Node node) {
@@ -479,7 +479,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         }
 
         public String getPath() throws RepositoryException {
-            return ServicingNodeImpl.this.getPath() + "/@" + getName();
+            return ServicingNodeImpl.this.getPath() + "/" + getName();
         }
 
         public String getName() throws RepositoryException {
@@ -590,7 +590,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     }
 
     class PropertyIteratorImpl implements PropertyIterator {
-        Iterator iter;
+        Iterator<Property> iter;
         int position;
 
         PropertyIteratorImpl() {
@@ -609,7 +609,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
 
         public Property nextProperty() {
             ++position;
-            return (Property) iter.next();
+            return iter.next();
         }
 
         public void remove() {
@@ -765,7 +765,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, Value value) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, value));
+            return properties.put(name, this.new PropertyImpl(name, value));
         }
         Property prop = node.setProperty(name, value);
         return factory.getPropertyDecorator(session, prop);
@@ -777,7 +777,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, Value value, int type) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, value));
+            return properties.put(name, this.new PropertyImpl(name, value));
         }
         Property prop = node.setProperty(name, value, type);
         return factory.getPropertyDecorator(session, prop);
@@ -789,7 +789,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, Value[] values) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, values));
+            return properties.put(name, this.new PropertyImpl(name, values));
         }
         Property prop = node.setProperty(name, values);
         return factory.getPropertyDecorator(session, prop);
@@ -801,7 +801,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, Value[] values, int type) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, values));
+            return properties.put(name, this.new PropertyImpl(name, values));
         }
         Property prop = node.setProperty(name, values, type);
         return factory.getPropertyDecorator(session, prop);
@@ -813,7 +813,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, String[] values) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, values));
+            return properties.put(name, this.new PropertyImpl(name, values));
         }
         Property prop = node.setProperty(name, values);
         return factory.getPropertyDecorator(session, prop);
@@ -825,7 +825,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, String[] values, int type) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, values));
+            return properties.put(name, this.new PropertyImpl(name, values));
         }
         Property prop = node.setProperty(name, values, type);
         return factory.getPropertyDecorator(session, prop);
@@ -837,7 +837,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, String value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
+            return properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
                     value)));
         }
         Property prop = node.setProperty(name, value);
@@ -850,7 +850,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, String value, int type) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, value));
+            return properties.put(name, this.new PropertyImpl(name, value));
         }
         Property prop = node.setProperty(name, value, type);
         return factory.getPropertyDecorator(session, prop);
@@ -862,7 +862,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, InputStream value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
+            return properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
                     value)));
         }
         Property prop = node.setProperty(name, value);
@@ -875,7 +875,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, boolean value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
+            return properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
                     value)));
         }
         Property prop = node.setProperty(name, value);
@@ -888,7 +888,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, double value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
+            return properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
                     value)));
         }
         Property prop = node.setProperty(name, value);
@@ -901,7 +901,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, long value) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
+            return properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
                     value)));
         }
         Property prop = node.setProperty(name, value);
@@ -914,7 +914,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, Calendar value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
+            return properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
                     value)));
         }
         Property prop = node.setProperty(name, value);
@@ -927,7 +927,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Property setProperty(String name, Node value) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
         if (node == null) {
-            return (Property) properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
+            return properties.put(name, this.new PropertyImpl(name, session.getValueFactory().createValue(
                     value.getUUID())));
         }
         Property prop = node.setProperty(name, ServicingNodeImpl.unwrap(value));
@@ -1001,6 +1001,13 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                 return child;
             }
         } else {
+          if(node == null) {
+            Node n = children.get(relPath);
+            if(n != null)
+              return n;
+            else
+              throw new PathNotFoundException();
+          } else {
             try {
                 Node n = node.getNode(relPath);
                 return factory.getNodeDecorator(session, n, getChildPath(relPath), getDepth() + 1);
@@ -1024,6 +1031,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                     throw ex;
                 }
             }
+          }
         }
     }
 
@@ -1055,7 +1063,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
      */
     public Property getProperty(String relPath) throws PathNotFoundException, RepositoryException {
         if (node == null) {
-            return (Property) properties.get(relPath);
+            return properties.get(relPath);
         }
         Property prop = node.getProperty(relPath);
         return factory.getPropertyDecorator(session, prop);
@@ -1131,7 +1139,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
      */
     public boolean hasNodes() throws RepositoryException {
         if (node == null) {
-            return true; // FIXME return !children.isEmpty();
+            return !children.isEmpty();
         }
         return node.hasNodes();
     }
@@ -1354,4 +1362,12 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         return ((ServicingWorkspaceImpl) getSession().getWorkspace()).getServicesManager().getService(this);
     }
 
+
+
+  public void save()
+    throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
+           ReferentialIntegrityException, VersionException, LockException, RepositoryException
+  {
+    super.save();
+  }
 }

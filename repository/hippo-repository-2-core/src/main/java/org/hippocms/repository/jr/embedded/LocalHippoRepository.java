@@ -48,7 +48,7 @@ import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 
 class LocalHippoRepository extends HippoRepository {
-    private final static String SVN = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     public final static String NS_URI = "http://www.hippocms.org/nt/1.0";
     public final static String NS_PREFIX = "hippo";
@@ -106,6 +106,7 @@ class LocalHippoRepository extends HippoRepository {
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
 
         Session session = login();
+
         try {
             Workspace workspace = session.getWorkspace();
 
@@ -122,7 +123,7 @@ class LocalHippoRepository extends HippoRepository {
         } catch (ParseException ex) {
             throw new RepositoryException("Could not preload repository with hippo node types", ex);
         } catch (InvalidNodeTypeDefException ex) {
-            log.error("Could not preload repository with hippo node types: " + ex.getMessage());
+            log.warn("Could not preload repository with hippo node types: " + ex.getMessage());
         }
 
         if (!session.getRootNode().hasNode("navigation")) {

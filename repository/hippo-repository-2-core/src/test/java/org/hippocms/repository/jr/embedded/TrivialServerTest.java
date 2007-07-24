@@ -22,9 +22,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import junit.framework.TestCase;
 
-/**
- * @version $Id$
- */
 public class TrivialServerTest extends TestCase {
 
     private HippoRepository server;

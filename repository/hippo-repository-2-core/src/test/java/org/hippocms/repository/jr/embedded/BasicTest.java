@@ -21,9 +21,6 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import junit.framework.TestCase;
 
-/**
- * @version $Id$
- */
 public class BasicTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 

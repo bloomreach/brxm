@@ -78,7 +78,7 @@ import org.hippocms.repository.jr.servicing.ServicingDecoratorFactory;
 import org.hippocms.repository.jr.servicing.client.ClientServicesAdapterFactory;
 
 class RemoteHippoRepository extends HippoRepository {
-    private final static String SVN = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     RemoteHippoRepository(String location) throws MalformedURLException, NotBoundException, RemoteException,
             RepositoryException {

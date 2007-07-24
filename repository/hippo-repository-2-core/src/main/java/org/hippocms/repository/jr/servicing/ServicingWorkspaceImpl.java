@@ -39,15 +39,19 @@ import javax.jcr.version.VersionException;
 
 import org.xml.sax.ContentHandler;
 
+import org.hippocms.repository.workflow.WorkflowManagerImpl;
+
 /**
  * Simple workspace decorator.
  */
 public class ServicingWorkspaceImpl extends AbstractDecorator implements ServicingWorkspace {
-    final static String CVS_ID = "$Id$";
+    final static String SVN_ID = "$Id$";
 
     /** The underlying workspace instance. */
     protected final Workspace workspace;
+    protected DocumentManager documentManager;
     protected ServicesManager servicesManager;
+    protected WorkflowManager workflowManager;
 
     /**
      * Creates a workspace decorator.
@@ -59,7 +63,9 @@ public class ServicingWorkspaceImpl extends AbstractDecorator implements Servici
     public ServicingWorkspaceImpl(DecoratorFactory factory, Session session, Workspace workspace) {
         super(factory, session);
         this.workspace = workspace;
+        documentManager = new DocumentManagerImpl(session);
         servicesManager = new ServicesManagerImpl(session);
+        workflowManager = new WorkflowManagerImpl(session);
     }
 
     /** {@inheritDoc} */
@@ -128,8 +134,16 @@ public class ServicingWorkspaceImpl extends AbstractDecorator implements Servici
         return factory.getQueryManagerDecorator(session, workspace.getQueryManager());
     }
 
+    public DocumentManager getDocumentManager() throws RepositoryException {
+        return documentManager;
+    }
+
     public ServicesManager getServicesManager() throws RepositoryException {
         return servicesManager;
+    }
+
+    public WorkflowManager getWorkflowManager() throws RepositoryException {
+        return workflowManager;
     }
 
     /**

@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
-    private final static String SVN = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     static String defaultLocation = null;
     static HippoRepository defaultRepository = null;

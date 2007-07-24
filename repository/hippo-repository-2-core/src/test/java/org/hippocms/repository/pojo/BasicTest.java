@@ -34,12 +34,9 @@ import org.jpox.store.OID;
 import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
 import org.hippocms.repository.jr.embedded.HippoRepository;
 import org.hippocms.repository.jr.embedded.Utilities;
-import org.hippocms.repository.workflows.TestService;
-import org.hippocms.repository.workflows.TestServiceImpl;
+import org.hippocms.repository.workflow.TestService;
+import org.hippocms.repository.workflow.TestServiceImpl;
 
-/**
- * @version $Id$
- */
 public class BasicTest extends TestCase {
     public void testPersistence() throws Exception {
         HippoRepository repository = (new HippoRepositoryFactory()).getHippoRepository(System.getProperty("user.dir"));
