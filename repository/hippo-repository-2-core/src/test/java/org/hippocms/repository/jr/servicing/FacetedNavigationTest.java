@@ -32,27 +32,14 @@ public class FacetedNavigationTest extends TestCase {
     public void testPaths() throws Exception {
         Exception firstException = null;
         HippoRepository repository = null;
-        Node root, node;
-        Item item;
         try {
             repository = HippoRepositoryFactory.getHippoRepository();
             assertNotNull(repository);
             Session session = repository.login();
-
-            // Setup
-            root = session.getRootNode();
-            node = root.addNode("files");
-            node = node.addNode("article");
-            node.setProperty("author","berry");
-            session.save();
-
-            node = root.getNode("navigation").getNode("byAuthorSource").getNode("berry");
+            Node node = session.getRootNode().getNode("navigation").getNode("byAuthorSource").getNode("resultset");
             assertNotNull(node);
-            item = session.getItem("/navigation/byAuthorSource/berry/hippo:facets");
-            assertNotNull(item);
-            System.err.println("BERRYBERRYBERRY "+item.getClass().getName());
-            assertFalse(item.isNode());
-
+            Item item = session.getItem("/navigation/byAuthorSource/resultset");
+            assertNotNull(node);
             session.logout();
         } catch (RepositoryException ex) {
             System.err.println("RepositoryException: "+ex.getMessage());
