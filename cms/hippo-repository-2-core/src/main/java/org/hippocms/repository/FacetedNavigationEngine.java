@@ -110,6 +110,10 @@ count template that go with them.
 
 public interface FacetedNavigationEngine
 {
+    class Count {
+      int count;
+    }
+
     /**
      * The faceted navigation engine is informed when a new principal is set up
      * in the repository.  For instance when a user with unique set of
@@ -248,6 +252,6 @@ public interface FacetedNavigationEngine
                      Map<String,String> facetsQuery,
                      Query openQuery,
                      Map<String,Map<String,Integer>> resultset,
-                     Map<Map<String,String>,Map<String,Map<String,Integer>>> futureFacetsQueries,
+                     Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
                      boolean hitsRequested) throws UnsupportedOperationException;
 }
