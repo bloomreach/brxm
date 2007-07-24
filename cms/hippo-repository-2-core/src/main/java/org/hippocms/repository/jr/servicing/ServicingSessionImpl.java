@@ -207,25 +207,13 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
           for (int i = 1; i < elements.length - 1; i++) {
             node = node.getNode(elements[i].getName().getLocalName());
           }
-String s = "hippo:" + elements[elements.length-1].getName().getLocalName();
-System.err.println("BERRY#1 "+s);
-for(javax.jcr.PropertyIterator iter = node.getProperties(); iter.hasNext(); )
-System.err.println("BERRY#2 "+iter.nextProperty().getName());
-
-          String lastElement = elements[elements.length-1].getName().getLocalName();
-          if(node.hasProperty(s)) {
-System.err.println("BERRY#3");
-            return node.getProperty(s);
-          } else {
-System.err.println("BERRY#4 "+lastElement);
-            try {
-              node = node.getNode(lastElement);
-              if (!(node instanceof ServicingNodeImpl))
-                node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1);
-              return node;
-            } catch(PathNotFoundException ex2) {
-              return node.getProperty(lastElement);
-            }
+          try {
+            node = node.getNode(elements[elements.length-1].getName().getLocalName());
+            if (!(node instanceof ServicingNodeImpl))
+              node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1);
+            return node;
+          } catch(PathNotFoundException ex2) {
+            return node.getProperty(elements[elements.length-1].getName().getLocalName());
           }
         } catch (ClassCastException ex2) {
           throw ex;
