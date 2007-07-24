@@ -67,4 +67,12 @@ public class ClientWorkflowManager extends ClientObject implements WorkflowManag
       throw new RemoteRuntimeException(ex);
     }
   }
+
+  public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
+    try {
+      return remote.getWorkflow(descriptor);
+    } catch(RemoteException ex) {
+      throw new RemoteRuntimeException(ex);
+    }
+  }
 }

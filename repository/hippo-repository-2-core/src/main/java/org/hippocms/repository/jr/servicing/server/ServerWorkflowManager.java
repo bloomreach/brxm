@@ -66,4 +66,14 @@ public class ServerWorkflowManager extends ServerObject
       throw getRepositoryException(ex);
     }
   }
+
+  public Workflow getWorkflow(WorkflowDescriptor descriptor)
+    throws RepositoryException, RemoteException
+  {
+    try {
+      return workflowManager.getWorkflow(descriptor);
+    } catch(RepositoryException ex) {
+      throw getRepositoryException(ex);
+    }
+  }
 }

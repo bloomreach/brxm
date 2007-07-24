@@ -111,123 +111,20 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import org.hippocms.repository.jr.embedded.HippoRepository;
 import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
 
-class ConnectionFactoryImpl implements ConnectionFactory {
-    private HippoRepository repository;
-    private String location;
-    private String username;
-    private String password;
-    private OMFContext omfContext;
-
-    public ConnectionFactoryImpl(OMFContext omfContext) throws RepositoryException {
-        this.omfContext = omfContext;
-        location = null;
-        String url = omfContext.getPersistenceConfiguration().getConnectionURL();
-        if (url != null) {
-            if (!url.startsWith("jcr"))
-                throw new JPOXException("JCR location invalid");
-            location = url.substring(4); // Omit the jcr prefix
-        }
-        if (location != null && !location.equals(""))
-            repository = (new HippoRepositoryFactory()).getHippoRepository(location);
-        else
-            repository = (new HippoRepositoryFactory()).getHippoRepository();
-        username = null; // FIXME
-        password = null; // FIXME
-    }
-
-    ConnectionFactoryImpl(String username, String password) throws RepositoryException {
-        repository = (new HippoRepositoryFactory()).getHippoRepository();
-        this.username = username;
-        this.password = password;
-    }
-
-    public ManagedConnection getConnection(ObjectManager om, Map options) {
-        ManagedConnection mconn = omfContext.getConnectionManager().allocateConnection(this, om, options);
-        return mconn;
-    }
-
-    public ManagedConnection createManagedConnection(Map transactionOptions) {
-        return new JCRManagedConnection();
-    }
-
-    class JCRManagedConnection implements ManagedConnection {
-        private Session session;
-        private boolean transactional;
-
-        public JCRManagedConnection() {
-            session = null;
-            transactional = false;
-        }
-
-        public Object getConnection() {
-            if (session == null) {
-                try {
-                    session = repository.login(username, password);
-                } catch (LoginException ex) {
-                    // FIXME: log something
-                    return null;
-                } catch (RepositoryException ex) {
-                    // FIXME: log something
-                    return null;
-                }
-            }
-            return session;
-        }
-
-        public javax.transaction.xa.XAResource getXAResource() {
-            if (session instanceof org.apache.jackrabbit.core.XASession)
-                return ((org.apache.jackrabbit.core.XASession) session).getXAResource();
-            else
-                return null;
-        }
-
-        public void release() {
-            try {
-                session.save();
-            } catch (AccessDeniedException ex) {
-                System.err.println(ex.getMessage());
-            } catch (ItemExistsException ex) {
-                System.err.println(ex.getMessage());
-            } catch (ConstraintViolationException ex) {
-                System.err.println(ex.getMessage());
-            } catch (InvalidItemStateException ex) {
-                System.err.println(ex.getMessage());
-            } catch (VersionException ex) {
-                System.err.println(ex.getMessage());
-            } catch (LockException ex) {
-                System.err.println(ex.getMessage());
-            } catch (NoSuchNodeTypeException ex) {
-                System.err.println(ex.getMessage());
-            } catch (RepositoryException ex) {
-                System.err.println(ex.getMessage());
-            }
-            /* FIXME:
-             if(!transactional)
-             close();
-             */
-        }
-
-        public void close() {
-            if (session != null) {
-                session.logout();
-                session = null;
-            }
-        }
-
-        public void setTransactional() {
-            transactional = true;
-        }
-    }
-}
-
 public class StoreManagerImpl extends StoreManager {
     private String username;
     private String password;
+    private Session session;
 
     public StoreManagerImpl(ClassLoaderResolver clr, ObjectManagerFactoryImpl omf, String username, String password)
             throws RepositoryException {
         super(clr, omf, username, password);
+	this.session = null;
         // FIXME: Provide a default AutoStartMechanism
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     public void close() {
@@ -248,7 +145,11 @@ public class StoreManagerImpl extends StoreManager {
 
     public ConnectionFactory getConnectionFactory() {
         try {
-            return new ConnectionFactoryImpl(getOMFContext()); // return new ConnectionFactoryImpl(username, password);
+	    // new ConnectionFactoryImpl(username, password);
+            if(session == null)
+                return new ConnectionFactoryImpl(getOMFContext());
+            else
+                return new ConnectionFactoryImpl(getOMFContext(), session);
         } catch (RepositoryException ex) {
             // FIXME: log something
             return null;

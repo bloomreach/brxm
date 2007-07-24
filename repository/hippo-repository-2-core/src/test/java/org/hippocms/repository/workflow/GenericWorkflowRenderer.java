@@ -19,27 +19,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.jr.servicing;
+package org.hippocms.repository.workflow;
 
-import java.rmi.RemoteException;
-
-import javax.jcr.Session;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.ValueFormatException;
 import javax.jcr.RepositoryException;
 
-import org.hippocms.repository.jr.servicing.ServicingNode;
-
-import org.hippocms.repository.workflow.Workflow;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
+import org.hippocms.repository.jr.embedded.HippoRepository;
 import org.hippocms.repository.workflow.WorkflowDescriptor;
 
-public interface WorkflowManager
+public abstract class GenericWorkflowRenderer
 {
-  public Session getSession() throws RepositoryException;
-  public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException;
-  public Workflow getWorkflow(String category, Node item) throws RepositoryException;
-  public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException;
+  protected WorkflowManager workflowManager;
+  protected WorkflowDescriptor workflowDescriptor;
+  public GenericWorkflowRenderer(WorkflowManager manager, WorkflowDescriptor descriptor) {
+    workflowManager = manager;
+    workflowDescriptor = descriptor;
+  }
+  public abstract void invoke() throws WorkflowException, RepositoryException;
 }
