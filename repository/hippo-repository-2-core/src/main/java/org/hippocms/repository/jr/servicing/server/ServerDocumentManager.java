@@ -23,11 +23,9 @@ package org.hippocms.repository.jr.servicing.server;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerObject;
-
 import org.hippocms.repository.jr.servicing.Document;
 import org.hippocms.repository.jr.servicing.DocumentManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteDocumentManager;

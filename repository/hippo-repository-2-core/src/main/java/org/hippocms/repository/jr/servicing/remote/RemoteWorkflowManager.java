@@ -24,11 +24,8 @@ package org.hippocms.repository.jr.servicing.remote;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import javax.jcr.Session;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippocms.repository.jr.servicing.Service;
 import org.hippocms.repository.workflow.Workflow;
 import org.hippocms.repository.workflow.WorkflowDescriptor;
 

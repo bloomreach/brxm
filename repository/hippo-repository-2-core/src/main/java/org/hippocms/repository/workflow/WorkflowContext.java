@@ -21,13 +21,12 @@
  */
 package org.hippocms.repository.workflow;
 
-import javax.jcr.Session;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
-import org.hippocms.repository.jr.servicing.ServicingSession;
-import org.hippocms.repository.jr.servicing.ServicingWorkspace;
 import org.hippocms.repository.jr.servicing.Document;
 import org.hippocms.repository.jr.servicing.DocumentManager;
+import org.hippocms.repository.jr.servicing.ServicingWorkspace;
 
 public final class WorkflowContext {
   Session session;

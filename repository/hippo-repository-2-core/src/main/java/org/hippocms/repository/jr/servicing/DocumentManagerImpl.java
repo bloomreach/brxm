@@ -21,31 +21,21 @@
  */
 package org.hippocms.repository.jr.servicing;
 
-import javax.jcr.Session;
-
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream; 
+import java.io.InputStream;
 import java.util.Properties;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
-
-import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.PersistenceManager;
 import javax.jdo.JDOHelper;
-import javax.jdo.Transaction;
-
-import org.jpox.PersistenceManagerFactoryImpl;
-import org.jpox.store.OID; 
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 
 import org.hippocms.repository.pojo.JCROID;
 import org.hippocms.repository.pojo.StoreManagerImpl;
-import org.hippocms.repository.jr.servicing.Document;
+import org.jpox.PersistenceManagerFactoryImpl;
 
 public class DocumentManagerImpl
   implements DocumentManager

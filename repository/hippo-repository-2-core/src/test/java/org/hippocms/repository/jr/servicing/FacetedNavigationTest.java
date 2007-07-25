@@ -15,13 +15,12 @@
  */
 package org.hippocms.repository.jr.servicing;
 
-import junit.framework.TestCase;
-
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Workspace;
-import javax.jcr.Item;
+
+import junit.framework.TestCase;
 
 import org.hippocms.repository.jr.embedded.HippoRepository;
 import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;

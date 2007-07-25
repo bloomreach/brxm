@@ -15,13 +15,7 @@
  */
 package org.hippocms.repository.jr.embedded;
 
-import java.io.Serializable;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.hippocms.repository.jr.servicing.ServiceImpl;
 

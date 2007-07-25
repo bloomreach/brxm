@@ -17,20 +17,15 @@ package org.hippocms.repository.jr.servicing.server;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.Session;
-import javax.jcr.RepositoryException;
-
-import org.apache.jackrabbit.core.XASession;
-import org.apache.jackrabbit.rmi.server.ServerSession;
-import org.apache.jackrabbit.rmi.remote.RemoteSession;
-
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.hippocms.repository.jr.servicing.remote.RemoteServicingSession;
-import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
+import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.rmi.server.ServerSession;
 import org.hippocms.repository.jr.servicing.ServicingSessionImpl;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingSession;
 
 public class ServerServicingSession extends ServerSession implements RemoteServicingSession {
     private ServicingSessionImpl session;

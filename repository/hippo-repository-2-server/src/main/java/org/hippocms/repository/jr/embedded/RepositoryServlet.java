@@ -16,39 +16,32 @@
 
 package org.hippocms.repository.jr.embedded;
 
-import java.rmi.Remote;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.StringTokenizer;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.rmi.RemoteException;
-import java.rmi.Naming;
-import java.net.MalformedURLException;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.hippocms.repository.jr.embedded.HippoRepository;
-import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
-import org.hippocms.repository.jr.servicing.ServicingNode;
-import org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.hippocms.repository.jr.servicing.ServicingNode;
+import org.hippocms.repository.jr.servicing.server.ServerServicingAdapterFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RepositoryServlet extends HttpServlet {
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);

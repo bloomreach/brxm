@@ -21,23 +21,21 @@
  */
 package org.hippocms.repository.workflow;
 
-import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import junit.framework.TestCase;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import junit.framework.TestCase;
 
 import org.hippocms.repository.jr.embedded.HippoRepository;
 import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
 import org.hippocms.repository.jr.servicing.DocumentManager;
-import org.hippocms.repository.jr.servicing.WorkflowManager;
-import org.hippocms.repository.workflow.WorkflowDescriptor;
-import org.hippocms.repository.jr.servicing.ServicingSession;
 import org.hippocms.repository.jr.servicing.ServicingWorkspace;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
 
 public class MyWorkflowTest extends TestCase
 {

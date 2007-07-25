@@ -21,7 +21,6 @@
  */
 package org.hippocms.repository.jr.servicing;
 
-import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
 public interface DocumentManager

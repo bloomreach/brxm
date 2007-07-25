@@ -16,11 +16,8 @@
 
 package org.hippocms.repository.jr.embedded;
 
-import java.io.Serializable;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
 import java.util.Random;
 
 public class TestImpl extends UnicastRemoteObject implements Test {

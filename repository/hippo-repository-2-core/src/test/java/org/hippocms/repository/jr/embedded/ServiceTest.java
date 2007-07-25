@@ -18,25 +18,16 @@ package org.hippocms.repository.jr.embedded;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Workspace;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import java.rmi.RemoteException;
-import java.rmi.AlreadyBoundException;
-
-import org.hippocms.repository.jr.servicing.ServicingWorkspace;
-import org.hippocms.repository.jr.servicing.ServicingNode;
-import org.hippocms.repository.jr.servicing.Service;
-
-import org.apache.jackrabbit.core.XASession;
-
+import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.SystemException;
 import javax.transaction.xa.XAResource;
-// FIXME: depend only on JTA, not on Atomikos
+
+import junit.framework.TestCase;
+
+import org.apache.jackrabbit.core.XASession;
+import org.hippocms.repository.jr.servicing.ServicingNode;
+
 import com.atomikos.icatch.jta.UserTransactionManager;
 
 public class ServiceTest extends TestCase {

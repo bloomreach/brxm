@@ -21,7 +21,6 @@
  */
 package org.hippocms.repository.workflow;
 
-import java.io.Serializable;
 
 public class TestServiceObject {
     public String content;

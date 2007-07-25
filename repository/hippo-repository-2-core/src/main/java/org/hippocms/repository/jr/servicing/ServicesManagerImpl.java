@@ -16,20 +16,12 @@
 package org.hippocms.repository.jr.servicing;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
-
-import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Workspace;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
 public class ServicesManagerImpl
   implements ServicesManager
