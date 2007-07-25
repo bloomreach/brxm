@@ -15,9 +15,8 @@
  */
 package org.hippocms.repository.jr.servicing;
 
-import javax.jcr.Node;
-import javax.jcr.Workspace;
 import javax.jcr.RepositoryException;
+import javax.jcr.Workspace;
 
 public interface ServicingWorkspace extends Workspace {
     public DocumentManager getDocumentManager() throws RepositoryException;

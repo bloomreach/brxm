@@ -26,16 +26,13 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 
 import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
-
-import org.hippocms.repository.workflow.Workflow;
-import org.hippocms.repository.workflow.WorkflowDescriptor;
 import org.hippocms.repository.jr.servicing.WorkflowManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteWorkflowManager;
+import org.hippocms.repository.workflow.Workflow;
+import org.hippocms.repository.workflow.WorkflowDescriptor;
 
 public class ClientWorkflowManager extends ClientObject implements WorkflowManager
 {

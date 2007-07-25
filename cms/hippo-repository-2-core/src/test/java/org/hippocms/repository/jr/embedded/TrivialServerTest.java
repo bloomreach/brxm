@@ -15,11 +15,12 @@
  */
 package org.hippocms.repository.jr.embedded;
 
-import java.io.File;
 import java.io.IOException;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
 import junit.framework.TestCase;
 
 public class TrivialServerTest extends TestCase {

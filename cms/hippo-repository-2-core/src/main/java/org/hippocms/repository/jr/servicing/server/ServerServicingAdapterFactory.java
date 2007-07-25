@@ -17,25 +17,23 @@ package org.hippocms.repository.jr.servicing.server;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.Session;
 import javax.jcr.Node;
+import javax.jcr.Session;
 import javax.jcr.Workspace;
 
-import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
-import org.apache.jackrabbit.rmi.server.ServerWorkspace;
+import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
-import org.apache.jackrabbit.rmi.remote.RemoteNode;
-
+import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.hippocms.repository.jr.servicing.DocumentManager;
 import org.hippocms.repository.jr.servicing.ServicesManager;
-import org.hippocms.repository.jr.servicing.WorkflowManager;
-import org.hippocms.repository.jr.servicing.ServicingSessionImpl;
 import org.hippocms.repository.jr.servicing.ServicingNodeImpl;
+import org.hippocms.repository.jr.servicing.ServicingSessionImpl;
 import org.hippocms.repository.jr.servicing.ServicingWorkspaceImpl;
-import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteDocumentManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
 import org.hippocms.repository.jr.servicing.remote.RemoteWorkflowManager;
 
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {

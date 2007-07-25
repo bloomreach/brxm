@@ -18,16 +18,11 @@ package org.hippocms.repository.jr.servicing.client;
 import java.rmi.RemoteException;
 
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.apache.jackrabbit.rmi.client.ClientSession;
-import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
-
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.hippocms.repository.jr.servicing.ServicingSession;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicingSession;
 

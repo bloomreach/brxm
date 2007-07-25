@@ -24,8 +24,6 @@ package org.hippocms.repository.workflow;
 import javax.jcr.RepositoryException;
 
 import org.hippocms.repository.jr.servicing.WorkflowManager;
-import org.hippocms.repository.jr.embedded.HippoRepository;
-import org.hippocms.repository.workflow.WorkflowDescriptor;
 
 public class MyWorkflowRenderer extends GenericWorkflowRenderer
 {

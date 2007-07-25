@@ -19,13 +19,10 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import javax.jcr.RepositoryException;
-
-import org.apache.jackrabbit.rmi.remote.RemoteSession;
-
-import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
+
+import org.apache.jackrabbit.rmi.remote.RemoteSession;
 
 public interface RemoteServicingSession extends RemoteSession, Remote, Serializable {
     public void commit(Xid xid, boolean onePhase) throws RemoteException;

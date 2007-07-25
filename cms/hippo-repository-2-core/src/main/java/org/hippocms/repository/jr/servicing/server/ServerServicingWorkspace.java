@@ -17,20 +17,17 @@ package org.hippocms.repository.jr.servicing.server;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.Workspace;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
-import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
-
 import org.hippocms.repository.jr.servicing.DocumentManager;
 import org.hippocms.repository.jr.servicing.ServicesManager;
-import org.hippocms.repository.jr.servicing.WorkflowManager;
 import org.hippocms.repository.jr.servicing.ServicingWorkspaceImpl;
-import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
-import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
+import org.hippocms.repository.jr.servicing.WorkflowManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteDocumentManager;
 import org.hippocms.repository.jr.servicing.remote.RemoteServicesManager;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingAdapterFactory;
+import org.hippocms.repository.jr.servicing.remote.RemoteServicingWorkspace;
 import org.hippocms.repository.jr.servicing.remote.RemoteWorkflowManager;
 
 public class ServerServicingWorkspace extends ServerWorkspace implements RemoteServicingWorkspace {

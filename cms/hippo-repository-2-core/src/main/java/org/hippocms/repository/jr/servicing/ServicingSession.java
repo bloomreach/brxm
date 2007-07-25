@@ -16,7 +16,7 @@
 package org.hippocms.repository.jr.servicing;
 
 import javax.jcr.Session;
-import javax.jcr.RepositoryException;
+
 import org.apache.jackrabbit.core.XASession;
 
 public interface ServicingSession extends Session, XASession {

@@ -15,14 +15,9 @@
  */
 package org.hippocms.repository.jr.servicing;
 
-import java.lang.Object;
-import java.lang.String;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.apache.jackrabbit.core.XASession;
-import org.xml.sax.SAXException;
-import org.xml.sax.ContentHandler;
 import java.security.AccessControlException;
 
 import javax.jcr.AccessDeniedException;
@@ -36,7 +31,6 @@ import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -46,26 +40,14 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
+import javax.transaction.SystemException;
+import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.core.XASession;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
-
-// FIXME: depend only on JTA, not on Atomikos
-import com.atomikos.icatch.config.TSInitInfo;
-import com.atomikos.icatch.config.UserTransactionService;
-import com.atomikos.icatch.config.UserTransactionServiceImp;
+//FIXME: depend only on JTA, not on Atomikos
 import com.atomikos.icatch.jta.UserTransactionManager;
 
 /**

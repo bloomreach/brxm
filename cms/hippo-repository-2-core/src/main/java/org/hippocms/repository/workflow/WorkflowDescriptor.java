@@ -23,14 +23,10 @@ package org.hippocms.repository.workflow;
 
 import java.io.Serializable;
 
-import javax.jcr.Session;
 import javax.jcr.Node;
-import javax.jcr.Workspace;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.ValueFormatException;
 import javax.jcr.RepositoryException;
-
-import org.hippocms.repository.jr.servicing.WorkflowManager;
+import javax.jcr.ValueFormatException;
 
 public class WorkflowDescriptor
   implements Serializable

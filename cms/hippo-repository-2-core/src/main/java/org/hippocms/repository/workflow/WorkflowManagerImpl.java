@@ -21,21 +21,16 @@
  */
 package org.hippocms.repository.workflow;
 
-import java.rmi.RemoteException;
-
-import javax.jcr.Session;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.ValueFormatException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.ValueFormatException;
 
 import org.hippocms.repository.jr.servicing.ServicingNode;
 import org.hippocms.repository.jr.servicing.WorkflowManager;
- 
-import org.hippocms.repository.workflow.Workflow;
-import org.hippocms.repository.workflow.WorkflowDescriptor;
 
 public class WorkflowManagerImpl
   implements WorkflowManager

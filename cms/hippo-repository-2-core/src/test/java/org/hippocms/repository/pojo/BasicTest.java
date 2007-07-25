@@ -15,26 +15,20 @@
  */
 package org.hippocms.repository.pojo;
 
-import java.io.File;
-import java.io.IOException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import junit.framework.TestCase;
-import java.util.Properties;
-import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.PersistenceManager;
-import javax.jdo.JDOHelper;
-
-import javax.jdo.Transaction;
 import java.io.InputStream;
+import java.util.Properties;
 
-import org.jpox.store.OID;
+import javax.jcr.Session;
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Transaction;
 
-import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
+import junit.framework.TestCase;
+
 import org.hippocms.repository.jr.embedded.HippoRepository;
+import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
 import org.hippocms.repository.jr.embedded.Utilities;
-import org.hippocms.repository.workflow.TestService;
 import org.hippocms.repository.workflow.TestServiceImpl;
 
 public class BasicTest extends TestCase {

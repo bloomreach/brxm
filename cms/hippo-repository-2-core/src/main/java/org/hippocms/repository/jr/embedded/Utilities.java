@@ -15,16 +15,14 @@
  */
 package org.hippocms.repository.jr.embedded;
 
+import java.io.PrintStream;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
-
-import java.io.PrintStream;
 
 public class Utilities {
     private static void dump(Node node, int level) throws RepositoryException {
