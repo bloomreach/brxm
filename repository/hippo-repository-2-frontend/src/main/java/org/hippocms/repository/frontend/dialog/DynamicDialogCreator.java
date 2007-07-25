@@ -17,49 +17,71 @@ package org.hippocms.repository.frontend.dialog;
 
 import java.lang.reflect.Constructor;
 
-import org.apache.wicket.Application;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.hippocms.repository.frontend.dialog.AbstractDialog;
-import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.dialog.error.ErrorDialog;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
+import org.hippocms.repository.frontend.update.IUpdatable;
 
-public class DynamicDialogCreator implements PageCreator {
+public class DynamicDialogCreator implements PageCreator, IUpdatable {
     private static final long serialVersionUID = 1L;
 
     private DialogWindow window;
     private JcrNodeModel model;
 
+    private String classname;
+
     public DynamicDialogCreator(DialogWindow window, JcrNodeModel model) {
         this.window = window;
         this.model = model;
+        Node node = model.getNode();
+        try {
+            if (node.hasProperty("renderer")) {
+                classname = node.getProperty("renderer").getString();
+            } else {
+                classname = null;
+            }
+        } catch (RepositoryException e) {
+            classname = "org.hippocms.repository.frontend.dialog.error.ErrorDialog";
+        }
+
     }
 
     public Page createPage() {
-        String classname = getClassname();
-        try {
-            Class dialogClass = Class.forName(classname);
-            Constructor constructor = dialogClass.getConstructor(new Class[] { window.getClass(), model.getClass() });
-            return (AbstractDialog) constructor.newInstance(new Object[] { window, model });
-        } catch (Exception e) {
-            ErrorDialog dialog = new ErrorDialog(window, model);
-            dialog.setMessage(e.getClass().getName() + ": " + e.getMessage());
-            return dialog;
+        Page result = null;
+        if (classname != null) {
+            try {
+                Class dialogClass = Class.forName(classname);
+                Class[] formalArgs = new Class[] { window.getClass(), model.getClass() };
+                Constructor constructor = dialogClass.getConstructor(formalArgs);
+                Object[] actualArgs = new Object[] { window, model };
+                result = (AbstractDialog) constructor.newInstance(actualArgs);
+            } catch (Exception e) {
+                String msg = e.getClass().getName() + ": " + e.getMessage();
+                result = new ErrorDialog(window, model, msg);
+            }
+        } else {
+           String msg = "Node has no associated renderer"; 
+           result = new ErrorDialog(window, model, msg); 
         }
+        return result;
     }
-    
-    private String getClassname() {   
-        WebApplication application = (WebApplication)Application.get();
-        String className = application.getInitParameter("dynamicDialog");
-        if (className == null || className.equals("")) {
-            className = application.getServletContext().getInitParameter("dynamicDialog");
+
+    public void update(AjaxRequestTarget target, JcrNodeModel model) {
+        Node node = model.getNode();
+        try {
+            if (node.hasProperty("renderer")) {
+                classname = node.getProperty("renderer").getString();
+            } else {
+                classname = null;
+            }
+        } catch (RepositoryException e) {
+            classname = "org.hippocms.repository.frontend.dialog.error.ErrorDialog";
         }
-        if (className == null || className.equals("")) {
-            className = "null";
-        }
-        return className;
     }
 
 }

@@ -30,10 +30,6 @@ import org.hippocms.repository.frontend.update.UpdateManager;
 public class Browser extends WebPage {
     private static final long serialVersionUID = 1L;
     
-    private EditorPanel editorPanel;
-    private TreePanel treePanel;
-    private Menu menu;
-
     public Browser() throws RepositoryException {
         BrowserSession session = (BrowserSession)getSession();
         UpdateManager updateManager = session.getUpdateManager();
@@ -41,23 +37,25 @@ public class Browser extends WebPage {
         Node root = session.getJcrSession().getRootNode();
         JcrNodeModel model = new JcrNodeModel(root);
 
-        treePanel = new TreePanel("treePanel", model);
+        TreePanel treePanel = new TreePanel("treePanel", model);
         updateManager.addUpdatable(treePanel);
         add(treePanel);
         
-        editorPanel = new EditorPanel("editorPanel", model);
+        EditorPanel editorPanel = new EditorPanel("editorPanel", model);
         updateManager.addUpdatable(editorPanel);
         add(editorPanel);
         
-        menu = new Menu("menu", model); 
+        Menu menu = new Menu("menu", model); 
         updateManager.addUpdatable(menu);
         add(menu);
+               
+        DialogWindow workflowDialog = new DialogWindow("workflow-dialog", model);
+        DynamicDialogCreator dialogCreator = new DynamicDialogCreator(workflowDialog, model);
+        workflowDialog.setPageCreator(dialogCreator);
         
-        
-        DialogWindow dynamicDialog = new DialogWindow("dynamic-dialog", model);
-        dynamicDialog.setPageCreator(new DynamicDialogCreator(dynamicDialog, model));
-        add(dynamicDialog);
-        add(dynamicDialog.dialogLink("dynamic-dialog-link"));
+        updateManager.addUpdatable(dialogCreator);
+        add(workflowDialog);
+        add(workflowDialog.dialogLink("workflow-dialog-link"));
     }
 
 }

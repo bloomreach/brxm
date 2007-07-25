@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.frontend.dialog.error;
+package org.hippocms.repository.frontend.workflow.foo;
 
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.PropertyModel;
 import org.hippocms.repository.frontend.dialog.AbstractDialog;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 
-public class ErrorDialog extends AbstractDialog {
+public class FooDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
-        
-    public ErrorDialog(DialogWindow dialogWindow, JcrNodeModel model, String message) {
+            
+    public FooDialog(DialogWindow dialogWindow, JcrNodeModel model) {
         super(dialogWindow, model);
-        add(new Label("message", message));
-        dialogWindow.setTitle("Error");
+        add(new Label("message", new PropertyModel(this, "message")));              
+        dialogWindow.setTitle("Foo");
     }
  
 
@@ -36,6 +37,17 @@ public class ErrorDialog extends AbstractDialog {
     }
 
     public void cancel() {
+    }
+
+    public String getMessage()  {
+        try {
+            return "Foo " + model.getNode().getPath();
+        } catch (RepositoryException e) {
+            return e.getMessage();
+        }
+    }
+
+    public void setMessage(String message) {
     }
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.frontend.dialog.move;
+package org.hippocms.repository.frontend.workflow.bar;
 
 import javax.jcr.RepositoryException;
 
@@ -23,13 +23,13 @@ import org.hippocms.repository.frontend.dialog.AbstractDialog;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 
-public class MoveDialog extends AbstractDialog {
+public class BarDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
             
-    public MoveDialog(DialogWindow dialogWindow, JcrNodeModel model) {
+    public BarDialog(DialogWindow dialogWindow, JcrNodeModel model) {
         super(dialogWindow, model);
         add(new Label("message", new PropertyModel(this, "message")));              
-        dialogWindow.setTitle("Move");
+        dialogWindow.setTitle("bar");
     }
  
 
@@ -41,7 +41,7 @@ public class MoveDialog extends AbstractDialog {
 
     public String getMessage()  {
         try {
-            return "Moving " + model.getNode().getPath();
+            return "Barring: " + model.getNode().getPath();
         } catch (RepositoryException e) {
             return e.getMessage();
         }
