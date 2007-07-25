@@ -26,7 +26,7 @@ public class Main extends WebApplication {
     
     protected void init() {
         super.init();
-        getDebugSettings().setAjaxDebugModeEnabled(true);
+        getDebugSettings().setAjaxDebugModeEnabled(false);
     }
 
     public Class getHomePage() {
