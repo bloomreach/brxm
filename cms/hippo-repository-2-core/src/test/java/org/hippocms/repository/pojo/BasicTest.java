@@ -33,7 +33,7 @@ import org.hippocms.repository.workflow.TestServiceImpl;
 
 public class BasicTest extends TestCase {
     public void testPersistence() throws Exception {
-        HippoRepository repository = (new HippoRepositoryFactory()).getHippoRepository(System.getProperty("user.dir"));
+        HippoRepository repository = HippoRepositoryFactory.getHippoRepository(System.getProperty("user.dir"));
         HippoRepositoryFactory.setDefaultRepository(repository);
         Session session = repository.login();
         session.getRootNode().addNode("files");
