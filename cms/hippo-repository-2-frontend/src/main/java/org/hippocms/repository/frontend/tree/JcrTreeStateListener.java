@@ -10,9 +10,9 @@ import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 
 public class JcrTreeStateListener implements ITreeStateListener, IClusterable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public void nodeExpanded(TreeNode treeNodeModel) {
+    public void nodeExpanded(TreeNode treeNodeModel) {
         JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
         Node node = nodeModel.getNode();
         if (node != null) {
@@ -37,24 +37,24 @@ public class JcrTreeStateListener implements ITreeStateListener, IClusterable {
         nodeModel.removeAllChildren();
     }
 
-	public void allNodesCollapsed() {
-		// TODO Auto-generated method stub
+    public void allNodesCollapsed() {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void allNodesExpanded() {
-		// TODO Auto-generated method stub
+    public void allNodesExpanded() {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void nodeSelected(TreeNode node) {
-		// TODO Auto-generated method stub
+    public void nodeSelected(TreeNode node) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void nodeUnselected(TreeNode node) {
-		// TODO Auto-generated method stub
+    public void nodeUnselected(TreeNode node) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
 }

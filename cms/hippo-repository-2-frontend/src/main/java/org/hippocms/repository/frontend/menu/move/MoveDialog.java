@@ -19,37 +19,43 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippocms.repository.frontend.BrowserSession;
 import org.hippocms.repository.frontend.dialog.AbstractDialog;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 import org.hippocms.repository.frontend.tree.JcrTreeStateListener;
-import org.hippocms.repository.frontend.tree.TreeView;
+import org.hippocms.repository.frontend.update.IUpdatable;
 
-public class MoveDialog extends AbstractDialog {
+public class MoveDialog extends AbstractDialog implements IUpdatable {
     private static final long serialVersionUID = 1L;
-    
-	private MoveTargetTreeView tree;
 
-	public MoveDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
+    private MoveTargetTreeView tree;
+    private MoveDialogInfoPanel infoPanel;
+
+    public MoveDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
         super(dialogWindow, model);
         dialogWindow.setTitle("Move selected node");
-        
-        BrowserSession sessionProvider = (BrowserSession)getSession();
+
+        BrowserSession sessionProvider = (BrowserSession) getSession();
         Node root;
-		try {
-			root = sessionProvider.getJcrSession().getRootNode();
-	        JcrNodeModel rootModel = new JcrNodeModel(root);
-	        DefaultTreeModel treeModel = new DefaultTreeModel(rootModel);
-	        tree = new MoveTargetTreeView("tree", treeModel);
-			tree.getTreeState().addTreeStateListener(new JcrTreeStateListener());
-	        tree.getTreeState().expandNode(rootModel);
-	        add(tree);
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+        try {
+            root = sessionProvider.getJcrSession().getRootNode();
+            JcrNodeModel rootModel = new JcrNodeModel(root);
+            DefaultTreeModel treeModel = new DefaultTreeModel(rootModel);
+            tree = new MoveTargetTreeView("tree", treeModel, this);
+            tree.getTreeState().addTreeStateListener(new JcrTreeStateListener());
+            tree.getTreeState().expandNode(rootModel);
+            add(tree);
+
+            infoPanel = new MoveDialogInfoPanel("info", model);
+            add(infoPanel);
+
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         if (model.getNode() == null) {
             ok.setVisible(false);
         }
@@ -57,18 +63,17 @@ public class MoveDialog extends AbstractDialog {
 
     public void ok() throws RepositoryException {
         if (model.getNode() != null) {
-        	JcrNodeModel targetNodeModel = (JcrNodeModel) tree.getSelectedNode();
-        	String target = targetNodeModel.getNode().getPath() + "/" + model.getNode().getName();
-        	System.out.println(target);
-            BrowserSession sessionProvider = (BrowserSession)getSession();
-            sessionProvider.getJcrSession().move(model.getNode().getPath(), target);
+            JcrNodeModel targetNodeModel = (JcrNodeModel) tree.getSelectedNode();
+            String destination = targetNodeModel.getNode().getPath() + "/" + model.getNode().getName();
+            BrowserSession sessionProvider = (BrowserSession) getSession();
+            sessionProvider.getJcrSession().move(model.getNode().getPath(), destination);
         }
     }
 
     public void cancel() {
     }
 
-    public String getMessage()  {
+    public String getMessage() {
         try {
             return "Move " + model.getNode().getPath();
         } catch (RepositoryException e) {
@@ -77,6 +82,20 @@ public class MoveDialog extends AbstractDialog {
     }
 
     public void setMessage(String message) {
+    }
+
+    public void update(AjaxRequestTarget target, JcrNodeModel model) {
+        if (model != null) {
+            try {
+                infoPanel.setDestinationPath(model.getNode().getPath() + "/" + this.model.getNode().getName());
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        if (target != null) {
+            target.addComponent(infoPanel);
+        }
     }
 
 }

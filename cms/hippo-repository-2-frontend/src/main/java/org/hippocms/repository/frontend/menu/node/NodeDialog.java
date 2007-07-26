@@ -28,11 +28,11 @@ public class NodeDialog extends AbstractDialog {
 
     private String name;
     private String type = "nt:unstructured";
- 
+
     public NodeDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
         super(dialogWindow, model);
         dialogWindow.setTitle("Add a new Node");
-        
+
         add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
         add(new AjaxEditableLabel("type", new PropertyModel(this, "type")));
         if (model.getNode() == null) {
