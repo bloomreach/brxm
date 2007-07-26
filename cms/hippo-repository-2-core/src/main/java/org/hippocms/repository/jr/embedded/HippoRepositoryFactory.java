@@ -37,7 +37,7 @@ public class HippoRepositoryFactory {
         defaultRepository = repository;
     }
 
-    public HippoRepositoryFactory() {
+    private HippoRepositoryFactory() {
     }
 
     public static HippoRepository getHippoRepository() throws RepositoryException {
@@ -62,7 +62,7 @@ public class HippoRepositoryFactory {
             return defaultRepository;
         } 
         
-        // remote
+        // remote?
         if (location.startsWith("rmi://")) {
             try {
                 return new RemoteHippoRepository(location);
@@ -78,10 +78,12 @@ public class HippoRepositoryFactory {
             }
         }
         
-        // local
+        // embedded/local default
         if (defaultRepository == null && location.equals(defaultLocation)) {
             return getHippoRepository();
         }
+        
+        // embedded/local with location
         return new LocalHippoRepository(location);
     }
 }
