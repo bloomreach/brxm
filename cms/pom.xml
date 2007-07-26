@@ -21,7 +21,7 @@
 
   <groupId>org.hippocms</groupId>
   <artifactId>hippo-repository-2</artifactId>
-  <version>1.01.00-dev</version>
+  <version>2.01.00-dev</version>
   <name>Hippo Repository 2</name>
   <packaging>pom</packaging>
 
