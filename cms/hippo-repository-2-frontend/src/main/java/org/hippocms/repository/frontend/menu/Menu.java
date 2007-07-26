@@ -23,6 +23,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.menu.delete.DeleteDialog;
+import org.hippocms.repository.frontend.menu.move.MoveDialog;
 import org.hippocms.repository.frontend.menu.node.NodeDialog;
 import org.hippocms.repository.frontend.menu.property.PropertyDialog;
 import org.hippocms.repository.frontend.menu.reset.ResetDialog;
@@ -56,6 +57,16 @@ public class Menu extends Panel implements IUpdatable {
         });
         add(deleteDialog);
         add(deleteDialog.dialogLink("delete-dialog-link"));
+        
+        final DialogWindow moveDialog = new DialogWindow("move-dialog", model);
+        moveDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new MoveDialog(moveDialog, model);
+            }
+        });
+        add(moveDialog);
+        add(moveDialog.dialogLink("move-dialog-link"));
 
         final DialogWindow propertyDialog = new DialogWindow("property-dialog", model);
         propertyDialog.setPageCreator(new ModalWindow.PageCreator() {
