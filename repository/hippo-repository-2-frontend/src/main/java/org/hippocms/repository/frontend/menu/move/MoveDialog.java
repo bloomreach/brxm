@@ -15,26 +15,41 @@
  */
 package org.hippocms.repository.frontend.menu.move;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.swing.tree.DefaultTreeModel;
 
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.PropertyModel;
 import org.hippocms.repository.frontend.BrowserSession;
 import org.hippocms.repository.frontend.dialog.AbstractDialog;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
+import org.hippocms.repository.frontend.tree.JcrTreeStateListener;
+import org.hippocms.repository.frontend.tree.TreeView;
 
 public class MoveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
     
-    private String target;
+	private MoveTargetTreeView tree;
 
 	public MoveDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
         super(dialogWindow, model);
         dialogWindow.setTitle("Move selected node");
         
-        add(new AjaxEditableLabel("target", new PropertyModel(this, "target")));
+        BrowserSession sessionProvider = (BrowserSession)getSession();
+        Node root;
+		try {
+			root = sessionProvider.getJcrSession().getRootNode();
+	        JcrNodeModel rootModel = new JcrNodeModel(root);
+	        DefaultTreeModel treeModel = new DefaultTreeModel(rootModel);
+	        tree = new MoveTargetTreeView("tree", treeModel);
+			tree.getTreeState().addTreeStateListener(new JcrTreeStateListener());
+	        tree.getTreeState().expandNode(rootModel);
+	        add(tree);
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         if (model.getNode() == null) {
             ok.setVisible(false);
         }
@@ -42,7 +57,9 @@ public class MoveDialog extends AbstractDialog {
 
     public void ok() throws RepositoryException {
         if (model.getNode() != null) {
-        	System.out.println("move to " + getTarget());
+        	JcrNodeModel targetNodeModel = (JcrNodeModel) tree.getSelectedNode();
+        	String target = targetNodeModel.getNode().getPath() + "/" + model.getNode().getName();
+        	System.out.println(target);
             BrowserSession sessionProvider = (BrowserSession)getSession();
             sessionProvider.getJcrSession().move(model.getNode().getPath(), target);
         }
@@ -61,19 +78,5 @@ public class MoveDialog extends AbstractDialog {
 
     public void setMessage(String message) {
     }
-
-    /**
-	 * @return the target
-	 */
-	public String getTarget() {
-		return target;
-	}
-
-	/**
-	 * @param target the target to set
-	 */
-	public void setTarget(String target) {
-		this.target = target;
-	}
 
 }
