@@ -48,16 +48,18 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         this.omfContext = omfContext;
         location = null;
         String url = omfContext.getPersistenceConfiguration().getConnectionURL();
-        if (url != null) {
-            if (!url.startsWith("jcr"))
+        if (url != null) { 
+            if (!url.startsWith("jcr")) {
                 throw new JPOXException("JCR location invalid");
+            }
             location = url.substring(4); // Omit the jcr prefix
         }
-        if (location != null && !location.equals(""))
+        if (location != null && !location.equals("")) {
             repository = HippoRepositoryFactory.getHippoRepository(location);
-        else
+        } else {
             repository = HippoRepositoryFactory.getHippoRepository();
-	session  = null;
+        }
+        session = null;
         username = null; // FIXME
         password = null; // FIXME
     }
@@ -67,11 +69,12 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         location = null;
         String url = omfContext.getPersistenceConfiguration().getConnectionURL();
         if (url != null) {
-            if (!url.startsWith("jcr"))
+            if (!url.startsWith("jcr")) {
                 throw new JPOXException("JCR location invalid");
+            }
         }
-	repository = null;
-	this.session = session;
+        repository = null;
+        this.session = session;
         username = null; // FIXME
         password = null; // FIXME
     }
@@ -116,10 +119,11 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         }
 
         public javax.transaction.xa.XAResource getXAResource() {
-            if (session instanceof org.apache.jackrabbit.core.XASession)
+            if (session instanceof org.apache.jackrabbit.core.XASession) {
                 return ((org.apache.jackrabbit.core.XASession) session).getXAResource();
-            else
+            } else {
                 return null;
+            }
         }
 
         public void release() {
