@@ -14,7 +14,13 @@
     <init-param>
       <param-name>repository-directory</param-name>
       <param-value>WEB-INF/storage</param-value>
-      <description>The location where to store files</description>
+      <description>The (relative) location where to store files</description>
+    </init-param>
+    <init-param>
+      <param-name>repository-config</param-name>
+      <param-value>repository.xml</param-value>
+      <description>The location of the repository configuration file. Unless the location
+      starts with file://, the location is retreived with getResourceAsStream().</description>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
