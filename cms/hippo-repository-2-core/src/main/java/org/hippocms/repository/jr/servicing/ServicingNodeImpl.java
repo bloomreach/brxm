@@ -1138,9 +1138,14 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
      * @inheritDoc
      */
     public boolean hasNodes() throws RepositoryException {
-        if (node == null) {
-            return !children.isEmpty();
+
+        // FIXME: doesn't really check if the node has childeren. A result set can be empty 
+        if (isNodeType("hippo:facetsearch") || isNodeType("hippo:facetresult")) {
+            return true;
         }
+        //if (node == null) {
+        //    return !children.isEmpty();
+        //}
         return node.hasNodes();
     }
 
