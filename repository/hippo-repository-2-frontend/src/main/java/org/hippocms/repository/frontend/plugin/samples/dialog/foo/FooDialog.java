@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.frontend.workflow.foo;
+package org.hippocms.repository.frontend.plugin.samples.dialog.foo;
 
 import javax.jcr.RepositoryException;
 

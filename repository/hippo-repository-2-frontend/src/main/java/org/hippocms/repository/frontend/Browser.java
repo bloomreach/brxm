@@ -19,11 +19,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.WebPage;
-import org.hippocms.repository.frontend.dialog.DialogWindow;
-import org.hippocms.repository.frontend.dialog.DynamicDialogCreator;
 import org.hippocms.repository.frontend.editor.EditorPanel;
 import org.hippocms.repository.frontend.menu.Menu;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
+import org.hippocms.repository.frontend.plugin.samples.SamplePluginPanel;
 import org.hippocms.repository.frontend.tree.TreePanel;
 import org.hippocms.repository.frontend.update.UpdateManager;
 
@@ -49,13 +48,9 @@ public class Browser extends WebPage {
         updateManager.addUpdatable(menu);
         add(menu);
                
-        DialogWindow workflowDialog = new DialogWindow("workflow-dialog", model);
-        DynamicDialogCreator dialogCreator = new DynamicDialogCreator(workflowDialog, model);
-        workflowDialog.setPageCreator(dialogCreator);
-        
-        updateManager.addUpdatable(dialogCreator);
-        add(workflowDialog);
-        add(workflowDialog.dialogLink("workflow-dialog-link"));
+        SamplePluginPanel samplePluginPanel = new SamplePluginPanel("sampleWorkflowPanel", model);
+        updateManager.addUpdatable(samplePluginPanel);
+        add(samplePluginPanel);        
     }
 
 }
