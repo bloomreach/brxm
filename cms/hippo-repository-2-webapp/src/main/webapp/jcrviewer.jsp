@@ -67,7 +67,7 @@
   HippoRepository repositoryConnection = (HippoRepository) session.getAttribute("repository");
   javax.jcr.Session repositorySession = (javax.jcr.Session) session.getAttribute("session");
   //if(repositoryConnection == null || repositorySession == null) {
-    repositoryConnection = new HippoRepositoryFactory().getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
+    repositoryConnection = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
     repositorySession = repositoryConnection.login();
     session.setAttribute("repository", repositoryConnection);
     session.setAttribute("session", repositorySession);
@@ -77,7 +77,7 @@
   String location = repositorySession.getRepository().getDescriptor(Repository.REP_NAME_DESC);
   String path = (String) request.getParameter("path");
   if(path == null)
-    path = "";
+    path = "/";
   out.println("Logged in as " + username + " to a " + location + " repository.");
 %>
 </DIV>
