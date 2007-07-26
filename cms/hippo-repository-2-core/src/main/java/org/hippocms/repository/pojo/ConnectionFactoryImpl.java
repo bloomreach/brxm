@@ -54,9 +54,9 @@ class ConnectionFactoryImpl implements ConnectionFactory {
             location = url.substring(4); // Omit the jcr prefix
         }
         if (location != null && !location.equals(""))
-            repository = (new HippoRepositoryFactory()).getHippoRepository(location);
+            repository = HippoRepositoryFactory.getHippoRepository(location);
         else
-            repository = (new HippoRepositoryFactory()).getHippoRepository();
+            repository = HippoRepositoryFactory.getHippoRepository();
 	session  = null;
         username = null; // FIXME
         password = null; // FIXME
@@ -77,7 +77,7 @@ class ConnectionFactoryImpl implements ConnectionFactory {
     }
 
     ConnectionFactoryImpl(String username, String password) throws RepositoryException {
-        repository = (new HippoRepositoryFactory()).getHippoRepository();
+        repository = HippoRepositoryFactory.getHippoRepository();
         this.username = username;
         this.password = password;
     }
