@@ -32,6 +32,7 @@ import javax.jcr.Value;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -44,69 +45,144 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RepositoryServlet extends HttpServlet {
+
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
+
+    /** Parameter name of the repository storage directory */
+    public final static String REPOSITORY_ADDRESS_PARAM = "repository-directory";
+
+    /** Parameter name of the binging address */
+    public final static String REPOSITORY_BINDING_PARAM = "repository-address";
+
+    /** Parameter name of the repository config file */
+    public final static String REPOSITORY_CONFIG_PARAM = "repository-config";
+
+    /** Default binding address for server */
+    public final static String DEFAULT_BINDING_ADDRESS = "rmi://localhost:1099/jackrabbit.repository";
+
+    /** System property for overriding the repostiory config file */
+    public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
+
+    /** Default config file */
+    public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
+
     HippoRepository repository;
     String bindingAddress;
     String storageLocation;
+    String repositoryConfig;
 
     public RepositoryServlet() {
         storageLocation = null;
     }
 
+    private void parseInitParameters(ServletConfig config) throws ServletException {
+        findStorageLocation(config);
+        findBindingAddress(config);
+        findRepositoryConfig(config);
+    }
+
+    /**
+     * Try to extract the binding address from the config or use the DEFAULT_BINDING_ADDRESS
+     * @param config
+     */
+    private void findBindingAddress(ServletConfig config) {
+        // try to get bind address from the config or servletContext
+        bindingAddress = config.getInitParameter(REPOSITORY_BINDING_PARAM);
+        if (bindingAddress == null || bindingAddress.equals("")) {
+            // fall back to global context setting
+            bindingAddress = config.getServletContext().getInitParameter(REPOSITORY_BINDING_PARAM);
+        }
+
+        // still got nothing, use default
+        if (bindingAddress == null || bindingAddress.equals("")) {
+            bindingAddress = DEFAULT_BINDING_ADDRESS;
+        }
+    }
+
+    /**
+     * 
+     * @param config
+     * @throws ServletException
+     */
+    private void findStorageLocation(ServletConfig config) throws ServletException {
+        storageLocation = config.getInitParameter("repository-directory");
+
+        // basic sanity
+        if (storageLocation == null) {
+            return;
+        }
+        if ("".equals(storageLocation)) {
+            storageLocation = null;
+            return;
+        }
+
+        // absolute path
+        //if (storageLocation.startsWith("/") || storageLocation.startsWith("file:")) {
+        //    return;
+        //}
+
+        // try to parse the path
+        storageLocation = config.getServletContext().getRealPath(storageLocation);
+        if (storageLocation == null) {
+            throw new ServletException("Cannot determin repository location "
+                    + config.getInitParameter("repository-directory"));
+        }
+    }
+
+    /**
+     * Try to extract the repository config file from the config or use the DEFAULT_REPOSITORY_CONFIG
+     * @param config
+     */
+    private void findRepositoryConfig(ServletConfig config) {
+        // try to get repository config file name from the config or servletContext
+        repositoryConfig = config.getInitParameter(REPOSITORY_CONFIG_PARAM);
+        if (repositoryConfig == null || repositoryConfig.equals("")) {
+            // fall back to global context setting
+            repositoryConfig = config.getServletContext().getInitParameter(REPOSITORY_CONFIG_PARAM);
+        }
+
+        // still got nothing, use default
+        if (repositoryConfig == null || repositoryConfig.equals("")) {
+            repositoryConfig = DEFAULT_REPOSITORY_CONFIG;
+        }
+    }
+
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        parseInitParameters(config);
+        System.setProperty(SYSTEM_SERVLETCONFIG_PROPERTY, repositoryConfig);
+        
         try {
-            storageLocation = config.getInitParameter("repository-directory");
-            if (storageLocation != null && !storageLocation.equals("")) {
-                if (!storageLocation.startsWith("/") && !storageLocation.startsWith("file:")) {
-                    storageLocation = config.getServletContext().getRealPath(storageLocation);
-                    if (storageLocation == null)
-                        throw new ServletException("Cannot determin repository location " + storageLocation);
-                }
-                repository = HippoRepositoryFactory.getHippoRepository(storageLocation);
-            } else {
-                storageLocation = null;
+            if (storageLocation == null) {
                 repository = HippoRepositoryFactory.getHippoRepository();
+            } else {
+                repository = HippoRepositoryFactory.getHippoRepository(storageLocation);
             }
             HippoRepositoryFactory.setDefaultRepository(repository);
             Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository.repository);
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-            bindingAddress = config.getInitParameter("repository-address");
-            if (bindingAddress == null || bindingAddress.equals(""))
-                bindingAddress = config.getServletContext().getInitParameter("repository-address");
-            if (bindingAddress == null || bindingAddress.equals(""))
-                bindingAddress = "rmi://localhost:1099/jackrabbit.repository";
+
             try {
                 Context ctx = new InitialContext();
                 ctx.rebind(bindingAddress, remote);
                 log.info("Server " + config.getServletName() + " available in context on " + bindingAddress);
             } catch (NamingException ex) {
                 log.error("Cannot bind to address " + bindingAddress, ex);
-                System.err.println("NamingException: " + ex.getMessage());
-                ex.printStackTrace(System.err);
+                //System.err.println("NamingException: " + ex.getMessage());
+                //ex.printStackTrace(System.err);
+                throw new ServletException("NamingException: " + ex.getMessage());
             }
-            /*
-             try {
-             Naming.rebind(bindingAddress, remote);
-             log.info("Server " + config.getServletName() + " available using RMI on " + bindingAddress);
-             } catch (MalformedURLException ex) {
-             log.error("Cannot bind to address " + bindingAddress, ex);
-             System.err.println("MalformedURLException: " + ex.getMessage());
-             ex.printStackTrace(System.err);
-             } catch (RemoteException ex) {
-             log.error("Generic remoting exception ", ex);
-             System.err.println("RemoteException: " + ex.getMessage());
-             ex.printStackTrace(System.err);
-             }
-             */
+
         } catch (RemoteException ex) {
             log.error("Generic remoting exception ", ex);
-            System.err.println("RemoteException: " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            //System.err.println("RemoteException: " + ex.getMessage());
+            //ex.printStackTrace(System.err);
+            throw new ServletException("RemoteException: " + ex.getMessage());
         } catch (RepositoryException ex) {
             log.error("Error while setting up JCR repository: ", ex);
-            System.err.println("RepositoryException: " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            //System.err.println("RepositoryException: " + ex.getMessage());
+            //ex.printStackTrace(System.err);
+            throw new ServletException("RepositoryException: " + ex.getMessage());
         }
     }
 
@@ -160,7 +236,8 @@ public class RepositoryServlet extends HttpServlet {
                     writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath()
                             + "/" + child.getPath() + "/" + "\">");
                     if (child.hasProperty("hippo:count")) {
-                        writer.print(((ServicingNode) child).getDisplayName() + " [" + child.getProperty("hippo:count").getLong() +"]");
+                        writer.print(((ServicingNode) child).getDisplayName() + " ["
+                                + child.getProperty("hippo:count").getLong() + "]");
                     } else {
                         writer.print(((ServicingNode) child).getDisplayName());
                     }
