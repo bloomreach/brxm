@@ -15,70 +15,24 @@
  */
 package org.hippocms.repository.frontend.tree;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 import org.hippocms.repository.frontend.update.IUpdatable;
 
-public class TreePanel extends Panel implements ITreeStateListener, IUpdatable {
+public class TreePanel extends Panel implements IUpdatable {
     private static final long serialVersionUID = 1L;
-
-    private TreeView tree;
-    DefaultTreeModel treeModel;
 
     public TreePanel(String id, JcrNodeModel model) {
         super(id);
-        treeModel = new DefaultTreeModel(model);
-        tree = new TreeView("tree", treeModel);
-        tree.getTreeState().addTreeStateListener(this);
+        DefaultTreeModel treeModel = new DefaultTreeModel(model);
+        TreeView tree = new TreeView("tree", treeModel);
+        tree.getTreeState().addTreeStateListener(new JcrTreeStateListener());
         tree.getTreeState().expandNode((TreeNode) model.getRoot());
         add(tree);
-    }
-
-    // ITreeStateListener
-
-    public void nodeExpanded(TreeNode treeNodeModel) {
-        JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
-        Node node = nodeModel.getNode();
-        if (node != null) {
-            try {
-                for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-                    Node childNode = iter.nextNode();
-                    JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
-                    nodeModel.add(childNodeModel);
-                }
-            } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void nodeCollapsed(TreeNode treeNodeModel) {
-        if (treeNodeModel == null) {
-            return;
-        }
-        JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
-        nodeModel.removeAllChildren();
-    }
-
-    public void nodeSelected(TreeNode treeNodeModel) {
-    }
-
-    public void nodeUnselected(TreeNode treeNodeModel) {
-    }
-
-    public void allNodesExpanded() {
-    }
-
-    public void allNodesCollapsed() {
     }
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
