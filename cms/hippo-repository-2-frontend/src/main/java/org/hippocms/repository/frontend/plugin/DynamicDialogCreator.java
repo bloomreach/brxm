@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.frontend.dialog;
+package org.hippocms.repository.frontend.plugin;
 
 import java.lang.reflect.Constructor;
 
@@ -23,6 +23,8 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
+import org.hippocms.repository.frontend.dialog.AbstractDialog;
+import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.dialog.error.ErrorDialog;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 import org.hippocms.repository.frontend.update.IUpdatable;
@@ -48,7 +50,6 @@ public class DynamicDialogCreator implements PageCreator, IUpdatable {
         } catch (RepositoryException e) {
             classname = "org.hippocms.repository.frontend.dialog.error.ErrorDialog";
         }
-
     }
 
     public Page createPage() {
