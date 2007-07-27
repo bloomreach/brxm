@@ -210,7 +210,9 @@ class LocalHippoRepository extends HippoRepository {
         if (!session.getRootNode().hasNode("navigation")) {
             log.info("Loading initial content");
             try {
-                InputStream in = getClass().getResourceAsStream("content.xml");
+                InputStream in = getClass().getResourceAsStream("configuration.xml");
+                session.importXML("/", in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+                in = getClass().getResourceAsStream("navigation.xml");
                 session.importXML("/", in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
             } catch (IOException ex) {
                 System.err.println(ex.getMessage());
