@@ -63,7 +63,9 @@ public class BrowserSession extends WebSession {
 
         Session getSession() {
             try {
-                ((Session)getObject()).isLive(); 
+                if (!((Session)getObject()).isLive()) {
+                    detach();
+                } 
             } catch (Exception e) {
                 detach();
             }
