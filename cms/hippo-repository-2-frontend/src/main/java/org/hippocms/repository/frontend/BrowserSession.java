@@ -62,7 +62,12 @@ public class BrowserSession extends WebSession {
         }
 
         Session getSession() {
-            return (Session) getObject();
+            try {
+                ((Session)getObject()).isLive(); 
+            } catch (Exception e) {
+                detach();
+            }
+            return (Session)getObject();
         }
 
         protected Object load() {
