@@ -3,11 +3,11 @@ package org.hippocms.repository.frontend.plugin.samples;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippocms.repository.frontend.IUpdatable;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 import org.hippocms.repository.frontend.plugin.DynamicDialogCreator;
 import org.hippocms.repository.frontend.plugin.GenericComponentFactory;
-import org.hippocms.repository.frontend.update.IUpdatable;
 
 public class SamplePluginPanel extends Panel implements IUpdatable {
     private static final long serialVersionUID = 1L;

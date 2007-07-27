@@ -21,6 +21,7 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippocms.repository.frontend.IUpdatable;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.menu.delete.DeleteDialog;
 import org.hippocms.repository.frontend.menu.move.MoveDialog;
@@ -29,7 +30,6 @@ import org.hippocms.repository.frontend.menu.property.PropertyDialog;
 import org.hippocms.repository.frontend.menu.reset.ResetDialog;
 import org.hippocms.repository.frontend.menu.save.SaveDialog;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
-import org.hippocms.repository.frontend.update.IUpdatable;
 
 public class Menu extends Panel implements IUpdatable {
     private static final long serialVersionUID = 1L;

@@ -55,7 +55,7 @@ public class TreeView extends Tree {
           
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
         BrowserSession session = (BrowserSession)getSession();
-        session.getUpdateManager().updateAll(target, (JcrNodeModel)treeNode);
+        session.updateAll(target, (JcrNodeModel)treeNode);
     }
 
 }

@@ -15,54 +15,79 @@
  */
 package org.hippocms.repository.frontend;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Request;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebSession;
-import org.hippocms.repository.frontend.update.UpdateManager;
+import org.hippocms.repository.frontend.model.JcrNodeModel;
 import org.hippocms.repository.jr.embedded.HippoRepository;
 import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
 
 public class BrowserSession extends WebSession {
     private static final long serialVersionUID = 1L;
-        
-    private javax.jcr.Session jcrSession;
-    private UpdateManager updateManager;
-    private WebApplication application;
+
+    private List updatables;
+    private JcrSessionModel jcrSessionModel;
 
     public BrowserSession(WebApplication application, Request request) {
         super(application, request);
-        this.application = application;
-        this.updateManager = new UpdateManager();
+        updatables = new ArrayList();
+        jcrSessionModel = new JcrSessionModel();
+        dirty();
     }
+    
+    public Session getJcrSession() {
+        return jcrSessionModel.getSession();
+    }
+    
+    
+    private class JcrSessionModel extends LoadableDetachableModel {
+        private static final long serialVersionUID = 1L;
 
-    public javax.jcr.Session getJcrSession()  {
-        if (jcrSession == null || !jcrSession.isLive()) {
+        String repositoryAdress;
+        
+        JcrSessionModel() {
+            Main main = (Main)Application.get();
+            this.repositoryAdress = main.getRepositoryAdress();
+        }
+
+        Session getSession() {
+            return (Session) getObject();
+        }
+
+        protected Object load() {
+            javax.jcr.Session result = null;
             try {
-                String address = getRepositoryAddress();
-                HippoRepository repository = HippoRepositoryFactory.getHippoRepository(address);
-                jcrSession = repository.login(new SimpleCredentials("username", "password".toCharArray()));
-            } catch (Exception e) {
+                HippoRepository repository = HippoRepositoryFactory.getHippoRepository(repositoryAdress);
+                result = repository.login(new SimpleCredentials("username", "password".toCharArray()));
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            return result;
         }
-        return jcrSession;
     }
     
-    public UpdateManager getUpdateManager() {
-        return updateManager;
+
+    public void addUpdatable(IUpdatable updatable) {
+        updatables.add(updatable);
     }
-    
-    private String getRepositoryAddress() {
-        String address = application.getInitParameter("repository-address");
-        if (address == null || address.equals("")) {
-            address = application.getServletContext().getInitParameter("repository-address");
+
+    public void updateAll(AjaxRequestTarget target, JcrNodeModel model) {
+        Iterator it = updatables.iterator();
+        while (it.hasNext()) {
+            ((IUpdatable) it.next()).update(target, model);
         }
-        if (address == null || address.equals("")) {
-            address = "rmi://localhost:1099/jackrabbit.repository";
-        }
-        return address;
     }
-    
+
 }
