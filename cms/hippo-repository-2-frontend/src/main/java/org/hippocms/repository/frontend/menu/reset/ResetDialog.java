@@ -18,7 +18,6 @@ package org.hippocms.repository.frontend.menu.reset;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippocms.repository.frontend.BrowserSession;
 import org.hippocms.repository.frontend.dialog.AbstractDialog;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
@@ -32,8 +31,7 @@ public class ResetDialog extends AbstractDialog {
         
         Label label;
         try {
-            BrowserSession sessionProvider = (BrowserSession)getSession();
-            boolean changes = sessionProvider.getJcrSession().hasPendingChanges();
+            boolean changes = model.getNode().getSession().hasPendingChanges();
             if (changes) {
                 label = new Label("message", "There are pending changes");
             } else {
@@ -46,8 +44,7 @@ public class ResetDialog extends AbstractDialog {
     }
 
     public void ok() throws RepositoryException {
-        BrowserSession sessionProvider = (BrowserSession)getSession();
-        sessionProvider.getJcrSession().refresh(false);
+        model.getNode().getSession().refresh(false);
     }
 
     public void cancel() {

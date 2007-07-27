@@ -6,8 +6,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippocms.repository.frontend.IUpdatable;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
-import org.hippocms.repository.frontend.update.IUpdatable;
 
 public class UpdatableLabel extends Label implements IUpdatable {
     private static final long serialVersionUID = 1L;

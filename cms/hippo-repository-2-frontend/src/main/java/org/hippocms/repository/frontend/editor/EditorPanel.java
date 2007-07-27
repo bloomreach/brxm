@@ -17,8 +17,8 @@ package org.hippocms.repository.frontend.editor;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippocms.repository.frontend.IUpdatable;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
-import org.hippocms.repository.frontend.update.IUpdatable;
 
 public class EditorPanel extends Panel implements IUpdatable {
     private static final long serialVersionUID = 1L;

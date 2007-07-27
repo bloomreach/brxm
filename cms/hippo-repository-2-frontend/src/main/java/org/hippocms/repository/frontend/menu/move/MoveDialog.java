@@ -20,12 +20,11 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippocms.repository.frontend.BrowserSession;
+import org.hippocms.repository.frontend.IUpdatable;
 import org.hippocms.repository.frontend.dialog.AbstractDialog;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 import org.hippocms.repository.frontend.tree.JcrTreeStateListener;
-import org.hippocms.repository.frontend.update.IUpdatable;
 
 public class MoveDialog extends AbstractDialog implements IUpdatable {
     private static final long serialVersionUID = 1L;
@@ -37,10 +36,9 @@ public class MoveDialog extends AbstractDialog implements IUpdatable {
         super(dialogWindow, model);
         dialogWindow.setTitle("Move selected node");
 
-        BrowserSession sessionProvider = (BrowserSession) getSession();
         Node root;
         try {
-            root = sessionProvider.getJcrSession().getRootNode();
+            root = model.getNode().getSession().getRootNode();
             JcrNodeModel rootModel = new JcrNodeModel(root);
             DefaultTreeModel treeModel = new DefaultTreeModel(rootModel);
             tree = new MoveTargetTreeView("tree", treeModel, this);
@@ -65,8 +63,7 @@ public class MoveDialog extends AbstractDialog implements IUpdatable {
         if (model.getNode() != null) {
             JcrNodeModel targetNodeModel = (JcrNodeModel) tree.getSelectedNode();
             String destination = targetNodeModel.getNode().getPath() + "/" + model.getNode().getName();
-            BrowserSession sessionProvider = (BrowserSession) getSession();
-            sessionProvider.getJcrSession().move(model.getNode().getPath(), destination);
+            model.getNode().getSession().move(model.getNode().getPath(), destination);
         }
     }
 

@@ -32,7 +32,7 @@ public class DialogWindow extends ModalWindow {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
                 BrowserSession session = (BrowserSession)getSession();
-                session.getUpdateManager().updateAll(target, model);
+                session.updateAll(target, model);
             }
         });
     }

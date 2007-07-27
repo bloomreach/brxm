@@ -37,4 +37,15 @@ public class Main extends WebApplication {
         return new BrowserSession(this, request);
     }
     
+    public String getRepositoryAdress() {
+        String repositoryAdress = getInitParameter("repository-address");
+        if (repositoryAdress == null || repositoryAdress.equals("")) {
+            repositoryAdress = getServletContext().getInitParameter("repository-address");
+        }
+        if (repositoryAdress == null || repositoryAdress.equals("")) {
+            repositoryAdress = "rmi://localhost:1099/jackrabbit.repository";
+        }
+        return repositoryAdress;
+    }
+    
 }

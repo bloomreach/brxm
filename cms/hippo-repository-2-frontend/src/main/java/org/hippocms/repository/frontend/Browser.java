@@ -24,33 +24,30 @@ import org.hippocms.repository.frontend.menu.Menu;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 import org.hippocms.repository.frontend.plugin.samples.SamplePluginPanel;
 import org.hippocms.repository.frontend.tree.TreePanel;
-import org.hippocms.repository.frontend.update.UpdateManager;
 
 public class Browser extends WebPage {
     private static final long serialVersionUID = 1L;
-    
+
     public Browser() throws RepositoryException {
-        BrowserSession session = (BrowserSession)getSession();
-        UpdateManager updateManager = session.getUpdateManager();
- 
-        Node root = session.getJcrSession().getRootNode();
-        JcrNodeModel model = new JcrNodeModel(root);
+        final BrowserSession session = (BrowserSession) getSession();
+        final Node rootNode = session.getJcrSession().getRootNode();
+        final JcrNodeModel model = new JcrNodeModel(rootNode);
 
         TreePanel treePanel = new TreePanel("treePanel", model);
-        updateManager.addUpdatable(treePanel);
+        session.addUpdatable(treePanel);
         add(treePanel);
+
+        Menu menu = new Menu("menu", model);
+        session.addUpdatable(menu);
+        add(menu);
         
         EditorPanel editorPanel = new EditorPanel("editorPanel", model);
-        updateManager.addUpdatable(editorPanel);
+        session.addUpdatable(editorPanel);
         add(editorPanel);
-        
-        Menu menu = new Menu("menu", model); 
-        updateManager.addUpdatable(menu);
-        add(menu);
                
         SamplePluginPanel samplePluginPanel = new SamplePluginPanel("sampleWorkflowPanel", model);
-        updateManager.addUpdatable(samplePluginPanel);
-        add(samplePluginPanel);        
+        session.addUpdatable(samplePluginPanel);
+        add(samplePluginPanel);    
     }
 
 }
