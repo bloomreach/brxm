@@ -32,7 +32,7 @@
   <description>Hippo Repository 2 Core module</description>
   <groupId>org.hippocms</groupId>
   <artifactId>hippo-repository-2-core</artifactId>
-  <version>1.01.00-dev</version>
+  <version>2.01.00-dev</version>
 
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-core</connection>

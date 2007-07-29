@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippocms.repository.frontend.BrowserSession;
+import org.hippocms.repository.frontend.UserSession;
 
 public class JcrItemModel extends LoadableDetachableModel {
     private static final long serialVersionUID = 1L;
@@ -44,7 +44,7 @@ public class JcrItemModel extends LoadableDetachableModel {
     protected Object load() {
         Item result = null;
         try {
-            BrowserSession sessionProvider = (BrowserSession)Session.get();
+            UserSession sessionProvider = (UserSession)Session.get();
             result = sessionProvider.getJcrSession().getItem(path);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
