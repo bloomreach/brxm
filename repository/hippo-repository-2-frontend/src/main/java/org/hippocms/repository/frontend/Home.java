@@ -33,8 +33,8 @@ public class Home extends WebPage {
         
         addPlugin("navigationPanel", "org.hippocms.repository.plugins.admin.browser.BrowserPlugin", model);
         addPlugin("menuPanel", "org.hippocms.repository.plugins.admin.menu.MenuPlugin", model);
-        //addPlugin("contentPanel", "org.hippocms.repository.plugins.admin.editor.EditorPlugin", model);
-        addPlugin("contentPanel", "org.hippocms.repository.plugins.samples.SamplesPlugin", model);
+        addPlugin("contentPanel", "org.hippocms.repository.plugins.admin.editor.EditorPlugin", model);
+        //addPlugin("contentPanel", "org.hippocms.repository.plugins.samples.SamplesPlugin", model);
     }
 
     public void addPlugin(String id, String classname, JcrNodeModel model) {
