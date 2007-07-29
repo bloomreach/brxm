@@ -18,7 +18,7 @@ package org.hippocms.repository.frontend.dialog;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.hippocms.repository.frontend.BrowserSession;
+import org.hippocms.repository.frontend.UserSession;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 
 public class DialogWindow extends ModalWindow {
@@ -31,8 +31,8 @@ public class DialogWindow extends ModalWindow {
         setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
-                BrowserSession session = (BrowserSession)getSession();
-                session.updateAll(target, model);
+                UserSession session = (UserSession)getSession();
+                session.notifyPlugins(target, model);
             }
         });
     }

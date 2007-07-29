@@ -19,8 +19,8 @@ import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.hippocms.repository.frontend.Browser;
-import org.hippocms.repository.frontend.BrowserSession;
+import org.hippocms.repository.frontend.Home;
+import org.hippocms.repository.frontend.UserSession;
 
 public class Main extends WebApplication {
     
@@ -30,11 +30,11 @@ public class Main extends WebApplication {
     }
 
     public Class getHomePage() {
-        return Browser.class;
+        return Home.class;
     }
 
     public Session newSession(Request request, Response response) {
-        return new BrowserSession(this, request);
+        return new UserSession(this, request);
     }
     
     public String getRepositoryAdress() {

@@ -44,6 +44,7 @@
     <module>hippo-repository-2-migration-tool</module>
     <module>hippo-repository-2-workflow</module>
     <module>hippo-repository-2-frontend</module>
+    <module>hippo-repository-2-plugins</module>
     <module>hippo-repository-2-webapp</module>
     <module>hippo-repository-2-docs</module>
   </modules>
