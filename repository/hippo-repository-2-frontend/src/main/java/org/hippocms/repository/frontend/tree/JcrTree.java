@@ -38,7 +38,7 @@ public abstract class JcrTree extends Tree {
         getTreeState().setAllowSelectMultiple(false);
         getTreeState().collapseAll();
         
-        getTreeState().addTreeStateListener(new JcrTreeStateListener());;
+        getTreeState().addTreeStateListener(new JcrTreeStateListener());
     }
 
     protected String renderNode(TreeNode treeNode) {

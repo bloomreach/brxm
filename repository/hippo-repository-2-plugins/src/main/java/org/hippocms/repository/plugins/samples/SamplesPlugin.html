@@ -17,11 +17,13 @@
     <wicket:panel>
         <h2>Plugin examples</h2>
         <p>
-            This is a Plugin Panel. A Plugin Panel is a Panel that implements the IUpdatable interface. Through that
-            interface it receives update events from other plugins (like the tree) when it needs to refresh it's content.
+            This is a Plugin Panel. A Plugin Panel is a Panel that implements the 
+            method "void update(AjaxRequestTarget target, JcrNodeModel model)". Through that
+            interface it receives update events from other plugins (like the tree or the menu) when it
+            needs to refresh it's content with a new Model.
         </p>
         <p>
-            This plugin could grow into a plugin central.
+            This example plugin could grow into a plugin central.
         </p>
         <p>
             <h3>Context aware dialog</h3>

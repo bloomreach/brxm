@@ -20,12 +20,11 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippocms.repository.frontend.IUpdatable;
 import org.hippocms.repository.frontend.dialog.AbstractDialog;
 import org.hippocms.repository.frontend.dialog.DialogWindow;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 
-public class MoveDialog extends AbstractDialog implements IUpdatable {
+public class MoveDialog extends AbstractDialog  {
     private static final long serialVersionUID = 1L;
 
     private MoveTargetTreeView tree;

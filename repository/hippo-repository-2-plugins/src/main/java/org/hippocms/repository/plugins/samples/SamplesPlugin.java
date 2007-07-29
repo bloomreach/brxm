@@ -61,7 +61,7 @@ public class SamplesPlugin extends Plugin {
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
         if (model != null && target != null) {
             //This forwards the ajax update event to the contextDialogFactory
-            //causing it to be reconfigured
+            //causing it to be reconfigured with a new classname. 
             contextDialogFactory.update(target, model);
         }
         if (model != null) {

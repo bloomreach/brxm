@@ -23,11 +23,10 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
-import org.hippocms.repository.frontend.IUpdatable;
 import org.hippocms.repository.frontend.dialog.error.ErrorDialog;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 
-public class ContextDialogFactory implements PageCreator, IUpdatable {
+public class ContextDialogFactory implements PageCreator {
     private static final long serialVersionUID = 1L;
 
     public static final String ERROR = "org.hippocms.repository.frontend.dialog.error.ErrorDialog";
