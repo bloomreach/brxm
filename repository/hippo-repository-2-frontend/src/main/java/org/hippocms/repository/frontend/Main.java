@@ -37,15 +37,15 @@ public class Main extends WebApplication {
         return new UserSession(this, request);
     }
     
-    public String getRepositoryAdress() {
-        String repositoryAdress = getInitParameter("repository-address");
-        if (repositoryAdress == null || repositoryAdress.equals("")) {
-            repositoryAdress = getServletContext().getInitParameter("repository-address");
+    public String getConfigurationParameter(String parameterName, String defaultValue) {
+        String result = getInitParameter(parameterName);
+        if (result == null || result.equals("")) {
+            result = getServletContext().getInitParameter(parameterName);
         }
-        if (repositoryAdress == null || repositoryAdress.equals("")) {
-            repositoryAdress = "rmi://localhost:1099/jackrabbit.repository";
+        if (result == null || result.equals("")) {
+            result = defaultValue;
         }
-        return repositoryAdress;
+        return result; 
     }
     
 }
