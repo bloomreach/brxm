@@ -16,15 +16,19 @@ public class PluginFactory {
 
     public Plugin getPlugin(String id, IModel model) {
         Plugin plugin;
-        try {
-            Class clazz = Class.forName(classname);
-            Class[] formalArgs = new Class[] { String.class, JcrNodeModel.class };
-            Constructor constructor = clazz.getConstructor(formalArgs);
-            Object[] actualArgs = new Object[] { id, model };
-            plugin = (Plugin) constructor.newInstance(actualArgs);
-        } catch (Exception e) {
-            String msg = e.getClass().getName() + ": " + e.getMessage();
-            plugin = new ErrorPlugin(id, (JcrNodeModel)model, msg);
+        if (classname == null) {
+            String message = "Plugin '" + id + "' is not configured.";
+            plugin = new ErrorPlugin(id, (JcrNodeModel) model, message); 
+        } else {
+            try {
+                Class clazz = Class.forName(classname);
+                Class[] formalArgs = new Class[] { String.class, JcrNodeModel.class };
+                Constructor constructor = clazz.getConstructor(formalArgs);
+                Object[] actualArgs = new Object[] { id, model };
+                plugin = (Plugin) constructor.newInstance(actualArgs);
+            } catch (Exception e) {
+                plugin = new ErrorPlugin(id, (JcrNodeModel) model, e);
+            }
         }
         return plugin;
     }

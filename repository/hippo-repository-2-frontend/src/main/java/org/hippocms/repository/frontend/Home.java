@@ -22,22 +22,28 @@ import org.apache.wicket.markup.html.WebPage;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
 import org.hippocms.repository.frontend.plugin.Plugin;
 import org.hippocms.repository.frontend.plugin.PluginFactory;
+import org.hippocms.repository.frontend.plugin.config.PluginConfig;
+import org.hippocms.repository.frontend.plugin.config.PluginConfigFactory;
 
 public class Home extends WebPage {
     private static final long serialVersionUID = 1L;
 
+    private PluginConfig pluginConfig;
+    
     public Home() throws RepositoryException {
+        pluginConfig = new PluginConfigFactory().getPluginConfig();
+        
         UserSession session = (UserSession) getSession();
         Node rootNode = session.getJcrSession().getRootNode();
         JcrNodeModel model = new JcrNodeModel(rootNode);
         
-        addPlugin("navigationPanel", "org.hippocms.repository.plugins.admin.browser.BrowserPlugin", model);
-        addPlugin("menuPanel", "org.hippocms.repository.plugins.admin.menu.MenuPlugin", model);
-        addPlugin("contentPanel", "org.hippocms.repository.plugins.admin.editor.EditorPlugin", model);
-        //addPlugin("contentPanel", "org.hippocms.repository.plugins.samples.SamplesPlugin", model);
+        addPlugin("navigationPanel", model);
+        addPlugin("menuPanel", model);
+        addPlugin("contentPanel", model);
     }
 
-    public void addPlugin(String id, String classname, JcrNodeModel model) {
+    public void addPlugin(String id, JcrNodeModel model) {
+        String classname = pluginConfig.pluginClassname(id);
         Plugin pluginPanel = new PluginFactory(classname).getPlugin(id, model);
         ((UserSession) getSession()).registerPlugin(pluginPanel);
         add(pluginPanel);
