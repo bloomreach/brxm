@@ -37,6 +37,7 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
@@ -193,6 +194,9 @@ class LocalHippoRepository extends HippoRepository {
             try {
                 nsreg.registerNamespace(NAMESPACE_PREFIX, NAMESPACE_URI);
             } catch (javax.jcr.NamespaceException ex) {
+                if (ex.getMessage().endsWith("mapping already exists")) {
+                    log.debug("Namespace already exists: " + NAMESPACE_URI);
+                }
                 log.warn(ex.getMessage());
             }
             
@@ -203,8 +207,8 @@ class LocalHippoRepository extends HippoRepository {
 
         } catch (ParseException ex) {
             throw new RepositoryException("Could not preload repository with hippo node types", ex);
-        } catch (InvalidNodeTypeDefException ex) {
-            log.warn("Could not preload repository with hippo node types: " + ex.getMessage());
+        //} catch (InvalidNodeTypeDefException ex) {
+        //    log.warn("Could not preload repository with hippo node types: " + ex.getMessage());
         }
 
         if (!session.getRootNode().hasNode("navigation")) {
@@ -243,9 +247,7 @@ class LocalHippoRepository extends HippoRepository {
         }
     }
 
-    private void createNodeTypesFromFile(Workspace workspace, String cndName) throws ParseException,
-            RepositoryException, InvalidNodeTypeDefException {
-
+    private void createNodeTypesFromFile(Workspace workspace, String cndName) throws ParseException, RepositoryException {
         log.info("Loading initial nodeTypes from: " + cndName);
 
         InputStream cndStream = getClass().getResourceAsStream(cndName);
@@ -255,27 +257,32 @@ class LocalHippoRepository extends HippoRepository {
         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
         NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
 
-
         for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
             NodeTypeDef ntd = (NodeTypeDef) iter.next();
+
             try {
                 ntreg.unregisterNodeType(ntd.getName());
+            } catch (NoSuchNodeTypeException ex) {
+                // new type, ignore
             } catch (RepositoryException ex) {
-                // save to ignore
+                // kind of safe to ignore
             }
+            
             try {
-                try {
-                    EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
-                } catch (NamespaceException ex) {
+                EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
+                log.info("Added NodeType: " + ntd.getName().getLocalName());
+            } catch (NamespaceException ex) {
+                log.warn(ex.getMessage());
+            } catch (InvalidNodeTypeDefException ex) {
+                if (ex.getMessage().endsWith("already exists")) {
+                    log.debug(ex.getMessage());
+                } else {
                     log.warn(ex.getMessage());
-                    System.err.println(ex.getMessage());
-                    ex.printStackTrace(System.err);
                 }
             } catch (RepositoryException ex) {
-                if (ex.getMessage().equals("not yet implemented")) {
-                    log.warn("cannot override typing; hoping they are equivalent");
-                } else {
-                    throw ex;
+                if (!ex.getMessage().equals("not yet implemented")) {
+                    log.warn(ex.getMessage());
+                    ex.printStackTrace();
                 }
             }
         }
