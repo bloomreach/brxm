@@ -18,8 +18,8 @@ package org.hippocms.repository.frontend.plugin.config;
 public class PluginConfigFactory {
     
     public PluginConfig getPluginConfig() {
-        return new PluginRepositoryConfig();
-        //return new PluginJavaConfig();
+        //return new PluginRepositoryConfig();
+        return new PluginJavaConfig();
     }
 
 }
