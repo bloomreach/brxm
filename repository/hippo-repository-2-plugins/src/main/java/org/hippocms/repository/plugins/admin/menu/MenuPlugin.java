@@ -27,6 +27,7 @@ import org.hippocms.repository.plugins.admin.menu.delete.DeleteDialog;
 import org.hippocms.repository.plugins.admin.menu.move.MoveDialog;
 import org.hippocms.repository.plugins.admin.menu.node.NodeDialog;
 import org.hippocms.repository.plugins.admin.menu.property.PropertyDialog;
+import org.hippocms.repository.plugins.admin.menu.rename.RenameDialog;
 import org.hippocms.repository.plugins.admin.menu.reset.ResetDialog;
 import org.hippocms.repository.plugins.admin.menu.save.SaveDialog;
 
@@ -65,6 +66,16 @@ public class MenuPlugin extends Plugin {
         });
         add(moveDialog);
         add(moveDialog.dialogLink("move-dialog-link"));
+
+        final DialogWindow renameDialog = new DialogWindow("rename-dialog", model);
+        renameDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new RenameDialog(renameDialog, model);
+            }
+        });
+        add(renameDialog);
+        add(renameDialog.dialogLink("rename-dialog-link"));
 
         final DialogWindow propertyDialog = new DialogWindow("property-dialog", model);
         propertyDialog.setPageCreator(new ModalWindow.PageCreator() {
