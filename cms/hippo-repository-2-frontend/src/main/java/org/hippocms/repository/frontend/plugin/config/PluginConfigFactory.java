@@ -15,11 +15,42 @@
  */
 package org.hippocms.repository.frontend.plugin.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.wicket.Application;
+import org.hippocms.repository.frontend.Main;
+
 public class PluginConfigFactory {
-    
+
+    private final static String pluginConfigFactoryParam = "frontend-plugin-config";
+    private final static String defaultPluginConfigFactory = "java";
+
+    private Map pluginConfigs;
+
+    public PluginConfigFactory() {
+        pluginConfigs = new HashMap();
+        pluginConfigs.put("java", PluginJavaConfig.class);
+        pluginConfigs.put("repository", PluginRepositoryConfig.class);
+        pluginConfigs.put("properties", PluginPropertiesConfig.class);
+        pluginConfigs.put("spring", PluginSpringConfig.class);
+    }
+
     public PluginConfig getPluginConfig() {
-        //return new PluginRepositoryConfig();
-        return new PluginJavaConfig();
+        Main main = (Main) Application.get();
+        String pluginConfigType = main.getConfigurationParameter(pluginConfigFactoryParam, defaultPluginConfigFactory);
+             
+        PluginConfig result;
+        try {
+            Class pluginConfigClass = (Class)pluginConfigs.get(pluginConfigType);
+            result = (PluginConfig)pluginConfigClass.newInstance();
+        } catch (Exception e) {
+            String message = e.getClass().getName() + ": " + e.getMessage();
+            message += "\nFailed to initialize plugin configuration '" + pluginConfigType + "', falling back to hard-coded PluginJavaConfig.";
+            System.err.println(message);
+            result = new PluginJavaConfig();
+         }
+        return result;
     }
 
 }

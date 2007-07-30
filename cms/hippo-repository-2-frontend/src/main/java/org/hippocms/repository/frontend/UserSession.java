@@ -59,11 +59,14 @@ public class UserSession extends WebSession {
         // like this has the added bonus of being a very simple reconnect mechanism.  
         private static final long serialVersionUID = 1L;
 
-        String repositoryAdress;
+        private final static String repositoryAddressConfigParam = "repository-address";
+        private final static String defaultRepositoryAddress = "rmi://localhost:1099/jackrabbit.repository";
+        
+        private String repositoryAdress;
 
         JcrSessionModel() {
             Main main = (Main) Application.get();
-            repositoryAdress = main.getRepositoryAdress();
+            repositoryAdress = main.getConfigurationParameter(repositoryAddressConfigParam, defaultRepositoryAddress);
         }
 
         Session getSession() {
