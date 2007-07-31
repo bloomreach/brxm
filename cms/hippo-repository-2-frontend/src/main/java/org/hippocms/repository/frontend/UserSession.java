@@ -88,8 +88,7 @@ public class UserSession extends WebSession {
                 HippoRepository repository = HippoRepositoryFactory.getHippoRepository(repositoryAdress);
                 result = repository.login(new SimpleCredentials("username", "password".toCharArray()));
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                System.err.println("Connection failed for repository " + repositoryAdress);
             }
             return result;
         }

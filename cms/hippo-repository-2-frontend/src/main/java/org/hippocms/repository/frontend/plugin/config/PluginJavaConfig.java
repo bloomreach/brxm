@@ -18,6 +18,9 @@ package org.hippocms.repository.frontend.plugin.config;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Acts as default configuration if custom configuration fails
+ */
 public class PluginJavaConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
     
