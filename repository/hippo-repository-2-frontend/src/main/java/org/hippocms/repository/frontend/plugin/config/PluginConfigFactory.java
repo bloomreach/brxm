@@ -46,7 +46,7 @@ public class PluginConfigFactory {
             result = (PluginConfig)pluginConfigClass.newInstance();
         } catch (Exception e) {
             String message = e.getClass().getName() + ": " + e.getMessage();
-            message += "\nFailed to initialize plugin configuration '" + pluginConfigType + "', falling back to hard-coded PluginJavaConfig.";
+            message += "\nFailed to initialize plugin configuration '" + pluginConfigType + "', falling back to default configuration.";
             System.err.println(message);
             result = new PluginJavaConfig();
          }
