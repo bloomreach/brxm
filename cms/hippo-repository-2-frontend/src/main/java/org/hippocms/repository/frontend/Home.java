@@ -44,7 +44,7 @@ public class Home extends WebPage {
                 addPlugins(new JcrNodeModel(rootNode));
             }
         } catch (RepositoryException e) {
-            showError(e, "Failed to retreive root node from repository");
+            showError(e, "Failed to retrieve root node from repository");
         }
     }
 
