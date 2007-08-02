@@ -15,22 +15,27 @@
  */
 package org.hippocms.repository.plugins.admin.browser;
 
-import javax.swing.tree.DefaultTreeModel;
+import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippocms.repository.frontend.UserSession;
 import org.hippocms.repository.frontend.model.JcrNodeModel;
+import org.hippocms.repository.frontend.model.JcrTreeModel;
 import org.hippocms.repository.frontend.plugin.Plugin;
 import org.hippocms.repository.frontend.tree.JcrTree;
+import org.hippocms.repository.jr.servicing.ServicingNode;
 
 public class BrowserPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
+    JcrTreeModel treeModel;
+    JcrTree tree;
+    
     public BrowserPlugin(String id, JcrNodeModel model) {
         super(id, model);
-        DefaultTreeModel treeModel = new DefaultTreeModel(model);
-        JcrTree tree = new JcrTree("tree", treeModel) {
+        treeModel = new JcrTreeModel(model);
+        tree = new JcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
                 UserSession session = (UserSession)getSession();
@@ -42,10 +47,21 @@ public class BrowserPlugin extends Plugin {
     }
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
-        //FIXME
-        // TreeNode selectedTreeNode = (TreeNode)tree.getTreeState().getSelectedNodes().iterator().next();
-        // ....
-        // tree.updateTree(target);
+        /*
+        ServicingNode node = model.getNode();
+        JcrNodeModel originalNode = treeModel.findJcrNode(node);
+        if (originalNode != null) {
+            try {
+                System.out.println("original node: " + originalNode.getNode().getPath());
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+            treeModel.nodeChanged(originalNode);
+            tree.updateTree(target);
+        }
+        */
     }
 
 }
