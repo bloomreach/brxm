@@ -54,6 +54,14 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
             itemModel = new JcrItemModel(node);
         }
     }
+    
+    public String toString() {
+        try {
+            return getNode().getPath();
+        } catch (RepositoryException e) {
+            return null;
+        }
+    }
 
     // Override DefaultMutableTreeNode, called when used as a TreeNode
     // by a subclass of org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree
