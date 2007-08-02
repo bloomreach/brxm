@@ -33,7 +33,7 @@ public class PluginFactory {
         Plugin plugin;
         if (pluginClass == null) {
             String message = "Implementation class name for plugin '" + id
-                    + "' could not be retreived from configuration, falling back to default plugin.";
+                    + "' could not be retrieved from configuration, falling back to default plugin.";
             System.err.println(message);
             plugin = getDefaultPlugin(id, model);
         } else {
