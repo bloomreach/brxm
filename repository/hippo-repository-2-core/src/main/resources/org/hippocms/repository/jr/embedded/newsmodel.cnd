@@ -4,6 +4,7 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippocms.org/nt/1.0'>
 
+[hippo:document] > nt:base, mix:referenceable
 
 // TODO: 
 // - (Unique) contraints on hippo:id's?
@@ -35,7 +36,7 @@
 - hippo:page (string)
 - hippo:review (string)
 
-[hippo:newsArticle]
+[hippo:newsArticle] > hippo:document
 - hippo:id (long) 
 //  > [(0,)]
 - hippo:categoryId (long)
@@ -56,7 +57,7 @@
   multiple
 + hippo:illustration (hippo:illustration) = hippo:illustration
 
-[hippo:author]
+[hippo:author] > hippo:document
 - hippo:id (long)
 - hippo:name (string)
 - hippo:email (string)

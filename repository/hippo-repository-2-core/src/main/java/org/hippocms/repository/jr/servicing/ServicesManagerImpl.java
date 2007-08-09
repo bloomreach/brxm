@@ -28,10 +28,10 @@ public class ServicesManagerImpl
 {
   class Entry {
     ServiceImpl service;
-    Node node;
-    Entry(ServiceImpl service, Node node) {
+    String uuid;
+    Entry(ServiceImpl service, String uuid) {
       this.service = service;
-      this.node    = node;
+      this.uuid    = uuid;
     }
   }
   Session session;
@@ -45,33 +45,34 @@ public class ServicesManagerImpl
   public Service getService(Node node) throws RepositoryException {
     return getService(node, null);
   }
+
+  /**
+   * @see DocumentManagerImpl.getObject(String,String,Node)
+   */
+  public Service getService(String uuid, String serviceName, Node types) throws RepositoryException {
+    DocumentManagerImpl manager = (DocumentManagerImpl)((ServicingWorkspace)session.getWorkspace()).getDocumentManager();
+    Object object = manager.getObject(uuid, serviceName, types);
+    ServiceImpl service = (ServiceImpl) object;
+    usedServices.add(new Entry(service, uuid));
+    return service;
+  }
+
   public Service getService(Node node, String serviceName) throws RepositoryException {
     if(serviceName == null)
       serviceName = "";
-    try {
-      ServiceImpl service = (ServiceImpl) classloader.loadClass(serviceName).newInstance();
-      // FIXME: service.setAction1(node.getProperty("HasAction1").getBoolean());
-      usedServices.add(new Entry(service, node));
-      return service;
-    } catch(IllegalAccessException ex) {
-      throw new RepositoryException("service unavailable", ex);
-    } catch(ClassNotFoundException ex) {
-      throw new RepositoryException("service unavailable", ex);
-    } catch(InstantiationException ex) {
-      throw new RepositoryException("service unavailable", ex);
-      /*
-    } catch(RemoteException ex) {
-      throw new RepositoryException("service inaccessible", ex);
-      */
-    }
+    return getService(node.getUUID(), serviceName, null);
   }
-  void save(ServiceImpl service, Node node) throws RepositoryException {
-    // FIXME: node.setProperty("HasAction2",service.getAction2());
+  void save(ServiceImpl service, String uuid) throws RepositoryException {
+    DocumentManagerImpl documentManager = (DocumentManagerImpl)((ServicingWorkspace)session.getWorkspace()).getDocumentManager();
+    documentManager.putObject(uuid, null, service);
   }
   void save() throws RepositoryException {
     for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
       Entry entry = iter.next();
-      save(entry.service, entry.node);
+    }
+    for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
+      Entry entry = iter.next();
+      save(entry.service, entry.uuid);
     }
     // FIXME: this assumes that Services are no longer used after a session.save()
     usedServices.clear();

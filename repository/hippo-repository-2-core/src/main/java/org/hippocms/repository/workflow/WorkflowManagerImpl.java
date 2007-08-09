@@ -31,6 +31,9 @@ import javax.jcr.ValueFormatException;
 
 import org.hippocms.repository.jr.servicing.ServicingNode;
 import org.hippocms.repository.jr.servicing.WorkflowManager;
+import org.hippocms.repository.jr.servicing.ServicesManagerImpl;
+import org.hippocms.repository.jr.servicing.Service;
+import org.hippocms.repository.jr.servicing.ServicingWorkspace;
 
 public class WorkflowManagerImpl
   implements WorkflowManager
@@ -43,6 +46,9 @@ public class WorkflowManagerImpl
     try {
       configuration = session.getRootNode().getNode("configuration/workflows").getUUID();
     } catch(RepositoryException ex) {
+      // FIXME
+      System.err.println("RepositoryException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
     }
   }
 
@@ -97,8 +103,11 @@ public class WorkflowManagerImpl
     Node workflowNode = getWorkflowNode(category, item);
     if(workflowNode != null) {
       try {
-        String serviceName = workflowNode.getProperty("service").getString();
-        Workflow workflow = (Workflow) ((ServicingNode)item).getService(/*serviceName*/); // FIXME
+        String classname = workflowNode.getProperty("service").getString();
+        Node types = workflowNode.getNode("types");
+        ServicesManagerImpl manager = (ServicesManagerImpl)((ServicingWorkspace)session.getWorkspace()).getServicesManager();
+        Service service = manager.getService(item.getUUID(), classname, types);
+        Workflow workflow = (Workflow) service;
         if(workflow instanceof WorkflowImpl) {
           ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
         }

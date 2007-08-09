@@ -37,17 +37,20 @@ class FieldManagerImpl extends AbstractFieldManager {
     private StateManager sm;
     private Session session;
     private Node node;
+    private Node types;
 
-    FieldManagerImpl(StateManager sm, Session session, Node node) {
+    FieldManagerImpl(StateManager sm, Session session, Node types, Node node) {
         this.sm = sm;
         this.session = session;
         this.node = node;
+        this.types = types;
     }
 
-    FieldManagerImpl(StateManager sm, Session session) {
+    FieldManagerImpl(StateManager sm, Session session, Node types) {
         this.sm = sm;
         this.session = session;
         this.node = null;
+        this.types = types;
     }
 
     public void storeBooleanField(int fieldNumber, boolean value) {
@@ -388,13 +391,24 @@ class FieldManagerImpl extends AbstractFieldManager {
             if (pc == null)
                 throw new NullPointerException();
             try {
-                Node child = node.addNode(field);
-                child.addMixin("mix:referenceable"); // FIXME: should be either per node type definition or not necessary at all
-                Object id = new JCROID(child.getUUID());
+                Node child;
+                Object id;
+                if (types != null) {
+                    String classname = value.getClass().getName();
+                    Node nodetypeNode = types.getNode(classname);
+                    String nodetype = nodetypeNode.getProperty("nodetype").getString();
+                    child = node.addNode(field, nodetype);
+                    id = new JCROID(child.getUUID(), classname);
+                } else {
+                    // FIXME: to be depricated
+                    child = node.addNode(field);
+                    child.addMixin("mix:referenceable");
+                    id = new JCROID(child.getUUID(), "org.hippocms.repository.workflow.TestServiceImpl");
+                }
                 StateManager pcSM = StateManagerFactory
                         .newStateManagerForPersistentClean(sm.getObjectManager(), id, pc);
                 pcSM.provideFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(pcSM, session,
-                        child));
+                        types, child));
             } catch (ItemExistsException ex) {
                 try {
                     throw new JPOXDataStoreException("ItemExistsException", ex, node.getPath() + "/" + field);
@@ -430,8 +444,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 Node node = oid.getNode(session);
                 Node child = node.getNode(field);
-                Object id = new JCROID(child.getUUID());
                 Class clazz = sm.getClassMetaData().getField(fieldNumber).getType();
+                Object id = new JCROID(child.getUUID(), clazz.getName());
                 StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
                 //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));
                 return pcSM.getObject();

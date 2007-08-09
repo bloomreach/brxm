@@ -309,9 +309,7 @@
     <dependency>
       <groupId>jpox</groupId>
       <artifactId>jpox-core</artifactId>
-      <!-- version>[1.1.0-rc-1,)</version -->
-      <!-- version>1.1.6</version -->
-      <version>1.2.0-beta-2</version>
+      <version>1.2.0-beta-3</version>
       <exclusions>
         <exclusion>
           <groupId>javax.transaction</groupId>
@@ -377,18 +375,6 @@
               <artifactId>bcel</artifactId>
               <version>5.1</version>
             </dependency>
-<!--
-            <dependency>
-              <groupId>jpox</groupId>
-              <artifactId>jpox-core</artifactId>
-              <version>1.2.0-beta-1</version>
-            </dependency>
-            <dependency>
-              <groupId>jpox</groupId>
-              <artifactId>jpox-enhancer</artifactId>
-              <version>1.2.0-beta-1</version>
-            </dependency>
--->
          </dependencies>
         </plugin>
       </plugins>
@@ -459,40 +445,7 @@
             <goals><goal>enhance</goal></goals>
           </execution>
         </executions>
-      </plugin><!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jpox-maven-plugin</artifactId>
-        <version>1.1.6</version>
-        <configuration>
-          <log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration>
-          <verbose>true</verbose>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>jpox</groupId>
-            <artifactId>jpox</artifactId>
-            <version>1.2.0</version>
-            <exclusions>
-              <exclusion>
-                <groupId>javax.transaction</groupId>
-                <artifactId>jta</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>javax.resource</groupId>
-                <artifactId>connector</artifactId>
-              </exclusion>
-            </exclusions>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals><goal>enhance</goal></goals>
-          </execution>
-        </executions>
       </plugin>
-      -->
    </plugins>
   </build>
 

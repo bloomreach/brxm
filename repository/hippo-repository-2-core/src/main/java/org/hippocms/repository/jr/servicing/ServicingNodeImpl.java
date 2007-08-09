@@ -146,7 +146,6 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         Node node = (this.node != null ? this.node : this);
 
         StringBuffer searchquery = getSearchQuery(node);
-        //System.out.println("Query results: " + searchquery.toString());
 
         Query facetValuesQuery = session.getWorkspace().getQueryManager().createQuery(searchquery.toString(),
                 Query.XPATH);
@@ -184,8 +183,6 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
             }
             searchquery.append("/@");
             searchquery.append(facet);
-
-            //System.out.println("Query facets: " + searchquery.toString());
 
             buildFacetMap(searchquery.toString());
             for (Iterator iter = facetValuesMap.keySet().iterator(); iter.hasNext();) {
@@ -228,7 +225,6 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
             if (clause.indexOf(FACET_SEPARATOR) != -1) {
                 clause = clause.substring(0, clause.indexOf(FACET_SEPARATOR));
             }
-            //System.out.println("Clause: " + clause);
             searchquery.append(clause);
         }
 
@@ -244,7 +240,6 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                 searchquery.append(",");
             }
             searchquery.append("@");
-            //System.out.println("Facet: @" + facet);
             searchquery.append(facet);
         }
         searchquery.insert(0, node.getProperty("hippo:docbase").getString() + "//node()" + "[");
@@ -669,7 +664,6 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
             // construct query
             xpath = xpath.substring(0,xpath.indexOf('?')) + getName() + xpath.substring(xpath.indexOf('?')+1);
             
-            //System.out.println("DsplayName xpath: " + xpath);
             Query query = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
             
             // execute
@@ -1065,6 +1059,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         if (node == null) {
             return properties.get(relPath);
         }
+
         Property prop = node.getProperty(relPath);
         return factory.getPropertyDecorator(session, prop);
     }

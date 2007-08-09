@@ -60,10 +60,10 @@ class LocalHippoRepository extends HippoRepository {
 
     /** Hippo Namespace */
     public final static String NAMESPACE_URI = "http://www.hippocms.org/nt/1.0";
-    
+
     /** Hippo Namespace prefix */
     public final static String NAMESPACE_PREFIX = "hippo";
-    
+
     /** System property for overriding the repostiory path */
     public final static String SYSTEM_PATH_PROPERTY = "repo.path";
 
@@ -72,13 +72,12 @@ class LocalHippoRepository extends HippoRepository {
 
     /** System property for overriding the repostiory config file */
     public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
-    
+
     /** Default config file */
     public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
 
-
     protected final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
-    
+
     private JackrabbitRepository jackrabbitRepository = null;
     private ServicingDecoratorFactory hippoRepositoryFactory;
 
@@ -140,13 +139,13 @@ class LocalHippoRepository extends HippoRepository {
         if (configName == null || "".equals(configName)) {
             configName = System.getProperty(SYSTEM_SERVLETCONFIG_PROPERTY);
         }
-        
+
         // if still not set use default
         if (configName == null || "".equals(configName)) {
             log.info("Using default repository config: " + DEFAULT_REPOSITORY_CONFIG);
             return getClass().getResourceAsStream(DEFAULT_REPOSITORY_CONFIG);
         }
-        
+
         // resource
         if (!configName.startsWith("file:")) {
             log.info("Using resource repository config: " + configName);
@@ -162,7 +161,7 @@ class LocalHippoRepository extends HippoRepository {
             configName = "/" + configName.substring(5);
         }
         log.info("Using file repository config: file:/" + configName);
-        
+
         // get the bufferedinputstream
         File configFile = new File(configName);
         try {
@@ -199,7 +198,7 @@ class LocalHippoRepository extends HippoRepository {
                 }
                 log.warn(ex.getMessage());
             }
-            
+
             // TODO: Be smarter about loading and configuring nodetype defs
             createNodeTypesFromFile(workspace, "repository.cnd");
             createNodeTypesFromFile(workspace, "newsmodel.cnd");
@@ -207,8 +206,6 @@ class LocalHippoRepository extends HippoRepository {
 
         } catch (ParseException ex) {
             throw new RepositoryException("Could not preload repository with hippo node types", ex);
-        //} catch (InvalidNodeTypeDefException ex) {
-        //    log.warn("Could not preload repository with hippo node types: " + ex.getMessage());
         }
 
         if (!session.getRootNode().hasNode("navigation")) {
@@ -247,7 +244,8 @@ class LocalHippoRepository extends HippoRepository {
         }
     }
 
-    private void createNodeTypesFromFile(Workspace workspace, String cndName) throws ParseException, RepositoryException {
+    private void createNodeTypesFromFile(Workspace workspace, String cndName) throws ParseException,
+            RepositoryException {
         log.info("Loading initial nodeTypes from: " + cndName);
 
         InputStream cndStream = getClass().getResourceAsStream(cndName);
@@ -267,7 +265,7 @@ class LocalHippoRepository extends HippoRepository {
             } catch (RepositoryException ex) {
                 // kind of safe to ignore
             }
-            
+
             try {
                 EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
                 log.info("Added NodeType: " + ntd.getName().getLocalName());
