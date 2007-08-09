@@ -48,7 +48,7 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         this.omfContext = omfContext;
         location = null;
         String url = omfContext.getPersistenceConfiguration().getConnectionURL();
-        if (url != null) { 
+        if (url != null) {
             if (!url.startsWith("jcr")) {
                 throw new JPOXException("JCR location invalid");
             }
@@ -91,7 +91,10 @@ class ConnectionFactoryImpl implements ConnectionFactory {
     }
 
     public ManagedConnection createManagedConnection(Map transactionOptions) {
-        return new JCRManagedConnection();
+        if (session != null)
+            return new ExistingConnection();
+        else
+            return new JCRManagedConnection();
     }
 
     class JCRManagedConnection implements ManagedConnection {
@@ -99,7 +102,12 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         private boolean transactional;
 
         public JCRManagedConnection() {
-            session = null;
+            this.session = null;
+            transactional = false;
+        }
+
+        public JCRManagedConnection(Session session) {
+            this.session = session;
             transactional = false;
         }
 
@@ -127,29 +135,6 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         }
 
         public void release() {
-            try {
-                session.save();
-            } catch (AccessDeniedException ex) {
-                System.err.println(ex.getMessage());
-            } catch (ItemExistsException ex) {
-                System.err.println(ex.getMessage());
-            } catch (ConstraintViolationException ex) {
-                System.err.println(ex.getMessage());
-            } catch (InvalidItemStateException ex) {
-                System.err.println(ex.getMessage());
-            } catch (VersionException ex) {
-                System.err.println(ex.getMessage());
-            } catch (LockException ex) {
-                System.err.println(ex.getMessage());
-            } catch (NoSuchNodeTypeException ex) {
-                System.err.println(ex.getMessage());
-            } catch (RepositoryException ex) {
-                System.err.println(ex.getMessage());
-            }
-            /* FIXME:
-             if(!transactional)
-             close();
-             */
         }
 
         public void close() {
@@ -157,6 +142,37 @@ class ConnectionFactoryImpl implements ConnectionFactory {
                 session.logout();
                 session = null;
             }
+        }
+
+        public void setTransactional() {
+            transactional = true;
+        }
+    }
+
+    class ExistingConnection implements ManagedConnection {
+        private boolean transactional;
+
+        public ExistingConnection() {
+            transactional = false;
+        }
+
+        public Object getConnection() {
+            return session;
+        }
+
+        public javax.transaction.xa.XAResource getXAResource() {
+            /*
+              if (session instanceof org.apache.jackrabbit.core.XASession) {
+                  return ((org.apache.jackrabbit.core.XASession) session).getXAResource();
+                  } else */{
+                return null;
+            }
+        }
+
+        public void release() {
+        }
+
+        public void close() {
         }
 
         public void setTransactional() {

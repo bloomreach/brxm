@@ -15,16 +15,17 @@
       <!-- field name="object" embedded="true" column="y"/ -->
     </class>
     <class name="MyWorkflowImpl" detachable="true" identity-type="datastore" table="files">
+      <datastore-identity strategy="native"/>
       <!-- field name="article" column="."/ -->
-      <field name="articleId" column="articleId"/>
-      <field name="authorId" column="authorId"/>
+      <field name="articleId" column="hippo:id"/>
+      <field name="authorId" column="hippo:authorId"/>
     </class>
     <class name="AuthorDocument" detachable="true" identity-type="datastore" table="files">
-      <field name="authorId" column="authorId"/>
+      <field name="authorId" column="hippo:id"/>
     </class>
     <class name="ArticleDocument" detachable="true" identity-type="datastore" table="files">
-      <field name="articleId" column="articleId"/>
-      <field name="authorId" column="authorId"/>
+      <field name="articleId" column="hippo:id"/>
+      <field name="authorId" column="hippo:authorId"/>
     </class>
   </package>
 </jdo>

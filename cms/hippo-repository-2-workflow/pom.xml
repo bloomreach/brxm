@@ -128,18 +128,6 @@
               <artifactId>bcel</artifactId>
               <version>5.1</version>
             </dependency>
-<!--
-            <dependency>
-              <groupId>jpox</groupId>
-              <artifactId>jpox-core</artifactId>
-              <version>1.2.0-beta-1</version>
-            </dependency>
-            <dependency>
-              <groupId>jpox</groupId>
-              <artifactId>jpox-enhancer</artifactId>
-              <version>1.2.0-beta-1</version>
-            </dependency>
--->
          </dependencies>
         </plugin>
       </plugins>

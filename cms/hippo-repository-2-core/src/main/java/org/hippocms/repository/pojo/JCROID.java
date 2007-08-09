@@ -19,51 +19,44 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
+
 import javax.jdo.spi.PersistenceCapable;
 
 import org.jpox.ObjectManager;
-import org.jpox.store.OID;
+import org.jpox.exceptions.JPOXDataStoreException;
+import org.jpox.identity.OID;
 
 public class JCROID implements OID {
-    static Integer keySequenceSeed;
-    static {
-        keySequenceSeed = new Integer(0);
-    }
     String key;
-    boolean isTemporary;
     Node node;
+    String classname;
 
-    public JCROID() {
-        synchronized (keySequenceSeed) {
-            this.key = Integer.toString(++keySequenceSeed);
-        }
-        this.node = null;
+    private JCROID() {
     }
 
-    public JCROID(Node node) {
-        synchronized (keySequenceSeed) {
-            this.key = Integer.toString(++keySequenceSeed);
+    public JCROID(Node node, String classname) {
+        try {
+            this.key = node.getUUID();
+            this.node = node;
+            this.classname = classname;
+        } catch (UnsupportedRepositoryOperationException ex) {
+            throw new JPOXDataStoreException("node has no uuid");
+        } catch (RepositoryException ex) {
+            throw new JPOXDataStoreException(ex.getMessage(), ex);
         }
-        this.node = node;
     }
 
-    public JCROID(String key) {
+    public JCROID(String key, String classname) {
         if (key == null)
             throw new NullPointerException();
         this.key = key;
         this.node = null;
-    }
-
-    void validateKeyValue(ObjectManager om, PersistenceCapable pc, String newKey) {
-        if (isTemporary) {
-            om.replaceObjectId(pc, key, newKey);
-            key = newKey;
-            isTemporary = false;
-        }
+        this.classname = classname;
     }
 
     Node getNode(Session session) {
@@ -94,7 +87,7 @@ public class JCROID implements OID {
     }
 
     public String getPcClass() {
-        return "org.hippocms.repository.workflow.TestServiceImpl";
+        return classname;
     }
 
     public boolean equals(Object obj) {

@@ -41,9 +41,9 @@ public abstract class HippoRepository {
     private String systemPassword = "password";
 
     private void initialize() {
-	// HREPTWO-40: disable because of problems reinitializing.
+        // HREPTWO-40: disable because of problems reinitializing.
         // FIXME: bring these properties into resource
-        if (uts == null && true==false) { // FIXME not thread safe
+        if (uts == null) { // FIXME not thread safe
             uts = new UserTransactionServiceImp();
             TSInitInfo initInfo = uts.createTSInitInfo();
             Properties initProperties = new Properties();

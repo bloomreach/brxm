@@ -24,6 +24,8 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
+import org.jpox.PersistenceManagerFactoryImpl;
+
 import junit.framework.TestCase;
 
 import org.hippocms.repository.jr.embedded.HippoRepository;
@@ -46,6 +48,10 @@ public class BasicTest extends TestCase {
 
             PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory(properties);
             PersistenceManager pm = pmf.getPersistenceManager();
+            StoreManagerImpl sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl) pmf).getOMFContext()
+                    .getStoreManager();
+            sm.setSession(session);
+
             Transaction tx = pm.currentTransaction();
             boolean transactional = true;
 
@@ -67,19 +73,22 @@ public class BasicTest extends TestCase {
             } finally {
                 if (transactional && tx.isActive()) {
                     tx.rollback();
+                    fail("transaction should not roll back");
                 }
             }
+            session.save();
 
-            System.err.println("----------");
+            //System.err.println("----------");
             session.refresh(false);
-            Utilities.dump(System.err, session.getRootNode().getNode("files"));
-            System.err.println("----------");
+            //Utilities.dump(System.err, session.getRootNode().getNode("files"));
+            //System.err.println("----------");
 
             String uuid = session.getRootNode().getNode("files").getNodes().nextNode().getUUID();
             try {
                 if (transactional)
                     tx.begin();
-                TestServiceImpl obj = (TestServiceImpl) pm.getObjectById(new JCROID(uuid));
+                TestServiceImpl obj = (TestServiceImpl) pm.getObjectById(new JCROID(uuid,
+                        "org.hippocms.repository.workflow.TestServiceImpl"));
                 assertTrue(obj.hasAction(1));
                 assertFalse(obj.hasAction(2));
                 assertTrue("bla".equals(obj.getMyContent()));

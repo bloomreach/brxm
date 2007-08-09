@@ -151,7 +151,7 @@ public class RepositoryServlet extends HttpServlet {
         super.init(config);
         parseInitParameters(config);
         System.setProperty(SYSTEM_SERVLETCONFIG_PROPERTY, repositoryConfig);
-        
+
         try {
             if (storageLocation == null) {
                 repository = HippoRepositoryFactory.getHippoRepository();
@@ -168,20 +168,14 @@ public class RepositoryServlet extends HttpServlet {
                 log.info("Server " + config.getServletName() + " available in context on " + bindingAddress);
             } catch (NamingException ex) {
                 log.error("Cannot bind to address " + bindingAddress, ex);
-                //System.err.println("NamingException: " + ex.getMessage());
-                //ex.printStackTrace(System.err);
                 throw new ServletException("NamingException: " + ex.getMessage());
             }
 
         } catch (RemoteException ex) {
             log.error("Generic remoting exception ", ex);
-            //System.err.println("RemoteException: " + ex.getMessage());
-            //ex.printStackTrace(System.err);
             throw new ServletException("RemoteException: " + ex.getMessage());
         } catch (RepositoryException ex) {
             log.error("Error while setting up JCR repository: ", ex);
-            //System.err.println("RepositoryException: " + ex.getMessage());
-            //ex.printStackTrace(System.err);
             throw new ServletException("RepositoryException: " + ex.getMessage());
         }
     }

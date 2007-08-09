@@ -63,9 +63,9 @@ public class ServicingWorkspaceImpl extends AbstractDecorator implements Servici
     public ServicingWorkspaceImpl(DecoratorFactory factory, Session session, Workspace workspace) {
         super(factory, session);
         this.workspace = workspace;
-        documentManager = new DocumentManagerImpl(session);
-        servicesManager = new ServicesManagerImpl(session);
-        workflowManager = new WorkflowManagerImpl(session);
+        documentManager = null;
+        servicesManager = null;
+        workflowManager = null;
     }
 
     /** {@inheritDoc} */
@@ -134,15 +134,24 @@ public class ServicingWorkspaceImpl extends AbstractDecorator implements Servici
         return factory.getQueryManagerDecorator(session, workspace.getQueryManager());
     }
 
-    public DocumentManager getDocumentManager() throws RepositoryException {
+    public synchronized DocumentManager getDocumentManager() throws RepositoryException {
+        if (documentManager == null) {
+            documentManager = new DocumentManagerImpl(session);
+        }
         return documentManager;
     }
 
-    public ServicesManager getServicesManager() throws RepositoryException {
+    public synchronized ServicesManager getServicesManager() throws RepositoryException {
+        if (servicesManager == null) {
+            servicesManager = new ServicesManagerImpl(session);
+        }
         return servicesManager;
     }
 
-    public WorkflowManager getWorkflowManager() throws RepositoryException {
+    public synchronized WorkflowManager getWorkflowManager() throws RepositoryException {
+        if (workflowManager == null) {
+            workflowManager = new WorkflowManagerImpl(session);
+        }
         return workflowManager;
     }
 

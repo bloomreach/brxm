@@ -36,7 +36,7 @@ public class MyWorkflowImpl extends WorkflowImpl implements MyWorkflow
     AuthorDocument author = (AuthorDocument) context.getDocument("authors",newName);
     if(author == null)
       throw new WorkflowException("author does not exist");
-    // article.authorId = author.authorId;
-    authorId = author.authorId;
+    /* article. */ authorId = author.authorId;
+    authorId = 666;
   }
 }

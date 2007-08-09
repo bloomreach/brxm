@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -69,16 +70,20 @@ public class StoreManagerImpl extends StoreManager {
     private String username;
     private String password;
     private Session session;
+    private Node types;
 
-    public StoreManagerImpl(ClassLoaderResolver clr, ObjectManagerFactoryImpl omf, String username, String password)
-            throws RepositoryException {
-        super(clr, omf, username, password);
-	this.session = null;
+    public StoreManagerImpl(ClassLoaderResolver clr, ObjectManagerFactoryImpl omf) throws RepositoryException {
+        super(clr, omf);
+        this.session = null;
         // FIXME: Provide a default AutoStartMechanism
     }
 
     public void setSession(Session session) {
         this.session = session;
+    }
+
+    public void setTypes(Node types) {
+        this.types = types;
     }
 
     public void close() {
@@ -99,8 +104,8 @@ public class StoreManagerImpl extends StoreManager {
 
     public ConnectionFactory getConnectionFactory() {
         try {
-	    // new ConnectionFactoryImpl(username, password);
-            if(session == null)
+            // new ConnectionFactoryImpl(username, password);
+            if (session == null)
                 return new ConnectionFactoryImpl(getOMFContext());
             else
                 return new ConnectionFactoryImpl(getOMFContext(), session);
@@ -126,7 +131,7 @@ public class StoreManagerImpl extends StoreManager {
                     }
                     cmds.addAll(getMetaDataManager().getReferencedClassMetaData(cmd, null, clr));
                 }
-            } catch (ClassNotResolvedException cnre) {
+            } catch (ClassNotResolvedException ex) {
                 // Class not found so ignore it
             }
         }
@@ -134,12 +139,12 @@ public class StoreManagerImpl extends StoreManager {
             ClassMetaData cmd = (ClassMetaData) iter.next();
             if (cmd.getPersistenceModifier() != ClassPersistenceModifier.PERSISTENCE_CAPABLE)
                 return; // FIXME: shouldn't this be a break?
-            StoreData sd = (StoreData) storeDataByClass.get(cmd.getFullClassName());
+            StoreData sd = (StoreData) storeDataMgr.get(cmd.getFullClassName());
             if (sd == null) {
                 sd = new StoreData(cmd.getFullClassName(), cmd, StoreData.FCO_TYPE, null);
                 //sd = new TableStoreData(cmd, new MyDatastoreContainerObject(), true);
                 registerStoreData(sd);
-                sd = (StoreData) storeDataByClass.get(cmd.getFullClassName());
+                sd = (StoreData) storeDataMgr.get(cmd.getFullClassName());
             }
         }
     }
@@ -154,7 +159,7 @@ public class StoreManagerImpl extends StoreManager {
         return connection;
     }
 
-    public void insert(StateManager sm) {
+    public void insertObject(StateManager sm) {
         ObjectManager om = sm.getObjectManager();
         ManagedConnection mconn = getConnection(om);
         try {
@@ -167,22 +172,28 @@ public class StoreManagerImpl extends StoreManager {
             String nodeName = null; // FIXME: cmd.getColumn();
             if (nodeName == null || nodeName.equals(""))
                 nodeName = cmd.getEntityName();
-            node = node.addNode(nodeName);
-            node.setProperty("classname", cmd.getFullClassName());
-            node.addMixin("mix:referenceable"); // FIXME: should be per node type definition
-            sm.provideFields(cmd.getAllFieldNumbers(), new FieldManagerImpl(sm, session, node));
+            if (types != null) {
+                Node nodetypeNode = types.getNode(cmd.getFullClassName());
+                node = node.addNode(nodeName, nodetypeNode.getProperty("nodetype").getString());
+            } else {
+                // FIXME: to be depricated method of storing classname reference
+                node = node.addNode(nodeName);
+                node.setProperty("classname", cmd.getFullClassName());
+                node.addMixin("mix:referenceable"); // FIXME: should be per node type definition
+            }
+            sm.provideFields(cmd.getAllFieldNumbers(), new FieldManagerImpl(sm, session, types, node));
         } catch (PathNotFoundException ex) {
-            System.err.println("PathNotFoundException :" + ex.getMessage());
+            System.err.println("PathNotFoundException: " + ex.getMessage());
         } catch (ItemExistsException ex) {
-            System.err.println("ItemExistsException :" + ex.getMessage());
+            System.err.println("ItemExistsException: " + ex.getMessage());
         } catch (NoSuchNodeTypeException ex) {
             System.err.println("NoSuchNodeTypeException :" + ex.getMessage());
         } catch (VersionException ex) {
-            System.err.println("VersionException :" + ex.getMessage());
+            System.err.println("VersionException: " + ex.getMessage());
         } catch (ConstraintViolationException ex) {
             System.err.println("ConstraintViolationException :" + ex.getMessage());
         } catch (LockException ex) {
-            System.err.println("LockException :" + ex.getMessage());
+            System.err.println("LockException: " + ex.getMessage());
         } catch (RepositoryException ex) {
             System.err.println("RepositoryException :" + ex.getMessage());
         } finally {
@@ -191,44 +202,17 @@ public class StoreManagerImpl extends StoreManager {
     }
 
     public void updateObject(StateManager sm, int fieldNumbers[]) {
-        updateObject(sm, fieldNumbers);
-    }
-
-    public void update(StateManager sm, int fieldNumbers[]) {
         ManagedConnection mconn = getConnection(sm.getObjectManager());
         try {
             Session session = (Session) mconn.getConnection();
-            sm.provideFields(fieldNumbers, new FieldManagerImpl(sm, session));
-        } finally {
-            mconn.release();
-        }
-    }
-
-    //public void fetchObject(StateManager sm, int fieldNumbers[]) { fetch(sm, fieldNumbers); }
-    public void fetch(StateManager sm, int fieldNumbers[]) {
-        ManagedConnection mconn = getConnection(sm.getObjectManager());
-        try {
-            Session session = (Session) mconn.getConnection();
-            AbstractClassMetaData cmd = sm.getClassMetaData();
-            sm.replaceFields(fieldNumbers, new FieldManagerImpl(sm, session));
-        } finally {
-            mconn.release();
-        }
-    }
-
-    public void locate(StateManager sm) {
-        super.locate(sm);
-    }
-
-    public Object newObjectID(ObjectManager om, String className, PersistenceCapable pc) {
-        return super.newObjectID(om, className, pc);
-    }
-
-    public void flush(ObjectManager om) {
-        ManagedConnection mconn = getConnection(om);
-        try {
-            Session session = (Session) mconn.getConnection();
-            session.save();
+            JCROID oid = (JCROID) sm.getExternalObjectId(null);
+            Node node = oid.node;
+            if (node == null) {
+                node = session.getNodeByUUID(oid.key);
+            }
+            sm.provideFields(fieldNumbers, new FieldManagerImpl(sm, session, types, node));
+        } catch (ItemNotFoundException ex) {
+            System.err.println("RepositoryException: " + ex.getMessage());
         } catch (RepositoryException ex) {
             System.err.println("RepositoryException: " + ex.getMessage());
         } finally {
@@ -236,27 +220,55 @@ public class StoreManagerImpl extends StoreManager {
         }
     }
 
+    public void fetchObject(StateManager sm, int fieldNumbers[]) {
+        ManagedConnection mconn = getConnection(sm.getObjectManager());
+        try {
+            Session session = (Session) mconn.getConnection();
+            AbstractClassMetaData cmd = sm.getClassMetaData();
+            sm.replaceFields(fieldNumbers, new FieldManagerImpl(sm, session, types));
+        } finally {
+            mconn.release();
+        }
+    }
+
+    public void locateObject(StateManager sm) {
+        getDatastoreClass(sm.getObject().getClass().getName(), sm.getObjectManager().getClassLoaderResolver()).locate(
+                sm);
+    }
+
+    public Object findObject(ObjectManager om, Object id) {
+        return null;
+    }
+
+    public void deleteObject(StateManager sm) {
+        // FIXME
+    }
+
+    public Object newObjectID(ObjectManager om, String className, PersistenceCapable pc) {
+        return super.newObjectID(om, className, pc);
+    }
+
+    public void flush(ObjectManager om) {
+        /*
+          ManagedConnection mconn = getConnection(om);
+          try {
+              Session session = (Session) mconn.getConnection();
+              //session.save();
+              //} catch (RepositoryException ex) {
+              //System.err.println("RepositoryException: " + ex.getMessage());
+          } finally {
+              mconn.release();
+          }
+         */
+    }
+
     public boolean usesDatastoreClass() {
         return false;
     }
 
     public String getClassNameForObjectID(Object id, ClassLoaderResolver clr, ObjectManager om) {
-        ManagedConnection mconn = getConnection(om);
-        try {
-            Session session = (Session) mconn.getConnection();
-            JCROID oid = (JCROID) id;
-            Node node = oid.getNode(session);
-            String className = node.getProperty("classname").getString();
-            return className;
-        } catch (PathNotFoundException ex) {
-            throw new JPOXDataStoreException("PathNotFoundException", ex, id);
-        } catch (ValueFormatException ex) {
-            throw new JPOXDataStoreException("ValueFormatException", ex, id);
-        } catch (RepositoryException ex) {
-            throw new JPOXDataStoreException("RepositoryException", ex, id);
-        } finally {
-            mconn.release();
-        }
+        JCROID oid = (JCROID) id;
+        return oid.classname;
     }
 
     public boolean isStrategyDatastoreAttributed(IdentityStrategy identityStrategy, boolean datastoreIdentityField) {
@@ -265,7 +277,7 @@ public class StoreManagerImpl extends StoreManager {
 
     public Object getStrategyValue(ObjectManager om, DatastoreClass table, AbstractClassMetaData cmd,
             int absoluteFieldNumber) {
-        return new JCROID();
+        throw new JPOXDataStoreException("Unsupported method");
     }
 
     public Extent getExtent(ObjectManager om, Class c, boolean subclasses) {

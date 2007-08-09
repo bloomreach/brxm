@@ -27,45 +27,117 @@ import java.util.Properties;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Transaction;
+
+import org.jpox.PersistenceManagerFactoryImpl;
+import org.jpox.transaction.HeuristicRollbackException;
 
 import org.hippocms.repository.pojo.JCROID;
 import org.hippocms.repository.pojo.StoreManagerImpl;
-import org.jpox.PersistenceManagerFactoryImpl;
 
 public class DocumentManagerImpl
   implements DocumentManager
 {
   Session session;
+  String configuration;
   PersistenceManagerFactory pmf;
+  StoreManagerImpl sm;
+  PersistenceManager pm;
   public DocumentManagerImpl(Session session) {
+    this.session = session;
+    // FIXME
     try {
-      this.session = session;
+      configuration = session.getRootNode().getNode("configuration/documents").getUUID();
+    } catch(RepositoryException ex) {
+      System.err.println("RepositoryException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+    }
+    try {
       Properties properties = new Properties();
       InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
       properties.load(istream);
       properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
       pmf = JDOHelper.getPersistenceManagerFactory(properties);
-      StoreManagerImpl sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
+      pm = null;
+      sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
       sm.setSession(session);
     } catch(IOException ex) {
-      // FIXME
+      System.err.println("IOException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+    }
+  }
+  public Object getObject(String uuid, String classname, Node types) {
+    Object obj = null;
+    if(pm == null) {
+      pm = pmf.getPersistenceManager();
+    }
+    if(types != null)
+      sm.setTypes(types);
+    try {
+      obj = pm.getObjectById(new JCROID(uuid, classname));
+    } finally {
+      sm.setTypes(null);
+    }    
+    return obj;
+  }
+  public void putObject(String uuid, Node types, Object object) {
+    if(pm == null) {
+      pm = pmf.getPersistenceManager();
+    }
+    Transaction tx = pm.currentTransaction();
+    tx.setNontransactionalRead(true);
+    tx.setNontransactionalWrite(true);
+    boolean transactional = true;
+    if(transactional && !tx.isActive()) {
+      try {
+        tx.begin();
+        pm.makePersistent(object);
+        tx.commit();
+      } finally {
+        if(tx.isActive())
+          tx.rollback();
+      }
+    } else {
+      pm.makePersistent(object);
     }
   }
   public Document getDocument(String category, String identifier) throws RepositoryException {
     try {
-      PersistenceManager pm = pmf.getPersistenceManager();
-      String uuid = session.getRootNode().getNode("files").getNode(category).getNode(identifier).getUUID();
-      Document obj = (Document) pm.getObjectById(new JCROID(uuid));
-      return obj;
+      Node queryNode = session.getNodeByUUID(configuration).getNode(category);
+      String queryLanguage = queryNode.getProperty("language").getString();
+      String queryString = queryNode.getProperty("query").getString();
+      queryString = queryString.replace("?", identifier);
+      Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
+      QueryResult result = query.execute();
+      NodeIterator iter = result.getNodes();
+      if(iter.hasNext()) {
+        Node resultNode = iter.nextNode();
+        String uuid = resultNode.getUUID();
+        return (Document) getObject(uuid, queryNode.getProperty("classname").getString(), queryNode.getNode("types"));
+      } else {
+        return null;
+      }
+    } catch(javax.jdo.JDODataStoreException ex) {
+      System.err.println("JDODataStoreException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+      return null;
     } catch(UnsupportedRepositoryOperationException ex) {
-      // FIXME
+      System.err.println("UnsupportedRepositoryOperationException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
       return null;
     } catch(PathNotFoundException ex) {
+      System.err.println("PathNotFoundException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
       /* getDocument cannot and should not be used to create documents.
        * null is a valid way to check whether the document looked for exist.
        */
