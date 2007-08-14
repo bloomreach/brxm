@@ -19,11 +19,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.workflow;
+package org.hippoecm.repository.sample;
+
+import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-public interface MyWorkflow extends Workflow
+import org.hippocms.repository.workflow.Workflow;
+import org.hippocms.repository.workflow.WorkflowException;
+
+public interface SampleWorkflow extends Workflow
 {
-  public void renameAuthor(String newName) throws WorkflowException, RepositoryException;
+  public void renameAuthor(String newName) throws WorkflowException, RepositoryException, RemoteException;
 }

@@ -4,8 +4,6 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippocms.org/nt/1.0'>
 
-[hippo:document] > nt:base, mix:referenceable
-
 // TODO: 
 // - (Unique) contraints on hippo:id's?
 // - verioning rules
