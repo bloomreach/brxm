@@ -159,8 +159,8 @@
             <exclude>**/SamplePersistencyTest.java</exclude>
             <exclude>**/SampleWorkflowTest.java</exclude>
             <exclude>**/SampleRemoteWorkflowTest.java</exclude>
-          </excludes>
-        </configuration -->
+          </excludes -->
+        </configuration>
       </plugin>     
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
