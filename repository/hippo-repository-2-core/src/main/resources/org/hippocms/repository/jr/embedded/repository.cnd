@@ -17,7 +17,34 @@
 
 [hippo:document] > nt:base, mix:referenceable
 
+[hippo:types] > nt:base
+- hippo:nodetype (string) mandatory
+- hippo:display (string) mandatory
+- hippo:classname (string) mandatory
+
 [hippo:workflow] > nt:base
+- hippo:nodetype (string) mandatory
 - hippo:service (string) mandatory
 - hippo:display (string) mandatory
 - hippo:renderer (string) mandatory
++ hippo:types (hippo:types) = hippo:types mandatory autocreated
+
+[hippo:workflowcategory] > nt:base
++ * (hippo:workflow) = hippo:workflow
+
+[hippo:workflowfolder] > nt:base, mix:referenceable
++ * (hippo:workflowcategory) = hippo:workflowcategory
+
+[hippo:query] > nt:base
+- hippo:query (string) mandatory
+- hippo:language (string) mandatory
+- hippo:classname (string) mandatory
++ hippo:types (hippo:types) = hippo:types mandatory autocreated
+
+[hippo:queryfolder] > nt:base, mix:referenceable
++ * (hippo:query) = hippo:query
+
+[hippo:configuration] > nt:base
++ hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
++ hippo:documents (hippo:queryfolder) = hippo:queryfolder mandatory
++ *
