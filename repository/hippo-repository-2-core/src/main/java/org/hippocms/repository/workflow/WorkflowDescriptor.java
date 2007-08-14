@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -23,38 +17,49 @@ package org.hippocms.repository.workflow;
 
 import java.io.Serializable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
-public class WorkflowDescriptor
-  implements Serializable
-{
-  String category;
-  String nodeAbsPath;
-  String displayName;
-  String rendererName;
-  String serviceName;
-  public WorkflowDescriptor(WorkflowManagerImpl manager, String category, Node node) throws RepositoryException {
-    this.category = category;
-    nodeAbsPath = node.getPath();
-    try {
-      displayName = node.getProperty("display").getString();
-      rendererName = node.getProperty("renderer").getString();
-      serviceName = node.getProperty("service").getString();
-    } catch(PathNotFoundException ex) {
-      // FIXME
-    } catch(ValueFormatException ex) {
-      // FIXME
-    } catch(RepositoryException ex) {
-      // FIXME
+public class WorkflowDescriptor implements Serializable {
+    private final Logger log = LoggerFactory.getLogger(Workflow.class);
+
+    String nodeAbsPath;
+    String category;
+    private String displayName;
+    private String rendererName;
+    private String serviceName;
+
+    public WorkflowDescriptor(WorkflowManagerImpl manager, String category, Node node) throws RepositoryException {
+        this.category = category;
+        nodeAbsPath = node.getPath();
+        try {
+            serviceName = node.getProperty("service").getString();
+            displayName = node.getProperty("display").getString();
+            rendererName = node.getProperty("renderer").getString();
+        } catch (PathNotFoundException ex) {
+            log.error("Workflow specification corrupt on node " + nodeAbsPath);
+            throw new RepositoryException("workflow specification corrupt", ex);
+        } catch (ValueFormatException ex) {
+            log.error("Workflow specification corrupt on node " + nodeAbsPath);
+            throw new RepositoryException("workflow specification corrupt", ex);
+        }
     }
-  }
-  public String getDisplayName() {
-    return displayName;
-  }
-  public String getRendererName() {
-    return rendererName;
-  }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getRendererName() {
+        return rendererName;
+    }
+
+    public String toString() {
+        return getClass().getName() + "[node=" + nodeAbsPath + ",category=" + category + ",service=" + serviceName
+                + ",renderer=" + rendererName + "]";
+    }
 }

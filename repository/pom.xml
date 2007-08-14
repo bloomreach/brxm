@@ -15,7 +15,9 @@
   limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -47,6 +49,7 @@
     <module>hippo-repository-2-plugins</module>
     <module>hippo-repository-2-webapp</module>
     <module>hippo-repository-2-docs</module>
+    <module>hippo-repository-2-sample</module>
   </modules>
   
   
@@ -78,6 +81,95 @@
     <cglib.version>2.1_3</cglib.version>
   </properties>
 
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</url>
+  </scm>
+  <organization>
+    <name>Hippo</name>
+    <url>http://www.hippo.nl/</url>
+  </organization>
+    
+  <developers>
+    <developer>
+      <name>Arje Cahn</name>
+      <id>acahn</id>
+      <email/>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Project Lead</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <name>Ate Douma</name>
+      <id>adouma</id>
+      <email/>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <name>Ard Schrijvers</name>
+      <id>aschrijvers</id>
+      <email/>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <name>(Berry) A.W. van Halderen</name>
+      <id>bvanhalderen</id>
+      <email>b.vanhalderen@hippo.nl</email>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <name>Wander Grevink</name>
+      <id>wgrevink</id>
+      <email/>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <name>Bart van der Schans</name>
+      <id>bvdschans</id>
+      <email/>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+  <mailingLists>
+    <mailingList>
+      <name>Hippo Repository 2 Dev List</name>
+      <subscribe>hipporepos-dev-subscribe@lists.hippocms.org</subscribe>
+      <unsubscribe>announce-unsubscribe@lists.hippocms.org</unsubscribe>
+      <post>hipporepos-dev@lists.hippoforge.org</post>
+      <archive>http://lists.hippoforge.org/mailman/listinfo/hipporepos-dev/</archive>
+    </mailingList>
+  </mailingLists>
 
   <repositories>
     <repository>
@@ -176,17 +268,6 @@
     </plugins>
   </build>
 
-  <mailingLists>
-    <mailingList>
-      <name>Hippo Repository 2 Dev List</name>
-      <subscribe>hipporepos-dev-subscribe@lists.hippocms.org</subscribe>
-      <unsubscribe>announce-unsubscribe@lists.hippocms.org</unsubscribe>
-      <post>hipporepos-dev@lists.hippoforge.org</post>
-      <archive>http://lists.hippoforge.org/mailman/listinfo/hipporepos-dev/</archive>
-    </mailingList>
-  </mailingLists>
-
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -248,6 +329,7 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>${org.slf4j.version}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -334,87 +416,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
-  
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</url>
-  </scm>
-  <organization>
-    <name>Hippo</name>
-    <url>http://www.hippo.nl/</url>
-  </organization>
-    
-  <developers>
-    <developer>
-      <name>Arje Cahn</name>
-      <id>acahn</id>
-      <email/>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Project Lead</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Ate Douma</name>
-      <id>adouma</id>
-      <email/>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Ard Schrijvers</name>
-      <id>aschrijvers</id>
-      <email/>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>(Berry) A.W. van Halderen</name>
-      <id>bvanhalderen</id>
-      <email>b.vanhalderen@hippo.nl</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Wander Grevink</name>
-      <id>wgrevink</id>
-      <email/>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <name>Bart van der Schans</name>
-      <id>bvdschans</id>
-      <email/>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
+
 
   <reporting>
     <!-- outputDirectory>target/site</outputDirectory -->

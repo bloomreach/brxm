@@ -3,6 +3,7 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippocms.org/nt/1.0'>
+
 [hippo:facetresult]
 + * multiple
 
@@ -13,3 +14,10 @@
 - hippo:count (long)
 + hippo:resultset (hippo:facetresult) = hippo:facetresult mandatory autocreated
 + * (hippo:facetsearch) = hippo:facetsearch multiple
+
+[hippo:document] > nt:base, mix:referenceable
+
+[hippo:workflow] > nt:base
+- hippo:service (string) mandatory
+- hippo:display (string) mandatory
+- hippo:renderer (string) mandatory

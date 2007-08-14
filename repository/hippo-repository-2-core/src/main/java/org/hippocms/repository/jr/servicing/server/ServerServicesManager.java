@@ -37,6 +37,7 @@ public class ServerServicesManager extends ServerObject implements RemoteService
 
     public Service getService(String absPath) throws RepositoryException, RemoteException {
         try {
+            absPath = absPath.substring(1); // skip leading slash
             Node node = servicesManager.getSession().getRootNode().getNode(absPath);
             return servicesManager.getService(node);
         } catch (RepositoryException ex) {

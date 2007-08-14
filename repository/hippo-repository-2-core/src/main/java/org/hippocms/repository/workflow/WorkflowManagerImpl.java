@@ -21,6 +21,9 @@
  */
 package org.hippocms.repository.workflow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -38,6 +41,8 @@ import org.hippocms.repository.jr.servicing.ServicingWorkspace;
 public class WorkflowManagerImpl
   implements WorkflowManager
 {
+  private final Logger log = LoggerFactory.getLogger(Workflow.class);
+
   Session session;
   String configuration;
   public WorkflowManagerImpl(Session session) {
@@ -86,16 +91,17 @@ public class WorkflowManagerImpl
   public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
     Node workflowNode = getWorkflowNode(category, item);
     if(workflowNode != null) {
-      return new WorkflowDescriptor(this, category, item);
+      return new WorkflowDescriptor(this, category, workflowNode);
     } else {
+      log.debug("Workflow for category "+category+" on "+item.getPath()+" is not available");
       return null;
     }
   }
   public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
     try {
-      return getWorkflow(descriptor.category, session.getRootNode().getNode(descriptor.nodeAbsPath));
+      return getWorkflow(descriptor.category, session.getRootNode().getNode(descriptor.nodeAbsPath.substring(1)));
     } catch(PathNotFoundException ex) {
-      // FIXME
+      log.debug("Workflow no longer available "+descriptor.nodeAbsPath);
       return null;
     }
   }
@@ -113,13 +119,14 @@ public class WorkflowManagerImpl
         }
         return workflow;
       } catch(PathNotFoundException ex) {
-        // FIXME
-        return null;
+        log.error("Workflow specification corrupt on node " + workflowNode.getPath());
+        throw new RepositoryException("workflow specification corrupt", ex);
       } catch(ValueFormatException ex) {
-        // FIXME
-        return null;
+        log.error("Workflow specification corrupt on node " + workflowNode.getPath());
+        throw new RepositoryException("workflow specification corrupt", ex);
       }
     } else {
+      log.debug("Workflow for category "+category+" on "+item.getPath()+" is not available");
       return null;
     }
   }

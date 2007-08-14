@@ -60,6 +60,7 @@ public class ServerWorkflowManager extends ServerObject
     throws RepositoryException, RemoteException
   {
     try {
+      absPath = absPath.substring(1); // skip leading slash
       Node node = workflowManager.getSession().getRootNode().getNode(absPath);
       return workflowManager.getWorkflow(category, node);
     } catch(RepositoryException ex) {

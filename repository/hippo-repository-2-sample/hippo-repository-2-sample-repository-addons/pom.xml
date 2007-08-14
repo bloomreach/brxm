@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.hippoecm</groupId>
+    <artifactId>hippo-repository-2-sample</artifactId>
+    <version>2.01.00-dev</version>
+    <relativePath>..</relativePath>
+  </parent>
+  
+  <name>Hippo Repository 2 Sample repository addons</name>
+  <description>Hippo Repository 2 Sample repository module</description>
+  <groupId>org.hippoecm</groupId>
+  <artifactId>hippo-repository-2-sample-repository-addons</artifactId>
+  <version>2.01.00-dev</version>
+  <packaging>jar</packaging>
+
+  <scm>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-sample/hippo-repository-2-sample-repository-addons</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-sample/hippo-repository-2-sample-repository-addons</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-sample/hippo-repository-2-sample-repository-addons</url>
+  </scm>
+
+  <repositories>
+    <repository>
+      <snapshots><enabled>true</enabled></snapshots>
+      <id>repository.hippocms.org</id>
+      <name>Hippo Repository for Maven2</name>
+      <url>http://repository.hippocms.org/maven2/</url>
+      <layout>default</layout>
+    </repository>
+    <repository>
+      <snapshots><enabled>true</enabled></snapshots>
+      <id>day.com</id>
+      <name>Day Repository for JCR</name>
+      <url>http://www.day.com/maven/</url>
+      <layout>legacy</layout>
+    </repository>
+    <repository>
+      <!-- For the Atomikos JARs -->
+      <id>logicblaze.deps</id>
+      <url>http://repo.logicblaze.com/maven2-all</url>
+      <snapshots><enabled>true</enabled><updatePolicy>never</updatePolicy></snapshots>
+      <releases><enabled>true</enabled><updatePolicy>never</updatePolicy></releases>
+    </repository>
+    <repository>
+      <!-- For JPOX dependencies -->
+      <id>JPOX Maven repository</id>
+      <url>http://www.jpox.org/downloads/maven/</url>
+      <snapshots><enabled>true</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
+      <layout>legacy</layout>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>JPOX Maven2 plugin repository</id>
+      <name>Repository for JPOX</name>
+      <url>http://www.jpox.org/downloads/maven2//</url>
+      <layout>default</layout>
+      <snapshots><enabled>true</enabled></snapshots>
+      <releases><updatePolicy>never</updatePolicy></releases>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.hippocms</groupId>
+      <artifactId>hippo-repository-2-core</artifactId>
+      <version>2.01.00-dev</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-repository-2-sample-common-addons</artifactId>
+      <version>2.01.00-dev</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <!-- FIXME: should not be reliant on jpox, but on general JDO -->
+    <dependency>
+      <groupId>jpox</groupId>
+      <artifactId>jpox-core</artifactId>
+      <version>1.2.0-beta-3</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.resource</groupId>
+          <artifactId>connector</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jpox-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>jpox</groupId>
+              <artifactId>jpox</artifactId>
+              <version>1.2.0</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>javax.resource</groupId>
+                  <artifactId>jta</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>javax.resource</groupId>
+                  <artifactId>connector</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>jpox</groupId>
+          <artifactId>jpox-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>bcel</groupId>
+              <artifactId>bcel</artifactId>
+              <version>5.1</version>
+            </dependency>
+         </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins> 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>always</forkMode>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+          <excludes>
+            <exclude>**/ServiceTest.java</exclude>
+            <exclude>**/FacettedNavigationTest.java</exclude>
+            <exclude>**/BusinessMethodsTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>     
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>process-classes-rmic</id>
+            <phase>process-classes</phase>
+            <configuration>
+              <tasks>
+                <rmic base="${project.build.outputDirectory}" verify="true"
+                      includes="org/hippocms/repository/jr/servicing/WorkflowImpl.class"/>
+                <rmic base="${project.build.outputDirectory}" verify="true"
+                      includes="org/hippocms/repository/jr/servicing/server/ServerServicing*.class"
+                      classpathref="maven.compile.classpath"/>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>jpox</groupId>
+        <artifactId>jpox-maven-plugin</artifactId>
+        <version>1.2.0-beta-2</version>
+        <configuration>
+          <!-- log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration -->
+          <verbose>true</verbose>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals><goal>enhance</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+   </plugins>
+  </build>
+
+</project>
