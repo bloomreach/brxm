@@ -19,19 +19,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippocms.repository.workflow;
+package org.hippoecm.repository.sample;
+
+import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippocms.repository.jr.servicing.WorkflowManager;
+import org.hippocms.repository.workflow.Workflow;
+import org.hippocms.repository.workflow.WorkflowException;
+import org.hippocms.repository.workflow.WorkflowImpl;
 
-public class MyWorkflowRenderer extends GenericWorkflowRenderer
+public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow
 {
-  public MyWorkflowRenderer(WorkflowManager manager, WorkflowDescriptor descriptor) {
-    super(manager, descriptor);
+  //ArticleDocument article;
+  String articleId;
+  int authorId;
+  public SampleWorkflowImpl() throws RemoteException {
   }
-  public void invoke() throws WorkflowException, RepositoryException {
-    MyWorkflow myworkflow = (MyWorkflow) workflowManager.getWorkflow(workflowDescriptor);
-    myworkflow.renameAuthor("Jan Smit");
+  public void renameAuthor(String newName) throws WorkflowException, RepositoryException {
+    AuthorDocument author = (AuthorDocument) context.getDocument("authors",newName);
+    if(author == null)
+      throw new WorkflowException("author does not exist");
+    /*article.*/authorId = author.authorId;
   }
 }
