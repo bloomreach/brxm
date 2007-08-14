@@ -176,11 +176,6 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <excludes>
-            <exclude>**/ServiceTest.java</exclude>
-            <exclude>**/FacettedNavigationTest.java</exclude>
-            <exclude>**/BusinessMethodsTest.java</exclude>
-          </excludes>
         </configuration>
       </plugin>     
       <plugin>
@@ -209,9 +204,7 @@
             <configuration>
               <tasks>
                 <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippocms/repository/jr/servicing/WorkflowImpl.class"/>
-                <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippocms/repository/jr/servicing/server/ServerServicing*.class"
+                      includes="org/hippoecm/repository/sample/SampleWorkflowImpl.class"
                       classpathref="maven.compile.classpath"/>
               </tasks>
             </configuration>

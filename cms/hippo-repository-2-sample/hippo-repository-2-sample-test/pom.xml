@@ -155,6 +155,11 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+          <!-- excludes>
+            <exclude>**/SamplePersistencyTest.java</exclude>
+            <exclude>**/SampleWorkflowTest.java</exclude>
+            <exclude>**/SampleRemoteWorkflowTest.java</exclude>
+          </excludes -->
         </configuration>
       </plugin>     
       <plugin>
