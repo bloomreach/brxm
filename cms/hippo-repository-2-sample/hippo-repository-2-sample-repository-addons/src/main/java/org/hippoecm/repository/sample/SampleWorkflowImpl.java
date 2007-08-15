@@ -25,9 +25,9 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippocms.repository.workflow.Workflow;
-import org.hippocms.repository.workflow.WorkflowException;
-import org.hippocms.repository.workflow.WorkflowImpl;
+import org.hippoecm.repository.workflow.Workflow;
+import org.hippoecm.repository.workflow.WorkflowException;
+import org.hippoecm.repository.workflow.WorkflowImpl;
 
 public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow
 {

@@ -10,7 +10,7 @@
   </context-param>
   <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
-    <servlet-class>org.hippocms.repository.jr.embedded.RepositoryServlet</servlet-class>
+    <servlet-class>org.hippoecm.repository.jr.embedded.RepositoryServlet</servlet-class>
     <init-param>
       <param-name>repository-directory</param-name>
       <param-value>WEB-INF/storage</param-value>

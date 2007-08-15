@@ -45,16 +45,16 @@ import org.apache.jackrabbit.core.XASession;
 
 import com.atomikos.icatch.jta.UserTransactionManager;
 
-import org.hippocms.repository.jr.embedded.HippoRepository;
-import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
-import org.hippocms.repository.jr.embedded.HippoRepositoryServer;
-import org.hippocms.repository.jr.servicing.DocumentManager;
-import org.hippocms.repository.jr.servicing.Document;
-import org.hippocms.repository.jr.servicing.ServicingWorkspace;
-import org.hippocms.repository.jr.servicing.WorkflowManager;
+import org.hippoecm.repository.jr.embedded.HippoRepository;
+import org.hippoecm.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippoecm.repository.jr.embedded.HippoRepositoryServer;
+import org.hippoecm.repository.jr.servicing.DocumentManager;
+import org.hippoecm.repository.jr.servicing.Document;
+import org.hippoecm.repository.jr.servicing.ServicingWorkspace;
+import org.hippoecm.repository.jr.servicing.WorkflowManager;
 
-import org.hippocms.repository.workflow.Workflow;
-import org.hippocms.repository.workflow.WorkflowException;
+import org.hippoecm.repository.workflow.Workflow;
+import org.hippoecm.repository.workflow.WorkflowException;
 
 public class SampleRemoteWorkflowTest extends TestCase
 {

@@ -44,16 +44,16 @@ import org.apache.jackrabbit.core.XASession;
 
 import com.atomikos.icatch.jta.UserTransactionManager;
 
-import org.hippocms.repository.jr.embedded.HippoRepository;
-import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
-import org.hippocms.repository.jr.servicing.DocumentManager;
-import org.hippocms.repository.jr.servicing.Document;
-import org.hippocms.repository.jr.servicing.ServicingWorkspace;
-import org.hippocms.repository.jr.servicing.WorkflowManager;
+import org.hippoecm.repository.jr.embedded.HippoRepository;
+import org.hippoecm.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippoecm.repository.jr.servicing.DocumentManager;
+import org.hippoecm.repository.jr.servicing.Document;
+import org.hippoecm.repository.jr.servicing.ServicingWorkspace;
+import org.hippoecm.repository.jr.servicing.WorkflowManager;
 
-import org.hippocms.repository.workflow.Workflow;
-import org.hippocms.repository.workflow.WorkflowDescriptor;
-import org.hippocms.repository.workflow.WorkflowException;
+import org.hippoecm.repository.workflow.Workflow;
+import org.hippoecm.repository.workflow.WorkflowDescriptor;
+import org.hippoecm.repository.workflow.WorkflowException;
 
 public class SampleWorkflowTest extends TestCase
 {
@@ -143,8 +143,8 @@ public class SampleWorkflowTest extends TestCase
       actualArgs[0] = manager;
       actualArgs[1] = descriptor;
       Class[] formalArgsTypes = new Class[2];
-      formalArgsTypes[0] = Class.forName("org.hippocms.repository.jr.servicing.WorkflowManager");
-      formalArgsTypes[1] = Class.forName("org.hippocms.repository.workflow.WorkflowDescriptor");
+      formalArgsTypes[0] = Class.forName("org.hippoecm.repository.jr.servicing.WorkflowManager");
+      formalArgsTypes[1] = Class.forName("org.hippoecm.repository.workflow.WorkflowDescriptor");
       Constructor constructor = rendererClass.getConstructor(formalArgsTypes);
       GenericWorkflowRenderer renderer = (GenericWorkflowRenderer) constructor.newInstance(actualArgs);
       try {

@@ -26,12 +26,12 @@ import javax.jcr.query.Query;
 
 import junit.framework.TestCase;
 
-import org.hippocms.repository.jr.embedded.HippoRepository;
-import org.hippocms.repository.jr.embedded.HippoRepositoryFactory;
-import org.hippocms.repository.jr.servicing.DocumentManager;
-import org.hippocms.repository.jr.servicing.Document;
-import org.hippocms.repository.jr.servicing.ServicingWorkspace;
-import org.hippocms.repository.jr.servicing.WorkflowManager;
+import org.hippoecm.repository.jr.embedded.HippoRepository;
+import org.hippoecm.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippoecm.repository.jr.servicing.DocumentManager;
+import org.hippoecm.repository.jr.servicing.Document;
+import org.hippoecm.repository.jr.servicing.ServicingWorkspace;
+import org.hippoecm.repository.jr.servicing.WorkflowManager;
 
 import org.apache.jackrabbit.core.XASession;
 import javax.transaction.SystemException;

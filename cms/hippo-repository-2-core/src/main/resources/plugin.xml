@@ -1,6 +1,6 @@
-<plugin id="org.hippocms.repository.workflow.reviewedactions" name="JPOX JCR" provider-name="JPOX">
+<plugin id="org.hippoecm.repository.workflow.reviewedactions" name="JPOX JCR" provider-name="JPOX">
   <extension point="org.jpox.store_manager">
-    <store-manager class-name="org.hippocms.repository.pojo.StoreManagerImpl" key="jcr"/>
+    <store-manager class-name="org.hippoecm.repository.pojo.StoreManagerImpl" key="jcr"/>
   </extension>
   <extension point="org.jpox.store_valuegenerator">
     <valuegenerator name="auid" class-name="org.jpox.store.poid.AUIDPoidGenerator" unique="true" datastore="jcr"/>
