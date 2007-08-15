@@ -19,9 +19,9 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippocms.repository.jr.servicing.WorkflowManager;
-import org.hippocms.repository.workflow.WorkflowDescriptor;
-import org.hippocms.repository.workflow.WorkflowException;
+import org.hippoecm.repository.jr.servicing.WorkflowManager;
+import org.hippoecm.repository.workflow.WorkflowDescriptor;
+import org.hippoecm.repository.workflow.WorkflowException;
 
 public class SampleWorkflowRenderer extends GenericWorkflowRenderer
 {

@@ -1,0 +1,90 @@
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.hippoecm.org/nt/1.0'>
+
+// TODO: 
+// - (Unique) contraints on hippo:id's?
+// - verioning rules
+
+// alttext nodetype is usde by illustration so put it _before_ illustration
+[hippo:altText]
+- hippo:locale (string)
+  multiple mandatory
+- hippo:text (string)
+
+// link nodetype is used by newsArticle so put it _before_ newsArticle
+[hippo:link]
+- hippo:href (String)
+- hippo:text (string)
+
+// illustration nodetype is used by newsArticle so put it _before_ newsArticle
+[hippo:illustration]
+- hippo:imageSetId
++ hippo:altText
+
+// body nodetype is used by newsArticle so put it _before_ newsArticle
+[hippo:body]
+- hippo:locale (string)
+  multiple mandatory
+- hippo:title (string)
+  primary
+- hippo:summary (string)
+- hippo:page (string)
+- hippo:review (string)
+
+[hippo:newsArticle] > hippo:document
+- hippo:id (long) 
+//  > [(0,)]
+- hippo:categoryId (long)
+  multiple
+- hippo:newsArticleId (long) 
+  multiple
+- hippo:magzineId (long)
+  multiple
+- hippo:sectionId (long)
+- hippo:authorId (long)
+- hippo:published (boolean)
+  = false
+- hippo:publicationDate (date)
+- hippo:newsDate (date)
++ hippo:body (hippo:body) = hippo:body
+  multiple
++ hippo:link (hippo:link) = hippo:link
+  multiple
++ hippo:illustration (hippo:illustration) = hippo:illustration
+
+[hippo:author] > hippo:document
+- hippo:id (long)
+- hippo:name (string)
+- hippo:email (string)
+
+[hippo:section]
+- hippo:id (long)
+- hippo:name (string)
+
+[hippo:category]
+- hippo:id (long)
+- hippo:name (string)
+
+[hippo:magazine]
+- hippo:id (long)
+- hippo:name (string)
+
+// image nodetype is used by imageSet so put it _before_ imageset
+[hippo:image]
+- hippo:src (string)
+- hippo:size (string)
+- hippo:contentType (string)
+
+[hippo:imageSet]
+- hippo:id (long)
+  mandatory
+- hippo:description (string)
+  primary
++ hippo:altText
++ * (hippo:image) = hippo:image
+  multiple
+
+

@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippocms</groupId>
+    <groupId>org.hippoecm</groupId>
     <artifactId>hippo-repository-2</artifactId>
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
@@ -30,7 +30,7 @@
   
   <name>Hippo Repository 2 Core</name>
   <description>Hippo Repository 2 Core module</description>
-  <groupId>org.hippocms</groupId>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-repository-2-core</artifactId>
   <version>2.01.00-dev</version>
 
@@ -419,9 +419,9 @@
             <configuration>
               <tasks>
                 <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippocms/repository/jr/servicing/WorkflowImpl.class"/>
+                      includes="org/hippoecm/repository/jr/servicing/WorkflowImpl.class"/>
                 <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippocms/repository/jr/servicing/server/ServerServicing*.class"
+                      includes="org/hippoecm/repository/jr/servicing/server/ServerServicing*.class"
                       classpathref="maven.compile.classpath"/>
               </tasks>
             </configuration>

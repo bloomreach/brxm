@@ -25,8 +25,8 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippocms.repository.workflow.Workflow;
-import org.hippocms.repository.workflow.WorkflowException;
+import org.hippoecm.repository.workflow.Workflow;
+import org.hippoecm.repository.workflow.WorkflowException;
 
 public interface SampleWorkflow extends Workflow
 {

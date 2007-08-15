@@ -21,7 +21,7 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.hippocms</groupId>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-repository-2</artifactId>
   <version>2.01.00-dev</version>
   <name>Hippo Repository 2</name>
