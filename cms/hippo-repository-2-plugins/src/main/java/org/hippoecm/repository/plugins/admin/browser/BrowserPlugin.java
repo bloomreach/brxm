@@ -24,7 +24,7 @@ import org.hippoecm.repository.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.frontend.model.JcrTreeModel;
 import org.hippoecm.repository.frontend.plugin.Plugin;
 import org.hippoecm.repository.frontend.tree.JcrTree;
-import org.hippoecm.repository.jr.servicing.ServicingNode;
+import org.hippoecm.repository.servicing.ServicingNode;
 
 public class BrowserPlugin extends Plugin {
     private static final long serialVersionUID = 1L;

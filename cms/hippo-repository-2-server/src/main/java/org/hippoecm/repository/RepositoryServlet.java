@@ -39,8 +39,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.repository.jr.servicing.ServicingNode;
-import org.hippoecm.repository.jr.servicing.server.ServerServicingAdapterFactory;
+import org.hippoecm.repository.servicing.ServicingNode;
+import org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

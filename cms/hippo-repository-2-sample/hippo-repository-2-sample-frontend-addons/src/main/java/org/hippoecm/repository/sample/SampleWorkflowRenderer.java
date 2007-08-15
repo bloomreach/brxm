@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.jr.servicing.WorkflowManager;
+import org.hippoecm.repository.servicing.WorkflowManager;
 import org.hippoecm.repository.workflow.WorkflowDescriptor;
 import org.hippoecm.repository.workflow.WorkflowException;
 

@@ -8,11 +8,11 @@
 <%@page import="javax.jcr.Session" %>
 <%@page import="javax.jcr.RepositoryException" %>
 <%@page import="javax.jcr.SimpleCredentials" %>
-<%@page import="org.hippoecm.repository.jr.servicing.ServicingNode" %>
+<%@page import="org.hippoecm.repository.servicing.ServicingNode" %>
 <%@page import="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory" %>
 <%@page import="org.hippoecm.repository.HippoRepository" %>
 <%@page import="org.hippoecm.repository.HippoRepositoryFactory" %>
-<%@page import="org.hippoecm.repository.jr.servicing.server.ServerServicingAdapterFactory" %>
+<%@page import="org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory" %>
 
 <%!
    public Node dumpTree(JspWriter out, javax.jcr.Node parent, int level, String targetPath)

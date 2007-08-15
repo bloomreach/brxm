@@ -21,7 +21,7 @@
  */
 package org.hippoecm.repository.sample;
 
-import org.hippoecm.repository.jr.servicing.Document;
+import org.hippoecm.repository.servicing.Document;
 
 public class AuthorDocument extends Document
 {

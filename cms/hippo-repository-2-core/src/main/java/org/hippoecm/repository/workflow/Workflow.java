@@ -21,7 +21,7 @@
  */
 package org.hippoecm.repository.workflow;
 
-import org.hippoecm.repository.jr.servicing.Service;
+import org.hippoecm.repository.servicing.Service;
 
 public interface Workflow extends Service
 {

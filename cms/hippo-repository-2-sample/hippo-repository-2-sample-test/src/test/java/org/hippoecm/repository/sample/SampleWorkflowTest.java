@@ -46,10 +46,10 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.jr.servicing.DocumentManager;
-import org.hippoecm.repository.jr.servicing.Document;
-import org.hippoecm.repository.jr.servicing.ServicingWorkspace;
-import org.hippoecm.repository.jr.servicing.WorkflowManager;
+import org.hippoecm.repository.servicing.DocumentManager;
+import org.hippoecm.repository.servicing.Document;
+import org.hippoecm.repository.servicing.ServicingWorkspace;
+import org.hippoecm.repository.servicing.WorkflowManager;
 
 import org.hippoecm.repository.workflow.Workflow;
 import org.hippoecm.repository.workflow.WorkflowDescriptor;
@@ -143,7 +143,7 @@ public class SampleWorkflowTest extends TestCase
       actualArgs[0] = manager;
       actualArgs[1] = descriptor;
       Class[] formalArgsTypes = new Class[2];
-      formalArgsTypes[0] = Class.forName("org.hippoecm.repository.jr.servicing.WorkflowManager");
+      formalArgsTypes[0] = Class.forName("org.hippoecm.repository.servicing.WorkflowManager");
       formalArgsTypes[1] = Class.forName("org.hippoecm.repository.workflow.WorkflowDescriptor");
       Constructor constructor = rendererClass.getConstructor(formalArgsTypes);
       GenericWorkflowRenderer renderer = (GenericWorkflowRenderer) constructor.newInstance(actualArgs);
