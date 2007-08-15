@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.repository.jr.embedded;
+package org.hippoecm.repository;
 
 import java.rmi.Remote;
 import java.io.IOException;

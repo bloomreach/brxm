@@ -10,8 +10,8 @@
 <%@page import="javax.jcr.SimpleCredentials" %>
 <%@page import="org.hippoecm.repository.jr.servicing.ServicingNode" %>
 <%@page import="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory" %>
-<%@page import="org.hippoecm.repository.jr.embedded.HippoRepository" %>
-<%@page import="org.hippoecm.repository.jr.embedded.HippoRepositoryFactory" %>
+<%@page import="org.hippoecm.repository.HippoRepository" %>
+<%@page import="org.hippoecm.repository.HippoRepositoryFactory" %>
 <%@page import="org.hippoecm.repository.jr.servicing.server.ServerServicingAdapterFactory" %>
 
 <%!
