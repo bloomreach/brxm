@@ -28,8 +28,8 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.jr.embedded.HippoRepository;
-import org.hippoecm.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.jpox.ConnectionFactory;
 import org.jpox.ManagedConnection;
 import org.jpox.OMFContext;

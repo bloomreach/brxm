@@ -44,8 +44,8 @@ import org.apache.jackrabbit.core.XASession;
 
 import com.atomikos.icatch.jta.UserTransactionManager;
 
-import org.hippoecm.repository.jr.embedded.HippoRepository;
-import org.hippoecm.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.jr.servicing.DocumentManager;
 import org.hippoecm.repository.jr.servicing.Document;
 import org.hippoecm.repository.jr.servicing.ServicingWorkspace;

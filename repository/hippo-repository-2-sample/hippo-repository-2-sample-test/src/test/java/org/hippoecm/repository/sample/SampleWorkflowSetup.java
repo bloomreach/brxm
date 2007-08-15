@@ -26,8 +26,8 @@ import javax.jcr.query.Query;
 
 import junit.framework.TestCase;
 
-import org.hippoecm.repository.jr.embedded.HippoRepository;
-import org.hippoecm.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.jr.servicing.DocumentManager;
 import org.hippoecm.repository.jr.servicing.Document;
 import org.hippoecm.repository.jr.servicing.ServicingWorkspace;

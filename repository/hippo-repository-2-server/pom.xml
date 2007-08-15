@@ -143,7 +143,7 @@
             <configuration>
               <tasks>
                 <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/jr/embedded/TestImpl.class"
+                      includes="org/hippoecm/repository/TestImpl.class"
                       classpathref="maven.compile.classpath"/>
               </tasks>
             </configuration>
@@ -182,7 +182,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>org.hippoecm.repository.jr.embedded.HippoRepositoryServer</mainClass>
+          <mainClass>org.hippoecm.repository.HippoRepositoryServer</mainClass>
           <commandlineArgs>"${project.build.directory}"</commandlineArgs>
           <cleanupDeamonThreads>false</cleanupDeamonThreads>
         </configuration>

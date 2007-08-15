@@ -22,8 +22,8 @@ import javax.jcr.Session;
 
 import junit.framework.TestCase;
 
-import org.hippoecm.repository.jr.embedded.HippoRepository;
-import org.hippoecm.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class FacetedNavigationTest extends TestCase {
     private final static String SVN_ID = "$Id$";

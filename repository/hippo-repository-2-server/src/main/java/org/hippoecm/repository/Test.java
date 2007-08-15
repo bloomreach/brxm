@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package org.hippoecm.repository.jr.embedded;
+package org.hippoecm.repository;
 
+import java.io.Serializable;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.Random;
 
-public class TestImpl extends UnicastRemoteObject implements Test {
-    private Random random;
-
-    public TestImpl() throws RemoteException {
-        random = new Random();
-    }
-
-    public int test(int max) throws RemoteException {
-        int rtvalue = random.nextInt(max);
-        System.err.println("TEST called with value " + max + " returning " + rtvalue);
-        return rtvalue;
-    }
+public interface Test extends Remote, Serializable {
+    public int test(int max) throws RemoteException;
 }

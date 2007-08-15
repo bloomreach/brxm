@@ -31,8 +31,8 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebSession;
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.frontend.plugin.Plugin;
-import org.hippoecm.repository.jr.embedded.HippoRepository;
-import org.hippoecm.repository.jr.embedded.HippoRepositoryFactory;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class UserSession extends WebSession {
     private static final long serialVersionUID = 1L;
