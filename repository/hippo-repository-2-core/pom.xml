@@ -419,9 +419,9 @@
             <configuration>
               <tasks>
                 <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/jr/servicing/WorkflowImpl.class"/>
+                      includes="org/hippoecm/repository/servicing/WorkflowImpl.class"/>
                 <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/jr/servicing/server/ServerServicing*.class"
+                      includes="org/hippoecm/repository/servicing/server/ServerServicing*.class"
                       classpathref="maven.compile.classpath"/>
               </tasks>
             </configuration>

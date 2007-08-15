@@ -29,7 +29,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
-import org.hippoecm.repository.jr.servicing.ServicingNode;
+import org.hippoecm.repository.servicing.ServicingNode;
 
 public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, IDataProvider {
     private static final long serialVersionUID = 1L;

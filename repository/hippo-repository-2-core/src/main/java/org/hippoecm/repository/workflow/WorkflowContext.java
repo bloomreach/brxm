@@ -24,9 +24,9 @@ package org.hippoecm.repository.workflow;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.jr.servicing.Document;
-import org.hippoecm.repository.jr.servicing.DocumentManager;
-import org.hippoecm.repository.jr.servicing.ServicingWorkspace;
+import org.hippoecm.repository.servicing.Document;
+import org.hippoecm.repository.servicing.DocumentManager;
+import org.hippoecm.repository.servicing.ServicingWorkspace;
 
 public final class WorkflowContext {
   Session session;

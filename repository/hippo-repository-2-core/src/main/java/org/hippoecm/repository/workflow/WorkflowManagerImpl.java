@@ -32,11 +32,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.repository.jr.servicing.ServicingNode;
-import org.hippoecm.repository.jr.servicing.WorkflowManager;
-import org.hippoecm.repository.jr.servicing.ServicesManagerImpl;
-import org.hippoecm.repository.jr.servicing.Service;
-import org.hippoecm.repository.jr.servicing.ServicingWorkspace;
+import org.hippoecm.repository.servicing.ServicingNode;
+import org.hippoecm.repository.servicing.WorkflowManager;
+import org.hippoecm.repository.servicing.ServicesManagerImpl;
+import org.hippoecm.repository.servicing.Service;
+import org.hippoecm.repository.servicing.ServicingWorkspace;
 
 public class WorkflowManagerImpl
   implements WorkflowManager

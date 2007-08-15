@@ -23,7 +23,7 @@ package org.hippoecm.repository.workflow;
 
 import java.rmi.RemoteException;
 
-import org.hippoecm.repository.jr.servicing.ServiceImpl;
+import org.hippoecm.repository.servicing.ServiceImpl;
 
 public abstract class WorkflowImpl extends ServiceImpl implements Workflow
 {

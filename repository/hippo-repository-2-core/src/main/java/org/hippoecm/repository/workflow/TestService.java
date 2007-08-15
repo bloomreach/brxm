@@ -23,7 +23,7 @@ package org.hippoecm.repository.workflow;
 
 import java.rmi.RemoteException;
 
-import org.hippoecm.repository.jr.servicing.Service;
+import org.hippoecm.repository.servicing.Service;
 
 public interface TestService extends Service {
     public void doAction1() throws Exception, RemoteException;

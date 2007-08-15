@@ -26,7 +26,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.jr.servicing.ServicingNode;
+import org.hippoecm.repository.servicing.ServicingNode;
 
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;

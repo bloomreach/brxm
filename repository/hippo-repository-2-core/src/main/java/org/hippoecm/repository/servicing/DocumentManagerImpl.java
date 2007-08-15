@@ -1,0 +1,147 @@
+/*
+  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
+  work has proceeded to a stable level, at which time this comment
+  will be removed.  -- Berry
+*/
+
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.hippoecm.repository.servicing;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Transaction;
+
+import org.jpox.PersistenceManagerFactoryImpl;
+import org.jpox.transaction.HeuristicRollbackException;
+
+import org.hippoecm.repository.pojo.JCROID;
+import org.hippoecm.repository.pojo.StoreManagerImpl;
+
+public class DocumentManagerImpl
+  implements DocumentManager
+{
+  Session session;
+  String configuration;
+  PersistenceManagerFactory pmf;
+  StoreManagerImpl sm;
+  PersistenceManager pm;
+  public DocumentManagerImpl(Session session) {
+    this.session = session;
+    // FIXME
+    try {
+      configuration = session.getRootNode().getNode("configuration/documents").getUUID();
+    } catch(RepositoryException ex) {
+      System.err.println("RepositoryException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+    }
+    try {
+      Properties properties = new Properties();
+      InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
+      properties.load(istream);
+      properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
+      pmf = JDOHelper.getPersistenceManagerFactory(properties);
+      pm = null;
+      sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
+      sm.setSession(session);
+    } catch(IOException ex) {
+      System.err.println("IOException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+    }
+  }
+  public Object getObject(String uuid, String classname, Node types) {
+    Object obj = null;
+    if(pm == null) {
+      pm = pmf.getPersistenceManager();
+    }
+    if(types != null)
+      sm.setTypes(types);
+    try {
+      obj = pm.getObjectById(new JCROID(uuid, classname));
+    } finally {
+      sm.setTypes(null);
+    }    
+    return obj;
+  }
+  public void putObject(String uuid, Node types, Object object) {
+    if(pm == null) {
+      pm = pmf.getPersistenceManager();
+    }
+    Transaction tx = pm.currentTransaction();
+    tx.setNontransactionalRead(true);
+    tx.setNontransactionalWrite(true);
+    boolean transactional = true;
+    if(transactional && !tx.isActive()) {
+      try {
+        tx.begin();
+        pm.makePersistent(object);
+        tx.commit();
+      } finally {
+        if(tx.isActive())
+          tx.rollback();
+      }
+    } else {
+      pm.makePersistent(object);
+    }
+  }
+  public Document getDocument(String category, String identifier) throws RepositoryException {
+    try {
+      Node queryNode = session.getNodeByUUID(configuration).getNode(category);
+      String queryLanguage = queryNode.getProperty("language").getString();
+      String queryString = queryNode.getProperty("query").getString();
+      queryString = queryString.replace("?", identifier);
+      Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
+      QueryResult result = query.execute();
+      NodeIterator iter = result.getNodes();
+      if(iter.hasNext()) {
+        Node resultNode = iter.nextNode();
+        String uuid = resultNode.getUUID();
+        return (Document) getObject(uuid, queryNode.getProperty("classname").getString(), queryNode.getNode("types"));
+      } else {
+        return null;
+      }
+    } catch(javax.jdo.JDODataStoreException ex) {
+      System.err.println("JDODataStoreException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+      return null;
+    } catch(UnsupportedRepositoryOperationException ex) {
+      System.err.println("UnsupportedRepositoryOperationException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+      return null;
+    } catch(PathNotFoundException ex) {
+      System.err.println("PathNotFoundException: "+ex.getMessage());
+      ex.printStackTrace(System.err);
+      /* getDocument cannot and should not be used to create documents.
+       * null is a valid way to check whether the document looked for exist.
+       */
+      return null;
+    }
+  }
+}
