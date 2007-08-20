@@ -15,34 +15,25 @@
  */
 package org.hippoecm.repository.frontend;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Request;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebSession;
-import org.hippoecm.repository.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.frontend.plugin.Plugin;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class UserSession extends WebSession {
     private static final long serialVersionUID = 1L;
 
-    private List plugins;
     private JcrSessionModel jcrSessionModel;
 
     public UserSession(WebApplication application, Request request) {
         super(application, request);
-        plugins = new ArrayList();
         jcrSessionModel = new JcrSessionModel();
         //Calling the dirty() method causes this wicket session to be reset in the http session
         //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
@@ -93,20 +84,6 @@ public class UserSession extends WebSession {
             return result;
         }
 
-    }
-
-    //TODO: Look into IInitializer and wicket.properties for this 
-
-    public void registerPlugin(Plugin plugin) {
-        //should we call dirty() here? (see comment in constructor)
-        plugins.add(plugin);
-    }
-
-    public void notifyPlugins(AjaxRequestTarget target, JcrNodeModel model) {
-        Iterator it = plugins.iterator();
-        while (it.hasNext()) {
-            ((Plugin) it.next()).update(target, model);
-        }
     }
 
 }

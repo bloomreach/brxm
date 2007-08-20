@@ -31,11 +31,10 @@ public class PluginJavaConfig implements PluginConfig {
         classMap.put("navigationPanel", "org.hippoecm.repository.plugins.admin.browser.BrowserPlugin");
         classMap.put("menuPanel", "org.hippoecm.repository.plugins.admin.menu.MenuPlugin");
         classMap.put("contentPanel", "org.hippoecm.repository.plugins.admin.editor.EditorPlugin");
-        //classMap.put("contentPanel", "org.hippoecm.repository.plugins.samples.SamplesPlugin");
+        classMap.put("workflowPanel", "org.hippoecm.repository.plugins.admin.workflow.WorkflowPlugin");   
     }
 
-    public String pluginClassname(String id) {
-        Object obj = classMap.get(id);
-        return (obj == null) ? null : obj.toString();
+    public Map getPluginMap() {
+        return new HashMap(classMap);
     }
 }

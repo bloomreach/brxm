@@ -1,6 +1,11 @@
 package org.hippoecm.repository.frontend.plugin.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -12,7 +17,7 @@ public class PluginRepositoryConfig implements PluginConfig {
 
     private String pluginConfigPath = "configuration/plugins";
     private JcrNodeModel pluginConfig;
-    
+
     public PluginRepositoryConfig() {
         try {
             UserSession session = (UserSession) Session.get();
@@ -24,12 +29,17 @@ public class PluginRepositoryConfig implements PluginConfig {
         }
     }
 
-    public String pluginClassname(String id) {
-        String result;
+    public Map getPluginMap() {
+        Map result = new HashMap();
         try {
-            result = pluginConfig.getNode().getProperty(id).getString();
+            PropertyIterator it = pluginConfig.getNode().getProperties("*Panel");
+            while (it.hasNext()) {
+                Property prop = it.nextProperty();
+                result.put(prop.getName(), prop.getString());
+            }
         } catch (RepositoryException e) {
-            result = null;
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         return result;
     }

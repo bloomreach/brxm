@@ -15,16 +15,14 @@
  */
 package org.hippoecm.repository.plugins.admin.browser;
 
-import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.repository.frontend.UserSession;
+import org.hippoecm.repository.frontend.Home;
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.frontend.model.JcrTreeModel;
 import org.hippoecm.repository.frontend.plugin.Plugin;
 import org.hippoecm.repository.frontend.tree.JcrTree;
-import org.hippoecm.repository.servicing.ServicingNode;
 
 public class BrowserPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
@@ -38,8 +36,8 @@ public class BrowserPlugin extends Plugin {
         tree = new JcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
-                UserSession session = (UserSession)getSession();
-                session.notifyPlugins(target, (JcrNodeModel)treeNode);
+                Home home = (Home)getWebPage();
+                home.getPluginManager().notifyPlugins(target, (JcrNodeModel)treeNode);
             }
         };
         tree.getTreeState().expandNode((TreeNode) model.getRoot());

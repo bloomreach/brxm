@@ -19,11 +19,9 @@ import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.hippoecm.repository.frontend.Home;
-import org.hippoecm.repository.frontend.UserSession;
 
 public class Main extends WebApplication {
-    
+
     protected void init() {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(false);
@@ -36,7 +34,7 @@ public class Main extends WebApplication {
     public Session newSession(Request request, Response response) {
         return new UserSession(this, request);
     }
-    
+
     public String getConfigurationParameter(String parameterName, String defaultValue) {
         String result = getInitParameter(parameterName);
         if (result == null || result.equals("")) {
@@ -45,7 +43,7 @@ public class Main extends WebApplication {
         if (result == null || result.equals("")) {
             result = defaultValue;
         }
-        return result; 
+        return result;
     }
-    
+
 }
