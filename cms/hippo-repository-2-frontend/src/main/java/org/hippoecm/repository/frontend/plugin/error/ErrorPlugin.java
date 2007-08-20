@@ -23,8 +23,8 @@ import org.hippoecm.repository.frontend.plugin.Plugin;
 public class ErrorPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public ErrorPlugin(String id, JcrNodeModel model, Exception exception, String message) {
-        super(id, model);
+    public ErrorPlugin(String id, Exception exception, String message) {
+        super(id, null);
         String errorMessage = "";
         if (exception != null) {
             errorMessage = exception.getClass().getName() + ": " + exception.getMessage();

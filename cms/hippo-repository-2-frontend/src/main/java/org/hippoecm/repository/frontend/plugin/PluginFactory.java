@@ -51,12 +51,12 @@ public class PluginFactory {
 
     private Plugin getDefaultPlugin(String id, JcrNodeModel model) {
         Plugin plugin;
-        String defaultPluginClassname = new PluginJavaConfig().pluginClassname(id);
+        String defaultPluginClassname = new PluginJavaConfig().getPluginMap().get(id).toString();
         try {
             plugin = loadPlugin(id, model, defaultPluginClassname);
         } catch (Exception e) {
             String message = "Failed to instantiate default plugin, something is seriously wrong.";
-            plugin = new ErrorPlugin(id, model, e, message);
+            plugin = new ErrorPlugin(id, e, message);
         }
         return plugin;
     }
