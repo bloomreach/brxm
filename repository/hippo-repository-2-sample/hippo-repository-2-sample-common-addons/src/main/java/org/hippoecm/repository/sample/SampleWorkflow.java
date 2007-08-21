@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -28,7 +22,6 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.workflow.Workflow;
 import org.hippoecm.repository.workflow.WorkflowException;
 
-public interface SampleWorkflow extends Workflow
-{
-  public void renameAuthor(String newName) throws WorkflowException, RepositoryException, RemoteException;
+public interface SampleWorkflow extends Workflow {
+    public void renameAuthor(String newName) throws WorkflowException, RepositoryException, RemoteException;
 }

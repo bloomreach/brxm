@@ -22,8 +22,7 @@ import java.lang.UnsupportedOperationException;
 import java.util.Map;
 import java.util.List;
 
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.Query;
+import javax.jcr.Session;
 
 /**
 
@@ -108,10 +107,23 @@ count template that go with them.
  * @version draft
  */
 
-public interface FacetedNavigationEngine
+import java.util.Iterator;
+
+public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query,C extends FacetedNavigationEngine.Context>
 {
     class Count {
-      int count;
+      public Count(int initialCount) {
+        count = initialCount;
+      }
+      public int count;
+    }
+    abstract class Result {
+      public abstract int length();
+      public abstract Iterator<String> iterator();
+    }
+    abstract class Query {
+    }
+    class Context {
     }
 
     /**
@@ -126,7 +138,7 @@ public interface FacetedNavigationEngine
      * @param initialQueries A list of initial queries later used in the #view methods
      * @see #unprepare(String)
      */
-    public void prepare(String principal, Map<String,String> authorizationQuery, List<Query> initialQueries);
+    public C prepare(String principal, Map<String,String> authorizationQuery, List<Q> initialQueries, Session session);
     
     /**
      * This method is called when a user logouts from the system.
@@ -135,7 +147,7 @@ public interface FacetedNavigationEngine
      *                  than for equality and order.
      * @see #prepare(String,Map,List)
      */
-    public void unprepare(String principal);
+    public void unprepare(C context);
     
     /**
      * In order to inform the engine that the facet definition has changed, the
@@ -235,9 +247,9 @@ public interface FacetedNavigationEngine
      * An implementation may choose to completely ignore this field, or
      * fill-in only parts of the structure.  It does not need to call an
      * UnsupportedOperationException
-     * @param hitsRequested Whether the engine is requested to return a Hits
+     * @param hitsRequested Whether the engine is requested to return a Result
      * objects from a Lucene search.
-     * @return The Hits object as returned by lucene when performing the
+     * @return The Result object as returned by lucene when performing the
      * combined initial-, authorization-, facets-, and open-query in lucene.
      * If the faceted navigation search engine can perform this search as a
      * by-product of its faceted search counting, or at minor extra cost the
@@ -247,11 +259,15 @@ public interface FacetedNavigationEngine
      * actually wants this result set.  When hitsRequested is set to false,
      * the engine should always return <code>null</code>.
      */
-    public Hits view(String queryName, Query initialQuery, String principal,
-                     Map<String,String> authorizationQuery,
-                     Map<String,String> facetsQuery,
-                     Query openQuery,
-                     Map<String,Map<String,Integer>> resultset,
-                     Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
-                     boolean hitsRequested) throws UnsupportedOperationException;
+    public Result view(String queryName, Q initialQuery, C authorization,
+		       Map<String,String> facetsQuery, Q openQuery,
+		       Map<String,Map<String,Count>> resultset,
+		       Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
+		       boolean resultRequested) throws UnsupportedOperationException;
+
+
+    public Result view(String queryName, Q initialQuery, C authorization,
+		       Map<String,String> facetsQuery, Q openQuery);
+
+    public Q parse(String query);
 }

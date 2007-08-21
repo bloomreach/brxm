@@ -22,6 +22,9 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
+
 /**
  * Simple {@link Repository Repository} decorator.
  */
@@ -31,9 +34,18 @@ public class RepositoryDecorator implements Repository {
 
     private Repository repository;
 
+    private FacetedNavigationEngine facetedEngine;
+
     public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
         this.factory = factory;
         this.repository = repository;
+    }
+
+    FacetedNavigationEngine getFacetedNavigationEngine() {
+        if(facetedEngine == null) {
+          facetedEngine = new FacetedNavigationEngineFirstImpl();
+        }
+        return facetedEngine;
     }
 
     /**
@@ -59,7 +71,11 @@ public class RepositoryDecorator implements Repository {
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
         Session session = repository.login(credentials, workspaceName);
-        return factory.getSessionDecorator(this, session);
+	// BERRY get username from credentials and have some method to map these to facets match
+        ServicingSessionImpl servicingSession = (ServicingSessionImpl) factory.getSessionDecorator(this, session);
+        FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, servicingSession);
+	servicingSession.setFacetedNavigationContext(context);
+	return servicingSession;
     }
 
     /**

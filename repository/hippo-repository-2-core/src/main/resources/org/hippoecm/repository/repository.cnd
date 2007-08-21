@@ -44,7 +44,16 @@
 [hippo:queryfolder] > nt:base, mix:referenceable
 + * (hippo:query) = hippo:query
 
+[hippo:initializeitem] > nt:base
+- hippo:namespace (string)
+- hippo:nodetypes (string)
+- hippo:content (string)
+
+[hippo:initializefolder] > nt:base
++ * (hippo:initializeitem) = hippo:initializeitem
+
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:queryfolder) = hippo:queryfolder mandatory
++ hippo:initialize (hippo:initializefolder) = hippo:initializefolder
 + *

@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -23,8 +17,7 @@ package org.hippoecm.repository.sample;
 
 import org.hippoecm.repository.servicing.Document;
 
-public class ArticleDocument extends Document
-{
-  int articleId;
-  int authorId;
+public class ArticleDocument extends Document {
+    int articleId;
+    int authorId;
 }
