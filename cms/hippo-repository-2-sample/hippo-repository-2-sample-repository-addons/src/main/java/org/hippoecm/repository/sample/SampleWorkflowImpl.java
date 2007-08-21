@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -29,17 +23,17 @@ import org.hippoecm.repository.workflow.Workflow;
 import org.hippoecm.repository.workflow.WorkflowException;
 import org.hippoecm.repository.workflow.WorkflowImpl;
 
-public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow
-{
-  //ArticleDocument article;
-  String articleId;
-  int authorId;
-  public SampleWorkflowImpl() throws RemoteException {
-  }
-  public void renameAuthor(String newName) throws WorkflowException, RepositoryException {
-    AuthorDocument author = (AuthorDocument) context.getDocument("authors",newName);
-    if(author == null)
-      throw new WorkflowException("author does not exist");
-    /*article.*/authorId = author.authorId;
-  }
+public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow {
+    ArticleDocument article;
+    String dummy;
+
+    public SampleWorkflowImpl() throws RemoteException {
+    }
+
+    public void renameAuthor(String newName) throws WorkflowException, RepositoryException {
+        AuthorDocument author = (AuthorDocument) context.getDocument("authors", newName);
+        if (author == null)
+            throw new WorkflowException("author does not exist");
+        article.authorId = author.authorId;
+    }
 }

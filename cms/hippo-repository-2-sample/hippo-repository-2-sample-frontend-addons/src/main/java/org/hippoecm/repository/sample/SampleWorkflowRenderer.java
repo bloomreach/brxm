@@ -32,9 +32,7 @@ public class SampleWorkflowRenderer extends GenericWorkflowRenderer
     SampleWorkflow myworkflow = (SampleWorkflow) workflowManager.getWorkflow(workflowDescriptor);
     if(myworkflow != null)
       myworkflow.renameAuthor("Jan Smit");
-    else {
-      System.out.println("BERRY "+workflowDescriptor);
+    else
       throw new WorkflowException("workflow no longer available: "+workflowDescriptor);
-    }
   }
 }

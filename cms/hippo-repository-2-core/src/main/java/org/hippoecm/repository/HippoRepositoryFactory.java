@@ -19,12 +19,15 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
     private final static String SVN_ID = "$Id$";
 
-    static String defaultLocation = null;
+    static String defaultLocation = null; // FIXME: should become: "java:comp/env/jcr/repository";
     static HippoRepository defaultRepository = null;
 
     public static void setDefaultRepository(String location) {
@@ -76,6 +79,16 @@ public class HippoRepositoryFactory {
                 return null;
                 // FIXME
             }
+        }
+
+        if(location.startsWith("java:")) {
+          try {
+            InitialContext ctx = new InitialContext();
+            return (HippoRepository) ctx.lookup(location);
+          } catch (NamingException ex) {
+            return null;
+            // FIXME
+          }
         }
         
         // embedded/local default

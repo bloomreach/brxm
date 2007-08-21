@@ -232,8 +232,8 @@ public class StoreManagerImpl extends StoreManager {
     }
 
     public void locateObject(StateManager sm) {
-        getDatastoreClass(sm.getObject().getClass().getName(), sm.getObjectManager().getClassLoaderResolver()).locate(
-                sm);
+        getDatastoreClass(sm.getObject().getClass().getName(), sm.getObjectManager().getClassLoaderResolver())
+                    .locate(sm);
     }
 
     public Object findObject(ObjectManager om, Object id) {

@@ -20,6 +20,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.AccessControlException;
 
+import javax.transaction.SystemException;
+import javax.transaction.xa.XAResource;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.InvalidItemStateException;
@@ -40,15 +43,19 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
-import javax.transaction.SystemException;
-import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.name.Path;
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.name.NameException;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 //FIXME: depend only on JTA, not on Atomikos
 import com.atomikos.icatch.jta.UserTransactionManager;
+
+import org.hippoecm.repository.FacetedNavigationEngine;
 
 /**
  */
@@ -62,6 +69,8 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
     protected final Session session;
 
     protected UserTransactionManager utm = null;
+
+    FacetedNavigationEngine.Context facetedContext;
 
     public UserTransactionManager getUserTransactionManager() {
         return utm;
@@ -91,6 +100,20 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
             utm.close();
             utm = null;
         }
+    }
+
+    FacetedNavigationEngine getFacetedNavigationEngine() {
+        return ((RepositoryDecorator)repository).getFacetedNavigationEngine();
+    }
+    FacetedNavigationEngine.Context getFacetedNavigationContext() {
+        return facetedContext;
+    }
+    void setFacetedNavigationContext(FacetedNavigationEngine.Context context) {
+        facetedContext = context;
+    }
+
+    Path getQPath(String absPath) throws NameException, NamespaceException {
+        return ((SessionImpl)session).getQPath(absPath);
     }
 
     public XAResource getXAResource() {
@@ -182,8 +205,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
       } catch (PathNotFoundException ex) {
         try {
           Node node = getRootNode();
-          org.apache.jackrabbit.name.Path p = ((org.apache.jackrabbit.core.SessionImpl)session).getQPath(absPath);
-          org.apache.jackrabbit.name.Path.PathElement[] elements = p.getElements();
+          Path.PathElement[] elements = getQPath(absPath).getElements();
           if (elements.length < 2)
             throw ex;
           for (int i = 1; i < elements.length - 1; i++) {
@@ -334,6 +356,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      */
     public void logout() {
         session.logout();
+        ((RepositoryDecorator)repository).getFacetedNavigationEngine().unprepare(facetedContext);
     }
 
     /**
