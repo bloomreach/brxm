@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<project name="hippo-repository-2-testutils-junit-report" default="main" basedir=".">
+
+  <property file="history.properties"/>
+
+  <target name="main">
+    <mkdir dir="${reports}" />
+    <junitreport todir="${results}">
+      <fileset dir="${results}">
+        <include name="TEST-*" />
+      </fileset>
+      <report format="frames" styledir="etc" todir="${reports}" />
+    </junitreport>
+  </target>
+    
+</project>
+
+
