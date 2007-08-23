@@ -32,8 +32,12 @@ import java.util.LinkedList;
 import java.io.IOException;
 
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
 public class FacetedNavigationEngineFirstImpl
@@ -44,6 +48,9 @@ public class FacetedNavigationEngineFirstImpl
     String xpath;
     public QueryImpl(String xpath) {
       this.xpath = xpath;
+    }
+    public String toString() {
+      return xpath;
     }
   }
   class ResultImpl extends FacetedNavigationEngine.Result {
@@ -59,6 +66,9 @@ public class FacetedNavigationEngineFirstImpl
     public Iterator<String> iterator() {
       return iter;
     }
+    public String toString() {
+      return getClass().getName()+"[length="+length+"]";
+    }
   }
   class ContextImpl extends FacetedNavigationEngine.Context {
     Session session;
@@ -68,6 +78,28 @@ public class FacetedNavigationEngineFirstImpl
       this.session = session;
       this.principal = principal;
       this.authorizationQuery = authorizationQuery;
+    }
+    public String toString() {
+      StringBuffer sb = null;
+      if(authorizationQuery != null) {
+        for(Map.Entry<String,String> authorizationEntry : authorizationQuery.entrySet()) {
+          if(sb == null)
+            sb = new StringBuffer();
+          else
+            sb.append("||");
+          sb.append(authorizationEntry.getKey());
+          sb.append("=");
+          sb.append(authorizationEntry.getValue());
+        }
+      } else
+        sb = new StringBuffer("(null)");
+      sb.insert(0,"query=");
+      sb.insert(0,",");
+      sb.insert(0,principal);
+      sb.insert(0,"[principal=");
+      sb.insert(0, getClass().getName());
+      sb.append("]");
+      return new String(sb);
     }
   }
 
@@ -114,8 +146,11 @@ public class FacetedNavigationEngineFirstImpl
       searchquery.append("@");
       searchquery.append(facet);
     }
-    searchquery.insert(0, initialQuery + "//node()" + "[");
-    searchquery.append("]");
+    if(searchquery.length() > 0) {
+      searchquery.insert(0,"[");
+      searchquery.append("]");
+    }
+    searchquery.insert(0, initialQuery + "//node()");
     if(facet != null) {
       searchquery.append("/@");
       searchquery.append(facet);
@@ -134,12 +169,16 @@ public class FacetedNavigationEngineFirstImpl
       int resultNodeCount = 0;
       for(String facet : resultset.keySet()) {
         String xpath = new String(getSearchQuery(initialQuery.xpath, facetsQuery, facet));
+        // System.err.println(getClass().getName()+" view facet query: "+xpath);
         javax.jcr.query.Query facetValuesQuery = session.getWorkspace().getQueryManager().createQuery(xpath, javax.jcr.query.Query.XPATH);
         QueryResult facetValuesResult = facetValuesQuery.execute();
         int count;
         Map<String,Count> facetValuesMap = resultset.get(facet);
-        for(RowIterator iter=facetValuesResult.getRows(); iter.hasNext(); ) {
-          String facetValue = iter.nextRow().getValues()[0].getString();
+        RowIterator iter=facetValuesResult.getRows();
+        while(iter.hasNext()) {
+          Row row = iter.nextRow();
+          Value[] values = row.getValues();
+          String facetValue = values[0].getString();
           if(!facetValuesMap.containsKey(facetValue))
             facetValuesMap.put(facetValue,new Count(1));
           else
@@ -149,10 +188,13 @@ public class FacetedNavigationEngineFirstImpl
       }
       return this . new ResultImpl(resultNodeCount, null);
     } catch(javax.jcr.query.InvalidQueryException ex) {
+      System.err.println(ex.getClass().getName()+": "+ex.getMessage());
       throw new UnsupportedOperationException(); // FIXME
     } catch(javax.jcr.ValueFormatException ex) {
+      System.err.println(ex.getClass().getName()+": "+ex.getMessage());
       throw new UnsupportedOperationException(); // FIXME
     } catch(javax.jcr.RepositoryException ex) {
+      System.err.println(ex.getClass().getName()+": "+ex.getMessage());
       throw new UnsupportedOperationException(); // FIXME
     }
   }
@@ -164,23 +206,28 @@ public class FacetedNavigationEngineFirstImpl
       Session session = authorization.session;
       LinkedList list = new LinkedList<String>();
       int size = 0;
-      for(String facet : facetsQuery.keySet()) {
-        String query = new String(getSearchQuery(initialQuery.xpath, facetsQuery, facet));
-        javax.jcr.query.Query facetValuesQuery = session.getWorkspace().getQueryManager().createQuery(query, javax.jcr.query.Query.XPATH);
-        QueryResult facetValuesResult = facetValuesQuery.execute();
-        RowIterator iter = facetValuesResult.getRows();
-        while(iter.hasNext()) {
-          size += iter.getSize();
-          String nodeName = iter.nextRow().getValues()[0].getString();
-          list.add(nodeName);
-        }
+      String xpath = new String(getSearchQuery(initialQuery.xpath, facetsQuery, null));
+      //System.err.println(getClass().getName()+" view result query: "+xpath);
+      javax.jcr.query.Query facetValuesQuery = session.getWorkspace().getQueryManager().createQuery(xpath, javax.jcr.query.Query.XPATH);
+      QueryResult facetValuesResult = facetValuesQuery.execute();
+      NodeIterator iter = facetValuesResult.getNodes(); // FIXME: should do query on jcr:path and only retrieve those
+      size += iter.getSize();
+      while(iter.hasNext()) {
+        Node node = iter.nextNode();
+        list.add(node.getPath());
       }
       return this . new ResultImpl(size, list.iterator());
     } catch(javax.jcr.query.InvalidQueryException ex) {
+      System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+      ex.printStackTrace(System.err);
       throw new UnsupportedOperationException(); // FIXME
     } catch(javax.jcr.ValueFormatException ex) {
+      System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+      ex.printStackTrace(System.err);
       throw new UnsupportedOperationException(); // FIXME
     } catch(javax.jcr.RepositoryException ex) {
+      System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+      ex.printStackTrace(System.err);
       throw new UnsupportedOperationException(); // FIXME
     }
   }
