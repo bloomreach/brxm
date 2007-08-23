@@ -393,7 +393,7 @@
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
-            <exclude>**/FacetedNavigationLargeTest.java</exclude>
+            <exclude>**/FacetedNavigation*PerfTest.java</exclude>
             <exclude>**/ServiceTest.java</exclude>
             <exclude>**/FacettedNavigationTest.java</exclude>
             <exclude>**/BusinessMethodsTest.java</exclude>
