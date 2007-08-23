@@ -72,7 +72,6 @@ public class RepositoryDecorator implements Repository {
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
         Session session = repository.login(credentials, workspaceName);
-	// BERRY get username from credentials and have some method to map these to facets match
         ServicingSessionImpl servicingSession = (ServicingSessionImpl) factory.getSessionDecorator(this, session);
         FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, servicingSession);
 	servicingSession.setFacetedNavigationContext(context);
