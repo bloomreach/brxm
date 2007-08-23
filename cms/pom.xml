@@ -49,6 +49,7 @@
     <module>hippo-repository-2-webapp</module>
     <module>hippo-repository-2-docs</module>
     <module>hippo-repository-2-sample</module>
+    <module>hippo-repository-2-testutils</module>
   </modules>
   
   

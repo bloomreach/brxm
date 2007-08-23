@@ -103,7 +103,6 @@ count template that go with them.
 </DD></DL>
 
  *
- * @author  (Berry) A.W. van Halderen
  * @version draft
  */
 
@@ -111,18 +110,50 @@ import java.util.Iterator;
 
 public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query,C extends FacetedNavigationEngine.Context>
 {
+    /**
+     * The Count class is used to encapsulate a simple integer count to be able
+     * to store this into a datastructure such as a Map.  Instead of an
+     * java.lang.Integer class, this class is mutable to allow in-place updates.
+     * For instance, it is permissable for an implementor of this interface to
+     * update the values previously returned in a view method call when being
+     * notified of a change.
+     */
     class Count {
       public Count(int initialCount) {
         count = initialCount;
       }
       public int count;
+      public String toString() {
+        return Integer.toString(count);
+      }
     }
+
+    /** An instance of a Result class contains the matching documents of a faceted view.
+     */
     abstract class Result {
+      /**
+       * Total number of matches (even if iterator will return only a few.
+       * @return the number of hits
+       */
       public abstract int length();
+      /**
+       * An iterator over the matched documents.  Returns either the Path or
+       * the JCR UUID (to be decided on).
+       * @return an iterator over java.lang.String.
+       */
       public abstract Iterator<String> iterator();
     }
+
+    /** An abstract class passed between invocations of the parse()
+     * and #view methods.
+     */
     abstract class Query {
     }
+
+    /**
+     * An abstract class passed between invocations of the #prepare and #view
+     * methods which can hold state on the authorization to be used.
+     */
     class Context {
     }
 
@@ -169,7 +200,8 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
     public void reload(Map<String,String[]> facetValues);
     
     /**
-     * If the implementation of this interface requires to be informed of facet
+     * If the implementation of this interfac            facetValuesMap.put(facetValue,new Count(1));
+e requires to be informed of facet
      * definition changes, it must return a value of true from this method.
      * Otherwise the
      *
@@ -257,17 +289,28 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * is not required to do so and may always return <code>null</code>.  The
      * hitsRequested parameter is set to <code>true</code> if the caller
      * actually wants this result set.  When hitsRequested is set to false,
-     * the engine should always return <code>null</code>.
+     * the engine should return a result object which returns the correct
+     * count as returned by the length() method, but where the iterator
+     * returns <code>null</code>.
      */
     public Result view(String queryName, Q initialQuery, C authorization,
-		       Map<String,String> facetsQuery, Q openQuery,
-		       Map<String,Map<String,Count>> resultset,
-		       Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
-		       boolean resultRequested) throws UnsupportedOperationException;
+               Map<String,String> facetsQuery, Q openQuery,
+               Map<String,Map<String,Count>> resultset,
+               Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
+               boolean resultRequested) throws UnsupportedOperationException;
 
-
+    /**
+     * The second view method is trimmed down version of the first one and used
+     * not the obtained the facet-value counts of a faceted navigation query,
+     *   but used when the actual resultset is required.  In this case.
+     */
     public Result view(String queryName, Q initialQuery, C authorization,
-		       Map<String,String> facetsQuery, Q openQuery);
+               Map<String,String> facetsQuery, Q openQuery);
 
+    /**
+     * This method is used to build a Query object from a query encoded in a
+     * string.  The language used, either XPATH, SQL or other should match the
+     * language expected by the interface implementation.
+     */
     public Q parse(String query);
 }

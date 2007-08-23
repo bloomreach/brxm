@@ -22,6 +22,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
@@ -62,12 +65,12 @@ import org.apache.jackrabbit.name.NameException;
 import org.apache.jackrabbit.name.Path;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.HippoNodeType;
 
 public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     final static private String SVN_ID = "$Id$";
 
     // FIXME
-    private final static String FACET_RESULTSET = "resultset";
     private final static char FACET_SEPARATOR = '#';
 
     protected Node node;
@@ -79,6 +82,11 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     protected int depth;
     protected Map<String,Node> children = null;
     protected Map<String,Property> properties = null;
+
+    private static Pattern facetPropertyPattern;
+    static {
+        facetPropertyPattern = Pattern.compile("^@([^=]+)='(.+)'$");
+    }
 
     protected ServicingNodeImpl(DecoratorFactory factory, Session session, Node node) {
         super(factory, session, node);
@@ -105,7 +113,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         this.node = node;
         this.path = path;
         this.depth = depth;
-        if (node.isNodeType("hippo:facetsearch")) {
+        if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
             children = new HashMap();
             properties = new HashMap();
         }
@@ -135,99 +143,128 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     if(instantiated)
       return;
     Node node = (this.node != null ? this.node : this);
-    if(isNodeType("hippo:facetsearch")) {
+    if(isNodeType(HippoNodeType.NT_FACETSEARCH)) {
       ServicingSessionImpl session = (ServicingSessionImpl) this.session;
 
-      ServicingNodeImpl resultset;
       String facet = null;
-      resultset = new ServicingNodeImpl(factory, session, "hippo:facetresult", getChildPath(relPath), relPath, depth+1);
+      Value[] facets = null;
+      try {
+        facets = getProperty("hippo:facets").getValues();
+        if(facets.length > 0)
+          facet = facets[0].getString();
+      } catch (PathNotFoundException ex) {
+        // safe to ignore
+      }
+
+      ServicingNodeImpl resultset;
+      resultset = new ServicingNodeImpl(factory, session, HippoNodeType.NT_FACETRESULT, getChildPath(HippoNodeType.FACETSEARCH_RESULTSET), HippoNodeType.FACETSEARCH_RESULTSET, depth+1);
       try {
         Value[] search = getProperty("hippo:search").getValues();
         resultset.setProperty("hippo:search", search);
       } catch (PathNotFoundException ex) {
         // safe to ignore
       }                
-      try {
-        Value[] facets = getProperty("hippo:facets").getValues();
-        facet = facets[0].getString();
-        resultset.setProperty("hippo:facets", facets);
-      } catch (PathNotFoundException ex) {
-        // safe to ignore
-      }
       resultset.setProperty("hippo:docbase", getProperty("hippo:docbase").getString());
+      if(facets == null)
+        resultset.setProperty("hippo:facets", facets);
       try {
         resultset.setProperty("hippo:count", getProperty("hippo:count").getLong());
       } catch (PathNotFoundException ex) {
         // safe to ignore
       }
-      addNode(FACET_RESULTSET, resultset);
+      addNode(HippoNodeType.FACETSEARCH_RESULTSET, resultset);
 
-      Map<String,Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count>> facetSearchResultMap = new TreeMap<String,Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count>>();
-      Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count> facetSearchResult = new TreeMap<String,org.hippoecm.repository.FacetedNavigationEngine.Count>();
-      facetSearchResultMap.put(facet, facetSearchResult);
-      Value[] currentFacetPath = getProperty("hippo:search").getValues();
-      FacetedNavigationEngine facetedEngine = session.getFacetedNavigationEngine();
-      FacetedNavigationEngine.Query initialQuery = facetedEngine.parse(getProperty("hippo:docbase").getString());
-      Map<String,String> currentFacetQuery = new TreeMap<String,String>();
-      for(int i=0; i<currentFacetPath.length; i++) {
-        String[] elements = currentFacetPath[i].getString().split("^@([^=]+)=([^#]+)#?(.*)$");
-        currentFacetQuery.put(elements[0], elements[1]);
-      }
-      facetedEngine.view(node.getProperty("hippo:queryname").getString(), initialQuery, session.getFacetedNavigationContext(),
-			 currentFacetQuery, null, facetSearchResultMap, null, false);
+      if(facet != null) {
+        Map<String,Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count>> facetSearchResultMap = new TreeMap<String,Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count>>();
+        Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count> facetSearchResult = new TreeMap<String,org.hippoecm.repository.FacetedNavigationEngine.Count>();
+        facetSearchResultMap.put(facet, facetSearchResult);
+        Value[] currentFacetPath = new Value[0];
+        try {
+          currentFacetPath = getProperty("hippo:search").getValues();
+        } catch(PathNotFoundException ex) {
+          // safe to ignore
+        }
+        FacetedNavigationEngine facetedEngine = session.getFacetedNavigationEngine();
+        FacetedNavigationEngine.Query initialQuery = facetedEngine.parse(getProperty("hippo:docbase").getString());
+        Map<String,String> currentFacetQuery = new TreeMap<String,String>();
+        for(int i=0; i<currentFacetPath.length; i++) {
+          Matcher matcher = facetPropertyPattern.matcher(currentFacetPath[i].getString());
+          if(matcher.matches() && matcher.groupCount() == 2) {
+            currentFacetQuery.put(matcher.group(1), matcher.group(2));
+          }
+        }
+        String queryName;
+        try {
+          queryName = node.getProperty("hippo:queryname").getString();
+        } catch(PathNotFoundException ex) {
+          queryName = node.getName();
+        }
+        facetedEngine.view(queryName, initialQuery, session.getFacetedNavigationContext(),
+                           currentFacetQuery, null, facetSearchResultMap, null, false);
 
-      Value[] newSearch;
-      for(Map.Entry<String,FacetedNavigationEngine.Count> facetValue : facetSearchResult.entrySet()) {
-        if(relPath == null || relPath.equals(facetValue.getKey())) {
-          ServicingNodeImpl child = new ServicingNodeImpl(factory, session, "hippo:facetsearch", getChildPath(relPath), relPath, depth+1);
-          Value[] facets = getProperty("hippo:facets").getValues();
-          Value[] newFacets = new Value[Math.max(0, facets.length - 1)];
-          if(facets.length > 0)
-            System.arraycopy(facets, 1, newFacets, 0, facets.length - 1);
-          Value[] search = new Value[0];
-          try {
-            search = getProperty("hippo:search").getValues();
-          } catch (PathNotFoundException ex) {
-            // safe to ignore
+        Value[] newSearch;
+        for(Map.Entry<String,FacetedNavigationEngine.Count> facetValue : facetSearchResult.entrySet()) {
+          if(relPath == null || relPath.equals(facetValue.getKey())) {
+            ServicingNodeImpl child = new ServicingNodeImpl(factory, session, HippoNodeType.NT_FACETSEARCH,
+                                                            getChildPath(facetValue.getKey()), facetValue.getKey(), depth+1);
+            Value[] newFacets = new Value[Math.max(0, facets.length - 1)];
+            if(facets.length > 0)
+              System.arraycopy(facets, 1, newFacets, 0, facets.length - 1);
+            Value[] search = new Value[0];
+            try {
+              search = getProperty("hippo:search").getValues();
+            } catch (PathNotFoundException ex) {
+              // safe to ignore
+            }
+            if (facets.length > 0) {
+              newSearch = new Value[search.length + 1];
+              System.arraycopy(search, 0, newSearch, 0, search.length);
+              // check for xpath separator
+              if(facets[0].getString().indexOf(FACET_SEPARATOR) == -1)
+                newSearch[search.length] = session.getValueFactory().createValue("@" + facets[0].getString() + "='" + facetValue.getKey() + "'");
+              else
+                newSearch[search.length] = session.getValueFactory().createValue("@" + facets[0].getString().substring(0,facets[0].getString().indexOf(FACET_SEPARATOR)) + "='" + facetValue.getKey() + "'" + facets[0].getString().substring(facets[0].getString().indexOf(FACET_SEPARATOR)));
+            } else {
+              newSearch = (Value[]) search.clone(); // FIXME should not be necessary?
+            }
+            child.setProperty("hippo:queryname", getProperty("hippo:queryname").getString());
+            child.setProperty("hippo:docbase", getProperty("hippo:docbase").getString());
+            child.setProperty("hippo:facets", newFacets);
+            child.setProperty("hippo:search", newSearch);
+            child.setProperty("hippo:count", facetValue.getValue().count);
+            addNode(facetValue.getKey(), child);
           }
-          if (facets.length > 0) {
-            newSearch = new Value[search.length + 1];
-            System.arraycopy(search, 0, newSearch, 0, search.length);
-            // check for xpath separator
-            if(facets[0].getString().indexOf(FACET_SEPARATOR) == -1)
-              newSearch[search.length] = session.getValueFactory().createValue("@" + facets[0].getString() + "='" + relPath + "'");
-            else
-              newSearch[search.length] = session.getValueFactory().createValue("@" + facets[0].getString().substring(0,facets[0].getString().indexOf(FACET_SEPARATOR)) + "='" + relPath + "'" + facets[0].getString().substring(facets[0].getString().indexOf(FACET_SEPARATOR)));
-          } else {
-            newSearch = (Value[]) search.clone(); // FIXME should not be necessary?
-          }
-          child.setProperty("hippo:queryname", getProperty("hippo:queryname").getString());
-          child.setProperty("hippo:docbase", getProperty("hippo:docbase").getString());
-          child.setProperty("hippo:facets", newFacets);
-          child.setProperty("hippo:search", newSearch);
-          child.setProperty("hippo:count", facetValue.getValue().count);
         }
       }
       if(relPath == null)
         instantiated = true;
 
-    } else if(isNodeType("hippo:facetresult")) {
+    } else if(isNodeType(HippoNodeType.NT_FACETRESULT)) {
       ServicingSessionImpl session = (ServicingSessionImpl) this.session;
       FacetedNavigationEngine facetedEngine = session.getFacetedNavigationEngine();
       Map<String,String> currentFacetQuery = new TreeMap<String,String>();
-      Value[] currentFacetPath = getProperty("hippo:search").getValues();
+      Value[] currentFacetPath = new Value[0];
+      try {
+        currentFacetPath = getProperty("hippo:search").getValues();
+      } catch(PathNotFoundException ex) {
+      }
       for(int i=0; i<currentFacetPath.length; i++) {
-        String[] elements = currentFacetPath[i].getString().split("^@([^=]+)=([^#]+)#?(.*)$");
-        currentFacetQuery.put(elements[0], elements[1]);
+        Matcher matcher = facetPropertyPattern.matcher(currentFacetPath[i].getString());
+        if(matcher.matches() && matcher.groupCount() == 2) {
+          currentFacetQuery.put(matcher.group(1), matcher.group(2));
+        }
       }
       FacetedNavigationEngine.Query initialQuery = facetedEngine.parse(getProperty("hippo:docbase").getString());
-      FacetedNavigationEngine.Result result = facetedEngine.view(node.getProperty("hippo:queryname").getString(), initialQuery, session.getFacetedNavigationContext(), currentFacetQuery, null);
+      String queryname = null;
+      try {
+        queryname = node.getProperty("hippo:queryname").getString();
+      } catch(PathNotFoundException ex) {
+      }
+      FacetedNavigationEngine.Result result = facetedEngine.view(queryname, initialQuery, session.getFacetedNavigationContext(), currentFacetQuery, null);
 
       for(Iterator<String> iter = result.iterator(); iter.hasNext(); ) {
-        String nodeName = iter.next();
-        addNode(nodeName, session.getNodeByUUID(nodeName));
-        addNode(nodeName, session.getRootNode().getNode(nodeName));
-        addNode(nodeName, session.getRootNode().getNode(nodeName.substring(1)));
+        String nodePath = iter.next();
+        addNode(nodePath, session.getRootNode().getNode(nodePath.substring(1)));
       }
     }
   }
@@ -605,8 +642,8 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
             
             // hippo:authorId#//element(*,hippo:author)[hippo:id=?]/@hippo:name
             // just return the resultset
-            if (getName().equals(FACET_RESULTSET)) {
-                return FACET_RESULTSET;
+            if (getName().equals(HippoNodeType.FACETSEARCH_RESULTSET)) {
+                return HippoNodeType.FACETSEARCH_RESULTSET;
             }
             
             // the last search is the current one
@@ -896,15 +933,14 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
      * @inheritDoc
      */
     public Node getNode(String relPath) throws PathNotFoundException, RepositoryException {
-      if(children != null)
-        instantiate(relPath);
-      if(node == null) {
-        Node n = children.get(relPath);
-        if(n != null)
-          return n;
-        else
-          throw new PathNotFoundException();
-      } else {
+        instantiate(null); // FIXME: instantiate(relPath);
+        if(children != null) {
+            Node n = children.get(relPath);
+            if(n != null)
+                return n;
+            else
+                throw new PathNotFoundException();
+        } else {
             try {
                 Node n = node.getNode(relPath);
                 return factory.getNodeDecorator(session, n, getChildPath(relPath), getDepth() + 1);
@@ -955,7 +991,10 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
      */
     public Property getProperty(String relPath) throws PathNotFoundException, RepositoryException {
         if (node == null) {
-            return properties.get(relPath);
+            Property rtvalue = properties.get(relPath);
+            if(rtvalue == null)
+              throw new PathNotFoundException(relPath);
+            return rtvalue;
         }
 
         Property prop = node.getProperty(relPath);
@@ -1033,7 +1072,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public boolean hasNodes() throws RepositoryException {
 
         // FIXME: doesn't really check if the node has childeren. A result set can be empty 
-        if (isNodeType("hippo:facetsearch") || isNodeType("hippo:facetresult")) {
+        if (isNodeType(HippoNodeType.NT_FACETSEARCH) || isNodeType(HippoNodeType.NT_FACETRESULT)) {
             return true;
         }
         //if (node == null) {

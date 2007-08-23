@@ -27,17 +27,6 @@ public class TrivialServerTest extends TestCase {
 
     private HippoRepository server;
 
-  /*
-    public void setUp() throws RepositoryException, IOException {
-        server = HippoRepositoryFactory.getHippoRepository();
-    }
-
-    public void tearDown() {
-        if(server != null)
-            server.close();
-    }
-  */
-
     public void test() throws RepositoryException {
         server = HippoRepositoryFactory.getHippoRepository();
         assertNotNull(server);
@@ -56,6 +45,6 @@ public class TrivialServerTest extends TestCase {
         session.save();
         session.logout();
 
-            server.close();
+        server.close();
     }
 }
