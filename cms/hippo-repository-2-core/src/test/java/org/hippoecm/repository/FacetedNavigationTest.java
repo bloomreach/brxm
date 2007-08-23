@@ -65,20 +65,6 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         commonEnd();
     }
 
-    /*
-    public void testPerformance() throws RepositoryException, IOException {
-        Node node = commonStart();
-        long count, tBefore, tAfter;
-        tBefore = System.currentTimeMillis();
-        count = node.getNode("x1").getNode("y2").getNode("z2").getNode("resultset").getProperty("hippo:count").getLong();
-        tAfter = System.currentTimeMillis();
-        System.out.println("BERRY#1 "+count);
-        System.out.println("BERRY#2 "+(tAfter-tBefore));
-        historyWriter.write(getClass().getName(), Long.toString(tAfter-tBefore), "ms", false);
-        commonEnd();
-    }
-    */
-
     public static void main(String[] args) {
         try {
             String location = args.length>0 ? args[0] : "rmi://localhost:1099/jackrabbit.repository";
