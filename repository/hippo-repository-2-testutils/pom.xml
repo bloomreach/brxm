@@ -15,9 +15,12 @@
   limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-  http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
   <modelVersion>4.0.0</modelVersion>
+  
   
   <parent>
     <groupId>org.hippoecm</groupId>
@@ -25,52 +28,23 @@
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
-
+  
   <name>Hippo Repository 2 Test Utilities</name>
-  <description>General utilities for testing the Hippo ECM</description>  
+  <description>General utilities for testing the Hippo ECM</description>
+  <groupId>org.hippoecm</groupId>  
   <artifactId>hippo-repository-2-testutils</artifactId>
   <version>2.01.00-dev</version>
-  <packaging>jar</packaging>  
-      
+  <packaging>pom</packaging>
+  
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils</url>
   </scm>
-
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-    </dependency>
-    <dependency>
-      <groupId>jfree</groupId>
-      <artifactId>jfreechart</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-  </dependencies>
   
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>results</name>
-              <value>target/surefire-reports</value>
-              <name>reports</name>
-              <value>target/performancetest-reports</value>
-              <name>history</name>
-              <value>history</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
+  <modules>
+    <module>historytest-utils</module>
+    <module>historytest-report-maven-plugin</module>
+  </modules>
+  
 </project>
