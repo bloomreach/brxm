@@ -1,10 +1,18 @@
 package org.hippoecm.repository.testutils.history;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
 
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
+import org.hippoecm.repository.testutils.history.myXML.myXMLEncodingException;
+import org.hippoecm.repository.testutils.history.myXML.myXMLException;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -20,19 +28,44 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.TimeSeriesDataItem;
 import org.jfree.data.xy.XYDataset;
 
-public class ChartsCreator implements XmlConstants {
+public class ChartsCreator extends Task implements XmlConstants {
 
     private static final String DATEFORMAT = "dd-MM-yyyy hh:mm:ss";
 
-    private myXML testSuite;
-    private Configuration config;
+    //private myXML testSuite;
+    private String reportsDir;
+    private Vector filesets = new Vector();
 
-    public ChartsCreator(myXML testSuite) {
-        this.testSuite = testSuite;
-        this.config = Configuration.getInstance();
+    public void setDir(String dir) {
+        this.reportsDir = dir;
+    }
+
+    public void addFileset(FileSet fileset) {
+        filesets.add(fileset);
     }
 
     public void execute() {
+        for (int i = 0; i < filesets.size(); i++) {
+            FileSet fs = (FileSet) filesets.elementAt(i);
+            DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+            String[] srcFiles = ds.getIncludedFiles();
+            for (int j = 0; j < srcFiles.length; j++) {
+                try {
+                    createChart(new File(fs.getDir(getProject()), srcFiles[j]));
+                } catch (myXMLException e) {
+                    e.printStackTrace();
+                } catch (myXMLEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void createChart(File file) throws myXMLException, myXMLEncodingException, IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        myXML testSuite = new myXML(reader);
         if (testSuite != null) {
             String className = testSuite.Attribute.find(ATTR_CLASSNAME);
             for (int testcaseIndex = 0; testcaseIndex < testSuite.size(); testcaseIndex++) {
@@ -44,7 +77,6 @@ public class ChartsCreator implements XmlConstants {
                 chart.addSubtitle(new TextTitle(className));
 
                 try {
-                    String reportsDir = config.getReportsDir();
                     File outputfile = getImageFile(reportsDir, className, testName);
                     ChartUtilities.saveChartAsPNG(outputfile, chart, 800, 200 + 200 * testCase.size(), null, true, 9);
                 } catch (IOException e) {
