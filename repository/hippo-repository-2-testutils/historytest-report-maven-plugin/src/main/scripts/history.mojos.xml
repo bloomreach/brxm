@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pluginMetadata>
+    <mojos>
+        <mojo>
+            <goal>report</goal>
+            <call>report</call>
+            <description>
+                Generate history tests report
+            </description>
+            <parameters>
+                <parameter>
+                    <name>name</name> 
+                    <property>history.points</property> 
+                    <required>true</required> 
+                    <expression>${history.points}</expression>
+                    <type>java.lang.String</type>
+                    <description>The location of the history points directory.</description>
+                </parameter>                
+                <parameter>
+                    <name>name</name> 
+                    <property>test.results</property> 
+                    <required>false</required> 
+                    <defaultValue>target/surefire-reports</defaultValue>
+                    <type>java.lang.String</type>
+                    <description>The location of the test results directory.</description>
+                </parameter>
+                <parameter>
+                    <name>name</name> 
+                    <property>history.reports</property> 
+                    <required>false</required> 
+                    <defaultValue>target/performancetest-reports</defaultValue>
+                    <type>java.lang.String</type>
+                    <description>The location of the history test reporting directory.</description>
+                </parameter>
+            </parameters>
+        </mojo>
+    </mojos>
+</pluginMetadata>
