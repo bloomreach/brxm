@@ -27,7 +27,6 @@
     
     <target name="init">
         <mkdir dir="${history.reports}" />
-        <mkdir dir="${test.results}" />
     </target>
     
 </project>
