@@ -1,10 +1,10 @@
 package org.hippoecm.repository.testutils;
 
-import org.hippoecm.repository.testutils.history.HistoryWriter;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.hippoecm.repository.testutils.history.HistoryWriter;
 
 public class HistoryWriterTest extends TestCase {
 
@@ -19,22 +19,27 @@ public class HistoryWriterTest extends TestCase {
     protected void setUp() throws Exception {
     }
 
-
-    public void testSimple() {
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 379; i++) {
-            for (int j = 0; j < 379; j++) {
-                for (int k = 0; k < 379; k++) {
-                    @SuppressWarnings("unused")
-                    int sum = i + j + k;
-                }
-            }
+    public void test100MeasurePoints() {
+        for (int i = 0; i < 100; i++) {
+            long start = System.currentTimeMillis();
+            somethingExpensive(379);
+            long end = System.currentTimeMillis();
+            historyWriter.write("Duration", String.valueOf(end - start), "Milliseconds");
         }
+    }
+    
+    public void testOneMeasurePoint() {
+        long start = System.currentTimeMillis();
+        somethingExpensive(501);
         long end = System.currentTimeMillis();
-        historyWriter.write("Chaos", String.valueOf(end - start), "Milliseconds");
+        historyWriter.write("Duration", String.valueOf(end - start), "Milliseconds");
     }
 
-    public void testFlatline() {
-        historyWriter.write("Flatline", "10", "Warnings", false);
+    private void somethingExpensive(int price) {
+        for (int i = 0; i < price; i++) {
+            for (int j = 0; j < price; j++) {
+                Math.sin(i + j);
+            }
+        }
     }
 }

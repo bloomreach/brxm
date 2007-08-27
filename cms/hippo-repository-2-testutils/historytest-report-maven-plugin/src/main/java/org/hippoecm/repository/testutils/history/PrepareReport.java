@@ -8,8 +8,8 @@ import java.io.OutputStream;
 
 import org.apache.tools.ant.Task;
 
-//Hack to copy the junit-frames.xsl to the current project,
-//so that the junit-report task can use it.
+//Copy junit-frames.xsl from the plugin to the target directory of
+//the current project so that the junit-report ant task can use it.
 public class PrepareReport extends Task {
 
     public void execute() {
@@ -20,11 +20,12 @@ public class PrepareReport extends Task {
         try {
             to = new FileOutputStream(toFile);
             byte[] buffer = new byte[4096];
+            
             int bytesRead;
-
             while ((bytesRead = from.read(buffer)) != -1) {
                 to.write(buffer, 0, bytesRead);
             }
+            
         } catch (IOException e) {
             System.err.println(e);
         } finally {
