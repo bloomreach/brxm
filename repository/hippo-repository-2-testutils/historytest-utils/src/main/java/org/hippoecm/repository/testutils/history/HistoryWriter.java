@@ -9,8 +9,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 
 import junit.extensions.TestSetup;
 import junit.framework.AssertionFailedError;
@@ -27,7 +25,6 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
     private myXML testSuite;
     private myXML testCase;
 
-    private Set loggedTo;
     private String name;
     private long timeStamp;
 
@@ -38,7 +35,6 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
         this.name = getName(test);
         this.timeStamp = System.currentTimeMillis();
         this.history = System.getProperty("history.points");
-        System.out.println("history: " + history);
     }
 
     public String getName() {
@@ -83,7 +79,8 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
                     writer = new PrintWriter(new OutputStreamWriter(out, "UTF8"));
                     testSuite.serialize(writer);
                 } catch (IOException exc) {
-                    System.err.println("Unable to history file" + exc.getMessage());
+                    System.err.println("Cannot write to history file " + historyFile.getAbsolutePath() + ": "
+                            + exc.getMessage());
                 } finally {
                     if (out != System.out && out != System.err && writer != null) {
                         writer.close();
@@ -98,31 +95,23 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
     }
 
     public void write(String name, String value, String unit, boolean fuzzy) {
-        if (loggedTo != null) {
-            if (!loggedTo.add(name)) {
-                System.out.println("Duplicate log name: " + name
-                        + ", it is not allowed to log to the same name more than once in one testmethod.");
-                return;
+        try {
+            myXML metric = testCase.findElement(METRIC, ATTR_NAME, name);
+            if (metric == null) {
+                metric = testCase.addElement(METRIC);
             }
+            metric.Attribute.add(ATTR_NAME, name);
+            metric.Attribute.add(ATTR_UNIT, unit);
+            metric.Attribute.add(ATTR_FUZZY, String.valueOf(fuzzy));
 
-            try {
-                myXML metric = testCase.findElement(METRIC, ATTR_NAME, name);
-                if (metric == null) {
-                    metric = testCase.addElement(METRIC);
-                }
-                metric.Attribute.add(ATTR_NAME, name);
-                metric.Attribute.add(ATTR_UNIT, unit);
-                metric.Attribute.add(ATTR_FUZZY, String.valueOf(fuzzy));
-
-                myXML measurePoint = metric.addElement(MEASUREPOINT);
-                measurePoint.Attribute.add(ATTR_TIMESTAMP, String.valueOf(timeStamp));
-                measurePoint.Attribute.add(ATTR_VALUE, value);
-            } catch (myXMLException e) {
-                System.err.println("Failed to add testcase data to testsuite: " + e.getMessage());
-            }
+            myXML measurePoint = metric.addElement(MEASUREPOINT);
+            measurePoint.Attribute.add(ATTR_TIMESTAMP, String.valueOf(timeStamp));
+            measurePoint.Attribute.add(ATTR_VALUE, value);
+        } catch (myXMLException e) {
+            System.err.println("Failed to add testcase data to testsuite: " + e.getMessage());
         }
     }
-    
+
     // interface TestListener
 
     public void startTest(Test test) {
@@ -135,7 +124,6 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
         } catch (myXMLException e) {
             System.err.println("Failed to add testcase data to testsuite: " + e.getMessage());
         }
-        loggedTo = new HashSet();
     }
 
     public void endTest(Test test) {
@@ -153,7 +141,7 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
 
     public void addFailure(Test test, AssertionFailedError t) {
     }
-    
+
     // privates
 
     private String getName(Test t) {
