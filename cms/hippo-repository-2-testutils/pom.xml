@@ -43,8 +43,8 @@
   </scm>
   
   <modules>
-    <module>historytest-utils</module>
-    <module>historytest-report-maven-plugin</module>
+    <module>testutils-history</module>
+    <module>testutils-history-report</module>
   </modules>
   
 </project>
