@@ -272,7 +272,7 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>historytest-utils</artifactId>
+      <artifactId>testutils-history</artifactId>
       <version>2.01.00-dev</version>
       <scope>test</scope>
     </dependency>
@@ -392,6 +392,12 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemProperties>
+            <property>
+              <name>history.points</name>
+              <value>${history.points}</value>
+            </property>
+          </systemProperties>
           <excludes>
             <exclude>**/FacetedNavigation*PerfTest.java</exclude>
             <exclude>**/ServiceTest.java</exclude>

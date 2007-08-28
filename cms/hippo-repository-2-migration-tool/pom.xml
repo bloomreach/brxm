@@ -49,10 +49,17 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemProperties>
+            <property>
+              <name>history.points</name>
+              <value>${history.points}</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
