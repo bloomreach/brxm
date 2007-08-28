@@ -152,6 +152,12 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemProperties>
+            <property>
+              <name>history.points</name>
+              <value>${history.points}</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>     
       <plugin>

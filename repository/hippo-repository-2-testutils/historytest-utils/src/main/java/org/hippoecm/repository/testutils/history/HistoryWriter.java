@@ -35,6 +35,7 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
         this.name = getName(test);
         this.timeStamp = System.currentTimeMillis();
         this.history = System.getProperty("history.points");
+        history = history == null ? null : history.startsWith("${") ? null : history;
     }
 
     public String getName() {
@@ -95,20 +96,22 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
     }
 
     public void write(String name, String value, String unit, boolean fuzzy) {
-        try {
-            myXML metric = testCase.findElement(METRIC, ATTR_NAME, name);
-            if (metric == null) {
-                metric = testCase.addElement(METRIC);
-            }
-            metric.Attribute.add(ATTR_NAME, name);
-            metric.Attribute.add(ATTR_UNIT, unit);
-            metric.Attribute.add(ATTR_FUZZY, String.valueOf(fuzzy));
+        if (history != null) {
+            try {
+                myXML metric = testCase.findElement(METRIC, ATTR_NAME, name);
+                if (metric == null) {
+                    metric = testCase.addElement(METRIC);
+                }
+                metric.Attribute.add(ATTR_NAME, name);
+                metric.Attribute.add(ATTR_UNIT, unit);
+                metric.Attribute.add(ATTR_FUZZY, String.valueOf(fuzzy));
 
-            myXML measurePoint = metric.addElement(MEASUREPOINT);
-            measurePoint.Attribute.add(ATTR_TIMESTAMP, String.valueOf(timeStamp));
-            measurePoint.Attribute.add(ATTR_VALUE, value);
-        } catch (myXMLException e) {
-            System.err.println("Failed to add testcase data to testsuite: " + e.getMessage());
+                myXML measurePoint = metric.addElement(MEASUREPOINT);
+                measurePoint.Attribute.add(ATTR_TIMESTAMP, String.valueOf(timeStamp));
+                measurePoint.Attribute.add(ATTR_VALUE, value);
+            } catch (myXMLException e) {
+                System.err.println("Failed to add testcase data to testsuite: " + e.getMessage());
+            }
         }
     }
 
