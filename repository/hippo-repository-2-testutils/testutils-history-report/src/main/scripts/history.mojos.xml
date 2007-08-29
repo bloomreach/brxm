@@ -18,17 +18,9 @@
                 </parameter>                
                 <parameter>
                     <name>name</name> 
-                    <property>test.results</property> 
-                    <required>false</required> 
-                    <defaultValue>target/surefire-reports</defaultValue>
-                    <type>java.lang.String</type>
-                    <description>The location of the test results directory.</description>
-                </parameter>
-                <parameter>
-                    <name>name</name> 
                     <property>history.reports</property> 
                     <required>false</required> 
-                    <defaultValue>target/performancetest-reports</defaultValue>
+                    <defaultValue>${project.build.directory}/performancetest-reports</defaultValue>
                     <type>java.lang.String</type>
                     <description>The location of the history test reporting directory.</description>
                 </parameter>

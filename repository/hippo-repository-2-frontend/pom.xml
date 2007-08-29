@@ -69,6 +69,12 @@
       <artifactId>hippo-repository-2-core</artifactId>
       <version>2.01.00-dev</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>testutils-history-run</artifactId>
+      <version>2.01.00-dev</version>
+      <scope>test</scope>
+    </dependency>
     
     <!-- Wicket web gui toolkit-->
     <dependency>
