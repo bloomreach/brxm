@@ -37,14 +37,19 @@
   <packaging>pom</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/testutils</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/testutils</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/testutils</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/</url>
   </scm>
   
   <modules>
     <module>testutils-history</module>
+    <module>testutils-history-run</module>
     <module>testutils-history-report</module>
   </modules>
+  
+  <build>
+    <defaultGoal>package</defaultGoal>
+  </build>
   
 </project>

@@ -28,8 +28,8 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>History test utilities</name>
-  <description>History test utilities</description>
+  <name>History test common</name>
+  <description>History test common</description>
   
   <groupId>org.hippoecm</groupId>  
   <artifactId>testutils-history</artifactId>
@@ -41,36 +41,9 @@
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/historytest-utils</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/historytest-utils</url>
   </scm>
-
-  <dependencies>
-    <dependency>
-      <groupId>ant</groupId>
-      <artifactId>ant</artifactId>
-      <version>[1.6.5,)</version>
-    </dependency>
-    <dependency>
-      <groupId>jfree</groupId>
-      <artifactId>jfreechart</artifactId>
-      <version>[1.0.1,)</version>
-    </dependency>
-  </dependencies>
   
   <build>
     <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>history.points</name>
-              <value>${history.points}</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-    </plugins>
   </build>
 
 </project>

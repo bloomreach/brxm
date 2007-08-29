@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-    
-    <property environment="env" value="" />
-    
-    <target name="report" depends="charts, html"/>
         
-    <target name="charts" depends="init">
+    <target name="report" depends="init, charts"/>
+        
+    <target name="charts" if="history.points.available">
+        <mkdir dir="${history.reports}"/>
         <taskdef name="chart" classname="org.hippoecm.repository.testutils.history.ChartsCreator"/>
         <chart dir="${history.reports}">
             <fileset dir="${history.points}">
@@ -13,20 +12,9 @@
             </fileset>
         </chart>
     </target>
-    
-    <target name="html" depends="init">
-        <taskdef name="prepare" classname="org.hippoecm.repository.testutils.history.PrepareReport"/>
-        <prepare/>
-        <junitreport todir="${test.results}">
-            <fileset dir="${test.results}">
-                <include name="TEST-*" />
-            </fileset>
-            <report format="frames" styledir="target" todir="${history.reports}" />
-        </junitreport>        
-    </target>
-    
+        
     <target name="init">
-        <mkdir dir="${history.reports}" />
+        <available file="${history.points}" type="dir" property="history.points.available"/>        
     </target>
     
 </project>
