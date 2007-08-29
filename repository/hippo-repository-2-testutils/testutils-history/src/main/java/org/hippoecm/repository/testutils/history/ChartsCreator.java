@@ -26,8 +26,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class ChartsCreator extends Task implements XmlConstants {
 
-    //private static final String DATEFORMAT = "dd-MM-yyyy hh:mm:ss";
-
     private String reportsDir;
     private Vector filesets = new Vector();
 
@@ -114,6 +112,8 @@ public class ChartsCreator extends Task implements XmlConstants {
             plot.setRangeAxis(rangeAxis);
 
             if (metric.Attribute.find(ATTR_FUZZY).equals("true")) {
+                xySeries = removeExtremes(xySeries);
+                
                 XYDataset measurePoints = new XYSeriesCollection(xySeries);
                 plot.setDataset(0, measurePoints);
                 plot.setRenderer(0, new XYDotRenderer());
@@ -159,5 +159,25 @@ public class ChartsCreator extends Task implements XmlConstants {
         }
         return result;
     }
+
+    private XYSeries removeExtremes(XYSeries series) {
+        int itemCount = series.getItemCount();
+        Double[] yData = new Double[itemCount];
+        for (int i = 0; i < itemCount; i++) {
+            yData[i] = new Double(series.getY(i).doubleValue());
+        }
+     
+        double stdDev = Statistics.getStdDev(yData);
+        double mean = Statistics.calculateMean(yData);
+
+        XYSeries result = new XYSeries("Cleaned series");
+        for (int i = 0; i < yData.length; i++) {
+            if (series.getY(i).doubleValue() > mean - 2 * stdDev && series.getY(i).doubleValue() < mean + 2 * stdDev) {
+                result.add(series.getX(i), series.getY(i));
+            }
+        }
+        return result;
+    }
+
 
 }
