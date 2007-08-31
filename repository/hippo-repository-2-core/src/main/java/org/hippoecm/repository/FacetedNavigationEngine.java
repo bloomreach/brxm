@@ -94,7 +94,7 @@ document count it has discovered.
 
 <i>Optional extension:</i><p>
 
-Certain implementations can can evaluate not just a single faceted search, but
+Certain implementations can evaluate not just a single faceted search, but
 also look up the navigation structure of a faceted search of one or more
 levels deeper.  To expose this result set, the operator of this interface may
 provide a structure which represents the future faceted searches and the facet
@@ -167,7 +167,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *                  than for equality and order.
      * @param authorizationQuery The authorization part used by the principal
      * @param initialQueries A list of initial queries later used in the #view methods
-     * @see #unprepare(String)
+     * @see #unprepare(C)
      */
     public C prepare(String principal, Map<String,String> authorizationQuery, List<Q> initialQueries, Session session);
     
