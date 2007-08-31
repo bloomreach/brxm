@@ -74,11 +74,11 @@ initial-query        ::= <i>any valid lucene query</i> ;
 authorization-query  ::= <b>AND</b> <b>(</b> authorization-cont <b>)</b>
                       |  <i>empty</i> ;
 authorization-cont   ::= facet-key <b>=</b> facet-value
-                      |  facet-key <b>=</b> facet-value <b>OR</b> authorization-query ;
+                      |  facet-key <b>=</b> facet-value <b>OR</b> authorization-cont ;
 facets-query         ::= <b>AND</b> facets-cont
                       |  <i>empty</i> ;
 facets-cont          ::= facet-key <b>=</b> facet-value
-                      |  facet-key <b>=</b> facet-value <b>AND</b> facets-query ;
+                      |  facet-key <b>=</b> facet-value <b>AND</b> facets-cont ;
 open-query           ::= <b>AND</b> <b>(</b> <i>any valid lucene query</i> <b>)</b>;
                       |  <i>empty</i> ;
 </pre>
