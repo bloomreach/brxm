@@ -15,26 +15,29 @@
  */
 package org.hippoecm.repository.frontend.plugin.config;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Acts as default configuration if custom configuration fails
  */
 public class PluginJavaConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
-    
-    private Map classMap;
 
-    public PluginJavaConfig() {
-        classMap = new HashMap();
-        classMap.put("navigationPanel", "org.hippoecm.repository.plugins.admin.browser.BrowserPlugin");
-        classMap.put("menuPanel", "org.hippoecm.repository.plugins.admin.menu.MenuPlugin");
-        classMap.put("contentPanel", "org.hippoecm.repository.plugins.admin.editor.EditorPlugin");
-        classMap.put("workflowPanel", "org.hippoecm.repository.plugins.admin.workflow.WorkflowPlugin");   
+    public PluginDescriptor getRoot() {
+        return new PluginDescriptor("0:rootPanel", "org.hippoecm.repository.plugins.admin.RootPlugin");
     }
 
-    public Map getPluginMap() {
-        return new HashMap(classMap);
+    public List getChildren(PluginDescriptor pluginDescriptor) {
+        List result = new ArrayList();
+        if (pluginDescriptor.getId().equals("rootPanel")) {
+            result.add(new PluginDescriptor("0:rootPanel:navigationPanel",
+                    "org.hippoecm.repository.plugins.admin.browser.BrowserPlugin"));
+            result.add(new PluginDescriptor("0:rootPanel:menuPanel",
+                    "org.hippoecm.repository.plugins.admin.menu.MenuPlugin"));
+            result.add(new PluginDescriptor("0:rootPanel:contentPanel",
+                    "org.hippoecm.repository.plugins.admin.editor.EditorPlugin"));
+        }
+        return result;
     }
 }
