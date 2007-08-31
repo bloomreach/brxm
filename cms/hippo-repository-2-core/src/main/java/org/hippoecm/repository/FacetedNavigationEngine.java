@@ -200,8 +200,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
     public void reload(Map<String,String[]> facetValues);
     
     /**
-     * If the implementation of this interfac            facetValuesMap.put(facetValue,new Count(1));
-e requires to be informed of facet
+     * If the implementation of this interface requires to be informed of facet
      * definition changes, it must return a value of true from this method.
      * Otherwise the
      *
@@ -242,7 +241,7 @@ e requires to be informed of facet
     public void purge();
      
     /**
-     * While the other methods in this interface are ment for informing the
+     * While the other methods in this interface are meant for informing the
      * engine on changes, the view method is used to query the faceted navigation
      * engine.
      *
