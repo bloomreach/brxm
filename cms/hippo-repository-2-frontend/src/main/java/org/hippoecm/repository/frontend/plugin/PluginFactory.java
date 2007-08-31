@@ -18,55 +18,37 @@ package org.hippoecm.repository.frontend.plugin;
 import java.lang.reflect.Constructor;
 
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.frontend.plugin.config.PluginJavaConfig;
+import org.hippoecm.repository.frontend.plugin.config.PluginDescriptor;
 import org.hippoecm.repository.frontend.plugin.error.ErrorPlugin;
 
 public class PluginFactory {
 
-    private String pluginClass;
+    private PluginDescriptor descriptor;
 
-    public PluginFactory(String classname) {
-        this.pluginClass = classname;
+    public PluginFactory(PluginDescriptor descriptor) {
+        this.descriptor = descriptor;
     }
 
-    public Plugin getPlugin(String id, JcrNodeModel model) {
+    public Plugin getPlugin(JcrNodeModel model) {
         Plugin plugin;
-        if (pluginClass == null) {
-            String message = "Implementation class name for plugin '" + id
-                    + "' could not be retrieved from configuration, falling back to default plugin.";
-            System.err.println(message);
-            plugin = getDefaultPlugin(id, model);
+        if (descriptor.getClassName() == null) {
+            String message = "Implementation class name for plugin '" + descriptor.getId()
+                    + "' could not be retrieved from configuration.";
+            plugin = new ErrorPlugin(descriptor.getId(), null, message);
         } else {
             try {
-                plugin = loadPlugin(id, model, pluginClass);
+                Class clazz = Class.forName(descriptor.getClassName());
+                Class[] formalArgs = new Class[] { String.class, JcrNodeModel.class };
+                Constructor constructor = clazz.getConstructor(formalArgs);
+                Object[] actualArgs = new Object[] { descriptor.getId(), model };
+                plugin = (Plugin) constructor.newInstance(actualArgs);
             } catch (Exception e) {
-                String message = "Failed to instantiate plugin implementation '" + pluginClass + "' for id '" + id
-                        + "', falling back to default plugin.";
-                System.err.println(message);
-                plugin = getDefaultPlugin(id, model);
+                String message = "Failed to instantiate plugin implementation '" + descriptor.getClassName()
+                        + "' for id '" + descriptor.getId() + "'.";
+                plugin = new ErrorPlugin(descriptor.getId(), e, message);
             }
         }
         return plugin;
-    }
-
-    private Plugin getDefaultPlugin(String id, JcrNodeModel model) {
-        Plugin plugin;
-        String defaultPluginClassname = new PluginJavaConfig().getPluginMap().get(id).toString();
-        try {
-            plugin = loadPlugin(id, model, defaultPluginClassname);
-        } catch (Exception e) {
-            String message = "Failed to instantiate default plugin, something is seriously wrong.";
-            plugin = new ErrorPlugin(id, e, message);
-        }
-        return plugin;
-    }
-
-    private Plugin loadPlugin(String id, JcrNodeModel model, String classname) throws Exception {
-        Class clazz = Class.forName(classname);
-        Class[] formalArgs = new Class[] { String.class, JcrNodeModel.class };
-        Constructor constructor = clazz.getConstructor(formalArgs);
-        Object[] actualArgs = new Object[] { id, model };
-        return (Plugin) constructor.newInstance(actualArgs);
     }
 
 }

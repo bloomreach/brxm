@@ -15,12 +15,14 @@
  */
 package org.hippoecm.repository.frontend.plugin.config;
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.wicket.IClusterable;
 
 public interface PluginConfig extends IClusterable {
-    
-    public Map getPluginMap(); 
+
+    public PluginDescriptor getRoot();
+
+    public List getChildren(PluginDescriptor plugin);
 
 }

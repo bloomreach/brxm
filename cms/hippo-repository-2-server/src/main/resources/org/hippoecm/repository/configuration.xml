@@ -12,18 +12,41 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>
-  <sv:node sv:name="plugins">
+  <sv:node sv:name="frontend">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
-    <sv:property sv:name="navigationPanel" sv:type="String">
-      <sv:value>org.hippoecm.repository.plugins.admin.browser.BrowserPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="menuPanel" sv:type="String">
-      <sv:value>org.hippoecm.repository.plugins.admin.menu.MenuPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="contentPanel" sv:type="String">
-      <sv:value>org.hippoecm.repository.plugins.admin.editor.EditorPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="rootPanel">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:property sv:name="renderer" sv:type="String">
+        <sv:value>org.hippoecm.repository.plugins.admin.RootPlugin</sv:value>
+      </sv:property>
+      <sv:node sv:name="navigationPanel">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>nt:unstructured</sv:value>
+        </sv:property>
+        <sv:property sv:name="renderer" sv:type="String">
+          <sv:value>org.hippoecm.repository.plugins.admin.browser.BrowserPlugin</sv:value>
+        </sv:property>  
+      </sv:node>
+      <sv:node sv:name="menuPanel">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>nt:unstructured</sv:value>
+        </sv:property>
+        <sv:property sv:name="renderer" sv:type="String">
+          <sv:value>org.hippoecm.repository.plugins.admin.menu.MenuPlugin</sv:value>
+        </sv:property>  
+      </sv:node>
+      <sv:node sv:name="contentPanel">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>nt:unstructured</sv:value>
+        </sv:property>
+        <sv:property sv:name="renderer" sv:type="String">
+          <sv:value>org.hippoecm.repository.plugins.admin.editor.EditorPlugin</sv:value>
+        </sv:property>  
+      </sv:node>      
+    </sv:node>
   </sv:node>
 </sv:node>

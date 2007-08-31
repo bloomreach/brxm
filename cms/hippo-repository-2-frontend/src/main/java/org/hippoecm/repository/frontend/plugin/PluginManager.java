@@ -1,46 +1,33 @@
 package org.hippoecm.repository.frontend.plugin;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.repository.frontend.HomePlugin;
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.frontend.plugin.config.PluginConfig;
+import org.hippoecm.repository.frontend.plugin.config.PluginDescriptor;
 
 public class PluginManager implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    private final HomePlugin homePlugin;
+    private Plugin rootPlugin;
 
-    public PluginManager(HomePlugin homePlugin, PluginConfig pluginConfig, JcrNodeModel model) {
-        this.homePlugin = homePlugin;
-        Map pluginMap = pluginConfig.getPluginMap();
-                
-        Iterator it = pluginMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String id = entry.getKey().toString();
-            String classname = entry.getValue().toString();
-            Plugin plugin = new PluginFactory(classname).getPlugin(id, model);
-            homePlugin.add(plugin);
-        }
+    public PluginManager(Plugin rootPlugin) {
+        this.rootPlugin = rootPlugin;
     }
 
     public void notifyPlugins(final AjaxRequestTarget target, final JcrNodeModel model) {
-        homePlugin.visitChildren(Plugin.class, new IVisitor() {
+        rootPlugin.visitChildren(Plugin.class, new IVisitor() {
             public Object component(Component component) {
                 Plugin plugin = (Plugin) component;
                 if (plugin instanceof ContextPlugin) {
                     String newPluginClassname = ((ContextPlugin) plugin).newPluginClass(model);
                     if (newPluginClassname != null) {
-                        Plugin newPlugin = new PluginFactory(newPluginClassname).getPlugin(plugin.getId(), model);
+                        PluginDescriptor pluginDescriptor = new PluginDescriptor(plugin.getPath(), newPluginClassname);
+                        Plugin newPlugin = new PluginFactory(pluginDescriptor).getPlugin(model);
                         newPlugin.setRenderBodyOnly(true);
-                        homePlugin.replace(newPlugin);
-                        target.addComponent(homePlugin);
+                        rootPlugin.replace(newPlugin);
+                        target.addComponent(rootPlugin);
                     }
                 }
                 plugin.update(target, model);

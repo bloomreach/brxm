@@ -15,17 +15,33 @@
  */
 package org.hippoecm.repository.frontend.plugin;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.frontend.plugin.config.PluginConfig;
+import org.hippoecm.repository.frontend.plugin.config.PluginDescriptor;
 
 public abstract class Plugin extends Panel {
-    
+
     public Plugin(String id, JcrNodeModel model) {
         super(id, model);
         setOutputMarkupId(true);
     }
-    
+
+    public void addChildren(PluginConfig pluginConfig) {
+        List children = pluginConfig.getChildren(new PluginDescriptor(this));
+        Iterator it = children.iterator();
+        while (it.hasNext()) {
+            PluginDescriptor childDescriptor = (PluginDescriptor) it.next();
+            Plugin child = new PluginFactory(childDescriptor).getPlugin((JcrNodeModel) getModel());
+            add(child);
+            child.addChildren(pluginConfig);
+        }
+    }
+
     public abstract void update(AjaxRequestTarget target, JcrNodeModel model);
 
 }
