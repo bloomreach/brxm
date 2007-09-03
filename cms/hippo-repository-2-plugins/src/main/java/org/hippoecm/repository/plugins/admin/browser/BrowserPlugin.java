@@ -37,7 +37,7 @@ public class BrowserPlugin extends Plugin {
             private static final long serialVersionUID = 1L;
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
                 Home home = (Home)getWebPage();
-                home.getPluginManager().notifyPlugins(target, (JcrNodeModel)treeNode);
+                home.update(target, (JcrNodeModel)treeNode);
             }
         };
         tree.getTreeState().expandNode((TreeNode) model.getRoot());

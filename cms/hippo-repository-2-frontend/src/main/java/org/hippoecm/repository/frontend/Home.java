@@ -15,14 +15,14 @@
  */
 package org.hippoecm.repository.frontend;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.frontend.plugin.Plugin;
+import org.hippoecm.repository.frontend.plugin.PluginDescriptor;
 import org.hippoecm.repository.frontend.plugin.PluginFactory;
-import org.hippoecm.repository.frontend.plugin.PluginManager;
 import org.hippoecm.repository.frontend.plugin.config.PluginConfig;
 import org.hippoecm.repository.frontend.plugin.config.PluginConfigFactory;
 import org.hippoecm.repository.frontend.plugin.error.ErrorPlugin;
@@ -30,38 +30,46 @@ import org.hippoecm.repository.frontend.plugin.error.ErrorPlugin;
 public class Home extends WebPage {
     private static final long serialVersionUID = 1L;
 
-    private PluginManager pluginManager;
+    private Plugin rootPlugin;
 
     public Home() {
-        JcrNodeModel rootModel = null;
-        try {
-            UserSession wicketSession = (UserSession) getSession();
-            javax.jcr.Session jcrSession = wicketSession.getJcrSession();
-            if (jcrSession == null) {
-                String message = "Session is null, no connection to server.";
-                add(new ErrorPlugin("rootPanel", null, message));
-            } else {
-                Node rootNode = jcrSession.getRootNode();
-                rootModel = new JcrNodeModel(rootNode);
-            }
-        } catch (RepositoryException e) {
-            String message = "Failed to retrieve root node from repository";
-            add(new ErrorPlugin("rootPanel", null, message));
-        }
-
-        if (rootModel != null) {
+        JcrNodeModel rootModel = getRootModel();
+        if (rootModel == null) {
+            String message = "Cannot find repository root, no connection to server.";
+            add(new ErrorPlugin("rootPlugin", null, message));
+        } else {
             PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
-            Plugin rootPlugin = new PluginFactory(pluginConfig.getRoot()).getPlugin(rootModel);
-
-            pluginManager = new PluginManager(rootPlugin);
+            rootPlugin = getRootPlugin(pluginConfig, rootModel);
 
             add(rootPlugin);
             rootPlugin.addChildren(pluginConfig);
         }
     }
 
-    public PluginManager getPluginManager() {
-        return pluginManager;
+    public void update(final AjaxRequestTarget target, final JcrNodeModel model) {
+        rootPlugin.update(target, model);
+    }
+
+    private JcrNodeModel getRootModel() {
+        JcrNodeModel result;
+        try {
+            UserSession wicketSession = (UserSession) getSession();
+            javax.jcr.Session jcrSession = wicketSession.getJcrSession();
+            if (jcrSession == null) {
+                result = null;
+            } else {
+                result = new JcrNodeModel(jcrSession.getRootNode());
+            }
+        } catch (RepositoryException e) {
+            result = null;
+        }
+        return result;
+    }
+
+    private Plugin getRootPlugin(PluginConfig pluginConfig, JcrNodeModel model) {
+        PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
+        PluginFactory rootPluginFactory = new PluginFactory(rootPluginDescriptor);
+        return rootPluginFactory.getPlugin(model);
     }
 
 }

@@ -18,6 +18,7 @@ package org.hippoecm.repository.frontend.plugin.config;
 import java.util.List;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.repository.frontend.plugin.PluginDescriptor;
 
 public interface PluginConfig extends IClusterable {
 

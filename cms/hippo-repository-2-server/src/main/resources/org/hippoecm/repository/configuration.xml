@@ -16,37 +16,45 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
-    <sv:node sv:name="rootPanel">
+    <sv:node sv:name="rootPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippo:frontendplugin</sv:value>
       </sv:property>
-      <sv:property sv:name="renderer" sv:type="String">
+      <sv:property sv:name="hippo:renderer" sv:type="String">
         <sv:value>org.hippoecm.repository.plugins.admin.RootPlugin</sv:value>
       </sv:property>
-      <sv:node sv:name="navigationPanel">
+      <sv:node sv:name="navigationPlugin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:unstructured</sv:value>
+          <sv:value>hippo:frontendplugin</sv:value>
         </sv:property>
-        <sv:property sv:name="renderer" sv:type="String">
+        <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.repository.plugins.admin.browser.BrowserPlugin</sv:value>
         </sv:property>  
       </sv:node>
-      <sv:node sv:name="menuPanel">
+      <sv:node sv:name="menuPlugin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:unstructured</sv:value>
+          <sv:value>hippo:frontendplugin</sv:value>
         </sv:property>
-        <sv:property sv:name="renderer" sv:type="String">
+        <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.repository.plugins.admin.menu.MenuPlugin</sv:value>
         </sv:property>  
       </sv:node>
-      <sv:node sv:name="contentPanel">
+      <sv:node sv:name="contentPlugin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:unstructured</sv:value>
+          <sv:value>hippo:frontendplugin</sv:value>
         </sv:property>
-        <sv:property sv:name="renderer" sv:type="String">
+        <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.repository.plugins.admin.editor.EditorPlugin</sv:value>
         </sv:property>  
-      </sv:node>      
+      </sv:node>
+      <sv:node sv:name="workflowPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:frontendplugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:renderer" sv:type="String">
+          <sv:value>org.hippoecm.repository.frontend.plugin.empty.EmptyPlugin</sv:value>
+        </sv:property>
+      </sv:node>     
     </sv:node>
   </sv:node>
 </sv:node>
