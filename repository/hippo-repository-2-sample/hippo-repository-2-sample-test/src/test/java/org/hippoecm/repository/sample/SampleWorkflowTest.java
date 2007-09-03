@@ -19,32 +19,18 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import javax.transaction.SystemException;
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.RollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.xa.XAResource;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
 
 import junit.framework.TestCase;
 
-import org.apache.jackrabbit.core.XASession;
-
-import com.atomikos.icatch.jta.UserTransactionManager;
-
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.servicing.DocumentManager;
-import org.hippoecm.repository.servicing.Document;
 import org.hippoecm.repository.servicing.ServicingWorkspace;
 import org.hippoecm.repository.servicing.WorkflowManager;
-
 import org.hippoecm.repository.workflow.Workflow;
 import org.hippoecm.repository.workflow.WorkflowDescriptor;
 import org.hippoecm.repository.workflow.WorkflowException;
