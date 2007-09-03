@@ -61,7 +61,6 @@ public class FacetedNavigationEngineSecondImpl
         String query;
         TermQuery term;
         public QueryImpl(String query) {
-            parser = new QueryParser("dummy", new KeywordAnalyzer());
             this.query = query;
             this.term = null; // FIXME: use parser to create a query, which is then picked up later
         }
