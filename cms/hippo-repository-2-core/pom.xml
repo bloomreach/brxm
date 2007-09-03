@@ -41,7 +41,7 @@
   </scm>
   
   <properties>
-    <jackrabbit.version>1.3</jackrabbit.version>
+    <jackrabbit.version>1.4-571494</jackrabbit.version>
   </properties>
   
   <repositories>
@@ -219,7 +219,11 @@
   </dependencyManagement>
  
   <dependencies>
-
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <version>1.0</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>

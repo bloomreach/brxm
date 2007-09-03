@@ -55,7 +55,7 @@
   
   <properties>
     <!-- Versions -->
-    <jackrabbit.version>1.3</jackrabbit.version>
+    <jackrabbit.version>1.4-571494</jackrabbit.version>
 
     <!-- Build Dependency Version Properties -->
     <jmock.version>1.2.0</jmock.version>
