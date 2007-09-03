@@ -32,7 +32,7 @@ public class DialogWindow extends ModalWindow {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
                 Home home = (Home)getWebPage();
-                home.getPluginManager().notifyPlugins(target, model);
+                home.update(target, model);
             }
         });
     }

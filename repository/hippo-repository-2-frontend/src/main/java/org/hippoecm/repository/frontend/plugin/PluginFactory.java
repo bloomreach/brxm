@@ -18,7 +18,6 @@ package org.hippoecm.repository.frontend.plugin;
 import java.lang.reflect.Constructor;
 
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.frontend.plugin.config.PluginDescriptor;
 import org.hippoecm.repository.frontend.plugin.error.ErrorPlugin;
 
 public class PluginFactory {

@@ -22,7 +22,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.repository.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.frontend.plugin.config.PluginConfig;
-import org.hippoecm.repository.frontend.plugin.config.PluginDescriptor;
 
 public abstract class Plugin extends Panel {
 
