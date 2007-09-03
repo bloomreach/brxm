@@ -1,4 +1,4 @@
-package org.hippoecm.repository.testutils;
+package org.hippoecm.repository.testutils.history;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
