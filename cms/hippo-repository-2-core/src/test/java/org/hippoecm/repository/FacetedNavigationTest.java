@@ -41,14 +41,12 @@ import junit.framework.TestSuite;
 public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
     public void testTraversal() throws RepositoryException, IOException {
-        System.err.println("GRR#1");
         Node node = commonStart();
         traverse(node); // for a full verbose dump use: Utilities.dump(root);
         commonEnd();
     }
 
     public void testCounts() throws RepositoryException, IOException {
-        System.err.println("GRR#1");
         Node node = commonStart();
         check("/navigation/xyz/x1", 1, 0, 0);
         check("/navigation/xyz/x2", 2, 0, 0);
@@ -66,20 +64,6 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         check("/navigation/xyz/x2/y2/z2", 2, 2, 2);
         commonEnd();
     }
-
-    /*
-    public void testPerformance() throws RepositoryException, IOException {
-        Node node = commonStart();
-        long count, tBefore, tAfter;
-        tBefore = System.currentTimeMillis();
-        count = node.getNode("x1").getNode("y2").getNode("z2").getNode("resultset").getProperty("hippo:count").getLong();
-        tAfter = System.currentTimeMillis();
-        System.out.println("BERRY#1 "+count);
-        System.out.println("BERRY#2 "+(tAfter-tBefore));
-        historyWriter.write(getClass().getName(), Long.toString(tAfter-tBefore), "ms", false);
-        commonEnd();
-    }
-     */
 
     public static void main(String[] args) {
         try {
