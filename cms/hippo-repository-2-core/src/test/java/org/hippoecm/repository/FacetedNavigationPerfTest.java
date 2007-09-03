@@ -16,27 +16,13 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
-import java.util.Random;
-import java.util.Map;
-import java.util.HashMap;
 
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFactory;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.hippoecm.repository.testutils.history.HistoryWriter;
 
 public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
