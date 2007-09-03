@@ -184,7 +184,9 @@
         </executions>
         <configuration>
           <mainClass>org.hippoecm.repository.HippoRepositoryServer</mainClass>
-          <commandlineArgs>"${project.build.directory}"</commandlineArgs>
+          <arguments>
+            <argument>${project.build.directory}</argument>
+          </arguments>
           <cleanupDeamonThreads>false</cleanupDeamonThreads>
         </configuration>
       </plugin>

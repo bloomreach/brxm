@@ -39,26 +39,32 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.hippoecm.repository.testutils.history.HistoryWriter;
 
-public class FacetedNavigation500PerfTest extends FacetedNavigationAbstractTest {
+public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
     private static HistoryWriter historyWriter;
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(FacetedNavigation500PerfTest.class);
+        TestSuite suite = new TestSuite(FacetedNavigationPerfTest.class);
         historyWriter = new HistoryWriter(suite);
         return historyWriter;
     }
 
-    public FacetedNavigation500PerfTest() throws RepositoryException {
+    public FacetedNavigationPerfTest() throws RepositoryException {
         super();
-        numDocs = 500;
     }
 
     public void testPerformance() throws RepositoryException, IOException {
-        Node node = commonStart();
-        long count, tBefore, tAfter;
-        tBefore = System.currentTimeMillis();
-        count = node.getNode("x1").getNode("y2").getNode("z2").getNode("hippo:resultset").getProperty("hippo:count").getLong();
-        tAfter = System.currentTimeMillis();
+        int[] numberOfNodesInTests = new int[] { 500 };
+        for (int i = 0; i < numberOfNodesInTests.length; i++) {
+            numDocs = numberOfNodesInTests[i];
+            Node node = commonStart();
+            long count, tBefore, tAfter;
+            tBefore = System.currentTimeMillis();
+            count = node.getNode("x1").getNode("y2").getNode("z2").getNode("hippo:resultset")
+                    .getProperty("hippo:count").getLong();
+            tAfter = System.currentTimeMillis();
+
+            historyWriter.write("FacetedNavigationPerfTest" + numDocs, Long.toString(tAfter - tBefore), "ms");
+        }
         commonEnd();
     }
 }
