@@ -8,7 +8,7 @@
 + * multiple
 
 [hippo:facetsearch]
-- hippo:queryname (string)
+- hippo:queryname (string) mandatory
 - hippo:docbase (string) mandatory
 - hippo:facets (string) mandatory multiple
 - hippo:search (string) multiple

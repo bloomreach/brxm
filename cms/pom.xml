@@ -63,14 +63,12 @@
     <junit.version>3.8.1</junit.version>
     
     <!-- Project Dependency Version Properties -->
-    <com.atomikos.version>3.1.4</com.atomikos.version>
     <commons-collections.version>3.1</commons-collections.version>
     <commons-httpclient.version>3.0</commons-httpclient.version>
     <concurrent.version>1.3.4</concurrent.version>
     <javax.jcr.version>1.0</javax.jcr.version>
     <org.apache.geronimo.specs.version>1.0.1B</org.apache.geronimo.specs.version>
     <org.apache.derby.version>10.2.1.6</org.apache.derby.version>
-    <org.apache.lucene.version>2.0.0</org.apache.lucene.version>
     <org.slf4j.version>1.3.0</org.slf4j.version>
     <poi.version>2.5.1-final-20040804</poi.version>
     <pdfbox.version>0.6.4</pdfbox.version>
@@ -202,17 +200,6 @@
       <name>Day Repository for JCR</name>
       <url>http://www.day.com/maven/</url>
       <layout>legacy</layout>
-    </repository>
-    <repository>
-      <!-- For the Atomikos JARs -->
-      <id>logicblaze.deps</id>
-      <url>http://repo.logicblaze.com/maven2-all</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
     </repository>
   </repositories>
 
@@ -357,11 +344,6 @@
             <artifactId>junit</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.lucene</groupId>
-        <artifactId>lucene-core</artifactId>
-        <version>${org.apache.lucene.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>

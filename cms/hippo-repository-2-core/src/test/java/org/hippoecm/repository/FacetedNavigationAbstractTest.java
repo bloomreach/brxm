@@ -51,8 +51,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
 
     private static String alphabet = "abcde"; // abcdefghijklmnopqrstuvwxyz
     private static int hierDepth = 1;
-    private static int saveInterval = 30;
-    private final static int defaultNumDocs = 300;
+    private static int saveInterval = 50;
+    private final static int defaultNumDocs = 20;
     protected int numDocs = -1;
 
     private String[] nodeNames;
