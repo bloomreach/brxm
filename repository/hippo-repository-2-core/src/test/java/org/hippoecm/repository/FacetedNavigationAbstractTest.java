@@ -16,27 +16,21 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
-import java.util.Random;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFactory;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 public abstract class FacetedNavigationAbstractTest extends TestCase {
 
@@ -196,14 +190,13 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         session = server.login();
         session.getRootNode().addNode("navigation");
         session.save();
-        documents = fill();
     }
 
     public void tearDown() throws RepositoryException {
         if(session.getRootNode().hasNode("navigation")) {
             session.getRootNode().getNode("navigation").remove();
         }
-        if(session.getRootNode().hasNode("navigation")) {
+        if(session.getRootNode().hasNode("documents")) {
             session.getRootNode().getNode("documents").remove();
         }
         if(session != null) {
@@ -215,6 +208,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     }
 
     protected Node commonStart() throws RepositoryException {
+        documents = fill();
         Node node = session.getRootNode().getNode("navigation");
         node = node.addNode("xyz","hippo:facetsearch");
         node.setProperty("hippo:queryname","xyz");
