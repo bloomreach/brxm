@@ -38,7 +38,14 @@
   </issueManagement>
   <inceptionYear>2007</inceptionYear>
 
-
+  
+  <distributionManagement>
+    <site>
+      <id>repodocs.hippocms.org</id>
+      <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
+    </site>
+  </distributionManagement>
+  
   <modules>
     <module>hippo-repository-2-api</module>
     <module>hippo-repository-2-core</module>
