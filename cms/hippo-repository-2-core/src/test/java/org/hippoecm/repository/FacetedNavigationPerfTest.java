@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.hippoecm.repository.testutils.history.HistoryWriter;
+import org.hippoecm.testutils.history.HistoryWriter;
 
 public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
     private static HistoryWriter historyWriter;

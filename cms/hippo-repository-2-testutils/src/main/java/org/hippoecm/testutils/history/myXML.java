@@ -21,7 +21,7 @@
  Should you need to contact the author, you can do so by email to
  <wsh@sprintmail.com>.
  */
-package org.hippoecm.repository.testutils.history;
+package org.hippoecm.testutils.history;
 
 import java.io.BufferedReader;
 import java.io.IOException;
