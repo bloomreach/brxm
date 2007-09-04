@@ -7,20 +7,20 @@
   You may obtain a copy of the License at
   
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" 
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
   See the License for the specific language governing permissions and 
   limitations under the License.
--->
+  -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-repository-2</artifactId>
@@ -28,28 +28,39 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo Test Utilities</name>
-  <description>Several utilities for testing the Hippo ECM</description>
+  <name>Test utilities</name>
+  <description>Test utilities</description>
   
   <groupId>org.hippoecm</groupId>  
   <artifactId>testutils</artifactId>
   <version>2.01.00-dev</version>
-  <packaging>pom</packaging>
-  
+  <packaging>jar</packaging>
+
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/historytest-utils</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/historytest-utils</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-testutils/historytest-utils</url>
   </scm>
   
-  <modules>
-    <module>testutils-history</module>
-    <module>testutils-history-run</module>
-    <module>testutils-history-report</module>
-  </modules>
+  <dependencies>     
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
   
   <build>
     <defaultGoal>package</defaultGoal>
   </build>
-  
+
 </project>

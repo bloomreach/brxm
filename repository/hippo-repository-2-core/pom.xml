@@ -264,7 +264,7 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>testutils-history-run</artifactId>
+      <artifactId>testutils</artifactId>
       <version>2.01.00-dev</version>
       <scope>test</scope>
     </dependency>
@@ -378,10 +378,6 @@
       </plugins>
     </pluginManagement>
     <plugins> 
-      <!-- plugin>
-        <groupId>org.hippoecm</groupId>
-        <artifactId>historytest-report-maven-plugin</artifactId>
-      </plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

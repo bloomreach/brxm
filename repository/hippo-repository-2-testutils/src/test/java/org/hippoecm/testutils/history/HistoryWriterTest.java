@@ -1,10 +1,8 @@
-package org.hippoecm.repository.testutils.history;
+package org.hippoecm.testutils.history;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.hippoecm.repository.testutils.history.HistoryWriter;
 
 public class HistoryWriterTest extends TestCase {
 
