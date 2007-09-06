@@ -56,7 +56,7 @@ public class SampleWorkflowTest extends TestCase {
             //TransactionManager tm = utm;
             //tm.begin();
 
-            Session session = server.login();
+            Session session = server.login("dummy","dummy".toCharArray());
 
             Node root = session.getRootNode();
 
@@ -111,7 +111,7 @@ public class SampleWorkflowTest extends TestCase {
             InvocationTargetException {
         SampleWorkflowSetup.commonStart(server);
         try {
-            Session session = server.login();
+            Session session = server.login("dummy","dummy".toCharArray());
             Node root = session.getRootNode();
 
             Node node = root.getNode("files/myarticle");
