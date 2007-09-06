@@ -114,7 +114,7 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         public Object getConnection() {
             if (session == null) {
                 try {
-                    session = repository.login(username, password);
+                    session = repository.login(username, password.toCharArray());
                 } catch (LoginException ex) {
                     // FIXME: log something
                     return null;

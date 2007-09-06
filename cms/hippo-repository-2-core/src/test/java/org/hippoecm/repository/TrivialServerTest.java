@@ -24,6 +24,9 @@ import javax.jcr.Session;
 import junit.framework.TestCase;
 
 public class TrivialServerTest extends TestCase {
+    
+    private static final String SYSTEMUSER_ID = "systemuser";
+    private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
 
     private HippoRepository server;
 
@@ -31,7 +34,7 @@ public class TrivialServerTest extends TestCase {
         server = HippoRepositoryFactory.getHippoRepository();
         assertNotNull(server);
 
-        Session session = server.login();
+        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node root = session.getRootNode();
 
         root.addNode("x");

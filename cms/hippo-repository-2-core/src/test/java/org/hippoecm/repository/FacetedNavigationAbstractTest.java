@@ -33,6 +33,9 @@ import javax.jcr.version.VersionException;
 import junit.framework.TestCase;
 
 public abstract class FacetedNavigationAbstractTest extends TestCase {
+    
+    private static final String SYSTEMUSER_ID = "systemuser";
+    private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
 
     static class Document {
         int docid;
@@ -187,9 +190,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
 
     public void setUp() throws RepositoryException, IOException {
         server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         session.getRootNode().addNode("navigation");
-        session.save();
     }
 
     public void tearDown() throws RepositoryException {
