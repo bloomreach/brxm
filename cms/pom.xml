@@ -100,7 +100,7 @@
   
   <ciManagement>
     <system>Bamboo</system>
-    <url>http://127.0.0.1:8080/</url>
+    <url>http://bamboo-intern.hippocms.org//</url>
  </ciManagement>
  
   <issueManagement>
