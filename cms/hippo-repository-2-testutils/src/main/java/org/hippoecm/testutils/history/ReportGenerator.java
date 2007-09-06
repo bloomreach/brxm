@@ -29,9 +29,6 @@ import org.apache.commons.cli.PosixParser;
 
 public class ReportGenerator {
 
-    private static final String DEFAULT_HISTORY = "target/history";
-    private static final String DEFAULT_REPORTS = "target/history-reports";
-
     public static void main(String[] args) {
         ReportGenerator reportGenerator = new ReportGenerator();
         reportGenerator.execute(args);
@@ -41,16 +38,18 @@ public class ReportGenerator {
     private File reportsDir;
 
     void execute(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            args[i] = args[i] == null ? "" : args[i];
+        }
         parseCommandLine(args);
         File[] historyFiles = historyDir.listFiles(new FileFilter() {
             public boolean accept(File file) {
                 return file.getName().endsWith("-history.xml");
             }
         });
-        reportsDir = new File(DEFAULT_REPORTS);
-        
+
         ChartsCreator chartsCreator = new ChartsCreator();
-        chartsCreator.createCharts(historyFiles, reportsDir );
+        chartsCreator.createCharts(historyFiles, reportsDir);
     }
 
     @SuppressWarnings("static-access")
@@ -58,9 +57,14 @@ public class ReportGenerator {
         try {
             Options options = new Options();
 
-            Option h = OptionBuilder.withArgName("directory").hasArg().withDescription("History points directory")
-                    .withLongOpt("history").create("h");
-            options.addOption(h);
+            Option history = OptionBuilder.withArgName("directory").hasArg()
+                    .withDescription("History points directory").withLongOpt("history").create("h");
+            options.addOption(history);
+
+            Option report = OptionBuilder.withArgName("directory").hasArg().withDescription("History report directory")
+                    .withLongOpt("report").create("r");
+            options.addOption(report);
+
             options.addOption("?", "help", false, "Print usage information");
 
             CommandLineParser parser = new PosixParser();
@@ -72,9 +76,18 @@ public class ReportGenerator {
                 System.exit(0);
             }
 
-            historyDir = new File(cmd.getOptionValue("h", DEFAULT_HISTORY));
+            historyDir = new File(cmd.getOptionValue("h"));
             if (!historyDir.isDirectory()) {
-                System.err.println("Directory '" + historyDir + "' does not exist");
+                System.err.println("History points directory '" + historyDir + "' does not exist");
+                System.exit(1);
+            }
+
+            reportsDir = new File(cmd.getOptionValue("r"));
+            if (!reportsDir.exists()) {
+                reportsDir.mkdirs();
+            }
+            if (!reportsDir.isDirectory()) {
+                System.err.println("Reporting directory '" + reportsDir + "' is not a directory");
                 System.exit(1);
             }
 
