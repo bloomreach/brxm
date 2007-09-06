@@ -23,6 +23,9 @@ import javax.jcr.Session;
 
 public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
+    private static final String SYSTEMUSER_ID = "systemuser";
+    private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
+
     public void testTraversal() throws RepositoryException, IOException {
         Node node = commonStart();
         traverse(node); // for a full verbose dump use: Utilities.dump(root);
@@ -59,7 +62,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
                 repository = HippoRepositoryFactory.getHippoRepository();
             }
             FacetedNavigationTest filler = new FacetedNavigationTest();
-            Session session = repository.login();
+            Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             filler.fill();
             session.logout();
             repository.close();

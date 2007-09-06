@@ -57,4 +57,17 @@
       </sv:node>     
     </sv:node>
   </sv:node>
+  <sv:node sv:name="users">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    <sv:node sv:name="johndoe">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:property sv:name="password" sv:type="String">
+        <sv:value>secret</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 </sv:node>

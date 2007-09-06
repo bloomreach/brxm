@@ -51,7 +51,9 @@ public class HippoRepositoryFactory {
             defaultRepository = getHippoRepository(defaultLocation);
             return defaultRepository;
         }
-        return new LocalHippoRepository();
+
+        defaultRepository = new LocalHippoRepository();
+        return defaultRepository;
     }
 
     public static HippoRepository getHippoRepository(String location) throws RepositoryException {
@@ -98,5 +100,11 @@ public class HippoRepositoryFactory {
         
         // embedded/local with location
         return new LocalHippoRepository(location);
+    }
+    
+    static void unregister(HippoRepository repository) {
+        if (repository == defaultRepository) {
+            defaultRepository = null;
+        }
     }
 }

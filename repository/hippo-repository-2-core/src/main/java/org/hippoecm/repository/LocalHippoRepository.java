@@ -40,6 +40,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
@@ -195,7 +196,7 @@ class LocalHippoRepository extends HippoRepository {
       repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
 
       try {
-          Session session = login();
+          Session session = login(new SimpleCredentials("systemuser", "systempass".toCharArray()));
           Workspace workspace = session.getWorkspace();
           NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
 

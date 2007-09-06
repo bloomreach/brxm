@@ -37,9 +37,6 @@ public abstract class HippoRepository {
     protected Repository repository;
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
 
-    private String systemUsername = "username";
-    private String systemPassword = "password";
-
     private void initialize() {
         // HREPTWO-40: disable because of problems reinitializing.
         // FIXME: bring these properties into resource
@@ -76,8 +73,9 @@ public abstract class HippoRepository {
     }
 
     protected HippoRepository(String workingDirectory) {
-        if (workingDirectory == null || workingDirectory.equals(""))
+        if (workingDirectory == null || workingDirectory.equals("")) {
             throw new NullPointerException();
+        }
         this.workingDirectory = new File(workingDirectory).getAbsolutePath();
         initialize();
     }
@@ -91,32 +89,39 @@ public abstract class HippoRepository {
     }
 
     public Session login() throws LoginException, RepositoryException {
-        if (systemUsername != null)
-            return login(systemUsername, systemPassword);
-        else
-            return login(null);
+        return login(null);
     }
 
-    public Session login(String username, String password) throws LoginException, RepositoryException {
-        if (username != null && !username.equals(""))
-            return login(new SimpleCredentials(systemUsername, systemPassword.toCharArray()));
-        else
-            return login(systemUsername, systemPassword);
+    public Session login(String username, char[] password) throws LoginException, RepositoryException {
+        if (username != null && !username.equals("")) {
+            return login(new SimpleCredentials(username, password));
+        } else {
+            return login(null);
+        }
     }
 
     public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
         Session session = null;
-        if (credentials == null)
+        
+        if (repository == null) {
+            throw new RepositoryException("Repository not initialized yet.");
+        }
+        
+        if (credentials == null) {
             session = repository.login();
-        else
+        } else {
             session = repository.login(credentials);
-        if (session != null)
+        }
+        
+        if (session != null) {
             log.info("Logged in as " + session.getUserID() + " to a "
                     + repository.getDescriptor(Repository.REP_NAME_DESC) + " repository.");
-        else if (credentials == null)
+        } else if (credentials == null) {
             log.error("Failed to login to repository with no credentials");
-        else
+        } else {
             log.error("Failed to login to repository with credentials " + credentials.toString());
+        }
+        
         return session;
     }
 
@@ -125,5 +130,6 @@ public abstract class HippoRepository {
             uts.shutdownWait();
             uts = null;
         }
+        HippoRepositoryFactory.unregister(this);
     }
 }
