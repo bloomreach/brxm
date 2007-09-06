@@ -143,5 +143,8 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <reporting>
+    <outputDirectory>../target/site/hippo-repository-2-migration-tool</outputDirectory>
+  </reporting> 
 </project>
 

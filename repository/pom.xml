@@ -32,20 +32,12 @@
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
-  <issueManagement>
-    <system>Jira</system>
-    <url>http://issues.hippo.nl/browse/HREPTWO</url>
-  </issueManagement>
-  <inceptionYear>2007</inceptionYear>
-
   
-  <distributionManagement>
-    <site>
-      <id>repodocs.hippocms.org</id>
-      <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
-    </site>
-  </distributionManagement>
-  
+  <organization>
+    <name>Hippo</name>
+    <url>http://www.hippo.nl/</url>
+  </organization>
+    
   <modules>
     <module>hippo-repository-2-api</module>
     <module>hippo-repository-2-core</module>
@@ -58,7 +50,6 @@
     <module>hippo-repository-2-sample</module>
     <module>hippo-repository-2-testutils</module>
   </modules>
-  
   
   <properties>
     <!-- Versions -->
@@ -93,16 +84,31 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</url>
-  </scm>
-  <organization>
-    <name>Hippo</name>
-    <url>http://www.hippo.nl/</url>
-  </organization>
-    
+ </scm>
+ 
+  <distributionManagement>
+    <site>
+      <id>repodocs.hippocms.org</id>
+      <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
+    </site>
+  </distributionManagement>
+  
+  <ciManagement>
+    <system>Bamboo</system>
+    <url>http://127.0.0.1:8080/</url>
+ </ciManagement>
+ 
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://issues.hippo.nl/browse/HREPTWO</url>
+  </issueManagement>
+  <inceptionYear>2007</inceptionYear>
+        
   <developers>
     <developer>
       <name>Arje Cahn</name>
@@ -147,7 +153,7 @@
     <developer>
       <name>Wander Grevink</name>
       <id>wgrevink</id>
-      <email/>
+      <email>w&lt;dOT&gt;grevink&lt;aT&gt;hippo&lt;d0t&gt;nl</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -408,7 +414,7 @@
 
 
   <reporting>
-    <!-- outputDirectory>target/site</outputDirectory -->
+    <outputDirectory>target/site</outputDirectory>
     <plugins>
       <plugin>
         <inherited>true</inherited>
@@ -444,7 +450,6 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
     </plugins>
-
   </reporting>
 
 </project>

@@ -151,4 +151,9 @@
       </plugin>
     </plugins>
   </build>
+  
+  <reporting>
+    <outputDirectory>../target/site/hippo-repository-2-frontend</outputDirectory>
+  </reporting>
+   
 </project>

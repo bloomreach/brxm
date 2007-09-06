@@ -326,5 +326,9 @@
       </plugin>
    </plugins>
   </build>
+  
+  <reporting>
+    <outputDirectory>../../target/site/hippo-repository-2-sample/hippo-repository-2-sample-common-addons</outputDirectory>
+  </reporting>
 
 </project>
