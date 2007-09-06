@@ -19,7 +19,6 @@
   http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-repository-2</artifactId>
@@ -31,14 +30,14 @@
   <description>Hippo Repository 2 Technical Documentation</description>
   <artifactId>hippo-repository-2-docs</artifactId>
   
-  
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-docs</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-docs</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-docs</url>
   </scm>
   
-  <dependencies>
-  </dependencies>
-  
+  <reporting>
+    <outputDirectory>../target/site/hippo-repository-2-docs</outputDirectory>
+  </reporting>
+    
 </project>

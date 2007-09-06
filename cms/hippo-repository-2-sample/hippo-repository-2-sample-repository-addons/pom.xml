@@ -231,5 +231,9 @@
       </plugin>
    </plugins>
   </build>
-
+  
+  <reporting>
+    <outputDirectory>../../target/site/hippo-repository-2-sample/hippo-repository-2-sample-repository-addons</outputDirectory>
+  </reporting>
+  
 </project>
