@@ -53,7 +53,7 @@ abstract class SampleWorkflowSetup
     oldAuthorId = rnd.nextInt();
     newAuthorId = rnd.nextInt();
 
-    Session session = server.login();
+    Session session = server.login("dummy","dummy".toCharArray());
     Node root = session.getRootNode();
 
     // set up the workflow specification as a node "/configuration/workflows/mycategory/myworkflow"
@@ -107,7 +107,7 @@ abstract class SampleWorkflowSetup
   }
 
   static void commonEnd(HippoRepository server) throws RepositoryException {
-    Session session = server.login();
+    Session session = server.login("dummy","dummy".toCharArray());
     Node root = session.getRootNode();
     root.getNode("files").remove();
     Node node = root.getNode("configuration");

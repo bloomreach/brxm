@@ -60,7 +60,7 @@ public class Initialize
   }
 
   private void initializeRepository() throws RepositoryException {
-    Session session = repository.login();
+    Session session = repository.login("dummy", "dummy".toCharArray());
     Node node = session.getRootNode();
     if(!node.hasNode("configuration"))
       node = node.addNode("configuration","hippo:configuration");

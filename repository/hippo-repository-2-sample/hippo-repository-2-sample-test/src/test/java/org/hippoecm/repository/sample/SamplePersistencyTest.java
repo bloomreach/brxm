@@ -57,7 +57,7 @@ public class SamplePersistencyTest extends TestCase
   }
 
   public void testAuthorDocument() throws RepositoryException {
-    Session session = server.login();
+    Session session = server.login("dummy","dummy".toCharArray());
     Node root = session.getRootNode();
 
     DocumentManager manager = ((ServicingWorkspace)session.getWorkspace()).getDocumentManager();

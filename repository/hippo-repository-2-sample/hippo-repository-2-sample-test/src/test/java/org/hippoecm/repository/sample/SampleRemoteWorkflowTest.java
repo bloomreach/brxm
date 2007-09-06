@@ -77,7 +77,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
             //TransactionManager tm = utm;
             //tm.begin();
 
-            Session session = server.login();
+            Session session = server.login("dummy", "dummy".toCharArray());
 
             Node root = session.getRootNode();
 
