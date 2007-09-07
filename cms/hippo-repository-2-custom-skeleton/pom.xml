@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.hippoecm</groupId>
+    <artifactId>hippo-repository-2</artifactId>
+    <version>2.01.00-dev</version>
+    <relativePath>..</relativePath>
+  </parent>
+
+  <name>Hippo Repository 2 Sample custom skeleton</name>
+  <description>Hippo Repository 2 Sample custom skeleton module</description>
+  <groupId>org.hippoecm</groupId>
+  <artifactId>hippo-repository-2-custom-skeleton</artifactId>
+  <version>2.01.00-dev</version>
+  <packaging>war</packaging>
+
+  <scm>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton</url>
+  </scm>
+
+  <repositories>
+    <repository>
+      <snapshots><enabled>true</enabled></snapshots>
+      <id>repository.hippocms.org</id>
+      <name>Hippo Repository for Maven2</name>
+      <url>http://repository.hippocms.org/maven2/</url>
+      <layout>default</layout>
+    </repository>
+    <repository>
+      <snapshots><enabled>true</enabled></snapshots>
+      <id>day.com</id>
+      <name>Day Repository for JCR</name>
+      <url>http://www.day.com/maven/</url>
+      <layout>legacy</layout>
+    </repository>
+    <repository>
+      <!-- For the Atomikos JARs -->
+      <id>logicblaze.deps</id>
+      <url>http://repo.logicblaze.com/maven2-all</url>
+      <snapshots><enabled>true</enabled><updatePolicy>never</updatePolicy></snapshots>
+      <releases><enabled>true</enabled><updatePolicy>never</updatePolicy></releases>
+    </repository>
+  </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.3.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.3.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-repository-2-server</artifactId>
+      <version>2.01.00-dev</version>
+      <type>war</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.0.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>org.hippoecm.repository.HippoRepositoryServer</mainClass>
+          <arguments>
+            <argument>${project.build.directory}</argument>
+          </arguments>
+          <cleanupDeamonThreads>false</cleanupDeamonThreads>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+
+        <configuration>
+          <contextPath>/</contextPath>         
+          <scanIntervalSeconds>1</scanIntervalSeconds>
+          <scanTargetPatterns>        
+            <scanTargetPattern>    
+              <directory>${basedir}/src/main/java</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+            </scanTargetPattern>
+          </scanTargetPatterns>
+          <!-- webApp>${project.build.directory}/${project.build.finalName}</webApp -->
+          <!-- webApp>${project.build.directory}/${project.build.finalName}.war</webApp -->
+          <!-- webApp>${project.build.directory}/hippo-repository-2-server-1.01.00-dev-jdk1.4</webApp -->
+        </configuration>    
+
+      </plugin>
+   </plugins>
+  </build>
+
+</project>
