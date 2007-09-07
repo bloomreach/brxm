@@ -30,7 +30,7 @@ import org.hippoecm.repository.frontend.plugin.PluginDescriptor;
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
-    private static final String pluginConfigRoot = "configuration/frontend";
+    private static final String pluginConfigRoot = "configuration/frontend/default";
     private static final String rootPluginId = "rootPlugin";
     private static final String pluginRendererProperty = "hippo:renderer";
 

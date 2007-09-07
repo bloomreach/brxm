@@ -185,178 +185,196 @@ class LocalHippoRepository extends HippoRepository {
         }
     }
 
-  private void initialize() throws RepositoryException {
-      jackrabbitRepository = RepositoryImpl.create(RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath()));
-      repository = jackrabbitRepository;
+    private void initialize() throws RepositoryException {
+        jackrabbitRepository = RepositoryImpl.create(RepositoryConfig.create(getRepositoryConfigAsStream(),
+                getRepositoryPath()));
+        repository = jackrabbitRepository;
 
-      String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
-      log.info("Node type registration support: " + (result != null ? result : "no"));
+        String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
+        log.info("Node type registration support: " + (result != null ? result : "no"));
 
-      hippoRepositoryFactory = new ServicingDecoratorFactory();
-      repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
+        hippoRepositoryFactory = new ServicingDecoratorFactory();
+        repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
 
-      try {
-          Session session = login(new SimpleCredentials("systemuser", "systempass".toCharArray()));
-          Workspace workspace = session.getWorkspace();
-          NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
+        try {
+            Session session = login(new SimpleCredentials("systemuser", "systempass".toCharArray()));
+            Workspace workspace = session.getWorkspace();
+            NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
 
-          try {
-              initializeNamespace(nsreg, NAMESPACE_PREFIX, NAMESPACE_URI);
-          } catch(UnsupportedRepositoryOperationException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
-          } catch(AccessDeniedException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
-          }
+            try {
+                initializeNamespace(nsreg, NAMESPACE_PREFIX, NAMESPACE_URI);
+            } catch (UnsupportedRepositoryOperationException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
+            } catch (AccessDeniedException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
+            }
 
-          try {
-              String cndName = "repository.cnd";
-              log.info("Initializing nodetypes from: " + cndName);
-              initializeNodetypes(workspace, getClass().getResourceAsStream(cndName), cndName);
-              session.save();
-          } catch(ConstraintViolationException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-          } catch(InvalidItemStateException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-          } catch(ItemExistsException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-          } catch(LockException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-          } catch(NoSuchNodeTypeException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-          } catch(ParseException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-          } catch(VersionException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-          } catch(AccessDeniedException ex) {
-              throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-          }
+            try {
+                String cndName = "repository.cnd";
+                log.info("Initializing nodetypes from: " + cndName);
+                initializeNodetypes(workspace, getClass().getResourceAsStream(cndName), cndName);
+                session.save();
+            } catch (ConstraintViolationException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (InvalidItemStateException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (ItemExistsException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (LockException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (NoSuchNodeTypeException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (ParseException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (VersionException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (AccessDeniedException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            }
 
-          if(!session.getRootNode().hasNode("configuration")) {
-              log.info("Initializing configuration content");
-              try {
-                  initializeNodecontent(session, "/", getClass().getResourceAsStream("configuration.xml"));
-                  session.save();
-              } catch(AccessDeniedException ex) {
-                  throw new RepositoryException("Could not initialize repository with configuration content", ex);
-              } catch(ConstraintViolationException ex) {
-                  throw new RepositoryException("Could not initialize repository with configuration content", ex);
-              } catch(InvalidItemStateException ex) {
-                  throw new RepositoryException("Could not initialize repository with configuration content", ex);
-              } catch(ItemExistsException ex) {
-                  throw new RepositoryException("Could not initialize repository with configuration content", ex);
-              } catch(LockException ex) {
-                  throw new RepositoryException("Could not initialize repository with configuration content", ex);
-              } catch(NoSuchNodeTypeException ex) {
-                  throw new RepositoryException("Could not initialize repository with configuration content", ex);
-              } catch(VersionException ex) {
-                  throw new RepositoryException("Could not initialize repository with configuration content", ex);
-              }
-          } else {
-              log.info("Initial configuration content already present");
-          }
+            if (!session.getRootNode().hasNode("configuration")) {
+                log.info("Initializing configuration content");
+                try {
+                    initializeNodecontent(session, "/", getClass().getResourceAsStream("configuration.xml"));
+                    session.save();
+                } catch (AccessDeniedException ex) {
+                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                } catch (ConstraintViolationException ex) {
+                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                } catch (InvalidItemStateException ex) {
+                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                } catch (ItemExistsException ex) {
+                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                } catch (LockException ex) {
+                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                } catch (NoSuchNodeTypeException ex) {
+                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                } catch (VersionException ex) {
+                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                }
+            } else {
+                log.info("Initial configuration content already present");
+            }
 
-          Node configurationNode = null;
-          try {
-              configurationNode = session.getRootNode().getNode("configuration");
-              if(configurationNode.hasNode("initialize")) {
-                  Node initializationNode = null;
-                  try {
-                      initializationNode = configurationNode.getNode("initialize");
-                  } catch(PathNotFoundException ex) {
-                      assert(initializationNode != null); // cannot happen
-                  }
-                  log.info("Looking for custom initializations at "+initializationNode.getPath());
-                  for(NodeIterator iter = initializationNode.getNodes(); iter.hasNext(); ) {
-                      Node node = iter.nextNode();
-                      log.info("Initializing configuration from "+node.getName());
-                      try {
-                          if(node.hasProperty("hippo:namespace")) {
-                              if(log.isDebugEnabled())
-                                  log.debug("Found namespace configuration");
-                              Property p = null;
-                              try {
-                                  String namespace = node.getProperty("hippo:namespace").getString();
-                                  log.info("Initializing namespace: "+namespace);
-                                  initializeNamespace(nsreg, node.getName(), namespace);
-                                  p.remove();
-                              } catch(PathNotFoundException ex) {
-                                  assert(p != null); // cannot happen
-                              }
-                          }
-                          if(node.hasProperty("hippo:nodetypes")) {
-                              if(log.isDebugEnabled())
-                                  log.debug("Found nodetypes configuration");
-                              Property p = null;
-                              try {
-                                  String cndName = (p = node.getProperty("hippo:nodetypes")).getString();
-                                  log.info("Initializing nodetypes from: " + cndName);
-                                  initializeNodetypes(workspace, getClass().getResourceAsStream(cndName), cndName);
-                                  p.remove();
-                              } catch(PathNotFoundException ex) {
-                                  assert(p != null); // cannot happen
-                              }
-                          }
-                          if(node.hasProperty("hippo:content")) {
-                              if(log.isDebugEnabled())
-                                  log.debug("Found content configuration");
-                              Property p = null;
-                              try {
-                                  String content = (p = node.getProperty("hippo:content")).getString();
-                                  log.info("Initializing content from: "+content);
-                                  initializeNodecontent(session, "/", getClass().getResourceAsStream(content));
-                                  p.remove();
-                              } catch(PathNotFoundException ex) {
-                                  assert(p != null); // cannot happen
-                              }
-                          }
-                          for(PropertyIterator propiter=node.getProperties(); propiter.hasNext(); ) {
-                              Property p = propiter.nextProperty();
-                          }
-                          session.save();
-                      } catch(ParseException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(AccessDeniedException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(ConstraintViolationException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(InvalidItemStateException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(ItemExistsException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(LockException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(NoSuchNodeTypeException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(UnsupportedRepositoryOperationException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(ValueFormatException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      } catch(VersionException ex) {
-                          log.error("configuration at specified by "+node.getPath()+" failed", ex);
-                          session.refresh(false);
-                      }
-                  }
-              }
-          } catch(PathNotFoundException ex) {
-              log.error("configuration node still not present");
-          }
-          session.logout();
-      } catch(LoginException ex) {
-          log.error("no access to repository by repository itself", ex);
-      }
-  }
+            Node configurationNode = null;
+            try {
+                configurationNode = session.getRootNode().getNode("configuration");
+                if (configurationNode.hasNode("initialize")) {
+                    Node initializationNode = null;
+                    try {
+                        initializationNode = configurationNode.getNode("initialize");
+                    } catch (PathNotFoundException ex) {
+                        assert (initializationNode != null); // cannot happen
+                    }
+                    log.info("Looking for custom initializations at " + initializationNode.getPath());
+                    for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
+                        Node node = iter.nextNode();
+                        log.info("Initializing configuration from " + node.getName());
+                        try {
+                            if (node.hasProperty("hippo:namespace")) {
+                                if (log.isDebugEnabled())
+                                    log.debug("Found namespace configuration");
+                                Property p = null;
+                                try {
+                                    String namespace = node.getProperty("hippo:namespace").getString();
+                                    log.info("Initializing namespace: " + namespace);
+                                    initializeNamespace(nsreg, node.getName(), namespace);
+                                    p.remove();
+                                } catch (PathNotFoundException ex) {
+                                    assert (p != null); // cannot happen
+                                }
+                            }
+                            if (node.hasProperty("hippo:nodetypes")) {
+                                if (log.isDebugEnabled())
+                                    log.debug("Found nodetypes configuration");
+                                Property p = null;
+                                try {
+                                    String cndName = (p = node.getProperty("hippo:nodetypes")).getString();
+                                    InputStream cndStream = getClass().getResourceAsStream(cndName);
+                                    if (cndStream == null) {
+                                        log.warn("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");                                        
+                                    } else {
+                                        log.info("Initializing nodetypes from: " + cndName);
+                                        initializeNodetypes(workspace, cndStream, cndName);
+                                        p.remove();
+                                    }
+                                } catch (PathNotFoundException ex) {
+                                    assert (p != null); // cannot happen
+                                }
+                            }
+                            if (node.hasProperty("hippo:content")) {
+                                if (log.isDebugEnabled())
+                                    log.debug("Found content configuration");
+                                Property contentProperty = null;
+                                Property rootProperty = null;
+                                try {
+                                    String contentName = (contentProperty = node.getProperty("hippo:content")).getString();                                    
+                                    InputStream contentStream = getClass().getResourceAsStream(contentName);
+                                    if (contentStream == null) {
+                                        log.warn("Cannot locate content configuration '" + contentName + "', initialization skipped");
+                                    } else {
+                                        String root = "/";
+                                        if (node.hasProperty("hippo:contentroot")) {
+                                            root = (rootProperty = node.getProperty("hippo:contentroot")).getString();
+                                            rootProperty.remove();
+                                        }
+                                        log.info("Initializing content from: " + contentName + " to " + root);
+                                        initializeNodecontent(session, root, contentStream);
+                                        contentProperty.remove();
+                                    }
+                                } catch (PathNotFoundException ex) {
+                                    assert (contentProperty != null); // cannot happen
+                                    assert (rootProperty != null); // cannot happen
+                                }
+                            }
+                            for (PropertyIterator propiter = node.getProperties(); propiter.hasNext();) {
+                                Property p = propiter.nextProperty();
+                            }
+                            session.save();
+                        } catch (ParseException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (AccessDeniedException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (ConstraintViolationException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (InvalidItemStateException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (ItemExistsException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (LockException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (NoSuchNodeTypeException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (UnsupportedRepositoryOperationException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (ValueFormatException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        } catch (VersionException ex) {
+                            log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                            session.refresh(false);
+                        }
+                    }
+                }
+            } catch (PathNotFoundException ex) {
+                log.error("configuration node still not present");
+            }
+            session.logout();
+        } catch (LoginException ex) {
+            log.error("no access to repository by repository itself", ex);
+        }
+    }
 
-
-    private void initializeNamespace(NamespaceRegistry nsreg, String prefix, String uri) throws UnsupportedRepositoryOperationException, AccessDeniedException, RepositoryException {
+    private void initializeNamespace(NamespaceRegistry nsreg, String prefix, String uri)
+            throws UnsupportedRepositoryOperationException, AccessDeniedException, RepositoryException {
         try {
             nsreg.registerNamespace(prefix, uri);
         } catch (NamespaceException ex) {
@@ -367,9 +385,8 @@ class LocalHippoRepository extends HippoRepository {
         }
     }
 
-    private void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName)
-      throws ParseException, RepositoryException
-    {
+    private void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws ParseException,
+            RepositoryException {
         BufferedReader cndInput = new BufferedReader(new InputStreamReader(cndStream));
         CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
         List ntdList = cndReader.getNodeTypeDefs();
@@ -409,6 +426,10 @@ class LocalHippoRepository extends HippoRepository {
 
     private void initializeNodecontent(Session session, String absPath, InputStream istream) {
         try {
+            String relpath = absPath.substring(1);
+            if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
+                session.getRootNode().addNode(relpath);
+            }
             session.importXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
