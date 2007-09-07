@@ -201,6 +201,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         if(session.getRootNode().hasNode("documents")) {
             session.getRootNode().getNode("documents").remove();
         }
+        session.save();
         if(session != null) {
             session.logout();
         }
