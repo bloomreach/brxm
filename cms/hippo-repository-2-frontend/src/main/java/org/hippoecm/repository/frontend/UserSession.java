@@ -77,7 +77,7 @@ public class UserSession extends WebSession {
             javax.jcr.Session result = null;
             try {
                 HippoRepository repository = HippoRepositoryFactory.getHippoRepository(repositoryAdress);
-                result = repository.login(new SimpleCredentials("username", "password".toCharArray()));
+                result = repository.login(new SimpleCredentials("johndoe", "secret".toCharArray()));
             } catch (RepositoryException e) {
                 System.err.println("Connection failed for repository " + repositoryAdress);
             }
