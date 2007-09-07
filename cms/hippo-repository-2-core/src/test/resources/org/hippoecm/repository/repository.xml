@@ -160,4 +160,3 @@
         <param name="path" value="${rep.home}/repository/index"/>
       </SearchIndex>
     </Repository>
-    
