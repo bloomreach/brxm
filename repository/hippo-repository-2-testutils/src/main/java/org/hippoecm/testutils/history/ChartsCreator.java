@@ -19,11 +19,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.commons.collections.MapIterator;
+import org.apache.commons.collections.OrderedMap;
+import org.apache.commons.collections.map.ListOrderedMap;
 import org.hippoecm.testutils.history.myXML.myXMLEncodingException;
 import org.hippoecm.testutils.history.myXML.myXMLException;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.XYPlot;
@@ -36,9 +44,9 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 public class ChartsCreator implements XmlConstants {
-    
+
     public void createCharts(File[] historyFiles, File reportsDir) {
-      for (int j = 0; j < historyFiles.length; j++) {
+        for (int j = 0; j < historyFiles.length; j++) {
             try {
                 reportsDir.mkdirs();
                 createChart(historyFiles[j], reportsDir);
@@ -52,7 +60,8 @@ public class ChartsCreator implements XmlConstants {
         }
     }
 
-    private void createChart(File historyFile, File reportsDir) throws myXMLException, myXMLEncodingException, IOException {
+    private void createChart(File historyFile, File reportsDir) throws myXMLException, myXMLEncodingException,
+            IOException {
         BufferedReader reader = new BufferedReader(new FileReader(historyFile));
         myXML testSuite = new myXML(reader);
         if (testSuite != null) {
@@ -85,8 +94,10 @@ public class ChartsCreator implements XmlConstants {
             }
         }
 
-        NumberAxis domainAxis = new NumberAxis("testrun");
-        plot.setDomainAxis(domainAxis);
+        DateAxis dateAxis = new DateAxis("Date");
+        dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MMM (HH:mm)"));
+        plot.setDomainAxis(dateAxis);
+        plot.setDomainAxisLocation(AxisLocation.TOP_OR_RIGHT);
         plot.setDomainGridlinesVisible(true);
 
         return plot;
@@ -95,13 +106,7 @@ public class ChartsCreator implements XmlConstants {
     private XYPlot processMetric(myXML metric) {
         XYPlot plot = new XYPlot();
         if (metric != null) {
-
-            XYSeries xySeries = new XYSeries(metric.Attribute.find(ATTR_NAME));
-            for (int measurepointIndex = 0; measurepointIndex < metric.size(); measurepointIndex++) {
-                myXML measurepoint = metric.getElement(measurepointIndex);
-                double y = Double.parseDouble(measurepoint.Attribute.find(ATTR_VALUE));
-                xySeries.add(measurepointIndex, y);
-            }
+            XYSeries xySeries = getSeries(metric);
 
             NumberAxis rangeAxis = new NumberAxis(metric.Attribute.find(ATTR_UNIT));
             rangeAxis.setAutoRangeIncludesZero(false);
@@ -109,14 +114,19 @@ public class ChartsCreator implements XmlConstants {
 
             if (metric.Attribute.find(ATTR_FUZZY).equals("true")) {
                 xySeries = removeExtremes(xySeries);
-                
-                XYDataset measurePoints = new XYSeriesCollection(xySeries);
-                plot.setDataset(0, measurePoints);
-                plot.setRenderer(0, new XYDotRenderer());
 
-                XYDataset movingAverage = new XYSeriesCollection(createMovingAverage(xySeries));
+                XYDataset movingAverage = new XYSeriesCollection(createMovingAverage(xySeries, 20));
                 plot.setDataset(1, movingAverage);
                 plot.setRenderer(1, new StandardXYItemRenderer());
+
+                XYDataset measurePoints = new XYSeriesCollection(xySeries);
+                plot.setDataset(0, measurePoints);
+                if (xySeries.getItemCount() < 20) {
+                    plot.setRenderer(0, new StandardXYItemRenderer());
+                } else {
+                    plot.setRenderer(0, new XYDotRenderer());
+                }
+
             } else {
                 XYDataset measurePoints = new XYSeriesCollection(xySeries);
                 plot.setDataset(0, measurePoints);
@@ -126,7 +136,33 @@ public class ChartsCreator implements XmlConstants {
         return plot;
     }
 
-    private XYSeries createMovingAverage(XYSeries xySeries) {
+    private XYSeries getSeries(myXML metric) {
+        XYSeries result = new XYSeries(metric.Attribute.find(ATTR_NAME));
+
+        OrderedMap map = new ListOrderedMap();
+        for (int measurepointIndex = 0; measurepointIndex < metric.size(); measurepointIndex++) {
+            myXML measurepoint = metric.getElement(measurepointIndex);
+            Double timestamp = new Double(measurepoint.Attribute.find(ATTR_TIMESTAMP));
+            Double value = new Double(measurepoint.Attribute.find(ATTR_VALUE));
+            Set set = (Set) map.get(timestamp);
+            if (set == null) {
+                set = new HashSet();
+                map.put(timestamp, set);
+            }
+            set.add(value);
+        }
+
+        MapIterator it = map.mapIterator();
+        while (it.hasNext()) {
+            double timestamp = ((Double) it.next()).doubleValue();
+            Set values = (Set) it.getValue();
+            double mean = Statistics.calculateMean(values);
+            result.add(timestamp, mean);
+        }
+        return result;
+    }
+
+    private XYSeries createMovingAverage(XYSeries xySeries, int trail) {
         int itemCount = xySeries.getItemCount();
         Double[] xData = new Double[itemCount];
         Double[] yData = new Double[itemCount];
@@ -135,9 +171,8 @@ public class ChartsCreator implements XmlConstants {
             yData[i] = new Double(xySeries.getY(i).doubleValue());
         }
 
-        int trail = itemCount > 20 ? 20 : itemCount;
-        double[][] movingAverage = Statistics.getMovingAverage(xData, yData, trail);
-        
+        double[][] movingAverage = Statistics.getMovingAverage(xData, yData, itemCount > trail ? trail : itemCount);
+
         XYSeries result = new XYSeries("Moving average(" + trail + ")");
         for (int i = 0; i < movingAverage.length; i++) {
             result.add(movingAverage[i][0], movingAverage[i][1]);
@@ -151,11 +186,11 @@ public class ChartsCreator implements XmlConstants {
         for (int i = 0; i < itemCount; i++) {
             yData[i] = new Double(series.getY(i).doubleValue());
         }
-     
+
         double stdDev = Statistics.getStdDev(yData);
         double mean = Statistics.calculateMean(yData);
 
-        XYSeries result = new XYSeries("Cleaned series");
+        XYSeries result = new XYSeries("Measure points");
         for (int i = 0; i < yData.length; i++) {
             if (series.getY(i).doubleValue() > mean - 2 * stdDev && series.getY(i).doubleValue() < mean + 2 * stdDev) {
                 result.add(series.getX(i), series.getY(i));
