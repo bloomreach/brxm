@@ -569,7 +569,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         }
 
         public void skip(long skipNum) {
-            while (skipNum > 0) {
+            while (skipNum-- > 0) {
                 ++position;
                 iter.next();
             }
@@ -615,7 +615,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         }
 
         public void skip(long skipNum) {
-            while (skipNum > 0) {
+            while (skipNum-- > 0) {
                 ++position;
                 iter.next();
             }
