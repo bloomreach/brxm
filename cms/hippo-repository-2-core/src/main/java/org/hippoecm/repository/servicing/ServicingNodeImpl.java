@@ -727,12 +727,39 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         return node;
     }
 
+    static void decoratePathProperty(Node node) throws RepositoryException {
+        if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            try {
+                String path = node.getPath();
+                if(path.startsWith("/"))
+                    path = path.substring(1);
+                String[] pathElements = path.split("/");
+                for(int i=1; i<pathElements.length; i++)
+                pathElements[i] = pathElements[i-1] + "/" + pathElements[i];
+                node.setProperty(HippoNodeType.DOCUMENT_PATHS, pathElements);
+            } catch(ValueFormatException ex) {
+                // FIXME: log some serious error
+                throw ex;
+            } catch(VersionException ex) {
+                // FIXME: log some serious error
+                throw ex;
+            } catch(LockException ex) {
+                // FIXME: log some serious error
+                throw ex;
+            } catch(ConstraintViolationException ex) {
+                // FIXME: log some serious error
+                throw ex;
+            }
+        }
+    }
+
     /**
      * @inheritDoc
      */
     public Node addNode(String name) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, RepositoryException {
         Node child = node.addNode(name);
+        decoratePathProperty(child);
         return factory.getNodeDecorator(session, child, getChildPath(name), node.getDepth());
     }
 
@@ -742,6 +769,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
     public Node addNode(String name, String type) throws ItemExistsException, PathNotFoundException,
             NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
         Node child = node.addNode(name, type);
+        decoratePathProperty(child);
         return factory.getNodeDecorator(session, child, getChildPath(name), node.getDepth());
     }
 
@@ -945,7 +973,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                 Node n = node.getNode(relPath);
                 return factory.getNodeDecorator(session, n, getChildPath(relPath), getDepth() + 1);
             } catch (PathNotFoundException ex) {
-	        ServicingSessionImpl session = (ServicingSessionImpl) this.session;
+            ServicingSessionImpl session = (ServicingSessionImpl) this.session;
                 try {
                     Path p = session.getQPath(relPath);
                     Path.PathElement[] elements = p.getElements();
