@@ -17,6 +17,7 @@
 + * (hippo:facetsearch) = hippo:facetsearch multiple
 
 [hippo:document] > nt:base, mix:referenceable
+- hippo:paths (string) multiple
 
 [hippo:types] > nt:base
 - hippo:nodetype (string) mandatory

@@ -103,17 +103,19 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
     }
 
     FacetedNavigationEngine getFacetedNavigationEngine() {
-        return ((RepositoryDecorator)repository).getFacetedNavigationEngine();
+        return ((RepositoryDecorator) repository).getFacetedNavigationEngine();
     }
+
     FacetedNavigationEngine.Context getFacetedNavigationContext() {
         return facetedContext;
     }
+
     void setFacetedNavigationContext(FacetedNavigationEngine.Context context) {
         facetedContext = context;
     }
 
     Path getQPath(String absPath) throws NameException, NamespaceException {
-        return ((SessionImpl)session).getQPath(absPath);
+        return ((SessionImpl) session).getQPath(absPath);
     }
 
     public XAResource getXAResource() {
@@ -199,32 +201,32 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      * @return decorated item, property, or node
      */
     public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
-      try {
-        Item item = session.getItem(absPath);
-        return factory.getItemDecorator(this, item);
-      } catch (PathNotFoundException ex) {
         try {
-          Node node = getRootNode();
-          Path.PathElement[] elements = getQPath(absPath).getElements();
-          if (elements.length < 2)
-            throw ex;
-          for (int i = 1; i < elements.length - 1; i++) {
-            node = node.getNode(elements[i].getName().getLocalName());
-          }
-          try {
-            node = node.getNode(elements[elements.length-1].getName().getLocalName());
-            if (!(node instanceof ServicingNodeImpl))
-              node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1);
-            return node;
-          } catch(PathNotFoundException ex2) {
-            return node.getProperty(elements[elements.length-1].getName().getLocalName());
-          }
-        } catch (ClassCastException ex2) {
-          throw ex;
-        } catch (org.apache.jackrabbit.name.NameException ex2) {
-          throw ex;
+            Item item = session.getItem(absPath);
+            return factory.getItemDecorator(this, item);
+        } catch (PathNotFoundException ex) {
+            try {
+                Node node = getRootNode();
+                Path.PathElement[] elements = getQPath(absPath).getElements();
+                if (elements.length < 2)
+                    throw ex;
+                for (int i = 1; i < elements.length - 1; i++) {
+                    node = node.getNode(elements[i].getName().getLocalName());
+                }
+                try {
+                    node = node.getNode(elements[elements.length - 1].getName().getLocalName());
+                    if (!(node instanceof ServicingNodeImpl))
+                        node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1);
+                    return node;
+                } catch (PathNotFoundException ex2) {
+                    return node.getProperty(elements[elements.length - 1].getName().getLocalName());
+                }
+            } catch (ClassCastException ex2) {
+                throw ex;
+            } catch (org.apache.jackrabbit.name.NameException ex2) {
+                throw ex;
+            }
         }
-      }
     }
 
     /**
@@ -240,6 +242,8 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
     public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException,
             VersionException, RepositoryException {
         session.move(srcAbsPath, destAbsPath);
+        Node movedNode = getRootNode().getNode(destAbsPath.startsWith("/") ? destAbsPath.substring(1) : destAbsPath);
+        ServicingNodeImpl.decoratePathProperty(movedNode);
     }
 
     /**
@@ -356,7 +360,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      */
     public void logout() {
         session.logout();
-        ((RepositoryDecorator)repository).getFacetedNavigationEngine().unprepare(facetedContext);
+        ((RepositoryDecorator) repository).getFacetedNavigationEngine().unprepare(facetedContext);
     }
 
     /**
