@@ -22,10 +22,15 @@
         class="org.apache.jackrabbit.core.security.SimpleAccessManager">
       <!-- <param name="config" value="${rep.home}/access.xml"/> -->
     </AccessManager>
-
-    <LoginModule class="org.apache.jackrabbit.core.security.SimpleLoginModule">
-      <!-- anonymous user name ('anonymous' is the default value) -->
-      <param name="anonymousId" value="anonymous"/>
+    
+    <LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule">
+      <!-- default values:
+        <param name="anonymousId" value="anonymous"/>
+        <param name="systemuserId" value="systemuser"/>
+        <param name="systemuserPassword" value="password"/>
+        <param name="debug" value="false"/>
+        <param name="maxCacheTimeMilliSec" value="10000"/>
+      -->
     </LoginModule>
   </Security>
 

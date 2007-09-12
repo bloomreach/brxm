@@ -12,10 +12,27 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>
+  
   <sv:node sv:name="initialize">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializefolder</sv:value>
     </sv:property>
+    
+    <sv:node sv:name="model">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:nodetypes" sv:type="String">
+        <sv:value>model.cnd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>model.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>
+    
     <sv:node sv:name="frontend">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:initializeitem</sv:value>
@@ -30,18 +47,18 @@
         <sv:value>/configuration/frontend</sv:value>
       </sv:property>
     </sv:node>
-  </sv:node>
-  <sv:node sv:name="users">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>nt:unstructured</sv:value>
-    </sv:property>
-    <sv:node sv:name="johndoe">
+    
+    <sv:node sv:name="users">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippo:initializeitem</sv:value>
       </sv:property>
-      <sv:property sv:name="password" sv:type="String">
-        <sv:value>secret</sv:value>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>users.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/configuration</sv:value>
       </sv:property>
     </sv:node>
+    
   </sv:node>
 </sv:node>
