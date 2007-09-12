@@ -64,6 +64,27 @@
       <artifactId>hippo-repository-2-frontend</artifactId>
       <version>2.01.00-dev</version>
     </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>    
   </dependencies>
   
   <build>
@@ -81,7 +102,7 @@
     <testResources>
       <testResource>
         <filtering>false</filtering>
-        <directory>${basedir}/test/java</directory>
+        <directory>${basedir}/src/test/java</directory>
         <includes>
           <include>**</include>
         </includes>
