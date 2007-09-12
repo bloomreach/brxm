@@ -235,8 +235,11 @@ class LocalHippoRepository extends HippoRepository {
             if (!session.getRootNode().hasNode("configuration")) {
                 log.info("Initializing configuration content");
                 try {
-                    initializeNodecontent(session, "/", getClass().getResourceAsStream("configuration.xml"));
-                    session.save();
+                    InputStream configuration = getClass().getResourceAsStream("configuration.xml");
+                    if (configuration != null) {
+                        initializeNodecontent(session, "/", configuration);
+                        session.save();
+                    }
                 } catch (AccessDeniedException ex) {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
                 } catch (ConstraintViolationException ex) {
