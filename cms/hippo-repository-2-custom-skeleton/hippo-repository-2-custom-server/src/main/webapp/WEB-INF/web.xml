@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app id="repository-server">
+  <display-name>Hippo Repository 2 Server</display-name>
+  <description>hippo-repository-2-server</description>
+  <context-param>
+    <!--
+    TODO: temporary set to rmi://localhost:1099/jackrabbit.repository to facilitate jetty/tomcat etc.
+    should be just 'jackrabbit.repository' and let the application server resolve it. 
+    -->
+    <param-name>repository-address</param-name>
+    <param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
+    <description>The address of the repository</description>
+  </context-param>
+  <servlet>
+    <servlet-name>RepositoryServlet</servlet-name>
+    <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
+    <init-param>
+      <param-name>repository-directory</param-name>
+      <param-value>WEB-INF/storage</param-value>
+      <description>The (relative) location where to store files</description>
+    </init-param>
+    <init-param>
+      <param-name>repository-config</param-name>
+      <param-value>repository.xml</param-value>
+      <description>The location of the repository configuration file. Unless the location
+      starts with file://, the location is retreived with getResourceAsStream().</description>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RepositoryServlet</servlet-name>
+    <url-pattern>/repository/*</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>5</session-timeout>
+  </session-config>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>

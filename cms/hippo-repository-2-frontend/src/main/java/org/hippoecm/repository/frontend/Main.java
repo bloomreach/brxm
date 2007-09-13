@@ -15,16 +15,37 @@
  */
 package org.hippoecm.repository.frontend;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class Main extends WebApplication {
+
+    private HippoRepository repository;
 
     protected void init() {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(false);
+        
+        String repositoryAddressConfigParam = "repository-address";
+        String defaultRepositoryAddress = "rmi://localhost:1099/jackrabbit.repository";
+        String repositoryAdress = getConfigurationParameter(repositoryAddressConfigParam, defaultRepositoryAddress);
+        try {
+            repository = HippoRepositoryFactory.getHippoRepository(repositoryAdress);
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    protected void destroy() {
+        super.destroy();
+        repository.close();
     }
 
     public Class getHomePage() {
@@ -44,6 +65,10 @@ public class Main extends WebApplication {
             result = defaultValue;
         }
         return result;
+    }
+
+    public HippoRepository getRepository() {
+        return repository;
     }
 
 }

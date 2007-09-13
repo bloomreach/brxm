@@ -25,7 +25,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebSession;
 import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class UserSession extends WebSession {
     private static final long serialVersionUID = 1L;
@@ -50,16 +49,6 @@ public class UserSession extends WebSession {
         // like this has the added bonus of being a very simple reconnect mechanism.  
         private static final long serialVersionUID = 1L;
 
-        private final static String repositoryAddressConfigParam = "repository-address";
-        private final static String defaultRepositoryAddress = "rmi://localhost:1099/jackrabbit.repository";
-        
-        private String repositoryAdress;
-
-        JcrSessionModel() {
-            Main main = (Main) Application.get();
-            repositoryAdress = main.getConfigurationParameter(repositoryAddressConfigParam, defaultRepositoryAddress);
-        }
-
         Session getSession() {
             // detach if anything is wrong with the jcr session
             try {
@@ -76,10 +65,11 @@ public class UserSession extends WebSession {
         protected Object load() {
             javax.jcr.Session result = null;
             try {
-                HippoRepository repository = HippoRepositoryFactory.getHippoRepository(repositoryAdress);
+                Main main = (Main) Application.get();
+                HippoRepository repository = main.getRepository();
                 result = repository.login(new SimpleCredentials("johndoe", "secret".toCharArray()));
             } catch (RepositoryException e) {
-                System.err.println("Connection failed for repository " + repositoryAdress);
+                System.err.println("Failed to connect to repository.");
             }
             return result;
         }
