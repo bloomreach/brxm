@@ -60,19 +60,10 @@
         <configuration>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-	      <port>8081</port>
+	          <port>8081</port>
             </connector>
           </connectors>
           <contextPath>/</contextPath>
-          <scanIntervalSeconds>1</scanIntervalSeconds>
-          <scanTargetPatterns>
-            <scanTargetPattern>
-              <directory>${basedir}/src/main/java</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-            </scanTargetPattern>
-          </scanTargetPatterns>
         </configuration>
       </plugin>
     </plugins>
