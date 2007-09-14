@@ -35,9 +35,9 @@
   <version>2.01.00-dev</version>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-core</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-core</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-core</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/core</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/core</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/core</url>
   </scm>
   
   <properties>

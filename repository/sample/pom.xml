@@ -36,16 +36,16 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-sample</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-sample</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-sample</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/sample</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/sample</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/sample</url>
   </scm>
 
   <modules>
-    <module>hippo-repository-2-sample-common-addons</module>
-    <module>hippo-repository-2-sample-repository-addons</module>
-    <module>hippo-repository-2-sample-frontend-addons</module>
-    <module>hippo-repository-2-sample-test</module>
+    <module>common-addons</module>
+    <module>repository-addons</module>
+    <module>frontend-addons</module>
+    <module>test</module>
   </modules>
 
   <repositories>

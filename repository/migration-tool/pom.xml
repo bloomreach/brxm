@@ -26,9 +26,9 @@
   <name>Hippo Repository 2 Migration Tool</name>
   <description>Hippo Repository 2 Migration Tool for exporting documents from Hippo Repository 1.2</description>
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-migration-tool</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-migration-tool</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-migration-tool</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/migration-tool</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/migration-tool</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/migration-tool</url>
   </scm>
   <build>
     <plugins>
