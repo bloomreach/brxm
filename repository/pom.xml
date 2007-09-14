@@ -39,17 +39,17 @@
   </organization>
     
   <modules>
-    <module>hippo-repository-2-api</module>
-    <module>hippo-repository-2-core</module>
-    <module>hippo-repository-2-server</module>
-    <module>hippo-repository-2-migration-tool</module>
-    <module>hippo-repository-2-frontend</module>
-    <module>hippo-repository-2-plugins</module>
-    <module>hippo-repository-2-webapp</module>
-    <module>hippo-repository-2-docs</module>
-    <module>hippo-repository-2-sample</module>
-    <module>hippo-repository-2-custom-skeleton</module>
-    <module>hippo-repository-2-testutils</module>
+    <module>api</module>
+    <module>core</module>
+    <module>server</module>
+    <module>migration-tool</module>
+    <module>frontend</module>
+    <module>plugins</module>
+    <module>webapp</module>
+    <module>docs</module>
+    <module>sample</module>
+    <module>custom-skeleton</module>
+    <module>testutils</module>
   </modules>
   
   <properties>
@@ -252,6 +252,14 @@
               </includes>
             </fileset>
           </filesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
         </configuration>
       </plugin>
       <plugin>
