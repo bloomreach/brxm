@@ -34,9 +34,9 @@
   <packaging>war</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton/hippo-repository-2-custom-client</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton/hippo-repository-2-custom-client</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton/hippo-repository-2-custom-client</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton/custom-client</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton/custom-client</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton/custom-client</url>
   </scm>
   
   <dependencies>

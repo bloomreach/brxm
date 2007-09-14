@@ -34,14 +34,14 @@
   <packaging>pom</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/hippo-repository-2-custom-skeleton</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton</url>
   </scm>
   
   <modules>
-    <module>hippo-repository-2-custom-server</module>
-    <module>hippo-repository-2-custom-client</module>
+    <module>custom-server</module>
+    <module>custom-client</module>
   </modules>
   
   <dependencyManagement>
