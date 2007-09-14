@@ -246,6 +246,9 @@
               <directory>.</directory>
               <includes>
                 <include>**/*~</include>
+				<!--atomikos leaves these behind-->
+                <include>**/tmlog*</include>
+                <include>**/tm.*</include>
               </includes>
             </fileset>
           </filesets>
