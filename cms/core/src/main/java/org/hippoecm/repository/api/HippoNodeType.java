@@ -17,7 +17,7 @@ package org.hippoecm.repository.api;
 
 /*
  * This file has to be kept in sync with:
- * hippo-repository-2-core/src/main/resources/org/hippoecm/repository/repository.cnd
+ * core/src/main/resources/org/hippoecm/repository/repository.cnd
  */
 
 /**
@@ -34,6 +34,8 @@ public interface HippoNodeType {
     final public static String NT_DOCUMENT = "hippo:document";
     final public static String NT_FACETRESULT = "hippo:facetresult";
     final public static String NT_FACETSEARCH = "hippo:facetsearch";
+    final public static String NT_FACETSELECT = "hippo:facetselect";
+    final public static String NT_HANDLE = "hippo:handle";
     final public static String NT_INITIALIZEFOLDER = "hippo:initializefolder";
     final public static String NT_INITIALIZEITEM = "hippo:initializeitem";
     final public static String NT_QUERY = "hippo:query";
