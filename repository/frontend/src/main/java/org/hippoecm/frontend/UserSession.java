@@ -17,7 +17,6 @@ package org.hippoecm.frontend;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Request;
@@ -67,7 +66,8 @@ public class UserSession extends WebSession {
             try {
                 Main main = (Main) Application.get();
                 HippoRepository repository = main.getRepository();
-                result = repository.login(new SimpleCredentials("johndoe", "secret".toCharArray()));
+                //TODO: add login dialog
+                result = repository.login(null);
             } catch (RepositoryException e) {
                 System.err.println("Failed to connect to repository.");
             }

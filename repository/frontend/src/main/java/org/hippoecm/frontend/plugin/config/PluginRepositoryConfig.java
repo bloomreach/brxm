@@ -38,15 +38,10 @@ public class PluginRepositoryConfig implements PluginConfig {
 
     private JcrNodeModel pluginConfigNodeModel;
 
-    public PluginRepositoryConfig() {
-        try {
-            UserSession session = (UserSession) Session.get();
-            Node rootNode = session.getJcrSession().getRootNode();
-            pluginConfigNodeModel = new JcrNodeModel(rootNode.getNode(pluginConfigRoot));
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public PluginRepositoryConfig() throws RepositoryException {
+        UserSession session = (UserSession) Session.get();
+        Node rootNode = session.getJcrSession().getRootNode();
+        pluginConfigNodeModel = new JcrNodeModel(rootNode.getNode(pluginConfigRoot));
     }
 
     public PluginDescriptor getRoot() {
