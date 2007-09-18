@@ -26,8 +26,8 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerObject;
-import org.hippoecm.repository.servicing.Document;
-import org.hippoecm.repository.servicing.DocumentManager;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
 

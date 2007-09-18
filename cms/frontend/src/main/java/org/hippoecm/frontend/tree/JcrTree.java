@@ -25,8 +25,11 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.servicing.ServicingNode;
+
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
@@ -43,13 +46,13 @@ public abstract class JcrTree extends Tree {
 
     protected String renderNode(TreeNode treeNode) {
         JcrNodeModel nodeModel = (JcrNodeModel) treeNode;
-        ServicingNode node = nodeModel.getNode();
+        HippoNode node = nodeModel.getNode();
         String result = "null";
         if (node != null) {
             try {
                 result = node.getDisplayName();
-                if (node.hasProperty("hippo:count")) {
-                    result += " [" + node.getProperty("hippo:count").getLong() + "]";
+                if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                    result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
                 }
             } catch (RepositoryException e) {
                 result = e.getMessage();

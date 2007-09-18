@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.servicing;
+package org.hippoecm.repository.api;
 
-import javax.jcr.RepositoryException;
+import java.io.Serializable;
 
-public interface DocumentManager {
-    public Document getDocument(String category, String identifier) throws RepositoryException;
+public abstract class Document implements Serializable {
 }

@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -26,13 +20,11 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.workflow.Workflow;
-import org.hippoecm.repository.workflow.WorkflowDescriptor;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 
-public interface RemoteWorkflowManager
-  extends Remote
-{
-  public WorkflowDescriptor getWorkflowDescriptor(String category, String node) throws RepositoryException, RemoteException;
-  public Workflow getWorkflow(String category, String node) throws RepositoryException, RemoteException;
-  public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException, RemoteException;
+public interface RemoteWorkflowManager extends Remote {
+    public WorkflowDescriptor getWorkflowDescriptor(String category, String node) throws RepositoryException, RemoteException;
+    public Workflow getWorkflow(String category, String node) throws RepositoryException, RemoteException;
+    public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException, RemoteException;
 }

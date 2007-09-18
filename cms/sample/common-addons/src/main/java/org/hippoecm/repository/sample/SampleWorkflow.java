@@ -19,8 +19,8 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.workflow.Workflow;
-import org.hippoecm.repository.workflow.WorkflowException;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 
 public interface SampleWorkflow extends Workflow {
     public void renameAuthor(String newName) throws WorkflowException, RepositoryException, RemoteException;

@@ -46,7 +46,7 @@ public class BrowserPlugin extends Plugin {
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
         /*
-        ServicingNode node = model.getNode();
+        HippoNode node = model.getNode();
         JcrNodeModel originalNode = treeModel.findJcrNode(node);
         if (originalNode != null) {
             try {

@@ -23,6 +23,8 @@ import javax.jcr.RepositoryException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 import org.hippoecm.testutils.history.HistoryWriter;
 
 public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
@@ -45,8 +47,8 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
             Node node = commonStart();
             long count, tBefore, tAfter;
             tBefore = System.currentTimeMillis();
-            count = node.getNode("x1").getNode("y2").getNode("z2").getNode("hippo:resultset")
-                    .getProperty("hippo:count").getLong();
+            count = node.getNode("x1").getNode("y2").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET)
+                    .getProperty(HippoNodeType.HIPPO_COUNT).getLong();
             tAfter = System.currentTimeMillis();
 
             historyWriter.write("FacetedNavigationPerfTest" + numDocs, Long.toString(tAfter - tBefore), "ms");

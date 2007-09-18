@@ -25,9 +25,9 @@ import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
-import org.hippoecm.repository.servicing.DocumentManager;
+import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.ServicesManager;
-import org.hippoecm.repository.servicing.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicesManager;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;

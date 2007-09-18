@@ -13,13 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.servicing;
+package org.hippoecm.repository.api;
 
+import java.io.Serializable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Workspace;
+import javax.jcr.ValueFormatException;
 
-public interface ServicingWorkspace extends Workspace {
-    public DocumentManager getDocumentManager() throws RepositoryException;
-    public ServicesManager getServicesManager() throws RepositoryException;
-    public WorkflowManager getWorkflowManager() throws RepositoryException;
+public abstract class WorkflowDescriptor implements Serializable {
+    private final Logger log = LoggerFactory.getLogger(Workflow.class);
+
+    protected String displayName;
+    protected String rendererName;
+    protected String serviceName;
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getRendererName() {
+        return rendererName;
+    }
 }

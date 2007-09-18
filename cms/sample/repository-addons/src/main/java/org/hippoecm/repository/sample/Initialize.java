@@ -42,6 +42,7 @@ import javax.jcr.version.VersionException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.lock.LockException;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 
@@ -63,16 +64,16 @@ public class Initialize
     Session session = repository.login("dummy", "dummy".toCharArray());
     Node node = session.getRootNode();
     if(!node.hasNode("configuration"))
-      node = node.addNode("configuration","hippo:configuration");
+      node = node.addNode(HippoNodeType.CONFIGURATION_PATH,HippoNodeType.NT_CONFIGURATION);
     else
-      node = node.getNode("configuration");
+      node = node.getNode(HippoNodeType.CONFIGURATION_PATH);
     if(!node.hasNode("initialize"))
-      node = node.addNode("initialize","hippo:initializefolder");
+      node = node.addNode(HippoNodeType.INITIALIZE_PATH,HippoNodeType.NT_INITIALIZEFOLDER);
     else
-      node = node.getNode("initialize");
-    node = node.addNode("newsmodel","hippo:initializeitem");
-    node.setProperty("nodetypes","newsmodel.cnd");
-    node.setProperty("content","navigation.xml");
+      node = node.getNode(HippoNodeType.INITIALIZE_PATH);
+    node = node.addNode("newsmodel",HippoNodeType.NT_INITIALIZEITEM);
+    node.setProperty(HippoNodeType.HIPPO_NODETYPES,"newsmodel.cnd");
+    node.setProperty(HippoNodeType.HIPPO_CONTENT,"navigation.xml");
     session.logout();
   }
 

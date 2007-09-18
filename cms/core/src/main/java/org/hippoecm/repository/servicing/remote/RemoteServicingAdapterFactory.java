@@ -19,9 +19,9 @@ import java.rmi.RemoteException;
 
 import org.apache.jackrabbit.rmi.server.RemoteAdapterFactory;
 
-import org.hippoecm.repository.servicing.DocumentManager;
+import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.ServicesManager;
-import org.hippoecm.repository.servicing.WorkflowManager;
 
 public interface RemoteServicingAdapterFactory extends RemoteAdapterFactory {
     public RemoteDocumentManager getRemoteDocumentManager(DocumentManager documentManager) throws RemoteException;

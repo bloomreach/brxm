@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.servicing.remote;
+package org.hippoecm.repository.api;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+import org.hippoecm.repository.servicing.Service;
 
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.repository.api.Document;
-
-public interface RemoteDocumentManager extends Remote {
-    public Document getDocument(String category, String identifier) throws RepositoryException, RemoteException;
+public interface Workflow extends Service
+{
 }

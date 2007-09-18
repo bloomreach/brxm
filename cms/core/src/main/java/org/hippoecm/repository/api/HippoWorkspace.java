@@ -13,9 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.servicing;
+package org.hippoecm.repository.api;
 
-import java.io.Serializable;
+import javax.jcr.RepositoryException;
+import javax.jcr.Workspace;
 
-public abstract class Document implements Serializable {
+import org.hippoecm.repository.servicing.ServicesManager;
+
+public interface HippoWorkspace extends Workspace {
+
+    public DocumentManager getDocumentManager() throws RepositoryException;
+
+    /**
+     * @deprecated
+     */
+    public ServicesManager getServicesManager() throws RepositoryException;
+
+    public WorkflowManager getWorkflowManager() throws RepositoryException;
+
 }

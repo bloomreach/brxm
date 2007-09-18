@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.HippoNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class PathsTest extends TestCase {
     private final static String SVN_ID = "$Id$";
@@ -88,10 +88,10 @@ public class PathsTest extends TestCase {
             Node root = session.getRootNode();
             Node sub1 = root.addNode("test");
             Node sub2 = sub1.addNode("sub");
-            Node sub3 = sub2.addNode("node", "hippo:document");
+            Node sub3 = sub2.addNode("node", HippoNodeType.NT_DOCUMENT);
             session.save();
             Node node = session.getRootNode().getNode("test/sub/node");
-            Property prop = node.getProperty(HippoNodeType.DOCUMENT_PATHS);
+            Property prop = node.getProperty(HippoNodeType.HIPPO_PATHS);
             Value[] values = prop.getValues();
             Set valuesSet = new HashSet();
             for (int i = 0; i < values.length; i++) {

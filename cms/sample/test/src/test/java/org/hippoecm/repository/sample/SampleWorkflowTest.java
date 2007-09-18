@@ -29,11 +29,11 @@ import junit.framework.TestCase;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.servicing.ServicingWorkspace;
-import org.hippoecm.repository.servicing.WorkflowManager;
-import org.hippoecm.repository.workflow.Workflow;
-import org.hippoecm.repository.workflow.WorkflowDescriptor;
-import org.hippoecm.repository.workflow.WorkflowException;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
 
 public class SampleWorkflowTest extends TestCase {
     private HippoRepository server;
@@ -63,7 +63,7 @@ public class SampleWorkflowTest extends TestCase {
             Node node = root.getNode("files/myarticle");
             assertEquals(node.getProperty("hippo:authorId").getLong(), SampleWorkflowSetup.oldAuthorId);
 
-            WorkflowManager manager = ((ServicingWorkspace) session.getWorkspace()).getWorkflowManager();
+            WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
 
             //Transaction tx = tm.getTransaction();
             //XAResource sessionXARes = ((XASession) session).getXAResource();
@@ -115,15 +115,15 @@ public class SampleWorkflowTest extends TestCase {
             Node root = session.getRootNode();
 
             Node node = root.getNode("files/myarticle");
-            WorkflowManager manager = ((ServicingWorkspace) session.getWorkspace()).getWorkflowManager();
+            WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
             WorkflowDescriptor descriptor = manager.getWorkflowDescriptor("mycategory", node);
             Class rendererClass = Class.forName(descriptor.getRendererName());
             Object[] actualArgs = new Object[2];
             actualArgs[0] = manager;
             actualArgs[1] = descriptor;
             Class[] formalArgsTypes = new Class[2];
-            formalArgsTypes[0] = Class.forName("org.hippoecm.repository.servicing.WorkflowManager");
-            formalArgsTypes[1] = Class.forName("org.hippoecm.repository.workflow.WorkflowDescriptor");
+            formalArgsTypes[0] = Class.forName("org.hippoecm.repository.api.WorkflowManager");
+            formalArgsTypes[1] = Class.forName("org.hippoecm.repository.api.WorkflowDescriptor");
             Constructor constructor = rendererClass.getConstructor(formalArgsTypes);
             GenericWorkflowRenderer renderer = (GenericWorkflowRenderer) constructor.newInstance(actualArgs);
             try {

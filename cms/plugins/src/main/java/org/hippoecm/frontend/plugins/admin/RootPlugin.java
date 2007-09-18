@@ -23,6 +23,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
@@ -36,7 +37,7 @@ public class RootPlugin extends Plugin {
             public Object component(Component component) {
                 Plugin plugin = (Plugin) component;
                 try {
-                    String newPluginClassname = model.getNode().getProperty("hippo:renderer").getString();
+                    String newPluginClassname = model.getNode().getProperty(HippoNodeType.HIPPO_RENDERER).getString();
                     if (newPluginClassname != null) {
                         if (plugin.getId().equals("workflowPlugin")) {
                             PluginDescriptor pluginDescriptor = new PluginDescriptor(plugin.getPath(), newPluginClassname);

@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -19,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.workflow;
+package org.hippoecm.repository.api;
 
-import org.hippoecm.repository.servicing.Service;
+import javax.jcr.RepositoryException;
 
-public interface Workflow extends Service
-{
+public interface DocumentManager {
+    public Document getDocument(String category, String identifier) throws RepositoryException;
 }

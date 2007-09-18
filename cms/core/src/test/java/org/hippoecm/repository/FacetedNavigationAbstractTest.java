@@ -32,6 +32,8 @@ import javax.jcr.version.VersionException;
 
 import junit.framework.TestCase;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 public abstract class FacetedNavigationAbstractTest extends TestCase {
     
     private static final String SYSTEMUSER_ID = "systemuser";
@@ -123,8 +125,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
 
     protected void traverse(Node node) throws RepositoryException {
         if(verbose) {
-            if(node.hasProperty("hippo:count")) {
-                System.out.println(node.getPath() + "\t" + node.getProperty("hippo:count").getLong());
+            if(node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                System.out.println(node.getPath() + "\t" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
             }
         }
         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
@@ -147,8 +149,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
                 node = node.getNode(pathElements[i]);
             }
             if(verbose)
-                System.out.println(facetPath + "\t" + node.getProperty("hippo:count"));
-            node = node.getNode("hippo:resultset");
+                System.out.println(facetPath + "\t" + node.getProperty(HippoNodeType.HIPPO_COUNT));
+            node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
             NodeIterator iter = node.getNodes();
             realCount = 0;
             while(iter.hasNext()) {
@@ -162,8 +164,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
                     System.out.println();
                 }
             }
-            if(node.hasProperty("hippo:count")) {
-                long obtainedCount = (int) node.getProperty("hippo:count").getLong();
+            if(node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                long obtainedCount = (int) node.getProperty(HippoNodeType.HIPPO_COUNT).getLong();
                 assertEquals("counted and indicated mismatch on "+facetPath, realCount, obtainedCount);
             }
         } catch(PathNotFoundException ex) {
@@ -213,10 +215,10 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     protected Node commonStart() throws RepositoryException {
         documents = fill();
         Node node = session.getRootNode().getNode("navigation");
-        node = node.addNode("xyz","hippo:facetsearch");
-        node.setProperty("hippo:queryname","xyz");
-        node.setProperty("hippo:docbase","documents");
-        node.setProperty("hippo:facets",new String[] { "x", "y", "z" });
+        node = node.addNode("xyz",HippoNodeType.NT_FACETSEARCH);
+        node.setProperty(HippoNodeType.HIPPO_QUERYNAME,"xyz");
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE,"documents");
+        node.setProperty(HippoNodeType.HIPPO_FACETS,new String[] { "x", "y", "z" });
         return node;
     }
     protected void commonEnd() throws RepositoryException {
@@ -227,7 +229,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         Node node = commonStart();
         long count, tBefore, tAfter;
         tBefore = System.currentTimeMillis();
-        count = node.getNode("x1").getNode("y2").getNode("z2").getNode("hippo:resultset").getProperty("hippo:count").getLong();
+        count = node.getNode("x1").getNode("y2").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET).getProperty(HippoNodeType.HIPPO_COUNT).getLong();
         tAfter = System.currentTimeMillis();
         commonEnd();
     }

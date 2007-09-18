@@ -25,16 +25,17 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
-public class WorkflowDescriptor implements Serializable {
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowManager;
+
+public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serializable {
     private final Logger log = LoggerFactory.getLogger(Workflow.class);
 
     String nodeAbsPath;
     String category;
-    private String displayName;
-    private String rendererName;
-    private String serviceName;
 
-    public WorkflowDescriptor(WorkflowManagerImpl manager, String category, Node node) throws RepositoryException {
+    WorkflowDescriptorImpl(WorkflowManager manager, String category, Node node) throws RepositoryException {
         this.category = category;
         nodeAbsPath = node.getPath();
         try {
@@ -48,14 +49,6 @@ public class WorkflowDescriptor implements Serializable {
             log.error("Workflow specification corrupt on node " + nodeAbsPath);
             throw new RepositoryException("workflow specification corrupt", ex);
         }
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public String getRendererName() {
-        return rendererName;
     }
 
     public String toString() {

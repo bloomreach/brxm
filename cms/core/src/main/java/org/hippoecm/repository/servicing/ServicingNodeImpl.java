@@ -65,9 +65,10 @@ import org.apache.jackrabbit.name.NameException;
 import org.apache.jackrabbit.name.Path;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.HippoNodeType;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
-public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
+public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     final static private String SVN_ID = "$Id$";
 
     // FIXME
@@ -149,7 +150,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
       String facet = null;
       Value[] facets = null;
       try {
-        facets = getProperty("hippo:facets").getValues();
+        facets = getProperty(HippoNodeType.HIPPO_FACETS).getValues();
         if(facets.length > 0)
           facet = facets[0].getString();
       } catch (PathNotFoundException ex) {
@@ -157,22 +158,22 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
       }
 
       ServicingNodeImpl resultset;
-      resultset = new ServicingNodeImpl(factory, session, HippoNodeType.NT_FACETRESULT, getChildPath(HippoNodeType.FACETSEARCH_RESULTSET), HippoNodeType.FACETSEARCH_RESULTSET, depth+1);
+      resultset = new ServicingNodeImpl(factory, session, HippoNodeType.NT_FACETRESULT, getChildPath(HippoNodeType.HIPPO_RESULTSET), HippoNodeType.HIPPO_RESULTSET, depth+1);
       try {
-        Value[] search = getProperty("hippo:search").getValues();
-        resultset.setProperty("hippo:search", search);
+        Value[] search = getProperty(HippoNodeType.HIPPO_SEARCH).getValues();
+        resultset.setProperty(HippoNodeType.HIPPO_SEARCH, search);
       } catch (PathNotFoundException ex) {
         // safe to ignore
       }                
-      resultset.setProperty("hippo:docbase", getProperty("hippo:docbase").getString());
+      resultset.setProperty(HippoNodeType.HIPPO_DOCBASE, getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
       if(facets == null)
-        resultset.setProperty("hippo:facets", facets);
+        resultset.setProperty(HippoNodeType.HIPPO_FACETS, facets);
       try {
-        resultset.setProperty("hippo:count", getProperty("hippo:count").getLong());
+        resultset.setProperty(HippoNodeType.HIPPO_COUNT, getProperty(HippoNodeType.HIPPO_COUNT).getLong());
       } catch (PathNotFoundException ex) {
         // safe to ignore
       }
-      addNode(HippoNodeType.FACETSEARCH_RESULTSET, resultset);
+      addNode(HippoNodeType.HIPPO_RESULTSET, resultset);
 
       if(facet != null) {
         Map<String,Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count>> facetSearchResultMap = new TreeMap<String,Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count>>();
@@ -180,12 +181,12 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         facetSearchResultMap.put(facet, facetSearchResult);
         Value[] currentFacetPath = new Value[0];
         try {
-          currentFacetPath = getProperty("hippo:search").getValues();
+          currentFacetPath = getProperty(HippoNodeType.HIPPO_SEARCH).getValues();
         } catch(PathNotFoundException ex) {
           // safe to ignore
         }
         FacetedNavigationEngine facetedEngine = session.getFacetedNavigationEngine();
-        FacetedNavigationEngine.Query initialQuery = facetedEngine.parse(getProperty("hippo:docbase").getString());
+        FacetedNavigationEngine.Query initialQuery = facetedEngine.parse(getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
         Map<String,String> currentFacetQuery = new TreeMap<String,String>();
         for(int i=0; i<currentFacetPath.length; i++) {
           Matcher matcher = facetPropertyPattern.matcher(currentFacetPath[i].getString());
@@ -195,7 +196,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         }
         String queryName;
         try {
-          queryName = node.getProperty("hippo:queryname").getString();
+          queryName = node.getProperty(HippoNodeType.HIPPO_QUERYNAME).getString();
         } catch(PathNotFoundException ex) {
           queryName = node.getName();
         }
@@ -212,7 +213,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
               System.arraycopy(facets, 1, newFacets, 0, facets.length - 1);
             Value[] search = new Value[0];
             try {
-              search = getProperty("hippo:search").getValues();
+              search = getProperty(HippoNodeType.HIPPO_SEARCH).getValues();
             } catch (PathNotFoundException ex) {
               // safe to ignore
             }
@@ -227,11 +228,11 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
             } else {
               newSearch = (Value[]) search.clone(); // FIXME should not be necessary?
             }
-            child.setProperty("hippo:queryname", getProperty("hippo:queryname").getString());
-            child.setProperty("hippo:docbase", getProperty("hippo:docbase").getString());
-            child.setProperty("hippo:facets", newFacets);
-            child.setProperty("hippo:search", newSearch);
-            child.setProperty("hippo:count", facetValue.getValue().count);
+            child.setProperty(HippoNodeType.HIPPO_QUERYNAME, getProperty(HippoNodeType.HIPPO_QUERYNAME).getString());
+            child.setProperty(HippoNodeType.HIPPO_DOCBASE, getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
+            child.setProperty(HippoNodeType.HIPPO_FACETS, newFacets);
+            child.setProperty(HippoNodeType.HIPPO_SEARCH, newSearch);
+            child.setProperty(HippoNodeType.HIPPO_COUNT, facetValue.getValue().count);
             addNode(facetValue.getKey(), child);
           }
         }
@@ -240,12 +241,13 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         instantiated = true;
 
     } else if(isNodeType(HippoNodeType.NT_FACETRESULT)) {
+
       ServicingSessionImpl session = (ServicingSessionImpl) this.session;
       FacetedNavigationEngine facetedEngine = session.getFacetedNavigationEngine();
       Map<String,String> currentFacetQuery = new TreeMap<String,String>();
       Value[] currentFacetPath = new Value[0];
       try {
-        currentFacetPath = getProperty("hippo:search").getValues();
+        currentFacetPath = getProperty(HippoNodeType.HIPPO_SEARCH).getValues();
       } catch(PathNotFoundException ex) {
       }
       for(int i=0; i<currentFacetPath.length; i++) {
@@ -254,10 +256,10 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
           currentFacetQuery.put(matcher.group(1), matcher.group(2));
         }
       }
-      FacetedNavigationEngine.Query initialQuery = facetedEngine.parse(getProperty("hippo:docbase").getString());
+      FacetedNavigationEngine.Query initialQuery = facetedEngine.parse(getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
       String queryname = null;
       try {
-        queryname = node.getProperty("hippo:queryname").getString();
+        queryname = node.getProperty(HippoNodeType.HIPPO_QUERYNAME).getString();
       } catch(PathNotFoundException ex) {
       }
       FacetedNavigationEngine.Result result = facetedEngine.view(queryname, initialQuery, session.getFacetedNavigationContext(), currentFacetQuery, null);
@@ -266,7 +268,9 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         String nodePath = iter.next();
         addNode(nodePath, session.getRootNode().getNode(nodePath.substring(1)));
       }
+
     }
+
   }
   protected void instantiate() throws ValueFormatException, PathNotFoundException, VersionException, UnsupportedRepositoryOperationException, ItemNotFoundException, LockException, ConstraintViolationException, RepositoryException {
     instantiate(null);
@@ -642,12 +646,12 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
             
             // hippo:authorId#//element(*,hippo:author)[hippo:id=?]/@hippo:name
             // just return the resultset
-            if (getName().equals(HippoNodeType.FACETSEARCH_RESULTSET)) {
-                return HippoNodeType.FACETSEARCH_RESULTSET;
+            if (getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
+                return HippoNodeType.HIPPO_RESULTSET;
             }
             
             // the last search is the current one
-            Value[] searches = getProperty("hippo:search").getValues();
+            Value[] searches = getProperty(HippoNodeType.HIPPO_SEARCH).getValues();
             if (searches.length == 0) {
                 return getName();
             }
@@ -736,7 +740,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                 String[] pathElements = path.split("/");
                 for(int i=1; i<pathElements.length; i++)
                 pathElements[i] = pathElements[i-1] + "/" + pathElements[i];
-                node.setProperty(HippoNodeType.DOCUMENT_PATHS, pathElements);
+                node.setProperty(HippoNodeType.HIPPO_PATHS, pathElements);
             } catch(ValueFormatException ex) {
                 // FIXME: log some serious error
                 throw ex;
@@ -973,7 +977,7 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
                 Node n = node.getNode(relPath);
                 return factory.getNodeDecorator(session, n, getChildPath(relPath), getDepth() + 1);
             } catch (PathNotFoundException ex) {
-            ServicingSessionImpl session = (ServicingSessionImpl) this.session;
+                ServicingSessionImpl session = (ServicingSessionImpl) this.session;
                 try {
                     Path p = session.getQPath(relPath);
                     Path.PathElement[] elements = p.getElements();
@@ -1103,9 +1107,6 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         if (isNodeType(HippoNodeType.NT_FACETSEARCH) || isNodeType(HippoNodeType.NT_FACETRESULT)) {
             return true;
         }
-        //if (node == null) {
-        //    return !children.isEmpty();
-        //}
         return node.hasNodes();
     }
 
@@ -1327,12 +1328,10 @@ public class ServicingNodeImpl extends ItemDecorator implements ServicingNode {
         return ((ServicingWorkspaceImpl) getSession().getWorkspace()).getServicesManager().getService(this);
     }
 
-
-
-  public void save()
-    throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
-           ReferentialIntegrityException, VersionException, LockException, RepositoryException
-  {
-    super.save();
-  }
+    public void save()
+        throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
+               ReferentialIntegrityException, VersionException, LockException, RepositoryException
+    {
+        super.save();
+    }
 }

@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.servicing;
+package org.hippoecm.repository.api;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
-public interface ServicingNode extends Node {
-    public Service getService() throws RepositoryException;
-    
-    public String getDisplayName() throws RepositoryException;
+public interface WorkflowManager {
+    public Session getSession() throws RepositoryException;
+
+    public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException;
+
+    public Workflow getWorkflow(String category, Node item) throws WorkflowMappingException, RepositoryException;
+
+    public Workflow getWorkflow(WorkflowDescriptor descriptor) throws WorkflowMappingException, RepositoryException;
 }

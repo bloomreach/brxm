@@ -23,6 +23,8 @@ package org.hippoecm.repository.workflow;
 
 import java.rmi.RemoteException;
 
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.servicing.ServiceImpl;
 
 public abstract class WorkflowImpl extends ServiceImpl implements Workflow
@@ -32,5 +34,8 @@ public abstract class WorkflowImpl extends ServiceImpl implements Workflow
   }
   final void setWorkflowContext(WorkflowContext context) {
     this.context = context;
+  }
+  final WorkflowContext getWorkflowContext() {
+    return context;
   }
 }
