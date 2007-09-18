@@ -39,7 +39,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.repository.servicing.ServicingNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,11 +231,11 @@ public class RepositoryServlet extends HttpServlet {
                     Node child = iter.nextNode();
                     writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath()
                             + "/" + child.getPath() + "/" + "\">");
-                    if (child.hasProperty("hippo:count")) {
-                        writer.print(((ServicingNode) child).getDisplayName() + " ["
-                                + child.getProperty("hippo:count").getLong() + "]");
+                    if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                        writer.print(((HippoNode) child).getDisplayName() + " ["
+                                + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
                     } else {
-                        writer.print(((ServicingNode) child).getDisplayName());
+                        writer.print(((HippoNode) child).getDisplayName());
                     }
                     writer.println("</a>");
                 }

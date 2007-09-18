@@ -15,7 +15,7 @@
  */
 package org.hippoecm.repository.sample;
 
-import org.hippoecm.repository.servicing.Document;
+import org.hippoecm.repository.api.Document;
 
 public class AuthorDocument extends Document {
     int authorId;

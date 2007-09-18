@@ -7,12 +7,12 @@ import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.easymock.MockControl;
-import org.hippoecm.repository.servicing.ServicingNode;
+import org.hippoecm.repository.api.HippoNode;
 
 public class MockJcr {
 
     public MockControl nodeControl;
-    public ServicingNode node;
+    public HippoNode node;
 
     public MockControl propertyIteratorControl;
     public PropertyIterator propertyIterator;
@@ -27,8 +27,8 @@ public class MockJcr {
     public Value value;
 
     public MockJcr() {
-        nodeControl = MockControl.createControl(ServicingNode.class);
-        node = (ServicingNode) nodeControl.getMock();
+        nodeControl = MockControl.createControl(HippoNode.class);
+        node = (HippoNode) nodeControl.getMock();
 
         propertyIteratorControl = MockControl.createControl(PropertyIterator.class);
         propertyIterator = (PropertyIterator) propertyIteratorControl.getMock();

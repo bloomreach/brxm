@@ -42,6 +42,8 @@ import javax.jdo.Transaction;
 import org.jpox.PersistenceManagerFactoryImpl;
 import org.jpox.transaction.HeuristicRollbackException;
 
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.pojo.JCROID;
 import org.hippoecm.repository.pojo.StoreManagerImpl;
 

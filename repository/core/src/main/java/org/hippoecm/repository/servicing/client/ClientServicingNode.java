@@ -23,11 +23,11 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.rmi.client.ClientNode;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.servicing.Service;
-import org.hippoecm.repository.servicing.ServicingNode;
 import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
 
-public class ClientServicingNode extends ClientNode implements ServicingNode {
+public class ClientServicingNode extends ClientNode implements HippoNode {
     private RemoteServicingNode remote;
 
     public ClientServicingNode(Session session, RemoteServicingNode remote, LocalServicingAdapterFactory factory) {

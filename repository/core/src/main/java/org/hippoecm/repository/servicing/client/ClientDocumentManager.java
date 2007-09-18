@@ -28,8 +28,8 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
-import org.hippoecm.repository.servicing.Document;
-import org.hippoecm.repository.servicing.DocumentManager;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 
 public class ClientDocumentManager extends ClientObject implements DocumentManager {

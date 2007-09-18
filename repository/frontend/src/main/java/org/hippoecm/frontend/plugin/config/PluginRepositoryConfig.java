@@ -23,6 +23,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+
+import org.hippoecm.repository.api.HippoNodeType;
+
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -32,7 +35,6 @@ public class PluginRepositoryConfig implements PluginConfig {
 
     private static final String pluginConfigRoot = "configuration/frontend/default";
     private static final String rootPluginId = "rootPlugin";
-    private static final String pluginRendererProperty = "hippo:renderer";
 
     private JcrNodeModel pluginConfigNodeModel;
 
@@ -84,7 +86,7 @@ public class PluginRepositoryConfig implements PluginConfig {
     }
 
     private PluginDescriptor getPluginDescriptor(Node pluginNode) throws RepositoryException {
-        String classname = pluginNode.getProperty(pluginRendererProperty).getString();
+        String classname = pluginNode.getProperty(HippoNodeType.HIPPO_RENDERER).getString();
         String path = pluginNode.getPath().substring(1);
         path = path.replaceFirst(pluginConfigRoot, "0");
         path = path.replaceAll("/", ":");

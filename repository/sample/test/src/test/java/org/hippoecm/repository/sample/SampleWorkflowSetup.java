@@ -28,10 +28,10 @@ import junit.framework.TestCase;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.servicing.DocumentManager;
-import org.hippoecm.repository.servicing.Document;
-import org.hippoecm.repository.servicing.ServicingWorkspace;
-import org.hippoecm.repository.servicing.WorkflowManager;
+import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowManager;
 
 import org.apache.jackrabbit.core.XASession;
 import javax.transaction.SystemException;

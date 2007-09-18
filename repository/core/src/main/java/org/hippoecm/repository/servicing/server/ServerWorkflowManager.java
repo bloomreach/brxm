@@ -28,9 +28,9 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerObject;
 
-import org.hippoecm.repository.workflow.Workflow;
-import org.hippoecm.repository.workflow.WorkflowDescriptor;
-import org.hippoecm.repository.servicing.WorkflowManager;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
 

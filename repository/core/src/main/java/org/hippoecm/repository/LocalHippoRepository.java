@@ -51,7 +51,11 @@ import javax.jcr.LoginException;
 import javax.jcr.ValueFormatException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
+
+// The following switches betweeon decorated and repository based implementation
+//import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.apache.jackrabbit.core.RepositoryImpl;
+
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -63,6 +67,8 @@ import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 import org.hippoecm.repository.servicing.ServicingDecoratorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.hippoecm.repository.api.HippoNodeType;
 
 class LocalHippoRepository extends HippoRepository {
     /** SVN id placeholder */
@@ -274,12 +280,12 @@ class LocalHippoRepository extends HippoRepository {
                         Node node = iter.nextNode();
                         log.info("Initializing configuration from " + node.getName());
                         try {
-                            if (node.hasProperty("hippo:namespace")) {
+                            if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
                                 if (log.isDebugEnabled())
                                     log.debug("Found namespace configuration");
                                 Property p = null;
                                 try {
-                                    String namespace = node.getProperty("hippo:namespace").getString();
+                                    String namespace = node.getProperty(HippoNodeType.HIPPO_NAMESPACE).getString();
                                     log.info("Initializing namespace: " + namespace);
                                     initializeNamespace(nsreg, node.getName(), namespace);
                                     p.remove();
@@ -287,12 +293,12 @@ class LocalHippoRepository extends HippoRepository {
                                     assert (p != null); // cannot happen
                                 }
                             }
-                            if (node.hasProperty("hippo:nodetypes")) {
+                            if (node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
                                 if (log.isDebugEnabled())
                                     log.debug("Found nodetypes configuration");
                                 Property p = null;
                                 try {
-                                    String cndName = (p = node.getProperty("hippo:nodetypes")).getString();
+                                    String cndName = (p = node.getProperty(HippoNodeType.HIPPO_NODETYPES)).getString();
                                     InputStream cndStream = getClass().getResourceAsStream(cndName);
                                     if (cndStream == null) {
                                         log.warn("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");                                        
@@ -305,20 +311,20 @@ class LocalHippoRepository extends HippoRepository {
                                     assert (p != null); // cannot happen
                                 }
                             }
-                            if (node.hasProperty("hippo:content")) {
+                            if (node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
                                 if (log.isDebugEnabled())
                                     log.debug("Found content configuration");
                                 Property contentProperty = null;
                                 Property rootProperty = null;
                                 try {
-                                    String contentName = (contentProperty = node.getProperty("hippo:content")).getString();                                    
+                                    String contentName = (contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT)).getString();                                    
                                     InputStream contentStream = getClass().getResourceAsStream(contentName);
                                     if (contentStream == null) {
                                         log.warn("Cannot locate content configuration '" + contentName + "', initialization skipped");
                                     } else {
                                         String root = "/";
-                                        if (node.hasProperty("hippo:contentroot")) {
-                                            root = (rootProperty = node.getProperty("hippo:contentroot")).getString();
+                                        if (node.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
+                                            root = (rootProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTROOT)).getString();
                                             rootProperty.remove();
                                         }
                                         log.info("Initializing content from: " + contentName + " to " + root);

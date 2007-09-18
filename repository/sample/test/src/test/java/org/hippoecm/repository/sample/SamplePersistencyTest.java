@@ -28,10 +28,10 @@ import junit.framework.TestCase;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.servicing.DocumentManager;
-import org.hippoecm.repository.servicing.Document;
-import org.hippoecm.repository.servicing.ServicingWorkspace;
-import org.hippoecm.repository.servicing.WorkflowManager;
+import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowManager;
 
 import org.apache.jackrabbit.core.XASession;
 import javax.transaction.SystemException;
@@ -60,7 +60,7 @@ public class SamplePersistencyTest extends TestCase
     Session session = server.login("dummy","dummy".toCharArray());
     Node root = session.getRootNode();
 
-    DocumentManager manager = ((ServicingWorkspace)session.getWorkspace()).getDocumentManager();
+    DocumentManager manager = ((HippoWorkspace)session.getWorkspace()).getDocumentManager();
     Document document = manager.getDocument("authors","Jan Smit");
 
     assertTrue(document instanceof AuthorDocument);

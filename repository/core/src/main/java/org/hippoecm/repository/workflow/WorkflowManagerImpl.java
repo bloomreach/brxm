@@ -32,11 +32,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.repository.servicing.ServicingNode;
-import org.hippoecm.repository.servicing.WorkflowManager;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowContext;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.servicing.ServicesManagerImpl;
 import org.hippoecm.repository.servicing.Service;
-import org.hippoecm.repository.servicing.ServicingWorkspace;
 
 public class WorkflowManagerImpl
   implements WorkflowManager
@@ -91,19 +93,20 @@ public class WorkflowManagerImpl
   public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
     Node workflowNode = getWorkflowNode(category, item);
     if(workflowNode != null) {
-      return new WorkflowDescriptor(this, category, workflowNode);
+      return new WorkflowDescriptorImpl(this, category, workflowNode);
     } else {
       log.debug("Workflow for category "+category+" on "+item.getPath()+" is not available");
       return null;
     }
   }
   public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
-    try {
-      return getWorkflow(descriptor.category, session.getRootNode().getNode(descriptor.nodeAbsPath.substring(1)));
-    } catch(PathNotFoundException ex) {
-      log.debug("Workflow no longer available "+descriptor.nodeAbsPath);
-      return null;
-    }
+      WorkflowDescriptorImpl descriptorImpl = (WorkflowDescriptorImpl) descriptor;
+      try {
+          return getWorkflow(descriptorImpl.category, session.getRootNode().getNode(descriptorImpl.nodeAbsPath.substring(1)));
+      } catch(PathNotFoundException ex) {
+          log.debug("Workflow no longer available "+descriptorImpl.nodeAbsPath);
+          return null;
+      }
   }
   public Workflow getWorkflow(String category, Node item) throws RepositoryException {
     Node workflowNode = getWorkflowNode(category, item);
@@ -111,7 +114,7 @@ public class WorkflowManagerImpl
       try {
         String classname = workflowNode.getProperty("service").getString();
         Node types = workflowNode.getNode("types");
-        ServicesManagerImpl manager = (ServicesManagerImpl)((ServicingWorkspace)session.getWorkspace()).getServicesManager();
+        ServicesManagerImpl manager = (ServicesManagerImpl)((HippoWorkspace)session.getWorkspace()).getServicesManager();
         Service service = manager.getService(item.getUUID(), classname, types);
         Workflow workflow = (Workflow) service;
         if(workflow instanceof WorkflowImpl) {

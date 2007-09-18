@@ -23,6 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.HippoWorkspace;
+
 public class ServicesManagerImpl
   implements ServicesManager
 {
@@ -50,7 +52,7 @@ public class ServicesManagerImpl
    * @see DocumentManagerImpl.getObject(String,String,Node)
    */
   public Service getService(String uuid, String serviceName, Node types) throws RepositoryException {
-    DocumentManagerImpl manager = (DocumentManagerImpl)((ServicingWorkspace)session.getWorkspace()).getDocumentManager();
+    DocumentManagerImpl manager = (DocumentManagerImpl)((HippoWorkspace)session.getWorkspace()).getDocumentManager();
     Object object = manager.getObject(uuid, serviceName, types);
     ServiceImpl service = (ServiceImpl) object;
     usedServices.add(new Entry(service, uuid));
@@ -63,7 +65,7 @@ public class ServicesManagerImpl
     return getService(node.getUUID(), serviceName, null);
   }
   void save(ServiceImpl service, String uuid) throws RepositoryException {
-    DocumentManagerImpl documentManager = (DocumentManagerImpl)((ServicingWorkspace)session.getWorkspace()).getDocumentManager();
+    DocumentManagerImpl documentManager = (DocumentManagerImpl)((HippoWorkspace)session.getWorkspace()).getDocumentManager();
     documentManager.putObject(uuid, null, service);
   }
   void save() throws RepositoryException {
