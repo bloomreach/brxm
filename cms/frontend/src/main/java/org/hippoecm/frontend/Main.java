@@ -27,16 +27,17 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 public class Main extends WebApplication {
 
     private HippoRepository repository;
+    
+    /** Parameter name of the repository storage directory */
+    public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
 
     protected void init() {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(false);
-        
-        String repositoryAddressConfigParam = "repository-address";
-        String defaultRepositoryAddress = "rmi://localhost:1099/jackrabbit.repository";
-        String repositoryAdress = getConfigurationParameter(repositoryAddressConfigParam, defaultRepositoryAddress);
+       
+        String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, "repository");
         try {
-            repository = HippoRepositoryFactory.getHippoRepository(repositoryAdress);
+            repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

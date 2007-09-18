@@ -27,18 +27,18 @@ public class PluginJavaConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
     public PluginDescriptor getRoot() {
-        return new PluginDescriptor("0:rootPlugin", "org.hippoecm.repository.plugins.admin.RootPlugin");
+        return new PluginDescriptor("0:rootPlugin", "org.hippoecm.frontend.plugins.admin.RootPlugin");
     }
 
     public List getChildren(PluginDescriptor pluginDescriptor) {
         List result = new ArrayList();
-        if (pluginDescriptor.getId().equals("rootPlugin")) {
+        if (pluginDescriptor.getPath().endsWith(":rootPlugin")) {
             result.add(new PluginDescriptor("0:rootPlugin:navigationPlugin",
-                    "org.hippoecm.repository.plugins.admin.browser.BrowserPlugin"));
+                    "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin"));
             result.add(new PluginDescriptor("0:rootPlugin:menuPlugin",
-                    "org.hippoecm.repository.plugins.admin.menu.MenuPlugin"));
+                    "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin"));
             result.add(new PluginDescriptor("0:rootPlugin:contentPlugin",
-                    "org.hippoecm.repository.plugins.admin.editor.EditorPlugin"));
+                    "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin"));
             result.add(new PluginDescriptor("0:rootPlugin:workflowPlugin",
                     "org.hippoecm.frontend.plugin.empty.EmptyPlugin"));
         }
