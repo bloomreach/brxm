@@ -30,21 +30,41 @@ public class Utilities {
     }
 
     private static void dump(PrintStream out, Node parent, int level) throws RepositoryException {
-        String prefix = "";
-        for (int i = 0; i < level; i++) {
-            prefix += "  ";
+        StringBuffer sb = new StringBuffer();
+        if(level > 0) {
+            for (int i = 0; i < level-1; i++) {
+                sb.append("  ");
+            }
+            out.print(new String(sb));
+            out.print("+ ");
+            sb.append("  ");
         }
-        out.println(prefix + parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth() + "]");
+        String prefix = new String(sb);
+        // out.print(parent.getPath() + " [name=" + parent.getName() + ",depth=" + parent.getDepth());
+        out.print((parent.getName().equals("")?"/":parent.getName()) + " [depth=" + parent.getDepth());
+        if (parent.hasProperty("jcr:primaryType")) {
+            out.print(",type="+parent.getProperty("jcr:primaryType").getString());
+        }
+        if (parent.hasProperty("jcr:uuid")) {
+            // out.print(",uuid="+parent.getProperty("jcr:uuid").getString());
+            out.print(",uuid=...");
+        }
+        out.println("]");
         for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
-            out.print(prefix + "| " + prop.getPath() + " [name=" + prop.getName() + "] = ");
+            if(prop.getName().equals("jcr:primaryType") ||
+               prop.getName().equals("jcr:uuid") ||
+               prop.getName().equals("hippo:paths")) {
+                continue;
+            }
+            out.print(prefix + "- " + prop.getName() + " = ");
             if (prop.getDefinition().isMultiple()) {
                 Value[] values = prop.getValues();
-                out.print("[ ");
+                out.print("{ ");
                 for (int i = 0; i < values.length; i++) {
                     out.print((i > 0 ? ", " : "") + values[i].getString());
                 }
-                out.println(" ]");
+                out.println(" } ");
             } else {
                 out.println(prop.getString());
             }
