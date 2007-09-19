@@ -65,6 +65,7 @@ import org.apache.jackrabbit.name.NameException;
 import org.apache.jackrabbit.name.Path;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.HitsRequested;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -200,8 +201,11 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         } catch(PathNotFoundException ex) {
           queryName = node.getName();
         }
+        
+        HitsRequested hitsRequested = new HitsRequested();
+        hitsRequested.setResultRequested(false);
         facetedEngine.view(queryName, initialQuery, session.getFacetedNavigationContext(),
-                           currentFacetQuery, null, facetSearchResultMap, null, false);
+                           currentFacetQuery, null, facetSearchResultMap, null, hitsRequested);
 
         Value[] newSearch;
         for(Map.Entry<String,FacetedNavigationEngine.Count> facetValue : facetSearchResult.entrySet()) {
@@ -262,7 +266,12 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         queryname = node.getProperty(HippoNodeType.HIPPO_QUERYNAME).getString();
       } catch(PathNotFoundException ex) {
       }
-      FacetedNavigationEngine.Result result = facetedEngine.view(queryname, initialQuery, session.getFacetedNavigationContext(), currentFacetQuery, null);
+      
+      HitsRequested hitsRequested = new HitsRequested();
+      hitsRequested.setResultRequested(true);
+      hitsRequested.setLimit(10);
+      hitsRequested.setOffset(0);
+      FacetedNavigationEngine.Result result = facetedEngine.view(queryname, initialQuery, session.getFacetedNavigationContext(), currentFacetQuery, null, new HitsRequested());
 
       for(Iterator<String> iter = result.iterator(); iter.hasNext(); ) {
         String nodePath = iter.next();
