@@ -67,7 +67,7 @@ public class UserSession extends WebSession {
                 Main main = (Main) Application.get();
                 HippoRepository repository = main.getRepository();
                 //TODO: add login dialog
-                result = repository.login(null);
+                result = repository.login("systemuser", "systempass".toCharArray());
             } catch (RepositoryException e) {
                 System.err.println("Failed to connect to repository.");
             }
