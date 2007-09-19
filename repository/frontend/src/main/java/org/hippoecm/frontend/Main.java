@@ -29,15 +29,23 @@ public class Main extends WebApplication {
     private HippoRepository repository;
     
     /** Parameter name of the repository storage directory */
+    public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
 
     protected void init() {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(false);
        
+        String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
         String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, "repository");
         try {
-            repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
+	    System.err.println("BERRY #1 "+repositoryDirectory);
+	    if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
+              repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
+	    } else {
+                repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
+	    }
+	    System.err.println("BERRY #2 "+repository);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
