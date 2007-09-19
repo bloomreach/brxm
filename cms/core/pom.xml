@@ -41,7 +41,7 @@
   </scm>
   
   <properties>
-    <jackrabbit.version>1.4-571494</jackrabbit.version>
+    <jackrabbit.version>1.4-576863</jackrabbit.version>
   </properties>
   
   <repositories>
