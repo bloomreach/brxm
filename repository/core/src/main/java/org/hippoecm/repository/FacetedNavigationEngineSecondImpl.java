@@ -88,15 +88,15 @@ public class FacetedNavigationEngineSecondImpl
 
     class ContextImpl extends FacetedNavigationEngine.Context {
         String principal;
-        Map<String,String> authorizationQuery;
-        ContextImpl(Session session, String principal, Map<String,String> authorizationQuery) {
+        Map<String,String[]> authorizationQuery;
+        ContextImpl(Session session, String principal, Map<String,String[]> authorizationQuery) {
             this.principal = principal;
             this.authorizationQuery = authorizationQuery;
         }
         public String toString() {
             StringBuffer sb = null;
             if(authorizationQuery != null) {
-                for(Map.Entry<String,String> authorizationEntry : authorizationQuery.entrySet()) {
+                for(Map.Entry<String,String[]> authorizationEntry : authorizationQuery.entrySet()) {
                     if(sb == null)
                         sb = new StringBuffer();
                     else
@@ -209,7 +209,7 @@ public class FacetedNavigationEngineSecondImpl
         }
     }
 
-    public ContextImpl prepare(String principal, Map<String,String> authorizationQuery, List<QueryImpl> initialQueries, Session session) {
+    public ContextImpl prepare(String principal, Map<String,String[]> authorizationQuery, List<QueryImpl> initialQueries, Session session) {
         return new ContextImpl(session, principal, authorizationQuery);
     }
     public void unprepare(ContextImpl authorization) {
@@ -231,39 +231,16 @@ public class FacetedNavigationEngineSecondImpl
                        Map<String,String> facetsQuery, QueryImpl openQuery,
                        Map<String,Map<String,Count>> resultset,
                        Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
-                       boolean hitsRequested) throws UnsupportedOperationException
+                       HitsRequested hitsRequested) throws UnsupportedOperationException
     {
-        try {
-            BooleanQuery query = new BooleanQuery();
-
-            if(initialQuery != null && initialQuery.term != null) {
-                query.add(initialQuery.term, BooleanClause.Occur.MUST);
-            }
-            for(Iterator<Map.Entry<String,String>> iter = facetsQuery.entrySet().iterator(); iter.hasNext(); ) {
-                Map.Entry<String,String> entry = iter.next();
-                query.add(new TermQuery(new Term(entry.getKey(),entry.getValue())), BooleanClause.Occur.MUST);
-            }
-            query.add(new TermQuery(new Term("type","document")), BooleanClause.Occur.MUST);
-            Collector collector = new Collector(searcher, resultset, hitsRequested);
-            searcher.search(query, collector);
-            int numhits = collector.getNumhits();
-            if(hitsRequested) {
-                Set<String> documents = new HashSet<String>();
-                Set<Integer> collected = collector.getHits();
-                for(Integer docid : collected) {
-                    searcher.doc(docid.intValue()).get("id");
-                }
-                return new ResultImpl(numhits, documents);
-            } else
-                return new ResultImpl(numhits);
-        } catch(IOException ex) {
-            return null; // FIXME
-        }
+        // no impl 
+        return new ResultImpl(0);
+       
     }
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-                       Map<String,String> facetsQuery, QueryImpl openQuery)
+                       Map<String,String> facetsQuery, QueryImpl openQuery,HitsRequested hitsRequested)
     {
-        return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, null, true);
+        return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, null, hitsRequested);
     }
 
     public QueryImpl parse(String query)
