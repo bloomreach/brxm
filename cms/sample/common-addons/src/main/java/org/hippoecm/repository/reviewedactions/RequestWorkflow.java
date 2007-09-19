@@ -19,9 +19,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.sample;
+package org.hippoecm.repository.reviewedactions;
 
-import java.util.Date;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
@@ -31,23 +30,22 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 
-public interface PublishedDocumentWorkflow extends Workflow {
+public interface RequestWorkflow extends Workflow {
     /**
-     * Immediate unpublication.
-     * The current user must have authorization for this.
+     * Cancels and/or disposes (!) the request.
      */
-    public void unpublish()
+    public void cancelRequest()
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
 
     /**
-     * Request unpublication.
+     * Approve and execute or schedule request
      */
-    public Node requestUnpublication()
+    public void acceptRequest()
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
 
     /**
-     * Request unpublication at given date.
+     * Rejects request with given reason
      */
-    public Node requestUnpublication(Date publicationDate)
+    public void rejectRequest(String reason)
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
 }

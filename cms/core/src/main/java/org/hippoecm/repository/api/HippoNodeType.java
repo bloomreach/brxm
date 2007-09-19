@@ -55,6 +55,7 @@ public interface HippoNodeType {
     final public static String HIPPO_FACETS = "hippo:facets";
     final public static String HIPPO_INITIALIZE = "hippo:initialize";
     final public static String HIPPO_LANGUAGE = "hippo:language";
+    final public static String HIPPO_MODES = "hippo:modes";
     final public static String HIPPO_NAMESPACE = "hippo:namespace";
     final public static String HIPPO_NODETYPE = "hippo:nodetype";
     final public static String HIPPO_NODETYPES = "hippo:nodetypes";
@@ -64,8 +65,9 @@ public interface HippoNodeType {
     final public static String HIPPO_RENDERER = "hippo:renderer";
     final public static String HIPPO_RESULTSET = "hippo:resultset";
     final public static String HIPPO_SEARCH = "hippo:search";
-    final public static String HIPPO_SERVICE = "hippo:service";
+    final public static String HIPPO_SERVICE = "hippo:classname";
     final public static String HIPPO_TYPES = "hippo:types";
+    final public static String HIPPO_VALUES = "hippo:values";
     final public static String HIPPO_WORKFLOWS = "hippo:workflows";
 
 }

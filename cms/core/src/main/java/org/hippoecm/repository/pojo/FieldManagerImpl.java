@@ -33,6 +33,8 @@ import org.jpox.exceptions.JPOXDataStoreException;
 import org.jpox.state.StateManagerFactory;
 import org.jpox.store.fieldmanager.AbstractFieldManager;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 class FieldManagerImpl extends AbstractFieldManager {
     private StateManager sm;
     private Session session;
@@ -396,7 +398,7 @@ class FieldManagerImpl extends AbstractFieldManager {
                 if (types != null) {
                     String classname = value.getClass().getName();
                     Node nodetypeNode = types.getNode(classname);
-                    String nodetype = nodetypeNode.getProperty("nodetype").getString();
+                    String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
                     child = node.addNode(field, nodetype);
                     id = new JCROID(child.getUUID(), classname);
                 } else {

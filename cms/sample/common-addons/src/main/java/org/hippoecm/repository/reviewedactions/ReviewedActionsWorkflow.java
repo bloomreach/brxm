@@ -19,7 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.sample;
+package org.hippoecm.repository.reviewedactions;
 
 import java.util.Date;
 import java.rmi.RemoteException;
@@ -32,6 +32,51 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 
 public interface ReviewedActionsWorkflow extends Workflow {
+    /**
+     * Request this editable copy of the document.
+     */
+    public void obtainEditableInstance()
+        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+
+    /**
+     * Do away with the editable copy of the document which was previously
+     * obtained.
+     */
+    public void disposeEditableInstance()
+        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate unpublication and deletion of document.
+     * The current user must have authorization for this.
+     */
+    public void delete()
+        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+
+    /**
+     * Request unpublication and deletion of document.
+     */
+    public void requestDeletion()
+        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+
+    /**
+     * Immediate unpublication.
+     * The current user must have authorization for this.
+     */
+    public void depublish()
+        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+
+    /**
+     * Request unpublication.
+     */
+    public void requestDepublication()
+        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+
+    /**
+     * Request unpublication at given date.
+     */
+    public void requestDepublication(Date publicationDate)
+        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+
     /**
      * Immediate publication.
      * The current user must have authorization for this.
@@ -47,7 +92,7 @@ public interface ReviewedActionsWorkflow extends Workflow {
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
 
     /**
-     * Publish at the requested date, and unpublish at the requested second date
+     * Publish at the requested date, and depublish at the requested second date
      * The current user must have authorization for this.
      */
     public void publish(Date publicationDate, Date unpublicationDate)
@@ -56,20 +101,20 @@ public interface ReviewedActionsWorkflow extends Workflow {
     /**
      * Request for this instance of the document to be published.
      */
-    public Node requestPublication()
+    public void requestPublication()
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
 
     /**
      * Request for this instance of the document to be published at the given
      * date.
      */
-    public Node requestPublication(Date publicationDate)
+    public void requestPublication(Date publicationDate)
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
 
     /**
      * Request for this instance of the document to be published at the given
      * date and to be scheduled for unpublication.
      */
-    public Node requestPublication(Date publicationDate, Date unpublicationDate)
+    public void requestPublication(Date publicationDate, Date unpublicationDate)
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
 }

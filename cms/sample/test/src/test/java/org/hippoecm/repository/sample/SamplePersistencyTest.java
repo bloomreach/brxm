@@ -63,7 +63,7 @@ public class SamplePersistencyTest extends TestCase
     DocumentManager manager = ((HippoWorkspace)session.getWorkspace()).getDocumentManager();
     Document document = manager.getDocument("authors","Jan Smit");
 
-    assertTrue(document instanceof AuthorDocument);
+    assertTrue("document is of wrong type: "+document.getClass().getName(), document instanceof AuthorDocument);
     AuthorDocument author = (AuthorDocument) document;
     assertTrue(author.authorId == SampleWorkflowSetup.newAuthorId);
 

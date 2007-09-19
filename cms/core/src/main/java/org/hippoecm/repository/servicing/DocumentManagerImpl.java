@@ -44,6 +44,7 @@ import org.jpox.transaction.HeuristicRollbackException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.pojo.JCROID;
 import org.hippoecm.repository.pojo.StoreManagerImpl;
 
@@ -57,9 +58,8 @@ public class DocumentManagerImpl
   PersistenceManager pm;
   public DocumentManagerImpl(Session session) {
     this.session = session;
-    // FIXME
     try {
-      configuration = session.getRootNode().getNode("configuration/documents").getUUID();
+      configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH+"/"+HippoNodeType.HIPPO_DOCUMENTS).getUUID();
     } catch(RepositoryException ex) {
       System.err.println("RepositoryException: "+ex.getMessage());
       ex.printStackTrace(System.err);
@@ -116,8 +116,8 @@ public class DocumentManagerImpl
   public Document getDocument(String category, String identifier) throws RepositoryException {
     try {
       Node queryNode = session.getNodeByUUID(configuration).getNode(category);
-      String queryLanguage = queryNode.getProperty("language").getString();
-      String queryString = queryNode.getProperty("query").getString();
+      String queryLanguage = queryNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+      String queryString = queryNode.getProperty(HippoNodeType.HIPPO_QUERY).getString();
       queryString = queryString.replace("?", identifier);
       Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
       QueryResult result = query.execute();
@@ -125,7 +125,7 @@ public class DocumentManagerImpl
       if(iter.hasNext()) {
         Node resultNode = iter.nextNode();
         String uuid = resultNode.getUUID();
-        return (Document) getObject(uuid, queryNode.getProperty("classname").getString(), queryNode.getNode("types"));
+        return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(), queryNode.getNode(HippoNodeType.NT_TYPES));
       } else {
         return null;
       }

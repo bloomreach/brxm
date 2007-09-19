@@ -25,6 +25,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -39,9 +40,9 @@ public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serial
         this.category = category;
         nodeAbsPath = node.getPath();
         try {
-            serviceName = node.getProperty("service").getString();
-            displayName = node.getProperty("display").getString();
-            rendererName = node.getProperty("renderer").getString();
+            serviceName = node.getProperty(HippoNodeType.HIPPO_SERVICE).getString();
+            displayName = node.getProperty(HippoNodeType.HIPPO_DISPLAY).getString();
+            rendererName = node.getProperty(HippoNodeType.HIPPO_RENDERER).getString();
         } catch (PathNotFoundException ex) {
             log.error("Workflow specification corrupt on node " + nodeAbsPath);
             throw new RepositoryException("workflow specification corrupt", ex);

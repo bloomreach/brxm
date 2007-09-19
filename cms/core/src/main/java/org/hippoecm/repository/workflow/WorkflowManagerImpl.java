@@ -36,6 +36,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.servicing.ServicesManagerImpl;
 import org.hippoecm.repository.servicing.Service;
@@ -51,7 +52,7 @@ public class WorkflowManagerImpl
     this.session = session;
     // FIXME
     try {
-      configuration = session.getRootNode().getNode("configuration/workflows").getUUID();
+      configuration = session.getRootNode().getNode("configuration/hippo:workflows").getUUID();
     } catch(RepositoryException ex) {
       // FIXME
       System.err.println("RepositoryException: "+ex.getMessage());
@@ -66,7 +67,7 @@ public class WorkflowManagerImpl
       Node workflowNode = null;
       for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
         workflowNode = iter.nextNode();
-        if(item.isNodeType(workflowNode.getProperty("nodetype").getString())) {
+        if(item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
           return workflowNode;
         }
       }
@@ -112,13 +113,14 @@ public class WorkflowManagerImpl
     Node workflowNode = getWorkflowNode(category, item);
     if(workflowNode != null) {
       try {
-        String classname = workflowNode.getProperty("service").getString();
-        Node types = workflowNode.getNode("types");
+        String classname = workflowNode.getProperty(HippoNodeType.HIPPO_SERVICE).getString();
+        Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
         ServicesManagerImpl manager = (ServicesManagerImpl)((HippoWorkspace)session.getWorkspace()).getServicesManager();
         Service service = manager.getService(item.getUUID(), classname, types);
         Workflow workflow = (Workflow) service;
         if(workflow instanceof WorkflowImpl) {
           ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
+          ((WorkflowImpl)workflow).pre();
         }
         return workflow;
       } catch(PathNotFoundException ex) {
