@@ -82,7 +82,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     protected String name;
     protected String path;
     protected int depth;
-    protected Map<String,Node> children = null;
+    protected Map<String,Node[]> children = null;
     protected Map<String,Property> properties = null;
 
     private static Pattern facetPropertyPattern;
@@ -115,8 +115,9 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         this.node = node;
         this.path = path;
         this.depth = depth;
-        if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
-            children = new HashMap();
+        if (node.isNodeType(HippoNodeType.NT_FACETSEARCH) ||
+            node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+            children = new HashMap<String,Node[]>();
             properties = new HashMap();
         }
     }
@@ -131,13 +132,23 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         this.path = path;
         this.name = name;
         this.depth = depth;
-        children = new HashMap();
+        children = new HashMap<String,Node[]>();
         properties = new HashMap();
     }
 
     
     protected void addNode(String name, Node node) {
-        children.put(name, node);
+        if(children.containsKey(name)) {
+            Node[] oldSiblings = children.get(name);
+            Node[] newSiblings = new Node[oldSiblings.length+1];
+            System.arraycopy(oldSiblings, 0, newSiblings, 0, oldSiblings.length);
+            newSiblings[oldSiblings.length] = node;
+            children.put(name, newSiblings);
+        } else {
+            Node[] siblings = new Node[1];
+            siblings[0] = node;
+            children.put(name, siblings);
+        }
     }
 
   private boolean instantiated = false;
@@ -278,6 +289,26 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         addNode(nodePath, session.getRootNode().getNode(nodePath.substring(1)));
       }
 
+    } else if(isNodeType(HippoNodeType.NT_FACETSELECT)) {
+
+        node = session.getRootNode();
+        String path = getProperty("hippo:docbase").getString();
+        if(path.startsWith("/"))
+            path = path.substring(1);
+        node = node.getNode(path);
+        for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+            node = iter.nextNode();
+            if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                addNode(node.getName(), node);
+            } else if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for(NodeIterator sub = node.getNodes(); sub.hasNext(); ) {
+                    node = sub.nextNode();
+                    addNode(node.getName(), node);
+                }
+            } else {
+                addNode(node.getName(), node);
+            }
+        }
     }
 
   }
@@ -547,29 +578,41 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     }
 
     class NodeIteratorImpl implements NodeIterator {
-        Iterator iter;
-        int position;
+        Iterator<Map.Entry<String,Node[]>> iter;
+        Node[] currentSiblings;
+        int relPosition;
+        int absPosition;
 
         NodeIteratorImpl() {
             iter = children.entrySet().iterator();
-            position = 0;
+            absPosition = 0;
+            currentSiblings = null;
         }
 
         public boolean hasNext() {
+            if(currentSiblings != null && relPosition < currentSiblings.length)
+                return true;
             return iter.hasNext();
         }
 
         public Object next() {
-            Map.Entry entry = (Map.Entry) iter.next();
-            ++position;
-            Object rtValue = entry.getValue();
-            if (rtValue == null) {
-                try {
-                    rtValue = getNode((String) entry.getKey());
-                } catch (RepositoryException ex) {
-                    return null;
+            Node rtValue = null;
+            if(currentSiblings != null && relPosition < currentSiblings.length) {
+                rtValue = currentSiblings[relPosition++];
+            } else {
+                Map.Entry<String,Node[]> entry = (Map.Entry<String,Node[]>) iter.next();
+                currentSiblings = entry.getValue();
+                if (currentSiblings == null) {
+                    try {
+                        rtValue = getNode(entry.getKey());
+                    } catch (RepositoryException ex) {
+                }
+                } else {
+                    relPosition = 0;
+                    rtValue = currentSiblings[relPosition++];
                 }
             }
+            ++absPosition;
             return rtValue;
         }
 
@@ -583,20 +626,20 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
 
         public void skip(long skipNum) {
             while (skipNum-- > 0) {
-                ++position;
+                ++absPosition;
                 iter.next();
             }
         }
 
         public long getSize() {
             int count = 0;
-            for (Iterator i = children.values().iterator(); i.hasNext(); i.next())
-                ++count;
+            for (Iterator<Node[]> i = children.values().iterator(); i.hasNext(); )
+                count += i.next().length;
             return count;
         }
 
         public long getPosition() {
-            return position;
+            return absPosition;
         }
     }
 
@@ -976,11 +1019,20 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     public Node getNode(String relPath) throws PathNotFoundException, RepositoryException {
         instantiate(null); // FIXME: instantiate(relPath);
         if(children != null) {
-            Node n = children.get(relPath);
-            if(n != null)
-                return n;
+            int pathPosition = relPath.indexOf("/");
+            String childName = (pathPosition < 0 ? relPath : relPath.substring(0,pathPosition));
+            int indexPosition = childName.indexOf("[");
+            Node[] siblings = children.get(indexPosition < 0 ? childName : childName.substring(0,indexPosition-1));
+            if(indexPosition > 0)
+                indexPosition = Integer.parseInt(childName.substring(indexPosition+1));
             else
+                indexPosition = 0;
+            if(siblings == null || indexPosition >= siblings.length || siblings[indexPosition] == null)
                 throw new PathNotFoundException();
+            if(pathPosition < 0)
+                return siblings[indexPosition];
+            else
+                return siblings[indexPosition].getNode(relPath.substring(pathPosition+1));
         } else {
             try {
                 Node n = node.getNode(relPath);

@@ -56,7 +56,7 @@ public class SampleWorkflowTest extends TestCase {
             //TransactionManager tm = utm;
             //tm.begin();
 
-            Session session = server.login("dummy","dummy".toCharArray());
+            Session session = server.login("systemuser","systempass".toCharArray());
 
             Node root = session.getRootNode();
 

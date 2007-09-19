@@ -66,6 +66,8 @@ import org.jpox.store.scostore.MapStore;
 import org.jpox.util.ClassUtils;
 import org.jpox.util.MacroString.IdentifierMacro;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 public class StoreManagerImpl extends StoreManager {
     private String username;
     private String password;
@@ -174,11 +176,11 @@ public class StoreManagerImpl extends StoreManager {
                 nodeName = cmd.getEntityName();
             if (types != null) {
                 Node nodetypeNode = types.getNode(cmd.getFullClassName());
-                node = node.addNode(nodeName, nodetypeNode.getProperty("nodetype").getString());
+                node = node.addNode(nodeName, nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
             } else {
                 // FIXME: to be depricated method of storing classname reference
                 node = node.addNode(nodeName);
-                node.setProperty("classname", cmd.getFullClassName());
+                node.setProperty(HippoNodeType.HIPPO_CLASSNAME, cmd.getFullClassName());
                 node.addMixin("mix:referenceable"); // FIXME: should be per node type definition
             }
             sm.provideFields(cmd.getAllFieldNumbers(), new FieldManagerImpl(sm, session, types, node));

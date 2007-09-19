@@ -30,4 +30,7 @@ public final class WorkflowContext {
         DocumentManager documentManager = ((HippoWorkspace)session.getWorkspace()).getDocumentManager();
         return documentManager.getDocument(category, identifier);
     }
+    public String getUsername() {
+        return session.getUserID();
+    }
 }

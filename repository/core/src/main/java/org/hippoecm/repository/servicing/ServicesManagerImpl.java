@@ -67,6 +67,8 @@ public class ServicesManagerImpl
   void save(ServiceImpl service, String uuid) throws RepositoryException {
     DocumentManagerImpl documentManager = (DocumentManagerImpl)((HippoWorkspace)session.getWorkspace()).getDocumentManager();
     documentManager.putObject(uuid, null, service);
+    if(service instanceof org.hippoecm.repository.workflow.WorkflowImpl) // FIXME: workaround for current mapping issues
+        ((org.hippoecm.repository.workflow.WorkflowImpl)service).post();
   }
   void save() throws RepositoryException {
     for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
