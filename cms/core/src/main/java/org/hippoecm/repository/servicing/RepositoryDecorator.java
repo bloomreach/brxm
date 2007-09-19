@@ -22,8 +22,12 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.core.RepositoryImpl;
+import org.apache.jackrabbit.core.SearchManager;
+import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
+import org.hippoecm.repository.FacetedNavigationEngineThirdImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 
 /**
@@ -49,6 +53,12 @@ public class RepositoryDecorator implements Repository {
         return facetedEngine;
     }
 
+    public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException{
+        return ((RepositoryImpl)repository).getSearchManager(workspaceName);
+    }
+
+
+    
     /**
      * Forwards the method call to the underlying repository.
      */
@@ -73,8 +83,21 @@ public class RepositoryDecorator implements Repository {
             NoSuchWorkspaceException, RepositoryException {
         Session session = repository.login(credentials, workspaceName);
         ServicingSessionImpl servicingSession = (ServicingSessionImpl) factory.getSessionDecorator(this, session);
+        
+        /*
+         * TODO Below facet authorizationQuery must be fetched. The authorizationQuery looks like below.
+         * These authorizations needs to be fetched from the repository.
+         * Map<String,String[]> authorizationQuery = new HashMap<String,String[]>();
+         * authorizationQuery.put("x", new String[]{"x1","x2"});
+         * authorizationQuery.put("y", new String[]{"y1","y2"});
+         * authorizationQuery.put("z", new String[]{"z1","z2"});
+         * FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare("abc", authorizationQuery, null, servicingSession);
+         */ 
+        
         FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, servicingSession);
-	servicingSession.setFacetedNavigationContext(context);
+        
+        
+        servicingSession.setFacetedNavigationContext(context);
 	return servicingSession;
     }
 
