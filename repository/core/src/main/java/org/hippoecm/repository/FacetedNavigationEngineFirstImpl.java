@@ -67,8 +67,8 @@ public class FacetedNavigationEngineFirstImpl
     class ContextImpl extends FacetedNavigationEngine.Context {
         Session session;
         String principal;
-        Map<String,String> authorizationQuery;
-        ContextImpl(Session session, String principal, Map<String,String> authorizationQuery) {
+        Map<String,String[]> authorizationQuery;
+        ContextImpl(Session session, String principal, Map<String,String[]> authorizationQuery) {
             this.session = session;
             this.principal = principal;
             this.authorizationQuery = authorizationQuery;
@@ -76,7 +76,7 @@ public class FacetedNavigationEngineFirstImpl
         public String toString() {
             StringBuffer sb = null;
             if(authorizationQuery != null) {
-                for(Map.Entry<String,String> authorizationEntry : authorizationQuery.entrySet()) {
+                for(Map.Entry<String,String[]> authorizationEntry : authorizationQuery.entrySet()) {
                     if(sb == null)
                         sb = new StringBuffer();
                     else
@@ -100,7 +100,7 @@ public class FacetedNavigationEngineFirstImpl
     public FacetedNavigationEngineFirstImpl() {
     }
 
-    public ContextImpl prepare(String principal, Map<String,String> authorizationQuery, List<QueryImpl> initialQueries,
+    public ContextImpl prepare(String principal, Map<String,String[]> authorizationQuery, List<QueryImpl> initialQueries,
                                Session session) {
         return new ContextImpl(session, principal, authorizationQuery);
     }
@@ -163,7 +163,7 @@ public class FacetedNavigationEngineFirstImpl
                        Map<String,String> facetsQuery, QueryImpl openQuery,
                        Map<String,Map<String,Count>> resultset,
                        Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
-                       boolean hitsRequested) throws UnsupportedOperationException {
+                       HitsRequested hitsRequested) throws UnsupportedOperationException {
         try {
             Session session = authorization.session;
             int resultNodeCount = 0;
@@ -200,7 +200,7 @@ public class FacetedNavigationEngineFirstImpl
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-                       Map<String,String> facetsQuery, QueryImpl openQuery) {
+                       Map<String,String> facetsQuery, QueryImpl openQuery, HitsRequested hitsRequested) {
         try {
             Session session = authorization.session;
             LinkedList list = new LinkedList<String>();
