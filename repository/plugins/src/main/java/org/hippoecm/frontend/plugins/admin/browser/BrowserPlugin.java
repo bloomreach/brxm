@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.admin.browser;
 
-import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
