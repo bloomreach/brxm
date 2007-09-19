@@ -55,7 +55,7 @@
           <param name="persistent" value="false"/>
         </PersistenceManager>
         
-        <SearchIndex class="org.hippoecm.repository.lucene.ServicingSearchIndex">
+        <SearchIndex class="org.hippoecm.repository.query.lucene.ServicingSearchIndex">
           <!--
             Search index and the file system it uses.
             class: FQN of class implementing the QueryHandler interface
@@ -113,15 +113,15 @@
             values and can be omitted.
           -->
           <param name="indexingConfiguration" value="${wsp.home}/indexing_configuration.xml"/>
-          <param name="indexingConfigurationClass" value="org.hippoecm.repository.lucene.ServicingIndexingConfigurationImpl"/>
+          <param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/>
           <param name="path" value="${wsp.home}/index"/>
           <param name="useCompoundFile" value="true"/>
           <param name="minMergeDocs" value="100"/>
           <param name="volatileIdleTime" value="3"/>
-          <param name="maxMergeDocs" value="100000"/>
+          <param name="maxMergeDocs" value="1000"/>
           <param name="mergeFactor" value="10"/>
           <param name="maxFieldLength" value="10000"/>
-          <param name="bufferSize" value="10"/>
+          <param name="bufferSize" value="1000"/>
           <param name="cacheSize" value="1000"/>
           <param name="forceConsistencyCheck" value="false"/>
           <param name="enableConsistencyCheck" value="false"/>
