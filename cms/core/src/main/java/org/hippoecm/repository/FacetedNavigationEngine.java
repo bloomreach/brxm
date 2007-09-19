@@ -169,7 +169,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @param initialQueries A list of initial queries later used in the #view methods
      * @see #unprepare(C)
      */
-    public C prepare(String principal, Map<String,String> authorizationQuery, List<Q> initialQueries, Session session);
+    public C prepare(String principal, Map<String,String[]> authorizationQuery, List<Q> initialQueries, Session session);
     
     /**
      * This method is called when a user logouts from the system.
@@ -296,7 +296,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
                Map<String,String> facetsQuery, Q openQuery,
                Map<String,Map<String,Count>> resultset,
                Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
-               boolean resultRequested) throws UnsupportedOperationException;
+               HitsRequested hitsRequested) throws UnsupportedOperationException;
 
     /**
      * The second view method is trimmed down version of the first one and used
@@ -304,7 +304,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *   but used when the actual resultset is required.  In this case.
      */
     public Result view(String queryName, Q initialQuery, C authorization,
-               Map<String,String> facetsQuery, Q openQuery);
+               Map<String,String> facetsQuery, Q openQuery, HitsRequested hitsRequested);
 
     /**
      * This method is used to build a Query object from a query encoded in a
