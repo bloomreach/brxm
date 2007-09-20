@@ -26,18 +26,18 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo Repository 2 Documentation</name>
-  <description>Hippo Repository 2 Technical Documentation</description>
-  <artifactId>hippo-repository-2-docs</artifactId>
+  <name>Hippo ECM Documentation</name>
+  <description>Hippo ECM Technical Documentation</description>
+  <artifactId>hippo-ecm-documentation</artifactId>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/docs</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/docs</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/docs</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/documentation</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/documentation</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/documentation</url>
   </scm>
   
   <reporting>
-    <outputDirectory>../target/site/hippo-repository-2-docs</outputDirectory>
+    <outputDirectory>../target/site/hippo-ecm-documentation</outputDirectory>
   </reporting>
     
 </project>
