@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo ECM tools</name>
+  <name>Tools</name>
   <description>Hippo ECM tools</description>
   <artifactId>hippo-ecm-tools</artifactId>
   <packaging>pom</packaging>

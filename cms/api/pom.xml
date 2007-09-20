@@ -27,7 +27,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo ECM API</name>
+  <name>API</name>
   <description>Hippo ECM specific extensions to the JCR API</description>
   <artifactId>hippo-ecm-api</artifactId>
 

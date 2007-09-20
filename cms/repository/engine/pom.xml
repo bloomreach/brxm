@@ -28,12 +28,11 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo ECM repository engine</name>
+  <name>Repository engine</name>
   <description>Hippo ECM repository engine</description>
-  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-repository-engine</artifactId>
-  <version>2.01.00-dev</version>
-
+  <packaging>jar</packaging>
+  
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/repository/engine</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/repository/engine</developerConnection>

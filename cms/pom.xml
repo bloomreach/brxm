@@ -24,10 +24,11 @@
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-repository-2</artifactId>
   <version>2.01.00-dev</version>
-  <name>Hippo Repository 2</name>
-  <packaging>pom</packaging>
-
+  
+  <name>Hippo ECM</name>
   <description>Hippo Repository 2.</description>
+  <packaging>pom</packaging>  
+  
   <url>http://wiki.hippo.nl/display/HREPTWO/Hippo+Repository+2+project+documentation</url>
   <prerequisites>
     <maven>2.0</maven>
@@ -39,12 +40,11 @@
   </organization>
     
   <modules>
-    <module>custom-skeleton</module>
-
-    <module>addon</module>
+    <module>api</module>
     <module>frontend</module>
-    <module>api</module>    
     <module>repository</module>
+    <module>application</module>
+    <module>addon</module>    
     <module>documentation</module>    
     <module>tools</module>
   </modules>

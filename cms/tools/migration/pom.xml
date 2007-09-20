@@ -25,8 +25,8 @@
   </parent>
     
   <artifactId>hippo-ecm-tools-migration</artifactId>
-  <name>Hippo ECM migration Tool</name>
-  <description>Hippo Repository 2 Migration Tool for exporting documents from Hippo Repository 1.2</description>
+  <name>Migration Tool</name>
+  <description>Hippo ECM migration tool for importing documents from Hippo Repository 1.2</description>
   
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/tools/migration</connection>

@@ -23,41 +23,26 @@
   
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-repository-2</artifactId>
+    <artifactId>hippo-ecm-application</artifactId>
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo Repository 2 Custom skeleton</name>
-  <description>Hippo Repository 2 custom skeleton module</description>
-  <artifactId>hippo-repository-2-custom-skeleton</artifactId>
+  <name>Default application</name>
+  <description>Hippo ECM default application</description>
+  <artifactId>hippo-ecm-application-default</artifactId>
   <packaging>pom</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/custom-skeleton</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/application/default</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/application/default</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/application/default</url>
   </scm>
   
   <modules>
-    <module>custom-server</module>
-    <module>custom-client</module>
+    <module>frontend</module>
+    <module>repository</module>
   </modules>
-  
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-        <version>1.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>1.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   
   <build>
     <defaultGoal>package</defaultGoal>
@@ -80,7 +65,7 @@
   </build>
   
   <reporting>
-    <outputDirectory>../target/site/hippo-repository-2-custom-skeleton</outputDirectory>
+    <outputDirectory>../target/site/hippo-ecm-application-default</outputDirectory>
   </reporting>
   
 </project>
