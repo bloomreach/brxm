@@ -14,18 +14,29 @@
 	* See the License for the specific language governing permissions and
 	* limitations under the License.
 -->
-<web-app id="hippo-ecm-frontend-application">
+<web-app id="hippo-ecm-application-default-frontend">
 
 	<!-- General configuration -->
-	<display-name>Hippo ECM minimal frontend</display-name>
-	<description>A non-configurable frontend on top of an empty embedded repository.</description>
+	<display-name>Hippo ECM default frontend</display-name>
+	<description>A repository-configurable frontend that connects to a remote repository with default configuration.</description>
 	
-	<!--Start embedded Hippo ECM repository-->
+    <!--
+    	Remote repository lookup
+    -->
 	<context-param>
 		<param-name>repository-directory</param-name>
-		<param-value>repository</param-value>
-		<description>Relative directory where to store files</description>
+		<param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
+		<description>Connect to remote Hippo ECM Server</description>
 	</context-param>
+	
+	<!--
+	<resource-ref>
+		<description>Hippo JCR Repository</description>
+		<res-ref-name>jcr/repository</res-ref-name>
+		<res-type>javax.jcr.Repository</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+	-->
 	
 	<!-- 
 		Frontend application plugin configuration factory, possible values: 
@@ -36,7 +47,7 @@
 	-->
 	<context-param>
 		<param-name>frontend-plugin-config</param-name>
-		<param-value>java</param-value>
+		<param-value>repository</param-value>
 	</context-param>
 		
 	<!-- Portals integration -->

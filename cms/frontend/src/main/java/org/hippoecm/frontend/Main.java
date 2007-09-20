@@ -39,11 +39,11 @@ public class Main extends WebApplication {
         String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
         String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, "repository");
         try {
-	    if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
-              repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
-	    } else {
+            if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
+                repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
+            } else {
                 repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
-	    }
+            }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

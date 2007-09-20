@@ -1,13 +1,38 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
-<web-app id="repository-server">
-  <display-name>Hippo Repository 2 Server</display-name>
-  <description>hippo-repository-2-server</description>
+<!--
+  * Copyright 2007 Hippo
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+<web-app id="hippo-ecm-repository-application">
+  
+  <!-- General configuration -->
+  <display-name>Hippo ECM minimal repository</display-name>
+  <description>An empty repository that binds to the RMI registry.</description>
+  
+  <!--
+  Rmi registration
+  For running in jetty start rmiregistry and set to 'rmi://localhost:1099/jackrabbit.repository'
+  For deployment in a true application server (glassfish, jboss, weblogic etc.) set to 'jackrabbit.repository'
+  '-->  
   <context-param>
     <param-name>repository-address</param-name>
-    <param-value>jackrabbit.repository</param-value>
+    <!--<param-value>jackrabbit.repository</param-value>-->
+    <param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
     <description>The address of the repository</description>
   </context-param>
+  
   <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
     <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
@@ -24,15 +49,20 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
+  
   <servlet-mapping>
     <servlet-name>RepositoryServlet</servlet-name>
     <url-pattern>/repository/*</url-pattern>
   </servlet-mapping>
+  
+  <!-- Timeout in minutes -->
   <session-config>
     <session-timeout>5</session-timeout>
   </session-config>
+  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
+  
 </web-app>

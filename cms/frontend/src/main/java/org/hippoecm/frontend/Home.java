@@ -49,7 +49,11 @@ public class Home extends WebPage {
     public void update(final AjaxRequestTarget target, final JcrNodeModel model) {
         rootPlugin.update(target, model);
     }
-
+    
+    public void reset(AjaxRequestTarget target) {
+       update(target, getRootModel());
+    }
+    
     private JcrNodeModel getRootModel() {
         JcrNodeModel result;
         try {

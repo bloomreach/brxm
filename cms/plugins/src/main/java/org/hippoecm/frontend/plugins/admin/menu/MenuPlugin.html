@@ -15,27 +15,36 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <div wicket:id="node-dialog"/>
-        <a wicket:id="node-dialog-link">Add Node</a>
-        |
-        <div wicket:id="delete-dialog"/>
-        <a wicket:id="delete-dialog-link">Delete Node</a>
-        |
-        <div wicket:id="move-dialog"/>
-        <a wicket:id="move-dialog-link">Move Node</a>
-        |
-        <div wicket:id="rename-dialog"/>
-        <a wicket:id="rename-dialog-link">Rename Node</a>
-        |
-        <div wicket:id="property-dialog"/>
-        <a wicket:id="property-dialog-link">Add Property</a>
-        |
-        <div wicket:id="save-dialog"/>
-        <a wicket:id="save-dialog-link">Save</a>
-        |
-        <div wicket:id="reset-dialog"/>
-        <a wicket:id="reset-dialog-link">Reset</a>
-        |
-        <b><span wicket:id="path"></span></b>
+        <table width="99%">
+            <tr valign="top">
+                <td align="left">
+                    <div wicket:id="node-dialog"/>
+                    <a wicket:id="node-dialog-link">Add Node</a>
+                    |
+                    <div wicket:id="delete-dialog"/>
+                    <a wicket:id="delete-dialog-link">Delete Node</a>
+                    |
+                    <div wicket:id="move-dialog"/>
+                    <a wicket:id="move-dialog-link">Move Node</a>
+                    |
+                    <div wicket:id="rename-dialog"/>
+                    <a wicket:id="rename-dialog-link">Rename Node</a>
+                    |
+                    <div wicket:id="property-dialog"/>
+                    <a wicket:id="property-dialog-link">Add Property</a>
+                    |
+                    <div wicket:id="save-dialog"/>
+                    <a wicket:id="save-dialog-link">Save</a>
+                    |
+                    <div wicket:id="reset-dialog"/>
+                    <a wicket:id="reset-dialog-link">Reset</a>
+                    |
+                    <b><span wicket:id="path"></span></b>
+                </td>
+                <td align="right">
+                    <div wicket:id="loginPlugin"/>
+                </td>
+            </tr>
+        </table>
     </wicket:panel>
 </html>

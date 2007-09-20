@@ -23,6 +23,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
+import org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class RootPlugin extends Plugin {
@@ -55,6 +56,22 @@ public class RootPlugin extends Plugin {
                 if (!plugin.getRenderBodyOnly()) {
                     plugin.update(target, model);
                 }
+
+                return IVisitor.CONTINUE_TRAVERSAL;
+            }
+        });
+    }
+    
+    //Temporary hack
+    public void resetTree(final JcrNodeModel root) {
+        visitChildren(BrowserPlugin.class, new IVisitor() {
+            public Object component(Component component) {
+                BrowserPlugin plugin = (BrowserPlugin) component;
+                PluginDescriptor pluginDescriptor = new PluginDescriptor(plugin.getPath(), BrowserPlugin.class.getName());
+                
+                Plugin newPlugin = new PluginFactory(pluginDescriptor).getPlugin(root);
+                newPlugin.setRenderBodyOnly(true);
+                RootPlugin.this.replace(newPlugin);
 
                 return IVisitor.CONTINUE_TRAVERSAL;
             }
