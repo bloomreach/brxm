@@ -39,12 +39,10 @@
   </organization>
     
   <modules>
-    <module>frontend</module>
-    <module>plugins</module>
-    <module>webapp</module>
     <module>sample</module>
     <module>custom-skeleton</module>
 
+    <module>frontend</module>
     <module>api</module>    
     <module>repository</module>
     <module>documentation</module>    

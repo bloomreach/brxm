@@ -28,8 +28,8 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo ECM Engine</name>
-  <description>Hippo ECM Engine</description>
+  <name>Hippo ECM repository engine</name>
+  <description>Hippo ECM repository engine</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-repository-engine</artifactId>
   <version>2.01.00-dev</version>
