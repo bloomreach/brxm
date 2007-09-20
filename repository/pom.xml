@@ -39,9 +39,9 @@
   </organization>
     
   <modules>
-    <module>sample</module>
     <module>custom-skeleton</module>
 
+    <module>addon</module>
     <module>frontend</module>
     <module>api</module>    
     <module>repository</module>
