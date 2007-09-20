@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Reviewed action addon tests</name>
+  <name>Reviewed action tests</name>
   <description>Hippo ECM reviewed action addon tests</description>
   <artifactId>hippo-ecm-addon-reviewed-action-test</artifactId>
   <packaging>jar</packaging>

@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Default application</name>
+  <name>Default app</name>
   <description>Hippo ECM default application</description>
   <artifactId>hippo-ecm-application-default</artifactId>
   <packaging>pom</packaging>

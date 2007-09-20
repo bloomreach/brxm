@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Default frontend application</name>
+  <name>Default frontend app</name>
   <description>Hippo ECM default frontend application</description>
   <artifactId>hippo-ecm-application-default-frontend</artifactId>
   <packaging>war</packaging>

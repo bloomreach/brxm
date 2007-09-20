@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Reviewed action frontend addons</name>
+  <name>Reviewed action frontend</name>
   <description>Hippo ECM reviewed action frontend addons</description>
   <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
   <packaging>jar</packaging>
