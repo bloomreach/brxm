@@ -27,9 +27,9 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo Repository 2 API</name>
-  <description>Hippo Repository 2 specific extensions to the JCR API</description>
-  <artifactId>hippo-repository-2-api</artifactId>
+  <name>Hippo ECM API</name>
+  <description>Hippo ECM specific extensions to the JCR API</description>
+  <artifactId>hippo-ecm-api</artifactId>
 
   
   <scm>
@@ -46,7 +46,7 @@
   </dependencies>
   
   <reporting>
-    <outputDirectory>../target/site/hippo-repository-2-api</outputDirectory>
+    <outputDirectory>../target/site/hippo-ecm-api</outputDirectory>
   </reporting>
 
 </project>
