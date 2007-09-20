@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo ECM frontend</name>
+  <name>Frontend</name>
   <description>Hippo ECM frontend</description>
   <artifactId>hippo-ecm-frontend</artifactId>
   <packaging>pom</packaging>

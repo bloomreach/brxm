@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo ECM repository</name>
+  <name>Repository</name>
   <description>Hippo ECM repository</description>
   <artifactId>hippo-ecm-repository</artifactId>
   <packaging>pom</packaging>

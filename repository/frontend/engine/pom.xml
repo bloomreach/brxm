@@ -28,8 +28,8 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo ECM frontend engine</name>
-  <description>Wicket component library for use by Hippo Repository 2 frontend applications and components</description>
+  <name>Frontend engine</name>
+  <description>Wicket component library for use by Hippo ECM frontend applications and components</description>
   <artifactId>hippo-ecm-frontend-engine</artifactId>
   <packaging>jar</packaging>
   

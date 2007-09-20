@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo ECM reviewed action common addons</name>
+  <name>Reviewed action common addons</name>
   <description>Hippo ECM reviewed action common addons</description>
   <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
   <packaging>jar</packaging>

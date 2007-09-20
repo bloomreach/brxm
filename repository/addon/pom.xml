@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo ECM addons</name>
+  <name>Addons</name>
   <description>Hippo ECM addons</description>
   <artifactId>hippo-ecm-addon</artifactId>
   <packaging>pom</packaging>
