@@ -87,7 +87,7 @@
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-repository-2-core</artifactId>
+      <artifactId>hippo-ecm-repository-engine</artifactId>
       <version>2.01.00-dev</version>
     </dependency>
     <dependency>

@@ -39,15 +39,14 @@
   </organization>
     
   <modules>
-    <module>api</module>
-    <module>core</module>
-    <module>server</module>
     <module>frontend</module>
     <module>plugins</module>
     <module>webapp</module>
     <module>sample</module>
     <module>custom-skeleton</module>
-    
+
+    <module>api</module>    
+    <module>repository</module>
     <module>documentation</module>    
     <module>tools</module>
   </modules>
