@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Minimal frontend application</name>
+  <name>Minimal frontend app</name>
   <description>Hippo ECM minimal frontend application</description>
   <artifactId>hippo-ecm-frontend-application</artifactId>
   <packaging>war</packaging>

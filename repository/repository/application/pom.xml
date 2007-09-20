@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Minimal repository application</name>
+  <name>Minimal repository app</name>
   <description>Hippo ECM minimal repository application</description>
   <artifactId>hippo-ecm-repository-application</artifactId>
   <packaging>war</packaging>
