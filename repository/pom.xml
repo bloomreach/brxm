@@ -22,11 +22,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-repository-2</artifactId>
+  <artifactId>hippo-ecm</artifactId>
   <version>2.01.00-dev</version>
   
   <name>Hippo ECM</name>
-  <description>Hippo Repository 2.</description>
+  <description>Hippo ECM suite</description>
   <packaging>pom</packaging>  
   
   <url>http://wiki.hippo.nl/display/HREPTWO/Hippo+Repository+2+project+documentation</url>
