@@ -42,14 +42,14 @@
     <module>api</module>
     <module>core</module>
     <module>server</module>
-    <module>migration-tool</module>
     <module>frontend</module>
     <module>plugins</module>
     <module>webapp</module>
-    <module>docs</module>
     <module>sample</module>
     <module>custom-skeleton</module>
-    <module>testutils</module>
+    
+    <module>documentation</module>    
+    <module>tools</module>
   </modules>
   
   <properties>
@@ -246,9 +246,10 @@
               <directory>.</directory>
               <includes>
                 <include>**/*~</include>
-				<!--atomikos leaves these behind-->
+                <include>**/derby.log</include>
                 <include>**/tmlog*</include>
                 <include>**/tm.*</include>
+                <include>**/.lock</include>
               </includes>
             </fileset>
           </filesets>
