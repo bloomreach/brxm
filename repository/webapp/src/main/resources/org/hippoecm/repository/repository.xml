@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE Repository PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 1.2//EN"
+    "http://jackrabbit.apache.org/dtd/repository-1.2.dtd">
+<Repository>
+  <!--
+  virtual file system where the repository stores global state
+  (e.g. registered namespaces, custom node types, etc.)
+  -->
+  <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+    <param name="path" value="${rep.home}/repository"/>
+  </FileSystem>
+
+  <!--
+      security configuration
+  -->
+  <Security appName="Jackrabbit">
+    <!--
+        access manager:
+        class: FQN of class implementing the AccessManager interface
+    -->
+    <AccessManager
+        class="org.apache.jackrabbit.core.security.SimpleAccessManager">
+      <!-- <param name="config" value="${rep.home}/access.xml"/> -->
+    </AccessManager>
+    
+    <LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule">
+      <!-- default values:
+        <param name="anonymousId" value="anonymous"/>
+        <param name="systemuserId" value="systemuser"/>
+        <param name="systemuserPassword" value="systempass"/>
+        <param name="debug" value="false"/>
+        <param name="maxCacheTimeMilliSec" value="10000"/>
+      -->
+    </LoginModule>
+  </Security>
+
+  
+  <!--
+  location of workspaces root directory and name of default workspace
+  -->
+  <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/>
+
+  <!--
+  workspace configuration template:
+  used to create the initial workspace if there's no workspace yet
+  -->
+  <Workspace name="${wsp.name}">
+
+    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+      <param name="path" value="${wsp.home}"/>
+    </FileSystem>
+    
+    <PersistenceManager class="org.apache.jackrabbit.core.state.db.DerbyPersistenceManager">
+      <param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/>
+      <param name="schemaObjectPrefix" value="${wsp.name}_"/>
+    </PersistenceManager>
+
+    <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+      <param name="path" value="${wsp.home}/index"/>
+    </SearchIndex>
+  </Workspace>
+
+  <Versioning rootPath="${rep.home}/version">
+    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+      <param name="path" value="${rep.home}/version"/>
+    </FileSystem>
+    
+    <PersistenceManager class="org.apache.jackrabbit.core.state.db.DerbyPersistenceManager">
+      <param name="url" value="jdbc:derby:${rep.home}/version/db;create=true"/>
+      <param name="schemaObjectPrefix" value="version_"/>
+    </PersistenceManager>
+  </Versioning>
+
+
+  <!--
+  Search index for content that is shared repository wide
+  (/jcr:system tree, contains mainly versions)
+
+  The same parameters are supported as in the search index configuration
+  inside the workspace definition element.
+
+  This element is optional. If omitted, the /jcr:system tree will not be
+  indexed and no results will be returned for that tree!
+  -->
+  <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+    <param name="path" value="${rep.home}/repository/index"/>
+  </SearchIndex>
+</Repository>

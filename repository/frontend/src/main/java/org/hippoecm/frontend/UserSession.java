@@ -23,6 +23,7 @@ import org.apache.wicket.Request;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebSession;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.repository.HippoRepository;
 
 public class UserSession extends WebSession {
@@ -42,11 +43,30 @@ public class UserSession extends WebSession {
         return jcrSessionModel.getSession();
     }
 
+    public void setCredentials(ValueMap credentials) {
+        jcrSessionModel.setCredentials(credentials);
+    }
+    
+    public ValueMap getCredentials() {
+        return jcrSessionModel.getCredentials();
+    }
+
     private class JcrSessionModel extends LoadableDetachableModel {
         // The jcr session is wrapped in a LoadableDetachableModel because it can't be serialized
         // and therefore cannot be a direct field of the wicket session. Wrapping the jcr session
         // like this has the added bonus of being a very simple reconnect mechanism.  
         private static final long serialVersionUID = 1L;
+
+        private ValueMap credentials = new ValueMap();
+
+        void setCredentials(ValueMap credentials) {
+            this.credentials = credentials;
+            detach();
+        }
+        
+        ValueMap getCredentials() {
+            return credentials;
+        }
 
         Session getSession() {
             // detach if anything is wrong with the jcr session
@@ -66,10 +86,17 @@ public class UserSession extends WebSession {
             try {
                 Main main = (Main) Application.get();
                 HippoRepository repository = main.getRepository();
-                //TODO: add login dialog
-                result = repository.login("systemuser", "systempass".toCharArray());
+                String username = credentials.getString("username");
+                String password = credentials.getString("password");
+                
+                if (username == null || password == null) {
+                    result = repository.login();
+                } else {
+                    result = repository.login(username, password.toCharArray());
+                }
             } catch (RepositoryException e) {
                 System.err.println("Failed to connect to repository.");
+                credentials.clear();
             }
             return result;
         }

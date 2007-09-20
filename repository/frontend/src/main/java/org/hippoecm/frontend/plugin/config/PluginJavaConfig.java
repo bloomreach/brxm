@@ -33,14 +33,14 @@ public class PluginJavaConfig implements PluginConfig {
     public List getChildren(PluginDescriptor pluginDescriptor) {
         List result = new ArrayList();
         if (pluginDescriptor.getPath().endsWith(":rootPlugin")) {
-            result.add(new PluginDescriptor("0:rootPlugin:navigationPlugin",
-                    "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin"));
-            result.add(new PluginDescriptor("0:rootPlugin:menuPlugin",
-                    "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin"));
-            result.add(new PluginDescriptor("0:rootPlugin:contentPlugin",
-                    "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin"));
-            result.add(new PluginDescriptor("0:rootPlugin:workflowPlugin",
-                    "org.hippoecm.frontend.plugin.empty.EmptyPlugin"));
+            result.add(new PluginDescriptor("0:rootPlugin:navigationPlugin", "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin"));
+            result.add(new PluginDescriptor("0:rootPlugin:menuPlugin",       "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin"));
+            result.add(new PluginDescriptor("0:rootPlugin:contentPlugin",    "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin"));
+            result.add(new PluginDescriptor("0:rootPlugin:workflowPlugin",   "org.hippoecm.frontend.plugin.empty.EmptyPlugin"));
+            
+        } else if (pluginDescriptor.getPath().endsWith(":menuPlugin")) {
+            result.add(new PluginDescriptor("0:rootPlugin:menuPlugin:loginPlugin",   "org.hippoecm.frontend.plugins.admin.login.LoginPlugin"));
+
         }
         return result;
     }
