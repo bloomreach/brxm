@@ -29,6 +29,7 @@
   </parent>
   
   <name>Hippo ECM frontend plugins</name>
+  <description>Hippo ECM frontend plugins</description>
   <artifactId>hippo-ecm-frontend-plugins</artifactId>
   <packaging>jar</packaging>
   
