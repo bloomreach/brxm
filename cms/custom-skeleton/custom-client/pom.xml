@@ -42,7 +42,7 @@
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-repository-2-webapp</artifactId>
+      <artifactId>hippo-ecm-frontend-application</artifactId>
       <version>2.01.00-dev</version>
       <type>war</type>
     </dependency>

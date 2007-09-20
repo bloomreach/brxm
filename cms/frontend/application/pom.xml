@@ -18,31 +18,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  
+
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-repository-2</artifactId>
+    <artifactId>hippo-ecm-frontend</artifactId>
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
-  
-  <name>Hippo Repository 2 Frontend plugins</name>
-  <artifactId>hippo-repository-2-plugins</artifactId>
-  <packaging>jar</packaging>
+
+  <name>Hippo ECM minimal frontend</name>
+  <description>Hippo ECM minimal frontend application</description>
+  <artifactId>hippo-ecm-frontend-application</artifactId>
+  <packaging>war</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/plugins</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/plugins</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/plugins</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend/application</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend/application</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend/application</url>
   </scm>
-  
-  <properties>
-    <!--1.3.0-incubating-SNAPSHOT == head of wicket-1.3-portlet-support branch-->
-    <wicket.version>1.3.0-incubating-SNAPSHOT</wicket.version>
-  </properties>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -57,52 +53,31 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-repository-2-frontend</artifactId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>2.01.00-dev</version>
     </dependency>
-    
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>test</scope>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-plugins</artifactId>
+      <version>2.01.00-dev</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>    
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
-  
+
   <build>
     <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
-        </includes>
-      </resource>
-    </resources>
     <testResources>
       <testResource>
         <filtering>false</filtering>
-        <directory>${basedir}/src/test/java</directory>
+        <directory>${basedir}/test/java</directory>
         <includes>
           <include>**</include>
         </includes>
@@ -111,26 +86,25 @@
         </excludes>
       </testResource>
     </testResources>
-    <plugins> 
+    <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
         <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>history.points</name>
-              <value>${history.points}</value>
-            </property>
-          </systemProperties>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8082</port>
+            </connector>
+          </connectors>
+          <contextPath>/</contextPath>
         </configuration>
       </plugin>
     </plugins>
   </build>
   
   <reporting>
-    <outputDirectory>../target/site/hippo-repository-2-plugins</outputDirectory>
+    <outputDirectory>../target/site/hippo-ecm-frontend-application</outputDirectory>
   </reporting> 
   
 </project>
