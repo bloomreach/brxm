@@ -23,21 +23,21 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-repository-2</artifactId>
+    <artifactId>hippo-ecm-repository</artifactId>
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo Repository 2 Core</name>
-  <description>Hippo Repository 2 Core module</description>
+  <name>Hippo ECM Engine</name>
+  <description>Hippo ECM Engine</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-repository-2-core</artifactId>
+  <artifactId>hippo-ecm-repository-engine</artifactId>
   <version>2.01.00-dev</version>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/core</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/core</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/core</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/repository/engine</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/repository/engine</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/repository/engine</url>
   </scm>
   
   <properties>
@@ -454,7 +454,7 @@
   </build>
   
   <reporting>
-    <outputDirectory>../target/site/hippo-repository-2-core</outputDirectory>
+    <outputDirectory>../target/site/hippo-ecm-repository-engine</outputDirectory>
   </reporting>  
 
 </project>
