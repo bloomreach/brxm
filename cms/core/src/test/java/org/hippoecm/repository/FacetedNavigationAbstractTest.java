@@ -54,9 +54,9 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     private final static int defaultNumDocs = 20;
     protected int numDocs = -1;
 
+    protected HippoRepository server;
+    protected Session session;
     private String[] nodeNames;
-    private HippoRepository server;
-    private Session session;
     private boolean verbose = false;
     private Map<Integer,Document> documents;
 
@@ -190,13 +190,13 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         assertEquals("counted and reference mismatch on "+facetPath, checkedCount, realCount);
     }
 
-    public void setUp() throws RepositoryException, IOException {
+    public void setUp() throws Exception {
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         session.getRootNode().addNode("navigation");
     }
 
-    public void tearDown() throws RepositoryException {
+    public void tearDown() throws Exception {
         if(session.getRootNode().hasNode("navigation")) {
             session.getRootNode().getNode("navigation").remove();
         }
