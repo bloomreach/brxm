@@ -34,9 +34,9 @@
   <packaging>jar</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend/engine</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend/engine</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend/engine</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/frontend/engine</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/frontend/engine</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/frontend/engine</url>
   </scm>
   
   <properties>

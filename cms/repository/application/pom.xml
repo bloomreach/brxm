@@ -34,9 +34,9 @@
   <packaging>war</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/repository/application</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/repository/application</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/repository/application</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/application</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/application</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/application</url>
   </scm>
 
   <repositories>

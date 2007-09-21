@@ -31,9 +31,9 @@
   <artifactId>hippo-ecm-documentation</artifactId>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/documentation</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/documentation</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/documentation</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/documentation</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/documentation</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/documentation</url>
   </scm>
   
   <reporting>

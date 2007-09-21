@@ -41,7 +41,7 @@ hippo-ecm-repository-engine
 => Jar project, core implementation of the repository
 
 hippo-ecm-repository-application
-=> War project, minimal empty repository
+=> War project, a minimal empty repository application
 
 
 
@@ -62,37 +62,11 @@ hippo-ecm-frontend-plugins
 => Jar project, core frontend plugins
 
 hippo-ecm-frontend-application
-=> War project, minimal client application
+=> War project, a minimal frontend application
    => starts embedded repository
    => uses hardcoded frontend plugin configuration 
    => portal configuration
    => wicket configuration
-
-
-
-===============ADDONS===================
-
-|-- addon                    hippo-ecm-addon
-|   |-- reviewed-action      hippo-ecm-addon-reviewed-action
-|   |   |-- common           hippo-ecm-addon-reviewed-action-common
-|   |   |-- frontend         hippo-ecm-addon-reviewed-action-frontend
-|   |   `-- repository       hippo-ecm-addon-reviewed-action-repository
-
-hippo-ecm-addon
-=> Pom project, bundles all addons
-
-hippo-ecm-addon-reviewed-action
-=> Pom project, bundles the reviewed-action addon
-
-hippo-ecm-addon-reviewed-action-repository
-=> Jar project, contains the repository-only part of the 'reviewed-action' addon
-
-hippo-ecm-addon-reviewed-action-frontend
-=> Jar project, contains the frontend-only part of the 'reviewed-action' addon
-
-hippo-ecm-addon-reviewed-action-common
-=> Jar project, contains the common part of the 'reviewed-action' addon
-
 
 
 ===============Default application===================
@@ -120,7 +94,30 @@ hippo-ecm-application-default-repository
    => adds default user configuration (bootstrap import of repository export file under /configuration/users/)
    => adds any other site-specific configuration (web.xml, log4j.xml etc.)
    
-   
+
+===============ADDONS===================
+
+|-- addon                    hippo-ecm-addon
+|   |-- reviewed-action      hippo-ecm-addon-reviewed-action
+|   |   |-- common           hippo-ecm-addon-reviewed-action-common
+|   |   |-- frontend         hippo-ecm-addon-reviewed-action-frontend
+|   |   `-- repository       hippo-ecm-addon-reviewed-action-repository
+
+hippo-ecm-addon
+=> Pom project, bundles all addons
+
+hippo-ecm-addon-reviewed-action
+=> Pom project, bundles the reviewed-action addon
+
+hippo-ecm-addon-reviewed-action-repository
+=> Jar project, contains the repository-only part of the reviewed-action addon
+
+hippo-ecm-addon-reviewed-action-frontend
+=> Jar project, contains the frontend-only part of the reviewed-action addon
+
+hippo-ecm-addon-reviewed-action-common
+=> Jar project, contains the common part of the reviewed-action addon
+
 
 ===============Demo application===================
 

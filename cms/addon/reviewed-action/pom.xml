@@ -34,9 +34,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/addon/reviewed-action</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/addon/reviewed-action</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/addon/reviewed-action</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action</url>
   </scm>
 
   <modules>

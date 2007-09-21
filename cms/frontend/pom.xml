@@ -34,9 +34,9 @@
   <packaging>pom</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/frontend</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/frontend</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/frontend</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/frontend</url>
   </scm>
   
   <modules>
