@@ -40,8 +40,13 @@ import org.apache.jackrabbit.name.NoPrefixDeclaredException;
 import org.apache.jackrabbit.name.QName;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServicingNodeIndexer extends NodeIndexer{
+   
+    /** The logger instance for this class */
+    private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
 
     /**
      * The indexing configuration or <code>null</code> if none is available.
@@ -64,7 +69,7 @@ public class ServicingNodeIndexer extends NodeIndexer{
     protected Document createDoc() throws RepositoryException {
         // index the jackrabbit way
         Document doc = super.createDoc();
-       
+
         // plus index our facet specifics 
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
@@ -73,8 +78,13 @@ public class ServicingNodeIndexer extends NodeIndexer{
             try {
                 PropertyState propState = (PropertyState) stateProvider.getItemState(id);
                 InternalValue[] values = propState.getValues();
-                for (int i = 0; i < values.length; i++) {
-                    addValue(doc, values[i], propState.getName());
+                if(isHippoPath(propName)){
+                    indexPath(doc,values,propState.getName());
+                } 
+                if(isFacet(propName)){
+                    for (int i = 0; i < values.length; i++) {
+                        addValue(doc, values[i], propState.getName());
+                    }
                 }
             } catch (NoSuchItemStateException e) {
                 throwRepositoryException(e);
@@ -98,24 +108,16 @@ public class ServicingNodeIndexer extends NodeIndexer{
                 // never facet;
                 break;
             case PropertyType.BOOLEAN:
-                if (isFacet(name)) {
-                    indexFacet(doc,fieldName,value.toString());
-                }
+                indexFacet(doc,fieldName,value.toString());
                 break;
             case PropertyType.DATE:
-                if (isFacet(name)) {
-                    indexFacet(doc,fieldName,DateField.timeToString(((Calendar)((Object)value)).getTimeInMillis()));
-                }
+                indexFacet(doc,fieldName,DateField.timeToString(((Calendar)((Object)value)).getTimeInMillis()));
                 break;
             case PropertyType.DOUBLE:
-                if (isFacet(name)) {
-                    indexFacet(doc,fieldName,DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
-                }
+                indexFacet(doc,fieldName,DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
                 break;
             case PropertyType.LONG:
-                if (isFacet(name)) {
-                    indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));
-                }
+                indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));
                 break;
             case PropertyType.REFERENCE:
                 // never facet;
@@ -124,9 +126,7 @@ public class ServicingNodeIndexer extends NodeIndexer{
                 // never facet;
                 break;
             case PropertyType.STRING:
-                if (isFacet(name)) {
-                    indexFacet(doc,fieldName,value.toString());
-                }
+                indexFacet(doc,fieldName,value.toString());
                 break;
             case PropertyType.NAME:
                 // never facet;
@@ -141,14 +141,41 @@ public class ServicingNodeIndexer extends NodeIndexer{
         
         int idx = fieldName.indexOf(':');
         fieldName = fieldName.substring(0, idx + 1)
-                + ServicingFieldNames.FACET + fieldName.substring(idx + 1);
+                + ServicingFieldNames.HIPPO_FACET + fieldName.substring(idx + 1);
         doc.add(new Field(fieldName,
                 value,
                 Field.Store.NO,
                 Field.Index.NO_NORMS,
                 Field.TermVector.YES));
+    }
+    
+    private void indexPath(Document doc, InternalValue[] values, QName name) {
+        String deepestPath = "";
+        // index each level of the path for searching
+        for (int i = 0; i < values.length; i++) {
+            InternalValue value = values[i];
+            if(value.getType() == PropertyType.STRING){
+                doc.add(new Field(ServicingFieldNames.HIPPO_PATH,
+                        value.toString(),
+                        Field.Store.NO,
+                        Field.Index.NO_NORMS,
+                        Field.TermVector.NO));
+                if(value.toString().length() > deepestPath.length()){
+                    deepestPath = value.toString();
+                }
+            }
+        }
+        // plus store the deepest path for retrieval
+        doc.add(new Field(ServicingFieldNames.HIPPO_PATH,
+                deepestPath,
+                Field.Store.YES,
+                Field.Index.NO_NORMS,
+                Field.TermVector.NO));
         
-       
+        // make lexical sorting on depth possible. Max depth = 999;
+        String depth = String.valueOf(values.length);
+        depth="000".substring(depth.length()).concat(depth);
+        doc.add(new Field(ServicingFieldNames.HIPPO_DEPTH,depth,Field.Store.NO, Field.Index.NO_NORMS,Field.TermVector.NO));
     }
 
 
@@ -165,6 +192,22 @@ public class ServicingNodeIndexer extends NodeIndexer{
             return false;
         } else {
             return servicingIndexingConfig.isFacet(propertyName);
+        }
+    }
+    
+    /**
+     * Returns <code>true</code> if the property with the given name should be
+     * indexed as hippo path.
+     *
+     * @param propertyName name of a property.
+     * @return <code>true</code> if the property is a hippo path;
+     *         <code>false</code> otherwise.
+     */
+    protected boolean isHippoPath(QName propertyName) {
+        if (servicingIndexingConfig == null) {
+            return false;
+        } else {
+            return servicingIndexingConfig.isHippoPath(propertyName);
         }
     }
     

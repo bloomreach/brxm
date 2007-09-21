@@ -18,7 +18,7 @@ public class ServicingNameFormat {
         String internalName = NameFormat.format(nodeName,nsMappings);
         int idx = internalName.indexOf(':');
         internalName = internalName.substring(0, idx + 1)
-                + ServicingFieldNames.FACET + internalName.substring(idx + 1);
+                + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx + 1);
         return internalName;
     }
     
@@ -28,7 +28,7 @@ public class ServicingNameFormat {
         String internalName = NameFormat.format(nodeName,nsMappings);
         int idx = internalName.indexOf(':');
         internalName = internalName.substring(0, idx + 1)
-                + ServicingFieldNames.FACET + internalName.substring(idx + 1);
+                + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx + 1);
         return internalName;
     }
     

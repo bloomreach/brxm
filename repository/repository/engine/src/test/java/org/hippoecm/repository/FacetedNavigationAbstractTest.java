@@ -73,7 +73,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         for (int i=0; i<alphabet.length(); i++) {
             if(verbose)
                 System.out.println(("          ".substring(0,level))+nodeNames[i]);
-            Node child = node.addNode(nodeNames[i]);
+            Node child = node.addNode(nodeNames[i],HippoNodeType.NT_DOCUMENT);
             if (level-1 > 0) {
                 createStructure(child, level-1);
             }
@@ -103,7 +103,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
             Node child = node;
             for (int depth=0; depth<hierDepth; depth++)
                 child = child.getNode(nodeNames[rnd.nextInt(alphabet.length())]);
-            child = child.addNode(Integer.toString(docid));
+            child = child.addNode(Integer.toString(docid),HippoNodeType.NT_DOCUMENT);
             child.setProperty("docid",docid);
             if ((document.x = rnd.nextInt(3)) > 0) {
                 child.setProperty("x","x"+document.x);
@@ -198,12 +198,12 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
 
     public void tearDown() throws Exception {
         if(session.getRootNode().hasNode("navigation")) {
-            session.getRootNode().getNode("navigation").remove();
+           // session.getRootNode().getNode("navigation").remove();
         }
         if(session.getRootNode().hasNode("documents")) {
-            session.getRootNode().getNode("documents").remove();
+          //  session.getRootNode().getNode("documents").remove();
         }
-        session.save();
+       // session.save();
         if(session != null) {
             session.logout();
         }
