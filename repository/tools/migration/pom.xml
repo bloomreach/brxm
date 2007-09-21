@@ -29,9 +29,9 @@
   <description>Hippo ECM migration tool for importing documents from Hippo Repository 1.2</description>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/tools/migration</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/tools/migration</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk/tools/migration</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/migration</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/migration</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/migration</url>
   </scm>
   
   <build>

@@ -85,9 +85,9 @@
   </licenses>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-repository-2/trunk</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</url>
  </scm>
  
   <distributionManagement>
