@@ -89,6 +89,11 @@ public class UserSession extends WebSession {
                 String username = credentials.getString("username");
                 String password = credentials.getString("password");
                 
+                //EXTREMELY UGLY
+                //Temporary workaround until we have a proper login dialog
+                username = "systemuser";
+                password = "systempass";
+                
                 if (username == null || password == null) {
                     result = repository.login();
                 } else {
