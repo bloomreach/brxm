@@ -26,6 +26,7 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.name.NameFormat;
 import org.apache.jackrabbit.name.NamespaceResolver;
 import org.apache.jackrabbit.name.QName;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -49,6 +50,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     private Set facetProperties = new HashSet();
     
     /**
+     * QName Hippo Path qualified name
+     */
+    private QName hippoPath;
+    
+    /**
      * A namespace resolver for parsing QNames in the configuration.
      */
     private NamespaceResolver nsResolver;
@@ -66,18 +72,26 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                     Node propertyNode = propertyChildNodes.item(k);
                     if (propertyNode.getNodeName().equals("property")) {
                         // get property name
-                        QName propName = NameFormat.parse(getTextContent(propertyNode), nsResolver);
+                        QName propName = NameFormat.parse(getTextContent(propertyNode), nsResolver);     
                         facetProperties.add(propName);
                         log.debug("Added property '"+propName.getNamespaceURI()+":"+propName.getLocalName()+"' to be indexed as facet.");
                     }
                 }
             }
         }
+        hippoPath = NameFormat.parse(HippoNodeType.HIPPO_PATHS, nsResolver);
     }
 
     public boolean isFacet(QName propertyName) {
         if(facetProperties.contains(propertyName)){
           return true;  
+        }
+        return false;
+    }
+    
+    public boolean isHippoPath(QName propertyName) {
+        if(this.hippoPath.equals(propertyName)){
+            return true;
         }
         return false;
     }
@@ -116,4 +130,5 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         }
         return content.toString();
     }
+
 }

@@ -25,8 +25,17 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration{
      * according to this configuration.
      *
      * @param propertyName the QName of the property.
-     * @return <code>true</code> if the property is indexed; <code>false</code>
+     * @return <code>true</code> if the property is facet; <code>false</code>
      *         otherwise.
      */
     boolean isFacet(QName propertyName);
+    
+    /**
+     * Returns <code>true</code> if the property with the given name is a hippo path
+     *
+     * @param propertyName the QName of the property.
+     * @return <code>true</code> if the property is path; <code>false</code>
+     *         otherwise.
+     */
+    boolean isHippoPath(QName propertyName);
 }

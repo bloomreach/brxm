@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -23,7 +22,6 @@ public class FacetResultCollector extends HitCollector {
     private Set<String> hits;
     private Map<String,Count> facetMap;
     private FieldSelector fieldSelector; 
-    private HitsRequested hitsRequested;
     private int offset;
     private int limit;
     
@@ -37,11 +35,9 @@ public class FacetResultCollector extends HitCollector {
          }
          
         this.numhits = 0;
-        this.hitsRequested = hitsRequested;
         
         Set<String> fieldNames = new HashSet<String>();
-        // TODO UUID must become path
-        fieldNames.add(FieldNames.UUID);
+        fieldNames.add(ServicingFieldNames.HIPPO_PATH);
         this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet());
         
         if(hitsRequested.isResultRequested()) {
@@ -59,11 +55,9 @@ public class FacetResultCollector extends HitCollector {
     public final void collect(final int docid, final float score) {
         try {
             if(hits != null) {
-                if(offset == 0 && hits.size() < hitsRequested.getLimit() ) {
-                    
+                if(offset == 0 && hits.size() < limit ) {
                     Document d = reader.document(docid,fieldSelector);
-                    // TODO UUID must become path
-                    Field f = d.getField(FieldNames.UUID);
+                    Field f = d.getField(ServicingFieldNames.HIPPO_PATH);
                     if(f!=null){
                         hits.add(f.stringValue());
                     }
