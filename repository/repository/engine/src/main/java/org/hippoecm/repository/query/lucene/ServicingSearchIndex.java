@@ -15,16 +15,37 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import javax.jcr.RepositoryException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
+import javax.jcr.RepositoryException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
 import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.lucene.document.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class ServicingSearchIndex extends SearchIndex {
 
+    /** The logger instance for this class */
+    private static final Logger log = LoggerFactory.getLogger(ServicingSearchIndex.class);
+
+    /**
+     * The DOM with the indexing configuration or <code>null</code> if there
+     * is no such configuration.
+     */
+    private Element indexingConfiguration;
+    
     public ServicingSearchIndex() {
         super();
     }
@@ -36,6 +57,82 @@ public class ServicingSearchIndex extends SearchIndex {
      */
     public MultiIndex getIndex() {
         return super.getIndex();
+    }
+    
+    
+    /**
+     * Returns the document element of the indexing configuration or
+     * <code>null</code> if there is no indexing configuration.
+     *
+     * @return the indexing configuration or <code>null</code> if there is
+     *         none.
+     */
+    @Override
+    protected Element getIndexingConfigurationDOM() {
+       
+        String configName = this.getIndexingConfiguration();
+        if (indexingConfiguration != null) {
+            return indexingConfiguration;
+        }
+        if (configName == null) {
+            return null;
+        }
+        
+        InputSource configurationInputSource = null;
+        File config = null;
+        
+        if (!configName.startsWith("file:")) {
+            log.info("Using resource repository indexing_configuration: " + configName);
+            configurationInputSource = new InputSource(getIndexingConfigurationAsStream(configName));
+            if(configurationInputSource == null) {
+                log.warn("indexing configuration not found: " + getClass().getName() +"/"+ configName);
+            }
+        }
+        else {
+        // parse file name
+            if (configName.startsWith("file://")) {
+                configName = configName.substring(6);
+            } else if (configName.startsWith("file:/")) {
+                configName = configName.substring(5);
+            } else if (configName.startsWith("file:")) {
+                configName = "/" + configName.substring(5);
+            }
+            config = new File(configName);
+            log.info("Using indexing configuration: " + configName);
+            if (!config.exists()) {
+                log.warn("File does not exist: " + this.getIndexingConfiguration());
+                return null;
+            } else if (!config.canRead()) {
+                log.warn("Cannot read file: " + this.getIndexingConfiguration());
+                return null;
+            }
+        }
+    
+        try {
+            DocumentBuilderFactory factory =
+                    DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setEntityResolver(new IndexingConfigurationEntityResolver());
+            if(configurationInputSource != null){
+                indexingConfiguration = builder.parse(configurationInputSource).getDocumentElement();
+            } else if(config != null){
+                indexingConfiguration = builder.parse(config).getDocumentElement();
+            } else {
+                log.warn("indexing configuration not found: " + configName);
+            }
+            
+        } catch (ParserConfigurationException e) {
+            log.warn("Unable to create XML parser", e);
+        } catch (IOException e) {
+            log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
+        } catch (SAXException e) {
+            log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
+        } 
+        return indexingConfiguration;
+    }
+
+    private InputStream getIndexingConfigurationAsStream(String configName){
+        return getClass().getResourceAsStream(configName);
     }
     
     @Override

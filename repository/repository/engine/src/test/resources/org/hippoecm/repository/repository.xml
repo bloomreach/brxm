@@ -112,7 +112,7 @@
             Note: all parameters (except path) in this SearchIndex config are default
             values and can be omitted.
           -->
-          <param name="indexingConfiguration" value="${wsp.home}/indexing_configuration.xml"/>
+          <param name="indexingConfiguration" value="indexing_configuration.xml"/>
           <param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/>
           <param name="path" value="${wsp.home}/index"/>
           <param name="useCompoundFile" value="true"/>
