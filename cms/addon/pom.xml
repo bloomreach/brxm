@@ -41,6 +41,7 @@
 
   <modules>
     <module>reviewed-action</module>
+    <module>sample</module>
   </modules>
   
   <dependencyManagement>
