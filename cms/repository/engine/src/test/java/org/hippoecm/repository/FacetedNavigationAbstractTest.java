@@ -233,4 +233,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         tAfter = System.currentTimeMillis();
         commonEnd();
     }
+    
+    public boolean getVerbose(){
+        return verbose;
+    }
 }
