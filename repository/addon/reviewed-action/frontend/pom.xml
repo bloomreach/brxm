@@ -39,29 +39,17 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action/frontend</url>
   </scm> 
 
-  <repositories>
-    <repository>
-      <snapshots><enabled>true</enabled></snapshots>
-      <id>repository.hippocms.org</id>
-      <name>Hippo Repository for Maven2</name>
-      <url>http://repository.hippocms.org/maven2/</url>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <snapshots><enabled>true</enabled></snapshots>
-      <id>day.com</id>
-      <name>Day Repository for JCR</name>
-      <url>http://www.day.com/maven/</url>
-      <layout>legacy</layout>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
       <version>2.01.00-dev</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>2.01.00-dev</version>
+    </dependency>    
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
@@ -76,7 +64,17 @@
   </dependencies>
 
   <build>
-    <defaultGoal>install</defaultGoal>
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins> 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

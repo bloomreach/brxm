@@ -23,41 +23,26 @@
   
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm</artifactId>
+    <artifactId>hippo-ecm-application</artifactId>
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Applications</name>
-  <description>Hippo ECM applications</description>
-  <artifactId>hippo-ecm-application</artifactId>
+  <name>Reviewed action app</name>
+  <description>Hippo ECM reviewed action workflow demo application</description>
+  <artifactId>hippo-ecm-application-reviewed-action</artifactId>
   <packaging>pom</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/application</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/application</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/application</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/application/reviewed-action</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/application/reviewed-action</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/application/reviewed-action</url>
   </scm>
   
   <modules>
-    <module>default</module>
-    <module>reviewed-action</module>
+    <module>frontend</module>
+    <module>repository</module>
   </modules>
-  
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-        <version>1.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>1.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   
   <build>
     <defaultGoal>package</defaultGoal>
@@ -80,7 +65,7 @@
   </build>
   
   <reporting>
-    <outputDirectory>../target/site/hippo-ecm-application</outputDirectory>
+    <outputDirectory>../target/site/hippo-ecm-application-reviewed-action</outputDirectory>
   </reporting>
   
 </project>

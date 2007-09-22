@@ -86,7 +86,7 @@
   </dependencies>
 
   <build>
-    <defaultGoal>install</defaultGoal>
+    <defaultGoal>package</defaultGoal>
     <pluginManagement>
       <plugins>
         <plugin>
