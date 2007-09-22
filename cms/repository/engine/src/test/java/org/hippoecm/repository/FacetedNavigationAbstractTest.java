@@ -198,12 +198,12 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
 
     public void tearDown() throws Exception {
         if(session.getRootNode().hasNode("navigation")) {
-           // session.getRootNode().getNode("navigation").remove();
+            session.getRootNode().getNode("navigation").remove();
         }
         if(session.getRootNode().hasNode("documents")) {
-          //  session.getRootNode().getNode("documents").remove();
+            session.getRootNode().getNode("documents").remove();
         }
-       // session.save();
+        session.save();
         if(session != null) {
             session.logout();
         }
