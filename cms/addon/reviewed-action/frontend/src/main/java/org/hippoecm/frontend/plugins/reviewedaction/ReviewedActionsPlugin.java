@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.workflow.reviewedactions;
+package org.hippoecm.frontend.plugins.reviewedaction;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 
-public class ReviewedActionsWorkflowPlugin extends Plugin {
+public class ReviewedActionsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public ReviewedActionsWorkflowPlugin(String id, JcrNodeModel model) {
+    public ReviewedActionsPlugin(String id, JcrNodeModel model) {
         super(id, model);
     }
 
