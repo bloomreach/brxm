@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -50,9 +51,39 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
             count = node.getNode("x1").getNode("y2").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET)
                     .getProperty(HippoNodeType.HIPPO_COUNT).getLong();
             tAfter = System.currentTimeMillis();
-
             historyWriter.write("FacetedNavigationPerfTest" + numDocs, Long.toString(tAfter - tBefore), "ms");
         }
         commonEnd();
     }
+    
+    public void testFullFacetedNavigationTraversal() throws RepositoryException, IOException {
+        numDocs = 0;
+        long tBefore, tAfter;
+        
+        Node node = commonStart();
+        
+        tBefore = System.currentTimeMillis();
+        facetedNavigationNodeTraversal(node,1 , node.getDepth() + 10);
+        tAfter = System.currentTimeMillis();
+
+        historyWriter.write("FullFacetedNavigationTraversal" + numDocs, Long.toString(tAfter - tBefore), "ms");
+        commonEnd();
+    }
+
+    private void facetedNavigationNodeTraversal(Node node, int indent, int depth) throws RepositoryException {
+        String s = "                                   ";
+        Iterator nodeIterator = node.getNodes();
+        while(nodeIterator.hasNext()){
+            Node childNode = (Node)nodeIterator.next();
+            if( childNode.hasProperty("hippo:count") && !childNode.getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
+                if(this.getVerbose()){
+                    System.out.println(s.substring(0, Math.min(indent,s.length())) + childNode.getName() + " ("+childNode.getProperty("hippo:count").getString() +")");
+                }
+            }
+            if(childNode.getDepth() <= depth && !childNode.getName().equals(HippoNodeType.HIPPO_RESULTSET)){
+                facetedNavigationNodeTraversal(childNode, indent + 6, depth);
+            } 
+        }
+    }
+    
 }
