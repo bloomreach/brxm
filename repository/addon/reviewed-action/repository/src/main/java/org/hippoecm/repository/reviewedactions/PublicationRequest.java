@@ -24,16 +24,18 @@ package org.hippoecm.repository.reviewedactions;
 import org.hippoecm.repository.api.Document;
 
 public class PublicationRequest extends Document {
-    final public String REJECTED = "rejected"; // zombie
-    final public String PUBLISH = "publish";
-    final public String DEPUBLISH = "depublish";
-    final public String DELETE = "delete";
+    final public static String REJECTED = "rejected"; // zombie
+    final public static String PUBLISH = "publish";
+    final public static String DEPUBLISH = "depublish";
+    final public static String DELETE = "delete";
     public String type;
-    public String username;
     public String reason;
-    public PublicationRequest(String type, String username) {
+    public String username;
+    public ReviewedActionsWorkflowImpl document;
+    public PublicationRequest(String type, PublishableDocument document, String username) {
         this.username = username;
         this.type = type;
         reason = "";
+        document = null;
     }
 }

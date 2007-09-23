@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -24,6 +18,9 @@ package org.hippoecm.repository.servicing;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -51,99 +48,111 @@ import org.hippoecm.repository.pojo.StoreManagerImpl;
 public class DocumentManagerImpl
   implements DocumentManager
 {
-  Session session;
-  String configuration;
-  PersistenceManagerFactory pmf;
-  StoreManagerImpl sm;
-  PersistenceManager pm;
-  public DocumentManagerImpl(Session session) {
-    this.session = session;
-    try {
-      configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH+"/"+HippoNodeType.HIPPO_DOCUMENTS).getUUID();
-    } catch(RepositoryException ex) {
-      System.err.println("RepositoryException: "+ex.getMessage());
-      ex.printStackTrace(System.err);
+    private final Logger log = LoggerFactory.getLogger(DocumentManagerImpl.class);
+
+    Session session;
+    String configuration;
+    PersistenceManagerFactory pmf;
+    StoreManagerImpl sm;
+    PersistenceManager pm;
+
+    public DocumentManagerImpl(Session session) {
+        this.session = session;
+        try {
+            configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
+                                                          HippoNodeType.DOCUMENTS_PATH).getUUID();
+        } catch(RepositoryException ex) {
+            log.error("document manager configuration failed: "+ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
+        try {
+            Properties properties = new Properties();
+            InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
+            properties.load(istream);
+            properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
+            pmf = JDOHelper.getPersistenceManagerFactory(properties);
+            pm = null;
+            sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
+            sm.setSession(session);
+        } catch(IOException ex) {
+            log.error("failed to initialize JDO layer: "+ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
     }
-    try {
-      Properties properties = new Properties();
-      InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
-      properties.load(istream);
-      properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
-      pmf = JDOHelper.getPersistenceManagerFactory(properties);
-      pm = null;
-      sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
-      sm.setSession(session);
-    } catch(IOException ex) {
-      System.err.println("IOException: "+ex.getMessage());
-      ex.printStackTrace(System.err);
+
+    public Object getObject(String uuid, String classname, Node types) {
+        Object obj = null;
+        if(pm == null) {
+            pm = pmf.getPersistenceManager();
+        }
+        if(types != null) {
+            sm.setTypes(types);
+        }
+        try {
+            obj = pm.getObjectById(new JCROID(uuid, classname));
+        } finally {
+            sm.setTypes(null);
+        }    
+        return obj;
     }
-  }
-  public Object getObject(String uuid, String classname, Node types) {
-    Object obj = null;
-    if(pm == null) {
-      pm = pmf.getPersistenceManager();
+
+    public void putObject(String uuid, Node types, Object object) {
+        if(pm == null) {
+            pm = pmf.getPersistenceManager();
+        }
+        if(types != null) {
+            sm.setTypes(types);
+        }
+        Transaction tx = pm.currentTransaction();
+        tx.setNontransactionalRead(true);
+        tx.setNontransactionalWrite(true);
+        boolean transactional = true;
+        if(transactional && !tx.isActive()) {
+            try {
+                tx.begin();
+                pm.makePersistent(object);
+                tx.commit();
+            } finally {
+                if(tx.isActive())
+                    tx.rollback();
+            }
+        } else {
+            pm.makePersistent(object);
+        }
     }
-    if(types != null)
-      sm.setTypes(types);
-    try {
-      obj = pm.getObjectById(new JCROID(uuid, classname));
-    } finally {
-      sm.setTypes(null);
-    }    
-    return obj;
-  }
-  public void putObject(String uuid, Node types, Object object) {
-    if(pm == null) {
-      pm = pmf.getPersistenceManager();
+
+    public Document getDocument(String category, String identifier) throws RepositoryException {
+        try {
+            Node queryNode = session.getNodeByUUID(configuration).getNode(category);
+            String queryLanguage = queryNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+            String queryString = queryNode.getProperty(HippoNodeType.HIPPO_QUERY).getString();
+            queryString = queryString.replace("?", identifier);
+            Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
+            QueryResult result = query.execute();
+            NodeIterator iter = result.getNodes();
+            if(iter.hasNext()) {
+                Node resultNode = iter.nextNode();
+                String uuid = resultNode.getUUID();
+                return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
+                                            queryNode.getNode(HippoNodeType.NT_TYPES));
+            } else {
+                return null;
+            }
+        } catch(javax.jdo.JDODataStoreException ex) {
+            System.err.println("JDODataStoreException: "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            return null;
+        } catch(UnsupportedRepositoryOperationException ex) {
+            System.err.println("UnsupportedRepositoryOperationException: "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            return null;
+        } catch(PathNotFoundException ex) {
+            System.err.println("PathNotFoundException: "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            /* getDocument cannot and should not be used to create documents.
+             * null is a valid way to check whether the document looked for exist.
+             */
+            return null;
+        }
     }
-    Transaction tx = pm.currentTransaction();
-    tx.setNontransactionalRead(true);
-    tx.setNontransactionalWrite(true);
-    boolean transactional = true;
-    if(transactional && !tx.isActive()) {
-      try {
-        tx.begin();
-        pm.makePersistent(object);
-        tx.commit();
-      } finally {
-        if(tx.isActive())
-          tx.rollback();
-      }
-    } else {
-      pm.makePersistent(object);
-    }
-  }
-  public Document getDocument(String category, String identifier) throws RepositoryException {
-    try {
-      Node queryNode = session.getNodeByUUID(configuration).getNode(category);
-      String queryLanguage = queryNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-      String queryString = queryNode.getProperty(HippoNodeType.HIPPO_QUERY).getString();
-      queryString = queryString.replace("?", identifier);
-      Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
-      QueryResult result = query.execute();
-      NodeIterator iter = result.getNodes();
-      if(iter.hasNext()) {
-        Node resultNode = iter.nextNode();
-        String uuid = resultNode.getUUID();
-        return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(), queryNode.getNode(HippoNodeType.NT_TYPES));
-      } else {
-        return null;
-      }
-    } catch(javax.jdo.JDODataStoreException ex) {
-      System.err.println("JDODataStoreException: "+ex.getMessage());
-      ex.printStackTrace(System.err);
-      return null;
-    } catch(UnsupportedRepositoryOperationException ex) {
-      System.err.println("UnsupportedRepositoryOperationException: "+ex.getMessage());
-      ex.printStackTrace(System.err);
-      return null;
-    } catch(PathNotFoundException ex) {
-      System.err.println("PathNotFoundException: "+ex.getMessage());
-      ex.printStackTrace(System.err);
-      /* getDocument cannot and should not be used to create documents.
-       * null is a valid way to check whether the document looked for exist.
-       */
-      return null;
-    }
-  }
 }

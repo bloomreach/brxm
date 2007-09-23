@@ -33,91 +33,108 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 
 public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements ReviewedActionsWorkflow {
-    PublicationRequest request;
-    PublishableDocument published;
-    PublishableDocument current;
-    PublishableDocument editing;
+    public String a; // FIXME: workaround for current mapping issues
+    public String content;
+    String username;
+    public PublicationRequest current;
+    public PublishableDocument published;
+    public PublishableDocument unpublished;
+    public PublishableDocument draft;
 
     public ReviewedActionsWorkflowImpl() throws RemoteException {
     }
     public void obtainEditableInstance() throws WorkflowException {
-        if(editing == null) {
+        System.err.println("obtain editable instance on document "+a);
+        if(draft == null) {
             try {
-                editing = (PublishableDocument) current.clone();
+                draft = (PublishableDocument) unpublished.clone();
+                draft.state = PublishableDocument.DRAFT;
             } catch(CloneNotSupportedException ex) {
                 throw new WorkflowException("document is not a publishable document");
             }
         } else {
+            if(!getWorkflowContext().getUsername().equals(username))
             throw new WorkflowException("document already being edited");
         }
     }
 
     public void disposeEditableInstance() throws WorkflowException {
-        editing = null;
+        System.err.println("dispose editable instance on document "+a);
+        draft = null;
     }
 
     public void delete() throws WorkflowException {
-        if(request != null)
+        System.err.println("deletion on document "+a);
+        if(current != null)
             throw new WorkflowException("cannot delete document with pending publication request");
-        current = editing = null;
+        unpublished = draft = null;
     }
 
     public void requestDeletion() throws WorkflowException {
-        if(request == null) {
-            request = new PublicationRequest(request.DELETE, getWorkflowContext().getUsername());
+        System.err.println("deletion request on document "+a);
+        if(current == null) {
+            current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUsername());
         } else {
             throw new WorkflowException("publication request already pending");
         }            
     }
 
     public void publish() throws WorkflowException, WorkflowMappingException {
+        System.err.println("publication on document "+a);
         try {
-            if(editing != null) {
-                published = (PublishableDocument) editing.clone();
+            if(draft != null) {
+                published = (PublishableDocument) draft.clone();
             } else {
-                published = (PublishableDocument) current.clone();
+                published = (PublishableDocument) unpublished.clone();
             }
         } catch(CloneNotSupportedException ex) {
             throw new WorkflowException("document is not a publishable document");
         }
-        published.state = published.PUBLISHED;
+        published.state = PublishableDocument.PUBLISHED;
     }
 
     public void publish(Date publicationDate) throws WorkflowException {
+        System.err.println("publication on document "+a);
         throw new WorkflowException("unsupported");
     }
 
     public void publish(Date publicationDate, Date depublicationDate) throws WorkflowException {
+        System.err.println("publication on document "+a);
         throw new WorkflowException("unsupported");
     }
 
     public void requestPublication() throws WorkflowException {
-        if(request == null) {
-            request = new PublicationRequest(request.PUBLISH, getWorkflowContext().getUsername());
+        System.err.println("publication request on document "+a);
+        if(current == null) {
+            current = new PublicationRequest(PublicationRequest.PUBLISH, draft, getWorkflowContext().getUsername());
         } else {
             throw new WorkflowException("publication request already pending");
         }
     }
 
     public void requestPublication(Date publicationDate) throws WorkflowException {
-        if(request == null) {
-            request = new PublicationRequest(request.PUBLISH, getWorkflowContext().getUsername());
+        System.err.println("publication request on document "+a);
+        if(current == null) {
+            current = new PublicationRequest(PublicationRequest.PUBLISH, draft, getWorkflowContext().getUsername());
         } else {
             throw new WorkflowException("publication request already pending");
         }
     }
 
     public void requestPublication(Date publicationDate, Date depublicationDate) throws WorkflowException {
+        System.err.println("publication request on document "+a);
         throw new WorkflowException("unsupported");
     }
 
     public void depublish() throws WorkflowException {
+        System.err.println("depublication on document "+a);
         published = null;
     }
 
     public void requestDepublication() throws WorkflowException {
-        if(request == null) {
-            request = new PublicationRequest(request.DEPUBLISH, getWorkflowContext().getUsername());
+        System.err.println("depublication request on document "+a);
+        if(current == null) {
+            current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUsername());
         } else {
             throw new WorkflowException("publication request already pending");
         }
@@ -125,5 +142,10 @@ public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements Reviewe
 
     public void requestDepublication(Date publicationDate) throws WorkflowException {
         throw new WorkflowException("Unsupported operation");
+    }
+
+    public void post() throws RepositoryException {
+        System.err.println("request performed on workflow "+a);
+        super.post();
     }
 }
