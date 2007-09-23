@@ -15,8 +15,8 @@
  */
 package org.hippoecm.repository.api;
 
-import org.hippoecm.repository.servicing.Service;
+import java.io.Serializable;
+import java.rmi.Remote;
 
-public interface Workflow extends Service
-{
+public interface Workflow extends Remote, Serializable {
 }

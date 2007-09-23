@@ -126,9 +126,9 @@ public class HippoRepositoryServer extends LocalHippoRepository {
                 server = new HippoRepositoryServer(args.length > 0 ? args[0] : ".");
             else
                 server = new HippoRepositoryServer();
-	    if(args.length > 1)
+            if(args.length > 1)
               server.run(args[1], false);
-	    else
+            else
               server.run(false);
             server.close();
         } catch (RemoteException ex) {

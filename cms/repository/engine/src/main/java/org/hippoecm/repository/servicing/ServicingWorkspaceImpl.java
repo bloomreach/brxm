@@ -42,7 +42,6 @@ import org.xml.sax.ContentHandler;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.workflow.WorkflowManagerImpl;
 
 /**
  * Simple workspace decorator.
@@ -53,7 +52,6 @@ public class ServicingWorkspaceImpl extends AbstractDecorator implements HippoWo
     /** The underlying workspace instance. */
     protected final Workspace workspace;
     protected DocumentManager documentManager;
-    protected ServicesManager servicesManager;
     protected WorkflowManager workflowManager;
 
     /**
@@ -67,7 +65,6 @@ public class ServicingWorkspaceImpl extends AbstractDecorator implements HippoWo
         super(factory, session);
         this.workspace = workspace;
         documentManager = null;
-        servicesManager = null;
         workflowManager = null;
     }
 
@@ -137,21 +134,14 @@ public class ServicingWorkspaceImpl extends AbstractDecorator implements HippoWo
         return factory.getQueryManagerDecorator(session, workspace.getQueryManager());
     }
 
-    public synchronized DocumentManager getDocumentManager() throws RepositoryException {
+    public DocumentManager getDocumentManager() throws RepositoryException {
         if (documentManager == null) {
             documentManager = new DocumentManagerImpl(session);
         }
         return documentManager;
     }
 
-    public synchronized ServicesManager getServicesManager() throws RepositoryException {
-        if (servicesManager == null) {
-            servicesManager = new ServicesManagerImpl(session);
-        }
-        return servicesManager;
-    }
-
-    public synchronized WorkflowManager getWorkflowManager() throws RepositoryException {
+    public WorkflowManager getWorkflowManager() throws RepositoryException {
         if (workflowManager == null) {
             workflowManager = new WorkflowManagerImpl(session);
         }

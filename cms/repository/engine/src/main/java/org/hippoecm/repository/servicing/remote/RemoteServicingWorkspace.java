@@ -23,6 +23,5 @@ import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 
 public interface RemoteServicingWorkspace extends RemoteWorkspace {
     public RemoteDocumentManager getDocumentManager() throws RepositoryException, RemoteException;
-    public RemoteServicesManager getServicesManager() throws RepositoryException, RemoteException;
     public RemoteWorkflowManager getWorkflowManager() throws RepositoryException, RemoteException;
 }

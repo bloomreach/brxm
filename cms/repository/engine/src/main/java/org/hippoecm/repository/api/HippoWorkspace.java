@@ -18,16 +18,9 @@ package org.hippoecm.repository.api;
 import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
 
-import org.hippoecm.repository.servicing.ServicesManager;
-
 public interface HippoWorkspace extends Workspace {
 
     public DocumentManager getDocumentManager() throws RepositoryException;
-
-    /**
-     * @deprecated
-     */
-    public ServicesManager getServicesManager() throws RepositoryException;
 
     public WorkflowManager getWorkflowManager() throws RepositoryException;
 

@@ -23,10 +23,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
-import org.hippoecm.repository.servicing.Service;
-
 public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
-    public Service getService() throws RepositoryException, RemoteException;
-
     public String getDisplayName() throws RepositoryException, RemoteException;
 }

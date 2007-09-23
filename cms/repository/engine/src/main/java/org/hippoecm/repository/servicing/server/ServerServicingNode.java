@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerNode;
 
-import org.hippoecm.repository.servicing.Service;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
 import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
@@ -32,10 +31,6 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
     public ServerServicingNode(ServicingNodeImpl node, RemoteServicingAdapterFactory factory) throws RemoteException {
         super(node, factory);
         this.node = node;
-    }
-
-    public Service getService() throws RepositoryException, RemoteException {
-        return node.getService();
     }
 
     public String getDisplayName() throws RepositoryException, RemoteException {

@@ -26,10 +26,8 @@ import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.servicing.ServicesManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
-import org.hippoecm.repository.servicing.remote.RemoteServicesManager;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ClientServicingWorkspace extends ClientWorkspace implements HippoWorkspace {
@@ -47,15 +45,6 @@ public class ClientServicingWorkspace extends ClientWorkspace implements HippoWo
         try {
             RemoteDocumentManager manager = remote.getDocumentManager();
             return ((LocalServicingAdapterFactory) getFactory()).getDocumentManager(session, manager);
-        } catch (RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
-    }
-
-    public ServicesManager getServicesManager() throws RepositoryException {
-        try {
-            RemoteServicesManager manager = remote.getServicesManager();
-            return ((LocalServicingAdapterFactory) getFactory()).getServicesManager(session, manager);
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }

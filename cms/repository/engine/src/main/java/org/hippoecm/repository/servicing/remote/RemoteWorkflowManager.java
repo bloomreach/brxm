@@ -24,7 +24,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public interface RemoteWorkflowManager extends Remote {
-    public WorkflowDescriptor getWorkflowDescriptor(String category, String node) throws RepositoryException, RemoteException;
-    public Workflow getWorkflow(String category, String node) throws RepositoryException, RemoteException;
+    public WorkflowDescriptor getWorkflowDescriptor(String category, String absPath) throws RepositoryException, RemoteException;
+    public Workflow getWorkflow(String category, String absPath) throws RepositoryException, RemoteException;
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException, RemoteException;
 }

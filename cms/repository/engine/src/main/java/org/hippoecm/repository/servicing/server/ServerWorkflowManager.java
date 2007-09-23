@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -34,9 +28,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
 
-public class ServerWorkflowManager extends ServerObject
-  implements RemoteWorkflowManager
-{
+public class ServerWorkflowManager extends ServerObject implements RemoteWorkflowManager {
   private WorkflowManager workflowManager;
 
   public ServerWorkflowManager(WorkflowManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
@@ -53,7 +45,6 @@ public class ServerWorkflowManager extends ServerObject
     } catch(RepositoryException ex) {
       throw getRepositoryException(ex);
     }
-
   }
 
   public Workflow getWorkflow(String category, String absPath)
