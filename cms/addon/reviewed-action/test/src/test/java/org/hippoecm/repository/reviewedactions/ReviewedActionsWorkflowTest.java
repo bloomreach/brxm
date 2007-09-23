@@ -48,6 +48,8 @@ public class ReviewedActionsWorkflowTest extends TestCase
     private static final String SYSTEMUSER_ID = "systemuser";
     private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
 
+    private static final String LOREM = "Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
+
     private HippoRepository server;
     private Session session;
     private WorkflowManager workflowMgr = null;
@@ -58,15 +60,19 @@ public class ReviewedActionsWorkflowTest extends TestCase
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node, root = session.getRootNode();
 
-        // set up the workflow specification as a node "/configuration/workflows/default/reviewedactions"
+        // set up the workflow specification as a node "/configuration/hippo:workflows/default/reviewedactions"
         node = root.getNode("configuration");
+        node.addNode("documents").addMixin("mix:referenceable");
+        if(node.hasNode("hippo:workflows"))
+            node.getNode("hippo:workflows").remove();
         node = node.addNode("hippo:workflows","hippo:workflowfolder");
         node.addMixin("mix:referenceable");
-        node = node.addNode("default","hippo:workflowcategory");
-        node = node.addNode("myworkflow","hippo:workflow");
+        Node wfs = node.addNode("default","hippo:workflowcategory");
+
+        node = wfs.addNode("reviewedactions","hippo:workflow");
         node.setProperty("hippo:nodetype","hippo:document");
         node.setProperty("hippo:display","Reviewed actions workflow");
-        node.setProperty("hippo:renderer","org.hippoecm.repository.reviewedactions.ReviewedActionsRenderer");
+        node.setProperty("hippo:renderer","org.hippoecm.frontend.reviewedactions.ReviewedActionsRenderer");
         node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflowImpl");
         Node types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument","hippo:type");
@@ -74,15 +80,34 @@ public class ReviewedActionsWorkflowTest extends TestCase
         node.setProperty("hippo:display","PublishableDocument");
         node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.PublishableDocument");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest","hippo:type");
-        node.setProperty("hippo:nodetype","nt:unstructured");
+        node.setProperty("hippo:nodetype","hippo:request");
         node.setProperty("hippo:display","PublicationRequest");
         node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.PublicationRequest");
+
+        node = wfs.addNode("reviewedrequests","hippo:workflow");
+        node.setProperty("hippo:nodetype","hippo:request");
+        node.setProperty("hippo:display","Reviewed requests workflow");
+        node.setProperty("hippo:renderer","org.hippoecm.frontend.reviewedactions.RequestWorkflowRenderer");
+        node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.RequestWorkflowImpl");
+        types = node.getNode("hippo:types");
+        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument","hippo:type");
+        node.setProperty("hippo:nodetype","hippo:document");
+        node.setProperty("hippo:display","PublishableDocument");
+        node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.PublishableDocument");
+        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest","hippo:type");
+        node.setProperty("hippo:nodetype","hippo:request");
+        node.setProperty("hippo:display","PublicationRequest");
+        node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.PublicationRequest");
+
         session.save();
 
+        if(root.hasNode("documents"))
+            root.getNode("documents").remove();
         node = root.addNode("documents");
         node = node.addNode("myarticle", "hippo:handle");
         node = node.addNode("myarticle", "hippo:document");
-        node.setProperty("content", "Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum");
+        node.setProperty("content", LOREM);
+        node.setProperty("state", "unpublished");
 
         session.save();
     }
@@ -105,75 +130,83 @@ public class ReviewedActionsWorkflowTest extends TestCase
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException
     {
         Node node, root = session.getRootNode();
-        Utilities.dump(root.getNode("configuration"));
-        Utilities.dump(root.getNode("documents"));
 
         // steps taken by an author
         {
-            node = root.getNode("documents/myarticle");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle");
             ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
-            if(workflow == null)
-                return;
+            assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.obtainEditableInstance();
-            node = root.getNode("documents/myarticle/myarticle[@state='editing']");
+            session.save(); session.refresh(true);
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='draft']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString() + ",");
-
+            session.save(); session.refresh(true);
             ReviewedActionsWorkflow reviewedWorkflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.requestPublication();
+            session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }
 
         // These steps would be taken by editor:
         {
-            node = root.getNode("documents/myarticle/request");
+            node = Utilities.getNode(root, "documents/myarticle/request");
             RequestWorkflow workflow = (RequestWorkflow) getWorkflow(node, "default");
+            assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.rejectRequest("comma should be a point");
+            session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }
 
         // steps taken by an author
         {
-            node = root.getNode("documents/myarticle/request");
+            node = Utilities.getNode(root, "documents/myarticle/request[type='rejected']");
             RequestWorkflow workflow = (RequestWorkflow) getWorkflow(node, "default");
+            assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.cancelRequest();
+            session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }
 
         // steps taken by an author
         {
-            node = root.getNode("documents/myarticle");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='unpublished']");
             ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.obtainEditableInstance();
-            node = root.getNode("documents/myarticle/myarticle[@state='editing']");
+            session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='draft']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0,prop.getString().length()-1) + "!");
-
             ReviewedActionsWorkflow reviewedWorkflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.requestPublication();
+            session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }
 
         // These steps would be taken by editor:
         {
-            node = root.getNode("documents/myarticle/request");
+            node = Utilities.getNode(root, "documents/myarticle/request[type='publish']");
             RequestWorkflow workflow = (RequestWorkflow) getWorkflow(node, "default");
             workflow.acceptRequest();
+            session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }
 
         // These steps would be taken by editor:
         {
-            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
-            workflow.obtainEditableInstance();
-            node = root.getNode("documents/myarticle/myarticle[@state='editing']");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='unpublished']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0,prop.getString().length()-1) + ".");
-
+            session.save(); session.refresh(true);
             ReviewedActionsWorkflow reviewedWorkflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.publish();
+            session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }
 
-        // These steps would be taken by author
+        /* These steps would be taken by author
         {
-            node = root.getNode("documents/myarticle");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='published']");
             ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.requestDeletion();
-        }
+            session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
+        }*/
     }
 }

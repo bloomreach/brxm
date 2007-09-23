@@ -98,9 +98,6 @@
               <value>${history.points}</value>
             </property>
           </systemProperties>
-          <excludes>
-            <exclude>**/ReviewedActionsWorkflowTest.java</exclude>
-          </excludes>
         </configuration>
       </plugin>     
       <plugin>

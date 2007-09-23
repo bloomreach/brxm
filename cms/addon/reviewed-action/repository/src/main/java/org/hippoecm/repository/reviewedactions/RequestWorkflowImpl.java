@@ -30,33 +30,52 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 
+import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.api.HippoWorkspace;
+
 public class RequestWorkflowImpl extends WorkflowImpl implements RequestWorkflow {
-    PublicationRequest request;
-    ReviewedActionsWorkflow document;
+
+    public String a; // FIXME: workaround for current mapping issues
+    public ReviewedActionsWorkflowImpl document;
+    public PublicationRequest request;
 
     public RequestWorkflowImpl() throws RemoteException {
     }
 
     public void cancelRequest() throws WorkflowException, WorkflowMappingException, RepositoryException {
-        document = null;
-        request = null;
+        request.document = null;
     }
 
     public void acceptRequest() throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException {
-        if(request.DELETE.equals(request.type)) {
+        System.err.println("accepting request for document "+document.a);
+        if(PublicationRequest.DELETE.equals(request.type)) {
             document.delete();
-        } else if(request.PUBLISH.equals(request.type)) {
+        } else if(PublicationRequest.PUBLISH.equals(request.type)) {
             document.publish();
-        } else if(request.DEPUBLISH.equals(request.type)) {
+        } else if(PublicationRequest.DEPUBLISH.equals(request.type)) {
             document.depublish();
-        } else if(request.REJECTED.equals(request.type)) {
+        } else if(PublicationRequest.REJECTED.equals(request.type)) {
             throw new WorkflowException("request has already been rejected");
         } else
             throw new WorkflowMappingException("unknown publication request");
     }
 
     public void rejectRequest(String reason) throws WorkflowException, WorkflowMappingException, RepositoryException {
+        System.err.println("rejecting request for document "+document.a);
+        request.type = PublicationRequest.REJECTED;
         request.reason = reason;
-        request.type = request.REJECTED;
+        document.current = null;
+        document.draft.state = document.draft.STALE;
+    }
+
+    public void pre() throws RepositoryException {
+        super.pre();
+        HippoWorkspace wsp = (HippoWorkspace) node.getSession().getWorkspace();
+        Node n = Utilities.getNode(handle, handle.getName()+"[state='draft']");
+        if(n == null)
+            n = Utilities.getNode(handle, handle.getName()+"[state='stale']");
+        if (n != null) {
+            document = (ReviewedActionsWorkflowImpl) wsp.getWorkflowManager().getWorkflow("default", n);
+        }
     }
 }

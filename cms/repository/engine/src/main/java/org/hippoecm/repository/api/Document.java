@@ -17,9 +17,11 @@ package org.hippoecm.repository.api;
 
 import java.io.Serializable;
 
-public abstract class Document implements Serializable {
+public abstract class Document implements Serializable, Cloneable {
+    public Document cloned = null; // FIXME: workaround for current mapping issues
     public Object clone() throws CloneNotSupportedException{
-        // FIXME: workaround for current mapping issues
-        return super.clone();
+        Document document = (Document) super.clone();
+        document.cloned = this;
+        return document;
     }
 }

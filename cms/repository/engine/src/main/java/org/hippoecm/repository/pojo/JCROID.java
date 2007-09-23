@@ -92,7 +92,7 @@ public class JCROID implements OID {
 
     public boolean equals(Object obj) {
         if (obj instanceof JCROID)
-            return ((JCROID) obj).key.equals(key);
+            return ((JCROID) obj).key.equals(key) && ((JCROID) obj).classname.equals(classname);
         else
             return false;
     }
@@ -100,7 +100,7 @@ public class JCROID implements OID {
     public int hashCode() {
         if (key == null)
             throw new NullPointerException();
-        return key.hashCode();
+        return key.hashCode() + classname.hashCode(); // FIXME
     }
 
     public String toString() {

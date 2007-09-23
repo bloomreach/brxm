@@ -66,9 +66,14 @@ import org.jpox.store.scostore.MapStore;
 import org.jpox.util.ClassUtils;
 import org.jpox.util.MacroString.IdentifierMacro;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class StoreManagerImpl extends StoreManager {
+    protected final Logger log = LoggerFactory.getLogger(StoreManagerImpl.class);
+
     private String username;
     private String password;
     private Session session;
@@ -164,6 +169,8 @@ public class StoreManagerImpl extends StoreManager {
     public void insertObject(StateManager sm) {
         ObjectManager om = sm.getObjectManager();
         ManagedConnection mconn = getConnection(om);
+        if(log.isDebugEnabled())
+            log.debug("insert object");
         try {
             Session session = (Session) mconn.getConnection();
             AbstractClassMetaData cmd = sm.getClassMetaData();
@@ -174,15 +181,8 @@ public class StoreManagerImpl extends StoreManager {
             String nodeName = null; // FIXME: cmd.getColumn();
             if (nodeName == null || nodeName.equals(""))
                 nodeName = cmd.getEntityName();
-            if (types != null) {
                 Node nodetypeNode = types.getNode(cmd.getFullClassName());
                 node = node.addNode(nodeName, nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
-            } else {
-                // FIXME: to be depricated method of storing classname reference
-                node = node.addNode(nodeName);
-                node.setProperty(HippoNodeType.HIPPO_CLASSNAME, cmd.getFullClassName());
-                node.addMixin("mix:referenceable"); // FIXME: should be per node type definition
-            }
             sm.provideFields(cmd.getAllFieldNumbers(), new FieldManagerImpl(sm, session, types, node));
         } catch (PathNotFoundException ex) {
             System.err.println("PathNotFoundException: " + ex.getMessage());
@@ -205,6 +205,8 @@ public class StoreManagerImpl extends StoreManager {
 
     public void updateObject(StateManager sm, int fieldNumbers[]) {
         ManagedConnection mconn = getConnection(sm.getObjectManager());
+        if(log.isDebugEnabled())
+            log.debug("update object");
         try {
             Session session = (Session) mconn.getConnection();
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
@@ -224,6 +226,8 @@ public class StoreManagerImpl extends StoreManager {
 
     public void fetchObject(StateManager sm, int fieldNumbers[]) {
         ManagedConnection mconn = getConnection(sm.getObjectManager());
+        if(log.isDebugEnabled())
+            log.debug("fetch object");
         try {
             Session session = (Session) mconn.getConnection();
             AbstractClassMetaData cmd = sm.getClassMetaData();
@@ -234,37 +238,40 @@ public class StoreManagerImpl extends StoreManager {
     }
 
     public void locateObject(StateManager sm) {
-        getDatastoreClass(sm.getObject().getClass().getName(), sm.getObjectManager().getClassLoaderResolver())
-                    .locate(sm);
+        if(log.isDebugEnabled())
+            log.debug("locate object");
+        /* For some reason, the following line causes problems.
+         * getDatastoreClass(sm.getObject().getClass().getName(), sm.getObjectManager().getClassLoaderResolver())
+         *     .locate(sm);
+         */
     }
 
     public Object findObject(ObjectManager om, Object id) {
+        if(log.isDebugEnabled())
+            log.debug("find object");
         return null;
     }
 
     public void deleteObject(StateManager sm) {
+        if(log.isDebugEnabled())
+            log.debug("delete object");
         // FIXME
     }
 
     public Object newObjectID(ObjectManager om, String className, PersistenceCapable pc) {
+        if(log.isDebugEnabled())
+            log.debug("new object id");
         return super.newObjectID(om, className, pc);
     }
 
     public void flush(ObjectManager om) {
-        /*
-          ManagedConnection mconn = getConnection(om);
-          try {
-              Session session = (Session) mconn.getConnection();
-              //session.save();
-              //} catch (RepositoryException ex) {
-              //System.err.println("RepositoryException: " + ex.getMessage());
-          } finally {
-              mconn.release();
-          }
-         */
+        if(log.isDebugEnabled())
+            log.debug("flush");
     }
 
     public boolean usesDatastoreClass() {
+        if(log.isDebugEnabled())
+            log.debug("uses datastore class");
         return false;
     }
 
@@ -274,6 +281,8 @@ public class StoreManagerImpl extends StoreManager {
     }
 
     public boolean isStrategyDatastoreAttributed(IdentityStrategy identityStrategy, boolean datastoreIdentityField) {
+        if(log.isDebugEnabled())
+            log.debug("is datastore attributed");
         return true;
     }
 

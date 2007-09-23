@@ -25,63 +25,70 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoWorkspace;
 
-public class ServicesManagerImpl
-  implements ServicesManager
-{
-  class Entry {
-    ServiceImpl service;
-    String uuid;
-    Entry(ServiceImpl service, String uuid) {
-      this.service = service;
-      this.uuid    = uuid;
+public class ServicesManagerImpl implements ServicesManager {
+    class Entry {
+        ServiceImpl service;
+        String uuid;
+        Node types;
+        Entry(ServiceImpl service, String uuid, Node types) {
+            this.service = service;
+            this.uuid    = uuid;
+            this.types   = types;
+        }
     }
-  }
-  Session session;
-  private List<Entry> usedServices;
-  ClassLoader classloader;
-  public ServicesManagerImpl(Session session) {
-    this.session = session;
-    usedServices = new LinkedList<Entry>();
-    classloader = getClass().getClassLoader();
-  }
-  public Service getService(Node node) throws RepositoryException {
-    return getService(node, null);
-  }
 
-  /**
-   * @see DocumentManagerImpl.getObject(String,String,Node)
-   */
-  public Service getService(String uuid, String serviceName, Node types) throws RepositoryException {
-    DocumentManagerImpl manager = (DocumentManagerImpl)((HippoWorkspace)session.getWorkspace()).getDocumentManager();
-    Object object = manager.getObject(uuid, serviceName, types);
-    ServiceImpl service = (ServiceImpl) object;
-    usedServices.add(new Entry(service, uuid));
-    return service;
-  }
+    Session session;
+    private List<Entry> usedServices;
+    ClassLoader classloader;
 
-  public Service getService(Node node, String serviceName) throws RepositoryException {
-    if(serviceName == null)
-      serviceName = "";
-    return getService(node.getUUID(), serviceName, null);
-  }
-  void save(ServiceImpl service, String uuid) throws RepositoryException {
-    DocumentManagerImpl documentManager = (DocumentManagerImpl)((HippoWorkspace)session.getWorkspace()).getDocumentManager();
-    documentManager.putObject(uuid, null, service);
-    if(service instanceof org.hippoecm.repository.workflow.WorkflowImpl) // FIXME: workaround for current mapping issues
-        ((org.hippoecm.repository.workflow.WorkflowImpl)service).post();
-  }
-  void save() throws RepositoryException {
-    for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
-      Entry entry = iter.next();
+    public ServicesManagerImpl(Session session) {
+        this.session = session;
+        usedServices = new LinkedList<Entry>();
+        classloader = getClass().getClassLoader();
     }
-    for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
-      Entry entry = iter.next();
-      save(entry.service, entry.uuid);
+
+    public Service getService(Node node) throws RepositoryException {
+        return getService(node, null);
     }
-    // FIXME: this assumes that Services are no longer used after a session.save()
-    usedServices.clear();
-  }
-  public Session getSession() throws RepositoryException {
-    return session;
-  }
+
+    /**
+     * @see DocumentManagerImpl.getObject(String,String,Node)
+     */
+    public Service getService(String uuid, String serviceName, Node types) throws RepositoryException {
+        DocumentManagerImpl manager = (DocumentManagerImpl)((HippoWorkspace)session.getWorkspace()).getDocumentManager();
+        Object object = manager.getObject(uuid, serviceName, types);
+        ServiceImpl service = (ServiceImpl) object;
+        usedServices.add(new Entry(service, uuid, types));
+        return service;
+    }
+
+    public Service getService(Node node, String serviceName) throws RepositoryException {
+        if(serviceName == null)
+            serviceName = "";
+        return getService(node.getUUID(), serviceName, null);
+    }
+
+    void save(ServiceImpl service, String uuid, Node types) throws RepositoryException {
+        HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+        DocumentManagerImpl documentManager = (DocumentManagerImpl) workspace.getDocumentManager();
+        if(service instanceof org.hippoecm.repository.workflow.WorkflowImpl) // FIXME: workaround for current mapping issues
+            ((org.hippoecm.repository.workflow.WorkflowImpl)service).post();
+        documentManager.putObject(uuid, types, service);
+    }
+
+    void save() throws RepositoryException {
+        for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
+            Entry entry = iter.next();
+        }
+        for(Iterator<Entry> iter = usedServices.iterator(); iter.hasNext(); ) {
+            Entry entry = iter.next();
+            save(entry.service, entry.uuid, entry.types);
+        }
+        // FIXME: this assumes that Services are no longer used after a session.save()
+        usedServices.clear();
+    }
+
+    public Session getSession() throws RepositoryException {
+        return session;
+    }
 }

@@ -27,7 +27,6 @@ import org.hippoecm.repository.servicing.ServiceImpl;
 public abstract class WorkflowImpl extends ServiceImpl implements Workflow
 {
     protected WorkflowContext context;
-    protected Node node; // FIXME: workaround for current mapping issues
     public WorkflowImpl() throws RemoteException {
     }
     final void setWorkflowContext(WorkflowContext context) {

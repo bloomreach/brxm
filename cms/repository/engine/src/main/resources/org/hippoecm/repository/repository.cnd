@@ -20,6 +20,8 @@
 + hippo:resultset (hippo:facetresult) = hippo:facetresult mandatory autocreated
 + * (hippo:facetsearch) = hippo:facetsearch multiple
 
+[hippo:request] > nt:unstructured, mix:referenceable
+
 [hippo:document] > nt:unstructured, mix:referenceable
 - hippo:paths (string) multiple
 

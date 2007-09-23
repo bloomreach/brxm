@@ -19,6 +19,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 public final class WorkflowContext {
+    public // FIXME: workaround for current mapping issues
     Session session;
     /**
      * This constructor is not ment for public usage.

@@ -29,6 +29,8 @@ public interface HippoNodeType {
 
     final public static String CONFIGURATION_PATH = "configuration";
     final public static String INITIALIZE_PATH = "initialize";
+    final public static String WORKFLOWS_PATH = "hippo:workflows";
+    final public static String DOCUMENTS_PATH = "hippo:documents";
 
     final public static String NT_CONFIGURATION = "hippo:configuration";
     final public static String NT_DOCUMENT = "hippo:document";
