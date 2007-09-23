@@ -1385,10 +1385,6 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         return node.isLocked();
     }
 
-    public Service getService() throws RepositoryException {
-        return ((ServicingWorkspaceImpl) getSession().getWorkspace()).getServicesManager().getService(this);
-    }
-
     public void save()
         throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
                ReferentialIntegrityException, VersionException, LockException, RepositoryException

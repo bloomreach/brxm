@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.workflow;
+package org.hippoecm.repository.servicing;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory; 
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
-import org.hippoecm.repository.servicing.ServiceImpl;
 
-public abstract class WorkflowImpl extends ServiceImpl implements Workflow
+public abstract class WorkflowImpl extends UnicastRemoteObject implements Workflow
 {
     protected WorkflowContext context;
     public WorkflowImpl() throws RemoteException {

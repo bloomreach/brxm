@@ -33,7 +33,7 @@ import org.hippoecm.repository.api.WorkflowMappingException;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
 // FIXME: workaround for current mapping issues
-public abstract class WorkflowImpl extends org.hippoecm.repository.workflow.WorkflowImpl
+public abstract class WorkflowImpl extends org.hippoecm.repository.servicing.WorkflowImpl
 {
     public WorkflowImpl() throws RemoteException {
         super();

@@ -24,7 +24,6 @@ import org.apache.jackrabbit.rmi.client.ClientNode;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.servicing.Service;
 import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
 
 public class ClientServicingNode extends ClientNode implements HippoNode {
@@ -33,15 +32,6 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
     public ClientServicingNode(Session session, RemoteServicingNode remote, LocalServicingAdapterFactory factory) {
         super(session, remote, factory);
         this.remote = remote;
-    }
-
-    public Service getService() throws RepositoryException {
-        try {
-            Service service = remote.getService();
-            return service;
-        } catch (RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
     }
 
     public String getDisplayName() throws RepositoryException {

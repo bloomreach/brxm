@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -34,8 +28,7 @@ import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
-public class ClientWorkflowManager extends ClientObject implements WorkflowManager
-{
+public class ClientWorkflowManager extends ClientObject implements WorkflowManager {
   private Session session;
   private RemoteWorkflowManager remote;
 
@@ -44,6 +37,9 @@ public class ClientWorkflowManager extends ClientObject implements WorkflowManag
     this.session = session;
     this.remote = remote;
   }
+
+    public void save() throws RepositoryException {
+    }
 
   public Session getSession() throws RepositoryException {
     return session;

@@ -56,6 +56,7 @@ import org.xml.sax.SAXException;
 import com.atomikos.icatch.jta.UserTransactionManager;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.api.WorkflowManager;
 
 /**
  */
@@ -252,7 +253,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
         ServicingWorkspaceImpl wsp = (ServicingWorkspaceImpl) getWorkspace();
-        ((ServicesManagerImpl) wsp.getServicesManager()).save();
+        ((WorkflowManagerImpl) wsp.getWorkflowManager()).save();
         session.save();
     }
 

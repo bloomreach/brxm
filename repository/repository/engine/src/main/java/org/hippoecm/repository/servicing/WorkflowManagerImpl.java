@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.workflow;
+package org.hippoecm.repository.servicing;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,23 +30,36 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
+import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.servicing.ServicesManagerImpl;
-import org.hippoecm.repository.servicing.Service;
+import org.hippoecm.repository.servicing.DocumentManagerImpl;
 
 public class WorkflowManagerImpl implements WorkflowManager {
     private final Logger log = LoggerFactory.getLogger(Workflow.class);
 
+    class Entry {
+        Workflow workflow;
+        String uuid;
+        Node types;
+        Entry(Workflow workflow, String uuid, Node types) {
+            this.workflow = workflow;
+            this.uuid     = uuid;
+            this.types    = types;
+        }
+    }
+
     Session session;
+    private List<Entry> usedWorkflows;
     String configuration;
 
     public WorkflowManagerImpl(Session session) {
         this.session = session;
+        usedWorkflows = new LinkedList<Entry>();
         try {
             configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
                                                           HippoNodeType.WORKFLOWS_PATH).getUUID();
@@ -82,6 +99,22 @@ public class WorkflowManagerImpl implements WorkflowManager {
         configuration = uuid;
     }
 
+    void save(Workflow workflow, String uuid, Node types) throws RepositoryException {
+        HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+        DocumentManagerImpl documentManager = (DocumentManagerImpl) workspace.getDocumentManager();
+        ((org.hippoecm.repository.servicing.WorkflowImpl)workflow).post(); // FIXME: workaround for current mapping issues
+        documentManager.putObject(uuid, types, workflow);
+    }
+
+    void save() throws RepositoryException {
+        for(Iterator<Entry> iter = usedWorkflows.iterator(); iter.hasNext(); ) {
+            Entry entry = iter.next();
+            save(entry.workflow, entry.uuid, entry.types);
+        }
+        // FIXME: this assumes that Workflows are no longer used after a session.save()
+        usedWorkflows.clear();
+    }
+
     public Session getSession() throws RepositoryException {
         return session;
     }
@@ -113,10 +146,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
             try {
                 String classname = workflowNode.getProperty(HippoNodeType.HIPPO_SERVICE).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
-                ServicesManagerImpl manager = (ServicesManagerImpl) ((HippoWorkspace) session.getWorkspace())
-                    .getServicesManager();
-                Service service = manager.getService(item.getUUID(), classname, types);
-                Workflow workflow = (Workflow) service;
+                DocumentManagerImpl manager = (DocumentManagerImpl) ((HippoWorkspace)session.getWorkspace())
+                    .getDocumentManager();
+                String uuid = item.getUUID();
+                Object object = manager.getObject(uuid, classname, types);
+                Workflow workflow = (Workflow) object;
+                usedWorkflows.add(new Entry(workflow, uuid, types));
                 if(workflow instanceof WorkflowImpl) {
                     ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
                     ((WorkflowImpl)workflow).pre();

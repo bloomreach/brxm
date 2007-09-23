@@ -21,13 +21,10 @@ import org.apache.jackrabbit.rmi.client.LocalAdapterFactory;
 
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.servicing.ServicesManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
-import org.hippoecm.repository.servicing.remote.RemoteServicesManager;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public interface LocalServicingAdapterFactory extends LocalAdapterFactory {
     public DocumentManager getDocumentManager(Session session, RemoteDocumentManager remote);
-    public ServicesManager getServicesManager(Session session, RemoteServicesManager remote);
     public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote);
 }

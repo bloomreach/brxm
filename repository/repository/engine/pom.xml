@@ -389,11 +389,6 @@
               <value>${history.points}</value>
             </property>
           </systemProperties>
-          <excludes>
-            <exclude>**/ServiceTest.java</exclude>
-            <exclude>**/FacettedNavigationTest.java</exclude>
-            <exclude>**/BusinessMethodsTest.java</exclude>
-          </excludes>
         </configuration>
       </plugin>     
       <plugin>
