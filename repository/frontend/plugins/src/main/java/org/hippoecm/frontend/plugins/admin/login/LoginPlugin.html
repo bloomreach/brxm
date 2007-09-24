@@ -15,26 +15,9 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <!--<form wicket:id="login-form">-->
-            <table>
-                <tr>
-                    <td>
-                        <b>Username:</b>
-                    </td>
-                    <td>            
-                        <span wicket:id="username" type="text"></span>
-                    </td>
-                    <td>
-                        <b>Password:</b>
-                    </td>
-                    <td>           
-                         <span wicket:id="password" type="password"></span>
-                    </td>
-                    <td>
-                        <a wicket:id="login">Login</a>
-                    </td>
-                </tr>
-            </table>
-        <!--</form>-->
+        Logged in as <span wicket:id="username"></span>
+        |
+        <div wicket:id="login-dialog"/>
+        <a wicket:id="login-dialog-link">Login</a>
     </wicket:panel>
 </html>

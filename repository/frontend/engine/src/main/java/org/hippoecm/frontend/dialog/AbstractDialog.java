@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
@@ -73,7 +71,7 @@ public abstract class AbstractDialog extends WebPage {
         return exception;
     }
 
-    protected abstract void ok() throws RepositoryException;
+    protected abstract void ok() throws Exception;
 
     protected abstract void cancel();
 

@@ -25,9 +25,13 @@ import org.hippoecm.frontend.UserSession;
 public class JcrItemModel extends LoadableDetachableModel {
     private static final long serialVersionUID = 1L;
 
-    private String path;
+    protected String path;
 
-    // constructor
+    // constructors
+
+    public JcrItemModel(String path) {
+        this.path = path;
+    }
 
     public JcrItemModel(Item item) {
         super(item);

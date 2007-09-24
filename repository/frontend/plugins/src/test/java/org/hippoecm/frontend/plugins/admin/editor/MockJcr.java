@@ -3,6 +3,7 @@ package org.hippoecm.frontend.plugins.admin.editor;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
@@ -10,6 +11,9 @@ import org.easymock.MockControl;
 import org.hippoecm.repository.api.HippoNode;
 
 public class MockJcr {
+    
+    public MockControl sessionControl;
+    public Session session;
 
     public MockControl nodeControl;
     public HippoNode node;
@@ -27,6 +31,9 @@ public class MockJcr {
     public Value value;
 
     public MockJcr() {
+        sessionControl = MockControl.createControl(Session.class);
+        session = (Session) sessionControl.getMock();
+        
         nodeControl = MockControl.createControl(HippoNode.class);
         node = (HippoNode) nodeControl.getMock();
 
@@ -50,6 +57,12 @@ public class MockJcr {
 
             node.getProperties();
             nodeControl.setReturnValue(propertyIterator, 2);
+            
+            node.getSession();
+            nodeControl.setReturnValue(session, 4);
+            
+            session.isLive();
+            sessionControl.setReturnValue(true, 4);
 
             propertyIterator.getSize();
             propertyIteratorControl.setReturnValue(1, 2);
@@ -80,6 +93,7 @@ public class MockJcr {
             value.getString();
             valueControl.setReturnValue("testvalue");
 
+            sessionControl.replay();
             nodeControl.replay();
             propertyIteratorControl.replay();
             propertyControl.replay();
@@ -92,6 +106,7 @@ public class MockJcr {
     }
 
     public void tearDown() {
+        sessionControl.reset();
         nodeControl.reset();
         propertyIteratorControl.reset();
         propertyControl.reset();

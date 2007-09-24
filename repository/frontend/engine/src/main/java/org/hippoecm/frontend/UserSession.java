@@ -43,8 +43,9 @@ public class UserSession extends WebSession {
         return jcrSessionModel.getSession();
     }
 
-    public void setCredentials(ValueMap credentials) {
-        jcrSessionModel.setCredentials(credentials);
+    public void setJcrSession(Session jcrSession, ValueMap credentials) {
+        jcrSessionModel.logout();
+        jcrSessionModel = new JcrSessionModel(jcrSession, credentials);
     }
     
     public ValueMap getCredentials() {
@@ -57,10 +58,19 @@ public class UserSession extends WebSession {
         // like this has the added bonus of being a very simple reconnect mechanism.  
         private static final long serialVersionUID = 1L;
 
-        private ValueMap credentials = new ValueMap();
+        private ValueMap credentials;
 
-        void setCredentials(ValueMap credentials) {
+        JcrSessionModel() {
+            credentials = new ValueMap();
+        }
+
+        public JcrSessionModel(Session jcrSession, ValueMap credentials) {
+            super(jcrSession);
             this.credentials = credentials;
+        }
+
+        void logout() {
+            ((Session) getObject()).logout();
             detach();
         }
         
@@ -86,14 +96,10 @@ public class UserSession extends WebSession {
             try {
                 Main main = (Main) Application.get();
                 HippoRepository repository = main.getRepository();
+
                 String username = credentials.getString("username");
                 String password = credentials.getString("password");
-                
-                //EXTREMELY UGLY
-                //Temporary workaround until we have a proper login dialog
-                username = "systemuser";
-                password = "systempass";
-                
+
                 if (username == null || password == null) {
                     result = repository.login();
                 } else {
@@ -101,7 +107,6 @@ public class UserSession extends WebSession {
                 }
             } catch (RepositoryException e) {
                 System.err.println("Failed to connect to repository.");
-                credentials.clear();
             }
             return result;
         }
