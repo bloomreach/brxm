@@ -15,52 +15,44 @@
  */
 package org.hippoecm.frontend.plugins.admin.browser;
 
-import javax.swing.tree.TreeNode;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrTreeModel;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.tree.JcrLazyTreeNode;
 import org.hippoecm.frontend.tree.JcrTree;
+import org.hippoecm.frontend.tree.LazyTreeModel;
+import org.hippoecm.repository.api.HippoNode;
+
+import javax.swing.tree.TreeNode;
 
 public class BrowserPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    JcrTreeModel treeModel;
+    LazyTreeModel treeModel;
     JcrTree tree;
     
     public BrowserPlugin(String id, JcrNodeModel model) {
         super(id, model);
-        JcrNodeModel modelForTree = (JcrNodeModel) model.clone();
-        treeModel = new JcrTreeModel(modelForTree);
+        JcrNodeModel modelForTree = new JcrNodeModel(model.getNode());
+        JcrLazyTreeNode treeNode = new JcrLazyTreeNode(null, modelForTree);
+        treeModel = new LazyTreeModel(treeNode);
         tree = new JcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
+                JcrLazyTreeNode jcrTreeNode = (JcrLazyTreeNode) treeNode;
                 Home home = (Home)getWebPage();
-                home.update(target, (JcrNodeModel)treeNode);
+                home.update(target, jcrTreeNode.getJcrNodeModel());
             }
         };
-        tree.getTreeState().expandNode((TreeNode) modelForTree.getRoot());
+        tree.getTreeState().expandNode(treeNode);
         add(tree);
     }
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
-        /*
-        HippoNode node = model.getNode();
-        JcrNodeModel originalNode = treeModel.findJcrNode(node);
-        if (originalNode != null) {
-            try {
-                System.out.println("original node: " + originalNode.getNode().getPath());
-            } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-            treeModel.nodeChanged(originalNode);
-            tree.updateTree(target);
-        }
-        */
+        System.out.println("BrowserPlugin.update: model: " + model);
+        treeModel.nodeChanged((TreeNode)treeModel.getRoot());
+        tree.updateTree(target);
     }
 
 }

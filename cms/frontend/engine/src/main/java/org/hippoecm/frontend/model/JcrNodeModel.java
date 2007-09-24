@@ -16,11 +16,13 @@
 package org.hippoecm.frontend.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -31,7 +33,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.hippoecm.repository.api.HippoNode;
 
-public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, IDataProvider {
+public class JcrNodeModel implements IWrapModel, IDataProvider {
     private static final long serialVersionUID = 1L;
 
     // The Item model that is wrapped by this model using the IWrapmodel interface
@@ -76,23 +78,7 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
             return null;
         }
     }
-
-    // Override DefaultMutableTreeNode, called when used as a TreeNode
-    // by a subclass of org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree
     
-    public boolean isLeaf() {
-        boolean result = true;
-        if (getNode() != null) {
-            try {
-                result = !getNode().hasNodes();
-            } catch (InvalidItemStateException e) {
-                // This can happen after a node has been deleted and the tree hasn't been refreshed yet
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
 
     // Implement IWrapModel, all IModel calls done by wicket components 
     // (subclasses of org.apache.wicket.Component) are redirected to this wrapped model. 
