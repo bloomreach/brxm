@@ -61,7 +61,11 @@ public class RenameDialog extends AbstractDialog {
         if (model.getNode() != null) {
             RenameDialog page = (RenameDialog) getPage();
             String parentPath = model.getNode().getParent().getPath();
-            String destination = parentPath + "/" + page.getName();
+            if (!"/".equals(parentPath)) {
+                // FIXME we should have a PathUtil class or something which does this kind of thing
+                parentPath += "/";
+            }
+            String destination = parentPath + page.getName();
             model.getNode().getSession().move(model.getNode().getPath(), destination);
         }
     }
