@@ -21,16 +21,16 @@ import java.util.*;
 import javax.swing.tree.*;
 
 public abstract class LazyTreeNode implements TreeNode, Serializable {
-    private LazyTreeNode _parent;
-    private Object _userObject;
-    private List _childNodes;
-    private int _childCount = -1;
-    private boolean _isLoaded;
+    private LazyTreeNode parent;
+    private Object userObject;
+    private List childNodes;
+    private int childCount = -1;
+    private boolean isLoaded;
     private boolean isDuplicate;
 
     protected LazyTreeNode(LazyTreeNode parent, Object userObject) {
-        _parent = parent;
-        _userObject = userObject;
+        this.parent = parent;
+        this.userObject = userObject;
         isDuplicate = isDuplicate(userObject, parent);
     }
 
@@ -52,37 +52,39 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
     }
 
     public void childAdded(Object o) {
-        int index = (_isLoaded) ? _childNodes.size() : -1;
+        int index = (isLoaded) ? childNodes.size() : -1;
         childAdded(o, index);
     }
 
     public void childAdded(Object o, int index) {
-        if (_isLoaded) {
+        if (isLoaded) {
             LazyTreeNode child = createNode(o);
-            _childNodes.add(index, child);
-            ++_childCount;
+            childNodes.add(index, child);
+            ++childCount;
             notifyChildNodeAdded(this, index, child);
-        } else {
+        } 
+        else {
             ensureChildrenLoaded();
-            _childCount = _childNodes.size();
+            childCount = childNodes.size();
             index = getIndex(o);
             if (index != -1) {
-                LazyTreeNode child = (LazyTreeNode) _childNodes.get(index);
+                LazyTreeNode child = (LazyTreeNode) childNodes.get(index);
                 notifyChildNodeAdded(this, index, child);
             }
         }
     }
 
     public void childRemoved(Object o) {
-        if (_childCount != -1) {
-            --_childCount;
+        if (childCount != -1) {
+            --childCount;
         }
-        if (_isLoaded) {
+        if (isLoaded) {
             int index = getIndex(o);
             if (index < 0) {
-                ++_childCount;
-            } else {
-                LazyTreeNode child = (LazyTreeNode) _childNodes.remove(index);
+                ++childCount;
+            } 
+            else {
+                LazyTreeNode child = (LazyTreeNode) childNodes.remove(index);
                 child.dispose();
                 notifyChildNodeRemoved(this, index, child);
             }
@@ -91,18 +93,18 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
 
     public Enumeration children() {
         ensureChildrenLoaded();
-        return Collections.enumeration(_childNodes);
+        return Collections.enumeration(childNodes);
     }
 
     private void clearNodes() {
-        if (_childNodes != null) {
-            _childCount = 0;
-            Iterator i = _childNodes.iterator();
+        if (childNodes != null) {
+            childCount = 0;
+            Iterator i = childNodes.iterator();
             while (i.hasNext()) {
                 LazyTreeNode node = (LazyTreeNode) i.next();
                 node.dispose();
             }
-            _childNodes.clear();
+            childNodes.clear();
         }
     }
 
@@ -113,8 +115,8 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
     protected abstract LazyTreeNode createNode(Object o);
 
     protected void dispose() {
-        if (_childNodes != null) {
-            Iterator i = _childNodes.iterator();
+        if (childNodes != null) {
+            Iterator i = childNodes.iterator();
             while (i.hasNext()) {
                 LazyTreeNode node = (LazyTreeNode) i.next();
                 node.dispose();
@@ -123,15 +125,15 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
     }
 
     private void ensureChildCountLoaded() {
-        if (_childCount == -1) {
-            _childCount = getChildObjectCount();
+        if (childCount == -1) {
+            childCount = getChildObjectCount();
         }
     }
 
     private void ensureChildrenLoaded() {
-        if (!_isLoaded) {
+        if (!isLoaded) {
             loadNodes();
-            _isLoaded = true;
+            isLoaded = true;
         }
     }
 
@@ -142,15 +144,15 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
     public TreeNode getChildAt(int i) {
         ensureChildrenLoaded();
         // Protect against children which fail to load, for whatever reason
-        if (i >= _childNodes.size()) {
-            i = _childNodes.size() - 1;
+        if (i >= childNodes.size()) {
+            i = childNodes.size() - 1;
         }
-        return (i == -1) ? null : (TreeNode) _childNodes.get(i);
+        return (i == -1) ? null : (TreeNode) childNodes.get(i);
     }
 
     public int getChildCount() {
         ensureChildCountLoaded();
-        return _childCount;
+        return childCount;
     }
 
     protected abstract int getChildObjectCount();
@@ -160,10 +162,10 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
     protected abstract Comparator getComparator();
 
     public int getIndex(Object o) {
-        int nChildren = _childNodes.size();
+        int nChildren = childNodes.size();
         int index = -1;
         for (int i = 0; i < nChildren; ++i) {
-            LazyTreeNode node = (LazyTreeNode) _childNodes.get(i);
+            LazyTreeNode node = (LazyTreeNode) childNodes.get(i);
             if (equals(node.getUserObject(), o)) {
                 index = i;
             }
@@ -173,27 +175,27 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
 
     public int getIndex(TreeNode node) {
         ensureChildrenLoaded();
-        return _childNodes.indexOf(node);
+        return childNodes.indexOf(node);
     }
 
     public LazyTreeNode getLazyTreeNodeParent() {
-        return _parent;
+        return parent;
     }
 
     public TreeNode getParent() {
-        return _parent;
+        return parent;
     }
 
     public Object getUserObject() {
-        return _userObject;
+        return userObject;
     }
 
     public int getUserObjectIndex(Object o) {
         ensureChildrenLoaded();
         int index = -1;
-        int nNodes = _childNodes.size();
+        int nNodes = childNodes.size();
         for (int i = 0; i < nNodes; ++i) {
-            LazyTreeNode node = (LazyTreeNode) _childNodes.get(i);
+            LazyTreeNode node = (LazyTreeNode) childNodes.get(i);
             if (equals(node.getUserObject(), o)) {
                 index = i;
                 break;
@@ -207,14 +209,14 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
             return true;
         }
         ensureChildCountLoaded();
-        return _childCount == 0;
+        return childCount == 0;
     }
 
     private void loadChildObjects(Collection childObjects) {
-        if (_childNodes == null) {
-            _childNodes = new ArrayList();
+        if (childNodes == null) {
+            childNodes = new ArrayList();
         } else {
-            _childNodes.clear();
+            childNodes.clear();
         }
         Iterator i = childObjects.iterator();
         while (i.hasNext()) {
@@ -222,14 +224,15 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
             TreeNode childNode;
             try {
                 childNode = createNode(child);
-            } catch (Exception e) {
+            } 
+            catch (Exception e) {
               // TODO log error
               e.printStackTrace();
               childNode = createErrorNode(child);
             }
-            _childNodes.add(childNode);
+            childNodes.add(childNode);
         }
-        _childCount = _childNodes.size();
+        childCount = childNodes.size();
         // Collections.sort(childNodes, getComparator());
     }
 
@@ -239,26 +242,26 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
     }
 
     public void notifyChildNodeAdded(LazyTreeNode parent, int index, LazyTreeNode child) {
-        if (_parent != null) {
-            _parent.notifyChildNodeAdded(parent, index, child);
+        if (this.parent != null) {
+            this.parent.notifyChildNodeAdded(parent, index, child);
         }
     }
 
     public void notifyChildNodeRemoved(LazyTreeNode parent, int index, LazyTreeNode child) {
-        if (_parent != null) {
-            _parent.notifyChildNodeRemoved(parent, index, child);
+        if (this.parent != null) {
+            this.parent.notifyChildNodeRemoved(parent, index, child);
         }
     }
 
     public void notifyNodeChanged(LazyTreeNode node) {
-        if (_parent != null) {
-            _parent.notifyNodeChanged(node);
+        if (this.parent != null) {
+            this.parent.notifyNodeChanged(node);
         }
     }
 
     public void notifyNodeStructureChanged(LazyTreeNode node) {
-        if (_parent != null) {
-            _parent.notifyNodeStructureChanged(node);
+        if (this.parent != null) {
+            this.parent.notifyNodeStructureChanged(node);
         }
     }
 
@@ -270,12 +273,12 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
     }
 
     public void reload(Object userObject) {
-        _userObject = userObject;
+        this.userObject = userObject;
         reload();
     }
 
     public String toString() {
-        return "LazyTreeNode(" + _userObject + ")";
+        return "LazyTreeNode(" + userObject + ")";
     }
 
     public static boolean equals(Object o1, Object o2) {
