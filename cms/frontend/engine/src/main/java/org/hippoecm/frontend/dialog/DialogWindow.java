@@ -23,16 +23,19 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class DialogWindow extends ModalWindow {
     private static final long serialVersionUID = 1L;
-    
-    public DialogWindow(String id, final JcrNodeModel model) {
+
+    public DialogWindow(String id, final JcrNodeModel model, final boolean resetOnClose) {
         super(id);
         setCookieName(id);
 
         setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
-                Home home = (Home)getWebPage();
+                Home home = (Home) getWebPage();
                 home.update(target, model);
+                if (resetOnClose) {
+                    setResponsePage(home);
+                }
             }
         });
     }

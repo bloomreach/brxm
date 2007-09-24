@@ -24,6 +24,7 @@ import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
+import org.hippoecm.frontend.plugins.admin.menu.export.ExportDialog;
 import org.hippoecm.frontend.plugins.admin.menu.move.MoveDialog;
 import org.hippoecm.frontend.plugins.admin.menu.node.NodeDialog;
 import org.hippoecm.frontend.plugins.admin.menu.property.PropertyDialog;
@@ -37,7 +38,7 @@ public class MenuPlugin extends Plugin {
     public MenuPlugin(String id, final JcrNodeModel model) {
         super(id, model);
 
-        final DialogWindow nodeDialog = new DialogWindow("node-dialog", model);
+        final DialogWindow nodeDialog = new DialogWindow("node-dialog", model, false);
         nodeDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -47,7 +48,7 @@ public class MenuPlugin extends Plugin {
         add(nodeDialog);
         add(nodeDialog.dialogLink("node-dialog-link"));
 
-        final DialogWindow deleteDialog = new DialogWindow("delete-dialog", model);
+        final DialogWindow deleteDialog = new DialogWindow("delete-dialog", model, false);
         deleteDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -57,7 +58,7 @@ public class MenuPlugin extends Plugin {
         add(deleteDialog);
         add(deleteDialog.dialogLink("delete-dialog-link"));
         
-        final DialogWindow moveDialog = new DialogWindow("move-dialog", model);
+        final DialogWindow moveDialog = new DialogWindow("move-dialog", model, false);
         moveDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -67,7 +68,7 @@ public class MenuPlugin extends Plugin {
         add(moveDialog);
         add(moveDialog.dialogLink("move-dialog-link"));
 
-        final DialogWindow renameDialog = new DialogWindow("rename-dialog", model);
+        final DialogWindow renameDialog = new DialogWindow("rename-dialog", model, false);
         renameDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -76,8 +77,18 @@ public class MenuPlugin extends Plugin {
         });
         add(renameDialog);
         add(renameDialog.dialogLink("rename-dialog-link"));
+        
+        final DialogWindow exportDialog = new DialogWindow("export-dialog", model, false);
+        exportDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new ExportDialog(exportDialog, model);
+            }
+        });
+        add(exportDialog);
+        add(exportDialog.dialogLink("export-dialog-link"));
 
-        final DialogWindow propertyDialog = new DialogWindow("property-dialog", model);
+        final DialogWindow propertyDialog = new DialogWindow("property-dialog", model, false);
         propertyDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -87,7 +98,7 @@ public class MenuPlugin extends Plugin {
         add(propertyDialog);
         add(propertyDialog.dialogLink("property-dialog-link"));
 
-        final DialogWindow saveDialog = new DialogWindow("save-dialog", model);
+        final DialogWindow saveDialog = new DialogWindow("save-dialog", model, false);
         saveDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -97,7 +108,7 @@ public class MenuPlugin extends Plugin {
         add(saveDialog);
         add(saveDialog.dialogLink("save-dialog-link"));
 
-        final DialogWindow resetDialog = new DialogWindow("reset-dialog", model);
+        final DialogWindow resetDialog = new DialogWindow("reset-dialog", model, false);
         resetDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {

@@ -23,7 +23,7 @@ public class SamplesPlugin extends Plugin {
         super(id, model);
 
         //The modal window that will hold the dialog
-        DialogWindow dialogWindow = new DialogWindow("plugin-dialog", model);
+        DialogWindow dialogWindow = new DialogWindow("plugin-dialog", model, false);
         add(dialogWindow);
         //The link to open the modal window
         add(dialogWindow.dialogLink("plugin-dialog-link"));

@@ -46,7 +46,21 @@ public class JcrNodeModel extends DefaultMutableTreeNode implements IWrapModel, 
     // The wrapped jcr Node object, convenience methods and not part of an api
 
     public HippoNode getNode() {
-        return (HippoNode) itemModel.getObject();
+        HippoNode result = (HippoNode) itemModel.getObject();
+        
+        boolean sessionClosed = false;
+        try {
+            if (!result.getSession().isLive()) {
+                sessionClosed = true;
+            }
+        } catch (RepositoryException e) {
+           sessionClosed = true;
+        }
+        if (sessionClosed) {
+            itemModel = new JcrItemModel(itemModel.path);
+        }
+        
+        return result;
     }
 
     public void setNode(HippoNode node) {

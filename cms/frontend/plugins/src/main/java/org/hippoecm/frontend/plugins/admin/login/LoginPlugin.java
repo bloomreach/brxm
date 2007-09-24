@@ -1,43 +1,58 @@
 package org.hippoecm.frontend.plugins.admin.login;
 
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
-import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.UserSession;
+import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 
 public class LoginPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public LoginPlugin(String id, JcrNodeModel model) {
+    private String username;
+
+    public LoginPlugin(String id, final JcrNodeModel model) {
         super(id, model);
 
         UserSession session = (UserSession) getSession();
-        final ValueMap credentials = session.getCredentials();
-        
-        add(new AjaxEditableLabel("username", new PropertyModel(credentials, "username")));
-        add(new AjaxEditableLabel("password", new PropertyModel(credentials, "password")));
+        ValueMap credentials = session.getCredentials();
+        username = credentials.getString("username");
+        username = (username == null || username.equals("")) ? "anonymous" : username;
+        add(new Label("username", new PropertyModel(this, "username")));
 
-        add(new AjaxLink("login") {
+        final DialogWindow loginDialog = new DialogWindow("login-dialog", model, true);
+        loginDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
-            public void onClick(AjaxRequestTarget target) {
-                UserSession session = (UserSession) getSession();
-                session.setCredentials(credentials);
-
-                Home home = (Home) getWebPage();
-                home.reset(target);
+            public Page createPage() {
+                return new LoginDialog(loginDialog, model);
             }
         });
+        add(loginDialog);
+        add(loginDialog.dialogLink("login-dialog-link"));
     }
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
-        // nothing much to do here
+        UserSession session = (UserSession) getSession();
+        ValueMap credentials = session.getCredentials();
+        username = credentials.getString("username");
+        username = (username == null || username.equals("")) ? "anonymous" : username;
+        setUsername(username);
+        if (target != null) {
+            target.addComponent(this);
+        }
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
 }
