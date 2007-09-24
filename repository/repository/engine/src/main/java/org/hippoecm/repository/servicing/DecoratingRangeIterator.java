@@ -119,12 +119,12 @@ public class DecoratingRangeIterator extends AbstractDecorator implements RangeI
             if (parent != null) {
                 try {
                     return factory.getNodeDecorator(session, (Node) object, parent.getChildPath(((Node)object).getName()),
-                            parent.depth + 1);
+                            parent.depth + 1, parent.selection);
                 } catch (RepositoryException ex) {
                     throw new UnsupportedOperationException("Decorator became invalid for " + object);
                 }
             } else
-                return factory.getNodeDecorator(session, (Node) object);
+                return factory.getNodeDecorator(session, (Node) object, null);
         } else if (object instanceof Property) {
             return factory.getPropertyDecorator(session, (Property) object);
         } else if (object instanceof Item) {

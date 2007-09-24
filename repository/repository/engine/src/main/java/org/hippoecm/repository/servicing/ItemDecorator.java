@@ -102,7 +102,8 @@ public class ItemDecorator extends AbstractDecorator implements Item {
     /** {@inheritDoc} */
     public Node getParent() throws ItemNotFoundException, AccessDeniedException, RepositoryException {
         Node parent = item.getParent();
-        return factory.getNodeDecorator(session, parent);
+        /* FIXME, we do not have access to the faceted selection NodeView at this point */
+        return factory.getNodeDecorator(session, parent, null);
     }
 
     /** {@inheritDoc} */

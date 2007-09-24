@@ -87,9 +87,10 @@ public interface DecoratorFactory {
      * @param node    the underlying node instance
      * @return node decorator
      */
-    Node getNodeDecorator(Session session, Node node);
+    Node getNodeDecorator(Session session, Node node, NodeView selection);
 
-    Node getNodeDecorator(Session session, Node node, String path, int depth);
+    Node getNodeDecorator(Session session, Node node, String path, int depth,
+                          NodeView selection);
 
     /**
      * Creates a property decorator.
