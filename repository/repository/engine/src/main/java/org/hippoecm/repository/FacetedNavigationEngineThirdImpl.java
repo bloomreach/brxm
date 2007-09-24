@@ -27,13 +27,16 @@ import javax.jcr.Session;
 import org.apache.jackrabbit.core.SearchManager;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
+import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.servicing.RepositoryDecorator;
@@ -118,7 +121,6 @@ public class FacetedNavigationEngineThirdImpl
   {
     try {
       Session session = authorization.session;
-      
       SearchManager searchManager = ((RepositoryDecorator)session.getRepository()).getSearchManager(session.getWorkspace().getName()) ;
       ServicingSearchIndex index = (ServicingSearchIndex)searchManager.getQueryHandler();
       NamespaceMappings nsMappings = index.getNamespaceMappings();
@@ -127,6 +129,14 @@ public class FacetedNavigationEngineThirdImpl
        * facetsQuery: get the query for the facets that are asked for
        */
       FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)index.getIndexingConfig());
+      
+      /*
+       * initialQuery: get the query for initialQuery 
+       */
+      org.apache.lucene.search.Query initialLuceneQuery = null;
+      if(initialQuery != null && !initialQuery.xpath.equals("")) {
+          initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH,initialQuery.xpath));
+      }
       
       /*
        * authorizationQuery: get the query for the facets the person is allowed to see (which
@@ -164,11 +174,13 @@ public class FacetedNavigationEngineThirdImpl
                   searchQuery.add(authorizationQuery.getQuery(), Occur.MUST);
               }
               
+              if(initialLuceneQuery != null){
+                  searchQuery.add(initialLuceneQuery, Occur.MUST);
+              }
+              
               long start = System.currentTimeMillis();
-             
               collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);
               searcher.search(searchQuery, collector);
-             
           }
           
       } catch (IOException e) {
