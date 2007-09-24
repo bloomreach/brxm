@@ -57,7 +57,7 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
     }
     
     public void testFullFacetedNavigationTraversal() throws RepositoryException, IOException {
-        numDocs = 0;
+        numDocs = 500;
         long tBefore, tAfter;
         
         Node node = commonStart();
