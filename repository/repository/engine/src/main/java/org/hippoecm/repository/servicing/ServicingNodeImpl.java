@@ -121,7 +121,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         this.depth = depth;
         if (node.isNodeType(HippoNodeType.NT_FACETSEARCH) ||
             node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-            children = new HashMap<String,Node[]>();
+            children = new TreeMap<String,Node[]>();
             properties = new HashMap();
         }
     }
@@ -137,7 +137,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         this.path = path;
         this.name = name;
         this.depth = depth;
-        children = new HashMap<String,Node[]>();
+        children = new TreeMap<String,Node[]>();
         properties = new HashMap();
     }
 
