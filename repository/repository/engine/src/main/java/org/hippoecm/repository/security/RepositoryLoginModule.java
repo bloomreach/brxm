@@ -136,18 +136,19 @@ public class RepositoryLoginModule implements LoginModule {
                 log.debug("Searching for user: " + username);
             }
 
-            Node node = root.getNode(usersNode + "/" + username);
-
-            if (node == null) {
+            Node node;
+            if (root.hasNode(usersNode + "/" + username)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found user node: " + usersNode + "/" + username);
+                }
+                node = root.getNode(usersNode + "/" + username);
+            } else {
                 if (log.isDebugEnabled()) {
                     log.debug("User not found: " + username);
                 }
                 return false;
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Found user node: " + node.getPath());
-            }
             if (node.hasProperty("password")) {
                 if (new String(password).equals(node.getProperty("password").getValue().getString())) {
                     synchronized (userCache) {
