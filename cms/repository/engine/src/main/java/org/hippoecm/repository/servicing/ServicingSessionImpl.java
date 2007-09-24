@@ -44,7 +44,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.name.Path;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.name.NameException;
