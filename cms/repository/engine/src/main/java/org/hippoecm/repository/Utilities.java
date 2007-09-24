@@ -83,7 +83,7 @@ public class Utilities {
                 out.println(prop.getString());
             }
         }
-        for (NodeIterator iter = parent.getNodes(); iter.hasNext();) {
+        for (NodeIterator iter = parent.getNodes(); iter.hasNext(); ) {
             Node node = iter.nextNode();
             if (!node.getPath().equals("/jcr:system")) {
                 dump(out, node, level + 1);

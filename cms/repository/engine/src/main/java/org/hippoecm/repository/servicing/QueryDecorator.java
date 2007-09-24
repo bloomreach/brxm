@@ -73,6 +73,6 @@ public class QueryDecorator extends AbstractDecorator implements Query {
     public Node storeAsNode(String absPath) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
         Node node = query.storeAsNode(absPath);
-        return factory.getNodeDecorator(session, node);
+        return factory.getNodeDecorator(session, node, null);
     }
 }

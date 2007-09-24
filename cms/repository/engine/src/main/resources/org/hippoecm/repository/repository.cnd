@@ -30,7 +30,7 @@
 - hippo:facets (string) multiple
 - hippo:values (string) multiple
 - hippo:modes (string) multiple < 'select', 'stick', 'clear'
-+ * (hippo:document) multiple
++ * multiple
 
 [hippo:handle] > nt:unstructured, mix:referenceable
 + * (hippo:document) = hippo:document multiple

@@ -179,7 +179,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      */
     public Node getRootNode() throws RepositoryException {
         Node root = session.getRootNode();
-        return factory.getNodeDecorator(this, root);
+        return factory.getNodeDecorator(this, root, null);
     }
 
     /**
@@ -190,7 +190,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      */
     public Node getNodeByUUID(String uuid) throws ItemNotFoundException, RepositoryException {
         Node node = session.getNodeByUUID(uuid);
-        return factory.getNodeDecorator(this, node);
+        return factory.getNodeDecorator(this, node, null);
     }
 
     /**
@@ -217,7 +217,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
                 try {
                     node = node.getNode(elements[elements.length - 1].getName().getLocalName());
                     if (!(node instanceof ServicingNodeImpl))
-                        node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1);
+                        node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1, null);
                     return node;
                 } catch (PathNotFoundException ex2) {
                     return node.getProperty(elements[elements.length - 1].getName().getLocalName());
