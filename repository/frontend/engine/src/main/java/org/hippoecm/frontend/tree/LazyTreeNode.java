@@ -1,17 +1,25 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.tree;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.logging.Level;
 
 import javax.swing.tree.*;
 
-/**
- * A tree node that doesn't check its children until it is asked for them. This lazy evaluation alls the system to do
- * "load on demand" from a database.
- *
- * @author Ray Fergerson <fergerson@smi.stanford.edu>
- */
 public abstract class LazyTreeNode implements TreeNode, Serializable {
     private LazyTreeNode _parent;
     private Object _userObject;
@@ -54,7 +62,6 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
             _childNodes.add(index, child);
             ++_childCount;
             notifyChildNodeAdded(this, index, child);
-            // Log.trace("added", this, "childAdded", o, new Integer(index));
         } else {
             ensureChildrenLoaded();
             _childCount = _childNodes.size();
@@ -70,11 +77,9 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
         if (_childCount != -1) {
             --_childCount;
         }
-        // Log.enter(this, "childRemoved", o);
         if (_isLoaded) {
             int index = getIndex(o);
             if (index < 0) {
-                // Log.warning("node not found", this, "childRemoved", o);
                 ++_childCount;
             } else {
                 LazyTreeNode child = (LazyTreeNode) _childNodes.remove(index);
@@ -235,7 +240,6 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
 
     public void notifyChildNodeAdded(LazyTreeNode parent, int index, LazyTreeNode child) {
         if (_parent == null) {
-            //Log.getLogger().warning("Notification message lost: " + child);
             System.out.println("Notification message lost: " + child);
         } else {
             _parent.notifyChildNodeAdded(parent, index, child);
@@ -244,7 +248,6 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
 
     public void notifyChildNodeRemoved(LazyTreeNode parent, int index, LazyTreeNode child) {
         if (_parent == null) {
-            //Log.getLogger().warning("Notification message lost: " + child);
             System.out.println("Notification message lost: " + child);
         } else {
             _parent.notifyChildNodeRemoved(parent, index, child);
@@ -253,7 +256,6 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
 
     public void notifyNodeChanged(LazyTreeNode node) {
         if (_parent == null) {
-            //Log.getLogger().warning("Notification message lost: " + node);
             System.out.println("Notification message lost: " + node);
         } else {
             _parent.notifyNodeChanged(node);
@@ -262,7 +264,6 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
 
     public void notifyNodeStructureChanged(LazyTreeNode node) {
         if (_parent == null) {
-            //Log.getLogger().warning("Notification message lost: " + node);
             System.out.println("Notification message lost: " + node);
         } else {
             _parent.notifyNodeStructureChanged(node);
