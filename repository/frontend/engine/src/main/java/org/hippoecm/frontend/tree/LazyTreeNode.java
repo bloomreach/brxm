@@ -239,33 +239,25 @@ public abstract class LazyTreeNode implements TreeNode, Serializable {
     }
 
     public void notifyChildNodeAdded(LazyTreeNode parent, int index, LazyTreeNode child) {
-        if (_parent == null) {
-            System.out.println("Notification message lost: " + child);
-        } else {
+        if (_parent != null) {
             _parent.notifyChildNodeAdded(parent, index, child);
         }
     }
 
     public void notifyChildNodeRemoved(LazyTreeNode parent, int index, LazyTreeNode child) {
-        if (_parent == null) {
-            System.out.println("Notification message lost: " + child);
-        } else {
+        if (_parent != null) {
             _parent.notifyChildNodeRemoved(parent, index, child);
         }
     }
 
     public void notifyNodeChanged(LazyTreeNode node) {
-        if (_parent == null) {
-            System.out.println("Notification message lost: " + node);
-        } else {
+        if (_parent != null) {
             _parent.notifyNodeChanged(node);
         }
     }
 
     public void notifyNodeStructureChanged(LazyTreeNode node) {
-        if (_parent == null) {
-            System.out.println("Notification message lost: " + node);
-        } else {
+        if (_parent != null) {
             _parent.notifyNodeStructureChanged(node);
         }
     }
