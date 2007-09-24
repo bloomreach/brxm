@@ -21,10 +21,17 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 
@@ -34,7 +41,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
 
-    public JcrTree(String id, TreeModel treeModel) {
+    public JcrTree(String id, LazyTreeModel treeModel) {
         super(id, treeModel);
         
         setLinkType(LinkType.AJAX);
@@ -44,8 +51,8 @@ public abstract class JcrTree extends Tree {
         getTreeState().addTreeStateListener(new JcrTreeStateListener());
     }
 
-    protected String renderNode(TreeNode treeNode) {
-        JcrNodeModel nodeModel = (JcrNodeModel) treeNode;
+    protected String renderNode(JcrLazyTreeNode treeNode) {
+        JcrNodeModel nodeModel = treeNode.getJcrNodeModel();
         HippoNode node = nodeModel.getNode();
         String result = "null";
         if (node != null) {
@@ -60,35 +67,37 @@ public abstract class JcrTree extends Tree {
         }
         return result;
     }
-          
+    
     protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode);
     
     private class JcrTreeStateListener implements ITreeStateListener, IClusterable {
         private static final long serialVersionUID = 1L;
 
         public void nodeExpanded(TreeNode treeNodeModel) {
-            JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
-            Node node = nodeModel.getNode();
-            if (node != null) {
-                try {
-                    for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-                        Node childNode = iter.nextNode();
-                        JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
-                        nodeModel.add(childNodeModel);
-                    }
-                } catch (RepositoryException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
+//            JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
+//            Node node = nodeModel.getNode();
+//            if (node != null) {
+//                try {
+//                    for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+//                        Node childNode = iter.nextNode();
+//                        JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
+//                        nodeModel.add(childNodeModel);
+//                    }
+//                } catch (RepositoryException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//            }
         }
 
         public void nodeCollapsed(TreeNode treeNodeModel) {
-            if (treeNodeModel == null) {
-                return;
-            }
-            JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
-            nodeModel.removeAllChildren();
+//            if (treeNodeModel == null) {
+//                return;
+//            }
+//            JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
+//            nodeModel.removeAllChildren();
+            JcrLazyTreeNode treeNode = (JcrLazyTreeNode) treeNodeModel;
+            treeNode.reload();
         }
 
         public void allNodesCollapsed() {

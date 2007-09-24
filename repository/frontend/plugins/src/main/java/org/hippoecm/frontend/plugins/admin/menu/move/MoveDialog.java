@@ -23,6 +23,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.tree.JcrLazyTreeNode;
+import org.hippoecm.frontend.tree.LazyTreeModel;
 
 public class MoveDialog extends AbstractDialog  {
     private static final long serialVersionUID = 1L;
@@ -38,9 +40,10 @@ public class MoveDialog extends AbstractDialog  {
         try {
             root = model.getNode().getSession().getRootNode();
             JcrNodeModel rootModel = new JcrNodeModel(root);
-            DefaultTreeModel treeModel = new DefaultTreeModel(rootModel);
+            JcrLazyTreeNode treeNode = new JcrLazyTreeNode(null, rootModel);
+            LazyTreeModel treeModel = new LazyTreeModel(treeNode);
             tree = new MoveTargetTreeView("tree", treeModel, this);
-            tree.getTreeState().expandNode(rootModel);
+            tree.getTreeState().expandNode(treeNode);
             add(tree);
 
             infoPanel = new MoveDialogInfoPanel("info", model);
@@ -58,7 +61,8 @@ public class MoveDialog extends AbstractDialog  {
 
     public void ok() throws RepositoryException {
         if (model.getNode() != null) {
-            JcrNodeModel targetNodeModel = (JcrNodeModel) tree.getSelectedNode();
+            JcrLazyTreeNode treeNode = (JcrLazyTreeNode) tree.getSelectedNode();
+            JcrNodeModel targetNodeModel = treeNode.getJcrNodeModel();
             String destination = targetNodeModel.getNode().getPath() + "/" + model.getNode().getName();
             model.getNode().getSession().move(model.getNode().getPath(), destination);
         }
