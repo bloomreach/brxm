@@ -74,28 +74,10 @@ public abstract class JcrTree extends Tree {
         private static final long serialVersionUID = 1L;
 
         public void nodeExpanded(TreeNode treeNodeModel) {
-//            JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
-//            Node node = nodeModel.getNode();
-//            if (node != null) {
-//                try {
-//                    for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-//                        Node childNode = iter.nextNode();
-//                        JcrNodeModel childNodeModel = new JcrNodeModel(childNode);
-//                        nodeModel.add(childNodeModel);
-//                    }
-//                } catch (RepositoryException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
         }
 
         public void nodeCollapsed(TreeNode treeNodeModel) {
-//            if (treeNodeModel == null) {
-//                return;
-//            }
-//            JcrNodeModel nodeModel = (JcrNodeModel) treeNodeModel;
-//            nodeModel.removeAllChildren();
+            // FIXME this is a workaround for the tree currently not updating automatically
             JcrLazyTreeNode treeNode = (JcrLazyTreeNode) treeNodeModel;
             treeNode.reload();
         }
