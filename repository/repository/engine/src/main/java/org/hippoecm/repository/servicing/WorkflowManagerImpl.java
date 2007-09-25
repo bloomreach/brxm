@@ -70,6 +70,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     private Node getWorkflowNode(String category, Node item) {
+	if(configuration == null) {
+            log.error("workflow has not been configured");
+	    return null;
+	}
         try {
             log.info("looking for workflow in category "+category+" for node "+(item==null?"<none>":item.getPath()));
             Node node = session.getNodeByUUID(configuration);
