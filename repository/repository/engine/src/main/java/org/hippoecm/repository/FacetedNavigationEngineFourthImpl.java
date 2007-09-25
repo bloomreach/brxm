@@ -36,11 +36,13 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
 import org.apache.lucene.document.SetBasedFieldSelector;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searchable;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.CachingFacetResultCollector;
@@ -48,10 +50,13 @@ import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.ParallelMultiSearcher;
+import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.servicing.RepositoryDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineFourthImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineFourthImpl.QueryImpl, FacetedNavigationEngineFourthImpl.ContextImpl>
@@ -97,8 +102,11 @@ public class FacetedNavigationEngineFourthImpl
     }
   }
  
- private Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache ;
+  private Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache ;
   
+  /** The logger instance for this class */
+  private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngineThirdImpl.class);
+
   public FacetedNavigationEngineFourthImpl() {
       this.tfvCache = new WeakHashMap<IndexReader, Map<String,Map<Integer, String[]>>>();
   }
@@ -142,6 +150,14 @@ public class FacetedNavigationEngineFourthImpl
        * facetsQuery: get the query for the facets that are asked for
        */
       FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)index.getIndexingConfig());
+     
+      /*
+       * initialQuery: get the query for initialQuery 
+       */
+      org.apache.lucene.search.Query initialLuceneQuery = null;
+      if(initialQuery != null && !initialQuery.xpath.equals("")) {
+          initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH,initialQuery.xpath));
+      }
       
       /*
        * authorizationQuery: get the query for the facets the person is allowed to see (which
@@ -190,12 +206,18 @@ public class FacetedNavigationEngineFourthImpl
                   searchQuery.add(authorizationQuery.getQuery(), Occur.MUST);
               }
               
+              if(initialLuceneQuery != null){
+                  searchQuery.add(initialLuceneQuery, Occur.MUST);
+              }
+              
               long start = System.currentTimeMillis();
               cachingCollector = new CachingFacetResultCollector(indexReader, tfvCache, facet, resultset, hitsRequested, nsMappings);
 
               // cache in the parallelMultiSearcher for each searcher/reader seperately
               parallelMultiSearcher.search(searchQuery, cachingCollector);
-
+              
+              log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() +" results"); 
+              
           }
           
       } catch (IOException e) {
