@@ -17,16 +17,7 @@ package org.hippoecm.repository.api;
 
 import java.io.Serializable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-
 public abstract class WorkflowDescriptor implements Serializable {
-    private final Logger log = LoggerFactory.getLogger(Workflow.class);
 
     protected String displayName;
     protected String rendererName;

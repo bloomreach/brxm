@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public class PluginDescriptor implements IClusterable {
     private static final long serialVersionUID = 1L;
@@ -29,6 +30,12 @@ public class PluginDescriptor implements IClusterable {
     public PluginDescriptor(String path, String className) {
         this.id = path.substring(path.lastIndexOf(":") + 1);
         this.className = className;
+        this.path = path;
+    }
+
+    public PluginDescriptor(String path, WorkflowDescriptor workflowDescriptor) {
+        this.id = path.substring(path.lastIndexOf(":") + 1);
+        this.className = workflowDescriptor.getRendererName();
         this.path = path;
     }
 

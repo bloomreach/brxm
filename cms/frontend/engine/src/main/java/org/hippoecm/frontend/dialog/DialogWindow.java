@@ -35,6 +35,7 @@ public class DialogWindow extends ModalWindow {
                 home.update(target, model);
                 if (resetOnClose) {
                     setResponsePage(home);
+                    setRedirect(true);
                 }
             }
         });

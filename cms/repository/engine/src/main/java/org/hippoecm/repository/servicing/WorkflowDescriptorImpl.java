@@ -31,7 +31,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
 public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serializable {
-    private final Logger log = LoggerFactory.getLogger(Workflow.class);
+    private transient final Logger log = LoggerFactory.getLogger(Workflow.class);
 
     String nodeAbsPath;
     String category;

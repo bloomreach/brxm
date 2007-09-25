@@ -40,7 +40,8 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
     throws RepositoryException, RemoteException
   {
     try {
-      Node node = workflowManager.getSession().getRootNode().getNode(absPath);
+      String relPath = absPath.substring(1);
+      Node node = workflowManager.getSession().getRootNode().getNode(relPath);
       return workflowManager.getWorkflowDescriptor(category, node);
     } catch(RepositoryException ex) {
       throw getRepositoryException(ex);
@@ -51,8 +52,8 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
     throws RepositoryException, RemoteException
   {
     try {
-      absPath = absPath.substring(1); // skip leading slash
-      Node node = workflowManager.getSession().getRootNode().getNode(absPath);
+      String relPath = absPath.substring(1);
+      Node node = workflowManager.getSession().getRootNode().getNode(relPath);
       return workflowManager.getWorkflow(category, node);
     } catch(RepositoryException ex) {
       throw getRepositoryException(ex);
