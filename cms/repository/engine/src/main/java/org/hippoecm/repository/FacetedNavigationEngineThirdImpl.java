@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 import javax.jcr.Session;
@@ -40,6 +41,8 @@ import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.servicing.RepositoryDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineThirdImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl, FacetedNavigationEngineThirdImpl.ContextImpl>
@@ -86,6 +89,10 @@ public class FacetedNavigationEngineThirdImpl
   }
  
   private Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache ;
+  
+  /** The logger instance for this class */
+  private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngineThirdImpl.class);
+
   
   public FacetedNavigationEngineThirdImpl() {
       this.tfvCache = new WeakHashMap<IndexReader, Map<String,Map<Integer, String[]>>>();
@@ -179,9 +186,13 @@ public class FacetedNavigationEngineThirdImpl
               }
               
               long start = System.currentTimeMillis();
-              collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);
+              collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);        
               searcher.search(searchQuery, collector);
-          }
+              //System.out.println("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() +" results");
+              log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() +" results"); 
+              //System.out.println("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) ); 
+              
+          } 
           
       } catch (IOException e) {
           e.printStackTrace();
