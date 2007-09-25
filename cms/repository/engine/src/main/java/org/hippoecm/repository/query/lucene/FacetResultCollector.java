@@ -3,6 +3,7 @@ package org.hippoecm.repository.query.lucene;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.lucene.document.Document;
@@ -66,17 +67,17 @@ public class FacetResultCollector extends HitCollector {
                     offset--;
                 }
             }
-            
-             final TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
-
-             if(tfv != null) {
-                 for(int i=0; i<tfv.getTermFrequencies().length; i++) {
-                     Count count = facetMap.get(tfv.getTerms()[i]);
-                     if(count == null) {
-                         facetMap.put(tfv.getTerms()[i], new Count(1));
-                     } else {
-                         count.count += 1;
-                      }
+             if(facetMap != null){
+                 final TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
+                 if(tfv != null) {
+                     for(int i=0; i<tfv.getTermFrequencies().length; i++) {
+                         Count count = facetMap.get(tfv.getTerms()[i]);
+                         if(count == null) {
+                             facetMap.put(tfv.getTerms()[i], new Count(1));
+                         } else {
+                             count.count += 1;
+                          }
+                     }
                  }
              }
              
