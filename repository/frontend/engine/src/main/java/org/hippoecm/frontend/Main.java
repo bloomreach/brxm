@@ -50,8 +50,7 @@ public class Main extends WebApplication {
         }
     }
 
-    protected void destroy() {
-        super.destroy();
+    protected void onDestroy() {
         repository.close();
     }
 

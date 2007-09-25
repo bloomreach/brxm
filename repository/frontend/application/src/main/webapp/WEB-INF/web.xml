@@ -39,17 +39,6 @@
 		<param-value>java</param-value>
 	</context-param>
 		
-	<!-- Portals integration -->
-	<context-param>
-		<param-name>org.apache.portals.bridges.common.ServletContextProvider</param-name>
-		<param-value>org.apache.jetspeed.portlet.ServletContextProviderImpl</param-value>
-	</context-param>
-	
-	<context-param>
-		<param-name>org.apache.portals.bridges.common.PortletResourceURLFactory</param-name>
-		<param-value>org.apache.jetspeed.portlet.PortletResourceURLFactoryImpl</param-value>
-	</context-param>
-
 	<!--Frontend application-->
 	<filter>
 		<filter-name>Frontend</filter-name>
