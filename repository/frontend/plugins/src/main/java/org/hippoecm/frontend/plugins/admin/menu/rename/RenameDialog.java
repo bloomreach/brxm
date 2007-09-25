@@ -22,6 +22,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrNodeModelState;
 
 public class RenameDialog extends AbstractDialog {
 
@@ -67,6 +68,7 @@ public class RenameDialog extends AbstractDialog {
             }
             String destination = parentPath + page.getName();
             model.getNode().getSession().move(model.getNode().getPath(), destination);
+            model.getState().mark(JcrNodeModelState.MOVED);
         }
     }
 

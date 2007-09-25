@@ -22,6 +22,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrNodeModelState;
 
 public class DeleteDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -39,6 +40,7 @@ public class DeleteDialog extends AbstractDialog {
     public void ok() throws RepositoryException {
         if (model.getNode() != null) {
             model.getNode().remove();
+            model.getState().mark(JcrNodeModelState.DELETED);
         }
     }
 
