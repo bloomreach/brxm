@@ -51,7 +51,7 @@ public class RepositoryDecorator implements Repository {
 
     FacetedNavigationEngine getFacetedNavigationEngine() {
         if(facetedEngine == null) {
-          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineThirdImpl());
+          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
         }
         return facetedEngine;
     }
