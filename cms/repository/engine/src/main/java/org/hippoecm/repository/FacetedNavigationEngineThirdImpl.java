@@ -41,8 +41,8 @@ import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.servicing.RepositoryDecorator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineThirdImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl, FacetedNavigationEngineThirdImpl.ContextImpl>
@@ -91,7 +91,7 @@ public class FacetedNavigationEngineThirdImpl
   private Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache ;
   
   /** The logger instance for this class */
-  private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngineThirdImpl.class);
+  //private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngineThirdImpl.class);
 
   
   public FacetedNavigationEngineThirdImpl() {
@@ -189,7 +189,7 @@ public class FacetedNavigationEngineThirdImpl
               collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);        
               searcher.search(searchQuery, collector);
               //System.out.println("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() +" results");
-              log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() +" results"); 
+             // log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() +" results"); 
               //System.out.println("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) ); 
               
           } 
