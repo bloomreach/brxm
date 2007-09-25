@@ -129,7 +129,7 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
         tBefore = System.currentTimeMillis();
         facetedNavigationNodeTraversal(node,1 , node.getDepth() + 10);
         tAfter = System.currentTimeMillis();
-        historyWriter.write("FullFacetedNavigationTraversal10000" + numDocs, Long.toString(tAfter - tBefore), "ms");
+        historyWriter.write("testFullFacetedNavigationTraversal10000SecondRun" + numDocs, Long.toString(tAfter - tBefore), "ms");
         commonEnd();
     }
 
