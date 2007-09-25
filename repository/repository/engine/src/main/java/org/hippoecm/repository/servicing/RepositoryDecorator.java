@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.servicing;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
@@ -48,7 +51,7 @@ public class RepositoryDecorator implements Repository {
 
     FacetedNavigationEngine getFacetedNavigationEngine() {
         if(facetedEngine == null) {
-          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
+          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineThirdImpl());
         }
         return facetedEngine;
     }
@@ -95,7 +98,6 @@ public class RepositoryDecorator implements Repository {
          */ 
         
         FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, servicingSession);
-        
         
         servicingSession.setFacetedNavigationContext(context);
 	return servicingSession;
