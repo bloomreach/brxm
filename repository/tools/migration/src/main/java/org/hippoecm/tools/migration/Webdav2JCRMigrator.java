@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.jr;
+package org.hippoecm.tools.migration;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
@@ -63,7 +63,7 @@ public class Webdav2JCRMigrator implements Plugin {
     private static final String JCR_PATH = "jcr.path";
 
     private static final String DOCUMENT_CONVERTER_CONFIG = "documentconverter";
-    private static final String DEFAULT_DOCUMENT_CONVERTER = "org.hippoecm.repository.jr.SimpleDocumentConverter";
+    private static final String DEFAULT_DOCUMENT_CONVERTER = "org.hippoecm.tools.migration.SimpleDocumentConverter";
     
 
 

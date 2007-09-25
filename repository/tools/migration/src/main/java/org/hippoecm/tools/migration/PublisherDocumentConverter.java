@@ -1,4 +1,4 @@
-package org.hippoecm.repository.jr;
+package org.hippoecm.tools.migration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
