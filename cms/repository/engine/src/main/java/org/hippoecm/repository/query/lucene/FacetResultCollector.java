@@ -28,19 +28,19 @@ public class FacetResultCollector extends HitCollector {
     
     public FacetResultCollector(IndexReader reader, String facet,  Map<String,Map<String,Count>> resultset, HitsRequested hitsRequested, NamespaceMappings nsMappings) {
         this.reader = reader;
-        try {
-         this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
-         } catch(Exception ex) {
-              System.err.println(ex.getMessage());
-              ex.printStackTrace(System.err);
-         }
-         
+        if(facet != null){
+             try {
+              this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
+             } catch(Exception ex) {
+                  System.err.println(ex.getMessage());
+                  ex.printStackTrace(System.err);
+             }
+        }
         this.numhits = 0;
         
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add(ServicingFieldNames.HIPPO_PATH);
         this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet());
-        
         if(hitsRequested.isResultRequested()) {
             this.hits = new HashSet<String>();
             this.offset = hitsRequested.getOffset();
@@ -60,7 +60,10 @@ public class FacetResultCollector extends HitCollector {
                     Document d = reader.document(docid,fieldSelector);
                     Field f = d.getField(ServicingFieldNames.HIPPO_PATH);
                     if(f!=null){
-                        hits.add(f.stringValue());
+                        // aparantly, path that is returned is expected to start with a "/"
+                        // TODO sort out why without starting "/" it breaks
+                        // TODO Instead of absolute path, we could also return the relative path
+                        hits.add("/"+f.stringValue());
                     }
                 } else if (offset > 0){
                     // decrement offset untill it is 0. Then start gathering results above
