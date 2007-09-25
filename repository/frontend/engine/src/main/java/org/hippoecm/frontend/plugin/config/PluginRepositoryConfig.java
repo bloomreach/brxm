@@ -23,12 +23,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
-
-import org.hippoecm.repository.api.HippoNodeType;
-
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
@@ -63,6 +61,20 @@ public class PluginRepositoryConfig implements PluginConfig {
                 Node child = it.nextNode();
                 result.add(getPluginDescriptor(child));
             }
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
+    public PluginDescriptor getPlugin(String wicketPath)  {
+        wicketPath = wicketPath.substring(2);
+        wicketPath = wicketPath.replaceAll(":", "/");
+        PluginDescriptor result = null;
+        try {
+            Node pluginNode = pluginConfigNodeModel.getNode().getNode(wicketPath);
+            result = getPluginDescriptor(pluginNode);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

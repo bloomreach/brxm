@@ -31,4 +31,9 @@ public class PluginSpringConfig implements PluginConfig {
         // TODO Auto-generated method stub
         return null;
     }
+
+    public PluginDescriptor getPlugin(String path) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

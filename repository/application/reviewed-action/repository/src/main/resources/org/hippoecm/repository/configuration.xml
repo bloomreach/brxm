@@ -56,9 +56,21 @@
         <sv:value>workflows.xml</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:contentroot" sv:type="String">
-        <sv:value>/configuration/hippo:workflows</sv:value>
+        <sv:value>/configuration</sv:value>
       </sv:property>
     </sv:node>
+    
+    <sv:node sv:name="documents">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>documents.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>   
     
     <sv:node sv:name="users">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

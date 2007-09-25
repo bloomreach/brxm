@@ -26,18 +26,59 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 public class PluginJavaConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
+    private PluginDescriptor rootPlugin;
+    private PluginDescriptor navigationPlugin;
+    private PluginDescriptor menuPlugin;
+    private PluginDescriptor loginPlugin;
+    private PluginDescriptor contentPlugin;
+    private PluginDescriptor workflowPlugin;
+
+    public PluginJavaConfig() {
+        rootPlugin = new PluginDescriptor("0:rootPlugin", 
+                "org.hippoecm.frontend.plugins.admin.RootPlugin");
+        navigationPlugin = new PluginDescriptor("0:rootPlugin:navigationPlugin",
+                "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin");
+        menuPlugin = new PluginDescriptor("0:rootPlugin:menuPlugin",
+                "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin");
+        loginPlugin = new PluginDescriptor("0:rootPlugin:loginPlugin",
+                "org.hippoecm.frontend.plugins.admin.login.LoginPlugin");
+        contentPlugin = new PluginDescriptor("0:rootPlugin:contentPlugin",
+                "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin");
+        workflowPlugin = new PluginDescriptor("0:rootPlugin:workflowPlugin",
+                "org.hippoecm.frontend.plugin.empty.EmptyPlugin");
+    }
+
     public PluginDescriptor getRoot() {
-        return new PluginDescriptor("0:rootPlugin", "org.hippoecm.frontend.plugins.admin.RootPlugin");
+        return rootPlugin;
+
     }
 
     public List getChildren(PluginDescriptor pluginDescriptor) {
         List result = new ArrayList();
         if (pluginDescriptor.getPath().endsWith(":rootPlugin")) {
-            result.add(new PluginDescriptor("0:rootPlugin:navigationPlugin", "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin"));
-            result.add(new PluginDescriptor("0:rootPlugin:menuPlugin",       "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin"));
-            result.add(new PluginDescriptor("0:rootPlugin:loginPlugin",      "org.hippoecm.frontend.plugins.admin.login.LoginPlugin"));
-            result.add(new PluginDescriptor("0:rootPlugin:contentPlugin",    "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin"));
-            result.add(new PluginDescriptor("0:rootPlugin:workflowPlugin",   "org.hippoecm.frontend.plugin.empty.EmptyPlugin"));    
+            result.add(navigationPlugin);
+            result.add(menuPlugin);
+            result.add(loginPlugin);
+            result.add(contentPlugin);
+            result.add(workflowPlugin);
+        }
+        return result;
+    }
+
+    public PluginDescriptor getPlugin(String path) {
+        PluginDescriptor result = null;
+        if (path.endsWith(":rootPlugin")) {
+            result = rootPlugin;
+        } else if (path.endsWith(":navigationPlugin")) {
+            return navigationPlugin;
+        } else if (path.endsWith(":menuPlugin")) {
+            return menuPlugin;
+        } else if (path.endsWith(":loginPlugin")) {
+            return loginPlugin;
+        } else if (path.endsWith(":contentPlugin")) {
+            return contentPlugin;
+        } else if (path.endsWith(":workflowPlugin")) {
+            return workflowPlugin;
         }
         return result;
     }
