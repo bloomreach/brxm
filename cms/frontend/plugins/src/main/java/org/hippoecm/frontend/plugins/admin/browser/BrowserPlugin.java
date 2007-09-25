@@ -18,7 +18,9 @@ package org.hippoecm.frontend.plugins.admin.browser;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrNodeModelState;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.tree.JcrLazyTreeModel;
 import org.hippoecm.frontend.tree.JcrLazyTreeNode;
 import org.hippoecm.frontend.tree.JcrTree;
 import org.hippoecm.frontend.tree.LazyTreeModel;
@@ -29,14 +31,14 @@ import javax.swing.tree.TreeNode;
 public class BrowserPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    LazyTreeModel treeModel;
+    JcrLazyTreeModel treeModel;
     JcrTree tree;
     
     public BrowserPlugin(String id, JcrNodeModel model) {
         super(id, model);
         JcrNodeModel modelForTree = new JcrNodeModel(model.getNode());
         JcrLazyTreeNode treeNode = new JcrLazyTreeNode(null, modelForTree);
-        treeModel = new LazyTreeModel(treeNode);
+        treeModel = new JcrLazyTreeModel(treeNode);
         tree = new JcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
@@ -50,9 +52,54 @@ public class BrowserPlugin extends Plugin {
     }
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
-        System.out.println("BrowserPlugin.update: model: " + model);
-        treeModel.nodeChanged((TreeNode)treeModel.getRoot());
-        tree.updateTree(target);
+        JcrNodeModelState nodeState = model.getState();
+        JcrLazyTreeNode treeNode = treeModel.getJcrLazyTreeNode(model);
+        
+        if (nodeState.isChanged()) {
+            if (nodeState.isDeleted()) {
+                JcrLazyTreeNode parent = (JcrLazyTreeNode) treeNode.getParent();
+                if (parent != null) {
+                    parent.childRemoved(treeNode.getJcrNodeModel());
+                    treeModel.nodeStructureChanged(parent);
+                    tree.getTreeState().selectNode(parent, true);
+                    
+                    // FIXME doing another update is not the best way, any better ideas?
+                    Home home = (Home)getWebPage();
+                    home.update(target, parent.getJcrNodeModel());
+                }
+            }
+            if (nodeState.isChildAdded()) {
+                JcrNodeModel child = nodeState.getRelatedNode();
+                if (child != null) {
+                    treeNode.childAdded(child);
+                    treeModel.nodeStructureChanged(treeNode);
+                    tree.getTreeState().expandNode(treeNode);
+                }
+            }
+            if (nodeState.isMoved()) {
+                JcrNodeModel newParent = nodeState.getRelatedNode();
+                if (newParent == null) {
+                    // same parent, node was only renamed
+                    treeModel.nodeChanged(treeNode);
+                }
+                else {
+                    // node was moved to different parent
+                    JcrLazyTreeNode newParentTreeNode = treeModel.getJcrLazyTreeNode(newParent);
+                    if (newParentTreeNode != null) {
+                        newParentTreeNode.childAdded(treeNode.getJcrNodeModel());
+                        treeModel.nodeStructureChanged(newParentTreeNode);
+                    }
+                    JcrLazyTreeNode oldParentTreeNode = (JcrLazyTreeNode) treeNode.getParent();
+                    if (newParent != null) {
+                        oldParentTreeNode.childRemoved(treeNode.getJcrNodeModel());
+                        treeModel.nodeStructureChanged(oldParentTreeNode);
+                    }
+                }
+            }
+            tree.updateTree(target);
+            nodeState.mark(JcrNodeModelState.UNCHANGED);
+            nodeState.setRelatedNode(null);
+        }
     }
 
 }

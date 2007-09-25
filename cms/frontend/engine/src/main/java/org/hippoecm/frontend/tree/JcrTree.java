@@ -77,9 +77,6 @@ public abstract class JcrTree extends Tree {
         }
 
         public void nodeCollapsed(TreeNode treeNodeModel) {
-            // FIXME this is a workaround for the tree currently not updating automatically
-            JcrLazyTreeNode treeNode = (JcrLazyTreeNode) treeNodeModel;
-            treeNode.reload();
         }
 
         public void allNodesCollapsed() {

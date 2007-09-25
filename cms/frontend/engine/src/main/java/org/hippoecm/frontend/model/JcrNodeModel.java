@@ -16,17 +16,14 @@
 package org.hippoecm.frontend.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
@@ -38,11 +35,14 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
 
     // The Item model that is wrapped by this model using the IWrapmodel interface
     private JcrItemModel itemModel;
+    
+    private JcrNodeModelState state;
 
     // Constructor
 
     public JcrNodeModel(Node node) {
         itemModel = new JcrItemModel(node);
+        state = new JcrNodeModelState(JcrNodeModelState.UNCHANGED);
     }
 
     // The wrapped jcr Node object, convenience methods and not part of an api
@@ -77,6 +77,11 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
         } catch (RepositoryException e) {
             return null;
         }
+    }
+    
+    
+    public JcrNodeModelState getState() {
+        return this.state;
     }
     
 
@@ -143,4 +148,8 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
     public void detach() {
     }
 
+    public boolean equals(JcrNodeModel jcrNodeModel) {
+        return (getNode() == null) ? jcrNodeModel.getNode() == null : getNode().equals(jcrNodeModel.getNode());
+    }
+    
 }

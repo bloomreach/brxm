@@ -23,6 +23,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrNodeModelState;
 import org.hippoecm.frontend.tree.JcrLazyTreeNode;
 import org.hippoecm.frontend.tree.LazyTreeModel;
 
@@ -63,8 +64,15 @@ public class MoveDialog extends AbstractDialog  {
         if (model.getNode() != null) {
             JcrLazyTreeNode treeNode = (JcrLazyTreeNode) tree.getSelectedNode();
             JcrNodeModel targetNodeModel = treeNode.getJcrNodeModel();
-            String destination = targetNodeModel.getNode().getPath() + "/" + model.getNode().getName();
+            String parentPath = targetNodeModel.getNode().getPath();
+            if (!"/".equals(parentPath)) {
+                // FIXME we should have a PathUtil class or something which does this kind of thing
+                parentPath += "/";
+            }
+            String destination = parentPath + model.getNode().getName();
             model.getNode().getSession().move(model.getNode().getPath(), destination);
+            model.getState().mark(JcrNodeModelState.MOVED);
+            model.getState().setRelatedNode(targetNodeModel); // save the new parent in the state object
         }
     }
 
@@ -85,7 +93,7 @@ public class MoveDialog extends AbstractDialog  {
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
         if (model != null) {
             try {
-                infoPanel.setDestinationPath(model.getNode().getPath() + "/" + this.model.getNode().getName());
+                infoPanel.setDestinationPath(model.getNode().getPath());
             } catch (RepositoryException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
