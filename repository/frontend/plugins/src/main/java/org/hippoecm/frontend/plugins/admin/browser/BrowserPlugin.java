@@ -52,10 +52,12 @@ public class BrowserPlugin extends Plugin {
     }
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
+        /* commented out because of instability
+
         JcrNodeModelState nodeState = model.getState();
         JcrLazyTreeNode treeNode = treeModel.getJcrLazyTreeNode(model);
         
-        if (nodeState.isChanged()) {
+        if (treeNode != null && nodeState.isChanged()) {
             if (nodeState.isDeleted()) {
                 JcrLazyTreeNode parent = (JcrLazyTreeNode) treeNode.getParent();
                 if (parent != null) {
@@ -100,6 +102,8 @@ public class BrowserPlugin extends Plugin {
             nodeState.mark(JcrNodeModelState.UNCHANGED);
             nodeState.setRelatedNode(null);
         }
+
+        */
     }
 
 }

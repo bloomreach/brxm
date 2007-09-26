@@ -69,9 +69,15 @@ public class JcrLazyTreeNode extends LazyTreeNode implements Serializable {
     public String toString() {
         JcrNodeModel jcrNodeModel = getJcrNodeModel();
         try {
+            if (jcrNodeModel == null) {
+                return "[Error: no model]";
+            }
+            if (jcrNodeModel.getNode() == null) {
+                return "[Error: no node]";
+            }
             return jcrNodeModel.getNode().getName();
         } catch (RepositoryException e) {
-            return "[Invalid Node: " + e + "]";
+            return "[Error: " + e + "]";
         }
     }
     
