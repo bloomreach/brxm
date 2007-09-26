@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 import javax.jcr.Session;
@@ -33,7 +32,6 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetResultCollector;
@@ -42,8 +40,6 @@ import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.servicing.RepositoryDecorator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineThirdImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl, FacetedNavigationEngineThirdImpl.ContextImpl>
@@ -90,10 +86,6 @@ public class FacetedNavigationEngineThirdImpl
   }
  
   private Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache ;
-  
-  /** The logger instance for this class */
-  private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngineThirdImpl.class);
-
   
   public FacetedNavigationEngineThirdImpl() {
       this.tfvCache = new WeakHashMap<IndexReader, Map<String,Map<Integer, String[]>>>();
@@ -156,21 +148,6 @@ public class FacetedNavigationEngineThirdImpl
                                                                      nsMappings, 
                                                                      (ServicingIndexingConfiguration)index.getIndexingConfig(),
                                                                      true); 
-      
-      BooleanQuery searchQuery = new BooleanQuery();
-      
-      
-      if(facetsQuery.getQuery().clauses().size() > 0){
-          searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
-      }
-      // TODO perhaps create cached user specific filter for authorisation to gain speed
-      if(authorizationQuery.getQuery().clauses().size() > 0){
-          searchQuery.add(authorizationQuery.getQuery(), Occur.MUST);
-      }
-      
-      if(initialLuceneQuery != null){
-          searchQuery.add(initialLuceneQuery, Occur.MUST);
-      }
  
       FacetResultCollector collector = null; 
       IndexReader indexReader = null;
@@ -180,25 +157,30 @@ public class FacetedNavigationEngineThirdImpl
           searcher = new IndexSearcher(indexReader);
       
           // In principle, below, there is always one facet 
-          if(resultset != null){
-              for(String facet : resultset.keySet()) {
-                  /*
-                   * facetPropExists: the document must have the property as facet
-                   */
-                  FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings, (ServicingIndexingConfiguration)index.getIndexingConfig());
-                  searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
-                 
-                  long start = System.currentTimeMillis();
-                  collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);        
-                  searcher.search(searchQuery, collector);
-                  log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() +" results"); 
-              } 
-          } else {
-              // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
+          for(String facet : resultset.keySet()) {
+              /*
+               * facetPropExists: the document must have the property as facet
+               */
+              FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings, (ServicingIndexingConfiguration)index.getIndexingConfig());
+              
+              BooleanQuery searchQuery = new BooleanQuery();
+              searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
+              
+              if(facetsQuery.getQuery().clauses().size() > 0){
+                  searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
+              }
+              // TODO perhaps create cached user specific filter for authorisation to gain speed
+              if(authorizationQuery.getQuery().clauses().size() > 0){
+                  searchQuery.add(authorizationQuery.getQuery(), Occur.MUST);
+              }
+              
+              if(initialLuceneQuery != null){
+                  searchQuery.add(initialLuceneQuery, Occur.MUST);
+              }
+              
               long start = System.currentTimeMillis();
-              collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);        
+              collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);
               searcher.search(searchQuery, collector);
-              log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() +" results"); 
           }
           
       } catch (IOException e) {

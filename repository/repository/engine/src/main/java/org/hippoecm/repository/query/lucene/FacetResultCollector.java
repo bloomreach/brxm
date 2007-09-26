@@ -3,7 +3,6 @@ package org.hippoecm.repository.query.lucene;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.lucene.document.Document;
@@ -28,19 +27,19 @@ public class FacetResultCollector extends HitCollector {
     
     public FacetResultCollector(IndexReader reader, String facet,  Map<String,Map<String,Count>> resultset, HitsRequested hitsRequested, NamespaceMappings nsMappings) {
         this.reader = reader;
-        if(facet != null){
-             try {
-              this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
-             } catch(Exception ex) {
-                  System.err.println(ex.getMessage());
-                  ex.printStackTrace(System.err);
-             }
-        }
+        try {
+         this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
+         } catch(Exception ex) {
+              System.err.println(ex.getMessage());
+              ex.printStackTrace(System.err);
+         }
+         
         this.numhits = 0;
         
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add(ServicingFieldNames.HIPPO_PATH);
         this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet());
+        
         if(hitsRequested.isResultRequested()) {
             this.hits = new HashSet<String>();
             this.offset = hitsRequested.getOffset();
@@ -60,27 +59,24 @@ public class FacetResultCollector extends HitCollector {
                     Document d = reader.document(docid,fieldSelector);
                     Field f = d.getField(ServicingFieldNames.HIPPO_PATH);
                     if(f!=null){
-                        // aparantly, path that is returned is expected to start with a "/"
-                        // TODO sort out why without starting "/" it breaks
-                        // TODO Instead of absolute path, we could also return the relative path
-                        hits.add("/"+f.stringValue());
+                        hits.add(f.stringValue());
                     }
                 } else if (offset > 0){
                     // decrement offset untill it is 0. Then start gathering results above
                     offset--;
                 }
             }
-             if(facetMap != null){
-                 final TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
-                 if(tfv != null) {
-                     for(int i=0; i<tfv.getTermFrequencies().length; i++) {
-                         Count count = facetMap.get(tfv.getTerms()[i]);
-                         if(count == null) {
-                             facetMap.put(tfv.getTerms()[i], new Count(1));
-                         } else {
-                             count.count += 1;
-                          }
-                     }
+            
+             final TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
+
+             if(tfv != null) {
+                 for(int i=0; i<tfv.getTermFrequencies().length; i++) {
+                     Count count = facetMap.get(tfv.getTerms()[i]);
+                     if(count == null) {
+                         facetMap.put(tfv.getTerms()[i], new Count(1));
+                     } else {
+                         count.count += 1;
+                      }
                  }
              }
              
