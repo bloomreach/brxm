@@ -117,9 +117,9 @@
           <param name="path" value="${wsp.home}/index"/>
           <param name="useCompoundFile" value="true"/>
           <param name="minMergeDocs" value="100"/>
-          <param name="volatileIdleTime" value="10"/>
+          <param name="volatileIdleTime" value="3"/>
           <param name="maxMergeDocs" value="1000"/>
-          <param name="mergeFactor" value="100"/>
+          <param name="mergeFactor" value="10"/>
           <param name="maxFieldLength" value="10000"/>
           <param name="bufferSize" value="1000"/>
           <param name="cacheSize" value="1000"/>

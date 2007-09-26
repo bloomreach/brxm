@@ -1,5 +1,7 @@
 package org.hippoecm.repository.query.lucene;
 
+import java.util.Map;
+
 import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class FacetPropExistsQuery {
     
+   
     /**
      * The logger instance for this class
      */
@@ -46,11 +49,11 @@ public class FacetPropExistsQuery {
             }
             
         } catch (NoPrefixDeclaredException e) {
-            log.error(e.toString());
+            e.printStackTrace();
         } catch (NameException e) {
-            log.error(e.toString());
+            e.printStackTrace();
         } catch (NamespaceException e) {
-            log.error(e.toString());
+            e.printStackTrace();
         }
     }
 

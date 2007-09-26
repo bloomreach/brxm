@@ -86,11 +86,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         if(facetProperties.contains(propertyName)){
           return true;  
         }
-        // TODO for now, all fields that are possible to index as a facet are index
-        // as a facet by the '|| true' part. When the indexing_configuration is maintainable
-        // through the repository, we can change this to only index facet properties as facets
-        return true;
-        //return false;
+        return false;
     }
     
     public boolean isHippoPath(QName propertyName) {
