@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin;
+package org.hippoecm.frontend.plugins.reviewedactions;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -27,7 +27,6 @@ public class RootPlugin extends Plugin {
     }
 
     public void update(final AjaxRequestTarget target, final JcrNodeModel model) {
-        //Nothing to do
     }
 
 }

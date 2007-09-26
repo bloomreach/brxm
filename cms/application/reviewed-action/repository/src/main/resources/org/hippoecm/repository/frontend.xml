@@ -17,7 +17,7 @@
             <sv:value>hippo:frontendplugin</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.admin.RootPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.reviewedactions.RootPlugin</sv:value>
         </sv:property>
         <sv:node sv:name="navigationPlugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">

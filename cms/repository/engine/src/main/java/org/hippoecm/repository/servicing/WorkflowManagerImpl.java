@@ -75,25 +75,30 @@ public class WorkflowManagerImpl implements WorkflowManager {
     	    return null;
     	}
         try {
-            log.info("looking for workflow in category "+category+" for node "+(item==null?"<none>":item.getPath()));
+            log.debug("looking for workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
             Node node = session.getNodeByUUID(configuration);
-            node = node.getNode(category);
-            Node workflowNode = null;
-            for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
-                workflowNode = iter.nextNode();
-                log.info("matching item type against "+workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
-                if(item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
-                    return workflowNode;
+            if (node.hasNode(category)) {
+                node = node.getNode(category);
+                Node workflowNode = null;
+                for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                    workflowNode = iter.nextNode();
+                    log.debug("matching item type against " + workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
+                    if (item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
+                        log.info("found workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
+                        return workflowNode;
+                    }
                 }
+            } else {
+                log.debug("workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()) + " not found");                
             }
-        } catch(ItemNotFoundException ex) {
-            log.error("workflow category does not exist or workflows definition missing"+ex.getMessage());
-        } catch(PathNotFoundException ex) {
-            log.error("workflow category does not exist or workflows definition missing"+ex.getMessage());
-        } catch(ValueFormatException ex) {
+        } catch (ItemNotFoundException ex) {
+            log.error("workflow category does not exist or workflows definition missing " + ex.getMessage());
+        } catch (PathNotFoundException ex) {
+            log.error("workflow category does not exist or workflows definition missing " + ex.getMessage());
+        } catch (ValueFormatException ex) {
             log.error("misconfiguration of workflow definition");
-        } catch(RepositoryException ex) {
-            log.error("generic error accessing workflow definitions "+ex.getMessage());
+        } catch (RepositoryException ex) {
+            log.error("generic error accessing workflow definitions " + ex.getMessage());
         }
         return null;
     }

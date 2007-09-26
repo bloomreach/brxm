@@ -31,7 +31,6 @@ public class PluginJavaConfig implements PluginConfig {
     private PluginDescriptor menuPlugin;
     private PluginDescriptor loginPlugin;
     private PluginDescriptor contentPlugin;
-    private PluginDescriptor workflowPlugin;
 
     public PluginJavaConfig() {
         rootPlugin = new PluginDescriptor("0:rootPlugin", 
@@ -44,8 +43,6 @@ public class PluginJavaConfig implements PluginConfig {
                 "org.hippoecm.frontend.plugins.admin.login.LoginPlugin");
         contentPlugin = new PluginDescriptor("0:rootPlugin:contentPlugin",
                 "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin");
-        workflowPlugin = new PluginDescriptor("0:rootPlugin:workflowPlugin",
-                "org.hippoecm.frontend.plugin.empty.EmptyPlugin");
     }
 
     public PluginDescriptor getRoot() {
@@ -60,7 +57,6 @@ public class PluginJavaConfig implements PluginConfig {
             result.add(menuPlugin);
             result.add(loginPlugin);
             result.add(contentPlugin);
-            result.add(workflowPlugin);
         }
         return result;
     }
@@ -77,8 +73,6 @@ public class PluginJavaConfig implements PluginConfig {
             return loginPlugin;
         } else if (path.endsWith(":contentPlugin")) {
             return contentPlugin;
-        } else if (path.endsWith(":workflowPlugin")) {
-            return workflowPlugin;
         }
         return result;
     }
