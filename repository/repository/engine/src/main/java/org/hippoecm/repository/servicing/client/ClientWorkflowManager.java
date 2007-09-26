@@ -45,6 +45,14 @@ public class ClientWorkflowManager extends ClientObject implements WorkflowManag
     return session;
   }
 
+    public boolean isConfigured() throws RepositoryException {
+        try {
+            return remote.isConfigured();
+        } catch (RemoteException ex) {
+            throw new RemoteRuntimeException(ex);
+        }
+    }
+
   public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
     try {
       return remote.getWorkflowDescriptor(category, item.getPath());

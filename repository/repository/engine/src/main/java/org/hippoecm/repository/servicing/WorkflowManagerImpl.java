@@ -16,11 +16,8 @@
 package org.hippoecm.repository.servicing;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -30,14 +27,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.servicing.DocumentManagerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorkflowManagerImpl implements WorkflowManager {
     private final Logger log = LoggerFactory.getLogger(Workflow.class);
@@ -65,15 +62,18 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                                           HippoNodeType.WORKFLOWS_PATH).getUUID();
         } catch(RepositoryException ex) {
             log.error("workflow manager configuration failed: "+ex.getMessage());
-            ex.printStackTrace(System.err);
         }
+    }
+    
+    public boolean isConfigured()  throws RepositoryException{
+        return configuration != null;
     }
 
     private Node getWorkflowNode(String category, Node item) {
-	if(configuration == null) {
+    	if(configuration == null) {
             log.error("workflow has not been configured");
-	    return null;
-	}
+    	    return null;
+    	}
         try {
             log.info("looking for workflow in category "+category+" for node "+(item==null?"<none>":item.getPath()));
             Node node = session.getNodeByUUID(configuration);
