@@ -36,6 +36,10 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
     this.workflowManager = manager;
   }
 
+  public boolean isConfigured() throws RepositoryException{
+      return workflowManager.isConfigured();
+  }
+  
   public WorkflowDescriptor getWorkflowDescriptor(String category, String absPath)
     throws RepositoryException, RemoteException
   {
