@@ -49,11 +49,11 @@ public class FacetPropExistsQuery {
             }
             
         } catch (NoPrefixDeclaredException e) {
-            e.printStackTrace();
+            log.error(e.toString());
         } catch (NameException e) {
-            e.printStackTrace();
+            log.error(e.toString());
         } catch (NamespaceException e) {
-            e.printStackTrace();
+            log.error(e.toString());
         }
     }
 
