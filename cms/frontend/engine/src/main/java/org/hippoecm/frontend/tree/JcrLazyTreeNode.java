@@ -70,10 +70,10 @@ public class JcrLazyTreeNode extends LazyTreeNode implements Serializable {
         JcrNodeModel jcrNodeModel = getJcrNodeModel();
         try {
             if (jcrNodeModel == null) {
-                return "[Error: no model]";
+                return "[error]";
             }
             if (jcrNodeModel.getNode() == null) {
-                return "[Error: no node]";
+                return "[node deleted]";
             }
             return jcrNodeModel.getNode().getName();
         } catch (RepositoryException e) {
