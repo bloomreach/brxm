@@ -78,7 +78,9 @@ public class Home extends WebPage {
 
                 WorkflowDescriptor descriptor = null;
                 try {
-                    descriptor = manager.getWorkflowDescriptor(plugin.getId(), model.getNode());
+                    if (model.getNode() != null) {
+                        descriptor = manager.getWorkflowDescriptor(plugin.getId(), model.getNode());
+                    }
                 } catch (RepositoryException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
