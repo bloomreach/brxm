@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 import java.io.IOException;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -35,6 +36,14 @@ public class FacetedNavigationRemoteTest extends FacetedNavigationAbstractTest {
         Thread.sleep(3000);
         server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        // first clean possible old entries
+        for (NodeIterator iter = session.getRootNode().getNodes(); iter.hasNext();) {
+            Node child = iter.nextNode();
+            if (!child.getPath().equals("/jcr:system")) {
+                child.remove();
+            }
+        }
+        session.save();
         session.getRootNode().addNode("navigation");
     }
 
