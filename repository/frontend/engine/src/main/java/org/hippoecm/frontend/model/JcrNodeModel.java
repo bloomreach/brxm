@@ -52,7 +52,7 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
         
         boolean sessionClosed = false;
         try {
-            if (!result.getSession().isLive()) {
+            if (result == null || result.getSession() == null || !result.getSession().isLive()) {
                 sessionClosed = true;
             }
         } catch (RepositoryException e) {
@@ -149,7 +149,15 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
     }
 
     public boolean equals(JcrNodeModel jcrNodeModel) {
-        return (getNode() == null) ? jcrNodeModel.getNode() == null : getNode().equals(jcrNodeModel.getNode());
+        if (jcrNodeModel == null) {
+        	// nothing to compare
+            return false;
+        }
+        if (getNode() == null) {
+        	// null is null is null
+            return jcrNodeModel.getNode() == null;
+        }
+        return getNode().equals(jcrNodeModel.getNode());
     }
     
 }
