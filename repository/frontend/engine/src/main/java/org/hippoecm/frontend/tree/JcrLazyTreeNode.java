@@ -46,8 +46,10 @@ public class JcrLazyTreeNode extends LazyTreeNode implements Serializable {
             NodeIterator jcrChildren = jcrNode.getNodes();
             while (jcrChildren.hasNext()) {
                 Node jcrChild = jcrChildren.nextNode();
-                JcrNodeModel newJcrNodeModel = new JcrNodeModel(jcrChild);
-                childObjects.add(newJcrNodeModel);
+                if (jcrChild != null) {
+                    JcrNodeModel newJcrNodeModel = new JcrNodeModel(jcrChild);
+                    childObjects.add(newJcrNodeModel);
+                }
             }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
