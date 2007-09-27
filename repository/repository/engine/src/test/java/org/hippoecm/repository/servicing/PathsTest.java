@@ -40,6 +40,7 @@ public class PathsTest extends TestCase {
     protected HippoRepository repository;
     protected Session session;
     protected Exception firstException = null;
+    protected boolean needCleanUp = true;
     
     public void testPaths() throws Exception {
         Exception firstException = null;
@@ -48,46 +49,29 @@ public class PathsTest extends TestCase {
             repository = HippoRepositoryFactory.getHippoRepository();
             assertNotNull(repository);
             session = repository.login();
+            // the login without credentials cannot save, so no cleanup needed
+            needCleanUp = false; 
             Node root = session.getRootNode();
+            
             Node sub1 = root.addNode("sub");
             Node sub2 = sub1.addNode("subsub");
-
+            
             assertTrue(root instanceof ServicingNodeImpl);
             assertTrue(sub1 instanceof ServicingNodeImpl);
             assertTrue(sub2 instanceof ServicingNodeImpl);
-            Node realroot = ((ServicingNodeImpl) root).unwrap(root);
-            Node realsub1 = ((ServicingNodeImpl) sub1).unwrap(sub1);
-            Node realsub2 = ((ServicingNodeImpl) sub2).unwrap(sub2);
-
-            sub2.remove();
-            sub1.remove();
+           
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
             firstException = ex;
-        } finally {
-            boolean exceptionOccurred = false;
-            try {
-                if (repository != null) {
-                    repository.close();
-                    repository = null;
-                }
-            } catch (Exception ex) {
-                if (firstException == null) {
-                    firstException = ex;
-                    exceptionOccurred = true;
-                }
-            }
-            if (exceptionOccurred)
-                throw firstException;
         }
     }
 
     public void testPathProperty() throws Exception {
-        HippoRepository repository = null;
+        repository = null;
         try {
             repository = HippoRepositoryFactory.getHippoRepository();
             assertNotNull(repository);
-            Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             Node root = session.getRootNode();
             Node sub1 = root.addNode("test");
             Node sub2 = sub1.addNode("sub");
@@ -112,17 +96,20 @@ public class PathsTest extends TestCase {
     
 public void tearDown() throws Exception {
         
-        Node node = session.getRootNode();
-        
-        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            if (!child.getPath().equals("/jcr:system")) {
-                child.remove();
+        if(needCleanUp){
+            Node node = session.getRootNode();
+            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                Node child = iter.nextNode();
+                System.out.println(child.getPath());
+                if (!child.getPath().equals("/jcr:system")) {
+                    System.out.println(child.getPath());
+                    child.remove();
+                }
             }
-        }
-        session.save();
-        if(session != null) {
-            session.logout();
+            session.save();
+            if(session != null) {
+                session.logout();
+            }
         }
         
         boolean exceptionOccurred = false;
