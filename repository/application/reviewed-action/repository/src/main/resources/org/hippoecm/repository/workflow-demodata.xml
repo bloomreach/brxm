@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="documents" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+<sv:node sv:name="workflow-demo"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
     xmlns:hippo="http://www.hippoecm.org/nt/1.0"
     xmlns:jcr="http://www.jcp.org/jcr/1.0"
@@ -13,14 +14,20 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:handle</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>efea9983-861b-4801-a297-db7d4ca20985</sv:value>
+        </sv:property>
         <sv:node sv:name="myarticle">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:document</sv:value>
             </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>f47e367e-2702-4758-af93-ecd134851ff1</sv:value>
+            </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String">
-                <sv:value>documents</sv:value>
-                <sv:value>documents/myarticle</sv:value>
-                <sv:value>documents/myarticle/myarticle</sv:value>
+                <sv:value>workflow-demo</sv:value>
+                <sv:value>workflow-demo/myarticle</sv:value>
+                <sv:value>workflow-demo/myarticle/myarticle</sv:value>
             </sv:property>
             <sv:property sv:name="content" sv:type="String">
                 <sv:value>Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
