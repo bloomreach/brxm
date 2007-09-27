@@ -35,9 +35,9 @@ public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serial
     String nodeAbsPath;
     String category;
 
-    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node) throws RepositoryException {
+    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Node item) throws RepositoryException {
         this.category = category;
-        nodeAbsPath = node.getPath();
+        nodeAbsPath = item.getPath();
         try {
             serviceName = node.getProperty(HippoNodeType.HIPPO_SERVICE).getString();
             displayName = node.getProperty(HippoNodeType.HIPPO_DISPLAY).getString();

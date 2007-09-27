@@ -129,7 +129,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
         Node workflowNode = getWorkflowNode(category, item);
         if(workflowNode != null) {
-            return new WorkflowDescriptorImpl(this, category, workflowNode);
+            return new WorkflowDescriptorImpl(this, category, workflowNode, item);
         } else {
             log.debug("Workflow for category "+category+" on "+item.getPath()+" is not available");
             return null;
