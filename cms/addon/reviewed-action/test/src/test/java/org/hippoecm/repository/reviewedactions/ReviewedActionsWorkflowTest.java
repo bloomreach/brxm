@@ -115,6 +115,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
     public void tearDown() throws Exception {
         session.getRootNode().getNode("configuration/hippo:workflows").remove();
         session.getRootNode().getNode("documents").remove();
+        session.save();
         server.close();
     }
 
@@ -126,7 +127,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         return workflowMgr.getWorkflow(category, node);
     }
 
-    public void testReviewedAction()
+    public void _testReviewedAction()
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException
     {
         Node node, root = session.getRootNode();
