@@ -164,6 +164,7 @@ public class Utilities {
 
     private static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
+            srcNode = ServicingNodeImpl.unwrap(srcNode);
             for(PropertyIterator iter = srcNode.getProperties(); iter.hasNext(); ) {
                 Property property = iter.nextProperty();
                 if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:uuid")) {
