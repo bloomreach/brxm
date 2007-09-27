@@ -127,7 +127,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         return workflowMgr.getWorkflow(category, node);
     }
 
-    public void _testReviewedAction()
+    public void testReviewedAction()
         throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException
     {
         Node node, root = session.getRootNode();
