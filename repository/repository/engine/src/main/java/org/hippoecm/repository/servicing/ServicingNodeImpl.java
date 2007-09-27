@@ -834,8 +834,6 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         }
         if (node instanceof ServicingNodeImpl) {
             node = (Node) ((ServicingNodeImpl) node).unwrap();
-        } else {
-            throw new IllegalStateException("node is not of type ServicingNodeImpl");
         }
         return node;
     }
