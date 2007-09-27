@@ -24,9 +24,7 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.SearchManager;
-import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineThirdImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 
@@ -48,7 +46,7 @@ public class RepositoryDecorator implements Repository {
 
     FacetedNavigationEngine getFacetedNavigationEngine() {
         if(facetedEngine == null) {
-          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
+          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineThirdImpl());
         }
         return facetedEngine;
     }
