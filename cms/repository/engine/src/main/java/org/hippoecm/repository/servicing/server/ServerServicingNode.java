@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerNode;
+import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
 import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
@@ -35,5 +36,13 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
 
     public String getDisplayName() throws RepositoryException, RemoteException {
         return node.getDisplayName();
+    }
+
+    public RemoteNode getCanonicalNode() throws RepositoryException, RemoteException {
+        try {
+            return getRemoteNode(node.getCanonicalNode());
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
     }
 }

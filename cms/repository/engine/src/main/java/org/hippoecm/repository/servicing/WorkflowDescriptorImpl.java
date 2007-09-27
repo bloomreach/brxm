@@ -31,12 +31,11 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
 public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serializable {
-    private transient final Logger log = LoggerFactory.getLogger(Workflow.class);
 
     String nodeAbsPath;
     String category;
 
-    WorkflowDescriptorImpl(WorkflowManager manager, String category, Node node) throws RepositoryException {
+    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node) throws RepositoryException {
         this.category = category;
         nodeAbsPath = node.getPath();
         try {
@@ -44,10 +43,10 @@ public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serial
             displayName = node.getProperty(HippoNodeType.HIPPO_DISPLAY).getString();
             rendererName = node.getProperty(HippoNodeType.HIPPO_RENDERER).getString();
         } catch (PathNotFoundException ex) {
-            log.error("Workflow specification corrupt on node " + nodeAbsPath);
+            manager.log.error("Workflow specification corrupt on node " + nodeAbsPath);
             throw new RepositoryException("workflow specification corrupt", ex);
         } catch (ValueFormatException ex) {
-            log.error("Workflow specification corrupt on node " + nodeAbsPath);
+            manager.log.error("Workflow specification corrupt on node " + nodeAbsPath);
             throw new RepositoryException("workflow specification corrupt", ex);
         }
     }

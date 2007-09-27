@@ -1,11 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-  HOWEVER: you are very much invited to discuss this code with me.
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -34,6 +27,7 @@ import junit.framework.TestCase;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -124,6 +118,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
             HippoWorkspace wsp = (HippoWorkspace) node.getSession().getWorkspace();
             workflowMgr = wsp.getWorkflowManager();
         }
+        node = ((HippoNode)node).getCanonicalNode();
         return workflowMgr.getWorkflow(category, node);
     }
 

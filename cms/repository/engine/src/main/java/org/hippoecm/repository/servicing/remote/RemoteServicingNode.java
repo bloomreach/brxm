@@ -25,4 +25,5 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
     public String getDisplayName() throws RepositoryException, RemoteException;
+    public RemoteNode getCanonicalNode() throws RepositoryException, RemoteException;
 }
