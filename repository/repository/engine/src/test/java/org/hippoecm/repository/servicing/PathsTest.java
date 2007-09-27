@@ -100,9 +100,7 @@ public void tearDown() throws Exception {
             Node node = session.getRootNode();
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
-                System.out.println(child.getPath());
                 if (!child.getPath().equals("/jcr:system")) {
-                    System.out.println(child.getPath());
                     child.remove();
                 }
             }
