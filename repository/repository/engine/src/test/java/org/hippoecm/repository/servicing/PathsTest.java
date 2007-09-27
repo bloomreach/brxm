@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Property;
@@ -36,13 +37,17 @@ public class PathsTest extends TestCase {
     private static final String SYSTEMUSER_ID = "systemuser";
     private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
 
+    protected HippoRepository repository;
+    protected Session session;
+    protected Exception firstException = null;
+    
     public void testPaths() throws Exception {
         Exception firstException = null;
-        HippoRepository repository = null;
+        repository = null;
         try {
             repository = HippoRepositoryFactory.getHippoRepository();
             assertNotNull(repository);
-            Session session = repository.login();
+            session = repository.login();
             Node root = session.getRootNode();
             Node sub1 = root.addNode("sub");
             Node sub2 = sub1.addNode("subsub");
@@ -79,7 +84,6 @@ public class PathsTest extends TestCase {
     }
 
     public void testPathProperty() throws Exception {
-        Exception firstException = null;
         HippoRepository repository = null;
         try {
             repository = HippoRepositoryFactory.getHippoRepository();
@@ -104,21 +108,41 @@ public class PathsTest extends TestCase {
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
             firstException = ex;
-        } finally {
-            boolean exceptionOccurred = false;
-            try {
-                if (repository != null) {
-                    repository.close();
-                    repository = null;
-                }
-            } catch (Exception ex) {
-                if (firstException == null) {
-                    firstException = ex;
-                    exceptionOccurred = true;
-                }
-            }
-            if (exceptionOccurred)
-                throw firstException;
-        }
+        } 
     }
+    
+public void tearDown() throws Exception {
+        
+        Node node = session.getRootNode();
+        
+        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+            Node child = iter.nextNode();
+            if (!child.getPath().equals("/jcr:system")) {
+                child.remove();
+            }
+        }
+        session.save();
+        if(session != null) {
+            session.logout();
+        }
+        
+        boolean exceptionOccurred = false;
+        try {
+            if (repository != null) {
+                repository.close();
+                repository = null;
+            }
+        } catch (Exception ex) {
+            if (firstException == null) {
+                firstException = ex;
+                exceptionOccurred = true;
+            }
+        }
+        
+        if (exceptionOccurred || firstException != null){
+            throw firstException;
+        }
+      
+    }
+    
 }
