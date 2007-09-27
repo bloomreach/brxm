@@ -310,6 +310,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
                 String nodePath = iter.next();
                 addNode(nodePath, session.getRootNode().getNode(nodePath.substring(1)));
             }
+            instantiated = true;
 
         } else if(isNodeType(HippoNodeType.NT_FACETSELECT)) {
 
@@ -319,6 +320,13 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
                 path = path.substring(1);
                 node = node.getNode(path);
             } else {
+                
+                if (relPath == null) {
+                    // The only way to get here is if docbase doesn't start with a slash
+                    // bail here to prevent a stack overflow due to a recursive loop
+                    // from here to instantiate(null) and back to here
+                    throw new RepositoryException("hippo:docbase MUST start with a / : " + path);
+                }
                 node = getNode(path);
             }
 
@@ -348,6 +356,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
                     addNode(node.getName(), factory.getNodeDecorator(session, node, targetView));
                 }
             }
+            instantiated = true;
 
         }
     }
