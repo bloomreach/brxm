@@ -1,0 +1,156 @@
+ <!--
+     * Copyright 2007 Hippo
+     *
+     * Licensed under the Apache License, Version 2.0 (the  "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+ -->
+<html xmlns:wicket="http://wicket.apache.org/">
+    <wicket:panel>
+        <table>
+        <ul>
+            <li>
+                <!--                
+                    /**
+                    * Request this editable copy of the document.
+                    */
+                    public void obtainEditableInstance()
+                -->                
+                <a wicket:id="obtainEditableInstance">Obtain editable copy</a>
+            </li>
+            <li>
+                <!--
+                    /**
+                    * Do away with the editable copy of the document which was previously
+                    * obtained.
+                    */
+                    public void disposeEditableInstance()
+                -->                
+                <a wicket:id="disposeEditableInstance">Discard editable copy</a>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <!--
+                    /**
+                    * Request for this instance of the document to be published.
+                    */
+                    public void requestPublication()
+                -->
+                <a wicket:id="requestPublication">Request publication</a>
+            </li>
+            <li>
+                <!--
+                    /**
+                    * Request unpublication.
+                    */
+                    public void requestDepublication()
+                -->                
+                <a wicket:id="requestDepublication">Request unpublication</a>
+            </li>
+            <li>
+                <!--
+                    /**
+                    * Request unpublication and deletion of document.
+                    */
+                    public void requestDeletion()
+                -->                
+                <a wicket:id="requestDeletion">Request delete</a>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <!--
+                    /**
+                    * Immediate publication.
+                    * The current user must have authorization for this.
+                    */
+                    public void publish()
+                -->
+                <a wicket:id="publish">Publish</a>
+            </li>                
+            <li>
+                <!--
+                    /**
+                    * Immediate unpublication.
+                    * The current user must have authorization for this.
+                    */
+                    public void depublish()
+                -->                
+                <a wicket:id="depublish">Unpublish</a>
+            </li>
+            <li>
+                <!--
+                    /**
+                    * Immediate unpublication and deletion of document.
+                    * The current user must have authorization for this.
+                    */
+                    public void delete()
+                -->                
+                <a wicket:id="delete">Unpublish and/or delete</a>
+            </li>
+        </ul>
+    </table>
+    </wicket:panel>
+</html>
+
+            <!--
+        <ul>
+                <li>
+                /**
+                * Publish at the requested date.
+                * The current user must have authorization for this.
+                */
+                public void publish(Date publicationDate)
+                <a wicket:id=""></a>
+                </li>
+            -->
+            <!--
+                <li>
+                /**
+                * Publish at the requested date, and depublish at the requested second date
+                * The current user must have authorization for this.
+                */
+                public void publish(Date publicationDate, Date unpublicationDate)
+                <a wicket:id=""></a>
+                </li>
+            -->
+            <!--
+                <li>
+                /**
+                * Request for this instance of the document to be published at the given
+                * date.
+                */
+                public void requestPublication(Date publicationDate)
+                <a wicket:id=""></a>
+                </li>
+            -->
+            <!--
+                <li>
+                /**
+                * Request for this instance of the document to be published at the given
+                * date and to be scheduled for unpublication.
+                */
+                public void requestPublication(Date publicationDate, Date unpublicationDate)
+                <a wicket:id=""></a>
+                </li>
+            -->
+            <!--
+                <li>
+                /**
+                * Request unpublication at given date.
+                */
+                public void requestDepublication(Date publicationDate)
+                
+                <a wicket:id=""></a>
+                </li>
+        </ul>
+            -->
