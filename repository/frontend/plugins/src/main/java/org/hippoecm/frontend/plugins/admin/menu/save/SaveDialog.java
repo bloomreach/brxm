@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.admin.menu.save;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -29,10 +30,10 @@ public class SaveDialog extends AbstractDialog {
         super(dialogWindow, model);
         dialogWindow.setTitle("Save Session");
         
+        
         Label label;
         try {
-            boolean changes = model.getNode().getSession().hasPendingChanges();
-            if (changes) {
+            if (((UserSession) getSession()).getJcrSession().hasPendingChanges()) {
                 label = new Label("message", "There are pending changes");
             } else {
                 label = new Label("message", "There are no pending changes");
@@ -44,7 +45,7 @@ public class SaveDialog extends AbstractDialog {
     }
 
     public void ok() throws RepositoryException {
-        model.getNode().getSession().save();
+        ((UserSession) getSession()).getJcrSession().save();
     }
 
     public void cancel() {
