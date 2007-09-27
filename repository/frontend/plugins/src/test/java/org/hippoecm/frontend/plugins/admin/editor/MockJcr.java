@@ -70,28 +70,28 @@ public class MockJcr {
             propertyIterator.skip(0);
 
             propertyIterator.nextProperty();
-            propertyIteratorControl.setReturnValue(property);
+            propertyIteratorControl.setReturnValue(property, MockControl.ONE_OR_MORE);
 
             property.getPath();
-            propertyControl.setReturnValue("/testnode/testproperty");
+            propertyControl.setReturnValue("/testnode/testproperty", MockControl.ONE_OR_MORE);
 
             property.getName();
-            propertyControl.setReturnValue("testproperty");
+            propertyControl.setReturnValue("testproperty", MockControl.ONE_OR_MORE);
 
             property.getValue();
-            propertyControl.setReturnValue(value);
+            propertyControl.setReturnValue(value, MockControl.ONE_OR_MORE);
 
             property.getDefinition();
             propertyControl.setReturnValue(propertyDefinition, MockControl.ONE_OR_MORE);
 
             propertyDefinition.isProtected();
-            propertyDefinitionControl.setDefaultReturnValue(false);
+            propertyDefinitionControl.setReturnValue(false, MockControl.ONE_OR_MORE);
 
             propertyDefinition.isMultiple();
-            propertyDefinitionControl.setDefaultReturnValue(false);
+            propertyDefinitionControl.setReturnValue(false, MockControl.ONE_OR_MORE);
 
             value.getString();
-            valueControl.setReturnValue("testvalue");
+            valueControl.setReturnValue("testvalue", MockControl.ONE_OR_MORE);
 
             sessionControl.replay();
             nodeControl.replay();
