@@ -59,7 +59,9 @@ public class PluginRepositoryConfig implements PluginConfig {
             NodeIterator it = pluginNode.getNodes();
             while (it.hasNext()) {
                 Node child = it.nextNode();
-                result.add(getPluginDescriptor(child));
+                if (child != null) {
+                    result.add(getPluginDescriptor(child));
+                }
             }
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block

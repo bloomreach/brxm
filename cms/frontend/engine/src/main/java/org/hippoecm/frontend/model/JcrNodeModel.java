@@ -108,7 +108,10 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
                 if (it.getSize() > 0) {
                     it.skip(first);
                     for (int i = 0; i < count; i++) {
-                        list.add(it.nextProperty());
+                        Property prop = it.nextProperty();
+                        if (prop != null) {
+                            list.add(it.nextProperty());
+                        }
                     }
                 }
             }
