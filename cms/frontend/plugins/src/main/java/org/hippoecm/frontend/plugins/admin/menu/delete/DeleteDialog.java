@@ -23,6 +23,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrNodeModelState;
+import org.hippoecm.repository.api.HippoNode;
 
 public class DeleteDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -39,8 +40,12 @@ public class DeleteDialog extends AbstractDialog {
 
     public void ok() throws RepositoryException {
         if (model.getNode() != null) {
+            HippoNode parentNode = (HippoNode) model.getNode().getParent();
             model.getNode().remove();
-            model.getState().mark(JcrNodeModelState.DELETED);
+            //JcrNodeModel removedModel = new JcrNodeModel(model.getNode());
+            model.setNode(parentNode); // node is deleted so use parent now
+            //model.getState().mark(JcrNodeModelState.CHILD_REMOVED);
+            //model.getState().setRelatedNode(removedModel);
         }
     }
 
