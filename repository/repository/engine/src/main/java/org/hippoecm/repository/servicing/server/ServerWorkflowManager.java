@@ -29,42 +29,43 @@ import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
 
 public class ServerWorkflowManager extends ServerObject implements RemoteWorkflowManager {
-  private WorkflowManager workflowManager;
+    private WorkflowManager workflowManager;
 
-  public ServerWorkflowManager(WorkflowManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
-    super(factory);
-    this.workflowManager = manager;
-  }
-
-  public WorkflowDescriptor getWorkflowDescriptor(String category, String absPath)
-    throws RepositoryException, RemoteException
-  {
-    try {
-      Node node = workflowManager.getSession().getRootNode().getNode(absPath);
-      return workflowManager.getWorkflowDescriptor(category, node);
-    } catch(RepositoryException ex) {
-      throw getRepositoryException(ex);
+    public ServerWorkflowManager(WorkflowManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
+        super(factory);
+        this.workflowManager = manager;
     }
-  }
 
-  public Workflow getWorkflow(String category, String absPath)
-    throws RepositoryException, RemoteException
-  {
-    try {
-      Node node = workflowManager.getSession().getRootNode().getNode(absPath);
-      return workflowManager.getWorkflow(category, node);
-    } catch(RepositoryException ex) {
-      throw getRepositoryException(ex);
+    public WorkflowDescriptor getWorkflowDescriptor(String category, String absPath) throws RepositoryException,
+            RemoteException {
+        try {
+            String path = absPath;
+            if (absPath.startsWith("/"))
+                path = path.substring(1);
+            Node node = workflowManager.getSession().getRootNode().getNode(path);
+            return workflowManager.getWorkflowDescriptor(category, node);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
     }
-  }
 
-  public Workflow getWorkflow(WorkflowDescriptor descriptor)
-    throws RepositoryException, RemoteException
-  {
-    try {
-      return workflowManager.getWorkflow(descriptor);
-    } catch(RepositoryException ex) {
-      throw getRepositoryException(ex);
+    public Workflow getWorkflow(String category, String absPath) throws RepositoryException, RemoteException {
+        try {
+            String path = absPath;
+            if (absPath.startsWith("/"))
+                path = path.substring(1);
+            Node node = workflowManager.getSession().getRootNode().getNode(path);
+            return workflowManager.getWorkflow(category, node);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
     }
-  }
+
+    public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException, RemoteException {
+        try {
+            return workflowManager.getWorkflow(descriptor);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
 }
