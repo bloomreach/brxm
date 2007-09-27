@@ -41,7 +41,11 @@ public class FacetedReferenceTest extends TestCase {
 
     private static final String SYSTEMUSER_ID = "systemuser";
     private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
-
+   
+    protected HippoRepository repository;
+    protected Session session;
+    protected Exception firstException = null;
+    
     private static String[] contents = new String[] {
         "/documents",                                                   "nt:unstructured",
         "/documents/pages",                                             "nt:unstructured",
@@ -188,12 +192,11 @@ public class FacetedReferenceTest extends TestCase {
     }
 
     public void testFacetedReference() throws Exception {
-        Exception firstException = null;
-        HippoRepository repository = null;
+        repository = null;
         try {
             repository = HippoRepositoryFactory.getHippoRepository();
             assertNotNull(repository);
-            Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             build(session, contents);
             session.save();
             Utilities.dump(session.getRootNode());
@@ -205,22 +208,44 @@ public class FacetedReferenceTest extends TestCase {
             assertNotNull(traverse(session,"/english/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
             assertNotNull(traverse(session,"/dutch/war-of-the-worlds[language='dutch']"));
             assertNull(traverse(session,"/dutch/war-of-the-worlds[language='english']"));
-            session.logout();
         } catch (RepositoryException ex) {
             firstException = ex;
-        } finally {
-            try {
-                if (repository != null) {
-                    repository.close();
-                    repository = null;
-                }
-            } catch (Exception ex) {
-                if (firstException == null) {
-                    firstException = ex;
-                }
-            }
-            if (firstException != null)
-                throw firstException;
-        }
+        } 
     }
+    
+    public void tearDown() throws Exception {
+        
+        Node node = session.getRootNode();
+        
+        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+            Node child = iter.nextNode();
+            if (!child.getPath().equals("/jcr:system")) {
+                child.remove();
+            }
+        }
+        session.save();
+        if(session != null) {
+            session.logout();
+        }
+        
+        boolean exceptionOccurred = false;
+        try {
+            if (repository != null) {
+                repository.close();
+                repository = null;
+            }
+        } catch (Exception ex) {
+            if (firstException == null) {
+                firstException = ex;
+                exceptionOccurred = true;
+            }
+        }
+        
+        if (exceptionOccurred || firstException != null){
+            throw firstException;
+        }
+           
+    }
+    
+    
 }
