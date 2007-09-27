@@ -28,7 +28,7 @@
                 <sv:value>Reviewed actions workflow</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.ReviewedActionsPlugin</sv:value>
+                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.ReviewedActionsWorkflowPlugin</sv:value>
             </sv:property>
             <sv:node sv:name="hippo:types">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -78,7 +78,7 @@
                 <sv:value>Reviewed requests workflow</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.reviewedactions.RequestWorkflowRenderer</sv:value>
+                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.RequestWorkflowPlugin</sv:value>
             </sv:property>
             <sv:node sv:name="hippo:types">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
