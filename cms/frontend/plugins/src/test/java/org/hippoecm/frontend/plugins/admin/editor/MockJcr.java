@@ -53,19 +53,19 @@ public class MockJcr {
     public void setUp() {
         try {
             node.getPath();
-            nodeControl.setReturnValue("/testnode", 2);
+            nodeControl.setReturnValue("/testnode", MockControl.ONE_OR_MORE);
 
             node.getProperties();
-            nodeControl.setReturnValue(propertyIterator, 2);
+            nodeControl.setReturnValue(propertyIterator, MockControl.ONE_OR_MORE);
             
             node.getSession();
-            nodeControl.setReturnValue(session, 4);
+            nodeControl.setReturnValue(session, MockControl.ONE_OR_MORE);
             
             session.isLive();
-            sessionControl.setReturnValue(true, 4);
+            sessionControl.setReturnValue(true, MockControl.ONE_OR_MORE);
 
             propertyIterator.getSize();
-            propertyIteratorControl.setReturnValue(1, 2);
+            propertyIteratorControl.setReturnValue(1, MockControl.ONE_OR_MORE);
 
             propertyIterator.skip(0);
 
@@ -82,7 +82,7 @@ public class MockJcr {
             propertyControl.setReturnValue(value);
 
             property.getDefinition();
-            propertyControl.setReturnValue(propertyDefinition, 6);
+            propertyControl.setReturnValue(propertyDefinition, MockControl.ONE_OR_MORE);
 
             propertyDefinition.isProtected();
             propertyDefinitionControl.setDefaultReturnValue(false);
