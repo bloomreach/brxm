@@ -139,7 +139,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
         WorkflowDescriptorImpl descriptorImpl = (WorkflowDescriptorImpl) descriptor;
         try {
-            String path = descriptorImpl.nodeAbsPath.substring(1);
+            String path = descriptorImpl.nodeAbsPath;
             if(path.startsWith("/"))
                 path = path.substring(1);
             return getWorkflow(descriptorImpl.category, session.getRootNode().getNode(path));

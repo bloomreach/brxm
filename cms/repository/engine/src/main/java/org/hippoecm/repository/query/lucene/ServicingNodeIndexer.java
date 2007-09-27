@@ -43,7 +43,7 @@ import org.apache.lucene.document.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServicingNodeIndexer extends NodeIndexer{
+public class ServicingNodeIndexer extends NodeIndexer {
    
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
