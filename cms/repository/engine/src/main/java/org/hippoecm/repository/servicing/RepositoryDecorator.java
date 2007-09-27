@@ -25,7 +25,7 @@ import javax.jcr.Session;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.SearchManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngineThirdImpl;
+import org.hippoecm.repository.FacetedNavigationEngineFirst;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 
 /**
@@ -46,13 +46,13 @@ public class RepositoryDecorator implements Repository {
 
     FacetedNavigationEngine getFacetedNavigationEngine() {
         if(facetedEngine == null) {
-          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineThirdImpl());
+          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
         }
         return facetedEngine;
     }
 
     public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException{
-        return ((RepositoryImpl)repository).getSearchManager(workspaceName);
+        return ((RepositoryImpl)repository).getSearchManager(workspaceName); // Ain't gonna work.
     }
 
 
@@ -96,7 +96,7 @@ public class RepositoryDecorator implements Repository {
         
         
         servicingSession.setFacetedNavigationContext(context);
-	return servicingSession;
+        return servicingSession;
     }
 
     /**
