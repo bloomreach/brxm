@@ -140,22 +140,23 @@ public class Utilities {
      * Convenience function to copy a node to a destination path in the same workspace
      *
      * @param srcNode the source path node to copy
-     * @param destAbsPath the absolute path where the srcNode contents should be copied to
+     * @param destAbsNodePath the absolute path of the to be created target
+     * node which will be a copy of srcNode
      * @returns the resulting copy
      */
-    public static Node copy(Node srcNode, String destAbsPath) throws PathNotFoundException, ItemExistsException,
+    public static Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
       LockException, VersionException, RepositoryException {
-        while (destAbsPath.startsWith("/")) {
-            destAbsPath = destAbsPath.substring(1);
+        while (destAbsNodePath.startsWith("/")) {
+            destAbsNodePath = destAbsNodePath.substring(1);
         }
         Node destNode = srcNode.getSession().getRootNode();
-        int p = destAbsPath.lastIndexOf("/");
+        int p = destAbsNodePath.lastIndexOf("/");
         if(p > 0) {
-            destNode = destNode.getNode(destAbsPath.substring(0,p));
-            destAbsPath = destAbsPath.substring(p+1);
+            destNode = destNode.getNode(destAbsNodePath.substring(0,p));
+            destAbsNodePath = destAbsNodePath.substring(p+1);
         }
         try {
-            destNode = destNode.addNode(destAbsPath, srcNode.getPrimaryNodeType().getName());
+            destNode = destNode.addNode(destAbsNodePath, srcNode.getPrimaryNodeType().getName());
             copy(srcNode, destNode);
             return destNode;
         } catch(ConstraintViolationException ex) {
