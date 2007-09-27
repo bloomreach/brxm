@@ -17,7 +17,6 @@ package org.hippoecm.repository.servicing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -26,7 +25,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 
 class NodeView {
@@ -37,21 +35,27 @@ class NodeView {
     NodeView(NodeView current, Property modifyFacets, Property modifyValues, Property modifyModes)
       throws RepositoryException {
         view = new HashMap<String,String>();
-        if(modifyFacets.getDefinition().isMultiple() || modifyValues.getDefinition().isMultiple() ||
-           modifyModes.getDefinition().isMultiple()) {
+        
+        
+        // Either all values MUST be mulltiValues OR all values MUST be single value properties
+        if (modifyFacets.getDefinition().isMultiple() && modifyValues.getDefinition().isMultiple()
+                && modifyModes.getDefinition().isMultiple()) {
+            
             Value[] newFacets = modifyFacets.getValues();
             Value[] newValues = modifyValues.getValues();
-            Value[] newModes  = modifyModes.getValues();
-            if(newFacets.length != newValues.length || newFacets.length != newModes.length)
-                throw new RepositoryException("malformed definition of faceted selection");
-            for(int i=0; i<newFacets.length; i++)
+            Value[] newModes = modifyModes.getValues();
+            if (newFacets.length != newValues.length || newFacets.length != newModes.length)
+                throw new RepositoryException(
+                        "Malformed definition of faceted selection: all multivalues must be of same length.");
+            for (int i = 0; i < newFacets.length; i++) {
                 modifyView(newFacets[i].getString(), newValues[i].getString(), newModes[i].getString());
+            }
+        } else if (!modifyFacets.getDefinition().isMultiple() && !modifyValues.getDefinition().isMultiple()
+                && !modifyModes.getDefinition().isMultiple()) {
+            modifyView(modifyFacets.getString(), modifyValues.getString(), modifyModes.getString());
         } else {
-            if(modifyFacets.getDefinition().isMultiple() && modifyValues.getDefinition().isMultiple() &&
-               modifyModes.getDefinition().isMultiple()) {
-                modifyView(modifyFacets.getString(), modifyValues.getString(), modifyModes.getString());
-            } else
-                throw new RepositoryException("malformed definition of faceted selection");
+            throw new RepositoryException(
+                    "Malformed definition of faceted selection: all values MUST be multi values OR all values must be single value properties.");
         }
     }
 
