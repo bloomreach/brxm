@@ -61,7 +61,6 @@ public class PathsTest extends TestCase {
 
             sub2.remove();
             sub1.remove();
-            session.logout();
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
             firstException = ex;
