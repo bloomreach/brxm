@@ -36,6 +36,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
 public class Utilities {
@@ -167,6 +168,7 @@ public class Utilities {
     private static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
             srcNode = ServicingNodeImpl.unwrap(srcNode);
+            
             for(PropertyIterator iter = srcNode.getProperties(); iter.hasNext(); ) {
                 Property property = iter.nextProperty();
                 if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:uuid")) {
@@ -176,6 +178,10 @@ public class Utilities {
                         destNode.setProperty(property.getName(), property.getValue());
                 }
             }
+            
+            // don't copy childeren of virtual nodes
+            if (srcNode.isNodeType(HippoNodeType.NT_FACETSELECT) || srcNode.isNodeType(HippoNodeType.NT_FACETSEARCH)) return;
+            
             for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
                 Node node = iter.nextNode();
                 Node child = destNode.addNode(node.getName(), srcNode.getPrimaryNodeType().getName());
