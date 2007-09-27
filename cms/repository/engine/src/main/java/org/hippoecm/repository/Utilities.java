@@ -36,6 +36,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
+import org.hippoecm.repository.servicing.ServicingNodeImpl;
+
 public class Utilities {
     private final static Logger log = LoggerFactory.getLogger(Utilities.class);
 
