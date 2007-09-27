@@ -20,8 +20,6 @@ import javax.jcr.RepositoryException;
 
 public interface HippoNode extends Node {
 
-    public String getDisplayName() throws RepositoryException;
-
     /*
      * Other (future) extensions to the interface may include:
      *
@@ -31,8 +29,8 @@ public interface HippoNode extends Node {
      * and could be used to check whether the Node is in fact
      * a full blown document bonzai.
      *
-     *   public Node getPrimary();
-     *   public Node getPrimary(Map<String,String> facets);
+     *   public Node getPrimaryNode();
+     *   public Node getPrimaryNode(Map<String,String> facets);
      * These calls can be used to look up the primary handle of
      * the document.  The handle of a document is the JCR Node
      * under which all instances of a particular document reside
@@ -42,5 +40,26 @@ public interface HippoNode extends Node {
      * uniquely identify the document node for which the handle was
      * requested.
      */
+
+    /**
+     * Get the most accurate and complete version available of the information
+     * represented in the current node.  Certain operations are only allowed
+     * on the most complete version of a node, rather then on any presentation
+     * of the node.
+     *
+     * @returns the node with the most accurate representation of this node.
+     */
+    public Node getCanonicalNode() throws RepositoryException;
+
+    /**
+     * Returns a human representational name for the information represented
+     * by this node.  In case there is no specific resolution to a human
+     * representation this name should return the same value as getName().
+     * This method should not return <code>null</code>.
+     *
+     * @returns a string which represents a human readable representation of
+     * the name of the node
+     */
+    public String getDisplayName() throws RepositoryException;
 
 }

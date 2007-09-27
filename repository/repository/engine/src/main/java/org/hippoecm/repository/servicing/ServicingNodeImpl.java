@@ -750,6 +750,14 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         return depth;
     }
     
+    public Node getCanonicalNode() throws RepositoryException {
+        if (hasProperty("jcr:uuid")) {
+            return getSession().getNodeByUUID(getProperty("jcr:uuid").getString());
+        } else {
+            return this;
+        }
+    }
+
     public String getDisplayName() throws RepositoryException {
         if (isVirtual) {
             

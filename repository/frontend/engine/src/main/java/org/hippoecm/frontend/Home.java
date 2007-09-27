@@ -58,9 +58,7 @@ public class Home extends WebPage {
             final PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
             final WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
 
-            if (manager.isConfigured()) {
-                reconfigurePlugins(manager, model, pluginConfig, target);
-            }
+            reconfigurePlugins(manager, model, pluginConfig, target);
             updatePlugins(target, model);
 
         } catch (RepositoryException e) {

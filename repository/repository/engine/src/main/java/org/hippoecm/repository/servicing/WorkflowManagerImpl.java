@@ -16,8 +16,11 @@
 package org.hippoecm.repository.servicing;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.LinkedList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -37,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WorkflowManagerImpl implements WorkflowManager {
-    private final Logger log = LoggerFactory.getLogger(Workflow.class);
+    final Logger log = LoggerFactory.getLogger(Workflow.class);
 
     class Entry {
         Workflow workflow;
@@ -65,13 +68,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
     
-    public boolean isConfigured()  throws RepositoryException{
-        return configuration != null;
-    }
-
     private Node getWorkflowNode(String category, Node item) {
     	if(configuration == null) {
-            log.error("workflow has not been configured");
     	    return null;
     	}
         try {
@@ -84,7 +82,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     workflowNode = iter.nextNode();
                     log.debug("matching item type against " + workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
                     if (item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
-                        log.info("found workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
+                        log.debug("found workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
                         return workflowNode;
                     }
                 }
@@ -141,8 +139,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
         WorkflowDescriptorImpl descriptorImpl = (WorkflowDescriptorImpl) descriptor;
         try {
-            return getWorkflow(descriptorImpl.category,
-                               session.getRootNode().getNode(descriptorImpl.nodeAbsPath.substring(1)));
+            String path = descriptorImpl.nodeAbsPath.substring(1);
+            if(path.startsWith("/"))
+                path = path.substring(1);
+            return getWorkflow(descriptorImpl.category, session.getRootNode().getNode(path));
         } catch(PathNotFoundException ex) {
             log.debug("Workflow no longer available "+descriptorImpl.nodeAbsPath);
             return null;

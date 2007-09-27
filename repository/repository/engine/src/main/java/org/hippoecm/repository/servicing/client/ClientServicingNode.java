@@ -17,6 +17,7 @@ package org.hippoecm.repository.servicing.client;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
@@ -37,6 +38,13 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
     public String getDisplayName() throws RepositoryException {
         try {
             return remote.getDisplayName();
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+    public Node getCanonicalNode() throws RepositoryException {
+        try {
+	    return getNode(getSession(), remote.getCanonicalNode());
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }

@@ -36,16 +36,16 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
     this.workflowManager = manager;
   }
 
-  public boolean isConfigured() throws RepositoryException{
-      return workflowManager.isConfigured();
-  }
-  
   public WorkflowDescriptor getWorkflowDescriptor(String category, String absPath)
     throws RepositoryException, RemoteException
   {
     try {
+/* NO THESE THINGS SHOULD WORK ON THE FUCKING ABSOLUTE PATH
       String relPath = absPath.substring(1);
       Node node = workflowManager.getSession().getRootNode().getNode(relPath);
+*/
+      Node node = workflowManager.getSession().getRootNode().getNode(absPath);
+
       return workflowManager.getWorkflowDescriptor(category, node);
     } catch(RepositoryException ex) {
       throw getRepositoryException(ex);
@@ -56,8 +56,13 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
     throws RepositoryException, RemoteException
   {
     try {
+/*
       String relPath = absPath.substring(1);
       Node node = workflowManager.getSession().getRootNode().getNode(relPath);
+      return workflowManager.getWorkflow(category, node);
+*/
+      absPath = absPath.substring(1); // skip leading slash
+      Node node = workflowManager.getSession().getRootNode().getNode(absPath);
       return workflowManager.getWorkflow(category, node);
     } catch(RepositoryException ex) {
       throw getRepositoryException(ex);

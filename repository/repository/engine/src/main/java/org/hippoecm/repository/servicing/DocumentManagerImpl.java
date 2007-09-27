@@ -63,7 +63,7 @@ public class DocumentManagerImpl
                                                           HippoNodeType.DOCUMENTS_PATH).getUUID();
         } catch(RepositoryException ex) {
             log.error("document manager configuration failed: "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            // ex.printStackTrace(System.err);
         }
         try {
             Properties properties = new Properties();
