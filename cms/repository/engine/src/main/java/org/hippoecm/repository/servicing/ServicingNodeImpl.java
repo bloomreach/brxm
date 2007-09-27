@@ -300,11 +300,11 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
       
             HitsRequested hitsRequested = new HitsRequested();
             hitsRequested.setResultRequested(true);
-            hitsRequested.setLimit(10);
+            hitsRequested.setLimit(1000000);
             hitsRequested.setOffset(0);
             FacetedNavigationEngine.Result result;
             result = facetedEngine.view(queryname, initialQuery, session.getFacetedNavigationContext(), currentFacetQuery,
-                                        null, new HitsRequested());
+                                        null, hitsRequested);
 
             for(Iterator<String> iter = result.iterator(); iter.hasNext(); ) {
                 String nodePath = iter.next();
