@@ -25,7 +25,7 @@
         <sv:value>brand</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:docbase" sv:type="String">
-        <sv:value>/facetsearch-demo/documents</sv:value>
+        <sv:value>facetsearch-demo/documents</sv:value>
       </sv:property>
       <sv:node sv:name="hippo:resultset">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

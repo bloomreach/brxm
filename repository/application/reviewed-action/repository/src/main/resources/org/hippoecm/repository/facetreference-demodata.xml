@@ -33,11 +33,11 @@
             <sv:value>4611a3ab-d698-433b-ac2e-66e4cc299750</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>facetedreference</sv:value>
-            <sv:value>facetedreference/documents</sv:value>
-            <sv:value>facetedreference/documents/articles</sv:value>
-            <sv:value>facetedreference/documents/articles/brave-new-world</sv:value>
-            <sv:value>facetedreference/documents/articles/brave-new-world/brave-new-world</sv:value>
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/brave-new-world</sv:value>
+            <sv:value>facetreference-demo/documents/articles/brave-new-world/brave-new-world</sv:value>
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
@@ -59,11 +59,11 @@
             <sv:value>13024de8-0cbd-45e4-90c0-fbb8a6296cec</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>facetedreference</sv:value>
-            <sv:value>facetedreference/documents</sv:value>
-            <sv:value>facetedreference/documents/articles</sv:value>
-            <sv:value>facetedreference/documents/articles/the-invisible-man</sv:value>
-            <sv:value>facetedreference/documents/articles/the-invisible-man/the-invisible-man</sv:value>
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/the-invisible-man</sv:value>
+            <sv:value>facetreference-demo/documents/articles/the-invisible-man/the-invisible-man</sv:value>
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
@@ -85,11 +85,11 @@
             <sv:value>c1e1c1bb-524c-40b7-8966-77128d870d96</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>facetedreference</sv:value>
-            <sv:value>facetedreference/documents</sv:value>
-            <sv:value>facetedreference/documents/articles</sv:value>
-            <sv:value>facetedreference/documents/articles/war-of-the-worlds</sv:value>
-            <sv:value>facetedreference/documents/articles/war-of-the-worlds/war-of-the-worlds</sv:value>
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/war-of-the-worlds</sv:value>
+            <sv:value>facetreference-demo/documents/articles/war-of-the-worlds/war-of-the-worlds</sv:value>
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
@@ -103,11 +103,11 @@
             <sv:value>e7477916-5740-4817-a41f-c64a0e3f664e</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>facetedreference</sv:value>
-            <sv:value>facetedreference/documents</sv:value>
-            <sv:value>facetedreference/documents/articles</sv:value>
-            <sv:value>facetedreference/documents/articles/war-of-the-worlds</sv:value>
-            <sv:value>facetedreference/documents/articles/war-of-the-worlds/war-of-the-worlds[2]</sv:value>
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/war-of-the-worlds</sv:value>
+            <sv:value>facetreference-demo/documents/articles/war-of-the-worlds/war-of-the-worlds</sv:value>
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>dutch</sv:value>
@@ -129,11 +129,11 @@
             <sv:value>17813d97-583b-459f-822c-935ee873268c</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>facetedreference</sv:value>
-            <sv:value>facetedreference/documents</sv:value>
-            <sv:value>facetedreference/documents/articles</sv:value>
-            <sv:value>facetedreference/documents/articles/nineteeneightyfour</sv:value>
-            <sv:value>facetedreference/documents/articles/nineteeneightyfour/nineteeneightyfour</sv:value>
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/nineteeneightyfour</sv:value>
+            <sv:value>facetreference-demo/documents/articles/nineteeneightyfour/nineteeneightyfour</sv:value>
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>dutch</sv:value>
@@ -147,11 +147,11 @@
             <sv:value>a61acd34-bbc7-4acf-bc15-99a1bcb211ac</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:paths" sv:type="String">
-            <sv:value>facetedreference</sv:value>
-            <sv:value>facetedreference/documents</sv:value>
-            <sv:value>facetedreference/documents/articles</sv:value>
-            <sv:value>facetedreference/documents/articles/nineteeneightyfour</sv:value>
-            <sv:value>facetedreference/documents/articles/nineteeneightyfour/nineteeneightyfour[2]</sv:value>
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/nineteeneightyfour</sv:value>
+            <sv:value>facetreference-demo/documents/articles/nineteeneightyfour/nineteeneightyfour</sv:value>
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
