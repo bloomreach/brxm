@@ -10,6 +10,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
@@ -80,13 +81,7 @@ public class JcrLazyTreeNode extends LazyTreeNode implements Serializable {
                 return "[node deleted]";
             }
 
-            ServicingNodeImpl node;
-            if (jcrNodeModel.getNode() instanceof ServicingNodeImpl) {
-                node = (ServicingNodeImpl) jcrNodeModel.getNode();                
-            } else {
-                // just a normal JCR node
-                return jcrNodeModel.getNode().getName();
-            }
+            HippoNode node = jcrNodeModel.getNode();
             
             if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                 return node.getDisplayName() + " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
