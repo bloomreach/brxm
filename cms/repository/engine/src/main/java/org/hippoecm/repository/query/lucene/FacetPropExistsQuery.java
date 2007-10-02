@@ -1,7 +1,5 @@
 package org.hippoecm.repository.query.lucene;
 
-import java.util.Map;
-
 import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;

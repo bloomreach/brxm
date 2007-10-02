@@ -4,10 +4,8 @@ import java.util.Map;
 
 import javax.jcr.NamespaceException;
 
-import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.name.NameException;
-import org.apache.jackrabbit.name.NameFormat;
 import org.apache.jackrabbit.name.NoPrefixDeclaredException;
 import org.apache.jackrabbit.name.ParsingNameResolver;
 import org.apache.jackrabbit.name.QName;
