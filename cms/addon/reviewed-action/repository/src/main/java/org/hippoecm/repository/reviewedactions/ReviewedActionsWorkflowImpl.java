@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -31,9 +25,9 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.servicing.WorkflowImpl;
 
 public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements ReviewedActionsWorkflow {
-    public String a; // FIXME: workaround for current mapping issues
     public String content;
     String username;
     public PublicationRequest current;
@@ -44,7 +38,7 @@ public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements Reviewe
     public ReviewedActionsWorkflowImpl() throws RemoteException {
     }
     public void obtainEditableInstance() throws WorkflowException {
-        System.err.println("obtain editable instance on document "+a);
+        System.err.println("obtain editable instance on document "+unpublished.getJcrIdentity());
         if(draft == null) {
             try {
                 draft = (PublishableDocument) unpublished.clone();
@@ -59,19 +53,19 @@ public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements Reviewe
     }
 
     public void disposeEditableInstance() throws WorkflowException {
-        System.err.println("dispose editable instance on document "+a);
+        System.err.println("dispose editable instance on document ");
         draft = null;
     }
 
     public void delete() throws WorkflowException {
-        System.err.println("deletion on document "+a);
+        System.err.println("deletion on document ");
         if(current != null)
             throw new WorkflowException("cannot delete document with pending publication request");
         unpublished = draft = null;
     }
 
     public void requestDeletion() throws WorkflowException {
-        System.err.println("deletion request on document "+a);
+        System.err.println("deletion request on document ");
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUsername());
         } else {
@@ -80,7 +74,7 @@ public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements Reviewe
     }
 
     public void publish() throws WorkflowException, WorkflowMappingException {
-        System.err.println("publication on document "+a);
+        System.err.println("publication on document ");
         try {
             if(draft != null) {
                 published = (PublishableDocument) draft.clone();
@@ -94,17 +88,17 @@ public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements Reviewe
     }
 
     public void publish(Date publicationDate) throws WorkflowException {
-        System.err.println("publication on document "+a);
+        System.err.println("publication on document ");
         throw new WorkflowException("unsupported");
     }
 
     public void publish(Date publicationDate, Date depublicationDate) throws WorkflowException {
-        System.err.println("publication on document "+a);
+        System.err.println("publication on document ");
         throw new WorkflowException("unsupported");
     }
 
     public void requestPublication() throws WorkflowException {
-        System.err.println("publication request on document "+a);
+        System.err.println("publication request on document ");
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.PUBLISH, draft, getWorkflowContext().getUsername());
         } else {
@@ -113,7 +107,7 @@ public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements Reviewe
     }
 
     public void requestPublication(Date publicationDate) throws WorkflowException {
-        System.err.println("publication request on document "+a);
+        System.err.println("publication request on document ");
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.PUBLISH, draft, getWorkflowContext().getUsername());
         } else {
@@ -122,17 +116,17 @@ public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements Reviewe
     }
 
     public void requestPublication(Date publicationDate, Date depublicationDate) throws WorkflowException {
-        System.err.println("publication request on document "+a);
+        System.err.println("publication request on document ");
         throw new WorkflowException("unsupported");
     }
 
     public void depublish() throws WorkflowException {
-        System.err.println("depublication on document "+a);
+        System.err.println("depublication on document ");
         published = null;
     }
 
     public void requestDepublication() throws WorkflowException {
-        System.err.println("depublication request on document "+a);
+        System.err.println("depublication request on document ");
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUsername());
         } else {
@@ -144,8 +138,4 @@ public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements Reviewe
         throw new WorkflowException("Unsupported operation");
     }
 
-    public void post() throws RepositoryException {
-        System.err.println("request performed on workflow "+a);
-        super.post();
-    }
 }
