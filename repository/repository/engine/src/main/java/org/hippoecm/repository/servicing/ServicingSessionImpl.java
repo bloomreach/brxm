@@ -57,6 +57,7 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.jackrabbit.HippoSession;
 
 /**
  */
@@ -70,8 +71,6 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
     protected final Session session;
 
     protected UserTransactionManager utm = null;
-
-    FacetedNavigationEngine.Context facetedContext;
 
     public UserTransactionManager getUserTransactionManager() {
         return utm;
@@ -108,11 +107,11 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
     }
 
     FacetedNavigationEngine.Context getFacetedNavigationContext() {
-        return facetedContext;
+        return ((HippoSession)session).getFacetedNavigationContext();
     }
 
     void setFacetedNavigationContext(FacetedNavigationEngine.Context context) {
-        facetedContext = context;
+        ((HippoSession)session).setFacetedNavigationContext(context);
     }
 
     Path getQPath(String absPath) throws NameException, NamespaceException {
@@ -217,7 +216,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
                 try {
                     node = node.getNode(elements[elements.length - 1].getName().getLocalName());
                     if (!(node instanceof ServicingNodeImpl))
-                        node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1, null);
+              node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1, null);
                     return node;
                 } catch (PathNotFoundException ex2) {
                     return node.getProperty(elements[elements.length - 1].getName().getLocalName());
@@ -361,7 +360,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      */
     public void logout() {
         session.logout();
-        ((RepositoryDecorator) repository).getFacetedNavigationEngine().unprepare(facetedContext);
+        ((RepositoryDecorator) repository).getFacetedNavigationEngine().unprepare(getFacetedNavigationContext());
     }
 
     /**

@@ -16,24 +16,34 @@
 package org.hippoecm.repository.query.lucene;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.jcr.RepositoryException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import javax.jcr.RepositoryException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import org.apache.lucene.document.Document;
+
+import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
 import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.lucene.document.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+
+import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 
 public class ServicingSearchIndex extends SearchIndex {
 
@@ -45,7 +55,10 @@ public class ServicingSearchIndex extends SearchIndex {
      * is no such configuration.
      */
     private Element indexingConfiguration;
-    
+
+    /**
+     * Simple zero argument constructor.
+     */
     public ServicingSearchIndex() {
         super();
     }
@@ -53,13 +66,13 @@ public class ServicingSearchIndex extends SearchIndex {
     /**
      * Returns the multi index.
      *
-     * @return the multi index.
+     * @return the multi index
      */
     public MultiIndex getIndex() {
         return super.getIndex();
     }
-    
-    
+
+
     /**
      * Returns the document element of the indexing configuration or
      * <code>null</code> if there is no indexing configuration.
@@ -69,35 +82,18 @@ public class ServicingSearchIndex extends SearchIndex {
      */
     @Override
     protected Element getIndexingConfigurationDOM() {
-       
-        String configName = this.getIndexingConfiguration();
+
         if (indexingConfiguration != null) {
             return indexingConfiguration;
         }
+        String configName = getIndexingConfiguration();
         if (configName == null) {
             return null;
         }
-        
-        InputSource configurationInputSource = null;
-        File config = null;
-        
-        if (!configName.startsWith("file:")) {
-            log.info("Using resource repository indexing_configuration: " + configName);
-            configurationInputSource = new InputSource(getIndexingConfigurationAsStream(configName));
-            if(configurationInputSource == null) {
-                log.warn("indexing configuration not found: " + getClass().getName() +"/"+ configName);
-            }
-        }
-        else {
-        // parse file name
-            if (configName.startsWith("file://")) {
-                configName = configName.substring(6);
-            } else if (configName.startsWith("file:/")) {
-                configName = configName.substring(5);
-            } else if (configName.startsWith("file:")) {
-                configName = "/" + configName.substring(5);
-            }
-            config = new File(configName);
+
+        InputStream configInputStream = null;
+        if(configName.startsWith("file:/")) {
+            File config = new File(configName.substring(5));
             log.info("Using indexing configuration: " + configName);
             if (!config.exists()) {
                 log.warn("File does not exist: " + this.getIndexingConfiguration());
@@ -106,47 +102,53 @@ public class ServicingSearchIndex extends SearchIndex {
                 log.warn("Cannot read file: " + this.getIndexingConfiguration());
                 return null;
             }
+            try {
+                configInputStream = new FileInputStream(config);
+            } catch(FileNotFoundException ex) {
+                log.warn("indexing configuration not found: " + configName);
+                return null;
+            }
+        } else {
+            log.info("Using resource repository indexing_configuration: " + configName);
+            configInputStream = getClass().getResourceAsStream(configName);
+            if(configInputStream == null) {
+                log.warn("indexing configuration not found: " + getClass().getName() +"/"+ configName);
+                return null;
+            }
         }
-    
+
         try {
-            DocumentBuilderFactory factory =
-                    DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(new IndexingConfigurationEntityResolver());
-            if(configurationInputSource != null){
-                indexingConfiguration = builder.parse(configurationInputSource).getDocumentElement();
-            } else if(config != null){
-                indexingConfiguration = builder.parse(config).getDocumentElement();
-            } else {
-                log.warn("indexing configuration not found: " + configName);
-            }
-            
+            InputSource configurationInputSource = new InputSource(configInputStream);
+            indexingConfiguration = builder.parse(configurationInputSource).getDocumentElement();
         } catch (ParserConfigurationException e) {
             log.warn("Unable to create XML parser", e);
         } catch (IOException e) {
             log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
         } catch (SAXException e) {
             log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
-        } 
+        }
+
         return indexingConfiguration;
     }
 
-    private InputStream getIndexingConfigurationAsStream(String configName){
-        return getClass().getResourceAsStream(configName);
-    }
-    
     @Override
-    protected Document createDocument(NodeState node, NamespaceMappings nsMappings) throws RepositoryException {
+    protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
+                                      IndexFormatVersion indexFormatVersion) throws RepositoryException
+    {
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node,
                 getContext().getItemStateManager(), nsMappings, super.getTextExtractor());
         indexer.setSupportHighlighting(super.getSupportHighlighting());
+        // indexer.setIndexingConfiguration(indexingConfig);
         indexer.setServicingIndexingConfiguration((ServicingIndexingConfiguration)super.getIndexingConfig());
-        Document doc = indexer.createDoc(); 
+        indexer.setIndexFormatVersion(indexFormatVersion);
+        Document doc = indexer.createDoc();
         mergeAggregatedNodeIndexes(node, doc);
         return doc;
     }
-  
-    
+
     // below used for parsing original xpath to get lucene query back
     //  public Query getLuceneQuery(ServicingSessionImpl session,
     //  String statement,
@@ -161,4 +163,5 @@ public class ServicingSearchIndex extends SearchIndex {
     //
     //  return q;
     //}
+
 }
