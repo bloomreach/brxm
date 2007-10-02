@@ -69,7 +69,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
     protected Document createDoc() throws RepositoryException {
         // index the jackrabbit way
         Document doc = super.createDoc();
-
         // plus index our facet specifics 
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
@@ -111,13 +110,17 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 indexFacet(doc,fieldName,value.toString());
                 break;
             case PropertyType.DATE:
-                indexFacet(doc,fieldName,DateField.timeToString(((Calendar)((Object)value)).getTimeInMillis()));
+                if((Object)value instanceof Calendar){
+                    indexFacet(doc,fieldName,DateField.timeToString(((Calendar)((Object)value)).getTimeInMillis()));
+                } else {
+                    log.warn("PropertyType.DATE contains internalValue for "+name.getLocalName()+" which is not instance of Calendar. Won't index this date");
+                }
                 break;
             case PropertyType.DOUBLE:
                 indexFacet(doc,fieldName,DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
                 break;
             case PropertyType.LONG:
-                indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));
+               indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));    
                 break;
             case PropertyType.REFERENCE:
                 // never facet;
