@@ -119,7 +119,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
          * authorizationQuery.put("z", new String[]{"z1","z2"});
          * FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare("abc", authorizationQuery, null, servicingSession);
          */
-System.err.println("GRRRR "+getFacetedNavigationEngine());
         FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, session);
         if(session instanceof HippoSession)
             ((HippoSession)session).setFacetedNavigationContext(context);

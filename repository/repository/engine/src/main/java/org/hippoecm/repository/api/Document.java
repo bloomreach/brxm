@@ -20,7 +20,6 @@ import java.io.Serializable;
 public abstract class Document implements Serializable, Cloneable {
     private transient Document jcrIsCloned = null;
     public Object clone() throws CloneNotSupportedException {
-        System.out.println("CLONE document "+getJcrIdentity()); // FIXME: side effect to force this field to be present
         Document document = (Document) super.clone();
         document.setJcrCloned(this);
         return document;
