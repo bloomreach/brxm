@@ -153,11 +153,11 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
 
     public boolean equals(JcrNodeModel jcrNodeModel) {
         if (jcrNodeModel == null) {
-        	// nothing to compare
+            // nothing to compare
             return false;
         }
         if (getNode() == null) {
-        	// null is null is null
+            // null is null is null
             return jcrNodeModel.getNode() == null;
         }
         return getNode().equals(jcrNodeModel.getNode());

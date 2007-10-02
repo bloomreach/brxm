@@ -69,9 +69,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
     
     private Node getWorkflowNode(String category, Node item) {
-    	if(configuration == null) {
-    	    return null;
-    	}
+        if(configuration == null) {
+            return null;
+        }
         try {
             log.debug("looking for workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
             Node node = session.getNodeByUUID(configuration);
