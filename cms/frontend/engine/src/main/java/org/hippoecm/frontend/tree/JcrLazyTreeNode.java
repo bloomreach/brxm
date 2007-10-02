@@ -10,9 +10,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
 public class JcrLazyTreeNode extends LazyTreeNode implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -69,29 +66,6 @@ public class JcrLazyTreeNode extends LazyTreeNode implements Serializable {
     public JcrNodeModel getJcrNodeModel() {
         JcrNodeModel jcrNodeModel = (JcrNodeModel) getUserObject();
         return jcrNodeModel;
-    }
-    
-    public String toString() {
-        JcrNodeModel jcrNodeModel = getJcrNodeModel();
-        try {
-            if (jcrNodeModel == null) {
-                return "[error]";
-            }
-            if (jcrNodeModel.getNode() == null) {
-                return "[node deleted]";
-            }
-
-            HippoNode node = jcrNodeModel.getNode();
-            
-            if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
-                return node.getDisplayName() + " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
-            } 
-            return node.getDisplayName();
-            
-        } catch (RepositoryException e) {
-            // TODO: this is kind of weird...
-            return "[Error: " + e + "]";
-        }
     }
     
 }
