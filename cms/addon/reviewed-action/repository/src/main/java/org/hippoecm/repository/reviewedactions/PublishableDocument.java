@@ -32,7 +32,6 @@ public class PublishableDocument extends Document {
         return jcrIdentity;
     }
     public Object clone() throws CloneNotSupportedException {
-        System.err.println("CLONE GVD");
         return super.clone();
     }
 }

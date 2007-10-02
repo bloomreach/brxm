@@ -783,7 +783,6 @@ class FieldManagerImpl extends AbstractFieldManager {
             } catch (LockException ex) {
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
-ex.printStackTrace(System.err);
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
