@@ -15,9 +15,16 @@
  */
 package org.hippoecm.repository.pojo;
 
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -26,16 +33,21 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
+
 import javax.jdo.spi.PersistenceCapable;
 
 import org.jpox.StateManager;
 import org.jpox.exceptions.JPOXDataStoreException;
 import org.jpox.state.StateManagerFactory;
 import org.jpox.store.fieldmanager.AbstractFieldManager;
+import org.jpox.metadata.ClassMetaData;
+import org.jpox.metadata.AbstractClassMetaData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 
 class FieldManagerImpl extends AbstractFieldManager {
@@ -60,13 +72,153 @@ class FieldManagerImpl extends AbstractFieldManager {
         this.types = types;
     }
 
+    static class Entry {
+        Node node;
+        String relPath;
+    }
+    private Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
+      throws InvalidItemStateException, RepositoryException {
+        if(last != null) {
+            last.node = null;
+            last.relPath = null;
+        }
+        Node node = ancestor;
+        String[] pathElts = path.split("/");
+        int pathEltsLength = pathElts.length;
+        if(isProperty)
+            --pathEltsLength;
+        for(int pathIdx=0; pathIdx<pathEltsLength && node != null; pathIdx++) {
+            String relPath = pathElts[pathIdx];
+            if(relPath.startsWith("{.}")) {
+                relPath = ancestor.getName() + relPath.substring(3);
+            } else if(relPath.startsWith("{..}")) {
+                relPath = ancestor.getParent().getName() + relPath.substring(4);
+            } else if(relPath.startsWith("{") && relPath.endsWith("}")) {
+                String uuid = relPath.substring(1,relPath.length()-1);
+                uuid = ancestor.getProperty(uuid).getString();
+                node = node.getSession().getNodeByUUID(uuid);
+                continue;
+            }
+            Map<String,String> conditions = null;
+            if(relPath.contains("[") && relPath.endsWith("]")) {
+                conditions = new TreeMap<String,String>();
+                String[] conditionElts = relPath.substring(relPath.indexOf("[")+1,relPath.lastIndexOf("]")).split(",");
+                for(int conditionIdx=0; conditionIdx<conditionElts.length; conditionIdx++) {
+                    int pos = conditionElts[conditionIdx].indexOf("=");
+                    if(pos >= 0) {
+                        String key = conditionElts[conditionIdx].substring(0,pos);
+                        String value = conditionElts[conditionIdx].substring(pos+1);
+                        if(value.startsWith("'") && value.endsWith("'"))
+                            value = value.substring(1,value.length()-1);
+                        conditions.put(key, value);
+                    } else
+                        conditions.put(conditionElts[conditionIdx], null);
+                }
+                relPath = relPath.substring(0,relPath.indexOf("["));
+            }
+            if(conditions == null || conditions.size() == 0) {
+                if(node.hasNode(relPath)) {
+                    try {
+                        node = node.getNode(relPath);
+                    } catch(PathNotFoundException ex) {
+                        return null;
+                    }
+                } else {
+                    if(last != null && pathIdx+1 == pathEltsLength) {
+                        last.node = node;
+                        last.relPath = relPath;
+                    }
+                    return null;
+                }
+            } else {
+                Node child = null;
+                for(NodeIterator iter = node.getNodes(relPath); iter.hasNext(); ) {
+                    child = iter.nextNode();
+                    for(Map.Entry<String,String> condition: conditions.entrySet()) {
+                        if(child.hasProperty(condition.getKey())) {
+                            if(condition.getValue() != null) {
+                                try {
+                                    if(!child.getProperty(condition.getKey()).getString().equals(condition.getValue())) {
+                                        child = null;
+                                        break;
+                                    }
+                                } catch(PathNotFoundException ex) {
+                                    child = null;
+                                    break;
+                                } catch(ValueFormatException ex) {
+                                    child = null;
+                                    break;
+                                }
+                            }
+                        } else {
+                            child = null;
+                            break;
+                        }
+                    }
+                    if(child != null)
+                        break;
+                }
+                if(child == null) {
+                    if(last != null && pathIdx+1 == pathEltsLength) {
+                        last.node = node;
+                        last.relPath = relPath;
+                    }
+                    return null;
+                } else
+                    node = child;
+            }
+        }
+        if(isProperty) {
+            if(node.hasProperty(pathElts[pathEltsLength])) {
+                return node.getProperty(pathElts[pathEltsLength]);
+            } else {
+                if(last != null) {
+                    last.node = node;
+                    last.relPath = pathElts[pathEltsLength];
+                }
+                return null;
+            }
+        } else
+            return node;
+    }
+    private Property getProperty(Node node, String field) throws RepositoryException {
+        return (Property) getItem(node, field, true, null);
+    }
+    private Property getProperty(Node node, String field, Entry last) throws RepositoryException {
+        return (Property) getItem(node, field, true, last);
+    }
+    private Node getNode(Node node, String field) throws InvalidItemStateException, RepositoryException {
+        return (Node) getItem(node, field, false, null);
+    }
+    private Node getNode(Node node, String field, String nodetype) throws RepositoryException {
+        Entry last = new Entry();
+        node = (Node) getItem(node, field, false, last);
+        if(node == null && last.node != null) {
+            if(nodetype != null)
+                node = last.node.addNode(last.relPath, nodetype);
+            else
+                node = last.node.addNode(last.relPath);
+        }
+        return node;
+    }
+
     public void storeBooleanField(int fieldNumber, boolean value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
+        if(log.isDebugEnabled()) 
+           log.debug("store \""+field+"\" = \""+value+"\"");
         if (field != null) {
             try {
-                node.setProperty(field, value);
+                Entry last = new Entry();
+                Property property = getProperty(node, field, last);
+                if(property == null)
+                    property = last.node.setProperty(last.relPath, value);
+                else
+                    property.setValue(value);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
@@ -82,13 +234,18 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public boolean fetchBooleanField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         boolean value = false;
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = node.getProperty(field).getBoolean();
+                value = getProperty(node, field).getBoolean();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -102,17 +259,28 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeCharField(int fieldNumber, char value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         if(log.isDebugEnabled())
             log.debug("store \""+field+"\" = \""+value+"\"");
         if (field != null) {
             try {
-                node.setProperty(field, value);
+                Entry last = new Entry();
+                Property property = getProperty(node, field, last);
+                if(property == null)
+                    property = last.node.setProperty(last.relPath, value);
+                else
+                    property.setValue(value);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
@@ -128,13 +296,18 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public char fetchCharField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         char value = ' ';
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = node.getProperty(field).getString().charAt(0);
+                value = getProperty(node, field).getString().charAt(0);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -148,17 +321,28 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeByteField(int fieldNumber, byte value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         if(log.isDebugEnabled())
             log.debug("store \""+field+"\" = \""+value+"\"");
         if (field != null) {
             try {
-                node.setProperty(field, value);
+                Entry last = new Entry();
+                Property property = getProperty(node, field, last);
+                if(property == null)
+                    property = last.node.setProperty(last.relPath, value);
+                else
+                    property.setValue(value);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
@@ -174,13 +358,18 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public short fetchShortField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         short value = 0;
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (short) node.getProperty(field).getLong();
+                value = (short) getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -194,17 +383,28 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeIntField(int fieldNumber, int value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         if(log.isDebugEnabled())
             log.debug("store \""+field+"\" = \""+value+"\"");
         if (field != null) {
             try {
-                node.setProperty(field, value);
+                Entry last = new Entry();
+                Property property = getProperty(node, field, last);
+                if(property == null)
+                    property = last.node.setProperty(last.relPath, value);
+                else
+                    property.setValue(value);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
@@ -220,13 +420,18 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public int fetchIntField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         int value = 0;
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (int) node.getProperty(field).getLong();
+                value = (int) getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -240,17 +445,28 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeLongField(int fieldNumber, long value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         if(log.isDebugEnabled())
             log.debug("store \""+field+"\" = \""+value+"\"");
         if (field != null) {
             try {
-                node.setProperty(field, value);
+                Entry last = new Entry();
+                Property property = getProperty(node, field, last);
+                if(property == null)
+                    property = last.node.setProperty(last.relPath, value);
+                else
+                    property.setValue(value);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
@@ -266,13 +482,18 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public long fetchLongField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         long value = 0L;
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = node.getProperty(field).getLong();
+                value = getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -286,17 +507,28 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeFloatField(int fieldNumber, float value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         if(log.isDebugEnabled())
             log.debug("store \""+field+"\" = \""+value+"\"");
         if (field != null) {
             try {
-                node.setProperty(field, value);
+                Entry last = new Entry();
+                Property property = getProperty(node, field, last);
+                if(property == null)
+                    property = last.node.setProperty(last.relPath, value);
+                else
+                    property.setValue(value);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
@@ -312,13 +544,18 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public float fetchFloatField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         float value = 0.0F;
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (float) node.getProperty(field).getDouble();
+                value = (float) getProperty(node, field).getDouble();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -332,17 +569,28 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeDoubleField(int fieldNumber, double value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         if(log.isDebugEnabled())
             log.debug("store \""+field+"\" = \""+value+"\"");
         if (field != null) {
             try {
-                node.setProperty(field, value);
+                Entry last = new Entry();
+                Property property = getProperty(node, field, last);
+                if(property == null)
+                    property = last.node.setProperty(last.relPath, value);
+                else
+                    property.setValue(value);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
@@ -358,13 +606,18 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public double fetchDoubleField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         double value = 0.0;
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = node.getProperty(field).getDouble();
+                value = getProperty(node, field).getDouble();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -378,17 +631,28 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeStringField(int fieldNumber, String value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         if(log.isDebugEnabled())
             log.debug("store \""+field+"\" = \""+value+"\"");
-        if (field != null) {
+        if (field != null && !field.equals("jcr:uuid")) {
             try {
-                node.setProperty(field, value);
+                Entry last = new Entry();
+                Property property = getProperty(node, field, last);
+                if(property == null)
+                    property = last.node.setProperty(last.relPath, value);
+                else
+                    property.setValue(value);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex, value);
             } catch (VersionException ex) {
@@ -404,13 +668,25 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public String fetchStringField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         String value = "";
+        if(log.isDebugEnabled()) {
+            log.debug("fetching \"" + cmd.getField(fieldNumber).getFullFieldName() + "\" = \"" + field + "\"");
+        }
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = node.getProperty(field).getString();
+                Property property = getProperty(node, field);
+                if(property != null)
+                    value = property.getString();
+                else
+                    value = null;
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -423,19 +699,40 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+        if(log.isDebugEnabled()) {
+            log.debug("fetched \"" + cmd.getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
+        }
         return value;
     }
 
     public void storeObjectField(int fieldNumber, Object value) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         if(log.isDebugEnabled())
             log.debug("store \""+field+"\" = \""+value+"\"");
         if (field == null)
             return;
-        if (value == null)
-            throw new NullPointerException();
+        if (value == null) {
+            try {
+                Node removal = getNode(node, field);
+                removal.remove();
+            } catch(InvalidItemStateException ex) {
+                if(log.isDebugEnabled()) {
+                    log.debug("node already deleted: "+ex.getMessage());
+                }
+            } catch(VersionException ex) {
+                throw new JPOXDataStoreException("VersionException", ex);
+            } catch(RepositoryException ex) {
+                throw new JPOXDataStoreException("RepositoryException", ex);
+            }
+            return;
+            // throw new NullPointerException();
+        }
         StateManager valueSM = sm.getObjectManager().findStateManager((PersistenceCapable) value);
         if (valueSM == null) { // If not already persisted
             PersistenceCapable pc = (PersistenceCapable) value;
@@ -444,15 +741,25 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 Node child;
                 Object id;
-                    String classname = value.getClass().getName();
-                    Node nodetypeNode = types.getNode(classname);
-                    String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
-                    child = node.addNode(field, nodetype);
-                    id = new JCROID(child.getUUID(), classname);
+                String classname = value.getClass().getName();
+                Node nodetypeNode = types.getNode(classname);
+                String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
+                if(value instanceof Document && ((Document)value).getJcrCloned() != null) {
+                    Entry last = new Entry();
+                    child = (Node) getItem(node, field, false, last);
+                    if(child == null) {
+                        Document document = (Document) value;
+                        child = node.getSession().getNodeByUUID(document.getJcrCloned().getJcrIdentity());
+                        child = Utilities.copy(child, last.node.getPath()+"/"+last.relPath);
+                    }
+                } else
+                    child = getNode(node, field, nodetype);
+
+                id = new JCROID(child.getUUID(), classname);
                 StateManager pcSM = StateManagerFactory
-                        .newStateManagerForPersistentClean(sm.getObjectManager(), id, pc);
+                    .newStateManagerForPersistentClean(sm.getObjectManager(), id, pc);
                 pcSM.provideFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(pcSM, session,
-                        types, child));
+                                                                                                      types, child));
             } catch (ItemExistsException ex) {
                 try {
                     throw new JPOXDataStoreException("ItemExistsException", ex, node.getPath() + "/" + field);
@@ -476,24 +783,34 @@ class FieldManagerImpl extends AbstractFieldManager {
             } catch (LockException ex) {
                 throw new JPOXDataStoreException("LockException", ex, value);
             } catch (RepositoryException ex) {
+ex.printStackTrace(System.err);
                 throw new JPOXDataStoreException("RepositoryException", ex, value);
             }
         }
     }
 
     public Object fetchObjectField(int fieldNumber) {
-        String field = sm.getClassMetaData().getField(fieldNumber).getColumn();
+        AbstractClassMetaData cmd = sm.getClassMetaData();
+        if(fieldNumber >= cmd.getNoOfFields()) {
+            fieldNumber -= cmd.getNoOfFields();
+            cmd = cmd.getBaseAbstractClassMetaData();
+        }
+        String field = cmd.getField(fieldNumber).getColumn();
         Object value = null;
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                Node child = node.getNode(field);
-                Class clazz = sm.getClassMetaData().getField(fieldNumber).getType();
-                Object id = new JCROID(child.getUUID(), clazz.getName());
-                StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
-                //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));
-                value = pcSM.getObject();
+                Node child = getNode(node, field);
+                if(child != null) {
+                    Utilities.dump(node);
+                    Class clazz = sm.getClassMetaData().getField(fieldNumber).getType();
+                    Object id = new JCROID(child.getUUID(), clazz.getName());
+                    StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
+                    //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));
+                    value = pcSM.getObject();
+
+                }
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -507,7 +824,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if(log.isDebugEnabled())
-            log.debug("fetch \""+field+"\" = \""+value+"\"");
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
+                      "\" = \"" + value + "\"");
         return value;
     }
 }

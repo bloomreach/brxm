@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -31,11 +25,11 @@ public class PublicationRequest extends Document {
     public String type;
     public String reason;
     public String username;
-    public ReviewedActionsWorkflowImpl document;
+    public String reference;
     public PublicationRequest(String type, PublishableDocument document, String username) {
         this.username = username;
         this.type = type;
         reason = "";
-        document = null;
+        reference = document.getJcrIdentity();
     }
 }

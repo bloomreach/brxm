@@ -197,12 +197,12 @@ public class ReviewedActionsWorkflowTest extends TestCase
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }
 
-        /* These steps would be taken by author
+        // These steps would be taken by author
         {
             node = Utilities.getNode(root, "documents/myarticle/myarticle[state='published']");
             ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.requestDeletion();
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
-        }*/
+        }
     }
 }

@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -28,8 +22,17 @@ public class PublishableDocument extends Document {
     final public static String UNPUBLISHED = "unpublished";
     final public static String DRAFT = "draft";
     final public static String STALE = "stale";
+    String jcrIdentity = null;
     String state;
     public PublishableDocument() {
+        System.out.println("PublishableDocument.document "+getJcrIdentity());
         this.state = UNPUBLISHED;
+    }
+    public final String getJcrIdentity() {
+        return jcrIdentity;
+    }
+    public Object clone() throws CloneNotSupportedException {
+        System.err.println("CLONE GVD");
+        return super.clone();
     }
 }

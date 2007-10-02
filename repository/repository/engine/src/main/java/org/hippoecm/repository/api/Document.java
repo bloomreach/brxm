@@ -18,10 +18,21 @@ package org.hippoecm.repository.api;
 import java.io.Serializable;
 
 public abstract class Document implements Serializable, Cloneable {
-    public Document cloned = null; // FIXME: workaround for current mapping issues
-    public Object clone() throws CloneNotSupportedException{
+    private transient Document jcrIsCloned = null;
+    public Object clone() throws CloneNotSupportedException {
+        System.out.println("CLONE document "+getJcrIdentity()); // FIXME: side effect to force this field to be present
         Document document = (Document) super.clone();
-        document.cloned = this;
+        document.setJcrCloned(this);
         return document;
+    }
+    private void setJcrCloned(Document document) {
+        jcrIsCloned = document;
+        //jcrIdentity = null;
+    }
+    public String getJcrIdentity() {
+        return null;
+    }
+    public Document getJcrCloned() {
+        return jcrIsCloned;
     }
 }
