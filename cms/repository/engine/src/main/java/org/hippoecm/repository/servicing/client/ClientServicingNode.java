@@ -44,7 +44,7 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
     }
     public Node getCanonicalNode() throws RepositoryException {
         try {
-	    return getNode(getSession(), remote.getCanonicalNode());
+            return getNode(getSession(), remote.getCanonicalNode());
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
