@@ -15,33 +15,22 @@
  */
 package org.hippoecm.frontend.tree;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
-
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
 
-    public JcrTree(String id, LazyTreeModel treeModel) {
+    public JcrTree(String id, TreeModel treeModel) {
         super(id, treeModel);
         
         setLinkType(LinkType.AJAX);
@@ -51,8 +40,8 @@ public abstract class JcrTree extends Tree {
         getTreeState().addTreeStateListener(new JcrTreeStateListener());
     }
 
-    protected String renderNode(JcrLazyTreeNode treeNode) {
-        JcrNodeModel nodeModel = treeNode.getJcrNodeModel();
+    protected String renderNode(TreeNode treeNode) {
+        JcrNodeModel nodeModel = ((JcrLazyTreeNode)treeNode).getJcrNodeModel();
         HippoNode node = nodeModel.getNode();
         String result = "null";
         if (node != null) {
