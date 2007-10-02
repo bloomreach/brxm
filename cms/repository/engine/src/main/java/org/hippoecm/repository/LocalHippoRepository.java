@@ -52,10 +52,6 @@ import javax.jcr.ValueFormatException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 
-// The following switches betweeon decorated and repository based implementation
-//import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.apache.jackrabbit.core.RepositoryImpl;
-
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -69,6 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 
 class LocalHippoRepository extends HippoRepository {
     /** SVN id placeholder */

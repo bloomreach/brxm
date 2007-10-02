@@ -22,10 +22,11 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.core.RepositoryImpl;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.apache.jackrabbit.core.SearchManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
+import org.hippoecm.repository.FacetedNavigationEngineThirdImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 
 /**
@@ -37,7 +38,7 @@ public class RepositoryDecorator implements Repository {
 
     private Repository repository;
 
-    private FacetedNavigationEngine facetedEngine;
+    private FacetedNavigationEngine facetedEngine = null;
 
     public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
         this.factory = factory;
@@ -46,16 +47,24 @@ public class RepositoryDecorator implements Repository {
 
     FacetedNavigationEngine getFacetedNavigationEngine() {
         if(facetedEngine == null) {
-          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
+            if(repository instanceof RepositoryImpl) {
+                facetedEngine = ((RepositoryImpl)repository).getFacetedNavigationEngine();
+            } else {
+                facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
+            }
         }
         return facetedEngine;
     }
 
-    public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException{
-        return ((RepositoryImpl)repository).getSearchManager(workspaceName); // Ain't gonna work.
+    public static Repository unwrap(Repository repository) {
+        if (repository == null) {
+            return null;
+        }
+        if (repository instanceof RepositoryDecorator) {
+            repository = ((RepositoryDecorator)repository).repository;
+        }
+        return repository;
     }
-
-
     
     /**
      * Forwards the method call to the underlying repository.
@@ -81,21 +90,6 @@ public class RepositoryDecorator implements Repository {
             NoSuchWorkspaceException, RepositoryException {
         Session session = repository.login(credentials, workspaceName);
         ServicingSessionImpl servicingSession = (ServicingSessionImpl) factory.getSessionDecorator(this, session);
-        
-        /*
-         * TODO Below facet authorizationQuery must be fetched. The authorizationQuery looks like below.
-         * These authorizations needs to be fetched from the repository.
-         * Map<String,String[]> authorizationQuery = new HashMap<String,String[]>();
-         * authorizationQuery.put("x", new String[]{"x1","x2"});
-         * authorizationQuery.put("y", new String[]{"y1","y2"});
-         * authorizationQuery.put("z", new String[]{"z1","z2"});
-         * FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare("abc", authorizationQuery, null, servicingSession);
-         */ 
-        
-        FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, servicingSession);
-        
-        
-        servicingSession.setFacetedNavigationContext(context);
         return servicingSession;
     }
 

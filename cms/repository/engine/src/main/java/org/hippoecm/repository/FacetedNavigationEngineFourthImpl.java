@@ -51,9 +51,10 @@ import org.hippoecm.repository.query.lucene.ParallelMultiSearcher;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.servicing.RepositoryDecorator;
 
-public class FacetedNavigationEngineFourthImpl
+public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
   implements FacetedNavigationEngine<FacetedNavigationEngineFourthImpl.QueryImpl, FacetedNavigationEngineFourthImpl.ContextImpl>
 {
   class QueryImpl extends FacetedNavigationEngine.Query {
@@ -133,15 +134,14 @@ public class FacetedNavigationEngineFourthImpl
   {
     try {
       Session session = authorization.session;
-      
-      SearchManager searchManager = ((RepositoryDecorator)session.getRepository()).getSearchManager(session.getWorkspace().getName()) ;
-      ServicingSearchIndex index = (ServicingSearchIndex)searchManager.getQueryHandler();
-      NamespaceMappings nsMappings = index.getNamespaceMappings();
+      RepositoryImpl repository = (RepositoryImpl) RepositoryDecorator.unwrap(session.getRepository());
+      SearchManager searchManager = repository.getSearchManager(session.getWorkspace().getName()) ;
+      NamespaceMappings nsMappings = getNamespaceMappings();
     
       /*
        * facetsQuery: get the query for the facets that are asked for
        */
-      FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)index.getIndexingConfig());
+      FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
       
       /*
        * authorizationQuery: get the query for the facets the person is allowed to see (which
@@ -151,7 +151,7 @@ public class FacetedNavigationEngineFourthImpl
       AuthorizationQuery authorizationQuery = new AuthorizationQuery(authorization.authorizationQuery, 
                                                                      facetsQueryMap , 
                                                                      nsMappings, 
-                                                                     (ServicingIndexingConfiguration)index.getIndexingConfig(),
+                                                                     (ServicingIndexingConfiguration)getIndexingConfig(),
                                                                      true); 
 
       FacetResultCollector collector = null;
@@ -159,7 +159,7 @@ public class FacetedNavigationEngineFourthImpl
       IndexReader indexReader = null;
       IndexSearcher searcher = null;
       try {
-          indexReader = index.getIndex().getIndexReader();
+          indexReader = getIndex().getIndexReader();
           searcher = new IndexSearcher(indexReader);
           
           
@@ -177,7 +177,7 @@ public class FacetedNavigationEngineFourthImpl
               /*
                * facetPropExists: the document must have the property as facet
                */
-              FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings, (ServicingIndexingConfiguration)index.getIndexingConfig());
+              FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
               
               BooleanQuery searchQuery = new BooleanQuery();
               searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
