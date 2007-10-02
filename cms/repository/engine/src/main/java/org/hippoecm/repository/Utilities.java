@@ -181,7 +181,8 @@ public class Utilities {
             }
             
             // don't copy childeren of virtual nodes
-            if (srcNode.isNodeType(HippoNodeType.NT_FACETSELECT) || srcNode.isNodeType(HippoNodeType.NT_FACETSEARCH)) return;
+            if (srcNode.isNodeType(HippoNodeType.NT_FACETSELECT) || srcNode.isNodeType(HippoNodeType.NT_FACETSEARCH))
+                return;
             
             for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
                 Node node = iter.nextNode();
