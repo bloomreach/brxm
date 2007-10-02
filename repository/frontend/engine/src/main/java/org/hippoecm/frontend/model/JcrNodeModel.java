@@ -60,6 +60,7 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
         }
         if (sessionClosed) {
             itemModel = new JcrItemModel(itemModel.path);
+            result = (HippoNode)itemModel.getObject();
         }
         
         return result;
