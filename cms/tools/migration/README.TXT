@@ -27,3 +27,13 @@ Step 2. Run
 
 $ mvn -Dexec.args="local.properties" compile exec:java
 
+- Or..
+
+Step 2. Use Appassembler
+$ mvn package appassembler:assemble
+
+Step 3. Run
+windows:
+$ target\appassembler\bin\migrate.bat <full path to config> 
+unix:
+./target/appassembler/bin/migrate <full path to config>

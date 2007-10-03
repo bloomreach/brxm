@@ -71,6 +71,23 @@
           </systemProperties>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <configuration>
+          <extraJvmArguments>-Xms128m -Xmx128m</extraJvmArguments> 
+          <platforms>
+            <platform>windows</platform>
+            <platform>unix</platform>
+          </platforms>
+          <programs>
+            <program>
+              <mainClass>nl.hippo.webdav.batchprocessor.WebdavBatchProcessorMain</mainClass>
+              <name>migrate</name>
+            </program>
+          </programs>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   
