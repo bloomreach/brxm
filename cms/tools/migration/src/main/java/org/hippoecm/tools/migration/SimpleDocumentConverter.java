@@ -17,8 +17,11 @@ package org.hippoecm.tools.migration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
@@ -27,18 +30,32 @@ import nl.hippo.webdav.batchprocessor.ProcessingException;
 
 import org.apache.webdav.lib.Property;
 import org.apache.webdav.lib.PropertyName;
+import org.hippoecm.tools.migration.jcr.JCRHelper;
+import org.hippoecm.tools.migration.webdav.WebdavHelper;
 
 /**
- * The SimpleDocumentConverter convert the all the webdav nodes to an identical
- * structor in the JCR repository
- * 
+ * The SimpleDocumentConverter converts the all the webdav nodes to a similar
+ * structor in the JCR repository. It also creates the extractors and the 
+ * published version of the documents.
  */
 public class SimpleDocumentConverter extends AbstractDocumentConverter implements DocumentConverter {
     
     /**
-     * Setup hook
+     * Author hashmap to speedup import
      */
-    public void postSetupHook() {
+    protected HashMap authorMap = new HashMap(); 
+    
+    /**
+     * Author basenode
+     */
+    protected Node authorBase;
+    
+    /**
+     * Post setup hook (before processing loop)
+     * @throws RepositoryException 
+     */
+    public void postSetupHook() throws RepositoryException {
+        authorBase = JCRHelper.checkAndCreatePath(getJcrSession(), AUTHOR_BASEPATH);
     }
     
     /**
@@ -47,64 +64,65 @@ public class SimpleDocumentConverter extends AbstractDocumentConverter implement
     public void convertNodeToJCR(nl.hippo.webdav.batchprocessor.Node webdavNode, String nodeName, javax.jcr.Node parent)
             throws RepositoryException, ProcessingException, OperationOnDeletedNodeException, IOException {
 
-        // Overwrite existing nodes
-        if (parent.hasNode(nodeName)) {
-            parent.getNode(nodeName).remove();
-        }
-
-        // Create the new JCR node
-        javax.jcr.Node current = parent.addNode(nodeName);
-
-        //current.addMixin("mix:referenceable");
-        current.setProperty("published", false);
+        // create a basic document
+        javax.jcr.Node current = JCRHelper.createDefaultDocument(getJcrSession(), parent, nodeName);
 
         // Set the content
+        int contentLength = 0;
         String contentLengthAsString = webdavNode.getProperty(DAV_NAMESPACE, "getcontentlength").getPropertyAsString();
-        int contentLength = Integer.parseInt(contentLengthAsString);
+        try {
+            contentLength = Integer.parseInt(contentLengthAsString);
+        } catch (NumberFormatException e) {
+           // ignore, no content
+        }
         if (contentLength > 0) {
-            byte[] content = webdavNode.getContents();
-            current.setProperty("content", jcrSession.getValueFactory().createValue(new ByteArrayInputStream(content)));
+            JCRHelper.setDocumentContent(getJcrSession(), current, new ByteArrayInputStream(webdavNode.getContents()));
         }
 
+        // publication holders
+        boolean isPublished = false;
+        Calendar publicationDate = null;
+        
+        // author holders
+        boolean hasAuthor = false;
+        String author = null;
+                
         // Add metadata properties
         Iterator webdavPropertyNames = webdavNode.propertyNamesIterator();
         while (webdavPropertyNames.hasNext()) {
             PropertyName webdavPropertyName = (PropertyName) webdavPropertyNames.next();
             String webdavPropertyNamespace = webdavPropertyName.getNamespaceURI();
+            
+            // only copy properties in the hippo namespace
             if (webdavPropertyNamespace.equals(HIPPO_NAMESPACE)) {
                 String name = webdavPropertyName.getLocalName();
                 Property webdavProperty = webdavNode.getProperty(webdavPropertyNamespace, name);
 
                 if (name.equals("publicationDate")) {
-                    current.setProperty("published", true);
-                    current.setProperty("publicationdate", getCalendarFromProperty(webdavProperty,
-                            PUBLICATIONDATE_FORMAT));
-
+                    isPublished = true;
+                    publicationDate = WebdavHelper.getCalendarFromProperty(webdavProperty, PUBLICATIONDATE_FORMAT);
+                } else if(name.equals("createdBy") || name.equals("lastWorkflowUser")) {
+                    hasAuthor = true;
+                    author = webdavProperty.getPropertyAsString();
                 } else {
-                    Value value = jcrSession.getValueFactory().createValue(webdavProperty.getPropertyAsString());
-                    current.setProperty(name, value);
+                    Value value = getJcrSession().getValueFactory().createValue(webdavProperty.getPropertyAsString());
+                    // don't set empty properties
+                    if (!"".equals(value.getString())) {
+                        current.setProperty(name, value);
+                    }
                 }
-            } else {
-                /* //Example to split out dates to day, month, year.
-                 String name = webdavPropertyName.getLocalName();
-                 if (name.equals("creationdate")) {
-                 Property webdavProperty = webdavNode.getProperty(webdavPropertyNamespace, name);
-                 Date d = new Date();
-                 try
-                 {
-                 d = CREATIONDATE_FORMAT.parse(webdavProperty.getPropertyAsString());
-                 Calendar c = Calendar.getInstance();
-                 c.setTime(d);
-                 current.setProperty("year", c.get(Calendar.YEAR));
-                 current.setProperty("month", 1 + c.get(Calendar.MONTH));
-                 current.setProperty("day", c.get(Calendar.DAY_OF_MONTH));
-                 } catch (java.text.ParseException e) {
-                 }
-                 
-                 }
-                 */
-
             }
+        }
+        
+        if (hasAuthor && author != null) {
+            if (!authorMap.containsKey(author)) {
+                JCRHelper.createDefaultAuthor(getJcrSession(), authorBase, author);
+                authorMap.put(author, true);
+            }
+            JCRHelper.addAuhtorToDocument(getJcrSession(), authorBase, current, author);
+        }
+        if (isPublished) {
+            JCRHelper.createPublishDocument(getJcrSession(), current, publicationDate);
         }
 
     }

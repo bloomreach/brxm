@@ -16,22 +16,18 @@
 package org.hippoecm.tools.migration;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.StringTokenizer;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.RowIterator;
 
 import nl.hippo.webdav.batchprocessor.PluginConfiguration;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.webdav.lib.Property;
 
+/**
+ * Abstract converter implementation for some basic functionalities.
+ * Converter plugins should extend this class.
+ */
 public abstract class AbstractDocumentConverter implements DocumentConverter {
 
     /* Hippo Repository 1.2.x DAV: namespace */
@@ -46,21 +42,24 @@ public abstract class AbstractDocumentConverter implements DocumentConverter {
     /* hippo::publicationDate = 20040124 */
     protected static final SimpleDateFormat PUBLICATIONDATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
+    /* TODO: make configurable */
+    protected static final String AUTHOR_BASEPATH = "authors";
+    
     /* the initialized jcrSession */
     protected Session jcrSession;
 
     /* the initialized httpClient */
-    protected HttpClient httpClient;
+    private HttpClient httpClient;
 
     /* hold the configuration from the properties file */
-    protected PluginConfiguration pluginConfiguration;
+    private PluginConfiguration pluginConfiguration;
 
     /**
      * Setup the converter
      * @param session
      * @param httpClient
      */
-    public final void setup(PluginConfiguration configuration, Session session, HttpClient httpClient) {
+    public final void setup(PluginConfiguration configuration, Session session, HttpClient httpClient) throws RepositoryException {
         setJcrSession(session);
         setHttpClient(httpClient);
         setPluginConfiguration(configuration);
@@ -113,157 +112,5 @@ public abstract class AbstractDocumentConverter implements DocumentConverter {
      */
     public final void setPluginConfiguration(PluginConfiguration pluginConfiguration) {
         this.pluginConfiguration = pluginConfiguration;
-    }
-
-    //-------------------------------------------------- WebDAV Related methods
-
-    /**
-     * Convert a webdav date property to a calendar date
-     * @param webdavProperty
-     * @param dateFormat
-     * @return calender
-     */
-    protected Calendar getCalendarFromProperty(Property webdavProperty, SimpleDateFormat dateFormat) {
-        Date d;
-        try {
-            d = dateFormat.parse(webdavProperty.getPropertyAsString());
-        } catch (java.text.ParseException e) {
-            // use now if the date can't be parsed
-            d = new Date();
-        }
-        Calendar c = Calendar.getInstance();
-        c.setTime(d);
-        return c;
-    }
-
-    //-------------------------------------------------- JCR Related Methods
-
-    /**
-     * Find the hippo:id of a nodetype or create a new node and return the id
-     * @param name
-     * @param nodeType
-     * @param baseNode
-     * @return the id of the node
-     * @throws RepositoryException
-     */
-    protected long getIdOrCreate(String name, String nodeType, String baseNode) throws RepositoryException {
-        long id = getId(name, nodeType);
-        // id has contraint >0 
-        if (id < 0) {
-            id = createIdNode(name, nodeType, baseNode);
-        }
-        return id;
-    }
-
-    /**
-     * Find the id of a nodeType
-     * @param name
-     * @param nodeType
-     * @return the id or -1 if the node doesn't exist
-     */
-    protected long getId(String name, String nodeType) {
-        long id = -1;
-        String sql = "SELECT hippo:id FROM " + nodeType + " WHERE  hippo:name = '" + name + "'";
-        try {
-            Query q = getJcrSession().getWorkspace().getQueryManager().createQuery(sql, Query.SQL);
-            QueryResult result = q.execute();
-            RowIterator it = result.getRows();
-            if (it.hasNext()) {
-                Value idValue = it.nextRow().getValue("hippo:id");
-                if (idValue != null) {
-                    id = idValue.getLong();
-                }
-            }
-        } catch (RepositoryException e) {
-            System.err.println(e);
-        }
-
-        return id;
-    }
-
-    /**
-     * Create a new node of a specific nodeType
-     * @param name
-     * @param nodeType
-     * @param baseNode
-     * @return the id of the new node
-     * @throws RepositoryException
-     */
-    protected long createIdNode(String name, String nodeType, String baseNode) throws RepositoryException {
-        long id = 1 + getMaxIdForNodeType(nodeType);
-
-        checkAndCreateStructureNode(baseNode);
-        javax.jcr.Node parent = getJcrSession().getRootNode().getNode(baseNode);
-        javax.jcr.Node author = parent.addNode(name, nodeType);
-
-        author.setProperty("hippo:id", id);
-        author.setProperty("hippo:name", name);
-
-        return id;
-
-    }
-
-    /**
-     * Check if a specific (srtucture) node exists and create the node and parent nodes
-     * if needed (like mkdir -p)
-     * @param nodeName
-     * @throws RepositoryException
-     */
-    protected void checkAndCreateStructureNode(String nodeName) throws RepositoryException {
-
-        try {
-            javax.jcr.Node node = (javax.jcr.Node) getJcrSession().getRootNode();
-            String currentPath = "";
-
-            StringTokenizer st = new StringTokenizer(nodeName, "/");
-
-            while (st.hasMoreTokens()) {
-
-                String curName = st.nextToken();
-
-                if (curName == null || "".endsWith(curName)) {
-                    continue;
-                }
-
-                // add node if it doesn't exist
-                if (!node.hasNode(curName)) {
-                    node.addNode(curName);
-                }
-                currentPath += "/" + curName;
-
-                // shift to child node 
-                node = node.getNode(curName);
-            }
-            getJcrSession().save();
-
-        } catch (RepositoryException e) {
-            System.err.println(e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Find the maximum used id for a specific nodeType
-     * @param nodeType
-     * @return the max used id or 0 if the nodeType doesn't exist
-     */
-    protected long getMaxIdForNodeType(String nodeType) {
-        long id = 0;
-        String sql = "SELECT hippo:id FROM " + nodeType + " ORDER BY hippo:id DESC";
-        try {
-            Query q = getJcrSession().getWorkspace().getQueryManager().createQuery(sql, Query.SQL);
-            QueryResult result = q.execute();
-            RowIterator it = result.getRows();
-            if (it.hasNext()) {
-                Value idValue = it.nextRow().getValue("hippo:id");
-                if (idValue != null) {
-                    id = idValue.getLong();
-                }
-            }
-
-        } catch (RepositoryException e) {
-            System.err.println(e);
-        }
-        return id;
     }
 }

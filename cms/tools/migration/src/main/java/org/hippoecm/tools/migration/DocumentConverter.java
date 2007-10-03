@@ -26,18 +26,21 @@ import nl.hippo.webdav.batchprocessor.ProcessingException;
 
 import org.apache.commons.httpclient.HttpClient;
 
+/**
+ * Interface for the converter plugins.
+ */
 public interface DocumentConverter {
 
     /** 
      * Setup and configure the converter 
      */
-    void setup(PluginConfiguration config, Session session, HttpClient httpClient);
+    void setup(PluginConfiguration config, Session session, HttpClient httpClient) throws RepositoryException;
 
     /**
      * The postSetupHook is called after setup and can be used to initialize the 
      * converter implementation
      */
-    void postSetupHook();
+    void postSetupHook() throws RepositoryException;
 
     /** 
      * Convert each webdav node to a jcr node
