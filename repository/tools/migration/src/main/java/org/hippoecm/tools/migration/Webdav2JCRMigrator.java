@@ -18,7 +18,6 @@ package org.hippoecm.tools.migration;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.StringTokenizer;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
@@ -39,17 +38,15 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
+import org.hippoecm.tools.migration.jcr.JCRHelper;
+import org.hippoecm.tools.migration.webdav.WebdavHelper;
 
-/*
- * TODO:
- * - extenalize strings for properties and nodetypes
- * - rename 2 => To
- * - refactor long methods
- * - commit!
- * - optimize document parsing (parse only once)
+
+/**
+ * The plugin to the wdbp. 
+ * Parses the configuration for the plugin and initilizes the converter plugin.
+ * Contains the main process loop which loops over all WebDAV nodes.
  */
-
-
 public class Webdav2JCRMigrator implements Plugin {
 
     // ---------------------------------------------------- Constants
@@ -64,10 +61,16 @@ public class Webdav2JCRMigrator implements Plugin {
 
     private static final String DOCUMENT_CONVERTER_CONFIG = "documentconverter";
     private static final String DEFAULT_DOCUMENT_CONVERTER = "org.hippoecm.tools.migration.SimpleDocumentConverter";
+
+    private static final String BATCH_SIZE_CONFIG = "batchsize";
+    private static final int DEFAULT_BATCH_SIZE = 20;
     
 
 
     // ---------------------------------------------------- Instance variables
+    private int batchCount = 0;
+    private int batchSize = DEFAULT_BATCH_SIZE;
+    
     //----------------------- rmi
     private String rmiHost;
     private String rmiPort;
@@ -93,8 +96,12 @@ public class Webdav2JCRMigrator implements Plugin {
 
         // Fetch properties
         webdavRootUri = config.getRootUri();
-        //workingDir = pluginConfig.getValue("jcr.workingdir");
-        //dumpFile = pluginConfig.getValue("dumpfile");
+        
+        // Batch size
+        String size = pluginConfig.getValue(BATCH_SIZE_CONFIG);
+        try {
+            batchSize = Integer.parseInt(size);
+        } catch (NumberFormatException e) {}
 
         // rmi connection
         rmiHost = pluginConfig.getValue(JCR_RMI_HOST);
@@ -112,6 +119,7 @@ public class Webdav2JCRMigrator implements Plugin {
         if (converter == null || "".equals(converter)) {
             converter = DEFAULT_DOCUMENT_CONVERTER;
         }
+        
         
         try {
             documentConverter = (DocumentConverter) Class.forName(converter).newInstance();
@@ -150,8 +158,13 @@ public class Webdav2JCRMigrator implements Plugin {
             }
 
             // test and create target path
-            checkPath();
+            JCRHelper.checkAndCreatePath(session, jcrPath);
 
+            // webdav
+            createHttpClient(config);
+
+            // setup converter
+            documentConverter.setup(pluginConfig, session, httpClient);
 
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
@@ -163,16 +176,12 @@ public class Webdav2JCRMigrator implements Plugin {
             throw new RuntimeException(e);
         }
 
-        // webdav
-        createHttpClient(config);
-
-        // setup converter
-        documentConverter.setup(pluginConfig, session, httpClient);
     }
 
     public void process(nl.hippo.webdav.batchprocessor.Node webdavNode) throws WebdavBatchProcessorException {
-        String jcrParentPath = jcrPath + parentPath(webdavNode.getUri());
-        String nodeName = nodeName(webdavNode.getUri());
+        
+        String jcrParentPath = jcrPath + WebdavHelper.parentPath(webdavNode.getUri().substring(webdavRootUri.length()));
+        String nodeName = WebdavHelper.nodeName(webdavNode.getUri());
 
         if (webdavNode.getUri().equals(webdavRootUri)) {
             return;
@@ -184,20 +193,25 @@ public class Webdav2JCRMigrator implements Plugin {
 
             javax.jcr.Node parent = (javax.jcr.Node) session.getItem(jcrParentPath);
 
-            // Add content property
             if (!webdavNode.isCollection()) {
+                // Add content property
                 try {
                     documentConverter.convertNodeToJCR(webdavNode, nodeName, parent);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
-                // create 'collection' nodes if they don't exist
+                // create nt:unstructured nodes if they don't exist
                 if (!parent.hasNode(nodeName)) {
                     parent.addNode(nodeName);
                 }
             }
-            session.save();
+            
+            batchCount++;
+            if ((batchCount % batchSize) == 0 ) {
+                session.save();
+                System.out.println(batchCount);
+            }
 
         } catch (PathNotFoundException e) {
             System.err.println("");
@@ -206,8 +220,6 @@ public class Webdav2JCRMigrator implements Plugin {
             throw new RuntimeException("Path does not exist: " + e.getMessage());
         } catch (RepositoryException e) {
             e.printStackTrace();
-        //} catch (IOException e) {
-        //    e.printStackTrace();
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -240,45 +252,6 @@ public class Webdav2JCRMigrator implements Plugin {
     }
 
     /**
-     * Check the JCR import root path and create the path if it doesn't exist
-     */
-    private void checkPath() {
-        try {
-            javax.jcr.Node node = (javax.jcr.Node) session.getRootNode();
-            String currentPath = "";
-
-            StringTokenizer st = new StringTokenizer(jcrPath, "/");
-
-            while (st.hasMoreTokens()) {
-
-                String nodeName = st.nextToken();
-
-                if (nodeName == null || "".endsWith(nodeName)) {
-                    continue;
-                }
-                System.out.println("Checking for: " + currentPath + "/" + nodeName);
-
-                // add node if it doesn't exist
-                if (!node.hasNode(nodeName)) {
-                    node.addNode(nodeName);
-                    System.out.println("Added node for jcrPath: " + currentPath);
-                }
-                currentPath += "/" + nodeName;
-
-                // shift to child node 
-                node = node.getNode(nodeName);
-            }
-            session.save();
-
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    //-------------------------------------------------- WebDAV Related Methods
-    
-    /**
      * Create and setup the httpClient
      * @param config
      */
@@ -294,29 +267,7 @@ public class Webdav2JCRMigrator implements Plugin {
         httpClient.setHostConfiguration(hostConfiguration);   
     }
     
-    /**
-     * Get the parent path of a uri
-     * @param uri
-     * @return the parent path
-     */
-    private String parentPath(String uri) {
-        String result = uri.substring(webdavRootUri.length());
-
-        int i = result.lastIndexOf("/");
-        result = i == -1 ? result : result.substring(0, i);
-
-        return result;
-    }
-
-    /**
-     * Find the nodeName from a specific uri
-     * @param uri
-     * @return the nodeName
-     */
-    private String nodeName(String uri) {
-        return uri.substring(uri.lastIndexOf("/") + 1);
-    }
-    
+   
     /**
      * Print the configuration to the screnen
      * @param config

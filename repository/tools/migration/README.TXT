@@ -13,20 +13,17 @@
 # limitations under the License.
 
 
-Running the wdbp jcr dumper
+The migration tool provides a framework for migrating content from a 
+Hippo Repository 1.2.x (WebDAV) to a Hippo Repository 2 (JCR)
+
+
+- Running the migration tool
 
 Step 1. Configure
 
-Edit the plugin.properties file according to your own settings.
+Copy the plugin.properties to local.properties and adjust the Sfile according to your own settings.
 
 Step 2. Run
 
-$ mvn -Dexec.args="plugin.properties" compile exec:java
-
-=> The repository content is copied from the configured repo1 to the repo2
-The repo2 content is dumped to the console (only useful for debugging) 
-
-=> Desired endstate (not implemented yet): 
-An export file containing the repository content is created.
-
+$ mvn -Dexec.args="local.properties" compile exec:java
 

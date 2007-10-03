@@ -20,14 +20,24 @@ import nl.hippo.webdav.batchprocessor.OperationOnDeletedNodeException;
 import nl.hippo.webdav.batchprocessor.ProcessingException;
 
 import org.apache.webdav.lib.Property;
+import org.hippoecm.tools.migration.webdav.WebdavHelper;
+import org.hippoecm.tools.migration.webdav.WebdavNode;
+import org.hippoecm.tools.migration.xml.ExtractorException;
+import org.hippoecm.tools.migration.xml.ExtractorInstruction;
+import org.hippoecm.tools.migration.xml.XmlExtractor;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class PublisherDocumentConverter extends AbstractDocumentConverter {
 
+/**
+ * DISABLED
+ */
+public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
+
+    /*
     private static final String CONTENTTYPE_PROPERTY = "hippo:contentType";
     private static final String SIZE_PROPERTY = "hippo:size";
     private static final String SRC_PROPERTY = "hippo:src";
@@ -190,14 +200,14 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
         // Newsdate
         prop = webDAVNode.getProperty(HIPPO_NAMESPACE, "documentdate");
         if (prop != null) {
-            newsArticle.setProperty(NEWSDATE_PROPERTY, getCalendarFromProperty(prop, DOCUMENTDATE_FORMAT));
+            newsArticle.setProperty(NEWSDATE_PROPERTY, WebdavHelper.getCalendarFromProperty(prop, DOCUMENTDATE_FORMAT));
         }
 
         // Publication
         prop = webDAVNode.getProperty(HIPPO_NAMESPACE, "publicationdate");
         if (prop != null) {
             newsArticle.setProperty(PUBLISHED_PROPERTY, true);
-            newsArticle.setProperty(PUBLICATIONDATE_PROPERTY, getCalendarFromProperty(prop, PUBLICATIONDATE_FORMAT));
+            newsArticle.setProperty(PUBLICATIONDATE_PROPERTY, WebdavHelper.getCalendarFromProperty(prop, PUBLICATIONDATE_FORMAT));
         }
 
         // Imageset
@@ -237,13 +247,14 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
         // TODO: Relations
 
     }
-
+*/
     /**
      * Create the imageSet and the images belonging to the imageSet
      * @param imageSet
      * @return the id of the imageSet
      * @throws RepositoryException
      */
+    /*
     private long createImageSet(String imageSet) throws RepositoryException {
         if (imageSet.indexOf('/') < 0) {
             return -1;
@@ -305,6 +316,7 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
 
         return id;
     }
+    */
 
     /**
      * Parse the WebdavNode and fetch the links
@@ -312,6 +324,7 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
      * @return returns a List of Link objects
      * @throws IOException
      */
+    /*
     private List parseWebdavLinks(Node webdavNode) throws IOException {
         ArrayList links = new ArrayList();
         NodeList nodeList;
@@ -343,6 +356,7 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
         }
         return links;
     }
+    */
 
     /**
      * Parse the WebdavNode and fetch the imagesets
@@ -354,6 +368,7 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
      * @throws SAXException
      * @throws DOMException
      */
+    /*
     private ImageSet parseWebdavImageSet(WebdavNode webdavNode) throws IOException, ProcessingException,
             ParserConfigurationException, SAXException, DOMException {
 
@@ -402,10 +417,12 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
         set.setImages(images);
         return set;
     }
+    */
 
     /**
      * Class to hold the imageSets
      */
+    /*
     private class ImageSet {
         private String description = "";
         private ArrayList images;
@@ -440,10 +457,12 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
             return buf.toString();
         }
     }
-
+     */
+    
     /**
      * Class to hold the an image belonging to an imageSet
      */
+    /*
     private class ImageSetImage {
         private String src;
         private String size;
@@ -467,10 +486,12 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
             return this.contentType;
         }
     }
+    */
 
     /**
      * Class to hold a (http) link
      */
+    /*
     private class Link {
         private String href;
         private String text;
@@ -492,4 +513,5 @@ public class PublisherDocumentConverter extends AbstractDocumentConverter {
             return this.text + " => " + this.href;
         }
     }
+    */
 }

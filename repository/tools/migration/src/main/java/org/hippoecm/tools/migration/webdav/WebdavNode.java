@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.tools.migration;
+package org.hippoecm.tools.migration.webdav;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,8 +38,7 @@ import org.apache.webdav.lib.properties.ResourceTypeProperty;
 
 /**
  * Class to hold a WebDAV node. The properties and the content are fetched from the 
- * repository when needed
- * 
+ * repository when needed (lazy method).
  */
 public class WebdavNode {
 
