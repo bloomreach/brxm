@@ -31,17 +31,19 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SearchManager;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
-import org.apache.jackrabbit.core.state.PersistenceManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
@@ -73,7 +75,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         return new RepositoryImpl(config);
     }
 
-    // BERRRY @Override
+    @Override
     protected SharedItemStateManager createItemStateManager(PersistenceManager persistMgr,
                                                             NodeId rootNodeId,
                                                             NodeTypeRegistry ntReg,
@@ -104,6 +106,16 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
     @Override
     protected NodeId getRootNodeId() {
         return super.getRootNodeId();
+    }
+
+    @Override
+    protected FileSystem getFileSystem() {
+        return super.getFileSystem();
+    }
+
+    @Override
+    protected NamespaceRegistryImpl getNamespaceRegistry() {
+        return super.getNamespaceRegistry();
     }
 
     @Override
