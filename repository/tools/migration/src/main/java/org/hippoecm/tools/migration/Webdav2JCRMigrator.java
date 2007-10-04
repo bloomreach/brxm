@@ -37,9 +37,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.hippoecm.tools.migration.jcr.JCRHelper;
 import org.hippoecm.tools.migration.webdav.WebdavHelper;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 
 
 /**
@@ -141,11 +142,10 @@ public class Webdav2JCRMigrator implements Plugin {
         
 
         // test and setup connection and login       
-        ClientRepositoryFactory factory = new ClientRepositoryFactory();
-        Repository repository;
+        HippoRepository repository;
         try {
             // get the repository
-            repository = factory.getRepository(getRmiUrl());
+	    repository = HippoRepositoryFactory.getHippoRepository(getRmiUrl());
 
             // login and get session
             session = repository.login(new SimpleCredentials(jcrUser, jcrPass.toCharArray()));
@@ -167,12 +167,6 @@ public class Webdav2JCRMigrator implements Plugin {
             documentConverter.setup(pluginConfig, session, httpClient);
 
         } catch (RepositoryException e) {
-            throw new RuntimeException(e);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
 
