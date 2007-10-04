@@ -82,7 +82,6 @@ public class ServicingSearchIndex extends SearchIndex {
      */
     @Override
     protected Element getIndexingConfigurationDOM() {
-
         if (indexingConfiguration != null) {
             return indexingConfiguration;
         }
@@ -90,7 +89,6 @@ public class ServicingSearchIndex extends SearchIndex {
         if (configName == null) {
             return null;
         }
-
         InputStream configInputStream = null;
         if(configName.startsWith("file:/")) {
             File config = new File(configName.substring(5));
@@ -110,7 +108,7 @@ public class ServicingSearchIndex extends SearchIndex {
             }
         } else {
             log.info("Using resource repository indexing_configuration: " + configName);
-            configInputStream = getClass().getResourceAsStream(configName);
+            configInputStream = ServicingSearchIndex.class.getResourceAsStream(configName);
             if(configInputStream == null) {
                 log.warn("indexing configuration not found: " + getClass().getName() +"/"+ configName);
                 return null;
@@ -130,7 +128,6 @@ public class ServicingSearchIndex extends SearchIndex {
         } catch (SAXException e) {
             log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
         }
-
         return indexingConfiguration;
     }
 
