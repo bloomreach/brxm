@@ -23,7 +23,8 @@
                     * Request this editable copy of the document.
                     */
                     public void obtainEditableInstance()
-                -->                
+                -->
+                <span wicket:id="obtainEditableInstance-dialog"></span>
                 <a wicket:id="obtainEditableInstance">Obtain editable copy</a>
             </li>
             <li>
@@ -33,8 +34,9 @@
                     * obtained.
                     */
                     public void disposeEditableInstance()
-                -->                
-                <a wicket:id="disposeEditableInstance">Discard editable copy</a>
+                -->
+                <span wicket:id="disposeEditableInstance-dialog"></span>
+                <a wicket:id="disposeEditableInstance">Dispose editable copy</a>
             </li>
         </ul>
         <ul>
@@ -44,7 +46,8 @@
                     * Request for this instance of the document to be published.
                     */
                     public void requestPublication()
-                -->
+                -->               
+                <span wicket:id="requestPublication-dialog"></span>
                 <a wicket:id="requestPublication">Request publication</a>
             </li>
             <li>
@@ -53,8 +56,9 @@
                     * Request unpublication.
                     */
                     public void requestDepublication()
-                -->                
-                <a wicket:id="requestDepublication">Request unpublication</a>
+                --> 
+                <span wicket:id="requestDePublication-dialog"></span>               
+                <a wicket:id="requestDePublication">Request unpublication</a>
             </li>
             <li>
                 <!--
@@ -62,7 +66,8 @@
                     * Request unpublication and deletion of document.
                     */
                     public void requestDeletion()
-                -->                
+                --> 
+                <span wicket:id="requestDeletion-dialog"></span>                
                 <a wicket:id="requestDeletion">Request delete</a>
             </li>
         </ul>
@@ -75,6 +80,7 @@
                     */
                     public void publish()
                 -->
+                <span wicket:id="publish-dialog"></span>
                 <a wicket:id="publish">Publish</a>
             </li>                
             <li>
@@ -84,8 +90,9 @@
                     * The current user must have authorization for this.
                     */
                     public void depublish()
-                -->                
-                <a wicket:id="depublish">Unpublish</a>
+                -->  
+                <span wicket:id="dePublish-dialog"></span>             
+                <a wicket:id="dePublish">Unpublish</a>
             </li>
             <li>
                 <!--
@@ -94,63 +101,11 @@
                     * The current user must have authorization for this.
                     */
                     public void delete()
-                -->                
+                -->
+                <span wicket:id="delete-dialog"></span>               
                 <a wicket:id="delete">Unpublish and/or delete</a>
             </li>
         </ul>
     </table>
     </wicket:panel>
 </html>
-
-            <!--
-        <ul>
-                <li>
-                /**
-                * Publish at the requested date.
-                * The current user must have authorization for this.
-                */
-                public void publish(Date publicationDate)
-                <a wicket:id=""></a>
-                </li>
-            -->
-            <!--
-                <li>
-                /**
-                * Publish at the requested date, and depublish at the requested second date
-                * The current user must have authorization for this.
-                */
-                public void publish(Date publicationDate, Date unpublicationDate)
-                <a wicket:id=""></a>
-                </li>
-            -->
-            <!--
-                <li>
-                /**
-                * Request for this instance of the document to be published at the given
-                * date.
-                */
-                public void requestPublication(Date publicationDate)
-                <a wicket:id=""></a>
-                </li>
-            -->
-            <!--
-                <li>
-                /**
-                * Request for this instance of the document to be published at the given
-                * date and to be scheduled for unpublication.
-                */
-                public void requestPublication(Date publicationDate, Date unpublicationDate)
-                <a wicket:id=""></a>
-                </li>
-            -->
-            <!--
-                <li>
-                /**
-                * Request unpublication at given date.
-                */
-                public void requestDepublication(Date publicationDate)
-                
-                <a wicket:id=""></a>
-                </li>
-        </ul>
-            -->
