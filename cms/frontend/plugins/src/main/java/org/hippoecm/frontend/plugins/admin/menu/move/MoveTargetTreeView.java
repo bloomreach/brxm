@@ -15,27 +15,28 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu.move;
 
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.tree.JcrLazyTreeNode;
 import org.hippoecm.frontend.tree.JcrTree;
+import org.hippoecm.frontend.tree.LazyTreeModel;
+import org.hippoecm.frontend.tree.LazyTreeNode;
 
 public class MoveTargetTreeView extends JcrTree {
     private static final long serialVersionUID = 1L;
     private TreeNode selectedNode;
     private MoveDialog dialog;
 
-    public MoveTargetTreeView(String id, TreeModel treeModel, MoveDialog dialog) {
+    public MoveTargetTreeView(String id, LazyTreeModel treeModel, MoveDialog dialog) {
         super(id, treeModel);
         this.dialog = dialog;
     }
 
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
-        this.selectedNode = treeNode;
-        JcrNodeModel jcrNodeModel = (JcrNodeModel) treeNode;
-        dialog.update(target, jcrNodeModel);
+        selectedNode = treeNode;
+        JcrLazyTreeNode jcrTreeNode = (JcrLazyTreeNode) treeNode;
+        dialog.update(target, jcrTreeNode.getJcrNodeModel());
     }
 
     public TreeNode getSelectedNode() {

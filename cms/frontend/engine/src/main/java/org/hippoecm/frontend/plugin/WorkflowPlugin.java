@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -37,7 +36,7 @@ public abstract class WorkflowPlugin extends Plugin {
     private transient WorkflowManager workflowManager;
     private transient WorkflowDescriptor workflowDescriptor;
     
-    protected interface Callback extends IClusterable {
+    protected interface Callback {
         void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException, RepositoryException;
     }
 

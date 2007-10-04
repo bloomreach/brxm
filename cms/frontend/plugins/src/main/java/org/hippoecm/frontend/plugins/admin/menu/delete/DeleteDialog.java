@@ -21,8 +21,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrNodeModelState;
 import org.hippoecm.repository.api.HippoNode;
 
 public class DeleteDialog extends AbstractDialog {
@@ -38,13 +38,15 @@ public class DeleteDialog extends AbstractDialog {
         }
     }
 
-    public JcrEvent ok() throws RepositoryException {
+    public void ok() throws RepositoryException {
         if (model.getNode() != null) {
             HippoNode parentNode = (HippoNode) model.getNode().getParent();
             model.getNode().remove();
+            //JcrNodeModel removedModel = new JcrNodeModel(model.getNode());
             model.setNode(parentNode); // node is deleted so use parent now
+            //model.getState().mark(JcrNodeModelState.CHILD_REMOVED);
+            //model.getState().setRelatedNode(removedModel);
         }
-        return new JcrEvent(model);
     }
 
     public void cancel() {

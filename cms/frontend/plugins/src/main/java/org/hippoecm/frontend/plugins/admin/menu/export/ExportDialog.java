@@ -31,7 +31,6 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.w3c.dom.Document;
 
@@ -63,8 +62,7 @@ public class ExportDialog extends AbstractDialog {
         cancel.setVisible(false);
     }
 
-    public JcrEvent ok() {
-        return new JcrEvent(model);
+    public void ok() {
     }
 
     public void cancel() {

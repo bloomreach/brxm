@@ -48,10 +48,8 @@ public class JcrItemModel extends LoadableDetachableModel {
     protected Object load() {
         Item result = null;
         try {
-            UserSession sessionProvider = (UserSession) Session.get();
-            if (sessionProvider.getJcrSession().itemExists(path)) {
-                result = sessionProvider.getJcrSession().getItem(path);
-            }
+            UserSession sessionProvider = (UserSession)Session.get();
+            result = sessionProvider.getJcrSession().getItem(path);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

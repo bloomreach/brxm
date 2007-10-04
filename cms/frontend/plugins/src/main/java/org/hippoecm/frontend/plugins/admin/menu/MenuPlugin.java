@@ -21,7 +21,6 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
@@ -122,9 +121,9 @@ public class MenuPlugin extends Plugin {
         add(new Label("path", new PropertyModel(model, "path")));
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        if (jcrEvent.getModel() != null) {
-            setModel(jcrEvent.getModel());
+    public void update(AjaxRequestTarget target, JcrNodeModel model) {
+        if (model != null) {
+            setModel(model);
         }
         if (target != null) {
             target.addComponent(this);

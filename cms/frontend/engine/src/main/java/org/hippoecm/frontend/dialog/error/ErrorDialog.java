@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class ErrorDialog extends AbstractDialog {
@@ -33,8 +32,7 @@ public class ErrorDialog extends AbstractDialog {
     }
  
 
-    public JcrEvent ok() throws RepositoryException {
-        return new JcrEvent(model);
+    public void ok() throws RepositoryException {
     }
 
     public void cancel() {

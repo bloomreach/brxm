@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class ResetDialog extends AbstractDialog {
@@ -44,9 +43,8 @@ public class ResetDialog extends AbstractDialog {
         add(label);
     }
 
-    public JcrEvent ok() throws RepositoryException {
+    public void ok() throws RepositoryException {
         model.getNode().getSession().refresh(false);
-        return new JcrEvent(model);
     }
 
     public void cancel() {
