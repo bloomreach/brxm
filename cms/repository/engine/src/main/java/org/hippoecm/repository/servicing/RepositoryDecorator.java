@@ -26,7 +26,6 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.apache.jackrabbit.core.SearchManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
-import org.hippoecm.repository.FacetedNavigationEngineThirdImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 
 /**
