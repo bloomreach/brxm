@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.reviewedactions;
-
-import java.rmi.RemoteException;
-
-import javax.jcr.RepositoryException;
+package org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest;
 
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.AbstractWorkflowDialog;
 import org.hippoecm.repository.reviewedactions.RequestWorkflow;
 
-public class RejectRequestDialog extends AbstractDialog {
+public class RejectRequestDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     private RequestWorkflow workflow;
@@ -44,8 +39,9 @@ public class RejectRequestDialog extends AbstractDialog {
         }
     }
 
-    public void ok() throws RepositoryException, RemoteException, WorkflowException {
+    public void ok() throws Exception {
         workflow.rejectRequest(reason);
+        super.ok();
     }
 
     public void cancel() {

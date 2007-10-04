@@ -15,18 +15,22 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.rmi.RemoteException;
-
-import javax.jcr.RepositoryException;
-
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.WorkflowPlugin;
-import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.delete.DeleteDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.depublish.DePublishDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableinstance.DisposeEditableInstanceDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinstance.ObtainEditableInstanceDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.publish.PublishDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion.RequestDeletionDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdepublication.RequestDePublicationDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication.RequestPublicationDialog;
 import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.WorkflowMappingException;
 import org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflow;
 
 public class ReviewedActionsWorkflowPlugin extends WorkflowPlugin {
@@ -36,69 +40,86 @@ public class ReviewedActionsWorkflowPlugin extends WorkflowPlugin {
             WorkflowDescriptor workflowDescriptor) {
         super(id, model, workflowManager, workflowDescriptor);
 
-        Callback obtainEditableInstance = new Callback() {
-            public void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
-                    RepositoryException {
-                ((ReviewedActionsWorkflow) workflow).obtainEditableInstance();
+        final DialogWindow obtainEditableInstanceDialog = new DialogWindow("obtainEditableInstance-dialog", model, false);
+        obtainEditableInstanceDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new ObtainEditableInstanceDialog(obtainEditableInstanceDialog, model, (ReviewedActionsWorkflow) getWorkflow());
             }
-        };
-        add(workflowMethodCaller("obtainEditableInstance", model, "Obtain editable copy", obtainEditableInstance));
+        });
+        add(obtainEditableInstanceDialog);
+        add(obtainEditableInstanceDialog.dialogLink("obtainEditableInstance"));
+        
+        final DialogWindow disposeEditableInstanceDialog = new DialogWindow("disposeEditableInstance-dialog", model, false);
+        disposeEditableInstanceDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new DisposeEditableInstanceDialog(disposeEditableInstanceDialog, model, (ReviewedActionsWorkflow) getWorkflow());
+            }
+        });
+        add(disposeEditableInstanceDialog);
+        add(disposeEditableInstanceDialog.dialogLink("disposeEditableInstance"));
 
-        Callback disposeEditableInstance = new Callback() {
-            public void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
-                    RepositoryException {
-                ((ReviewedActionsWorkflow) workflow).disposeEditableInstance();
+        final DialogWindow requestPublicationDialog = new DialogWindow("requestPublication-dialog", model, false);
+        requestPublicationDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new RequestPublicationDialog(requestPublicationDialog, model, (ReviewedActionsWorkflow) getWorkflow());
             }
-        };
-        add(workflowMethodCaller("disposeEditableInstance", model, "Discard editable copy", disposeEditableInstance));
+        });
+        add(requestPublicationDialog);
+        add(requestPublicationDialog.dialogLink("requestPublication"));
 
-        Callback requestPublication = new Callback() {
-            public void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
-                    RepositoryException {
-                ((ReviewedActionsWorkflow) workflow).requestPublication();
+        final DialogWindow requestDePublicationDialog = new DialogWindow("requestDePublication-dialog", model, false);
+        requestDePublicationDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new RequestDePublicationDialog(requestDePublicationDialog, model, (ReviewedActionsWorkflow) getWorkflow());
             }
-        };
-        add(workflowMethodCaller("requestPublication", model, "Request publication", requestPublication));
+        });
+        add(requestDePublicationDialog);
+        add(requestDePublicationDialog.dialogLink("requestDePublication"));
 
-        Callback requestDepublication = new Callback() {
-            public void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
-                    RepositoryException {
-                ((ReviewedActionsWorkflow) workflow).requestDepublication();
+        final DialogWindow requestDeletionDialog = new DialogWindow("requestDeletion-dialog", model, false);
+        requestDeletionDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new RequestDeletionDialog(requestDeletionDialog, model, (ReviewedActionsWorkflow) getWorkflow());
             }
-        };
-        add(workflowMethodCaller("requestDepublication", model, "Request unpublication", requestDepublication));
+        });
+        add(requestDeletionDialog);
+        add(requestDeletionDialog.dialogLink("requestDeletion"));
 
-        Callback requestDeletion = new Callback() {
-            public void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
-                    RepositoryException {
-                ((ReviewedActionsWorkflow) workflow).requestDeletion();
-            }
-        };
-        add(workflowMethodCaller("requestDeletion", model, "Request delete", requestDeletion));
 
-        Callback publish = new Callback() {
-            public void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
-                    RepositoryException {
-                ((ReviewedActionsWorkflow) workflow).publish();
+        final DialogWindow publishDialog = new DialogWindow("publish-dialog", model, false);
+        publishDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new PublishDialog(publishDialog, model, (ReviewedActionsWorkflow) getWorkflow());
             }
-        };
-        add(workflowMethodCaller("publish", model, "Publish", publish));
+        });
+        add(publishDialog);
+        add(publishDialog.dialogLink("publish"));
+        
+        final DialogWindow dePublishDialog = new DialogWindow("dePublish-dialog", model, false);
+        dePublishDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new DePublishDialog(dePublishDialog, model, (ReviewedActionsWorkflow) getWorkflow());
+            }
+        });
+        add(dePublishDialog);
+        add(dePublishDialog.dialogLink("dePublish"));
 
-        Callback depublish = new Callback() {
-            public void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
-                    RepositoryException {
-                ((ReviewedActionsWorkflow) workflow).depublish();
+        final DialogWindow deleteDialog = new DialogWindow("delete-dialog", model, false);
+        deleteDialog.setPageCreator(new ModalWindow.PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return new DeleteDialog(deleteDialog, model, (ReviewedActionsWorkflow) getWorkflow());
             }
-        };
-        add(workflowMethodCaller("depublish", model, "Unpublish", depublish));
-
-        Callback delete = new Callback() {
-            public void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
-                    RepositoryException {
-                ((ReviewedActionsWorkflow) workflow).delete();
-            }
-        };
-        add(workflowMethodCaller("delete", model, "Unpublish and/or delete", delete));
+        });
+        add(deleteDialog);
+        add(deleteDialog.dialogLink("delete"));
     }
 
     public void update(final AjaxRequestTarget target, final JcrNodeModel model) {
