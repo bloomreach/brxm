@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.ContextDialogFactory;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -58,7 +59,8 @@ public class SamplesPlugin extends Plugin {
         add(editor);
     }
 
-    public void update(AjaxRequestTarget target, JcrNodeModel model) {
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
+        JcrNodeModel model = jcrEvent.getModel();
         if (model != null && target != null) {
             //This forwards the ajax update event to the contextDialogFactory
             //causing it to be reconfigured with a new classname. 

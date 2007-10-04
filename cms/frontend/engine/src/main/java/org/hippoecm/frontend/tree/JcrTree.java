@@ -37,11 +37,11 @@ public abstract class JcrTree extends Tree {
         getTreeState().setAllowSelectMultiple(false);
         getTreeState().collapseAll();
         
-        getTreeState().addTreeStateListener(new JcrTreeStateListener());
+        //getTreeState().addTreeStateListener(new JcrTreeStateListener());
     }
 
     protected String renderNode(TreeNode treeNode) {
-        JcrNodeModel nodeModel = ((JcrLazyTreeNode)treeNode).getJcrNodeModel();
+        JcrNodeModel nodeModel = (JcrNodeModel)treeNode;
         HippoNode node = nodeModel.getNode();
         String result = "null";
         if (node != null) {
@@ -59,30 +59,30 @@ public abstract class JcrTree extends Tree {
     
     protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode);
     
-    private class JcrTreeStateListener implements ITreeStateListener, IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        public void nodeExpanded(TreeNode treeNodeModel) {
-        }
-
-        public void nodeCollapsed(TreeNode treeNodeModel) {
-            // FIXME this is a workaround for the tree currently not updating automatically
-            JcrLazyTreeNode treeNode = (JcrLazyTreeNode) treeNodeModel;
-            treeNode.reload();
-        }
-
-        public void allNodesCollapsed() {
-        }
-
-        public void allNodesExpanded() {
-        }
-
-        public void nodeSelected(TreeNode node) {
-        }
-
-        public void nodeUnselected(TreeNode node) {
-        }
-
-    }
+//    private class JcrTreeStateListener implements ITreeStateListener, IClusterable {
+//        private static final long serialVersionUID = 1L;
+//
+//        public void nodeExpanded(TreeNode treeNodeModel) {
+//        }
+//
+//        public void nodeCollapsed(TreeNode treeNodeModel) {
+//            // FIXME this is a workaround for the tree currently not updating automatically
+//            LazyTreeNode treeNode = (LazyTreeNode) treeNodeModel;
+//            treeNode.reload();
+//        }
+//
+//        public void allNodesCollapsed() {
+//        }
+//
+//        public void allNodesExpanded() {
+//        }
+//
+//        public void nodeSelected(TreeNode node) {
+//        }
+//
+//        public void nodeUnselected(TreeNode node) {
+//        }
+//
+//    }
 
 }

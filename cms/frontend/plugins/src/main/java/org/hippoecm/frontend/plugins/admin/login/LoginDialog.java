@@ -25,6 +25,7 @@ import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.HippoRepository;
 
@@ -49,7 +50,7 @@ public class LoginDialog extends AbstractDialog {
         add(new AjaxEditableLabel("password", new PropertyModel(credentials, "password")));
     }
 
-    public void ok() throws Exception {
+    public JcrEvent ok() throws Exception {
         String username = credentials.getString("username");
         String password = credentials.getString("password");
 
@@ -59,6 +60,8 @@ public class LoginDialog extends AbstractDialog {
 
         UserSession userSession = (UserSession) getSession();
         userSession.setJcrSession(jcrSession, credentials);
+        
+        return new JcrEvent(model);
     }
 
     public void cancel() {
