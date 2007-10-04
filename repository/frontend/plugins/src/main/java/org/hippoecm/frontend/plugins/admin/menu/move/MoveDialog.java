@@ -18,14 +18,13 @@ package org.hippoecm.frontend.plugins.admin.menu.move;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrNodeModelState;
-import org.hippoecm.frontend.tree.JcrLazyTreeNode;
-import org.hippoecm.frontend.tree.LazyTreeModel;
 
 public class MoveDialog extends AbstractDialog  {
     private static final long serialVersionUID = 1L;
@@ -41,10 +40,9 @@ public class MoveDialog extends AbstractDialog  {
         try {
             root = model.getNode().getSession().getRootNode();
             JcrNodeModel rootModel = new JcrNodeModel(root);
-            JcrLazyTreeNode treeNode = new JcrLazyTreeNode(null, rootModel);
-            LazyTreeModel treeModel = new LazyTreeModel(treeNode);
+            TreeModel treeModel = new DefaultTreeModel(rootModel);
             tree = new MoveTargetTreeView("tree", treeModel, this);
-            tree.getTreeState().expandNode(treeNode);
+            tree.getTreeState().expandNode(rootModel);
             add(tree);
 
             infoPanel = new MoveDialogInfoPanel("info", model);
@@ -60,20 +58,18 @@ public class MoveDialog extends AbstractDialog  {
         }
     }
 
-    public void ok() throws RepositoryException {
+    public JcrEvent ok() throws RepositoryException {
         if (model.getNode() != null) {
-            JcrLazyTreeNode treeNode = (JcrLazyTreeNode) tree.getSelectedNode();
-            JcrNodeModel targetNodeModel = treeNode.getJcrNodeModel();
-            String parentPath = targetNodeModel.getNode().getPath();
+            JcrNodeModel treeNode = (JcrNodeModel) tree.getSelectedNode();
+            String parentPath = treeNode.getNode().getPath();
             if (!"/".equals(parentPath)) {
                 // FIXME we should have a PathUtil class or something which does this kind of thing
                 parentPath += "/";
             }
             String destination = parentPath + model.getNode().getName();
             model.getNode().getSession().move(model.getNode().getPath(), destination);
-            model.getState().mark(JcrNodeModelState.MOVED);
-            model.getState().setRelatedNode(targetNodeModel); // save the new parent in the state object
         }
+        return new JcrEvent(model);
     }
 
     public void cancel() {

@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public abstract class AbstractDialog extends WebPage {
@@ -43,7 +44,7 @@ public abstract class AbstractDialog extends WebPage {
             private static final long serialVersionUID = 1L;
             public void onClick(AjaxRequestTarget target) {
                 try {
-                    ok();
+                    dialogWindow.setJcrEvent(ok());
                     dialogWindow.close(target);
                 } catch (Exception e) {
                     setException(e.getMessage());
@@ -71,7 +72,7 @@ public abstract class AbstractDialog extends WebPage {
         return exception;
     }
 
-    protected abstract void ok() throws Exception;
+    protected abstract JcrEvent ok() throws Exception;
 
     protected abstract void cancel();
 

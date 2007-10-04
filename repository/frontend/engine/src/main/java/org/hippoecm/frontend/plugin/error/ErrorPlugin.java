@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugin.error;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 
 public class ErrorPlugin extends Plugin {
@@ -38,7 +38,7 @@ public class ErrorPlugin extends Plugin {
         add(new MultiLineLabel("message", errorMessage));
     }
 
-    public void update(AjaxRequestTarget target, JcrNodeModel model) {
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         // nothing much to do here
     }
 

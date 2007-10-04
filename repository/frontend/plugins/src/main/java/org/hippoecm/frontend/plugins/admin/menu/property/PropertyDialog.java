@@ -23,6 +23,7 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class PropertyDialog extends AbstractDialog {
@@ -52,7 +53,7 @@ public class PropertyDialog extends AbstractDialog {
         }
     }
 
-    public void ok() throws RepositoryException {
+    public JcrEvent ok() throws RepositoryException {
         PropertyDialog page = (PropertyDialog) getPage();
         if (isMultiple.booleanValue()) {
             String value = page.getValue();
@@ -63,6 +64,7 @@ public class PropertyDialog extends AbstractDialog {
         } else {
             model.getNode().setProperty(page.getName(), page.getValue());
         }
+        return new JcrEvent(model);
     }
 
     public void cancel() {
