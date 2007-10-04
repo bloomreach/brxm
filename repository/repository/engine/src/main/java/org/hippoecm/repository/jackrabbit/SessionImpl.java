@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.io.File;
+
 import javax.security.auth.Subject;
 
 import javax.jcr.AccessDeniedException;
@@ -25,13 +27,16 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemManager;
+import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.security.AMContext;
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implements HippoSession {
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
@@ -57,9 +62,22 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
 
     protected ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
         return super.createItemManager(itemStateMgr, hierMgr);
-        /* return new ItemManager(itemStateMgr, hierMgr, this,
-           ntMgr.getRootNodeDefinition(), rep.getRootNodeId());
-         */
+    }
+
+    protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
+        AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
+        try {
+            AMContext ctx = new AMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()), ((RepositoryImpl)rep).getFileSystem(), subject, hierMgr, ((RepositoryImpl)rep).getNamespaceRegistry(), wsp.getName());
+            AccessManager accessMgr = (AccessManager) amConfig.newInstance();
+            accessMgr.init(ctx);
+            return accessMgr;
+        } catch (AccessDeniedException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            String msg = "failed to instantiate AccessManager implementation: " + amConfig.getClassName();
+            log.error(msg, ex);
+            throw new RepositoryException(msg, ex);
+        }
     }
 
     protected FacetedNavigationEngine.Context facetedContext;
