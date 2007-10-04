@@ -15,14 +15,12 @@
  */
 package org.hippoecm.frontend;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -54,31 +52,22 @@ public class Home extends WebPage {
         }
     }
 
-    public void update(final AjaxRequestTarget target, final JcrEvent jcrEvent) {
+    public void update(final AjaxRequestTarget target, final JcrNodeModel model) {
         try {
             Session session = ((UserSession) getSession()).getJcrSession();
             final PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
             final WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
 
-            if (jcrEvent.getModel() != null) {
-                JcrNodeModel model = jcrEvent.getModel();
-                if (model.getNode() != null) {
-                    Node node = model.getNode();
-                    if (node != null) {
-                        if (session.itemExists(node.getPath())) {
-                            reconfigurePlugins(manager, jcrEvent, pluginConfig, target);
-                            updatePlugins(target, jcrEvent);
-                        }
-                    }
-                }
-            }
+            reconfigurePlugins(manager, model, pluginConfig, target);
+            updatePlugins(target, model);
+
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    private void reconfigurePlugins(final WorkflowManager manager, final JcrEvent jcrEvent,
+    private void reconfigurePlugins(final WorkflowManager manager, final JcrNodeModel model,
             final PluginConfig pluginConfig, final AjaxRequestTarget target) {
         
         rootPlugin.visitChildren(Plugin.class, new IVisitor() {
@@ -87,8 +76,8 @@ public class Home extends WebPage {
 
                 WorkflowDescriptor descriptor = null;
                 try {
-                    if (jcrEvent.getModel().getNode() != null) {
-                        descriptor = manager.getWorkflowDescriptor(plugin.getId(), jcrEvent.getModel().getNode());
+                    if (model.getNode() != null) {
+                        descriptor = manager.getWorkflowDescriptor(plugin.getId(), model.getNode());
                     }
                 } catch (RepositoryException e) {
                     // TODO Auto-generated catch block
@@ -98,12 +87,12 @@ public class Home extends WebPage {
                     PluginDescriptor defaultPluginDescriptor = pluginConfig.getPlugin(plugin.getPath());
                     if (!defaultPluginDescriptor.getClassName().equals(plugin.getClass().getName())) {
                         PluginFactory pluginFactory = new PluginFactory(defaultPluginDescriptor);
-                        Plugin defaultPlugin = pluginFactory.getPlugin(jcrEvent.getModel());
+                        Plugin defaultPlugin = pluginFactory.getPlugin(model);
                         replace(defaultPlugin);
                     }
                 } else {
                     WorkflowPluginFactory pluginFactory = new WorkflowPluginFactory(manager, descriptor);
-                    Plugin workflowPlugin = pluginFactory.getWorkflowPlugin(plugin.getId(), jcrEvent.getModel());
+                    Plugin workflowPlugin = pluginFactory.getWorkflowPlugin(plugin.getId(), model);
                     replace(workflowPlugin);
                 }
                 return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
@@ -117,12 +106,12 @@ public class Home extends WebPage {
         });
     }
 
-    private void updatePlugins(final AjaxRequestTarget target, final JcrEvent jcrEvent) {
+    private void updatePlugins(final AjaxRequestTarget target, final JcrNodeModel model) {
         visitChildren(Plugin.class, new IVisitor() {
             public Object component(Component component) {
                 Plugin plugin = (Plugin) component;
                 if (!plugin.getRenderBodyOnly()) {
-                    plugin.update(target, jcrEvent);
+                    plugin.update(target, model);
                 }
                 return IVisitor.CONTINUE_TRAVERSAL;
             }

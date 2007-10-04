@@ -15,14 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu.node;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrNodeModelState;
+import org.hippoecm.repository.api.HippoNode;
 
 public class NodeDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -41,10 +43,11 @@ public class NodeDialog extends AbstractDialog {
         }
     }
 
-    public JcrEvent ok() throws RepositoryException {
+    public void ok() throws RepositoryException {
         NodeDialog page = (NodeDialog) getPage();
-        model.getNode().addNode(page.getName(), page.getType());
-        return new JcrEvent(model);
+        Node childNode = model.getNode().addNode(page.getName(), page.getType());
+        model.getState().mark(JcrNodeModelState.CHILD_ADDED);
+        model.getState().setRelatedNode(new JcrNodeModel(childNode));
     }
 
     public void cancel() {

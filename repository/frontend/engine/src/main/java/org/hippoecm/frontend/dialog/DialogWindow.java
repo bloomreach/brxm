@@ -19,13 +19,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class DialogWindow extends ModalWindow {
     private static final long serialVersionUID = 1L;
-
-    private JcrEvent jcrEvent;
 
     public DialogWindow(String id, final JcrNodeModel model, final boolean resetOnClose) {
         super(id);
@@ -35,9 +32,7 @@ public class DialogWindow extends ModalWindow {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
                 Home home = (Home) getWebPage();
-                if (jcrEvent != null) {
-                    home.update(target, jcrEvent);
-                }
+                home.update(target, model);
                 if (resetOnClose) {
                     setResponsePage(home);
                     setRedirect(true);
@@ -49,15 +44,10 @@ public class DialogWindow extends ModalWindow {
     public AjaxLink dialogLink(String id) {
         return new AjaxLink(id) {
             private static final long serialVersionUID = 1L;
-
             public void onClick(AjaxRequestTarget target) {
                 show(target);
             }
         };
-    }
-
-    public void setJcrEvent(JcrEvent event) {
-        this.jcrEvent = event;
     }
 
 }

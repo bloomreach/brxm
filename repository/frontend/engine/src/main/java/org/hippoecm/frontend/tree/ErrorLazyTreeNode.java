@@ -13,21 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin;
+package org.hippoecm.frontend.tree;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
+import java.io.Serializable;
+import java.util.*;
 
-public class RootPlugin extends Plugin {
+class ErrorLazyTreeNode extends LazyTreeNode implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public RootPlugin(String id, JcrNodeModel model) {
-        super(id, model);
+    ErrorLazyTreeNode(LazyTreeNode parent, Object o) {
+        super(parent, "Invalid Node -- " + o);
     }
 
-    public void update(final AjaxRequestTarget target, final JcrNodeModel model) {
-        //Nothing to do
+    public LazyTreeNode createNode(Object o) {
+        return null;
     }
 
+    public int getChildObjectCount() {
+        return 0;
+    }
+
+    public Collection getChildObjects() {
+        return Collections.EMPTY_SET;
+    }
+
+    public Comparator getComparator() {
+        return null;
+    }
 }

@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 
@@ -42,6 +41,6 @@ public abstract class Plugin extends Panel {
         }
     }
 
-    public abstract void update(AjaxRequestTarget target, JcrEvent model);
+    public abstract void update(AjaxRequestTarget target, JcrNodeModel model);
 
 }

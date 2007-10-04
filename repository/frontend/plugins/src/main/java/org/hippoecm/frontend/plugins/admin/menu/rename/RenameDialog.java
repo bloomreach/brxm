@@ -21,8 +21,8 @@ import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrNodeModelState;
 
 public class RenameDialog extends AbstractDialog {
 
@@ -36,7 +36,7 @@ public class RenameDialog extends AbstractDialog {
     public RenameDialog(DialogWindow dialogWindow, JcrNodeModel model) {
         super(dialogWindow, model);
         dialogWindow.setTitle("Rename Node");
-
+        
         try {
             // get name of current node
             name = model.getNode().getName();
@@ -51,7 +51,14 @@ public class RenameDialog extends AbstractDialog {
         }
     }
 
-    protected JcrEvent ok() throws RepositoryException {
+    @Override
+    protected void cancel() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected void ok() throws RepositoryException {
         if (model.getNode() != null) {
             RenameDialog page = (RenameDialog) getPage();
             String parentPath = model.getNode().getParent().getPath();
@@ -61,19 +68,24 @@ public class RenameDialog extends AbstractDialog {
             }
             String destination = parentPath + page.getName();
             model.getNode().getSession().move(model.getNode().getPath(), destination);
+            model.getState().mark(JcrNodeModelState.MOVED);
         }
-        return new JcrEvent(model);
     }
 
-    protected void cancel() {
-    }
-
+    /**
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name the name to set
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    
+    
 }
