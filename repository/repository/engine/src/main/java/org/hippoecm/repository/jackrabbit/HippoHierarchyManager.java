@@ -18,22 +18,57 @@ package org.hippoecm.repository.jackrabbit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.state.ItemStateManager;
-import org.apache.jackrabbit.core.CachingHierarchyManager;
-import org.apache.jackrabbit.name.PathResolver;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.RepositoryException;
 
-public class HippoHierarchyManager extends CachingHierarchyManager {
+import org.apache.jackrabbit.core.CachingHierarchyManager;
+import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.ItemId;
+import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.state.ItemState;
+import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateManager;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+import org.apache.jackrabbit.name.Path;
+import org.apache.jackrabbit.name.PathResolver;
+import org.apache.jackrabbit.name.QName;
+
+public class HippoHierarchyManager implements HierarchyManager {
     private static Logger log = LoggerFactory.getLogger(HippoHierarchyManager.class);
 
-    /**
-     * Create a new instance of this class.
-     *
-     * @param rootNodeId   root node id
-     * @param provider     item state manager
-     * @param resolver   namespace resolver
-     */
-    public HippoHierarchyManager(NodeId rootNodeId, ItemStateManager provider, PathResolver resolver) {
-        super(rootNodeId, provider, resolver);
+    protected HierarchyManager hierMgr;
+    protected HippoSessionItemStateManager itemStateMgr;
+
+    public HippoHierarchyManager(HippoSessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
+        this.hierMgr = hierMgr;
+        this.itemStateMgr = itemStateMgr;
+    }
+
+    public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+        return itemStateMgr.getItemState(id);
+    }
+
+    public ItemId resolvePath(Path path) throws RepositoryException {
+        return hierMgr.resolvePath(path);
+    }
+
+    public Path getPath(ItemId id) throws ItemNotFoundException, RepositoryException {
+        return hierMgr.getPath(id);
+    }
+
+    public QName getName(ItemId id) throws ItemNotFoundException, RepositoryException {
+        return hierMgr.getName(id);
+    }
+
+    public int getDepth(ItemId id) throws ItemNotFoundException, RepositoryException {
+        return hierMgr.getDepth(id);
+    }
+
+    public int getRelativeDepth(NodeId ancestorId, ItemId descendantId) throws ItemNotFoundException, RepositoryException {
+        return hierMgr.getRelativeDepth(ancestorId, descendantId);
+    }
+
+    public boolean isAncestor(NodeId nodeId, ItemId itemId) throws ItemNotFoundException, RepositoryException {
+        return hierMgr.isAncestor(nodeId, itemId);        
     }
 }

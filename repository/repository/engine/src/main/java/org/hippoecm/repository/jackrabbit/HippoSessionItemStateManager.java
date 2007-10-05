@@ -18,10 +18,11 @@ package org.hippoecm.repository.jackrabbit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.ItemStateManager;
-import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
+import org.apache.jackrabbit.core.state.SessionItemStateManager;
 
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
@@ -29,26 +30,45 @@ import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.name.QName;
 
 class HippoSessionItemStateManager extends SessionItemStateManager {
+    HippoHierarchyManager wrappedHierMgr = null;
+
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, SessionImpl session) {
         super(rootNodeId, manager, session);
+        if(wrappedHierMgr == null)
+            wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
+    }
+
+    @Override
+    public HierarchyManager getHierarchyMgr() {
+        if(wrappedHierMgr == null)
+            wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
+        return wrappedHierMgr;
+    }
+
+    public HierarchyManager getAtticAwareHierarchyMgr() {
+        return new HippoHierarchyManager(this, super.getAtticAwareHierarchyMgr());
     }
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, XASessionImpl session) {
         super(rootNodeId, manager, session);
     }
 
+    @Override
     public NodeState createNew(NodeState transientState) throws IllegalStateException {
         return super.createNew(transientState);
     }
 
+    @Override
     public PropertyState createNew(QName propName, NodeId parentId) throws IllegalStateException {
         return super.createNew(propName, parentId);
     }
 
+    @Override
     public PropertyState createNew(PropertyState transientState) throws IllegalStateException {
         return super.createNew(transientState);
     }
 
+    @Override
     public void store(ItemState state) throws IllegalStateException {
         super.store(state);
     }

@@ -25,9 +25,16 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.security.AMContext;
-import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.AccessManager;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.apache.jackrabbit.core.state.ItemState;
+import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.name.QName;
+
+import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 
 public class SimpleAccessManager extends org.apache.jackrabbit.core.security.SimpleAccessManager implements AccessManager {
 
@@ -88,6 +95,23 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
 
         for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
             String username = principal.getName();
+            // FIXME: here the username could be used to determin the role
+            // and allow or deny access
+        }
+
+        // FIXME Current simple implementation to be removed for M2.
+        try {
+            ItemState itemState = ((HippoHierarchyManager)hierMgr).getItemState(id);
+            if(itemState.isNode()) {
+                NodeState nodeState = (NodeState) itemState;
+                for(Object mixin : nodeState.getMixinTypeNames()) {
+                    QName mixinName = (QName) mixin;
+                    if(mixinName.toString().equals("{http://www.hippoecm.org/nt/1.0}restricted"))
+                        throw new AccessDeniedException();
+                }
+            }
+        } catch(NoSuchItemStateException ex) {
+        } catch(ItemStateException ex) {
         }
     }
 
@@ -110,9 +134,26 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
 
         for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
             String username = principal.getName();
+            // FIXME: here the username could be used to determin the role
+            // and allow or deny access
         }
 
-        return true;
+        // FIXME Current simple implementation to be removed for M2.
+        try {
+            ItemState itemState = ((HippoHierarchyManager)hierMgr).getItemState(id);
+            if(itemState.isNode()) {
+                NodeState nodeState = (NodeState) itemState;
+                for(Object mixin : nodeState.getMixinTypeNames()) {
+                    QName mixinName = (QName) mixin;
+                    if(mixinName.toString().equals("{http://www.hippoecm.org/nt/1.0}restricted"))
+                        return false;
+                }
+            }
+        } catch(NoSuchItemStateException ex) {
+        } catch(ItemStateException ex) {
+        }
+
+        return true; // FIXME: should default be false
     }
 
     /**

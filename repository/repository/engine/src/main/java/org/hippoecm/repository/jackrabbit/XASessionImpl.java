@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.io.File;
+
 import javax.security.auth.Subject;
 
 import javax.jcr.AccessDeniedException;
@@ -25,13 +27,16 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemManager;
+import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.security.AMContext;
 
 public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl implements HippoSession {
     private static Logger log = LoggerFactory.getLogger(XASessionImpl.class);
@@ -41,24 +46,43 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
         super(rep, loginContext, wspConfig);
     }
 
-    protected XASessionImpl(RepositoryImpl rep, Subject subject, WorkspaceConfig wspConfig)
-            throws AccessDeniedException, RepositoryException {
+    protected XASessionImpl(RepositoryImpl rep, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
+            RepositoryException {
         super(rep, subject, wspConfig);
     }
 
+    @Override
     protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
         return new HippoSessionItemStateManager(((RepositoryImpl) rep).getRootNodeId(), manager, this);
     }
 
+    @Override
     protected org.apache.jackrabbit.core.WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig,
-            SharedItemStateManager stateMgr, org.apache.jackrabbit.core.RepositoryImpl rep,
-            org.apache.jackrabbit.core.SessionImpl session) {
-        return new XAWorkspaceImpl(wspConfig, stateMgr, (RepositoryImpl) rep, session);
+          SharedItemStateManager stateMgr, org.apache.jackrabbit.core.RepositoryImpl rep,
+          org.apache.jackrabbit.core.SessionImpl session) {
+        return new XAWorkspaceImpl(wspConfig, stateMgr, rep, session);
     }
 
+    @Override
     protected ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
-        ItemManager i = super.createItemManager(itemStateMgr, hierMgr);
-        return i;
+        return  super.createItemManager(itemStateMgr, hierMgr);
+    }
+
+    @Override
+    protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
+        AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
+        try {
+            AMContext ctx = new AMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()), ((RepositoryImpl)rep).getFileSystem(), subject, hierMgr, ((RepositoryImpl)rep).getNamespaceRegistry(), wsp.getName());
+            AccessManager accessMgr = (AccessManager) amConfig.newInstance();
+            accessMgr.init(ctx);
+            return accessMgr;
+        } catch (AccessDeniedException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            String msg = "failed to instantiate AccessManager implementation: " + amConfig.getClassName();
+            log.error(msg, ex);
+            throw new RepositoryException(msg, ex);
+        }
     }
 
     protected FacetedNavigationEngine.Context facetedContext;

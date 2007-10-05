@@ -22,6 +22,8 @@
 
 [hippo:request] > nt:unstructured, mix:referenceable
 
+[hippo:restricted] mixin
+
 [hippo:document] > nt:unstructured, mix:referenceable
 - hippo:paths (string) multiple
 

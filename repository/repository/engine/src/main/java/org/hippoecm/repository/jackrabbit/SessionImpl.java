@@ -51,19 +51,24 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
         super(rep, subject, wspConfig);
     }
 
+    @Override
     protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
         return new HippoSessionItemStateManager(((RepositoryImpl) rep).getRootNodeId(), manager, this);
     }
 
-    protected WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig, SharedItemStateManager stateMgr,
-            org.apache.jackrabbit.core.RepositoryImpl rep, org.apache.jackrabbit.core.SessionImpl session) {
+    @Override
+    protected org.apache.jackrabbit.core.WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig,
+          SharedItemStateManager stateMgr, org.apache.jackrabbit.core.RepositoryImpl rep,
+          org.apache.jackrabbit.core.SessionImpl session) {
         return new WorkspaceImpl(wspConfig, stateMgr, rep, session);
     }
 
+    @Override
     protected ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
         return super.createItemManager(itemStateMgr, hierMgr);
     }
 
+    @Override
     protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
         AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
         try {
