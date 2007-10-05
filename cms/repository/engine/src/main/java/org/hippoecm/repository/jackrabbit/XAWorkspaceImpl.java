@@ -25,8 +25,6 @@ import org.apache.jackrabbit.core.state.LocalItemStateManager;
 public class XAWorkspaceImpl extends org.apache.jackrabbit.core.XAWorkspace {
     private static Logger log = LoggerFactory.getLogger(XAWorkspaceImpl.class);
 
-    protected HippoHierarchyManager hippoHierMgr;
-
     protected XAWorkspaceImpl(WorkspaceConfig wspConfig, SharedItemStateManager stateMgr,
             org.apache.jackrabbit.core.RepositoryImpl rep, org.apache.jackrabbit.core.SessionImpl session) {
         super(wspConfig, stateMgr, rep, session);
