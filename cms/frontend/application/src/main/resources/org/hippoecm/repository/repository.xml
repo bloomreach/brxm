@@ -55,7 +55,7 @@
       <param name="schemaObjectPrefix" value="${wsp.name}_"/>
     </PersistenceManager>
 
-    <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl">
+    <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
       <!--
         Search index and the file system it uses.
         class: FQN of class implementing the QueryHandler interface
