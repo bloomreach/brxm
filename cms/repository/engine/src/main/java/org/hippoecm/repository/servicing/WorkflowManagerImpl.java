@@ -80,6 +80,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 Node workflowNode = null;
                 for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                     workflowNode = iter.nextNode();
+                    if(workflowNode == null)
+                        continue;
                     log.debug("matching item type against " + workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
                     if (item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
                         log.debug("found workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
