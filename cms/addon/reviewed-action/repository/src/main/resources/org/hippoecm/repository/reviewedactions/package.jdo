@@ -10,7 +10,22 @@
       <field name="published" column="../{.}[state='published']"/>
       <field name="current" column="../request[state='current']"/>
     </class>
+    <class name="AuthorReviewedActionsWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
+      <datastore-identity strategy="native"/>
+      <field name="content" column="content"/>
+      <field name="username" column="username"/>
+      <field name="draft" column="../{.}[state='draft']"/>
+      <field name="unpublished" column="../{.}[state='unpublished']"/>
+      <field name="published" column="../{.}[state='published']"/>
+      <field name="current" column="../request[state='current']"/>
+    </class>
     <class name="RequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
+      <datastore-identity strategy="native"/>
+      <field name="request" column="."/>
+      <field name="workflow" column="../{..}[state='draft']"/>
+      <field name="document" column="{document}"/>
+    </class>
+    <class name="AuthorRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
       <field name="request" column="."/>
       <field name="workflow" column="../{..}[state='draft']"/>

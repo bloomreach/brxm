@@ -18,6 +18,9 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:workflow</sv:value>
             </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:restricted</sv:value>
+            </sv:property>
             <sv:property sv:name="hippo:nodetype" sv:type="String">
                 <sv:value>hippo:document</sv:value>
             </sv:property>
@@ -64,9 +67,62 @@
                 </sv:node>
             </sv:node>
         </sv:node>
+        <sv:node sv:name="authorreviewedactions">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:workflow</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:nodetype" sv:type="String">
+                <sv:value>hippo:document</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:classname" sv:type="String">
+                <sv:value>org.hippoecm.repository.reviewedactions.AuthorReviewedActionsWorkflowImpl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:display" sv:type="String">
+                <sv:value>Author Reviewed actions workflow</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.AuthorReviewedActionsWorkflowPlugin</sv:value>
+            </sv:property>
+            <sv:node sv:name="hippo:types">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:types</sv:value>
+                </sv:property>
+                <sv:node sv:name="org.hippoecm.repository.reviewedactions.PublishableDocument">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:type</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:nodetype" sv:type="String">
+                        <sv:value>hippo:document</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:classname" sv:type="String">
+                        <sv:value>org.hippoecm.repository.reviewedactions.PublishableDocument</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:display" sv:type="String">
+                        <sv:value>PublishableDocument</sv:value>
+                    </sv:property>
+                </sv:node>
+                <sv:node sv:name="org.hippoecm.repository.reviewedactions.PublicationRequest">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:type</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:nodetype" sv:type="String">
+                        <sv:value>hippo:request</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:classname" sv:type="String">
+                        <sv:value>org.hippoecm.repository.reviewedactions.PublicationRequest</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:display" sv:type="String">
+                        <sv:value>PublicationRequest</sv:value>
+                    </sv:property>
+                </sv:node>
+            </sv:node>
+        </sv:node>
         <sv:node sv:name="reviewedrequests">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:workflow</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:restricted</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:nodetype" sv:type="String">
                 <sv:value>hippo:request</sv:value>
@@ -79,6 +135,56 @@
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugins.reviewedactions.RequestWorkflowPlugin</sv:value>
+            </sv:property>
+            <sv:node sv:name="hippo:types">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:types</sv:value>
+                </sv:property>
+                <sv:node sv:name="org.hippoecm.repository.reviewedactions.PublishableDocument">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:type</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:nodetype" sv:type="String">
+                        <sv:value>hippo:document</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:classname" sv:type="String">
+                        <sv:value>org.hippoecm.repository.reviewedactions.PublishableDocument</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:display" sv:type="String">
+                        <sv:value>PublishableDocument</sv:value>
+                    </sv:property>
+                </sv:node>
+                <sv:node sv:name="org.hippoecm.repository.reviewedactions.PublicationRequest">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:type</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:nodetype" sv:type="String">
+                        <sv:value>hippo:request</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:classname" sv:type="String">
+                        <sv:value>org.hippoecm.repository.reviewedactions.PublicationRequest</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:display" sv:type="String">
+                        <sv:value>PublicationRequest</sv:value>
+                    </sv:property>
+                </sv:node>
+            </sv:node>
+        </sv:node>
+        <sv:node sv:name="authorreviewedrequests">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:workflow</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:nodetype" sv:type="String">
+                <sv:value>hippo:request</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:classname" sv:type="String">
+                <sv:value>org.hippoecm.repository.reviewedactions.AuthorRequestWorkflowImpl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:display" sv:type="String">
+                <sv:value>Author Reviewed requests workflow</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.AuthorRequestWorkflowPlugin</sv:value>
             </sv:property>
             <sv:node sv:name="hippo:types">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
