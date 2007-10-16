@@ -69,7 +69,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         facetedEngine = engine;
     }
 
-    @Override
     public static RepositoryImpl create(RepositoryConfig config)
         throws RepositoryException {
         return new RepositoryImpl(config);
