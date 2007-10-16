@@ -144,7 +144,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
             String path = descriptorImpl.nodeAbsPath;
             if(path.startsWith("/"))
                 path = path.substring(1);
-            return getWorkflow(descriptorImpl.category, session.getRootNode().getNode(path));
+            Node node = session.getRootNode();
+            if (!path.equals(""))
+                node = node.getNode(path);
+            return getWorkflow(descriptorImpl.category, node);
         } catch(PathNotFoundException ex) {
             log.debug("Workflow no longer available "+descriptorImpl.nodeAbsPath);
             return null;
