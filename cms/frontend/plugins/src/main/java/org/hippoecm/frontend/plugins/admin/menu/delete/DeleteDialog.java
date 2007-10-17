@@ -18,49 +18,42 @@ package org.hippoecm.frontend.plugins.admin.menu.delete;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrNodeModelState;
-import org.hippoecm.repository.api.HippoNode;
 
 public class DeleteDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public DeleteDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
-        dialogWindow.setTitle("Delete selected node");
-        
-        add(new Label("message", new PropertyModel(this, "message")));
-        if (model.getNode() == null) {
+    public DeleteDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
+
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        String message;
+        try {
+            message = "Delete " + nodeModel.getNode().getPath();
+        } catch (RepositoryException e) {
+            message = e.getMessage();
+        }
+        dialogWindow.setTitle(message);
+        add(new Label("message", message));
+        if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public void ok() throws RepositoryException {
-        if (model.getNode() != null) {
-            HippoNode parentNode = (HippoNode) model.getNode().getParent();
-            model.getNode().remove();
-            //JcrNodeModel removedModel = new JcrNodeModel(model.getNode());
-            model.setNode(parentNode); // node is deleted so use parent now
-            //model.getState().mark(JcrNodeModelState.CHILD_REMOVED);
-            //model.getState().setRelatedNode(removedModel);
-        }
+    public JcrEvent ok() throws RepositoryException {
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        nodeModel.getNode().remove();
+        
+        JcrNodeModel parentModel = (JcrNodeModel)nodeModel.getParent();
+        parentModel.childRemoved(nodeModel.getNode());
+        
+        return new JcrEvent(parentModel, true);
     }
 
     public void cancel() {
-    }
-
-    public String getMessage()  {
-        try {
-            return "Delete " + model.getNode().getPath();
-        } catch (RepositoryException e) {
-            return "";
-        }
-    }
-
-    public void setMessage(String message) {
     }
 
 }

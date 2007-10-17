@@ -19,6 +19,10 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.model.Model;
 
 public class JcrValueModel extends Model {
@@ -66,6 +70,36 @@ public class JcrValueModel extends Model {
                 e.printStackTrace();
             }
         }
+    }
+    
+    // override Object
+    
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+            .append("index", index)
+            .append("value", value)
+            .toString();
+     }
+    
+    public boolean equals(Object object) {
+        if (object instanceof JcrValueModel == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        JcrValueModel valueModel = (JcrValueModel) object;
+        return new EqualsBuilder()
+            .append(value, valueModel.value)
+            .append(index, valueModel.index)
+            .isEquals();
+    }
+    
+    public int hashCode() {
+        return new HashCodeBuilder(33, 113)
+            .append(value)
+            .append(index)
+            .toHashCode();
     }
 }
 

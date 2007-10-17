@@ -31,18 +31,20 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.w3c.dom.Document;
 
 public class ExportDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public ExportDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+    public ExportDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
 
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         String path;
         try {
-            path = model.getNode().getPath();
+            path = nodeModel.getNode().getPath();
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
@@ -50,7 +52,7 @@ public class ExportDialog extends AbstractDialog {
 
         String export;
         try {
-            Node node = model.getNode();
+            Node node = nodeModel.getNode();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             node.getSession().exportSystemView(node.getPath(), out, true, false);
             export = prettyPrint(out.toByteArray());
@@ -62,7 +64,8 @@ public class ExportDialog extends AbstractDialog {
         cancel.setVisible(false);
     }
 
-    public void ok() {
+    public JcrEvent ok() {
+        return new JcrEvent(dialogWindow.getNodeModel());
     }
 
     public void cancel() {

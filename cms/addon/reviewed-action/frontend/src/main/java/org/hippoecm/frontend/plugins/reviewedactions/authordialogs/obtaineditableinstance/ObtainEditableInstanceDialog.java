@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.authordialogs.obtaineditableinstance;
 
+import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.AbstractWorkflowDialog;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.repository.reviewedactions.AuthorReviewedActionsWorkflow;
 
 public class ObtainEditableInstanceDialog extends AbstractWorkflowDialog {
@@ -25,18 +25,18 @@ public class ObtainEditableInstanceDialog extends AbstractWorkflowDialog {
 
     private AuthorReviewedActionsWorkflow workflow;
 
-    public ObtainEditableInstanceDialog(final DialogWindow dialogWindow, JcrNodeModel model, AuthorReviewedActionsWorkflow workflow) {
-        super(dialogWindow, model);
+    public ObtainEditableInstanceDialog(DialogWindow dialogWindow, AuthorReviewedActionsWorkflow workflow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Obtain editable instance");
         this.workflow = workflow;
-        if (model.getNode() == null) {
+        if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public void ok() throws Exception {
+    public JcrEvent ok() throws Exception {
         workflow.obtainEditableInstance();
-        super.ok();
+        return super.ok();
     }
 
     public void cancel() {

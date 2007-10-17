@@ -20,9 +20,11 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -35,29 +37,18 @@ public abstract class WorkflowPlugin extends Plugin {
     //TODO:  wrap these in detachable models instead of making them transient
     private transient WorkflowManager workflowManager;
     private transient WorkflowDescriptor workflowDescriptor;
-    
-    protected interface Callback {
-        void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException, RepositoryException;
-    }
 
-    public WorkflowPlugin(String id, JcrNodeModel model, WorkflowManager workflowManager, WorkflowDescriptor workflowDescriptor) {
+    public WorkflowPlugin(String id, JcrNodeModel model, WorkflowManager workflowManager,
+            WorkflowDescriptor workflowDescriptor) {
         super(id, model);
         this.workflowManager = workflowManager;
         this.workflowDescriptor = workflowDescriptor;
     }
 
-    public WorkflowManager getWorkflowManager() {
-        return workflowManager;
-    }
-
-    public WorkflowDescriptor getWorkflowDescriptor() {
-        return workflowDescriptor;
-    }
-    
     protected Workflow getWorkflow() {
         Workflow workflow = null;
         try {
-            workflow = getWorkflowManager().getWorkflow(workflowDescriptor);
+            workflow = workflowManager.getWorkflow(workflowDescriptor);
         } catch (WorkflowMappingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -67,7 +58,18 @@ public abstract class WorkflowPlugin extends Plugin {
         }
         return workflow;
     }
-    
+
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
+        update(jcrEvent);
+    }
+
+    public abstract void update(JcrEvent jcrEvent);
+
+    protected interface Callback extends IClusterable {
+        void execute(Workflow workflow) throws WorkflowMappingException, RemoteException, WorkflowException,
+                RepositoryException;
+    }
+
     protected Component workflowMethodCaller(String id, final JcrNodeModel model, String label, final Callback callback) {
         Component result = null;
         if (model == null || model.getNode() == null) {
@@ -76,6 +78,7 @@ public abstract class WorkflowPlugin extends Plugin {
         } else {
             result = new AjaxLink(id, model) {
                 private static final long serialVersionUID = 1L;
+
                 public void onClick(AjaxRequestTarget target) {
                     try {
                         callback.execute(getWorkflow());
@@ -95,6 +98,6 @@ public abstract class WorkflowPlugin extends Plugin {
                 }
             };
         }
-        return result;   
+        return result;
     }
 }

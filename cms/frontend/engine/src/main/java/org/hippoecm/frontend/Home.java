@@ -21,6 +21,8 @@ import javax.jcr.Session;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
+import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -39,45 +41,45 @@ public class Home extends WebPage {
     private Plugin rootPlugin;
 
     public Home() {
-        JcrNodeModel rootModel = getRootModel();
+        JcrNodeModel rootModel = JcrNodeModel.getRootModel();
         if (rootModel == null) {
             String message = "Cannot find repository root, no connection to server.";
             add(new ErrorPlugin("rootPlugin", null, message));
         } else {
-            PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
-            rootPlugin = getRootPlugin(pluginConfig, rootModel);
+            PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();            
+            PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
+            PluginFactory rootPluginFactory = new PluginFactory(rootPluginDescriptor);
+            rootPlugin = rootPluginFactory.getPlugin(rootModel);
 
             add(rootPlugin);
             rootPlugin.addChildren(pluginConfig);
         }
     }
+    
 
-    public void update(final AjaxRequestTarget target, final JcrNodeModel model) {
+    public void update(final AjaxRequestTarget target, JcrEvent jcrEvent) {
         try {
-            Session session = ((UserSession) getSession()).getJcrSession();
-            final PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
-            final WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-
-            reconfigurePlugins(manager, model, pluginConfig, target);
-            updatePlugins(target, model);
-
+            reconfigurePlugins(target, jcrEvent);
+            updatePlugins(target, jcrEvent);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    private void reconfigurePlugins(final WorkflowManager manager, final JcrNodeModel model,
-            final PluginConfig pluginConfig, final AjaxRequestTarget target) {
-        
+    private void reconfigurePlugins(final AjaxRequestTarget target, final JcrEvent jcrEvent) throws RepositoryException {
+        Session session = ((UserSession) getSession()).getJcrSession();
+        final WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        final PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
+
         rootPlugin.visitChildren(Plugin.class, new IVisitor() {
             public Object component(Component component) {
                 Plugin plugin = (Plugin) component;
 
                 WorkflowDescriptor descriptor = null;
                 try {
-                    if (model.getNode() != null) {
-                        descriptor = manager.getWorkflowDescriptor(plugin.getId(), model.getNode());
+                    if (jcrEvent.getModel().getNode() != null) {
+                        descriptor = manager.getWorkflowDescriptor(plugin.getId(), jcrEvent.getModel().getNode());
                     }
                 } catch (RepositoryException e) {
                     // TODO Auto-generated catch block
@@ -87,12 +89,12 @@ public class Home extends WebPage {
                     PluginDescriptor defaultPluginDescriptor = pluginConfig.getPlugin(plugin.getPath());
                     if (!defaultPluginDescriptor.getClassName().equals(plugin.getClass().getName())) {
                         PluginFactory pluginFactory = new PluginFactory(defaultPluginDescriptor);
-                        Plugin defaultPlugin = pluginFactory.getPlugin(model);
+                        Plugin defaultPlugin = pluginFactory.getPlugin(jcrEvent.getModel());
                         replace(defaultPlugin);
                     }
                 } else {
                     WorkflowPluginFactory pluginFactory = new WorkflowPluginFactory(manager, descriptor);
-                    Plugin workflowPlugin = pluginFactory.getWorkflowPlugin(plugin.getId(), model);
+                    Plugin workflowPlugin = pluginFactory.getWorkflowPlugin(plugin.getId(), jcrEvent.getModel());
                     replace(workflowPlugin);
                 }
                 return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
@@ -106,38 +108,22 @@ public class Home extends WebPage {
         });
     }
 
-    private void updatePlugins(final AjaxRequestTarget target, final JcrNodeModel model) {
+    private void updatePlugins(final AjaxRequestTarget target, final JcrEvent jcrEvent) {
         visitChildren(Plugin.class, new IVisitor() {
             public Object component(Component component) {
                 Plugin plugin = (Plugin) component;
-                if (!plugin.getRenderBodyOnly()) {
-                    plugin.update(target, model);
-                }
+                plugin.update(target, jcrEvent);
                 return IVisitor.CONTINUE_TRAVERSAL;
             }
         });
-    }
-
-    private JcrNodeModel getRootModel() {
-        JcrNodeModel result;
-        try {
-            UserSession wicketSession = (UserSession) getSession();
-            javax.jcr.Session jcrSession = wicketSession.getJcrSession();
-            if (jcrSession == null) {
-                result = null;
-            } else {
-                result = new JcrNodeModel(jcrSession.getRootNode());
+        
+        visitChildren(DialogWindow.class, new IVisitor() {
+            public Object component(Component component) {
+                DialogWindow dialogWindow = (DialogWindow) component;
+                dialogWindow.setNodeModel(jcrEvent.getModel());
+                return IVisitor.CONTINUE_TRAVERSAL;
             }
-        } catch (RepositoryException e) {
-            result = null;
-        }
-        return result;
-    }
-
-    private Plugin getRootPlugin(PluginConfig pluginConfig, JcrNodeModel model) {
-        PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
-        PluginFactory rootPluginFactory = new PluginFactory(rootPluginDescriptor);
-        return rootPluginFactory.getPlugin(model);
+        });
     }
 
 }

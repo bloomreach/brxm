@@ -18,6 +18,10 @@ package org.hippoecm.frontend.model;
 import javax.jcr.Item;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.UserSession;
@@ -28,10 +32,6 @@ public class JcrItemModel extends LoadableDetachableModel {
     protected String path;
 
     // constructors
-
-    public JcrItemModel(String path) {
-        this.path = path;
-    }
 
     public JcrItemModel(Item item) {
         super(item);
@@ -48,13 +48,40 @@ public class JcrItemModel extends LoadableDetachableModel {
     protected Object load() {
         Item result = null;
         try {
-            UserSession sessionProvider = (UserSession)Session.get();
+            UserSession sessionProvider = (UserSession) Session.get();
             result = sessionProvider.getJcrSession().getItem(path);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return result;
+    }
+    
+    // override Object
+    
+    public String toString() {
+       return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+           .append("path", path)
+           .toString();
+    }
+    
+    public boolean equals(Object object) {
+        if (object instanceof JcrItemModel == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        JcrItemModel itemModel = (JcrItemModel) object;
+        return new EqualsBuilder()
+            .append(path, itemModel.path)
+            .isEquals();
+    }
+    
+    public int hashCode() {
+        return new HashCodeBuilder(177, 3)
+            .append(path)
+            .toHashCode();
     }
 
 }

@@ -17,77 +17,83 @@ package org.hippoecm.frontend.plugins.admin.menu.move;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrNodeModelState;
-import org.hippoecm.frontend.tree.JcrLazyTreeNode;
-import org.hippoecm.frontend.tree.LazyTreeModel;
 
-public class MoveDialog extends AbstractDialog  {
+public class MoveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private MoveTargetTreeView tree;
     private MoveDialogInfoPanel infoPanel;
 
-    public MoveDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+    public MoveDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Move selected node");
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
-        Node root;
-        try {
-            root = model.getNode().getSession().getRootNode();
-            JcrNodeModel rootModel = new JcrNodeModel(root);
-            JcrLazyTreeNode treeNode = new JcrLazyTreeNode(null, rootModel);
-            LazyTreeModel treeModel = new LazyTreeModel(treeNode);
-            tree = new MoveTargetTreeView("tree", treeModel, this);
-            tree.getTreeState().expandNode(treeNode);
-            add(tree);
+        JcrNodeModel rootModel = JcrNodeModel.getRootModel();
+        TreeModel treeModel = new DefaultTreeModel(rootModel);
 
-            infoPanel = new MoveDialogInfoPanel("info", model);
-            add(infoPanel);
+        tree = new MoveTargetTreeView("tree", treeModel, this);
+        tree.getTreeState().expandNode(rootModel);
+        add(tree);
 
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        infoPanel = new MoveDialogInfoPanel("info", nodeModel);
+        add(infoPanel);
 
-        if (model.getNode() == null) {
+        if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public void ok() throws RepositoryException {
-        if (model.getNode() != null) {
-            JcrLazyTreeNode treeNode = (JcrLazyTreeNode) tree.getSelectedNode();
-            JcrNodeModel targetNodeModel = treeNode.getJcrNodeModel();
-            String parentPath = targetNodeModel.getNode().getPath();
-            if (!"/".equals(parentPath)) {
-                // FIXME we should have a PathUtil class or something which does this kind of thing
-                parentPath += "/";
+    public JcrEvent ok() throws RepositoryException {
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+
+        JcrEvent result;
+        if (nodeModel.getParent() == null) {
+            result = new JcrEvent(nodeModel);
+        } else {
+            String nodeName = nodeModel.getNode().getName();
+            String sourcePath = nodeModel.getNode().getPath();
+
+            JcrNodeModel targetNodeModel = (JcrNodeModel) tree.getSelectedNode();            
+            String targetPath = targetNodeModel.getNode().getPath();
+            if (!targetPath.endsWith("/")) {
+                targetPath += "/";
             }
-            String destination = parentPath + model.getNode().getName();
-            model.getNode().getSession().move(model.getNode().getPath(), destination);
-            model.getState().mark(JcrNodeModelState.MOVED);
-            model.getState().setRelatedNode(targetNodeModel); // save the new parent in the state object
+            targetPath += nodeName;
+ 
+            JcrNodeModel sourceParent = (JcrNodeModel)nodeModel.getParent();
+            sourceParent.childRemoved(nodeModel.getNode());          
+            
+            // The actual move
+            Session jcrSession = ((UserSession) getSession()).getJcrSession();
+            jcrSession.move(sourcePath, targetPath);
+   
+            Node targetNode = targetNodeModel.getNode().getNode(nodeName);
+            targetNodeModel.childAdded(targetNode);
+            
+            //TODO: use common ancestor iso root
+            JcrNodeModel rootNodeModel = targetNodeModel;
+            while (!rootNodeModel.getNode().getPath().equals("/")) {
+                rootNodeModel = (JcrNodeModel)rootNodeModel.getParent();
+            }
+            rootNodeModel.reload();
+            result = new JcrEvent(rootNodeModel, true);
         }
+
+        return result;
     }
 
     public void cancel() {
-    }
-
-    public String getMessage() {
-        try {
-            return "Move " + model.getNode().getPath();
-        } catch (RepositoryException e) {
-            return "";
-        }
-    }
-
-    public void setMessage(String message) {
     }
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {

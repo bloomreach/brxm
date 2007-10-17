@@ -28,6 +28,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.model.JcrEvent;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrPropertyModel;
 import org.hippoecm.frontend.model.JcrValueModel;
 
@@ -42,6 +45,24 @@ public class PropertyValueEditor extends DataView {
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
 
+    //  TODO Move this up to a class in the frontend engine
+    //  and (obviously) get rid of the string literals
+    protected void maybeUpdate(AjaxRequestTarget target, JcrEvent jcrEvent) {
+        try {
+            String nodeTypeName = jcrEvent.getModel().getNode().getPrimaryNodeType().getName();
+            if ("hippo:facetsearch".equals(nodeTypeName) || "hippo:facetselect".equals(nodeTypeName)) {
+                jcrEvent.getModel().reload();                
+                Home home = (Home)getPage();
+                home.update(target, jcrEvent);
+            }
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    
+    // Implement DataView
     protected void populateItem(Item item) {
         try {
             boolean isProtected = propertyModel.getProperty().getDefinition().isProtected();
@@ -54,12 +75,26 @@ public class PropertyValueEditor extends DataView {
                 item.add(label);
             } else {
                 if (valueModel.getObject().toString().contains("\n")) {
-                    AjaxEditableMultiLineLabel editor = new AjaxEditableMultiLineLabel("value", valueModel);
+                    AjaxEditableMultiLineLabel editor = new AjaxEditableMultiLineLabel("value", valueModel) {
+                        private static final long serialVersionUID = 1L;
+                        protected void onSubmit(AjaxRequestTarget target) {
+                            super.onSubmit(target);
+                            JcrNodeModel nodeModel = propertyModel.getNodeModel();
+                            maybeUpdate(target, new JcrEvent(nodeModel, true));
+                        }
+                    };
                     editor.setCols(80);
                     editor.setRows(25);
                     item.add(editor);
                 } else {
-                    AjaxEditableLabel editor = new AjaxEditableLabel("value", valueModel);
+                    AjaxEditableLabel editor = new AjaxEditableLabel("value", valueModel) {
+                        private static final long serialVersionUID = 1L;
+                        protected void onSubmit(AjaxRequestTarget target) {
+                            super.onSubmit(target);
+                            JcrNodeModel nodeModel = propertyModel.getNodeModel();
+                            maybeUpdate(target, new JcrEvent(nodeModel, true));
+                        }
+                    };
                     item.add(editor);
                 }
             }
@@ -68,12 +103,11 @@ public class PropertyValueEditor extends DataView {
             if (isMultiple) {
                 item.add(new AjaxLink("remove", valueModel) {
                     private static final long serialVersionUID = 1L;
-
                     public void onClick(AjaxRequestTarget target) {
                         try {
                             Property prop = propertyModel.getProperty();
                             Value[] values = prop.getValues();
-                            values = (Value[])ArrayUtils.remove(values, valueModel.getIndex());
+                            values = (Value[]) ArrayUtils.remove(values, valueModel.getIndex());
                             prop.setValue(values);
                         } catch (RepositoryException e) {
                             // TODO Auto-generated catch block

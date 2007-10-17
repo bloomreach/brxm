@@ -22,8 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -37,9 +35,8 @@ public class PluginRepositoryConfig implements PluginConfig {
     private JcrNodeModel pluginConfigNodeModel;
 
     public PluginRepositoryConfig() throws RepositoryException {
-        UserSession session = (UserSession) Session.get();
-        Node rootNode = session.getJcrSession().getRootNode();
-        pluginConfigNodeModel = new JcrNodeModel(rootNode.getNode(pluginConfigRoot));
+        JcrNodeModel rootModel = JcrNodeModel.getRootModel();
+        pluginConfigNodeModel = new JcrNodeModel(null, rootModel.getNode().getNode(pluginConfigRoot));
     }
 
     public PluginDescriptor getRoot() {

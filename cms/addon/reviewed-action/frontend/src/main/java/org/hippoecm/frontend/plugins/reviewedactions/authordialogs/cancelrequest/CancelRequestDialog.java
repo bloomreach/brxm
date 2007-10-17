@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.authordialogs.cancelrequest;
 
+import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.AbstractWorkflowDialog;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.repository.reviewedactions.AuthorRequestWorkflow;
 
 public class CancelRequestDialog extends AbstractWorkflowDialog {
@@ -25,18 +25,18 @@ public class CancelRequestDialog extends AbstractWorkflowDialog {
 
     private AuthorRequestWorkflow workflow;
 
-    public CancelRequestDialog(final DialogWindow dialogWindow, JcrNodeModel model, AuthorRequestWorkflow workflow) {
-        super(dialogWindow, model);
+    public CancelRequestDialog(DialogWindow dialogWindow, AuthorRequestWorkflow workflow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Cancel request");
         this.workflow = workflow;
-        if (model.getNode() == null) {
+        if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public void ok() throws Exception {
+    public JcrEvent ok() throws Exception {
         workflow.cancelRequest();
-        super.ok();
+        return super.ok();
     }
 
     public void cancel() {

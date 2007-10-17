@@ -19,10 +19,7 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
-import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -36,12 +33,10 @@ public abstract class JcrTree extends Tree {
         setLinkType(LinkType.AJAX);
         getTreeState().setAllowSelectMultiple(false);
         getTreeState().collapseAll();
-        
-        getTreeState().addTreeStateListener(new JcrTreeStateListener());
     }
 
     protected String renderNode(TreeNode treeNode) {
-        JcrNodeModel nodeModel = ((JcrLazyTreeNode)treeNode).getJcrNodeModel();
+        JcrNodeModel nodeModel = (JcrNodeModel)treeNode;
         HippoNode node = nodeModel.getNode();
         String result = "null";
         if (node != null) {
@@ -57,32 +52,4 @@ public abstract class JcrTree extends Tree {
         return result;
     }
     
-    protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode);
-    
-    private class JcrTreeStateListener implements ITreeStateListener, IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        public void nodeExpanded(TreeNode treeNodeModel) {
-        }
-
-        public void nodeCollapsed(TreeNode treeNodeModel) {
-            // FIXME this is a workaround for the tree currently not updating automatically
-            JcrLazyTreeNode treeNode = (JcrLazyTreeNode) treeNodeModel;
-            treeNode.reload();
-        }
-
-        public void allNodesCollapsed() {
-        }
-
-        public void allNodesExpanded() {
-        }
-
-        public void nodeSelected(TreeNode node) {
-        }
-
-        public void nodeUnselected(TreeNode node) {
-        }
-
-    }
-
 }
