@@ -20,19 +20,20 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrEvent;
 
 public class ErrorDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
         
-    public ErrorDialog(DialogWindow dialogWindow, JcrNodeModel model, String message) {
-        super(dialogWindow, model);
+    public ErrorDialog(DialogWindow dialogWindow, String message) {
+        super(dialogWindow);
         add(new Label("message", message));
         dialogWindow.setTitle("Error");
     }
  
 
-    public void ok() throws RepositoryException {
+    public JcrEvent ok() throws RepositoryException {
+        return new JcrEvent(dialogWindow.getNodeModel());
     }
 
     public void cancel() {

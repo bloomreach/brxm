@@ -12,7 +12,7 @@ public class EditorPluginTestPage extends WebPage {
     public EditorPluginTestPage() {
         mockJcr = new MockJcr();
         mockJcr.setUp();
-        add(new EditorPlugin("editorPlugin", new JcrNodeModel(mockJcr.node)));
+        add(new EditorPlugin("editorPlugin", new JcrNodeModel(null, mockJcr.node)));
     }
 
     public void tearDown() {

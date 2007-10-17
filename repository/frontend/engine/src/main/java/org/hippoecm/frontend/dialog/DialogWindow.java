@@ -19,20 +19,27 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class DialogWindow extends ModalWindow {
     private static final long serialVersionUID = 1L;
 
-    public DialogWindow(String id, final JcrNodeModel model, final boolean resetOnClose) {
+    private JcrEvent jcrEvent;
+    private JcrNodeModel nodeModel;
+
+    public DialogWindow(String id, JcrNodeModel nodeModel, final boolean resetOnClose) {
         super(id);
         setCookieName(id);
+        this.nodeModel = nodeModel;
 
         setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
                 Home home = (Home) getWebPage();
-                home.update(target, model);
+                if (jcrEvent != null) {
+                    home.update(target, jcrEvent);
+                }
                 if (resetOnClose) {
                     setResponsePage(home);
                     setRedirect(true);
@@ -48,6 +55,18 @@ public class DialogWindow extends ModalWindow {
                 show(target);
             }
         };
+    }
+
+    public void setJcrEvent(JcrEvent event) {
+        this.jcrEvent = event;
+    }
+
+    public void setNodeModel(JcrNodeModel nodeModel) {
+        this.nodeModel = nodeModel;
+    }
+
+    public JcrNodeModel getNodeModel() {
+        return nodeModel;
     }
 
 }

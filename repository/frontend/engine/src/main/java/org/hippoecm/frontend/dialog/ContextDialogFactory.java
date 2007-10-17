@@ -55,7 +55,7 @@ public class ContextDialogFactory implements PageCreator {
         Page result = null;
         if (classname == null || ERROR.equals(classname)) {
             String msg = "No dialog renderer found";
-            result = new ErrorDialog(window, model, msg);
+            result = new ErrorDialog(window, msg);
         } else {
             try {
                 Class clazz = Class.forName(classname);
@@ -65,7 +65,7 @@ public class ContextDialogFactory implements PageCreator {
                 result = (AbstractDialog) constructor.newInstance(actualArgs);
             } catch (Exception e) {
                 String msg = e.getClass().getName() + ": " + e.getMessage();
-                result = new ErrorDialog(window, model, msg);
+                result = new ErrorDialog(window, msg);
             }
         }
         return result;

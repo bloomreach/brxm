@@ -23,6 +23,10 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractWrapModel;
 import org.apache.wicket.model.IModel;
@@ -33,16 +37,24 @@ public class JcrPropertyModel extends AbstractWrapModel implements IDataProvider
     //  The Item model that is wrapped by this model using the IWrapmodel interface
     private JcrItemModel itemModel;
 
+    // The Node model that owns this Property model
+    // NOT part of equals/hashcode/toString, convenience only
+    private JcrNodeModel nodeModel;
+
     //  Constructor
-
-    public JcrPropertyModel(Property prop) {
-        itemModel = new JcrItemModel(prop);
+    public JcrPropertyModel(JcrNodeModel nodeModel, Property prop) {
+        this.itemModel = new JcrItemModel(prop);
+        this.nodeModel = nodeModel;
     }
-
-    // The wrapped jcr Property object, convenience method and not part of an api
-
+    
+    // The wrapped jcr Property object, 
     public Property getProperty() {
         return (Property) itemModel.getObject();
+    }
+    
+    //The owning node model
+    public JcrNodeModel getNodeModel() {
+        return nodeModel;
     }
 
     // Implement IWrapModel, all IModel calls done by wicket components 
@@ -101,6 +113,33 @@ public class JcrPropertyModel extends AbstractWrapModel implements IDataProvider
             this.index = index;
             this.value = value;
         }
+    }
+    
+    // override Object
+    
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+            .append("item", itemModel)
+            .toString();
+     }
+    
+    public boolean equals(Object object) {
+        if (object instanceof JcrPropertyModel == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        JcrPropertyModel propertyModel = (JcrPropertyModel) object;
+        return new EqualsBuilder()
+            .append(itemModel, propertyModel.itemModel)
+            .isEquals();
+    }
+    
+    public int hashCode() {
+        return new HashCodeBuilder(473, 17)
+            .append(itemModel)
+            .toHashCode();
     }
 
 }

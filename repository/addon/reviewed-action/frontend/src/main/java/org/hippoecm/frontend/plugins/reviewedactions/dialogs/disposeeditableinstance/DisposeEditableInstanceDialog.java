@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableinstance;
 
+import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.AbstractWorkflowDialog;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflow;
 
 public class DisposeEditableInstanceDialog extends AbstractWorkflowDialog {
@@ -25,18 +25,18 @@ public class DisposeEditableInstanceDialog extends AbstractWorkflowDialog {
 
     private ReviewedActionsWorkflow workflow;
 
-    public DisposeEditableInstanceDialog(final DialogWindow dialogWindow, JcrNodeModel model, ReviewedActionsWorkflow workflow) {
-        super(dialogWindow, model);
+    public DisposeEditableInstanceDialog(DialogWindow dialogWindow, ReviewedActionsWorkflow workflow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Dispose editable instance");
         this.workflow = workflow;
-        if (model.getNode() == null) {
+        if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public void ok() throws Exception {
+    public JcrEvent ok() throws Exception {
         workflow.disposeEditableInstance();
-        super.ok();
+        return super.ok();
     }
 
     public void cancel() {

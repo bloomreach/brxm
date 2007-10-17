@@ -17,9 +17,12 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
@@ -34,7 +37,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
     public void testCounts() throws RepositoryException, IOException {
         numDocs = 500;
-        Node node = commonStart();
+        commonStart();
         check("/navigation/xyz/x1", 1, 0, 0);
         check("/navigation/xyz/x2", 2, 0, 0);
         check("/navigation/xyz/x1/y1", 1, 1, 0);
@@ -49,6 +52,27 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         check("/navigation/xyz/x2/y1/z2", 2, 1, 2);
         check("/navigation/xyz/x2/y2/z1", 2, 2, 1);
         check("/navigation/xyz/x2/y2/z2", 2, 2, 2);
+        commonEnd();
+    }
+    
+    //TODO: Enable after fixing HREPTWO-143
+    public void _testGetResultSet() throws RepositoryException {
+        commonStart();
+        
+        String basePath = "/navigation/xyz/x1/y1/z2";
+        Item item = session.getItem(basePath);
+        assertNotNull(item);
+        assertTrue(item instanceof Node);        
+        Node baseNode = (Node)item;
+        
+        Node resultSetNode_1 = baseNode.getNode(HippoNodeType.HIPPO_RESULTSET);
+        assertNotNull(resultSetNode_1);
+        
+        Node resultSetNode_2 = (Node)session.getItem(basePath + "/" + HippoNodeType.HIPPO_RESULTSET);
+        assertNotNull(resultSetNode_2);
+        
+        assertEquals(resultSetNode_1, resultSetNode_2);
+        
         commonEnd();
     }
 

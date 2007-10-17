@@ -16,75 +16,122 @@
 package org.hippoecm.frontend.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
+import org.hippoecm.frontend.UserSession;
+import org.hippoecm.frontend.tree.LazyTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 
-public class JcrNodeModel implements IWrapModel, IDataProvider {
+public class JcrNodeModel extends LazyTreeNode implements IWrapModel, IDataProvider {
     private static final long serialVersionUID = 1L;
 
     // The Item model that is wrapped by this model using the IWrapmodel interface
     private JcrItemModel itemModel;
-    
-    private JcrNodeModelState state;
 
     // Constructor
 
-    public JcrNodeModel(Node node) {
+    public JcrNodeModel(JcrNodeModel parent, Node node) {
+        super(parent);
         itemModel = new JcrItemModel(node);
-        state = new JcrNodeModelState(JcrNodeModelState.UNCHANGED);
+    }
+
+    // Rootnode factory
+
+    public static JcrNodeModel getRootModel() {
+        JcrNodeModel result;
+        try {
+            UserSession wicketSession = (UserSession) org.apache.wicket.Session.get();
+            javax.jcr.Session jcrSession = wicketSession.getJcrSession();
+            if (jcrSession == null) {
+                result = null;
+            } else {
+                result = new JcrNodeModel(null, jcrSession.getRootNode());
+            }
+        } catch (RepositoryException e) {
+            result = null;
+        }
+        return result;
     }
 
     // The wrapped jcr Node object, convenience methods and not part of an api
 
     public HippoNode getNode() {
-        HippoNode result = (HippoNode) itemModel.getObject();
-        
-        boolean sessionClosed = false;
-        try {
-            if (result == null || result.getSession() == null || !result.getSession().isLive()) {
-                sessionClosed = true;
-            }
-        } catch (RepositoryException e) {
-           sessionClosed = true;
+        return (HippoNode) itemModel.getObject();
+    }
+
+    public void impersonate(JcrNodeModel model) {
+        if (model != null) {
+            itemModel = new JcrItemModel(model.getNode());
+            parent = model.parent;
+            childCount = model.childCount;
+            childNodes = model.childNodes;
+            isLoaded = model.isLoaded;
         }
-        if (sessionClosed) {
-            itemModel = new JcrItemModel(itemModel.path);
-            result = (HippoNode)itemModel.getObject();
+    }
+
+    // Implement LazyTreeNode
+
+    protected LazyTreeNode createNode(Object o) {
+        LazyTreeNode result;
+        if (o instanceof Node) {
+            Node node = (Node) o;
+            result = new JcrNodeModel(this, node);
+        } else {
+            throw new IllegalArgumentException("parameter should be a jcr node, but was a: " + o.getClass().getName());
         }
-        
         return result;
     }
 
-    public void setNode(HippoNode node) {
-        if (node != null) {
-            itemModel = new JcrItemModel(node);
-        }
-    }
-    
-    public String toString() {
+    protected int getChildObjectCount() {
+        int childCount = 0;
+        Node jcrNode = getNode();
         try {
-            return getNode().getPath();
+            NodeIterator jcrChildren = jcrNode.getNodes();
+            childCount = (int) jcrChildren.getSize();
         } catch (RepositoryException e) {
-            return null;
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        return childCount;
     }
-    
-    
-    public JcrNodeModelState getState() {
-        return this.state;
+
+    protected Collection getChildObjects() {
+        Node jcrNode = getNode();
+        Collection childObjects = new ArrayList();
+        try {
+            NodeIterator jcrChildren = jcrNode.getNodes();
+            while (jcrChildren.hasNext()) {
+                Node jcrChild = jcrChildren.nextNode();
+                if (jcrChild != null) {
+                    childObjects.add(jcrChild);
+                }
+            }
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return childObjects;
     }
-    
+
+    protected Object getUserObject() {
+        return getNode();
+    }
 
     // Implement IWrapModel, all IModel calls done by wicket components 
     // (subclasses of org.apache.wicket.Component) are redirected to this wrapped model. 
@@ -92,14 +139,15 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
     public IModel getWrappedModel() {
         return itemModel;
     }
-    
+
     // This takes care that bean property calls on the wrapped model are wired through
     public Object getObject() {
         return itemModel.getObject();
     }
 
-    // IDataProvider implementation for use in DataViews
+    // IDataProvider implementation for use in DataViews 
     // (subclasses of org.apache.wicket.markup.repeater.data.DataViewBase)
+    //  TODO this is for properties, need the same thing for mixintypes
 
     public Iterator iterator(int first, int count) {
         List list = new ArrayList();
@@ -126,7 +174,7 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
 
     public IModel model(Object object) {
         Property prop = (Property) object;
-        return new JcrPropertyModel(prop);
+        return new JcrPropertyModel(this, prop);
     }
 
     public int size() {
@@ -142,26 +190,37 @@ public class JcrNodeModel implements IWrapModel, IDataProvider {
         }
         return result;
     }
-    
+
     // Empty implementation of the 'write' methods of IModel,
     // all model calls are redirected to the wrapped model. 
-    
+
     public void setObject(Object object) {
     }
 
     public void detach() {
     }
 
-    public boolean equals(JcrNodeModel jcrNodeModel) {
-        if (jcrNodeModel == null) {
-            // nothing to compare
+    // override Object
+    // TODO: add properties to this
+
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("item", itemModel).toString();
+    }
+
+    public boolean equals(Object object) {
+        if (object instanceof JcrNodeModel == false) {
             return false;
         }
-        if (getNode() == null) {
-            // null is null is null
-            return jcrNodeModel.getNode() == null;
+        if (this == object) {
+            return true;
         }
-        return getNode().equals(jcrNodeModel.getNode());
+        JcrNodeModel nodeModel = (JcrNodeModel) object;
+        return new EqualsBuilder().append(itemModel, nodeModel.itemModel).isEquals();
+
     }
-    
+
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(itemModel).toHashCode();
+    }
+
 }

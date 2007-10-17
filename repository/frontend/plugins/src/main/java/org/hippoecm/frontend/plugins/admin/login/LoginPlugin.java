@@ -8,6 +8,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 
@@ -16,7 +17,7 @@ public class LoginPlugin extends Plugin {
 
     private String username;
 
-    public LoginPlugin(String id, final JcrNodeModel model) {
+    public LoginPlugin(String id, JcrNodeModel model) {
         super(id, model);
 
         UserSession session = (UserSession) getSession();
@@ -29,19 +30,18 @@ public class LoginPlugin extends Plugin {
         loginDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new LoginDialog(loginDialog, model);
+                return new LoginDialog(loginDialog);
             }
         });
         add(loginDialog);
         add(loginDialog.dialogLink("login-dialog-link"));
     }
 
-    public void update(AjaxRequestTarget target, JcrNodeModel model) {
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         UserSession session = (UserSession) getSession();
         ValueMap credentials = session.getCredentials();
         username = credentials.getString("username");
         username = (username == null || username.equals("")) ? "anonymous" : username;
-        setUsername(username);
         if (target != null) {
             target.addComponent(this);
         }

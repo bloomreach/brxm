@@ -16,13 +16,15 @@
 package org.hippoecm.frontend.plugins.admin.menu.rename;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrNodeModelState;
 
 public class RenameDialog extends AbstractDialog {
 
@@ -33,59 +35,60 @@ public class RenameDialog extends AbstractDialog {
      */
     private String name;
 
-    public RenameDialog(DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+    public RenameDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Rename Node");
-        
+
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         try {
             // get name of current node
-            name = model.getNode().getName();
+            name = nodeModel.getNode().getName();
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
-        if (model.getNode() == null) {
+        if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    @Override
-    protected void cancel() {
-        // TODO Auto-generated method stub
-        
-    }
+    protected JcrEvent ok() throws RepositoryException {
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
-    @Override
-    protected void ok() throws RepositoryException {
-        if (model.getNode() != null) {
-            RenameDialog page = (RenameDialog) getPage();
-            String parentPath = model.getNode().getParent().getPath();
-            if (!"/".equals(parentPath)) {
-                // FIXME we should have a PathUtil class or something which does this kind of thing
-                parentPath += "/";
+        JcrEvent result;
+        if (nodeModel.getParent() == null) {
+            result = new JcrEvent(nodeModel);
+        } else {
+            JcrNodeModel parentModel = (JcrNodeModel)nodeModel.getParent();            
+            parentModel.childRemoved(nodeModel.getNode());
+            
+            //The actual move
+            String oldPath = nodeModel.getNode().getPath();
+            String newPath = parentModel.getNode().getPath();
+            if (!newPath.endsWith("/")) {
+                newPath += "/";
             }
-            String destination = parentPath + page.getName();
-            model.getNode().getSession().move(model.getNode().getPath(), destination);
-            model.getState().mark(JcrNodeModelState.MOVED);
+            newPath += getName();
+            Session jcrSession = ((UserSession) getSession()).getJcrSession();
+            jcrSession.move(oldPath, newPath);
+
+            parentModel.childAdded(parentModel.getNode().getNode(getName()));
+            result = new JcrEvent(parentModel, true);
         }
+        return result;
     }
 
-    /**
-     * @return the name
-     */
+    protected void cancel() {
+    }
+
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    
-    
 }

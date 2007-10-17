@@ -23,6 +23,7 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class PropertyDialog extends AbstractDialog {
@@ -32,8 +33,8 @@ public class PropertyDialog extends AbstractDialog {
     private String value;
     private Boolean isMultiple = Boolean.FALSE;
 
-    public PropertyDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+    public PropertyDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Add a new Property");
         
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
@@ -47,22 +48,24 @@ public class PropertyDialog extends AbstractDialog {
         });
         add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
         add(new AjaxEditableMultiLineLabel("value", new PropertyModel(this, "value")));
-        if (model.getNode() == null) {
+        if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public void ok() throws RepositoryException {
+    public JcrEvent ok() throws RepositoryException {
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         PropertyDialog page = (PropertyDialog) getPage();
         if (isMultiple.booleanValue()) {
             String value = page.getValue();
             if (value == null || value.equals("")) {
                 value = "...";
             }
-            model.getNode().setProperty(page.getName(), new String[] { value });
+            nodeModel.getNode().setProperty(page.getName(), new String[] { value });
         } else {
-            model.getNode().setProperty(page.getName(), page.getValue());
+            nodeModel.getNode().setProperty(page.getName(), page.getValue());
         }
+        return new JcrEvent(nodeModel);
     }
 
     public void cancel() {

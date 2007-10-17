@@ -15,16 +15,29 @@
  */
 package org.hippoecm.frontend.plugins.admin.editor;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class NodeEditor extends Form  {
+public class NodeEditor extends Form {
     private static final long serialVersionUID = 1L;
 
     public NodeEditor(String id, final JcrNodeModel model) {
         super(id, model);
         setOutputMarkupId(true);
         add(new PropertiesEditor("properties", model));
+    }
+
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
+        JcrNodeModel model = jcrEvent.getModel();
+        if (model != null) {
+            JcrNodeModel editorNodeModel = (JcrNodeModel) getModel();
+            editorNodeModel.impersonate(model);
+        }
+        if (target != null) {
+            target.addComponent(this);
+        }
     }
 
 }

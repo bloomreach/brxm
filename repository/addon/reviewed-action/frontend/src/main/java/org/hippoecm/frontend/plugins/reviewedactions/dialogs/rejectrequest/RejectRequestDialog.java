@@ -17,9 +17,9 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest;
 
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.AbstractWorkflowDialog;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.repository.reviewedactions.RequestWorkflow;
 
 public class RejectRequestDialog extends AbstractWorkflowDialog {
@@ -28,20 +28,20 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
     private RequestWorkflow workflow;
     private String reason;
 
-    public RejectRequestDialog(final DialogWindow dialogWindow, JcrNodeModel model, RequestWorkflow workflow) {
-        super(dialogWindow, model);
+    public RejectRequestDialog(DialogWindow dialogWindow, RequestWorkflow workflow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Reject request");       
         this.workflow = workflow;
 
         add(new AjaxEditableLabel("reason", new PropertyModel(this, "reason")));
-        if (model.getNode() == null) {
+        if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public void ok() throws Exception {
+    public JcrEvent ok() throws Exception {
         workflow.rejectRequest(reason);
-        super.ok();
+        return super.ok();
     }
 
     public void cancel() {

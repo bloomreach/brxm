@@ -22,9 +22,8 @@ import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrNodeModelState;
-import org.hippoecm.repository.api.HippoNode;
 
 public class NodeDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -32,22 +31,23 @@ public class NodeDialog extends AbstractDialog {
     private String name;
     private String type = "nt:unstructured";
 
-    public NodeDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+    public NodeDialog(final DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Add a new Node");
 
         add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
         add(new AjaxEditableLabel("type", new PropertyModel(this, "type")));
-        if (model.getNode() == null) {
+        if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public void ok() throws RepositoryException {
-        NodeDialog page = (NodeDialog) getPage();
-        Node childNode = model.getNode().addNode(page.getName(), page.getType());
-        model.getState().mark(JcrNodeModelState.CHILD_ADDED);
-        model.getState().setRelatedNode(new JcrNodeModel(childNode));
+    public JcrEvent ok() throws RepositoryException {
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        Node newchild = nodeModel.getNode().addNode(getName(), getType());
+        nodeModel.childAdded(newchild);
+        
+        return new JcrEvent(nodeModel, true);
     }
 
     public void cancel() {

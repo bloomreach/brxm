@@ -21,16 +21,15 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrEvent;
 
 public class SaveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public SaveDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+    public SaveDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Save Session");
-        
-        
+               
         Label label;
         try {
             if (((UserSession) getSession()).getJcrSession().hasPendingChanges()) {
@@ -44,8 +43,9 @@ public class SaveDialog extends AbstractDialog {
         add(label);
     }
 
-    public void ok() throws RepositoryException {
+    public JcrEvent ok() throws RepositoryException {
         ((UserSession) getSession()).getJcrSession().save();
+        return new JcrEvent(dialogWindow.getNodeModel());
     }
 
     public void cancel() {

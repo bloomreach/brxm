@@ -25,6 +25,7 @@ import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.HippoRepository;
 
@@ -34,8 +35,8 @@ public class LoginDialog extends AbstractDialog {
     private ValueMap credentials;
     private ValueMap oldCredentials;
 
-    public LoginDialog(final DialogWindow dialogWindow, JcrNodeModel model) {
-        super(dialogWindow, model);
+    public LoginDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Login");
 
         UserSession session = (UserSession) getSession();
@@ -49,7 +50,7 @@ public class LoginDialog extends AbstractDialog {
         add(new AjaxEditableLabel("password", new PropertyModel(credentials, "password")));
     }
 
-    public void ok() throws Exception {
+    public JcrEvent ok() throws Exception {
         String username = credentials.getString("username");
         String password = credentials.getString("password");
 
@@ -59,6 +60,13 @@ public class LoginDialog extends AbstractDialog {
 
         UserSession userSession = (UserSession) getSession();
         userSession.setJcrSession(jcrSession, credentials);
+        
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        while (!nodeModel.getNode().getPath().equals("/")) {
+            nodeModel = (JcrNodeModel)nodeModel.getParent();
+        }
+        nodeModel.reload();
+        return new JcrEvent(nodeModel, true);
     }
 
     public void cancel() {
