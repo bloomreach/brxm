@@ -75,7 +75,7 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
         Iterator nodeIterator = node.getNodes();
         while(nodeIterator.hasNext()){
             Node childNode = (Node)nodeIterator.next();
-            if( childNode.hasProperty("hippo:count") && !childNode.getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
+            if (childNode.hasProperty("hippo:count") && !childNode.getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
                 if(this.getVerbose()){
                     System.out.println(s.substring(0, Math.min(indent,s.length())) + childNode.getName() + " ("+childNode.getProperty("hippo:count").getString() +")");
                 }

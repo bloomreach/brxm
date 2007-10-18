@@ -55,8 +55,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         commonEnd();
     }
     
-    //TODO: Enable after fixing HREPTWO-143
-    public void _testGetResultSet() throws RepositoryException {
+    public void testGetItemFromSession() throws RepositoryException {
         commonStart();
         
         String basePath = "/navigation/xyz/x1/y1/z2";
@@ -71,7 +70,23 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         Node resultSetNode_2 = (Node)session.getItem(basePath + "/" + HippoNodeType.HIPPO_RESULTSET);
         assertNotNull(resultSetNode_2);
         
-        assertEquals(resultSetNode_1, resultSetNode_2);
+        commonEnd();
+    }
+
+    public void getGetItemFromNode() throws RepositoryException {
+        commonStart();
+        
+        String basePath = "/navigation/xyz/x1/y1/z2";
+        Item item = session.getItem(basePath);
+        assertNotNull(item);
+        assertTrue(item instanceof Node);        
+        Node baseNode = (Node)item;
+        
+        Node resultSetNode_1 = baseNode.getNode(HippoNodeType.HIPPO_RESULTSET);
+        assertNotNull(resultSetNode_1);
+        
+        Node resultSetNode_2 = (Node)session.getItem(basePath + "/" + HippoNodeType.HIPPO_RESULTSET);
+        assertNotNull(resultSetNode_2);
         
         commonEnd();
     }

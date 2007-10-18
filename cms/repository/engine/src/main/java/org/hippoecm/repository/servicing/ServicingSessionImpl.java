@@ -32,6 +32,7 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
@@ -45,9 +46,10 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.api.XASession;
-import org.apache.jackrabbit.name.Path;
 import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.name.AbstractNamespaceResolver;
 import org.apache.jackrabbit.name.NameException;
+import org.apache.jackrabbit.name.Path;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -114,8 +116,14 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
         ((HippoSession)session).setFacetedNavigationContext(context);
     }
 
-    Path getQPath(String absPath) throws NameException, NamespaceException {
-        return ((SessionImpl) session).getQPath(absPath);
+    String[] getQPath(String absPath) throws NameException, NamespaceException, RepositoryException {
+        NamespaceRegistry nsreg = session.getWorkspace().getNamespaceRegistry();
+        Path.PathElement[] elements = ((SessionImpl) session).getQPath(absPath.startsWith("/") ? absPath.substring(1) : absPath).getElements();
+        String[] rtelements = new String[elements.length];
+        for(int i=0; i<elements.length; i++) {
+            rtelements[i] = elements[i].toJCRName((AbstractNamespaceResolver)nsreg);
+        }
+        return rtelements;
     }
 
     public XAResource getXAResource() {
@@ -207,19 +215,19 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
         } catch (PathNotFoundException ex) {
             try {
                 Node node = getRootNode();
-                Path.PathElement[] elements = getQPath(absPath).getElements();
-                if (elements.length < 2)
+                String[] elements = getQPath(absPath);
+                if (elements.length == 1)
                     throw ex;
-                for (int i = 1; i < elements.length - 1; i++) {
-                    node = node.getNode(elements[i].getName().getLocalName());
+                for (int i = 0; i < elements.length-1; i++) {
+                    node = node.getNode(elements[i]);
                 }
                 try {
-                    node = node.getNode(elements[elements.length - 1].getName().getLocalName());
-                    if (!(node instanceof ServicingNodeImpl))
-              node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1, null);
+                    node = node.getNode(elements[elements.length - 1]);
+                    if(!(node instanceof ServicingNodeImpl))
+                        node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1, null);
                     return node;
                 } catch (PathNotFoundException ex2) {
-                    return node.getProperty(elements[elements.length - 1].getName().getLocalName());
+                    return node.getProperty(elements[elements.length - 1]);
                 }
             } catch (ClassCastException ex2) {
                 throw ex;
