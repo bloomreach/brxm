@@ -1118,13 +1118,12 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
             } catch (PathNotFoundException ex) {
                 ServicingSessionImpl session = (ServicingSessionImpl) this.session;
                 try {
-                    Path p = session.getQPath(relPath);
-                    Path.PathElement[] elements = p.getElements();
+                    String[] elements = session.getQPath(relPath);
                     Node node = this;
                     if (elements.length < 2)
                         throw ex;
                     for (int i = 0; i < elements.length; i++) {
-                        node = node.getNode(elements[i].getName().getLocalName());
+                        node = node.getNode(elements[i]);
                     }
                     if (!(node instanceof ServicingNodeImpl))
                         node = new ServicingNodeImpl(factory,session,node,getChildPath(relPath),getDepth()+1,selection);
@@ -1288,15 +1287,14 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
             } catch (PathNotFoundException ex) {
                 ServicingSessionImpl session = (ServicingSessionImpl) this.session;
                 try {
-                    Path p = session.getQPath(relPath);
-                    Path.PathElement[] elements = p.getElements();
+                    String[] elements = session.getQPath(relPath);
                     Node node = this;
                     if (elements.length < 2)
                         throw ex;
                     for (int i = 0; i < elements.length-1; i++) {
-                        node = node.getNode(elements[i].getName().getLocalName());
+                        node = node.getNode(elements[i]);
                     }
-                    return node.hasNode(elements[elements.length-1].getName().getLocalName());
+                    return node.hasNode(elements[elements.length - 1]);
                 } catch (PathNotFoundException ex2) {
                     return false;
                 } catch (ClassCastException ex2) {
