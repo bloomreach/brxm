@@ -40,7 +40,7 @@
     </sv:property>
     <sv:node sv:name="DeWalt 14.4 Volt Drill Kit DW928K-2">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippo:document</sv:value>
       </sv:property>
       <sv:property sv:name="brand" sv:type="String">
         <sv:value>DeWalt</sv:value>
@@ -51,7 +51,7 @@
     </sv:node>
     <sv:node sv:name="Makita Cordless Driver-Drill 6095 D">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippo:document</sv:value>
       </sv:property>
       <sv:property sv:name="brand" sv:type="String">
         <sv:value>Makita</sv:value>
@@ -62,7 +62,7 @@
     </sv:node>
     <sv:node sv:name="Bosch 18-Volt Brute Tough Drill-Driver 33618">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippo:document</sv:value>
       </sv:property>
       <sv:property sv:name="brand" sv:type="String">
         <sv:value>Bosch</sv:value>
@@ -73,7 +73,7 @@
     </sv:node>
     <sv:node sv:name="DeWalt Drill-Saw Kit 19.2v 9884CS">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippo:document</sv:value>
       </sv:property>
       <sv:property sv:name="brand" sv:type="String">
         <sv:value>DeWalt</sv:value>
