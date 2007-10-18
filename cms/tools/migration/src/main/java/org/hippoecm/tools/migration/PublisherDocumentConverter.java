@@ -147,7 +147,6 @@ public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
         javax.jcr.Node newsArticle = parent.addNode(nodeName, NEWSARTICLE_NODETYPE);
         id = 1 + getMaxIdForNodeType(NEWSARTICLE_NODETYPE);
         newsArticle.setProperty(HIPPO_ID_PROPERTY, id);
-        //newsArticle.addMixin("mix:referenceable");
         newsArticle.setProperty(PUBLISHED_PROPERTY, false);
 
         // Body
