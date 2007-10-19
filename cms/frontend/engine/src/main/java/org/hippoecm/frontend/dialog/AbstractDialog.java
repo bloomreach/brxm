@@ -44,7 +44,7 @@ public abstract class AbstractDialog extends WebPage {
                     dialogWindow.setJcrEvent(ok());
                     dialogWindow.close(target);
                 } catch (Exception e) {
-                    setException(e.getMessage());
+                    setException(e.getClass().getName() + ": " + e.getMessage());
                     target.addComponent(exceptionLabel);
                 }
             }

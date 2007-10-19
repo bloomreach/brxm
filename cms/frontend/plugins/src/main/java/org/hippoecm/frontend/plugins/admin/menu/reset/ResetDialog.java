@@ -54,9 +54,6 @@ public class ResetDialog extends AbstractDialog {
         while (!nodeModel.getNode().getPath().equals("/")) {
             nodeModel = (JcrNodeModel) nodeModel.getParent();
         }
-        if (hasPendingChanges) {
-            nodeModel.reload();
-        }
         return new JcrEvent(nodeModel, hasPendingChanges);
     }
 

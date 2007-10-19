@@ -108,7 +108,7 @@ public class MenuPlugin extends Plugin {
         add(propertyDialog);
         add(propertyDialog.dialogLink("property-dialog-link"));
 
-        saveDialog = new DialogWindow("save-dialog", model, false);
+        saveDialog = new DialogWindow("save-dialog", model, true);
         saveDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {

@@ -57,10 +57,11 @@ public class Home extends WebPage {
     }
     
 
-    public void update(final AjaxRequestTarget target, JcrEvent jcrEvent) {
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         try {
             reconfigurePlugins(target, jcrEvent);
             updatePlugins(target, jcrEvent);
+            updateDialogs(target, jcrEvent);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -115,8 +116,10 @@ public class Home extends WebPage {
                 plugin.update(target, jcrEvent);
                 return IVisitor.CONTINUE_TRAVERSAL;
             }
-        });
-        
+        });        
+    }
+    
+    private void updateDialogs(final AjaxRequestTarget target, final JcrEvent jcrEvent) {
         visitChildren(DialogWindow.class, new IVisitor() {
             public Object component(Component component) {
                 DialogWindow dialogWindow = (DialogWindow) component;

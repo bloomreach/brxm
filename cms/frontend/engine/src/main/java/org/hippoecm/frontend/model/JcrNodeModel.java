@@ -16,7 +16,8 @@
 package org.hippoecm.frontend.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -35,19 +37,21 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.hippoecm.frontend.UserSession;
-import org.hippoecm.frontend.tree.LazyTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 
-public class JcrNodeModel extends LazyTreeNode implements IWrapModel, IDataProvider {
+public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
     private static final long serialVersionUID = 1L;
 
     // The Item model that is wrapped by this model using the IWrapmodel interface
     private JcrItemModel itemModel;
+    
+    // Parent node, null if this node represents a root node
+    private JcrNodeModel parent;
 
     // Constructor
 
     public JcrNodeModel(JcrNodeModel parent, Node node) {
-        super(parent);
+        this.parent = parent;
         itemModel = new JcrItemModel(node);
     }
 
@@ -69,7 +73,7 @@ public class JcrNodeModel extends LazyTreeNode implements IWrapModel, IDataProvi
         return result;
     }
 
-    // The wrapped jcr Node object, convenience methods and not part of an api
+    // Convenience methods, not part of an api
 
     public HippoNode getNode() {
         return (HippoNode) itemModel.getObject();
@@ -79,59 +83,39 @@ public class JcrNodeModel extends LazyTreeNode implements IWrapModel, IDataProvi
         if (model != null) {
             itemModel = new JcrItemModel(model.getNode());
             parent = model.parent;
-            childCount = model.childCount;
-            childNodes = model.childNodes;
-            isLoaded = model.isLoaded;
         }
     }
+    
+    // TreeNode implementation for use in trees
 
-    // Implement LazyTreeNode
-
-    protected LazyTreeNode createNode(Object o) {
-        LazyTreeNode result;
-        if (o instanceof Node) {
-            Node node = (Node) o;
-            result = new JcrNodeModel(this, node);
-        } else {
-            throw new IllegalArgumentException("parameter should be a jcr node, but was a: " + o.getClass().getName());
-        }
-        return result;
+    public Enumeration children() {
+        return Collections.enumeration(getChildren());
     }
 
-    protected int getChildObjectCount() {
-        int childCount = 0;
-        Node jcrNode = getNode();
-        try {
-            NodeIterator jcrChildren = jcrNode.getNodes();
-            childCount = (int) jcrChildren.getSize();
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return childCount;
+    public TreeNode getChildAt(int i) {
+        return (TreeNode) getChildren().get(i);
     }
 
-    protected Collection getChildObjects() {
-        Node jcrNode = getNode();
-        Collection childObjects = new ArrayList();
-        try {
-            NodeIterator jcrChildren = jcrNode.getNodes();
-            while (jcrChildren.hasNext()) {
-                Node jcrChild = jcrChildren.nextNode();
-                if (jcrChild != null) {
-                    childObjects.add(jcrChild);
-                }
-            }
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return childObjects;
+    public int getChildCount() {
+        return getChildren().size();
     }
 
-    protected Object getUserObject() {
-        return getNode();
+    public int getIndex(TreeNode node) {
+        return getChildren().indexOf(node);
     }
+
+    public boolean isLeaf() {
+        return getChildren().size() == 0;
+    }
+
+    public TreeNode getParent() {
+        return parent;
+    }
+
+    public boolean getAllowsChildren() {
+        return true;
+    }
+
 
     // Implement IWrapModel, all IModel calls done by wicket components 
     // (subclasses of org.apache.wicket.Component) are redirected to this wrapped model. 
@@ -221,6 +205,27 @@ public class JcrNodeModel extends LazyTreeNode implements IWrapModel, IDataProvi
 
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(itemModel).toHashCode();
+    }
+
+    
+    // privates
+    
+    private List getChildren() {
+        Node jcrNode = getNode();
+        List children = new ArrayList();
+        try {
+            NodeIterator jcrChildren = jcrNode.getNodes();
+            while (jcrChildren.hasNext()) {
+                Node jcrChild = jcrChildren.nextNode();
+                if (jcrChild != null) {
+                    children.add(new JcrNodeModel(this, jcrChild));
+                }
+            }
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return children;
     }
 
 }
