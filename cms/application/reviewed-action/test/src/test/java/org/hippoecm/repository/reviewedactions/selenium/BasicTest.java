@@ -146,4 +146,72 @@ public class BasicTest extends TestCase {
             Thread.sleep(1000);
         }
     }
+    
+    /**
+     * Browses through the tree and adds a node.
+     */
+    public void testAddNode() throws Exception {
+        selenium.open("/");
+        selenium.click("//span/span");
+        for (int second = 0;; second++) {
+            if (second >= 60) fail("timeout");
+            try { if (selenium.isElementPresent("//div[6]/div/a[1]/span/span")) break; } catch (Exception e) {}
+            Thread.sleep(1000);
+        }
+
+        selenium.click("//div[6]/div/a[1]/span/span");
+        for (int second = 0;; second++) {
+            if (second >= 60) fail("timeout");
+            try { if (selenium.isElementPresent("//div[7]/div/a[1]/span/span")) break; } catch (Exception e) {}
+            Thread.sleep(1000);
+        }
+
+        selenium.click("//div[7]/div/a[1]/span/span");
+        for (int second = 0;; second++) {
+            if (second >= 60) fail("timeout");
+            try { if (selenium.isElementPresent("//div[7]/div/a[2]/span[2]")) break; } catch (Exception e) {}
+            Thread.sleep(1000);
+        }
+
+        selenium.click("//div[7]/div/a[2]/span[2]");
+        for (int second = 0;; second++) {
+            if (second >= 60) fail("timeout");
+            try { if (selenium.isTextPresent("/workflow-demo/myarticle")) break; } catch (Exception e) {}
+            Thread.sleep(1000);
+        }
+
+        selenium.click("node-dialog-link4");
+        for (int second = 0;; second++) {
+            if (second >= 60) fail("timeout");
+            try { if (selenium.isElementPresent("ok8")) break; } catch (Exception e) {}
+            Thread.sleep(1000);
+        }
+
+        selenium.click("label4");
+        for (int second = 0;; second++) {
+            if (second >= 60) fail("timeout");
+            try { if (selenium.isElementPresent("editor10")) break; } catch (Exception e) {}
+            Thread.sleep(1000);
+        }
+
+        selenium.type("editor10", "test");
+        selenium.keyPress("editor10", "\\13");
+        selenium.click("ok8");
+        for (int second = 0;; second++) {
+            if (second >= 60) fail("timeout");
+            try { if (selenium.isElementPresent("//div[9]/div/a[2]/span[2]")) break; } catch (Exception e) {}
+            Thread.sleep(1000);
+        }
+
+        selenium.click("//div[9]/div/a[2]/span[2]");
+        for (int second = 0;; second++) {
+            if (second >= 60) fail("timeout");
+            try { if (selenium.isTextPresent("/workflow-demo/myarticle/test")) break; } catch (Exception e) {}
+            Thread.sleep(1000);
+        }
+
+        assert(selenium.isTextPresent("/workflow-demo/myarticle/test"));
+        
+    }
+    
 }
