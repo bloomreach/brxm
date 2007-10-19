@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu.node;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
@@ -44,9 +43,8 @@ public class NodeDialog extends AbstractDialog {
 
     public JcrEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        Node newchild = nodeModel.getNode().addNode(getName(), getType());
-        nodeModel.childAdded(newchild);
-        
+        nodeModel.getNode().addNode(getName(), getType());
+
         return new JcrEvent(nodeModel, true);
     }
 

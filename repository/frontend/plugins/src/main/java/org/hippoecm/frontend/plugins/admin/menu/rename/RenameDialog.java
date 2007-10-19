@@ -62,7 +62,6 @@ public class RenameDialog extends AbstractDialog {
             result = new JcrEvent(nodeModel);
         } else {
             JcrNodeModel parentModel = (JcrNodeModel)nodeModel.getParent();            
-            parentModel.childRemoved(nodeModel.getNode());
             
             //The actual move
             String oldPath = nodeModel.getNode().getPath();
@@ -74,7 +73,6 @@ public class RenameDialog extends AbstractDialog {
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(oldPath, newPath);
 
-            parentModel.childAdded(parentModel.getNode().getNode(getName()));
             result = new JcrEvent(parentModel, true);
         }
         return result;

@@ -15,11 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu.move;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.UserSession;
@@ -40,9 +37,7 @@ public class MoveDialog extends AbstractDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
         JcrNodeModel rootModel = JcrNodeModel.getRootModel();
-        TreeModel treeModel = new DefaultTreeModel(rootModel);
-
-        tree = new MoveTargetTreeView("tree", treeModel, this);
+        tree = new MoveTargetTreeView("tree", rootModel, this);
         tree.getTreeState().expandNode(rootModel);
         add(tree);
 
@@ -69,24 +64,17 @@ public class MoveDialog extends AbstractDialog {
             if (!targetPath.endsWith("/")) {
                 targetPath += "/";
             }
-            targetPath += nodeName;
- 
-            JcrNodeModel sourceParent = (JcrNodeModel)nodeModel.getParent();
-            sourceParent.childRemoved(nodeModel.getNode());          
+            targetPath += nodeName; 
             
             // The actual move
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(sourcePath, targetPath);
-   
-            Node targetNode = targetNodeModel.getNode().getNode(nodeName);
-            targetNodeModel.childAdded(targetNode);
             
             //TODO: use common ancestor iso root
             JcrNodeModel rootNodeModel = targetNodeModel;
             while (!rootNodeModel.getNode().getPath().equals("/")) {
                 rootNodeModel = (JcrNodeModel)rootNodeModel.getParent();
             }
-            rootNodeModel.reload();
             result = new JcrEvent(rootNodeModel, true);
         }
 

@@ -47,9 +47,7 @@ public class DeleteDialog extends AbstractDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         nodeModel.getNode().remove();
         
-        JcrNodeModel parentModel = (JcrNodeModel)nodeModel.getParent();
-        parentModel.childRemoved(nodeModel.getNode());
-        
+        JcrNodeModel parentModel = (JcrNodeModel)nodeModel.getParent();     
         return new JcrEvent(parentModel, true);
     }
 

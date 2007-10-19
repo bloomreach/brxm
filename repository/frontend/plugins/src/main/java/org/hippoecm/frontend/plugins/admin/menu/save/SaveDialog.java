@@ -18,21 +18,25 @@ package org.hippoecm.frontend.plugins.admin.menu.save;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class SaveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
+    
+    private boolean hasPendingChanges;
 
     public SaveDialog(DialogWindow dialogWindow) {
         super(dialogWindow);
         dialogWindow.setTitle("Save Session");
                
         Label label;
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         try {
-            if (((UserSession) getSession()).getJcrSession().hasPendingChanges()) {
+            hasPendingChanges = nodeModel.getNode().getSession().hasPendingChanges();
+            if (hasPendingChanges) {
                 label = new Label("message", "There are pending changes");
             } else {
                 label = new Label("message", "There are no pending changes");
@@ -44,8 +48,13 @@ public class SaveDialog extends AbstractDialog {
     }
 
     public JcrEvent ok() throws RepositoryException {
-        ((UserSession) getSession()).getJcrSession().save();
-        return new JcrEvent(dialogWindow.getNodeModel());
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        nodeModel.getNode().getSession().save();
+
+        while (!nodeModel.getNode().getPath().equals("/")) {
+            nodeModel = (JcrNodeModel) nodeModel.getParent();
+        }
+        return new JcrEvent(nodeModel, hasPendingChanges);
     }
 
     public void cancel() {

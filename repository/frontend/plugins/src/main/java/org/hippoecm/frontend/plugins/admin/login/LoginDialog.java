@@ -65,7 +65,6 @@ public class LoginDialog extends AbstractDialog {
         while (!nodeModel.getNode().getPath().equals("/")) {
             nodeModel = (JcrNodeModel)nodeModel.getParent();
         }
-        nodeModel.reload();
         return new JcrEvent(nodeModel, true);
     }
 
