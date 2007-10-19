@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="facetsearch-demo"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+  xmlns:jcr="http://www.jcp.org/jcr/1.0"
+  xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+  xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
+  xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>nt:unstructured</sv:value>
+  </sv:property>
+  <sv:node sv:name="demo">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    <sv:node sv:name="By Brand">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetsearch</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:queryname" sv:type="String">
+        <sv:value>By Brand</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>brand</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>facetsearch-demo/documents</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:resultset">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:facetresult</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="documents">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    <sv:node sv:name="DeWalt 14.4 Volt Drill Kit DW928K-2">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>facetsearch-demo</sv:value> 
+        <sv:value>facetsearch-demo/documents</sv:value> 
+        <sv:value>facetsearch-demo/documents/DeWalt 14.4 Volt Drill Kit DW928K-2</sv:value> 
+      </sv:property>
+      <sv:property sv:name="brand" sv:type="String">
+        <sv:value>DeWalt</sv:value>
+      </sv:property>
+      <sv:property sv:name="power-source" sv:type="String">
+        <sv:value>cordless</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Makita Cordless Driver-Drill 6095 D">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>facetsearch-demo</sv:value> 
+        <sv:value>facetsearch-demo/documents</sv:value> 
+        <sv:value>facetsearch-demo/documents/Makita Cordless Driver-Drill 6095 D</sv:value> 
+      </sv:property>
+      <sv:property sv:name="brand" sv:type="String">
+        <sv:value>Makita</sv:value>
+      </sv:property>
+      <sv:property sv:name="power-source" sv:type="String">
+        <sv:value>cordless</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Bosch 18-Volt Brute Tough Drill-Driver 33618">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>facetsearch-demo</sv:value> 
+        <sv:value>facetsearch-demo/documents</sv:value> 
+        <sv:value>facetsearch-demo/documents/Bosch 18-Volt Brute Tough Drill-Driver 33618</sv:value> 
+      </sv:property>
+      <sv:property sv:name="brand" sv:type="String">
+        <sv:value>Bosch</sv:value>
+      </sv:property>
+      <sv:property sv:name="power-source" sv:type="String">
+        <sv:value>corded</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="DeWalt Drill-Saw Kit 19.2v 9884CS">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>facetsearch-demo</sv:value> 
+        <sv:value>facetsearch-demo/documents</sv:value> 
+        <sv:value>facetsearch-demo/documents/DeWalt Drill-Saw Kit 19.2v 9884CS</sv:value> 
+      </sv:property>
+      <sv:property sv:name="brand" sv:type="String">
+        <sv:value>DeWalt</sv:value>
+      </sv:property>
+      <sv:property sv:name="power-source" sv:type="String">
+        <sv:value>electric</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>
