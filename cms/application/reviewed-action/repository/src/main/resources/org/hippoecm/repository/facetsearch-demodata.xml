@@ -42,6 +42,11 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:document</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>facetsearch-demo</sv:value> 
+        <sv:value>facetsearch-demo/documents</sv:value> 
+        <sv:value>facetsearch-demo/documents/DeWalt 14.4 Volt Drill Kit DW928K-2</sv:value> 
+      </sv:property>
       <sv:property sv:name="brand" sv:type="String">
         <sv:value>DeWalt</sv:value>
       </sv:property>
@@ -52,6 +57,11 @@
     <sv:node sv:name="Makita Cordless Driver-Drill 6095 D">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>facetsearch-demo</sv:value> 
+        <sv:value>facetsearch-demo/documents</sv:value> 
+        <sv:value>facetsearch-demo/documents/Makita Cordless Driver-Drill 6095 D</sv:value> 
       </sv:property>
       <sv:property sv:name="brand" sv:type="String">
         <sv:value>Makita</sv:value>
@@ -64,6 +74,11 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:document</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>facetsearch-demo</sv:value> 
+        <sv:value>facetsearch-demo/documents</sv:value> 
+        <sv:value>facetsearch-demo/documents/Bosch 18-Volt Brute Tough Drill-Driver 33618</sv:value> 
+      </sv:property>
       <sv:property sv:name="brand" sv:type="String">
         <sv:value>Bosch</sv:value>
       </sv:property>
@@ -74,6 +89,11 @@
     <sv:node sv:name="DeWalt Drill-Saw Kit 19.2v 9884CS">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>facetsearch-demo</sv:value> 
+        <sv:value>facetsearch-demo/documents</sv:value> 
+        <sv:value>facetsearch-demo/documents/DeWalt Drill-Saw Kit 19.2v 9884CS</sv:value> 
       </sv:property>
       <sv:property sv:name="brand" sv:type="String">
         <sv:value>DeWalt</sv:value>
