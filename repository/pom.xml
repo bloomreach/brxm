@@ -236,6 +236,7 @@
   <build>
     <plugins>
       <plugin>
+        <inherited>false</inherited>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
           <filesets>
