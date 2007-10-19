@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="facetreference-demo"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+  xmlns:jcr="http://www.jcp.org/jcr/1.0"
+  xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+  xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
+  xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>nt:unstructured</sv:value>
+  </sv:property>
+  <sv:node sv:name="documents">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    <sv:node sv:name="articles">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:node sv:name="brave-new-world">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>c9870e65-1d4d-4c60-9c4f-97f6a6cc08ed</sv:value>
+        </sv:property>
+        <sv:node sv:name="brave-new-world">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:document</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>4611a3ab-d698-433b-ac2e-66e4cc299750</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/brave-new-world</sv:value>
+            <sv:value>facetreference-demo/documents/articles/brave-new-world/brave-new-world</sv:value>
+          </sv:property>
+          <sv:property sv:name="language" sv:type="String">
+            <sv:value>english</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="the-invisible-man">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>82325329-21a9-4f3a-9020-20c2ad4dc93d</sv:value>
+        </sv:property>
+        <sv:node sv:name="the-invisible-man">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:document</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>13024de8-0cbd-45e4-90c0-fbb8a6296cec</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/the-invisible-man</sv:value>
+            <sv:value>facetreference-demo/documents/articles/the-invisible-man/the-invisible-man</sv:value>
+          </sv:property>
+          <sv:property sv:name="language" sv:type="String">
+            <sv:value>english</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="war-of-the-worlds">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>c6b7f5ac-40f5-4d7e-b469-70136e3313cc</sv:value>
+        </sv:property>
+        <sv:node sv:name="war-of-the-worlds">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:document</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>c1e1c1bb-524c-40b7-8966-77128d870d96</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/war-of-the-worlds</sv:value>
+            <sv:value>facetreference-demo/documents/articles/war-of-the-worlds/war-of-the-worlds</sv:value>
+          </sv:property>
+          <sv:property sv:name="language" sv:type="String">
+            <sv:value>english</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="war-of-the-worlds">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:document</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>e7477916-5740-4817-a41f-c64a0e3f664e</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/war-of-the-worlds</sv:value>
+            <sv:value>facetreference-demo/documents/articles/war-of-the-worlds/war-of-the-worlds</sv:value>
+          </sv:property>
+          <sv:property sv:name="language" sv:type="String">
+            <sv:value>dutch</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="nineteeneightyfour">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>7f214b50-bd01-4122-a782-b0d873eca7db</sv:value>
+        </sv:property>
+        <sv:node sv:name="nineteeneightyfour">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:document</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>17813d97-583b-459f-822c-935ee873268c</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/nineteeneightyfour</sv:value>
+            <sv:value>facetreference-demo/documents/articles/nineteeneightyfour/nineteeneightyfour</sv:value>
+          </sv:property>
+          <sv:property sv:name="language" sv:type="String">
+            <sv:value>dutch</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="nineteeneightyfour">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:document</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>a61acd34-bbc7-4acf-bc15-99a1bcb211ac</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>facetreference-demo</sv:value>
+            <sv:value>facetreference-demo/documents</sv:value>
+            <sv:value>facetreference-demo/documents/articles</sv:value>
+            <sv:value>facetreference-demo/documents/articles/nineteeneightyfour</sv:value>
+            <sv:value>facetreference-demo/documents/articles/nineteeneightyfour/nineteeneightyfour</sv:value>
+          </sv:property>
+          <sv:property sv:name="language" sv:type="String">
+            <sv:value>english</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="demo">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    <sv:node sv:name="english">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>language</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>english</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>stick</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>/facetreference-demo/documents</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="dutch">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>language</sv:value>
+        <sv:value>state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>dutch</sv:value>
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>stick</sv:value>
+        <sv:value>clear</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>/facetreference-demo/documents</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

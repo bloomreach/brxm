@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
+         xmlns:jcr="http://www.jcp.org/jcr/1.0"
+         xmlns:rep="internal"
+         xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+         xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+         xmlns:fn="http://www.w3.org/2005/xpath-functions" 
+         sv:name="configuration">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>nt:unstructured</sv:value>
+  </sv:property>
+  
+  <sv:node sv:name="initialize">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializefolder</sv:value>
+    </sv:property>
+    
+    <!--Document model-->
+    <sv:node sv:name="model">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:nodetypes" sv:type="String">
+        <sv:value>model.cnd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>
+    
+    <!--Frontend plugin configuration-->
+    <sv:node sv:name="frontend">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:nodetypes" sv:type="String">
+        <sv:value>frontend-config.cnd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>frontend-config.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/configuration/frontend</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!--User configuration-->
+    <sv:node sv:name="users">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>users-config.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/configuration</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!--Workflows configuration-->
+    <sv:node sv:name="workflows">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>workflow-config.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/configuration</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!--Facet Reference demo-->
+    <sv:node sv:name="facetreference">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>facetreference-demodata.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!--Facet search demo-->
+    <sv:node sv:name="facetsearch">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>facetsearch-demodata.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>
+    
+    <!--Workflow demo-->
+    <sv:node sv:name="workflowdata">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>workflow-demodata.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>
+       
+  </sv:node>
+</sv:node>

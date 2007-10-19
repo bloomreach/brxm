@@ -307,8 +307,9 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
                                         null, hitsRequested);
 
             for(Iterator<String> iter = result.iterator(); iter.hasNext(); ) {
-                String nodePath = iter.next();
-                addNode(nodePath, session.getRootNode().getNode(nodePath.substring(1)));
+                String foundNodePath = iter.next();
+                Node foundNode = session.getRootNode().getNode(foundNodePath.substring(1));
+                addNode(foundNode.getName(), foundNode);
             }
             instantiated = true;
 

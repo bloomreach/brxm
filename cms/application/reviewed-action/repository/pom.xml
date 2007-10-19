@@ -55,7 +55,19 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
       <version>2.01.00-dev</version>
-    </dependency>    
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.4.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
     
   <build>
