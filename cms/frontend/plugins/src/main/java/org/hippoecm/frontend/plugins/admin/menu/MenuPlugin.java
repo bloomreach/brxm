@@ -18,11 +18,9 @@ package org.hippoecm.frontend.plugins.admin.menu;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.admin.menu.export.ExportDialog;
 import org.hippoecm.frontend.plugins.admin.menu.move.MoveDialog;
@@ -32,7 +30,7 @@ import org.hippoecm.frontend.plugins.admin.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.admin.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 
-public class MenuPlugin extends Plugin {
+public class MenuPlugin extends AbstractMenuPlugin {
     private static final long serialVersionUID = 1L;
 
     public MenuPlugin(String id, final JcrNodeModel model) {
@@ -48,14 +46,6 @@ public class MenuPlugin extends Plugin {
         addMenuOption("reset-dialog", "reset-dialog-link", ResetDialog.class.getName(), model);
 
         add(new Label("path", new PropertyModel(model, "path")));
-    }
-    
-    
-    private void addMenuOption(String dialogId, String dialogLinkId, String dialogClassName, JcrNodeModel model) {
-        final DialogWindow dialog = new DialogWindow(dialogId, model, true);
-        dialog.setPageCreator(new DynamicDialogFactory(dialog, dialogClassName));
-        add(dialog);
-        add(dialog.dialogLink(dialogLinkId));
     }
     
     
