@@ -66,13 +66,13 @@ public class PluginRepositoryConfig implements PluginConfig {
         }
         return result;
     }
-    
-    public PluginDescriptor getPlugin(String wicketPath)  {
-        wicketPath = wicketPath.substring(2);
-        wicketPath = wicketPath.replaceAll(":", "/");
+
+    public PluginDescriptor getPlugin(String wicketPath) {
+        String path = wicketPath.substring(2);
+        path = path.replaceAll(":", "/");
         PluginDescriptor result = null;
         try {
-            Node pluginNode = pluginConfigNodeModel.getNode().getNode(wicketPath);
+            Node pluginNode = pluginConfigNodeModel.getNode().getNode(path);
             result = getPluginDescriptor(pluginNode);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block

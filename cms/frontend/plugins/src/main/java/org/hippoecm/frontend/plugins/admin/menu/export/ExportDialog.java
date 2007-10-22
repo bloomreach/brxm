@@ -65,7 +65,7 @@ public class ExportDialog extends AbstractDialog {
     }
 
     public JcrEvent ok() {
-        return new JcrEvent(dialogWindow.getNodeModel());
+        return new JcrEvent(dialogWindow.getNodeModel(), false);
     }
 
     public void cancel() {

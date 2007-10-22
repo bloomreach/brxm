@@ -54,7 +54,7 @@ public class MoveDialog extends AbstractDialog {
 
         JcrEvent result;
         if (nodeModel.getParent() == null) {
-            result = new JcrEvent(nodeModel);
+            result = new JcrEvent(nodeModel, false);
         } else {
             String nodeName = nodeModel.getNode().getName();
             String sourcePath = nodeModel.getNode().getPath();

@@ -59,7 +59,7 @@ public class RenameDialog extends AbstractDialog {
 
         JcrEvent result;
         if (nodeModel.getParent() == null) {
-            result = new JcrEvent(nodeModel);
+            result = new JcrEvent(nodeModel, false);
         } else {
             JcrNodeModel parentModel = (JcrNodeModel)nodeModel.getParent();            
             

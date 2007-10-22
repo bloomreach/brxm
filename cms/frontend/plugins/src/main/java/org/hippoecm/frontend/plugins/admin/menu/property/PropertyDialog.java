@@ -65,7 +65,7 @@ public class PropertyDialog extends AbstractDialog {
         } else {
             nodeModel.getNode().setProperty(page.getName(), page.getValue());
         }
-        return new JcrEvent(nodeModel);
+        return new JcrEvent(nodeModel, false);
     }
 
     public void cancel() {

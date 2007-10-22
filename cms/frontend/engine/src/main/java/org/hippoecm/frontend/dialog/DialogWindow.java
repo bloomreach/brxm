@@ -25,7 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 public class DialogWindow extends ModalWindow {
     private static final long serialVersionUID = 1L;
 
-    private JcrEvent jcrEvent;
+    protected JcrEvent jcrEvent;
     private JcrNodeModel nodeModel;
 
     public DialogWindow(String id, JcrNodeModel nodeModel, final boolean resetOnClose) {

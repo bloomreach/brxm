@@ -33,7 +33,7 @@ public class ErrorDialog extends AbstractDialog {
  
 
     public JcrEvent ok() throws RepositoryException {
-        return new JcrEvent(dialogWindow.getNodeModel());
+        return new JcrEvent(dialogWindow.getNodeModel(), false);
     }
 
     public void cancel() {

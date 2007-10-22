@@ -38,7 +38,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 public class Home extends WebPage {
     private static final long serialVersionUID = 1L;
 
-    private Plugin rootPlugin;
+    protected Plugin rootPlugin;
 
     public Home() {
         JcrNodeModel rootModel = JcrNodeModel.getRootModel();
@@ -61,7 +61,7 @@ public class Home extends WebPage {
         try {
             reconfigurePlugins(target, jcrEvent);
             updatePlugins(target, jcrEvent);
-            updateDialogs(target, jcrEvent);
+            updateDialogs(jcrEvent);
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -119,7 +119,7 @@ public class Home extends WebPage {
         });        
     }
     
-    private void updateDialogs(final AjaxRequestTarget target, final JcrEvent jcrEvent) {
+    private void updateDialogs(final JcrEvent jcrEvent) {
         visitChildren(DialogWindow.class, new IVisitor() {
             public Object component(Component component) {
                 DialogWindow dialogWindow = (DialogWindow) component;
