@@ -15,12 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -36,100 +35,29 @@ import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 public class MenuPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    private DialogWindow nodeDialog;
-    private DialogWindow deleteDialog;
-    private DialogWindow moveDialog;
-    private DialogWindow renameDialog;
-    private DialogWindow exportDialog;
-    private DialogWindow propertyDialog;
-    private DialogWindow saveDialog;
-    private DialogWindow resetDialog;
-    
     public MenuPlugin(String id, final JcrNodeModel model) {
         super(id, model);
 
-        nodeDialog = new DialogWindow("node-dialog", model, false);
-        nodeDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new NodeDialog(nodeDialog);
-            }
-        });
-        add(nodeDialog);
-        add(nodeDialog.dialogLink("node-dialog-link"));
-
-        deleteDialog = new DialogWindow("delete-dialog", model, false);
-        deleteDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new DeleteDialog(deleteDialog);
-            }
-        });
-        add(deleteDialog);
-        add(deleteDialog.dialogLink("delete-dialog-link"));
-        
-        moveDialog = new DialogWindow("move-dialog", model, true);
-        moveDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new MoveDialog(moveDialog);
-            }
-        });
-        add(moveDialog);
-        add(moveDialog.dialogLink("move-dialog-link"));
-
-        renameDialog = new DialogWindow("rename-dialog", model, false);
-        renameDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new RenameDialog(renameDialog);
-            }
-        });
-        add(renameDialog);
-        add(renameDialog.dialogLink("rename-dialog-link"));
-        
-        exportDialog = new DialogWindow("export-dialog", model, false);
-        exportDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new ExportDialog(exportDialog);
-            }
-        });
-        add(exportDialog);
-        add(exportDialog.dialogLink("export-dialog-link"));
-
-        propertyDialog = new DialogWindow("property-dialog", model, false);
-        propertyDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new PropertyDialog(propertyDialog);
-            }
-        });
-        add(propertyDialog);
-        add(propertyDialog.dialogLink("property-dialog-link"));
-
-        saveDialog = new DialogWindow("save-dialog", model, true);
-        saveDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new SaveDialog(saveDialog);
-            }
-        });
-        add(saveDialog);
-        add(saveDialog.dialogLink("save-dialog-link"));
-
-        resetDialog = new DialogWindow("reset-dialog", model, true);
-        resetDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new ResetDialog(resetDialog);
-            }
-        });
-        add(resetDialog);
-        add(resetDialog.dialogLink("reset-dialog-link"));
+        addMenuOption("node-dialog", "node-dialog-link", NodeDialog.class.getName(), model);
+        addMenuOption("delete-dialog", "delete-dialog-link", DeleteDialog.class.getName(), model);
+        addMenuOption("move-dialog", "move-dialog-link", MoveDialog.class.getName(), model);
+        addMenuOption("rename-dialog", "rename-dialog-link", RenameDialog.class.getName(), model);
+        addMenuOption("export-dialog", "export-dialog-link", ExportDialog.class.getName(), model);
+        addMenuOption("property-dialog", "property-dialog-link", PropertyDialog.class.getName(), model);
+        addMenuOption("save-dialog", "save-dialog-link", SaveDialog.class.getName(), model);
+        addMenuOption("reset-dialog", "reset-dialog-link", ResetDialog.class.getName(), model);
 
         add(new Label("path", new PropertyModel(model, "path")));
     }
+    
+    
+    private void addMenuOption(String dialogId, String dialogLinkId, String dialogClassName, JcrNodeModel model) {
+        final DialogWindow dialog = new DialogWindow(dialogId, model, true);
+        dialog.setPageCreator(new DynamicDialogFactory(dialog, dialogClassName));
+        add(dialog);
+        add(dialog.dialogLink(dialogLinkId));
+    }
+    
     
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         if (jcrEvent.getModel() != null) {
