@@ -59,7 +59,7 @@ public class Main extends WebApplication {
     }
 
     public Session newSession(Request request, Response response) {
-        return new UserSession(this, request);
+        return new UserSession(request);
     }
 
     public String getConfigurationParameter(String parameterName, String defaultValue) {

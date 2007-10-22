@@ -106,8 +106,8 @@ public class JcrPropertyModel extends AbstractWrapModel implements IDataProvider
     }
 
     private class IndexedValue {
-        private String value;
-        private int index;
+        protected String value;
+        protected int index;
 
         IndexedValue(String value, int index) {
             this.index = index;

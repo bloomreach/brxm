@@ -10,33 +10,22 @@ public class JcrEvent implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private JcrNodeModel nodeModel;
-    private boolean structureChanged;
-
-    public JcrEvent(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
-        this.structureChanged = false;
-    }
 
     public JcrEvent(JcrNodeModel nodeModel, boolean structureChanged) {
         this.nodeModel = nodeModel;
-        this.structureChanged = structureChanged;
+        if (structureChanged) {
+            nodeModel.markDirty();
+        }
     }
 
     public JcrNodeModel getModel() {
         return nodeModel;
     }
 
-    public boolean structureChanged() {
-        return structureChanged;
-    }
-    
     // override Object
 
     public String toString() {
-       return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-           .append("nodeModel", nodeModel)
-           .append("structureChanged", structureChanged)
-           .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeModel", nodeModel).toString();
     }
 
     public boolean equals(Object object) {
@@ -47,18 +36,11 @@ public class JcrEvent implements IClusterable {
             return true;
         }
         JcrEvent event = (JcrEvent) object;
-        return new EqualsBuilder()
-            .append(nodeModel, event.nodeModel)
-            .append(structureChanged, event.structureChanged)
-            .isEquals();
-    }
-    
-    public int hashCode() {
-        return new HashCodeBuilder(11, 99)
-            .append(nodeModel)
-            .append(structureChanged)
-            .toHashCode();
+        return new EqualsBuilder().append(nodeModel, event.nodeModel).isEquals();
     }
 
+    public int hashCode() {
+        return new HashCodeBuilder(11, 99).append(nodeModel).toHashCode();
+    }
 
 }

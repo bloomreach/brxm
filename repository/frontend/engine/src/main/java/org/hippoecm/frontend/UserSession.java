@@ -21,7 +21,6 @@ import javax.jcr.Session;
 import org.apache.wicket.Application;
 import org.apache.wicket.Request;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.repository.HippoRepository;
@@ -31,7 +30,7 @@ public class UserSession extends WebSession {
 
     private JcrSessionModel jcrSessionModel;
 
-    public UserSession(WebApplication application, Request request) {
+    public UserSession(Request request) {
         super(request);
         jcrSessionModel = new JcrSessionModel();
         //Calling the dirty() method causes this wicket session to be reset in the http session

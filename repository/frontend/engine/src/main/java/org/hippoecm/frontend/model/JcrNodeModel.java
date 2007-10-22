@@ -48,6 +48,9 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
     // Parent node, null if this node represents a root node
     private JcrNodeModel parent;
 
+    private boolean dirty = true;
+    private List children = new ArrayList();
+
     // Constructor
 
     public JcrNodeModel(JcrNodeModel parent, Node node) {
@@ -85,27 +88,45 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
             parent = model.parent;
         }
     }
-    
+
+    public void markDirty() {
+        Iterator it = children.iterator();
+        while (it.hasNext()) {
+            JcrNodeModel child = (JcrNodeModel) it.next();
+            child.markDirty();
+        }
+        this.dirty = true;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
     // TreeNode implementation for use in trees
 
     public Enumeration children() {
-        return Collections.enumeration(getChildren());
+        ensureChildrenLoaded();
+        return Collections.enumeration(children);
     }
 
     public TreeNode getChildAt(int i) {
-        return (TreeNode) getChildren().get(i);
+        ensureChildrenLoaded();
+        return (TreeNode) children.get(i);
     }
 
     public int getChildCount() {
-        return getChildren().size();
+        ensureChildrenLoaded();
+        return children.size();
     }
 
     public int getIndex(TreeNode node) {
-        return getChildren().indexOf(node);
+        ensureChildrenLoaded();
+        return children.indexOf(node);
     }
 
     public boolean isLeaf() {
-        return getChildren().size() == 0;
+        ensureChildrenLoaded();
+        return children.size() == 0;
     }
 
     public TreeNode getParent() {
@@ -115,7 +136,6 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
     public boolean getAllowsChildren() {
         return true;
     }
-
 
     // Implement IWrapModel, all IModel calls done by wicket components 
     // (subclasses of org.apache.wicket.Component) are redirected to this wrapped model. 
@@ -207,25 +227,30 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
         return new HashCodeBuilder(17, 37).append(itemModel).toHashCode();
     }
 
-    
     // privates
-    
-    private List getChildren() {
+
+    private void ensureChildrenLoaded() {
         Node jcrNode = getNode();
-        List children = new ArrayList();
-        try {
-            NodeIterator jcrChildren = jcrNode.getNodes();
-            while (jcrChildren.hasNext()) {
-                Node jcrChild = jcrChildren.nextNode();
-                if (jcrChild != null) {
-                    children.add(new JcrNodeModel(this, jcrChild));
+        if (jcrNode == null) {
+            dirty = false;
+            children.clear();
+        } else if (dirty) {
+            List newChildren = new ArrayList();
+            try {
+                NodeIterator jcrChildren = jcrNode.getNodes();
+                while (jcrChildren.hasNext()) {
+                    Node jcrChild = jcrChildren.nextNode();
+                    if (jcrChild != null) {
+                        newChildren.add(new JcrNodeModel(this, jcrChild));
+                    }
                 }
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            dirty = false;
+            children = newChildren;
         }
-        return children;
     }
 
 }

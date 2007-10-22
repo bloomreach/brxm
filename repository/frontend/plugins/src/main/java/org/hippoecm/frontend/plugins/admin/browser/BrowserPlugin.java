@@ -36,10 +36,10 @@ public class BrowserPlugin extends Plugin {
         tree = new JcrTree("tree", treeNode) {
             private static final long serialVersionUID = 1L;
 
-            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
-                JcrNodeModel jcrTreeNode = (JcrNodeModel) treeNode;
+            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
+                JcrNodeModel jcrTreeNode = (JcrNodeModel) clickedNode;
                 Home home = (Home) getWebPage();
-                JcrEvent jcrEvent = new JcrEvent(jcrTreeNode);
+                JcrEvent jcrEvent = new JcrEvent(jcrTreeNode, false);
                 home.update(target, jcrEvent);
             }
         };
@@ -47,7 +47,7 @@ public class BrowserPlugin extends Plugin {
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        if (jcrEvent.structureChanged()) {
+        if (jcrEvent.getModel().isDirty()) {
             JcrNodeModel treeNode = jcrEvent.getModel();
             tree.nodeStructureChanged(treeNode);
             tree.updateTree(target);
