@@ -103,7 +103,7 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
         this.reloadChildCount = true;
     }
 
-    public boolean isDirty() {
+    public boolean needsReload() {
         return reload;
     }
 
