@@ -38,6 +38,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
     private static final long serialVersionUID = 1L;
@@ -48,8 +49,11 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
     // Parent node, null if this node represents a root node
     private JcrNodeModel parent;
 
-    private boolean dirty = true;
+    private boolean reload = true;
+    private boolean reloadChildCount = true;
+    
     private List children = new ArrayList();
+    private int childCount = 0;
 
     // Constructor
 
@@ -95,11 +99,12 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
             JcrNodeModel child = (JcrNodeModel) it.next();
             child.markDirty();
         }
-        this.dirty = true;
+        this.reload = true;
+        this.reloadChildCount = true;
     }
 
     public boolean isDirty() {
-        return dirty;
+        return reload;
     }
 
     // TreeNode implementation for use in trees
@@ -115,8 +120,8 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
     }
 
     public int getChildCount() {
-        ensureChildrenLoaded();
-        return children.size();
+        childCountLoaded();
+        return childCount;
     }
 
     public int getIndex(TreeNode node) {
@@ -125,8 +130,8 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
     }
 
     public boolean isLeaf() {
-        ensureChildrenLoaded();
-        return children.size() == 0;
+        childCountLoaded();
+        return childCount == 0;
     }
 
     public TreeNode getParent() {
@@ -229,12 +234,35 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
 
     // privates
 
+    private void childCountLoaded() {
+        Node jcrNode = getNode();
+        if (jcrNode == null) {
+            reloadChildCount = false;
+            childCount = 0;
+        } else if (reloadChildCount) {
+            try {
+                // never a child count  needed for HippoNodeType.NT_FACETRESULT or HippoNodeType.NT_FACETSEARCH. It is
+                // very slow to do a child count for large result sets!
+                if(getNode().isNodeType(HippoNodeType.NT_FACETRESULT) || getNode().isNodeType(HippoNodeType.NT_FACETSEARCH)){
+                    childCount = 1;
+                }
+                else {
+                    childCount = (int) jcrNode.getNodes().getSize();
+                }
+               
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
+            reloadChildCount = false;
+        }
+    }
+    
     private void ensureChildrenLoaded() {
         Node jcrNode = getNode();
         if (jcrNode == null) {
-            dirty = false;
+            reload = false;
             children.clear();
-        } else if (dirty) {
+        } else if (reload) {
             List newChildren = new ArrayList();
             try {
                 NodeIterator jcrChildren = jcrNode.getNodes();
@@ -248,7 +276,7 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            dirty = false;
+            reload = false;
             children = newChildren;
         }
     }
