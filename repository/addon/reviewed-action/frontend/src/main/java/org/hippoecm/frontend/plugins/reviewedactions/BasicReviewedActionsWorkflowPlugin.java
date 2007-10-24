@@ -21,22 +21,19 @@ import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.WorkflowPlugin;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.delete.DeleteDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.depublish.DePublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableinstance.DisposeEditableInstanceDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinstance.ObtainEditableInstanceDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.publish.PublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion.RequestDeletionDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdepublication.RequestDePublicationDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication.RequestPublicationDialog;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflow;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
-public class ReviewedActionsWorkflowPlugin extends WorkflowPlugin {
+public class BasicReviewedActionsWorkflowPlugin extends WorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    public ReviewedActionsWorkflowPlugin(String id, final JcrNodeModel model, WorkflowManager workflowManager,
+    public BasicReviewedActionsWorkflowPlugin(String id, JcrNodeModel model, WorkflowManager workflowManager,
             WorkflowDescriptor workflowDescriptor) {
         super(id, model, workflowManager, workflowDescriptor);
 
@@ -44,7 +41,7 @@ public class ReviewedActionsWorkflowPlugin extends WorkflowPlugin {
         obtainEditableInstanceDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new ObtainEditableInstanceDialog(obtainEditableInstanceDialog, (ReviewedActionsWorkflow) getWorkflow());
+                return new ObtainEditableInstanceDialog(obtainEditableInstanceDialog, (BasicReviewedActionsWorkflow) getWorkflow());
             }
         });
         add(obtainEditableInstanceDialog);
@@ -54,7 +51,7 @@ public class ReviewedActionsWorkflowPlugin extends WorkflowPlugin {
         disposeEditableInstanceDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new DisposeEditableInstanceDialog(disposeEditableInstanceDialog, (ReviewedActionsWorkflow) getWorkflow());
+                return new DisposeEditableInstanceDialog(disposeEditableInstanceDialog, (BasicReviewedActionsWorkflow) getWorkflow());
             }
         });
         add(disposeEditableInstanceDialog);
@@ -64,7 +61,7 @@ public class ReviewedActionsWorkflowPlugin extends WorkflowPlugin {
         requestPublicationDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new RequestPublicationDialog(requestPublicationDialog, (ReviewedActionsWorkflow) getWorkflow());
+                return new RequestPublicationDialog(requestPublicationDialog, (BasicReviewedActionsWorkflow) getWorkflow());
             }
         });
         add(requestPublicationDialog);
@@ -74,7 +71,7 @@ public class ReviewedActionsWorkflowPlugin extends WorkflowPlugin {
         requestDePublicationDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new RequestDePublicationDialog(requestDePublicationDialog, (ReviewedActionsWorkflow) getWorkflow());
+                return new RequestDePublicationDialog(requestDePublicationDialog, (BasicReviewedActionsWorkflow) getWorkflow());
             }
         });
         add(requestDePublicationDialog);
@@ -84,42 +81,11 @@ public class ReviewedActionsWorkflowPlugin extends WorkflowPlugin {
         requestDeletionDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new RequestDeletionDialog(requestDeletionDialog, (ReviewedActionsWorkflow) getWorkflow());
+                return new RequestDeletionDialog(requestDeletionDialog, (BasicReviewedActionsWorkflow) getWorkflow());
             }
         });
         add(requestDeletionDialog);
         add(requestDeletionDialog.dialogLink("requestDeletion"));
-
-
-        final DialogWindow publishDialog = new DialogWindow("publish-dialog", model, false);
-        publishDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new PublishDialog(publishDialog, (ReviewedActionsWorkflow) getWorkflow());
-            }
-        });
-        add(publishDialog);
-        add(publishDialog.dialogLink("publish"));
-        
-        final DialogWindow dePublishDialog = new DialogWindow("dePublish-dialog", model, false);
-        dePublishDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new DePublishDialog(dePublishDialog, (ReviewedActionsWorkflow) getWorkflow());
-            }
-        });
-        add(dePublishDialog);
-        add(dePublishDialog.dialogLink("dePublish"));
-
-        final DialogWindow deleteDialog = new DialogWindow("delete-dialog", model, false);
-        deleteDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return new DeleteDialog(deleteDialog, (ReviewedActionsWorkflow) getWorkflow());
-            }
-        });
-        add(deleteDialog);
-        add(deleteDialog.dialogLink("delete"));
     }
 
     public void update(JcrEvent jcrEvent) {

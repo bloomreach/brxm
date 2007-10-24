@@ -20,14 +20,24 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.servicing.WorkflowImpl;
 
-public interface AuthorRequestWorkflow extends Workflow {
-    /**
-     * Cancels and/or disposes (!) the request.
-     */
-    public void cancelRequest()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+public class BasicRequestWorkflowImpl extends WorkflowImpl implements BasicRequestWorkflow {
+
+    protected PublicationRequest request;
+    protected PublishableDocument document;
+
+    public BasicRequestWorkflowImpl() throws RemoteException {
+    }
+
+    public void cancelRequest() throws WorkflowException, WorkflowMappingException, RepositoryException {
+        document = null;
+        request = null;
+    }
+
 }

@@ -67,7 +67,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         node.setProperty("hippo:nodetype","hippo:document");
         node.setProperty("hippo:display","Reviewed actions workflow");
         node.setProperty("hippo:renderer","org.hippoecm.frontend.reviewedactions.ReviewedActionsRenderer");
-        node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflowImpl");
+        node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl");
         Node types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument","hippo:type");
         node.setProperty("hippo:nodetype","hippo:document");
@@ -82,7 +82,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         node.setProperty("hippo:nodetype","hippo:request");
         node.setProperty("hippo:display","Reviewed requests workflow");
         node.setProperty("hippo:renderer","org.hippoecm.frontend.reviewedactions.RequestWorkflowRenderer");
-        node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.RequestWorkflowImpl");
+        node.setProperty("hippo:classname","org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl");
         types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument","hippo:type");
         node.setProperty("hippo:nodetype","hippo:document");
@@ -130,7 +130,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         // steps taken by an author
         {
             node = Utilities.getNode(root, "documents/myarticle/myarticle");
-            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.obtainEditableInstance();
             session.save(); session.refresh(true);
@@ -138,7 +138,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString() + ",");
             session.save(); session.refresh(true);
-            ReviewedActionsWorkflow reviewedWorkflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.requestPublication();
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
@@ -147,7 +147,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         // These steps would be taken by editor:
         {
             node = Utilities.getNode(root, "documents/myarticle/request");
-            RequestWorkflow workflow = (RequestWorkflow) getWorkflow(node, "default");
+            FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.rejectRequest("comma should be a point");
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
@@ -156,7 +156,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         // steps taken by an author
         {
             node = Utilities.getNode(root, "documents/myarticle/request[type='rejected']");
-            RequestWorkflow workflow = (RequestWorkflow) getWorkflow(node, "default");
+            BasicRequestWorkflow workflow = (BasicRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.cancelRequest();
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
@@ -165,13 +165,13 @@ public class ReviewedActionsWorkflowTest extends TestCase
         // steps taken by an author
         {
             node = Utilities.getNode(root, "documents/myarticle/myarticle[state='unpublished']");
-            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.obtainEditableInstance();
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
             node = Utilities.getNode(root, "documents/myarticle/myarticle[state='draft']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0,prop.getString().length()-1) + "!");
-            ReviewedActionsWorkflow reviewedWorkflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.requestPublication();
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
@@ -180,7 +180,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         // These steps would be taken by editor:
         {
             node = Utilities.getNode(root, "documents/myarticle/request[type='publish']");
-            RequestWorkflow workflow = (RequestWorkflow) getWorkflow(node, "default");
+            FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             workflow.acceptRequest();
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }
@@ -191,7 +191,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0,prop.getString().length()-1) + ".");
             session.save(); session.refresh(true);
-            ReviewedActionsWorkflow reviewedWorkflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.publish();
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
@@ -200,7 +200,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
         // These steps would be taken by author
         {
             node = Utilities.getNode(root, "documents/myarticle/myarticle[state='published']");
-            ReviewedActionsWorkflow workflow = (ReviewedActionsWorkflow) getWorkflow(node, "default");
+            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.requestDeletion();
             session.save(); session.refresh(true); Utilities.dump(root.getNode("documents"));
         }

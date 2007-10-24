@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdepublicati
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
-import org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflow;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class RequestDePublicationDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private ReviewedActionsWorkflow workflow;
+    private BasicReviewedActionsWorkflow workflow;
 
-    public RequestDePublicationDialog(DialogWindow dialogWindow, ReviewedActionsWorkflow workflow) {
+    public RequestDePublicationDialog(DialogWindow dialogWindow, BasicReviewedActionsWorkflow workflow) {
         super(dialogWindow);
         dialogWindow.setTitle("Request de-publication");
         this.workflow = workflow;

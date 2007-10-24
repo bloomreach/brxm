@@ -27,18 +27,11 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 import org.hippoecm.repository.servicing.WorkflowImpl;
 
-public class RequestWorkflowImpl extends WorkflowImpl implements RequestWorkflow {
+public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
 
-    public ReviewedActionsWorkflowImpl workflow;
-    public PublicationRequest request;
-    PublishableDocument document;
+    protected FullReviewedActionsWorkflowImpl workflow;
 
-    public RequestWorkflowImpl() throws RemoteException {
-    }
-
-    public void cancelRequest() throws WorkflowException, WorkflowMappingException, RepositoryException {
-        document = null;
-        request = null;
+    public FullRequestWorkflowImpl() throws RemoteException {
     }
 
     public void acceptRequest() throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException {

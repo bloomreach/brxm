@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.delete;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
-import org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflow;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
 public class DeleteDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private ReviewedActionsWorkflow workflow;
+    private FullReviewedActionsWorkflow workflow;
 
-    public DeleteDialog(DialogWindow dialogWindow, ReviewedActionsWorkflow workflow) {
+    public DeleteDialog(DialogWindow dialogWindow, FullReviewedActionsWorkflow workflow) {
         super(dialogWindow);
         dialogWindow.setTitle("Unpublish and/or delete");
         this.workflow = workflow;

@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableins
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
-import org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflow;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class DisposeEditableInstanceDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private ReviewedActionsWorkflow workflow;
+    private BasicReviewedActionsWorkflow workflow;
 
-    public DisposeEditableInstanceDialog(DialogWindow dialogWindow, ReviewedActionsWorkflow workflow) {
+    public DisposeEditableInstanceDialog(DialogWindow dialogWindow, BasicReviewedActionsWorkflow workflow) {
         super(dialogWindow);
         dialogWindow.setTitle("Dispose editable instance");
         this.workflow = workflow;

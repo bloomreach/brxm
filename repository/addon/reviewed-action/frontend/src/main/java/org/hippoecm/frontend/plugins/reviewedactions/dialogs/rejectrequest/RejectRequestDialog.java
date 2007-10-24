@@ -20,15 +20,15 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
-import org.hippoecm.repository.reviewedactions.RequestWorkflow;
+import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
 public class RejectRequestDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private RequestWorkflow workflow;
+    private FullRequestWorkflow workflow;
     private String reason;
 
-    public RejectRequestDialog(DialogWindow dialogWindow, RequestWorkflow workflow) {
+    public RejectRequestDialog(DialogWindow dialogWindow, FullRequestWorkflow workflow) {
         super(dialogWindow);
         dialogWindow.setTitle("Reject request");       
         this.workflow = workflow;

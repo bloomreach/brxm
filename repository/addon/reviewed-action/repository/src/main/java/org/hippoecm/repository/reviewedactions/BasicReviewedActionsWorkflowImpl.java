@@ -27,16 +27,18 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 import org.hippoecm.repository.servicing.WorkflowImpl;
 
-public class ReviewedActionsWorkflowImpl extends WorkflowImpl implements ReviewedActionsWorkflow {
-    public String content;
-    String username;
-    public PublicationRequest current;
-    public PublishableDocument published;
-    public PublishableDocument unpublished;
-    public PublishableDocument draft;
+public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements FullReviewedActionsWorkflow {
 
-    public ReviewedActionsWorkflowImpl() throws RemoteException {
+    protected String content;
+    protected String username;
+    protected PublicationRequest current;
+    protected PublishableDocument published;
+    protected PublishableDocument unpublished;
+    protected PublishableDocument draft;
+
+    public BasicReviewedActionsWorkflowImpl() throws RemoteException {
     }
+
     public void obtainEditableInstance() throws WorkflowException {
         System.err.println("obtain editable instance on document "+unpublished.getJcrIdentity());
         if(draft == null) {
