@@ -76,6 +76,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         Node node;
         String relPath;
     }
+
     private Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
       throws InvalidItemStateException, RepositoryException {
         if(last != null) {
@@ -181,20 +182,24 @@ class FieldManagerImpl extends AbstractFieldManager {
         } else
             return node;
     }
+
     private Property getProperty(Node node, String field) throws RepositoryException {
         return (Property) getItem(node, field, true, null);
     }
+
     private Property getProperty(Node node, String field, Entry last) throws RepositoryException {
         return (Property) getItem(node, field, true, last);
     }
+
     private Node getNode(Node node, String field) throws InvalidItemStateException, RepositoryException {
         return (Node) getItem(node, field, false, null);
     }
+
     private Node getNode(Node node, String field, String nodetype) throws RepositoryException {
         Entry last = new Entry();
         node = (Node) getItem(node, field, false, last);
-        if(node == null && last.node != null) {
-            if(nodetype != null)
+        if (node == null && last.node != null) {
+            if (nodetype != null)
                 node = last.node.addNode(last.relPath, nodetype);
             else
                 node = last.node.addNode(last.relPath);
@@ -204,18 +209,18 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public void storeBooleanField(int fieldNumber, boolean value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled()) 
-           log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
                 Entry last = new Entry();
                 Property property = getProperty(node, field, last);
-                if(property == null)
+                if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
                     property.setValue(value);
@@ -235,10 +240,10 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public boolean fetchBooleanField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         boolean value = false;
         if (field != null) {
@@ -258,26 +263,26 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled())
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
+                    + "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeCharField(int fieldNumber, char value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
                 Entry last = new Entry();
                 Property property = getProperty(node, field, last);
-                if(property == null)
+                if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
                     property.setValue(value);
@@ -297,10 +302,10 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public char fetchCharField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         char value = ' ';
         if (field != null) {
@@ -320,26 +325,26 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled())
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
+                    + "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeByteField(int fieldNumber, byte value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
                 Entry last = new Entry();
                 Property property = getProperty(node, field, last);
-                if(property == null)
+                if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
                     property.setValue(value);
@@ -359,10 +364,10 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public short fetchShortField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         short value = 0;
         if (field != null) {
@@ -382,26 +387,26 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled())
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
+                    + "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeIntField(int fieldNumber, int value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
                 Entry last = new Entry();
                 Property property = getProperty(node, field, last);
-                if(property == null)
+                if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
                     property.setValue(value);
@@ -421,10 +426,10 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public int fetchIntField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         int value = 0;
         if (field != null) {
@@ -444,26 +449,26 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled())
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
+                    + "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeLongField(int fieldNumber, long value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
                 Entry last = new Entry();
                 Property property = getProperty(node, field, last);
-                if(property == null)
+                if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
                     property.setValue(value);
@@ -483,10 +488,10 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public long fetchLongField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         long value = 0L;
         if (field != null) {
@@ -506,26 +511,26 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled())
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
+                    + "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeFloatField(int fieldNumber, float value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
                 Entry last = new Entry();
                 Property property = getProperty(node, field, last);
-                if(property == null)
+                if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
                     property.setValue(value);
@@ -545,10 +550,10 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public float fetchFloatField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         float value = 0.0F;
         if (field != null) {
@@ -568,26 +573,26 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled())
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
+                    + "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeDoubleField(int fieldNumber, double value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
                 Entry last = new Entry();
                 Property property = getProperty(node, field, last);
-                if(property == null)
+                if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
                     property.setValue(value);
@@ -607,10 +612,10 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public double fetchDoubleField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         double value = 0.0;
         if (field != null) {
@@ -630,26 +635,26 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled())
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
+                    + "\" = \"" + value + "\"");
         return value;
     }
 
     public void storeStringField(int fieldNumber, String value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null && !field.equals("jcr:uuid")) {
             try {
                 Entry last = new Entry();
                 Property property = getProperty(node, field, last);
-                if(property == null)
+                if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
                     property.setValue(value);
@@ -669,13 +674,13 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public String fetchStringField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         String value = "";
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("fetching \"" + cmd.getField(fieldNumber).getFullFieldName() + "\" = \"" + field + "\"");
         }
         if (field != null) {
@@ -683,7 +688,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 Node node = oid.getNode(session);
                 Property property = getProperty(node, field);
-                if(property != null)
+                if (property != null)
                     value = property.getString();
                 else
                     value = null;
@@ -699,35 +704,35 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled()) {
-            log.debug("fetched \"" + cmd.getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetched \"" + cmd.getField(fieldNumber).getFullFieldName() + "\" = \"" + field + "\" = \""
+                    + value + "\"");
         }
         return value;
     }
 
     public void storeObjectField(int fieldNumber, Object value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
-        if(log.isDebugEnabled())
-            log.debug("store \""+field+"\" = \""+value+"\"");
+        if (log.isDebugEnabled())
+            log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field == null)
             return;
         if (value == null) {
             try {
                 Node removal = getNode(node, field);
                 removal.remove();
-            } catch(InvalidItemStateException ex) {
-                if(log.isDebugEnabled()) {
-                    log.debug("node already deleted: "+ex.getMessage());
+            } catch (InvalidItemStateException ex) {
+                if (log.isDebugEnabled()) {
+                    log.debug("node already deleted: " + ex.getMessage());
                 }
-            } catch(VersionException ex) {
+            } catch (VersionException ex) {
                 throw new JPOXDataStoreException("VersionException", ex);
-            } catch(RepositoryException ex) {
+            } catch (RepositoryException ex) {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
             return;
@@ -744,22 +749,22 @@ class FieldManagerImpl extends AbstractFieldManager {
                 String classname = value.getClass().getName();
                 Node nodetypeNode = types.getNode(classname);
                 String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
-                if(value instanceof Document && ((Document)value).getJcrCloned() != null) {
+                if (value instanceof Document && ((Document) value).getJcrCloned() != null) {
                     Entry last = new Entry();
                     child = (Node) getItem(node, field, false, last);
-                    if(child == null) {
+                    if (child == null) {
                         Document document = (Document) value;
                         child = node.getSession().getNodeByUUID(document.getJcrCloned().getJcrIdentity());
-                        child = Utilities.copy(child, last.node.getPath()+"/"+last.relPath);
+                        child = Utilities.copy(child, last.node.getPath() + "/" + last.relPath);
                     }
                 } else
                     child = getNode(node, field, nodetype);
 
                 id = new JCROID(child.getUUID(), classname);
                 StateManager pcSM = StateManagerFactory
-                    .newStateManagerForPersistentClean(sm.getObjectManager(), id, pc);
+                        .newStateManagerForPersistentClean(sm.getObjectManager(), id, pc);
                 pcSM.provideFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(pcSM, session,
-                                                                                                      types, child));
+                        types, child));
             } catch (ItemExistsException ex) {
                 try {
                     throw new JPOXDataStoreException("ItemExistsException", ex, node.getPath() + "/" + field);
@@ -790,10 +795,10 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     public Object fetchObjectField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
-        if(fieldNumber >= cmd.getNoOfFields()) {
-            fieldNumber -= cmd.getNoOfFields();
-            cmd = cmd.getBaseAbstractClassMetaData();
+        while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
+            cmd = cmd.getSuperAbstractClassMetaData();
         }
+        fieldNumber -= cmd.getNoOfInheritedManagedFields();
         String field = cmd.getField(fieldNumber).getColumn();
         Object value = null;
         if (field != null) {
@@ -801,14 +806,12 @@ class FieldManagerImpl extends AbstractFieldManager {
             try {
                 Node node = oid.getNode(session);
                 Node child = getNode(node, field);
-                if(child != null) {
-                    Utilities.dump(node);
-                    Class clazz = sm.getClassMetaData().getField(fieldNumber).getType();
+                if (child != null) {
+                    Class clazz = cmd.getField(fieldNumber).getType();
                     Object id = new JCROID(child.getUUID(), clazz.getName());
                     StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
                     //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));
                     value = pcSM.getObject();
-
                 }
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
@@ -822,9 +825,9 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if(log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field +
-                      "\" = \"" + value + "\"");
+        if (log.isDebugEnabled())
+            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
+                    + "\" = \"" + value + "\"");
         return value;
     }
 }

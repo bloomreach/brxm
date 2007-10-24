@@ -169,7 +169,7 @@ public class StoreManagerImpl extends StoreManager {
     public void insertObject(StateManager sm) {
         ObjectManager om = sm.getObjectManager();
         ManagedConnection mconn = getConnection(om);
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("insert object");
         try {
             Session session = (Session) mconn.getConnection();
@@ -181,8 +181,8 @@ public class StoreManagerImpl extends StoreManager {
             String nodeName = null; // FIXME: cmd.getColumn();
             if (nodeName == null || nodeName.equals(""))
                 nodeName = cmd.getEntityName();
-                Node nodetypeNode = types.getNode(cmd.getFullClassName());
-                node = node.addNode(nodeName, nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
+            Node nodetypeNode = types.getNode(cmd.getFullClassName());
+            node = node.addNode(nodeName, nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
             sm.provideFields(cmd.getAllFieldNumbers(), new FieldManagerImpl(sm, session, types, node));
         } catch (PathNotFoundException ex) {
             System.err.println("PathNotFoundException: " + ex.getMessage());
@@ -205,7 +205,7 @@ public class StoreManagerImpl extends StoreManager {
 
     public void updateObject(StateManager sm, int fieldNumbers[]) {
         ManagedConnection mconn = getConnection(sm.getObjectManager());
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("update object");
         try {
             Session session = (Session) mconn.getConnection();
@@ -226,7 +226,7 @@ public class StoreManagerImpl extends StoreManager {
 
     public void fetchObject(StateManager sm, int fieldNumbers[]) {
         ManagedConnection mconn = getConnection(sm.getObjectManager());
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("fetch object");
         try {
             Session session = (Session) mconn.getConnection();
@@ -238,7 +238,7 @@ public class StoreManagerImpl extends StoreManager {
     }
 
     public void locateObject(StateManager sm) {
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("locate object");
         /* For some reason, the following line causes problems.
          * getDatastoreClass(sm.getObject().getClass().getName(), sm.getObjectManager().getClassLoaderResolver())
@@ -247,30 +247,30 @@ public class StoreManagerImpl extends StoreManager {
     }
 
     public Object findObject(ObjectManager om, Object id) {
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("find object");
         return null;
     }
 
     public void deleteObject(StateManager sm) {
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("delete object");
         // FIXME
     }
 
     public Object newObjectID(ObjectManager om, String className, PersistenceCapable pc) {
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("new object id");
         return super.newObjectID(om, className, pc);
     }
 
     public void flush(ObjectManager om) {
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("flush");
     }
 
     public boolean usesDatastoreClass() {
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("uses datastore class");
         return false;
     }
@@ -281,7 +281,7 @@ public class StoreManagerImpl extends StoreManager {
     }
 
     public boolean isStrategyDatastoreAttributed(IdentityStrategy identityStrategy, boolean datastoreIdentityField) {
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
             log.debug("is datastore attributed");
         return true;
     }
