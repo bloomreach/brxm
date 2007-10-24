@@ -70,12 +70,6 @@ public class BasicTest extends TestCase {
     public void testMyArticleHasWorkflow() throws Exception {
         try {
             selenium.open("/");
-            selenium.click("//span/span");
-            for (int second = 0;; second++) {
-                if (second >= 60) fail("timeout");
-                try { if (selenium.isElementPresent("//div[6]/div/a[2]/span[2]")) break; } catch (Exception e) {}
-                Thread.sleep(1000);
-            }
 
             selenium.click("//div[6]/div/a[1]/span/span");
             for (int second = 0;; second++) {
@@ -152,12 +146,6 @@ public class BasicTest extends TestCase {
      */
     public void testAddNode() throws Exception {
         selenium.open("/");
-        selenium.click("//span/span");
-        for (int second = 0;; second++) {
-            if (second >= 60) fail("timeout");
-            try { if (selenium.isElementPresent("//div[6]/div/a[1]/span/span")) break; } catch (Exception e) {}
-            Thread.sleep(1000);
-        }
 
         selenium.click("//div[6]/div/a[1]/span/span");
         for (int second = 0;; second++) {
