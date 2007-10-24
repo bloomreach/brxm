@@ -25,13 +25,13 @@
                 <sv:value>hippo:document</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:classname" sv:type="String">
-                <sv:value>org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflowImpl</sv:value>
+                <sv:value>org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:display" sv:type="String">
                 <sv:value>Reviewed actions workflow</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.ReviewedActionsWorkflowPlugin</sv:value>
+                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullReviewedActionsWorkflowPlugin</sv:value>
             </sv:property>
             <sv:node sv:name="hippo:types">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -75,13 +75,13 @@
                 <sv:value>hippo:document</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:classname" sv:type="String">
-                <sv:value>org.hippoecm.repository.reviewedactions.AuthorReviewedActionsWorkflowImpl</sv:value>
+                <sv:value>org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflowImpl</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:display" sv:type="String">
                 <sv:value>Author Reviewed actions workflow</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.AuthorReviewedActionsWorkflowPlugin</sv:value>
+                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicReviewedActionsWorkflowPlugin</sv:value>
             </sv:property>
             <sv:node sv:name="hippo:types">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -128,13 +128,13 @@
                 <sv:value>hippo:request</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:classname" sv:type="String">
-                <sv:value>org.hippoecm.repository.reviewedactions.RequestWorkflowImpl</sv:value>
+                <sv:value>org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:display" sv:type="String">
                 <sv:value>Reviewed requests workflow</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.RequestWorkflowPlugin</sv:value>
+                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullRequestWorkflowPlugin</sv:value>
             </sv:property>
             <sv:node sv:name="hippo:types">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -178,13 +178,13 @@
                 <sv:value>hippo:request</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:classname" sv:type="String">
-                <sv:value>org.hippoecm.repository.reviewedactions.AuthorRequestWorkflowImpl</sv:value>
+                <sv:value>org.hippoecm.repository.reviewedactions.BasicRequestWorkflowImpl</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:display" sv:type="String">
                 <sv:value>Author Reviewed requests workflow</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.AuthorRequestWorkflowPlugin</sv:value>
+                <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicRequestWorkflowPlugin</sv:value>
             </sv:property>
             <sv:node sv:name="hippo:types">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
