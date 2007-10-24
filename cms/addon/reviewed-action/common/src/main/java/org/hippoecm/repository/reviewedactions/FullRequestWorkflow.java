@@ -24,13 +24,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 
-public interface RequestWorkflow extends Workflow {
-    /**
-     * Cancels and/or disposes (!) the request.
-     */
-    public void cancelRequest()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
-
+public interface FullRequestWorkflow extends BasicRequestWorkflow {
     /**
      * Approve and execute or schedule request
      */

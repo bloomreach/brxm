@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
-import org.hippoecm.repository.reviewedactions.RequestWorkflow;
+import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
 public class CancelRequestDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private RequestWorkflow workflow;
+    private BasicRequestWorkflow workflow;
 
-    public CancelRequestDialog(DialogWindow dialogWindow, RequestWorkflow workflow) {
+    public CancelRequestDialog(DialogWindow dialogWindow, BasicRequestWorkflow workflow) {
         super(dialogWindow);
         dialogWindow.setTitle("Cancel request");
         this.workflow = workflow;

@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
-import org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflow;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class RequestPublicationDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private ReviewedActionsWorkflow workflow;
+    private BasicReviewedActionsWorkflow workflow;
 
-    public RequestPublicationDialog(DialogWindow dialogWindow, ReviewedActionsWorkflow workflow) {
+    public RequestPublicationDialog(DialogWindow dialogWindow, BasicReviewedActionsWorkflow workflow) {
         super(dialogWindow);
         dialogWindow.setTitle("Request publication");
         this.workflow = workflow;

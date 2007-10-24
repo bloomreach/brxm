@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinst
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
-import org.hippoecm.repository.reviewedactions.ReviewedActionsWorkflow;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class ObtainEditableInstanceDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private ReviewedActionsWorkflow workflow;
+    private BasicReviewedActionsWorkflow workflow;
 
-    public ObtainEditableInstanceDialog(DialogWindow dialogWindow, ReviewedActionsWorkflow workflow) {
+    public ObtainEditableInstanceDialog(DialogWindow dialogWindow, BasicReviewedActionsWorkflow workflow) {
         super(dialogWindow);
         dialogWindow.setTitle("Obtain editable instance");
         this.workflow = workflow;

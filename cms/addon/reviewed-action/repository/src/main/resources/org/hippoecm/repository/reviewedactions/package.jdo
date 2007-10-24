@@ -1,7 +1,10 @@
 <!DOCTYPE jdo PUBLIC "-//Sun Microsystems, Inc.//DTD Java Data Objects Metadata 2.0//EN" "jdo2.dtd">
 <jdo>
   <package name="org.hippoecm.repository.reviewedactions">
-    <class name="ReviewedActionsWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
+    <class name="FullReviewedActionsWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
+      <datastore-identity strategy="native"/>
+    </class>
+    <class name="BasicReviewedActionsWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
       <field name="content" column="content"/>
       <field name="username" column="username"/>
@@ -10,25 +13,13 @@
       <field name="published" column="../{.}[state='published']"/>
       <field name="current" column="../request[state='current']"/>
     </class>
-    <class name="AuthorReviewedActionsWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
+    <class name="FullRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
-      <field name="content" column="content"/>
-      <field name="username" column="username"/>
-      <field name="draft" column="../{.}[state='draft']"/>
-      <field name="unpublished" column="../{.}[state='unpublished']"/>
-      <field name="published" column="../{.}[state='published']"/>
-      <field name="current" column="../request[state='current']"/>
+      <field name="workflow" column="../{..}[state='draft']"/>
     </class>
-    <class name="RequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
+    <class name="BasicRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
       <field name="request" column="."/>
-      <field name="workflow" column="../{..}[state='draft']"/>
-      <field name="document" column="{document}"/>
-    </class>
-    <class name="AuthorRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
-      <datastore-identity strategy="native"/>
-      <field name="request" column="."/>
-      <field name="workflow" column="../{..}[state='draft']"/>
       <field name="document" column="{document}"/>
     </class>
     <class name="PublishableDocument" detachable="true" table="documents">

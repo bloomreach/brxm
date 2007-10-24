@@ -27,15 +27,9 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 import org.hippoecm.repository.servicing.WorkflowImpl;
 
-public class AuthorReviewedActionsWorkflowImpl extends WorkflowImpl implements AuthorReviewedActionsWorkflow {
-    public String content;
-    String username;
-    public PublicationRequest current;
-    public PublishableDocument published;
-    public PublishableDocument unpublished;
-    public PublishableDocument draft;
+public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
-    public AuthorReviewedActionsWorkflowImpl() throws RemoteException {
+    public FullReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
     public void obtainEditableInstance() throws WorkflowException {

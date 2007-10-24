@@ -11,12 +11,12 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.Cance
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest.RejectRequestDialog;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.RequestWorkflow;
+import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
-public class RequestWorkflowPlugin extends WorkflowPlugin {
+public class FullRequestWorkflowPlugin extends WorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    public RequestWorkflowPlugin(String id, final JcrNodeModel model, WorkflowManager workflowManager,
+    public FullRequestWorkflowPlugin(String id, final JcrNodeModel model, WorkflowManager workflowManager,
             WorkflowDescriptor workflowDescriptor) {
         super(id, model, workflowManager, workflowDescriptor);
 
@@ -24,7 +24,7 @@ public class RequestWorkflowPlugin extends WorkflowPlugin {
         acceptRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new AcceptRequestDialog(acceptRequestDialog, (RequestWorkflow) getWorkflow());
+                return new AcceptRequestDialog(acceptRequestDialog, (FullRequestWorkflow) getWorkflow());
             }
         });
         add(acceptRequestDialog);
@@ -34,7 +34,7 @@ public class RequestWorkflowPlugin extends WorkflowPlugin {
         rejectRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new RejectRequestDialog(rejectRequestDialog, (RequestWorkflow) getWorkflow());
+                return new RejectRequestDialog(rejectRequestDialog, (FullRequestWorkflow) getWorkflow());
             }
         });
         add(rejectRequestDialog);
@@ -44,7 +44,7 @@ public class RequestWorkflowPlugin extends WorkflowPlugin {
         cancelRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new CancelRequestDialog(cancelRequestDialog, (RequestWorkflow) getWorkflow());
+                return new CancelRequestDialog(cancelRequestDialog, (FullRequestWorkflow) getWorkflow());
             }
         });
         add(cancelRequestDialog);

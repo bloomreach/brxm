@@ -6,15 +6,15 @@ import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.WorkflowPlugin;
-import org.hippoecm.frontend.plugins.reviewedactions.authordialogs.cancelrequest.CancelRequestDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.CancelRequestDialog;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.AuthorRequestWorkflow;
+import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
-public class AuthorRequestWorkflowPlugin extends WorkflowPlugin {
+public class BasicRequestWorkflowPlugin extends WorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    public AuthorRequestWorkflowPlugin(String id, JcrNodeModel model, WorkflowManager workflowManager,
+    public BasicRequestWorkflowPlugin(String id, JcrNodeModel model, WorkflowManager workflowManager,
             WorkflowDescriptor workflowDescriptor) {
         super(id, model, workflowManager, workflowDescriptor);
 
@@ -22,7 +22,7 @@ public class AuthorRequestWorkflowPlugin extends WorkflowPlugin {
         cancelRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new CancelRequestDialog(cancelRequestDialog, (AuthorRequestWorkflow) getWorkflow());
+                return new CancelRequestDialog(cancelRequestDialog, (BasicRequestWorkflow) getWorkflow());
             }
         });
         add(cancelRequestDialog);

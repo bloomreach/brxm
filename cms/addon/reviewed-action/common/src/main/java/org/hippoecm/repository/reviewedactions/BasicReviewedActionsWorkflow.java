@@ -25,7 +25,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
 
-public interface AuthorReviewedActionsWorkflow extends Workflow {
+public interface BasicReviewedActionsWorkflow extends Workflow {
     /**
      * Request this editable copy of the document.
      */
