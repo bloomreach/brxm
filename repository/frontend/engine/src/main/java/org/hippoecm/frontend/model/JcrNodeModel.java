@@ -241,10 +241,17 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
             childCount = 0;
         } else if (reloadChildCount) {
             try {
-                // never a child count  needed for HippoNodeType.NT_FACETRESULT or HippoNodeType.NT_FACETSEARCH. It is
-                // very slow to do a child count for large result sets!
+                /*
+                 * When the node is of type NT_FACETRESULT or NT_FACETSEARCH, always show a folder! Therefor, 
+                 * a placeholder childCount = 1 is used. Note that not the real count 
+                 * getNode().getNodes().getSize() is used, because this might be extremely expensive.
+                 * When opening a folder, the real childCount is set on the parent to ensuer a correct drawn tree.
+                 * Setting the correct number on the parent is not expensive anymore, because you already opened
+                 * the folder. Setting the correct number directly will result in extreme slow results.
+                 */
                 if(getNode().isNodeType(HippoNodeType.NT_FACETRESULT) || getNode().isNodeType(HippoNodeType.NT_FACETSEARCH)){
                     childCount = 1;
+                    parent.childCount = (int) parent.getNode().getNodes().getSize();
                 }
                 else {
                     childCount = (int) jcrNode.getNodes().getSize();
