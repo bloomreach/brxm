@@ -36,7 +36,7 @@ public class RootPlugin extends Plugin {
 
         // create a list of ITab objects used to feed the tabbed panel
         List tabs = new ArrayList();
-        tabs.add(new AbstractTab(new Model("first tab"))
+        tabs.add(new AbstractTab(new Model("Browse"))
         {
             public Panel getPanel(String panelId)
             {
@@ -44,7 +44,7 @@ public class RootPlugin extends Plugin {
             }
         });
 
-        tabs.add(new AbstractTab(new Model("second tab"))
+        tabs.add(new AbstractTab(new Model("Edit"))
         {
             public Panel getPanel(String panelId)
             {
