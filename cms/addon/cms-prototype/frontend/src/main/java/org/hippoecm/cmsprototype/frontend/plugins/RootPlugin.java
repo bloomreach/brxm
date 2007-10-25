@@ -26,7 +26,10 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin;
+//import org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin;
+import org.hippoecm.cmsprototype.frontend.plugins.browser.BrowserPlugin;
+import org.hippoecm.cmsprototype.frontend.plugins.editor.EditorPlugin;
+
 
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
@@ -97,6 +100,7 @@ public class RootPlugin extends Plugin {
         public TabPanel2(String id, JcrNodeModel model)
         {
             super(id);
+            add(new EditorPlugin("editor", model));
         }
     };
     
