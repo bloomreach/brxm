@@ -38,9 +38,13 @@ public class RootPlugin extends Plugin {
         List tabs = new ArrayList();
         tabs.add(new AbstractTab(new Model("Browse"))
         {
+        	private Panel panel = null;
             public Panel getPanel(String panelId)
             {
-                return new TabPanel1(panelId, model);
+            	if(panel == null) {
+            		panel = new TabPanel1(panelId, model); 
+            	}
+                return panel;
             }
         });
 

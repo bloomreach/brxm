@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Reviewed action frontend</name>
+  <name>CMS prototype frontend</name>
   <description>Hippo ECM CMS prototype frontend addons</description>
   <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
   <packaging>jar</packaging>
