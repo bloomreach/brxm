@@ -42,6 +42,7 @@
   <modules>
     <module>default</module>
     <module>reviewed-action</module>
+    <module>cms-prototype</module>
   </modules>
   
   <dependencyManagement>
