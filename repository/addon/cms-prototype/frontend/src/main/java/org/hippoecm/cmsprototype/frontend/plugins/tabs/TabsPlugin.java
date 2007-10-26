@@ -17,14 +17,18 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 
+import org.hippoecm.cmsprototype.frontend.plugins.tabs.IConsumer;
+
 public class TabsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-    
+
     ArrayList tabs;
-    
+    private List listeners;
+
     public TabsPlugin(String id, JcrNodeModel model) {
         super(id, model);
         tabs = new ArrayList();
+        listeners = new ArrayList();
     }
 
     public void addChildren(PluginConfig pluginConfig) {
@@ -33,10 +37,15 @@ public class TabsPlugin extends Plugin {
         List plugins = new ArrayList();
         while (it.hasNext()) {
             PluginDescriptor childDescriptor = (PluginDescriptor) it.next();
-            PluginDescriptor tabDescriptor = new PluginDescriptor(childDescriptor.getPath(), childDescriptor.getClassName(),
-                    TabbedPanel.TAB_PANEL_ID);
+            PluginDescriptor tabDescriptor = new PluginDescriptor(childDescriptor.getPath(), childDescriptor
+                    .getClassName(), TabbedPanel.TAB_PANEL_ID);
             final Plugin child = new PluginFactory(tabDescriptor).getPlugin((JcrNodeModel) getModel());
-            
+
+            // tell child that there is a browser
+            if (child instanceof IConsumer) {
+                listeners.add(child);
+            }
+
             tabs.add(new AbstractTab(new Model(childDescriptor.getId())) {
                 private static final long serialVersionUID = 1L;
 
@@ -47,16 +56,19 @@ public class TabsPlugin extends Plugin {
             plugins.add(child);
         }
         add(new AjaxTabbedPanel("tabs", tabs));
-//        it= plugins.iterator();
-//        while(it.hasNext()) {
-//            Plugin child = (Plugin) it.next();
-//            child.addChildren(pluginConfig);
-//        }
+        //        it= plugins.iterator();
+        //        while(it.hasNext()) {
+        //            Plugin child = (Plugin) it.next();
+        //            child.addChildren(pluginConfig);
+        //        }
     }
 
     @Override
-    public void update(AjaxRequestTarget target, JcrEvent model) {
-        
+    public void update(AjaxRequestTarget target, JcrEvent event) {
+        Iterator it = listeners.iterator();
+        while (it.hasNext()) {
+            IConsumer child = (IConsumer) it.next();
+            child.setModel(event.getModel());
+        }
     }
-
 }
