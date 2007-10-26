@@ -32,6 +32,12 @@ public class PluginDescriptor implements IClusterable {
         this.className = className;
         this.path = path;
     }
+    
+    public PluginDescriptor(String path, String className, String id) {
+        this.id = id;
+        this.className = className;
+        this.path = path;
+    }
 
     public PluginDescriptor(String path, WorkflowDescriptor workflowDescriptor) {
         this.id = path.substring(path.lastIndexOf(":") + 1);
