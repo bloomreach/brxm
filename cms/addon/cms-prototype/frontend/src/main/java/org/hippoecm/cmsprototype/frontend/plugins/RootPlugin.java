@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.plugins.perspectives.BrowserPerspective;
 import org.hippoecm.cmsprototype.frontend.plugins.perspectives.EditPerspective;
+import org.hippoecm.cmsprototype.frontend.plugins.tabs.TabsPlugin;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -37,32 +38,9 @@ import org.hippoecm.frontend.plugin.config.PluginConfig;
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    private List tabs;
-
     public RootPlugin(String id, final JcrNodeModel model) {
         super(id, model);
 
-        tabs = new ArrayList();
-        add(new AjaxTabbedPanel("tabs", tabs));
-    }
-
-    @Override
-    public void addChildren(PluginConfig pluginConfig) {
-        List children = pluginConfig.getChildren(new PluginDescriptor(this));
-        Iterator it = children.iterator();
-        while (it.hasNext()) {
-            final PluginDescriptor childDescriptor = (PluginDescriptor) it.next();
-
-            tabs.add(new AbstractTab(new Model(childDescriptor.getId())) {
-                private static final long serialVersionUID = 1L;
-
-                public Panel getPanel(String panelId) {
-                    PluginDescriptor tabDescriptor = new PluginDescriptor(childDescriptor.getPath(), childDescriptor
-                            .getClassName(), panelId);
-                    return new PluginFactory(tabDescriptor).getPlugin((JcrNodeModel) getModel());
-                }
-            });
-        }
     }
 
     public void update(final AjaxRequestTarget target, JcrEvent jcrEvent) {
