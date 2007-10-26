@@ -26,9 +26,8 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
-//import org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin;
-import org.hippoecm.cmsprototype.frontend.plugins.browser.BrowserPlugin;
-import org.hippoecm.cmsprototype.frontend.plugins.editor.EditorPlugin;
+import org.hippoecm.cmsprototype.frontend.plugins.perspectives.BrowserPerspective;
+import org.hippoecm.cmsprototype.frontend.plugins.perspectives.EditPerspective;
 
 
 public class RootPlugin extends Plugin {
@@ -45,7 +44,7 @@ public class RootPlugin extends Plugin {
             public Panel getPanel(String panelId)
             {
             	if(panel == null) {
-            		panel = new TabPanel1(panelId, model); 
+            		panel = new BrowserPerspective(panelId, model); 
             	}
                 return panel;
             }
@@ -55,7 +54,7 @@ public class RootPlugin extends Plugin {
         {
             public Panel getPanel(String panelId)
             {
-                return new TabPanel2(panelId, model);
+                return new EditPerspective(panelId, model);
             }
         });
 
@@ -66,42 +65,5 @@ public class RootPlugin extends Plugin {
 
     public void update(final AjaxRequestTarget target, JcrEvent jcrEvent) {
     }
-
-    /**
-     * Panel representing the content panel for the first tab.
-     */
-    private static class TabPanel1 extends Panel
-    {
-        /**
-         * Constructor
-         * 
-         * @param id
-         *            component id
-         */
-        public TabPanel1(String id, JcrNodeModel model)
-        {
-            super(id);
-            
-            add(new BrowserPlugin("tree", model));
-        }
-    };
-
-    /**
-     * Panel representing the content panel for the second tab.
-     */
-    private static class TabPanel2 extends Panel
-    {
-        /**
-         * Constructor
-         * 
-         * @param id
-         *            component id
-         */
-        public TabPanel2(String id, JcrNodeModel model)
-        {
-            super(id);
-            add(new EditorPlugin("editor", model));
-        }
-    };
     
 }
