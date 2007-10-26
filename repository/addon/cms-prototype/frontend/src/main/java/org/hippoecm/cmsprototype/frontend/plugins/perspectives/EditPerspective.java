@@ -15,14 +15,17 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.cmsprototype.frontend.plugins.editor.EditorPlugin;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.Plugin;
 
 /**
  * Panel representing the content panel for the first tab.
  */
-public class EditPerspective extends Panel
+public class EditPerspective extends Plugin
 {
     /**
 	 * 
@@ -37,9 +40,15 @@ public class EditPerspective extends Panel
      */
     public EditPerspective(String id, JcrNodeModel model)
     {
-        super(id);
+        super(id, model);
         
-        add(new EditorPlugin("editor", model));
+        //add(new EditorPlugin("editor", model));
+    }
+
+    @Override
+    public void update(AjaxRequestTarget target, JcrEvent model) {
+        // TODO Auto-generated method stub
+        
     }
 }
 

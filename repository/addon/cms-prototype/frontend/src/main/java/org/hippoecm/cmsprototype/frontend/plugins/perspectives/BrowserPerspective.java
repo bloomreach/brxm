@@ -15,14 +15,17 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.cmsprototype.frontend.plugins.browser.BrowserPlugin;
+import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.Plugin;
 
 /**
  * Panel representing the content panel for the first tab.
  */
-public class BrowserPerspective extends Panel
+public class BrowserPerspective extends Plugin
 {
     /**
 	 * 
@@ -37,9 +40,15 @@ public class BrowserPerspective extends Panel
      */
     public BrowserPerspective(String id, JcrNodeModel model)
     {
-        super(id);
+        super(id, model);
         
-        add(new BrowserPlugin("tree", model));
+        //add(new BrowserPlugin("tree", model));
+    }
+
+    @Override
+    public void update(AjaxRequestTarget target, JcrEvent model) {
+        // TODO Auto-generated method stub
+        
     }
 }
 
