@@ -37,7 +37,7 @@
             <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.browser.BrowserPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin</sv:value>
           </sv:property>
         </sv:node>
 
@@ -56,7 +56,7 @@
             <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.editor.EditorPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.admin.editor.EditorPlugin</sv:value>
           </sv:property>
         </sv:node>
 

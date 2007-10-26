@@ -17,7 +17,6 @@ package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.cmsprototype.frontend.plugins.editor.EditorPlugin;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
