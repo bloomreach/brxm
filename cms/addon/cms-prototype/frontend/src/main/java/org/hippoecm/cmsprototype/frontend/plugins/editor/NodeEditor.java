@@ -13,23 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.cmsprototype.frontend.plugins;
+package org.hippoecm.cmsprototype.frontend.plugins.editor;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugins.admin.editor.PropertiesEditor;
 
-
-public class RootPlugin extends Plugin {
+public class NodeEditor extends Form {
     private static final long serialVersionUID = 1L;
 
-    public RootPlugin(String id, final JcrNodeModel model) {
+    public NodeEditor(String id, final JcrNodeModel model) {
         super(id, model);
-
+        setOutputMarkupId(true);
+        add(new PropertiesEditor("properties", model));
     }
 
-    public void update(final AjaxRequestTarget target, JcrEvent jcrEvent) {
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
+        JcrNodeModel model = jcrEvent.getModel();
+        setModel(model);
+        if (target != null) {
+            target.addComponent(this);
+        }
     }
-    
+
+    public void setModel(JcrNodeModel model) {
+        if (model != null) {
+            JcrNodeModel editorNodeModel = (JcrNodeModel) getModel();
+            editorNodeModel.impersonate(model);
+        }
+    }
 }
