@@ -33,6 +33,7 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -44,6 +45,8 @@ import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
+import org.hippoecm.repository.query.lucene.FixedScoreSimilarity;
+import org.hippoecm.repository.query.lucene.FixedScoreTermQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
@@ -128,111 +131,98 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                        Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
                        HitsRequested hitsRequested) throws UnsupportedOperationException
     {
+        
+        NamespaceMappings nsMappings = getNamespaceMappings();
+
+        /*
+         * facetsQuery: get the query for the facets that are asked for
+         */
+        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
+
+        /*
+         * initialQuery: get the query for initialQuery 
+         */
+        org.apache.lucene.search.Query initialLuceneQuery = null;
+        if(initialQuery != null && !initialQuery.xpath.equals("")) {
+            initialLuceneQuery = new FixedScoreTermQuery(new Term(ServicingFieldNames.HIPPO_PATH,initialQuery.xpath));
+        }
+
+        /*
+         * authorizationQuery: get the query for the facets the person is allowed to see (which
+         * is again a facetsQuery)
+         */
+
+        AuthorizationQuery authorizationQuery = new AuthorizationQuery(authorization.authorizationQuery,
+                   facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig(), true);
+
+        BooleanQuery searchQuery = new BooleanQuery(true);
+
+        if(facetsQuery.getQuery().clauses().size() > 0){
+            searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
+        }
+        // TODO perhaps create cached user specific filter for authorisation to gain speed
+        if(authorizationQuery.getQuery().clauses().size() > 0){
+            searchQuery.add(authorizationQuery.getQuery(), Occur.MUST);
+        }
+
+        if(initialLuceneQuery != null){
+            searchQuery.add(initialLuceneQuery, Occur.MUST);
+        }
+
+        FacetResultCollector collector = null; 
+        IndexReader indexReader = null;
+        IndexSearcher searcher = null; ;
         try {
-            Session session = authorization.session;
-
-            RepositoryImpl repository = (RepositoryImpl) RepositoryDecorator.unwrap(session.getRepository());
-            SearchManager searchManager = repository.getSearchManager(session.getWorkspace().getName()) ;
-
-            NamespaceMappings nsMappings = getNamespaceMappings();
-    
-            /*
-             * facetsQuery: get the query for the facets that are asked for
-             */
-            FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
-
-            /*
-             * initialQuery: get the query for initialQuery 
-             */
-            org.apache.lucene.search.Query initialLuceneQuery = null;
-            if(initialQuery != null && !initialQuery.xpath.equals("")) {
-                initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH,initialQuery.xpath));
-            }
-
-            /*
-             * authorizationQuery: get the query for the facets the person is allowed to see (which
-             * is again a facetsQuery)
-             */
-
-            AuthorizationQuery authorizationQuery = new AuthorizationQuery(authorization.authorizationQuery,
-                       facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig(), true);
-
-            BooleanQuery searchQuery = new BooleanQuery();
-
-            if(facetsQuery.getQuery().clauses().size() > 0){
-                searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
-            }
-            // TODO perhaps create cached user specific filter for authorisation to gain speed
-            if(authorizationQuery.getQuery().clauses().size() > 0){
-                searchQuery.add(authorizationQuery.getQuery(), Occur.MUST);
-            }
-
-            if(initialLuceneQuery != null){
-                searchQuery.add(initialLuceneQuery, Occur.MUST);
-            }
-
-            FacetResultCollector collector = null; 
-            IndexReader indexReader = null;
-            IndexSearcher searcher = null; ;
-            try {
-                indexReader = getIndex().getIndexReader();
-                searcher = new IndexSearcher(indexReader);
-
-                // In principle, below, there is always one facet 
-                if(resultset != null){
-                    for(String facet : resultset.keySet()) {
-                        /*
-                         * facetPropExists: the document must have the property as facet
-                         */
-                        FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings,
-                                                                (ServicingIndexingConfiguration)getIndexingConfig());
-                        searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
-
-                        long start = System.currentTimeMillis();
-                        collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);
-                        searcher.search(searchQuery, collector);
-                        log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start)
-                                  + " ms for " + collector.getNumhits() +" results"); 
-                    } 
-                } else {
-                    // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
+            indexReader = getIndex().getIndexReader();
+            searcher = new IndexSearcher(indexReader);
+            searcher.setSimilarity(new FixedScoreSimilarity());
+            // In principle, below, there is always one facet 
+            if(resultset != null){
+                for(String facet : resultset.keySet()) {
+                    /*
+                     * facetPropExists: the document must have the property as facet
+                     */
+                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings,
+                                                            (ServicingIndexingConfiguration)getIndexingConfig());
+                    searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
+                 
                     long start = System.currentTimeMillis();
-                    collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);        
+                    collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);
                     searcher.search(searchQuery, collector);
                     log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start)
-                              + " ms for " + collector.getNumhits() +" results"); 
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if(searcher != null){
-                    try {
-                        searcher.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if(indexReader != null) {
-                    try {
-                        indexReader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                            + " ms for " + collector.getNumhits() +" results"); 
+                } 
+            } else {
+                // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
+             
+                long start = System.currentTimeMillis();
+                collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);        
+                searcher.search(searchQuery, collector);
+                log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start)
+                          + " ms for " + collector.getNumhits() +" results"); 
             }
 
-            return this . new ResultImpl(collector.getNumhits(), collector.getHits());
-        } catch(javax.jcr.query.InvalidQueryException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            throw new UnsupportedOperationException(); // FIXME
-        } catch(javax.jcr.ValueFormatException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            throw new UnsupportedOperationException(); // FIXME
-        } catch(javax.jcr.RepositoryException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            throw new UnsupportedOperationException(); // FIXME
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(searcher != null){
+                try {
+                    searcher.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(indexReader != null) {
+                try {
+                    indexReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+
+        return this . new ResultImpl(collector.getNumhits(), collector.getHits());
+        
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,

@@ -55,7 +55,7 @@ public class AuthorizationQuery {
                               NamespaceMappings nsMappings, 
                               ServicingIndexingConfiguration indexingConfig,
                               boolean facetsORed) {
-        this.query = new BooleanQuery();
+        this.query = new BooleanQuery(true);
         
         if(authorizationQuery!=null){
             ParsingNameResolver pnr = new ParsingNameResolver(nsMappings);   
@@ -67,7 +67,7 @@ public class AuthorizationQuery {
                     if(indexingConfig.isFacet(nodeName)){
                         internalName = ServicingNameFormat.getInternalFacetName(nodeName,nsMappings);
                         String[] facetValues = entry.getValue();
-                        BooleanQuery orQuery = new BooleanQuery();
+                        BooleanQuery orQuery = new BooleanQuery(true);
                         Set tmpContainsSet = new HashSet();
                         for(int i = 0; i < facetValues.length ; i++ ) {
                             if(facetsQueryMap.containsKey(entry.getKey()) && facetsQueryMap.get(entry.getKey()).equals(facetValues[i])){
@@ -77,7 +77,7 @@ public class AuthorizationQuery {
                             }
                             // add to tmp set to check wether already added. Multiplicity slows queries down
                             if(orQuery!=null && tmpContainsSet.add(facetValues[i])) {
-                                Query q = new TermQuery(new Term(internalName, facetValues[i] ));
+                                Query q = new FixedScoreTermQuery(new Term(internalName, facetValues[i] ));
                                 orQuery.add(q, Occur.SHOULD);
                             }
                         }
