@@ -93,11 +93,11 @@ public class JcrNodeModel implements TreeNode, IWrapModel, IDataProvider {
         }
     }
 
-    public void markDirty() {
+    public void markReload() {
         Iterator it = children.iterator();
         while (it.hasNext()) {
             JcrNodeModel child = (JcrNodeModel) it.next();
-            child.markDirty();
+            child.markReload();
         }
         this.reload = true;
         this.reloadChildCount = true;
