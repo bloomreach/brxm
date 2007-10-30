@@ -14,7 +14,7 @@ public class JcrEvent implements IClusterable {
     public JcrEvent(JcrNodeModel nodeModel, boolean structureChanged) {
         this.nodeModel = nodeModel;
         if (structureChanged) {
-            nodeModel.markDirty();
+            nodeModel.markReload();
         }
     }
 
