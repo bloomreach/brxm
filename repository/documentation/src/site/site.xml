@@ -76,6 +76,7 @@
             <item name="Frontend Plugin Architecture" href="/extending-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
           </item>
         </item>
+        <item name="Hello World" href="/extending-hippo-ecm/hello-world.html"/>
       </item>
       
     </menu>
