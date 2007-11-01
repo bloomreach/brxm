@@ -2,32 +2,34 @@
 <document>
     <properties>
         <author>Hippo</author>
-        <title>Hippo ECM Documentation: </title>
+        <title>Hippo ECM Documentation: Usages for Hippo ECM</title>
     </properties>
     <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
     <head>
-        <meta />
+        <meta/>
     </head>
     <body>
         <!-- The body of the document contains a number of sections -->
-        <section name="section 1">
-            
-            <!-- Within sections, any XHTML can be used -->
-            <p>Hi!</p>
-            
-            <!-- in addition to XHTML, any number of subsections can be within a section -->
-            <subsection name="subsection 1">
-                <p>Subsection!</p>
-            </subsection>
+        <section name="Introduction">
+
+            <p>Hippo ECM can be used in a wide variety of cases, and can be tailored where needed.
+                Hippo does not enforce structure, although it does bring clarity in the enormous
+                amount of content that users have to cope with on a day to day basis. Some of the
+                most common usages are listed in this section. </p>
         </section>
-        
-        <section name="other section">
-            
-            <!-- You can also include preformatted source blocks in the document -->
-            <source>
-                code line 1
-                code line 2
-            </source>
+
+        <section name="Using Hippo ECM for Document Management">
+            <p>Out of the box, Hippo ECM provides Document Management functionalities that allows
+                users to share and collaborate on documents. Hippo ECM extends standard Document
+                Management functionalities by allowing users to organize all information in a way
+                that is most useful to themselves or to the group they participate in, within
+                forcing anyone to use a certain predefined structure.</p>
+            <p> By using the Hippo ECM Faceted interface, anyone can start adding documents in no
+                time without having to worry about the structure in which information should be
+                stored. </p>
         </section>
+
+        <section name="Using Hippo ECM for Web Content Management"> </section>
+
     </body>
 </document>
