@@ -55,8 +55,10 @@
       </item>
       
       <item name="Extending Hippo ECM">
+        <item name="Project Structure" href="/extending-hippo-ecm/project-structure.html"/>
         <item name="Building Hippo ECM">
-          <item name="Project Structure" href="/project-structure.html"/>
+          <item name="Maven" href="/extending-hippo-ecm/building/maven.html"/>
+          <item name="Eclipse" href="/extending-hippo-ecm/building/eclipse.html"/>
         </item>
         <item name="Plugins">
           <item name="Repository Plugins"></item>
