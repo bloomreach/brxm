@@ -179,6 +179,16 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+      <name>Frank van Lankvelt</name>
+      <id>fvlankvelt</id>
+      <email/>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
   </developers>
 
   <mailingLists>
