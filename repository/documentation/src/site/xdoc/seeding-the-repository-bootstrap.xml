@@ -1,1 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <body>
+    <section name="Bootstrapping the repository">
+
+The Hippo repository has been designed to allow for extensive customization.
+In such a degree even, that the bare repository has only limited
+functionality.  Two examples; for one, it defines no template document
+structure.  What constitutes a document is dependent on the application domain
+and is normally configured seperately.  Workflow, which defines which
+operations are allowed on documents, is a pure plugin.  The repository only
+defines how a workflow can be accessed, not which operations it can define or
+which implementation to be used.
+
+Because of this high pluggable structure, the bare repository is relatively
+lean, and you are likely to always need to add, replace, or remove modules in
+your own environment, to obtain the set of functionalities you require.  The
+default repository you can download comes with a number of modules available
+to it.
+
+A big problem with many systems, is that customization requires rebuilding the
+application to include the additional features.  With Hippo repository it is
+possible to add new functionalities to an existing databases without
+rebuilding the application.
+
+running repository add new functionality by uploading 
+
+Note: at this time, the repository will only load the new features at start-up
+time.  It is therefore required that you stop and restart the repository
+server.  In addition
+
+
+    </section>
+  </body>
+</document>
