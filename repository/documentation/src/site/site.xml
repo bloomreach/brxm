@@ -84,6 +84,15 @@
       <item name="Hippo Forge"/>
       <item name="Contributing"/>
     </menu>
+
+    <menu name="General">
+      <item name="Project team" href="team-list.html"/>
+      <item name="Mailing list" href="mail-lists.html"/>
+      <item name="Dependencies" href="dependencies.html"/>
+      <item name="Source repository" href="source-repository.html"/>
+      <item name="Issue tracking" href="issue-tracking.html"/>
+      <item name="Licence" href="license.html"/>
+    </menu>
     
   </body>
   
