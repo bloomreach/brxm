@@ -18,10 +18,7 @@
                 <p>
                 The repository configuration file is an XML file that specifies 
                 the components and configuration of a Jackrabbit content repository.
-                Individual workspaces of the repository are configured through
-                separate configuration files called workspace.xml which are
-                located in a subfolder of the workspaces root directory
-                (see Workspaces element).
+                
                 <br/>
                 it consists of
             
