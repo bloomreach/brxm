@@ -13,12 +13,33 @@
       <item name="Apache" href="http://www.apache.org/"/>
     </links>
         
-    <menu name="Hippo repository 2 project documention">
-      <item name="Candidate component list" href="/candidate-component-list.html"/>
-      <item name="Supported environments" href="/supported-environments.html"/>
-      <item name="Architecture" href="/architecture.html"/>
-      <item name="Roadmap" href="/roadmap.html"/>
-      <item name="Usecases" href="/use-cases.html"/>
+    <menu name="About Hippo ECM">
+        <item name="What is Hippo ECM?" href="/what-is-hippo-ecm.html"/>
+    </menu>
+    
+    <menu name="Documentation">
+      
+      <item name="Running Hippo ECM">
+        <item name="Configuration">
+          <item name="configuration.xml" href="/configuration_files/configuration.html"/>
+          <item name="repository.xml" href="/configuration_files/repository.html"/>
+          <item name="Search Index" href="/configuration_files/searchindex.html"/>
+        </item>
+      </item>
+      
+      <item name="Default Hippo ECM Functionality"></item>
+      
+      <item name="Extending Hippo ECM">
+        <item name="Building Hippo ECM From Source">
+          <item name="SVN Project Structure" href=""/>
+        </item>
+        <item name="Plugins">
+          <item name="Frontend Plugins">
+            <item name="Frontend Plugin Architecture" href="/frontend-plugin-architecture.html"/>
+          </item>
+        </item>
+      </item>
+      
     </menu>
     
   </body>
