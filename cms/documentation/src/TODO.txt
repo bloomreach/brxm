@@ -1,0 +1,66 @@
+- Algemeen verhaal
+	- What is Hippo ECM? -> AC
+	- Usages for Hippo ECM -> AC
+	- Features 
+		- Facets -> AS
+	- Architectuur -> BvdS 
+	- Wat zijn de componenten -> BvdS
+	- Future -> AC
+- How to run
+	- Requirements
+		- Operating system -> BvdS
+		- Java -> BvdS
+		- Container: Tomcat, JBoss, Jetty -> BvdS
+	- From a pre-built WAR -> BvdS
+	- As a zip (including a container)
+	- Starting and stopping -> AS
+	- Browsing the repository using the UI
+	- Where is your data stored
+		- Databases (how to connect to a production database)
+	- Getting the demo data
+	- Seeding the repository (bootstrap) -> BvH
+	- Configuration files
+		- Configuration.xml -> AS
+		- repository.xml -> AS
+		- Lucene options -> AS
+		- Frontend plugin configuration -> WG
+		- User configuration (setting up users) -> BvdS 
+		- Workflow configuration -> BvH
+- Default Hippo ECM functionality
+	- Configuring facets -> AS
+		- Physical structure vs virtual structure -> AS
+		- How to define faceted views (using the UI) -> AS
+	- Workflow
+		- Configuring the workflow -> BvH
+		- Default workflow plugin: Reviewed actions -> BvH
+- Extending Hippo ECM
+	- Configuring vs building -> WG
+	- How to build from scratch
+		- SVN structure -> WG
+		- Eclipse multiproject -> WG
+		- Running, starting stopping -> WG
+		- Netbeans?
+	- Plugins: UI plugins vs repository plugins -> WG, NvK, FvL
+		- Uitleg plugins voor UI, plugins voor repo, plugins voor allebei -> BvH
+		- UI: how to work with plugins
+			- Hello World plugin -> WG
+			- Wicket -> WG
+			- Differences with Wicket structure -> WG
+			- Configuring plugins (with rebuilding, omdat dat nu zo moet) -> WG
+			- Configuring plugins (without rebuilding, toekomst) -> WG
+		- Repository plugins
+			- Configuring plugins (with rebuilding, omdat dat nu zo moet)
+			- Configuring plugins (without rebuilding, toekomst)
+	- Workflow -> 
+		- Architecture -> BvH
+		- How to write your own workflow plugin -> BvH
+- Integrating Hippo ECM (in an existing environment)
+	- Architecture -> RdG
+	- Example: hooking up a mailserver -> RdG
+- Community
+	- Hippo forge
+	- Getting plugins
+	- Setting up your own plugin project
+	- Contributing
+
+- Appendix: API reference (JavaDocs)
