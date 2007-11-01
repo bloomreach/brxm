@@ -6,25 +6,25 @@
   <head>
   </head>
   <body>
-    <!-- The body of the document contains a number of sections -->
+    
+    <h1>Frontend Plugin Architecture</h1>
+    
+    <p>
+      Hippo ECM provides an <a href="http://wicket.apache.org">Apache Wicket</a> based
+      plugin architecture to facilitate a customisable GUI. All standard GUI components are written
+      as plugins. The Hippo CMS application offers a default configuration for these plugins.
+      Customising Hippo CMS comes down to extending the standards plugins, and/or writing your own,
+      and configuring them to form your own custom application.
+    </p>
+    
     <section name="section 1">
 
-      <!-- Within sections, any XHTML can be used -->
       <p>Hi!</p>
 
-      <!-- in addition to XHTML, any number of subsections can be within a section -->
       <subsection name="subsection 1">
         <p>Subsection!</p>
       </subsection>
     </section>
 
-    <section name="other section">
-
-      <!-- You can also include preformatted source blocks in the document -->
-      <source>
-code line 1
-code line 2
-      </source>
-    </section>
   </body>
 </document>
