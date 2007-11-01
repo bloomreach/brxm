@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Hippo</author>
+        <title>Hippo ECM Documentation: Requirements</title>
+    </properties>
+    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
+    <head>
+        <meta />
+    </head>
+    <body>
+        <!-- The body of the document contains a number of sections -->
+        <section name="Operating Systems">
+            <p>
+                The Hippo ECM software is known to run on at least the following Operating Systems:
+                <ul>
+                    <li>Windows XP/2000, Windows Server 2003</li>
+                    <li>Linux, RedHat (RHEL), SUSE (SLES), Debian, Ubuntu and other distributeions</li>
+                    <li>FreeBSD and other BSD variants</li>
+                    <li>Solaris 9/10 and OpenSolaris</li>
+                    <li>IBM AIX</li>
+                </ul>
+                It should be possible to run the software on any POSIX compliant Operating System.
+            </p>
+        </section>
+        
+        <section name="Java versions">
+            <subsection name="Running Hippo ECM"> 
+                <p> 
+                    To run Hippo ECM Java 1.4, Java 5 or Java 6 is required. 
+                    The following JVMs can be used:
+                    <ul>
+                        <li>Sun JVM</li>
+                        <li>IBM JVM</li>
+                        <li>BEA JRockit</li>
+                    </ul>
+                </p> 
+            </subsection>
+            <subsection name="Building Hippo ECM">
+                <p>
+                    To build the Hippo ECM software Java 5 or Java 6 is required.
+                    The following JVMs can be used:
+                    <ul>
+                        <li>Sun JVM</li>
+                        <li>IBM JVM</li>
+                        <li>BEA JRockit</li>
+                    </ul>
+                </p> 
+            </subsection>
+        </section>
+        
+        
+        <section name="Application Containers">
+            <p>
+                Hippo ECM requires an application container. One of the following can be used:
+                <ul>
+                    <li>Jetty 6</li>
+                    <li>Tomcat 5.5 and 6</li>
+                    <li>IBM WebSphere Application Server 6</li>
+                    <li>BEA WebLogic Server 10</li>
+                    <li>JBoss Application Server 4</li>
+                    <li>Sun ONE Application Server and Sun Glassfish V2</li>
+                </ul>
+            </p>
+        </section>
+        
+            
+        <section name="Databases">
+            <p>
+                Hippo ECM requires a relational database for it's datastorage. By default 
+                Apache Derby is embedded and configured and runs "out of the box". It is 
+                however possible to configure other databases such as:
+                <ul>
+                    <li>MySQL 4.1, 5.0 and 5.1</li>
+                    <li>PosgreSQL 8</li>
+                    <li>Oracle 9 and 10</li>
+                    <li>MS SQLServer</li>
+                    <li>Derby</li>
+                </ul>
+            </p>
+        </section>
+    </body>
+</document>
