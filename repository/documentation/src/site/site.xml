@@ -24,8 +24,8 @@
   
   <body>
     <links>
-      <item name="Maven" href="http://maven.apache.org/"/>
-      <item name="Apache" href="http://www.apache.org/"/>
+      <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
+      <item name="Hippo" href="http://www.hippo.nl/"/>
     </links>
     
     <menu name="Main">
@@ -33,8 +33,11 @@
     </menu>
         
     <menu name="About Hippo ECM">
-      <item name="What is Hippo ECM?" href="/what-is-hippo-ecm.html"/>
-      <item name="Usages for Hippo ECM" href="/usages-for-hippo-ecm.html"/>
+      <item name="What is Hippo ECM?" href="/about-hippo-ecm/what-is-hippo-ecm.html"/>
+      <item name="Usages for Hippo ECM" href="/about-hippo-ecm/usages-for-hippo-ecm.html"/>
+      <item name="Features" href="/about-hippo-ecm/features.html"/>
+      <item name="Architecture" href="/about-hippo-ecm/architecture.html"/>
+      <item name="Components" href="/about-hippo-ecm/components.html"/>
       <item name="Future" href="/about-hippo-ecm/future.html"/>
     </menu>
     
@@ -57,6 +60,8 @@
       <item name="Default Hippo ECM Functionality" href="/default-functionality/index.html" collapse="true">
         <item name="Facets" collapse="true">
         </item>
+        <item name="Workflow" collapse="true">
+        </item>
       </item>
       
       <item name="Extending Hippo ECM" href="/extending-hippo-ecm/index.html" collapse="true">
@@ -68,7 +73,7 @@
         <item name="Plugins" href="/extending-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extending-hippo-ecm/plugins/repository/index.html"></item>
           <item name="Frontend Plugins" href="/extending-hippo-ecm/plugins/frontend/index.html" collapse="true">
-            <item name="Frontend Plugin Architecture" href="/frontend-plugin-architecture.html"/>
+            <item name="Frontend Plugin Architecture" href="/extending-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
           </item>
         </item>
       </item>
