@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Hippo</author>
+        <title>Hippo ECM Documentation: Deploying the Hippo ECM wars</title>
+    </properties>
+    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
+    <head>
+        <meta />
+    </head>
+    <body>
+        <!-- The body of the document contains a number of sections -->
+        <section name="Deploying the Hippo ECM wars">
+            <subsection name="Application Server">
+                <p>
+                    Start and configure your Application Server. 
+                </p>
+            </subsection>
+            
+            <subsection name="Hippo ECM Application Server settings">
+                No special settings are needed for the default wars. For a list of 
+                configuration options see: [TODO] link. 
+            </subsection>
+            
+            <subsection name="Download the wars">
+                Coming soon..
+            </subsection>
+            
+            <subsection name="Deploy the wars">
+                Upload the wars to your application server in the following order:
+                <ol>
+                    <li>hippo-ecm-repository.war</li>
+                    <li>hippo-ecm-cms.war</li>
+                </ol>
+                Now you can browse to the following urls:
+                <ul>
+                    <li>http://[host]:[port]/hippo-ecm-repository/</li>
+                    <li>http://[host]:[port]/hippo-ecm-cms/</li>
+                </ul>
+                Replace the [host] and [port] values to match you Applicaiton Server installation.
+            </subsection>
+        </section>
+    </body>
+</document>
