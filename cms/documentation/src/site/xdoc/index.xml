@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Welcome to Hippo ECM</title>
+    </properties>
+    <body>
+      <h1>Welcome to Hippo ECM</h1>
+      <p>
+        Hippo ECM is an open source Enterprise Content Management solution.
+        It's targeted at medium to large organisations managing content for multi-channel distribution 
+        like web sites and intranets. It facilitates an open and flexible way of using your information 
+        by following international accepted open standards.
+      </p>
+      
+      <section name="Learning about Hippo ECM">
+        <p>
+          This site is separated into the following sections, depending on how you'd like to use Hippo ECM:
+          <ul>
+            <li>
+              Run Hippo ECM
+            </li>
+            <li>
+              Use Hippo ECM
+            </li>
+            <li>
+              Customise Hippo ECM
+            </li>
+            <li>
+              Develop Hippo ECM
+            </li>
+          </ul>
+        </p>
+      </section>
+      
+      <section name="How to get support">
+        <p>
+          Support for Hippo ECM is available in a variety of different forms.
+        </p>
+
+        <p>
+          To get started, search the documentation, the wiki, issue tracker, or the mailing list archives 
+          to see if the problem has been solved or reported before.
+        </p>
+
+        <p>
+          If the problem has not been reported before, the recommended way to get help is to subscribe to the 
+          Hippo ECM Users Mailing list . Many other users and Hippo ECM developers will answer your questions 
+          there, and the answer will be archived for others in the future.
+        </p>
+
+        <p>
+          Commercial support is provided by <a href="http://www.hippo.nl">Hippo</a>.
+        </p>
+      </section>
+      
+    </body>
+</document>
