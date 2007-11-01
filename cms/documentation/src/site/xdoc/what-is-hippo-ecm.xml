@@ -1,33 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <author email="user@company.com">John Doe</author>
-        <title>Page Title</title>
+        <author>Hippo</author>
+        <title>Hippo ECM Documentation: What is Hippo ECM?</title>
     </properties>
-    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
     <head>
-        <meta />
+        <meta/>
     </head>
     <body>
+        <section name="What is Hippo ECM?">
+            <p> Hippo ECM bundles a set of applications for managing information in large-scale
+                organizational environments.</p>
+            <p> Managing all information in an organization is a daunting task. Knowledge is stored
+                in numerous files, emails, webpages, forms, Excel sheets, and so on, and is handled
+                differently for every organization. To work with all this information, every
+                organization employs a diverse set of applications that adds logic and behaviour.
+                How to integrate those applications, manage the underlaying information and present
+                the end user with a simple, unified environment for all their information
+                management?</p>
+            <p>Hippo ECM structures information, offers integration possibilities on both content
+                and presentation level, in a simple and for users understandable way. </p>
+        </section>
+
         <!-- The body of the document contains a number of sections -->
-        <section name="section 1">
-            
-            <!-- Within sections, any XHTML can be used -->
-            <p>Hi!</p>
-            
-            <!-- in addition to XHTML, any number of subsections can be within a section -->
-            <subsection name="subsection 1">
-                <p>Subsection!</p>
-            </subsection>
+        <section name="History of Hippo ECM">
+            <p>The first stable distribution of Hippo CMS version 6 was released in June 2004. This
+                new release introduced a fresh architecture where Hippo CMS, a frontend application
+                and the content repository were seperated in different server applications. This
+                seperation of concerns on setup level has been one of the main drivers for the
+                success of Hippo CMS v6.0. It allowed for complex integrations with external systems
+                while keeping a strong focus on a standardized user interface for the end-user. The
+                focus on standardized protocols and XML technologies opened up the possibilities
+                needed for enterprise wide CMS usage. Scalability and load balancing functionalities
+                have added to the stability of the platform and allowed it to be used in the
+                largest, content rich environments. A familiar user interface driven by AJAX
+                technologies to update only those parts of the application that needed to do so
+                brought wide user acceptance. On the developer's side, the concept of deployments
+                and custom builds allowed external developers to setup and use the Hippo CMS
+                platform for a diverse set of applications. All of these developments combined have
+                led to the current stable v6.04 release, rich in functionalities and possibilities.
+                They have also inspired developers and customers to raise ideas and whishes that go
+                far beyond what's possible today. But the architectural concept has proven itself,
+                and those new ideas only intensify the feeling that we're on the right track. We are
+                facing new horizons and need to take that leap to jump to the next level of
+                extendibility, user experience and scalability. Together with the HippoCMS.org
+                community, Hippo will be driving the development of the future version of the Hippo
+                Content Platform, consisting of Hippo CMS v7, Hippo Repository v2 and Hippo Portal
+                v1. </p>
         </section>
-        
-        <section name="other section">
-            
-            <!-- You can also include preformatted source blocks in the document -->
-            <source>
-                code line 1
-                code line 2
-            </source>
-        </section>
+
     </body>
 </document>
