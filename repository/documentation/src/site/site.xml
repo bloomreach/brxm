@@ -33,7 +33,8 @@
     </menu>
         
     <menu name="About Hippo ECM">
-        <item name="What is Hippo ECM?" href="/what-is-hippo-ecm.html"/>
+      <item name="What is Hippo ECM?" href="/what-is-hippo-ecm.html"/>
+      <item name="Usages for Hippo ECM" href="/usages-for-hippo-ecm.html"/>
     </menu>
     
     <menu name="Documentation">
