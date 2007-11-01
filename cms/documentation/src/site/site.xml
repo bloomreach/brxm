@@ -55,8 +55,8 @@
       </item>
       
       <item name="Extending Hippo ECM">
-        <item name="Building Hippo ECM From Source">
-          <item name="SVN Project Structure" href="/project-structure.html"/>
+        <item name="Building Hippo ECM">
+          <item name="Project Structure" href="/project-structure.html"/>
         </item>
         <item name="Plugins">
           <item name="Repository Plugins"></item>
