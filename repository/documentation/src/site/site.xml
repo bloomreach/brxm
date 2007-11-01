@@ -44,6 +44,7 @@
         <item name="Configuration">
           <item name="configuration.xml" href="/configuration_files/configuration.html"/>
           <item name="repository.xml" href="/configuration_files/repository.html"/>
+          <item name="workspace.xml" href="/configuration_files/workspace.html"/>
           <item name="Search Index" href="/configuration_files/searchindex.html"/>
         </item>
       </item>
