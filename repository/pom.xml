@@ -169,6 +169,16 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+      <name>Niels van Kampenhout</name>
+      <id>nvankampenhout</id>
+      <email/>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Doctator</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
   </developers>
 
   <mailingLists>
