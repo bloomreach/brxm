@@ -1,6 +1,6 @@
 - Algemeen verhaal
-	- What is Hippo ECM? -> AC
-	- Usages for Hippo ECM -> AC
+	- What is Hippo ECM? -> AC. SETUP DONE
+	- Usages for Hippo ECM -> AC. SETUP DONE
 	- Features 
 		- Facets -> AS
 	- Architectuur -> BvdS 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Hippo</author>
+        <title>Hippo ECM Documentation: Future</title>
+    </properties>
+    <head>
+        <meta />
+    </head>
+    <body>
+        <section name="Roadmap of Hippo ECM">
+
+        </section>
+
+        <section name="Main goals">
+            <p>
+            These goals define in the broadest sense what Hippo ECM will provide as a whole.
+            </p>
+            
+            <subsection name="Usability, extendibility, interoperability, integration and administration">
+                <p>
+                The Hippo Content Platform will be easy to understand, use, extend, integrate with external systems, and administer.
+                </p>
+            </subsection>
+            
+            <subsection name="Central point for information management">
+                <p>
+                Hippo ECM will act as a central point for information management, with its main focus on a generic content repository that allows for integration with a diverse set of applications.
+                <br clear="both"/>
+                <img src="images/roadmap-medium.jpg"/>
+                </p>           
+            </subsection>
+                        
+        </section>        
+    </body>
+</document>
