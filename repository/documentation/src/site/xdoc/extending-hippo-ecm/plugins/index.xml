@@ -20,6 +20,19 @@
             An add-on can consist of only repository plugins, or only frontend plugins, or both,
             depending on the kind of functionality implemented.
           </p>
+          <p>
+            Each type of plugin is explained in their respective subsection:
+            
+            <ul>
+              <li>
+                <a href="repository/index.html">Repository plugins</a>
+              </li>
+              <li>
+                <a href="frontend/index.html">Frontend plugins</a>
+              </li>
+            </ul>
+            
+          </p>
           
         </subsection>
         
