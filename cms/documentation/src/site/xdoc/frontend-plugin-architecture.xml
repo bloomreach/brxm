@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Frontend Plugin Architecture</title>
+  </properties>
+  <head>
+  </head>
+  <body>
+    <!-- The body of the document contains a number of sections -->
+    <section name="section 1">
+
+      <!-- Within sections, any XHTML can be used -->
+      <p>Hi!</p>
+
+      <!-- in addition to XHTML, any number of subsections can be within a section -->
+      <subsection name="subsection 1">
+        <p>Subsection!</p>
+      </subsection>
+    </section>
+
+    <section name="other section">
+
+      <!-- You can also include preformatted source blocks in the document -->
+      <source>
+code line 1
+code line 2
+      </source>
+    </section>
+  </body>
+</document>
