@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author email="a.schrijvers@hippo.nl">Ard Schrijvers</author>
+        <title>Configuration</title>
+    </properties>
+    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
+    <head>
+        <meta />
+    </head>
+    <body>
+        <!-- The body of the document contains a number of sections -->
+        <section name="section 1">
+            
+            
+        </section>
+        
+    </body>
+</document>
