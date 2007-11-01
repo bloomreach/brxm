@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Hippo</author>
+        <title>Hippo ECM Documentation: Repository based Authentication and Users</title>
+    </properties>
+    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
+    <head>
+        <meta />
+    </head>
+    <body>
+        <!-- The body of the document contains a number of sections -->
+        <section name="Repository based Authentication">
+            The repository can be configured to store the users as nodes inside the repository itself. 
+            To achieve this the RepositoryLoginModule is configured in the <code>repository.xml</code> in the Security section.
+            The authentication module is based on <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" alt="Sun JAAS">JAAS</a>. 
+            By default this moduled is enabled. 
+            <pre>
+&lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
+    &lt;!-- default values:
+    &lt;param name="anonymousId" value="anonymous"/&gt;
+    &lt;param name="systemuserId" value="systemuser"/&gt;
+    &lt;param name="systemuserPassword" value="password"/&gt;
+    &lt;param name="debug" value="false"/&gt;
+    &lt;param name="maxCacheTimeMilliSec" value="10000"/&gt;
+    --&gt;
+&lt;/LoginModule&gt;
+            </pre>
+            The defaults as shown in the comments can be simply overwritten by setting the 
+            parameters. The parameters are:
+            <table>
+                <tr><td>anonymousId</td><td>The id given to a user in a non authenticated session.</td></tr>
+                <tr><td>systemuserId</td><td>The id of the systemuser. The system user is used to lookup the user nodes in the repository.</td></tr>
+                <tr><td>systemuserPassword</td><td>The password of the systemuser.</td></tr>
+                <tr><td>debug</td><td>Enable or disable debug info.</td></tr>
+                <tr><td>maxCacheTimeMilliSec</td><td>Time in miliseconds between user credential cache purges.</td></tr>
+            </table>
+        </section>
+        
+        <section name="Configure users for the RepositoryLoginModule">
+            <p>
+                The users are stored in the repository as childeren of the node 
+                <code>/configuration/users</code>.
+                A user node has the following configuration:
+                <pre>
+&lt;sv:node sv:name="johndoe"&gt;
+    &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
+        &lt;sv:value&gt;nt:unstructured&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+    &lt;sv:property sv:name="password" sv:type="String"&gt;    
+        &lt;sv:value&gt;secret&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+&lt;/sv:node&gt;
+                </pre>
+            </p>
+            The password is currently stored in plain text. This will change in the near future. 
+        </section>
+    </body>
+</document>
