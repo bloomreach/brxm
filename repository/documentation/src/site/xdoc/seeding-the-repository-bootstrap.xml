@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
 <body>
+
 <section name="Bootstrapping the repository">
 
 The Hippo repository has been designed to allow for extensive customization.
@@ -111,5 +112,5 @@ configuration.xml
 </subsection>
 </section>
 
-  </body>
+</body>
 </document>
