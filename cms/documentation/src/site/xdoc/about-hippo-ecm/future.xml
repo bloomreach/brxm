@@ -5,32 +5,331 @@
         <title>Hippo ECM Documentation: Future</title>
     </properties>
     <head>
-        <meta />
+        <meta/>
     </head>
     <body>
-        <section name="Roadmap of Hippo ECM">
-
-        </section>
+        <section name="Roadmap of Hippo ECM"> </section>
 
         <section name="Main goals">
-            <p>
-            These goals define in the broadest sense what Hippo ECM will provide as a whole.
-            </p>
-            
-            <subsection name="Usability, extendibility, interoperability, integration and administration">
-                <p>
-                The Hippo Content Platform will be easy to understand, use, extend, integrate with external systems, and administer.
+            <p> These goals define in the broadest sense what Hippo ECM will provide as a whole. </p>
+
+            <subsection
+                name="Usability, extendibility, interoperability, integration and administration">
+                <p> The Hippo Content Platform will be easy to understand, use, extend, integrate
+                    with external systems, and administer. </p>
+            </subsection>
+
+            <subsection name="Central point for information management">
+                <p> Hippo ECM will act as a central point for information management, with its main
+                    focus on a generic content repository that allows for integration with a diverse
+                    set of applications. <br clear="both"/>
+                    <img src="../images/roadmap-medium.jpg"/>
                 </p>
             </subsection>
-            
-            <subsection name="Central point for information management">
-                <p>
-                Hippo ECM will act as a central point for information management, with its main focus on a generic content repository that allows for integration with a diverse set of applications.
-                <br clear="both"/>
-                <img src="../images/roadmap-medium.jpg"/>
-                </p>           
+
+        </section>
+        <section name="Subgoals">
+            <subsection name="User experience (Easy to understand and use)">
+                <p> An excellent end user experience is the primary concern when designing and
+                    developing the Hippo ECM user interface. Any user of Hippo ECM, in any language
+                    and on any platform, should be able to comfortably work with the UI. The
+                    productivity of the user should go up. </p>
+                <p> For developers, the API of the platform should be setup in a consistent and
+                    understandable way and should follow common best practices and patterns from the
+                    open source Java world. </p>
+                <ul>
+                    <li>High performance ("snappy") user interface</li>
+
+                    <li>Platform independent</li>
+                    <li>Context sensitive help</li>
+                    <li>All multilingual <ul>
+                            <li>Language switch button</li>
+                            <li>Remember user language in profile</li>
+                        </ul>
+                    </li>
+                    <li>Communication with peers (messaging, inbox, ..)</li>
+                    <li>Customizable look and feel (customer skinning)</li>
+                    <li>User permissions, profiles</li>
+                    <li>Recognizable and predictable user interface behaviour <ul>
+                            <li>Mimic Windows-like user interface behaviour</li>
+
+                            <li>Predictable copy paste from Word, Windows</li>
+                        </ul>
+                    </li>
+                    <li>Management tools (statistical feedback, reports) <ul>
+                            <li>Dashboard queries <ul>
+                                    <li>"Recent changes" list</li>
+                                    <li>Number of documents, editors, changes, ..</li>
+
+                                    <li>What's been recently published / what will go live soon</li>
+                                    <li>Queries to be defined by user, and saved for use on
+                                        dashboard</li>
+                                </ul>
+                            </li>
+                            <li>Management info <ul>
+                                    <li>How many changes</li>
+                                    <li></li>
+
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Simplified template development <ul>
+                            <li>Template editing from within CMS interface</li>
+                        </ul>
+                    </li>
+
+                    <li>Micro updates <ul>
+                            <li>In-page direct editing of single fields through AJAX interface
+                                ("Flickr way")</li>
+                            <li>User permissions / workflow on a per-field basis</li>
+                            <li>Backend templates work with micro updates. Clicking a field will
+                                make it editable. Save action is not performed on the complete
+                                document but on a per-field basis.</li>
+                        </ul>
+                    </li>
+                    <li>Browser back button support in Hippo CMS</li>
+
+                    <li>AJAX update inter-portlet UI elements</li>
+                    <li>Dragdrop functionalities across UI portlets</li>
+                    <li>Preview functionality from CMS user interface</li>
+                    <li>Preview on labels (across all labels, ie preview "Release 1", "Christmas
+                        edition")</li>
+                    <li>Translation guidance <ul>
+                            <li>Show different language versions in one view, allow translators to
+                                easily translate</li>
+
+                        </ul>
+                    </li>
+                    <li>History view <ul>
+                            <li>Who did what</li>
+                            <li>See changes in context (rich diff)</li>
+                        </ul>
+                    </li>
+
+                    <li>Navigation through CMS interface <ul>
+                            <li>Guide user in finding what he needs to change (faceted interface)</li>
+                            <li>Use hierarchical views where appropriate</li>
+                            <li>Use relational views where appropriate</li>
+                            <li>Use faceted views where appropriate</li>
+                        </ul>
+                    </li>
+                    <li>Workflow <ul>
+                            <li>TODO list</li>
+                            <li>"Inbox" view</li>
+                            <li>Clear presentation of workflow state of objects</li>
+                        </ul>
+                    </li>
+
+                    <li>"Click efficient" <ul>
+                            <li>Lower the number of clicks needed to perform a common end user task
+                                as much as possible</li>
+                        </ul>
+                    </li>
+                    <li>Meta information editor <ul>
+                            <li>Tagging editor</li>
+                        </ul>
+                    </li>
+                    <li>Usability for disabled <ul>
+                            <li>WAI</li>
+                        </ul>
+                    </li>
+                    <li>User login/logoff <ul>
+                            <li>Single sign on support (Portal / CMS / ...)</li>
+
+                            <li>Remember login functionality</li>
+                            <li>Password reminder, request new password</li>
+                            <li>Logoff button always available</li>
+                            <li>Keep connection alive as long as editor is open on user's screen</li>
+                            <li>Warn user when connection drops or he's logged off (Gmail
+                            style)</li>
+                        </ul>
+                    </li>
+                    <li>Navigation editor and picker</li>
+                    <li>Thesauruseditor and picker</li>
+                    <li>i18n editor and picker</li>
+                    <li>Provide user feedback on status of the document, whether actions succeeded
+                        or not</li>
+                </ul>
+
             </subsection>
-                        
-        </section>        
+
+            <subsection name="Extendibility (Easy to extend)">
+                <p> Hippo CMS, Hippo Repository and Hippo Portal are building blocks that can be
+                    extended in a standardized way by developers to customize the system to the
+                    needs of the customer. Extensions written for such a customized environment will
+                    be stored seperately from the core codebase, can be tested with new versions and
+                    can be supported by either Hippo or a third party. A clear API helps developers
+                    setup extensions, who can share their contributions in a seperate Hippo
+                    Extensions community. </p>
+
+                <ul>
+                    <li>Workflow extendibility <ul>
+                            <li>Allowing integration with business logic from external
+                            processes</li>
+                        </ul>
+                    </li>
+                    <li>CMS user interface extendibility <ul>
+                            <li>Allowing custom functionalities in a durable way</li>
+                        </ul>
+                    </li>
+                </ul>
+            </subsection>
+
+            <subsection
+                name="Interoperability and integration (Easy to integrate with external systems)">
+                <p> Hippo CMS, Hippo Repository and Hippo Portal are building blocks that can be
+                    combined with other building blocks to form integrated solutions that fit
+                    perfectly into the information infrastructure needs of the customer. </p>
+                <p> Whenever the choice for a protocol, storage format or interface is needed,
+                    widespread open standards are preferred. Storage is done in a </p>
+                <p> All protocols should be using widely adopted open standards. </p>
+
+                <ul>
+                    <li>Authenticating against external servers (LDAP, Active Directory, NDS)</li>
+                    <li>Integration in portal environments (JSR-168, JSR-286)</li>
+
+                    <li>Database independent (Derby, MySQL, Oracle, MS SQL)</li>
+                    <li>Conform common repository standards (WebDAV, JSR-170, JSR-283)</li>
+                    <li>Ability to use and index meta information from external systems ()</li>
+                    <li></li>
+                </ul>
+
+            </subsection>
+            <subsection name="Easy to administer">
+                <p> The administration of a Hippo CMS or Portal instance should be easy for
+                    technical, but non-programmer engineers. </p>
+
+                <ul>
+                    <li>Deployment in common containers as single WAR for each component (Tomcat,
+                        Websphere, Weblogic, JBoss)</li>
+                    <li>'Easy install' <ul>
+                            <li>A clean deploy of the Hippo Repository should work out-of-the-box
+                                and not need manual tweaking of databases</li>
+                            <li></li>
+
+                        </ul>
+                    </li>
+                    <li>Clustering / load balancing</li>
+                    <li>Error / conflict reporting to system administrator</li>
+                    <li>Workflow administration using webbased user interface <ul>
+                            <li>Adding steps, roles, etc</li>
+                        </ul>
+                    </li>
+                </ul>
+            </subsection>
+            <subsection name="A central point for information management">
+                <ul>
+                    <li>Handle images and perform image manipulation</li>
+                    <li>Store video and audio or index and use video, audio from external systems</li>
+                    <li>Handle XML documents for pure text</li>
+
+                    <li>Handle any type of binary format, like PDF, Word, Excel, etc</li>
+                    <li>Document management (operating system integration, integration with desktop
+                        applications, Word, Excel, Outlook) <ul>
+                            <li>CIFS implementation (Windows shared network drive)</li>
+                        </ul>
+                    </li>
+                    <li>Repository object model <ul>
+                            <li>An object can be <ul>
+
+                                    <li>A document descriptor (of XML document, binary, or reference
+                                        to an external object)</li>
+                                    <li>A container of objects, with ordering</li>
+                                </ul>
+                            </li>
+                            <li>An object consists of <ul>
+                                    <li>A unique numerical identifier</li>
+                                    <li>One semantical meaning (represents 1 semantical object,
+                                        regardless of language, version or workflow state)</li>
+
+                                    <li>Different languages</li>
+                                    <li>Revisions per language</li>
+                                    <li>A workflow state per language, per revision, per version on
+                                        the object as a whole, and on a group of objects together</li>
+                                    <li>Revision on the complete object</li>
+                                    <li>References to other objects, with ordering</li>
+                                    <li>Meta information, tags, properties</li>
+
+                                    <li>Version labeling (not-versioned in the object, but on the
+                                        object as a whole, part of a group of objects. ie. "Release
+                                        1")</li>
+                                </ul>
+                            </li>
+                            <li>Objects should be <ul>
+                                    <li>'Movable' in the hierarchical view (ie, get retagged)</li>
+                                    <li>Renameable</li>
+                                </ul>
+                            </li>
+                            <li>Bag of objects</li>
+                            <li>Hierarchical structure is a result of a mapping on the tags attached
+                                to object</li>
+                            <li>An object can show up in many locations in the (virtual)
+                            hierarchy</li>
+                        </ul>
+                    </li>
+                    <li>Users / groups / roles</li>
+
+                    <li>Indexing and searching <ul>
+                            <li></li>
+                        </ul>
+                    </li>
+                    <li>Workflow <ul>
+                            <li>A workflow state per language, per revision, per version on the
+                                object as a whole, and on a group of objects together</li>
+                            <li>Knowledge driven workflow <ul>
+
+                                    <li>Based on tagging and user knowledge (workflow rules to match
+                                        tags on objects with tags on users)</li>
+                                    <li>Documents show up in 'inbox' based on tagging</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Support for integration with: <ul>
+
+                            <li>Mailinglist functionality (personalized or not)</li>
+                            <li>Microsoft Office importer (server side conversion of Office to XML)</li>
+                            <li></li>
+                        </ul>
+                    </li>
+                </ul>
+            </subsection>
+        </section>
+
+        <section name="Technical requirements">
+
+            <ul>
+                <li>Transactional</li>
+                <li>Critical error messages on any level should propagate back to the client where
+                    the user should be notified appropriately</li>
+                <li>Support for different browser based editors: form based, Xopus</li>
+                <li></li>
+            </ul>
+        </section>
+
+        <section name="Main technical differences from previous architecture">
+
+            <ol>
+                <li>Detach documents from a strict location in a fixed hierarchy <ul>
+
+                        <li>Allowing different views on the same dataset</li>
+                        <li>Allowing workflow structures based on business rules other than
+                            hierarchy <ul>
+                                <li>Knowledge based workflow</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>Move versioning and workflow into deeper layers in Hippo Repository <ul>
+                        <li>Higher grade of seperation between business logic and CMS</li>
+                    </ul>
+                </li>
+                <li>Higher level of integration with external content repositories (including video,
+                    etc)</li>
+            </ol>
+
+        </section>
     </body>
 </document>
