@@ -17,7 +17,7 @@
 <site>
   
   <bannerLeft>
-    <name>Hippo repository 2 project documention</name>
+    <name>Hippo ECM project documention</name>
     <src>http://wiki.hippo.nl/download/userResources/logo</src>
     <href>http://www.hippoecm.org/</href>
   </bannerLeft>
@@ -35,6 +35,7 @@
     <menu name="About Hippo ECM">
       <item name="What is Hippo ECM?" href="/what-is-hippo-ecm.html"/>
       <item name="Usages for Hippo ECM" href="/usages-for-hippo-ecm.html"/>
+      <item name="Future" href="/about-hippo-ecm/future.html"/>
     </menu>
     
     <menu name="Documentation">
@@ -48,6 +49,8 @@
           <item name="repository.xml" href="/configuration_files/repository.html"/>
           <item name="workspace.xml" href="/configuration_files/workspace.html"/>
           <item name="Search Index" href="/configuration_files/searchindex.html"/>
+          <item name="Authentication and Users" href="/configuration_files/authentication-and-users.html"/>
+          <item name="Repository Based Authentication and Users" href="/configuration_files/repository-based-authentication-and-users.html"/>
         </item>
       </item>
       
