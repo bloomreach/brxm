@@ -45,25 +45,25 @@ The following list describes which properties may be set to an initialization
 node, and the effect it has:
 
 <dl>
-<dd>hippo:namespace
+<dd>hippo:namespace</dd>
 <dt>The value of this property indicates the namespace URL of the namespace.
 The actual shorthand name of the namespace is the nodename of the
-initialization node (see also example below).
-<dd>hippo:nodetypes
+initialization node (see also example below).</dt>
+<dd>hippo:nodetypes</dd>
 <dt>The value of this property specifies a resource (file) available on the
 classpath of the repository.  The content of this file should be a proper JCR
 content node definition (CND) file.  The node defintions are inserted into the
-repository.
-<dd>hippo:content
+repository.</dt>
+<dd>hippo:content</dd>
 <dt>The value of this property indicates a resource available on the
 classpath.  The content of this resource should be a valid XML dump describing
 content to be loaded into the running repository.  The content is loaded
 through Session.importXML.  Unless the hippo:contentroot property is also set,
-the content is loaded relative to the root node in the JCR repository.
-<dd>hippo:contentroot
+the content is loaded relative to the root node in the JCR repository.</dt>
+<dd>hippo:contentroot</dd>
 <dt>The value of this property indicates an alternative location where to load
 the content as indicated by the hippo:content property.  The value should be
-an absolute JCR path starting with a single leading slash.
+an absolute JCR path starting with a single leading slash.</dt>
 </dl>
 
 Because the hippo:nodetypes, hippo:namespace and hippo:content are interpreted
@@ -86,7 +86,7 @@ session.save();
 // At this time the initialization procedure may have created
 // a new node type demo:mynodetype if present in nodetypes.cnd.
 session.getRootNode().addNode("test","demo:mynodetype");
-<source>
+</source>
 
 </subsubsection>
 
