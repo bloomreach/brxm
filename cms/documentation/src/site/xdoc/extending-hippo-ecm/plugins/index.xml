@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Hippo ECM Plugins</title>
+    </properties>
+    <body>
+      <section name="Hippo ECM Plugins">
+        
+        <p>
+          Customizability of Hippo ECM is achieved by means of a configurable plugin framework.
+          All standard functionality is implemented as plugins, which can be extended and customized.
+          New plugins can be written to add functionality. New functionality will typically be 
+          implemented as an add-on, consisting of a number of plugins.
+        </p>
+        
+        <subsection name="Repository plugins vs. frontend plugins">
+          
+          <p>
+            Plugins can be divided into two groups: repository plugins and frontend plugins.
+            An add-on can consist of only repository plugins, or only frontend plugins, or both,
+            depending on the kind of functionality implemented.
+          </p>
+          
+        </subsection>
+        
+      </section>
+    </body>
+</document>

@@ -39,9 +39,11 @@
     
     <menu name="Documentation">
       
-      <item name="Running Hippo ECM">
+      <item name="Running Hippo ECM" href="/how-to-run/index.html" collapse="true">
+        <item name="Requirements" href="/how-to-run/requirements.html"/>
+        <item name="Deploying the WARs" href="/how-to-run/deploying-the-wars.html"/>
         <item name="Seeding The Repository" href="/seeding-the-repository-bootstrap.html"/>
-        <item name="Configuration">
+        <item name="Configuration" href="/how-to-run/configuration/index.html" collapse="true">
           <item name="configuration.xml" href="/configuration_files/configuration.html"/>
           <item name="repository.xml" href="/configuration_files/repository.html"/>
           <item name="workspace.xml" href="/configuration_files/workspace.html"/>
@@ -49,20 +51,20 @@
         </item>
       </item>
       
-      <item name="Default Hippo ECM Functionality">
-        <item name="Facets">
+      <item name="Default Hippo ECM Functionality" href="/default-functionality/index.html" collapse="true">
+        <item name="Facets" collapse="true">
         </item>
       </item>
       
-      <item name="Extending Hippo ECM">
-        <item name="Project Structure" href="/extending-hippo-ecm/project-structure.html"/>
-        <item name="Building Hippo ECM">
+      <item name="Extending Hippo ECM" href="/extending-hippo-ecm/index.html" collapse="true">
+        <item name="Building Hippo ECM From Source" href="/extending-hippo-ecm/building/index.html" collapse="true">
+          <item name="SVN Project Structure" href="/extending-hippo-ecm/project-structure.html"/>
           <item name="Maven" href="/extending-hippo-ecm/building/maven.html"/>
           <item name="Eclipse" href="/extending-hippo-ecm/building/eclipse.html"/>
         </item>
-        <item name="Plugins">
-          <item name="Repository Plugins"></item>
-          <item name="Frontend Plugins">
+        <item name="Plugins" href="/extending-hippo-ecm/plugins/index.html" collapse="true">
+          <item name="Repository Plugins" href="/extending-hippo-ecm/plugins/repository/index.html"></item>
+          <item name="Frontend Plugins" href="/extending-hippo-ecm/plugins/frontend/index.html" collapse="true">
             <item name="Frontend Plugin Architecture" href="/frontend-plugin-architecture.html"/>
           </item>
         </item>
