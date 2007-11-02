@@ -35,10 +35,10 @@
                         as it is at the moment.)
                     </p>
                     <source>
-                        &lt;SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl"&gt;
-                            &lt;param name="indexingConfiguration" value="indexing_configuration.xml"/&gt;
-                            &lt;param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/&gt;
-                        &lt;/SearchIndex&gt;
+&lt;SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl"&gt;
+    &lt;param name="indexingConfiguration" value="indexing_configuration.xml"/&gt;
+    &lt;param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/&gt;
+&lt;/SearchIndex&gt;
                     </source>
                 </subsection>
                 
@@ -49,11 +49,11 @@
                     which have been found to be proper values. 
                     </p>
                     <source>
-                        &lt;param name="useCompoundFile" value="true"/&gt;
-                        &lt;param name="minMergeDocs" value="100"/&gt;
-                        &lt;param name="volatileIdleTime" value="10"/&gt;
-                        &lt;param name="maxMergeDocs" value="1000000000"/&gt;
-                        &lt;param name="mergeFactor" value="5"/&gt;
+&lt;param name="useCompoundFile" value="true"/&gt;
+&lt;param name="minMergeDocs" value="100"/&gt;
+&lt;param name="volatileIdleTime" value="10"/&gt;
+&lt;param name="maxMergeDocs" value="1000000000"/&gt;
+&lt;param name="mergeFactor" value="5"/&gt;
                     </source>
                     <p>
                         Setting maxMergeDocs too low or mergeFactor too high results in many lucene indexes
@@ -86,9 +86,9 @@
                         Still needed investigation wether this is needed.
                     </p>    
                     <source>
-                        &lt;param name="forceConsistencyCheck" value="true"/&gt;
-                        &lt;param name="enableConsistencyCheck" value="true"/&gt;
-                        &lt;param name="autoRepair" value="true"/&gt; 
+&lt;param name="forceConsistencyCheck" value="true"/&gt;
+&lt;param name="enableConsistencyCheck" value="true"/&gt;
+&lt;param name="autoRepair" value="true"/&gt; 
                     </source>
                     
                 </subsection>
@@ -109,24 +109,129 @@
                             documents in a way to enable fast faceted searching on their properties. 
                         </li>
                     </ol>
-                    
+                    Our createDocument function calls the Hippo Repository ServicingNodeIndexer which indexes 
+                    like the normal JackRabbit NodeIndexer, but is also indexes properties in such a way that they can
+                    be search on in a facet way. 
                     
                 </subsection>
                 
                 <subsection name="ServicingIndexingConfigurationImpl">
+                    At the time of this writing, the ServicingIndexingConfigurationImpl only serves to have the xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+                    namespace available, and to know wether a property is a Hippo Facet or Hippo Path, and needs 
+                    to be indexed as such. Currently, the indexing_configuration is ignored, but might become important in M2 or M3. 
+                    <br/>
+                    Current configuration can look like:
+                    <source>
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.0"&gt;
+    &lt;facets&gt;
+         &lt;property name="author"/&gt;
+         &lt;property name="date"/&gt;
+         &lt;property name="published"/&gt;
+    &lt;/facets&gt;
+&lt;/configuration&gt;
+                    </source>
+                    <p>
+                    This would mean, that <i>only</i> properties of type 'caption', 'author' and 'date' are indexed as 
+                    facets, and other properties are not available as facets. The advantage for this is that less properties 
+                    needs to be indexed and their TermVector stored. For example, it makes hardly any use to index the 'content' of 
+                    a document as a <i>facet</i> value. 
+                    Currently, some JCR properties are indexed as facet, and some are never. See below:
+                    </p>
+                    <p>
+                    <table>
+                        <tr>
+                            <th>property</th>
+                            <th>facet indexed</th>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.BINARY</td>
+                            <td>NO</td>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.BOOLEAN</td>
+                            <td>YES</td>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.DATE</td>
+                            <td>YES</td>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.DOUBLE</td>
+                            <td>YES</td>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.LONG</td>
+                            <td>YES</td>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.REFERENCE</td>
+                            <td>NO</td>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.PATH</td>
+                            <td>NO</td>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.STRING</td>
+                            <td>YES</td>
+                        </tr>
+                        <tr>
+                            <td>javax.jcr.PropertyType.NAME</td>
+                            <td>NO</td>
+                        </tr>
+                    </table>
+                    </p>
+                    <p>
+                        <b>Future:</b><br/>
+                        The indexing_configuration might be extended to support (multiple) formatting of 
+                        dates/long/string. 
+                        <br/>
+                        For example define:
+                        <ol>
+                            <li>Define the type of property for conversion to String and back</li>
+                            <li>Double/Long/Date granularity for effective range searches</li>
+                            <li>Date formatting option to index a Date property as weeknumber for example (yyyyWW)</li>
+                            <li>max string length for facet</li>
+                        </ol>
+                    </p>
+                    <p>   
+                        The first option is probably quite essential and must be implemented.
+                        Obviously, the other parameters might be considered as tuning performance, becoming important for >10.000.000
+                        nodes involved with range queries reducing granularity will make a huge optimalisation (or
+                        set the granularity exactly to be the facet value set). See lucene
+                        <a href="http://lucene.zones.apache.org:8080/hudson/job/Lucene-Nightly/javadoc/org/apache/lucene/search/RangeQuery.html">RangeQuery</a> and 
+                        <a href="http://lucene.zones.apache.org:8080/hudson/job/Lucene-Nightly/javadoc/org/apache/lucene/search/ConstantScoreRangeQuery.html">ConstantScoreRangeQuery.html</a> 
+                        if you are interested in the bits and the bytes. 
+                    </p>
+                    <p>
+                        Date formatting indexing options might be very useful if for example faceted navigation is wanted 
+                        on something like year-month-weeknumber basis, on a single Date property. Configuration might for example
+                        look like
+                        <source>
+NOT YET AVAILABLE:
+&lt;facets&gt;
+    &lt;property name="date" type="Date" format="WW" facetname="weeknumber"/&gt;
+&lt;/facets&gt;                           
+
+or for single property to multiple facets
+
+&lt;facets&gt;
+    &lt;property name="date" type="Date"&gt;
+        &lt;facet name="year" format="yyyy"/&gt;
+        &lt;facet name="month" format="MON"/&gt;
+        &lt;facet name="weeknumber" format="WW"/&gt;
+    &lt;/property&gt;
+&lt;/facets&gt;
+                        </source>
+                        
+                        <b>Note:</b>
+                        If these option become available, do realize that after changing the indexing_configuration 
+                        re-indexing must be done for the entire workspace. Deleting the workspace index and restarting
+                        will do the job, but might take long for large workspaces. 
+                    </p>
                     
                 </subsection>
                 
-                <subsection name="Expert: JackRabbit lucene implementation">
-                    <!-- 
-                        <param name="analyzer" value="org.apache.lucene.analysis.standard.StandardAnalyzer"/>
-                        <param name="queryClass" value="org.apache.jackrabbit.core.query.QueryImpl"/>
-                     -->
-                </subsection>
-                
-                <subsection name="Expert: Hippo Repository lucene implementation">
-                    
-                </subsection>
             </p> 
              
         </section>       

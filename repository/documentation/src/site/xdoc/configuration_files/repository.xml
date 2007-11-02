@@ -121,7 +121,7 @@
             </subsection>
             <subsection name="Versioning element">
             a Versioning element that is used for configuring
-            versioning-related settings. 
+            versioning-related settings. At the moment of this writing this is not yet implemented.
             </subsection>
         </section>
         
