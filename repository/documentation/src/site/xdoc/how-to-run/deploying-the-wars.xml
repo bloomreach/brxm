@@ -18,12 +18,12 @@
             </subsection>
             
             <subsection name="Hippo ECM Application Server settings">
-                No special settings are needed for the default wars. For a list of 
-                configuration options see: [TODO] link. 
+                No special settings are needed for the default wars. The default configuration can 
+                be adjusted and overridden by adjusting the <a href="configuration/index.html" alt="configuration">configurations</a>.
             </subsection>
             
             <subsection name="Download the wars">
-                Coming soon..
+                Currently there are no pre-build wars available and a <a href="../extending-hippo-ecm/building/maven.html" alt="building from source">source build</a> is needed.
             </subsection>
             
             <subsection name="Deploy the wars">
