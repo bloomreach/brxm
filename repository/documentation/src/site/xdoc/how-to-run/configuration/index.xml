@@ -3,9 +3,33 @@
     <properties>
         <title>Configuration</title>
     </properties>
-    <head>
-        <meta />
-    </head>
     <body>
+      <section name="Configuration">
+        
+        <p>
+          <ul>
+            <li>
+              <a href="configuration/configuration.html">configuration.xml</a>
+            </li>
+            <li>
+              <a href="configuration/repository.html">repository.xml</a>
+            </li>
+            <li>
+              <a href="configuration/workspace.html">workspace.xml</a>
+            </li>
+            <li>
+              <a href="configuration/searchindex.html">Search index</a>
+            </li>
+            <li>
+              <a href="configuration/repository-based-authentication-and-users.html">Authentication and users</a>
+            </li>
+            <li>
+              <a href="configuration/workflow-configuration.html">Workflow</a>
+            </li>
+          </ul>
+        </p>
+        
+        
+      </section>
     </body>
 </document>
