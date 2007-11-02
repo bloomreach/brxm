@@ -28,42 +28,42 @@
 					hippo-ecm-repository-application. There are two types of WAR projects: repository and frontend
 				</li>
 			</ol>
-			<source>
-				Module                   ArtifactId
-				------------------------------------------------------------------------
-				hippo-ecm
-				|-- addon                    hippo-ecm-addon
-				|   `-- reviewed-action      hippo-ecm-addon-reviewed-action
-				|       |-- common           hippo-ecm-addon-reviewed-action-common
-				|       |-- frontend         hippo-ecm-addon-reviewed-action-frontend
-				|       |-- repository       hippo-ecm-addon-reviewed-action-repository
-				|       `-- test             hippo-ecm-addon-reviewed-action-test
-				|-- api                      hippo-ecm-api
-				|-- application              hippo-ecm-application
-				|   |-- default              hippo-ecm-application-default
-				|   |   |-- frontend         hippo-ecm-application-default-frontend
-				|   |   `-- repository       hippo-ecm-application-default-repository
-				|   `-- reviewed-action      hippo-ecm-application-reviewed-action
-				|       |-- frontend         hippo-ecm-application-reviewed-action-frontend
-				|       `-- repository       hippo-ecm-application-reviewed-action-repository
-				|-- documentation            hippo-ecm-documentation
-				|-- frontend                 hippo-ecm-frontend
-				|   |-- engine               hippo-ecm-frontend-engine
-				|   |-- application          hippo-ecm-frontend-application
-				|   `-- plugins              hippo-ecm-frontend-plugins
-				|-- repository               hippo-ecm-repository
-				|   |-- engine               hippo-ecm-repository-engine
-				|   `-- application          hippo-ecm-repository-application
-				`-- tools                    hippo-ecm-tools
-				|-- migration            hippo-ecm-tools-migration
-				`-- testutils            hippo-ecm-tools-testutils
-			</source>
+<source>
+Module                   ArtifactId
+------------------------------------------------------------------------
+hippo-ecm
+|-- addon                    hippo-ecm-addon
+|   `-- reviewed-action      hippo-ecm-addon-reviewed-action
+|       |-- common           hippo-ecm-addon-reviewed-action-common
+|       |-- frontend         hippo-ecm-addon-reviewed-action-frontend
+|       |-- repository       hippo-ecm-addon-reviewed-action-repository
+|       `-- test             hippo-ecm-addon-reviewed-action-test
+|-- api                      hippo-ecm-api
+|-- application              hippo-ecm-application
+|   |-- default              hippo-ecm-application-default
+|   |   |-- frontend         hippo-ecm-application-default-frontend
+|   |   `-- repository       hippo-ecm-application-default-repository
+|   `-- reviewed-action      hippo-ecm-application-reviewed-action
+|       |-- frontend         hippo-ecm-application-reviewed-action-frontend
+|       `-- repository       hippo-ecm-application-reviewed-action-repository
+|-- documentation            hippo-ecm-documentation
+|-- frontend                 hippo-ecm-frontend
+|   |-- engine               hippo-ecm-frontend-engine
+|   |-- application          hippo-ecm-frontend-application
+|   `-- plugins              hippo-ecm-frontend-plugins
+|-- repository               hippo-ecm-repository
+|   |-- engine               hippo-ecm-repository-engine
+|   `-- application          hippo-ecm-repository-application
+`-- tools                    hippo-ecm-tools
+|-- migration            hippo-ecm-tools-migration
+`-- testutils            hippo-ecm-tools-testutils
+</source>
 		</section>
 		
 		<section name="API">
-			<source>
-				|-- api                      hippo-ecm-api
-			</source>
+<source>
+|-- api                      hippo-ecm-api
+</source>
 			
 			<b>hippo-ecm-api</b>:<br/>
 			To be determined    
@@ -71,11 +71,11 @@
 		
 		
 		<section name="Repository">
-			<source>
-				|-- repository              hippo-ecm-repository
-				|   |-- engine              hippo-ecm-repository-engine
-				|   `-- application         hippo-ecm-repository-application
-			</source>
+<source>
+|-- repository              hippo-ecm-repository
+|   |-- engine              hippo-ecm-repository-engine
+|   `-- application         hippo-ecm-repository-application
+</source>
 			
 			<b>hippo-ecm-repository</b>:<br/> 
 			Pom project, bundles all repository modules
@@ -94,12 +94,12 @@
 		</section>
 		
 		<section name="Frontend">
-			<source>
-				|-- frontend                 hippo-ecm-frontend
-				|   |-- engine               hippo-ecm-frontend-engine
-				|   |-- plugins              hippo-ecm-frontend-plugins
-				|   `-- application          hippo-ecm-frontend-application
-			</source>
+<source>
+|-- frontend                 hippo-ecm-frontend
+|   |-- engine               hippo-ecm-frontend-engine
+|   |-- plugins              hippo-ecm-frontend-plugins
+|   `-- application          hippo-ecm-frontend-application
+</source>
 			
 			<b>hippo-ecm-frontend</b>:<br/>
 			Pom project, bundles all frontend modules
@@ -128,12 +128,12 @@
 		</section>
 		
 		<section name="Default application">
-			<source>
-				|-- application              hippo-ecm-application
-				|   |-- default              hippo-ecm-application-default
-				|   |   |-- frontend         hippo-ecm-application-default-frontend
-				|   |   `-- repository       hippo-ecm-application-default-repository
-			</source>
+<source>
+|-- application              hippo-ecm-application
+|   |-- default              hippo-ecm-application-default
+|   |   |-- frontend         hippo-ecm-application-default-frontend
+|   |   `-- repository       hippo-ecm-application-default-repository
+</source>
 			
 			<b>hippo-ecm-application</b>:<br/>
 			Pom project, bundles all application projects
@@ -164,13 +164,13 @@
 		
 		
 		<section name="Addons">
-			<source>
-				|-- addon                    hippo-ecm-addon
-				|   |-- reviewed-action      hippo-ecm-addon-reviewed-action
-				|   |   |-- common           hippo-ecm-addon-reviewed-action-common
-				|   |   |-- frontend         hippo-ecm-addon-reviewed-action-frontend
-				|   |   `-- repository       hippo-ecm-addon-reviewed-action-repository
-			</source>   
+<source>
+|-- addon                    hippo-ecm-addon
+|   |-- reviewed-action      hippo-ecm-addon-reviewed-action
+|   |   |-- common           hippo-ecm-addon-reviewed-action-common
+|   |   |-- frontend         hippo-ecm-addon-reviewed-action-frontend
+|   |   `-- repository       hippo-ecm-addon-reviewed-action-repository
+</source>   
 			<b>hippo-ecm-addon</b>:<br/>
 			Pom project, bundles all addons
 			
@@ -192,12 +192,12 @@
 		</section>
 		
 		<section name="Applications">
-			<source>
-				|-- application              hippo-ecm-application
-				|   |-- reviewed-action      hippo-ecm-application-reviewed-action
-				|   |   |-- frontend         hippo-ecm-application-reviewed-action-frontend
-				|   |   `-- repository       hippo-ecm-application-reviewed-action-repository
-			</source>
+<source>
+|-- application              hippo-ecm-application
+|   |-- reviewed-action      hippo-ecm-application-reviewed-action
+|   |   |-- frontend         hippo-ecm-application-reviewed-action-frontend
+|   |   `-- repository       hippo-ecm-application-reviewed-action-repository
+</source>
 			
 			<b>hippo-ecm-application</b>:<br/>
 			Pom project, bundles all application projects
@@ -226,11 +226,11 @@
 		</section>
 		
 		<section name="Tools">
-			<source>
-				|-- tools              hippo-ecm-tools
-				|   |-- testutils      hippo-ecm-tools-testutils
-				|   `-- migration      hippo-ecm-tools-migration
-			</source>
+<source>
+|-- tools              hippo-ecm-tools
+|   |-- testutils      hippo-ecm-tools-testutils
+|   `-- migration      hippo-ecm-tools-migration
+</source>
 			
 			<b>hippo-ecm-tools</b>:<br/>
 			Pom project, bundles all tools
@@ -249,9 +249,9 @@
 		</section>
 		
 		<section name="Documentation">
-			<source>
-				|-- documentation            hippo-ecm-documentation
-			</source>
+<source>
+|-- documentation            hippo-ecm-documentation
+</source>
 			
 			<b>hippo-ecm-documentation</b>:<br/>
 			Project documentation 
