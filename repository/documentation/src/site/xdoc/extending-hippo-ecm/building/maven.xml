@@ -62,25 +62,9 @@
 		
 		<section name="Run">
 			<p>
-				Hippo ECM consists of a number of projects (see the 
-				<a href="../project-structure.html">project structure documentation</a>).
-				These projects come in three flavors:
+				First choose which application you want to run, all modules under
+				the 'application' module are applications. 
 			</p>
-			<ol>
-				<li>
-					<b>POM</b> projects act as 'glue' for binding together other projects. Examples are
-					hippo-ecm-addon-reviewed-action, hippo-ecm-application-default
-				</li>
-				<li>
-					<b>JAR</b> projects deliver a jar file that can be used in applications.Examples are
-					hippo-ecm-frontend-engine, hippo-ecm-addon-reviewed-action-repository
-				</li>
-				<li>
-					<b>WAR</b> projects deliver an application that can be deployed in an application container
-					(glassfish, jboss, tomcat etc.). Examples are hippo-ecm-application-default-frontend, 
-					hippo-ecm-repository-application.
-				</li>
-			</ol>
 			<p>
 				For running the 'default' application, execute the following commands:
 			</p>
@@ -89,7 +73,8 @@
 ~/workspaces/hippo-ecm/application/default/repository> mvn jetty:run-war
 			</source>				
 			<p>
-				This will start a repository, open a browser and go to http://localhost:8081/repository to view it's contents.
+				This will start a repository server. 
+				Open a browser and go to http://localhost:8081/repository to view it's contents.
 			</p>
 			<p>
 				In another console execute the following commands:
@@ -99,7 +84,8 @@
 ~/workspaces/hippo-ecm/application/default/frontend> mvn jetty:run-war
 			</source>				
 			<p>
-				This will start a frontend, open a browser and go to http://localhost:8082 to start the frontend application.
+				This will start a frontend server.
+				Open a browser and go to http://localhost:8082 to start the frontend application.
 			</p>
 		</section>	
     </body>
