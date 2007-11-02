@@ -66,7 +66,31 @@
 		
 		<section name="Run">
 			<p>
-				To run a out-of-the-box application, execute the following commands:
+				The preferred way of running Hippo ECM is by <a href="../../how-to-run/deploying-the-wars.html">
+				deploying the application wars in an application server</a>.
+			</p>
+			<p>	
+				To facilitate development it is also possible to run Hippo ECM from the commandline using Jetty,
+				this needs some preparation:
+			</p>
+			<p>
+				Start the <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/rmiregistry.html">rmiregistry</a>
+				This is a small program that is shipped with the JDK, it can be found in $JAVA_HOME/bin
+			</p>
+			<p>
+				For Windows: ,  				
+			</p>
+			<source>
+C:> %JAVA_HOME%\bin\rmiregistry.exe
+			</source>
+			<p>
+				For Unix:                  
+			</p>
+			<source>
+~/hippo-ecm> $JAVA_HOME/bin/rmiregistry.exe &amp;				
+			</source>
+			<p>	
+				To start an out-of-the-box application from the command line, execute the following commands:
 			</p>
 			<source>
 ~/hippo-ecm> cd application/reviewed-action/repository
@@ -74,7 +98,8 @@
 			</source>
 			<p>
 				This will start a repository server. 
-				Open a browser and go to http://localhost:8081/repository to view its contents.
+				Open a browser and go to <a href="http://localhost:8081/repository">http://localhost:8081/repository</a>
+				to view its contents.
 			</p>
 			<p>
 				In another console execute the following commands:
@@ -88,6 +113,7 @@
 				Open a web browser and go to <a href="http://localhost:8082">http://localhost:8082</a> 
 				to navigate and edit your repository.
 			</p>
-		</section>	
+		</section>
+		
     </body>
 </document>
