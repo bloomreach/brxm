@@ -14,18 +14,18 @@
             The repository can be configured to store the users as nodes inside the repository itself. 
             To achieve this the RepositoryLoginModule is configured in the <code>repository.xml</code> in the Security section.
             The authentication module is based on <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" alt="Sun JAAS">JAAS</a>. 
-            By default this moduled is enabled. 
-            <pre>
-&lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
-    &lt;!-- default values:
-    &lt;param name="anonymousId" value="anonymous"/&gt;
-    &lt;param name="systemuserId" value="systemuser"/&gt;
-    &lt;param name="systemuserPassword" value="password"/&gt;
-    &lt;param name="debug" value="false"/&gt;
-    &lt;param name="maxCacheTimeMilliSec" value="10000"/&gt;
-    --&gt;
-&lt;/LoginModule&gt;
-            </pre>
+            By default this moduled is enabled.
+            <source>
+            &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
+                &lt;!-- default values:
+                    &lt;param name="anonymousId" value="anonymous"/&gt;
+                    &lt;param name="systemuserId" value="systemuser"/&gt;
+                    &lt;param name="systemuserPassword" value="password"/&gt;
+                    &lt;param name="debug" value="false"/&gt;
+                    &lt;param name="maxCacheTimeMilliSec" value="10000"/&gt;
+                --&gt;
+            &lt;/LoginModule&gt;
+            <source>
             The defaults as shown in the comments can be simply overwritten by setting the 
             parameters. The parameters are:
             <table>
@@ -42,16 +42,16 @@
                 The users are stored in the repository as childeren of the node 
                 <code>/configuration/users</code>.
                 A user node has the following configuration:
-                <pre>
-&lt;sv:node sv:name="johndoe"&gt;
-    &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;nt:unstructured&lt;/sv:value&gt;
-    &lt;/sv:property&gt;
-    &lt;sv:property sv:name="password" sv:type="String"&gt;    
-        &lt;sv:value&gt;secret&lt;/sv:value&gt;
-    &lt;/sv:property&gt;
-&lt;/sv:node&gt;
-                </pre>
+                <source>
+                &lt;sv:node sv:name="johndoe"&gt;
+                    &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
+                        &lt;sv:value&gt;nt:unstructured&lt;/sv:value&gt;
+                    &lt;/sv:property&gt;
+                    &lt;sv:property sv:name="password" sv:type="String"&gt;    
+                        &lt;sv:value&gt;secret&lt;/sv:value&gt;
+                    &lt;/sv:property&gt;
+                &lt;/sv:node&gt;
+                <source>
             </p>
             The password is currently stored in plain text. This will change in the near future. 
         </section>
