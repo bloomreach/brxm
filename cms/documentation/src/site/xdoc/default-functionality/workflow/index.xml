@@ -1,8 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <title>Default workflow</title>
+        <title>Default Hippo ECM functionality - Workflow</title>
     </properties>
-    <body>
-    </body>
+<body>
+
+<section name="Workflow functionality">
+
+<p>
+Workflow is often defined as the automation of a business process, where
+documents, information or tasks are passed from one participant or state to
+another for action according to a set of procedural rules.
+</p>
+
+<p>
+Hippo ECM supports these business workflows, and allows workflows to be freely
+defined.  This means that the workflow rules are not just customizable, but
+that any workflow may be integrated as add-on program code.
+</p>
+
+<p>
+Other components, or the user through a front-end application, define when a
+workflow step on a documents should be performed.  The logic which defines
+whether the workflow step is valid and executes the transformations defined by
+the workflow for that step is executed by a plug-in in the repository.
+</p>
+
+<p>
+Workflows are executed in the repository in order to obtain a separation of
+concerns.  A front-end only has the interface to execute workflow steps, the
+single point where the actual implementation resides can be accessed from
+independent applications.  A workflow is executed in a special context,
+allowing for operations to be performed a broader access scope than would be
+available to the application directly.  This cleanly separates audited logic
+program code (workflows) from untrusted code (front-end).
+</p>
+
+<subsection name="Workflow model">
+
+<p>
+Hippo OCM workflow is defined as a procedure to transform part of the
+information in the repository into an reprocessed form.
+</p>
+<ol>
+<li>On which information to perform the procedure is indicated by a calling
+module or through the front-end application;</li>
+<li>When to perform the procedure is indicated by the calling module or
+through the front-end application;</li>
+<li>Which procedure to perform depends on:
+  <ol>
+  <li>the type of information selected in 1, because workflows are defined as
+  being applicable on certain types of information;</li>
+  <li>the category of workflow requested, because not all workflows are available
+  in all categories;</li>
+  <li>the actual method inside the workflow selected by the calling module or
+  front-end;</li>
+  </ol></li>
+</ol>
+
+<p>
+The workflow implementation uses a very open model, where no defined rules
+language is imposed on how the workflow must be defined.  Instead regular
+Java code may be used.  This allows for any number of extensions and
+connecting with other applications or workflow systems.
+</p>
+
+<p>
+When a specific workflow is available on a selected part of information, then
+the workflow may expose different steps available.  
+</p>
+
+<p>
+A workflow is available to other modules and to the front-end, as a Java
+interface with methods.  The implementation of a workflow is provided by a
+Java class implementing the interface.  The individual workflow steps are
+the methods of the interface that defines the workflow.
+Invoking a workflow step therefor maps directly to calling the method of the
+workflow Java interface.
+</p>
+
+</subsection>
+
+<subsection name="Workflow access">
+
+<p>
+If you want to access the workflow on information in the repository, you first
+need to access the JCR node representing the information in the repository.
+You can then use the Hippo OCM API for the repository to obtain a reference to
+the workflow.
+</p>
+
+<p>
+The following source snippet is typical to directly access a workflow
+</p>
+<source>
+Node node = ...;
+// The cast in the next statement gives access to the Hippo OCM API
+HippoWorkspace wsp = (HippoWorkspace) node.getSession().getWorkspace();
+WorkflowManager workflowMgr = wsp.getWorkflowManager();
+// The cast in the next statement also gives access to the Hippo OCM API
+node = ((HippoNode)node).getCanonicalNode();
+Workflow workflow = workflowMgr.getWorkflow("workflowPlugin", node);
+</source>
+
+<p>
+The workflow returned is a generic interface without workflow methods.  It
+needs to be cast to the workflow interface that actually implements the steps
+expected.
+</p>
+
+</subsection>
+
+</section>
+
+<subsection name="Configuring the workflow">
+</subsection>
+
+<subsection name="Reviewed actions workflow">
+
+A default available add-on for the Hippo OCM repository is the reviewed
+actions workflow.
+
+At this time a sample application that comes in the SVN source in the
+directory <code>application/reviewed-action</code> is pre-configured with the
+add-on.  Building using maven with goal package in the directories
+<code>application/reviewed-action/repository</code> and
+<code>application/reviewed-action/frontend</code> results in two WAR packages
+which can be deployed in your application or can be run using Jetty (see
+FIXME).
+In the maven repository at FIXME is a pre-build WAR of both front-end and
+repository which include the pre-configured reviewed actions workflow.
+
+By M3, you can use the generic downloadable WAR, and upload the JAR package at
+a special location in the repository.  The repository will auto-configure the
+workflow.
+
+</subsection>
+
+</body>
 </document>
