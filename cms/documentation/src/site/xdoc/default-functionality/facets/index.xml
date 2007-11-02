@@ -4,5 +4,73 @@
         <title>Facets</title>
     </properties>
     <body>
+        <h1>Hippo ECM facets</h1>
+        <p>
+          The Hippo Repository is build on top of
+          <a href="http://jackrabbit.apache.org/" alt="Apache Jackrabbit">Apache Jackrabbit</a>.
+          The Hippo Repository adds extra functionality to the default Jackrabbit distribution while
+          keeping full compliance with the JCR 1.0
+          <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" alt="JSR 170">JSR 170</a>.
+          The main added features are facets, virtual nodes and workflow.
+        </p>
+
+        <section name="Faceted navigation">
+          <p>
+            [FIXME Frank: ripped from Arje's blog]
+            By (not) organizing the hierarchy of the content repository upfront, but by allowing
+            it to grow dynamically based on meta data, I hope we can adhere to David Neuscheler's
+            Rule #1, which was inspired by Stefano's "Data first vs Structure first" blogposting.
+          </p>
+
+          <p>
+            In the core of Hippo Repository 2, there is a faceted representation of physical
+            folders in Jackrabbit.  Those virtual trees are again exposed as 'normal' JCR nodes, and
+            can be used to represent all kinds of data in all kinds of different structures purely
+            defined by their meta information.
+          </p>
+
+            <subsection name="Defining the facets">
+              <p>
+                Facets are defined by nodes of type <code>hippo:facetsearch</code>.  These nodes will
+                form the root of the virtual folder structure.  They have the following JCR properties:
+              </p>
+                  <dt>hippo:queryname</dt>
+                  <dd>This property contains the name of the query.  It is used to ...</dd>
+                  <dt>hippo:docbase</dt>
+                  <dd>
+                    The base physical (?) folder whose contents will be used to generate the
+                    virtual folder
+                  </dd>
+                  <dt>hippo:facets</dt>
+                  <dd>
+                    This multivalued property contains the names of the properties that will be 
+                    comprise the virtual folder structure.
+                  </dd>
+            </subsection>
+
+            <subsection name="Screencast">
+              <p>
+                A screenshot showing off the faceted navigation features can be found on Arj&#233; Cahn's blog
+                posting 11/09/2007 with embedded screencast:<br />
+                <a href="http://blogs.hippo.nl/arje/2007/09/status_update_defining_facets.html">
+                  <img src="../../images/facets-screenshot.jpg" width="421" height="410" />
+                </a>
+              </p>
+            </subsection>
+
+        </section>
+
+        <section name="Faceted selection">
+          <p>
+          </p>
+<!--
+        faceted select
+        - geen filter
+        - andere boom structuur (net editable)
+        - getCanonincalNode (wel editable)
+
+        geen facet search op search: hoor je niet te doen.
+-->
+        </section>        
     </body>
 </document>
