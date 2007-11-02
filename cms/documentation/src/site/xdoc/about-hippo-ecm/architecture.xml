@@ -48,16 +48,45 @@
             </subsection>
             
             <subsection name="Hippo Facet Engine">
-                
+                <p>
+                    Hippo Facet Engine works out of the box, and does not need any configuration to start with. 
+                    Browsing through faceted navigation gives you a virtual structured view with counting on your (unstructured)
+                    physical data. 
+                    The facet engine works through intelligent indexing in <a href="#Lucene">Apache Lucene</a>, and is extremely
+                    fast, as if you are browsing through a (fast cached) File System. 
+                </p>
+                <p>
+                    The Facet Engine can be configured if fast faceted browsing on some indirect value, like the week number of
+                    a date, is needed. See <a href="../configuration_files/searchindex.html">Search Index</a> at the bottom.
+                </p>
             </subsection>
             
             <subsection name="Databases">
-                The databse is used to store the actual content. A wide range of databases is supported, 
+                The database is used to store the actual content. A wide range of databases is supported, 
                 such as: MySQL, Oracle, MS SQL, Derby and PostgreSQL. 
             </subsection>
             
             <subsection name="Lucene">
-                <a href="http://lucene.apache.org/" alt="Lucene">The Lucene</a> search engine is used to index all the content.
+                <p>
+                    Content and meta data is indexed through implementation of <a href="http://lucene.apache.org/java/docs/">Apache Lucene 2.2.0</a> search engine library.
+                    It is a scalable, high-performance indexing, accurate and efficient search algorithm cross-platform Open Source application, with a strong
+                    prospering community. 
+                </p>
+                <p>
+                    Some of the possible searches through Lucene that are enabled are listed below
+                    <ol>
+                        <li>and/not/or queries</li>
+                        <li>faceted searching</li>
+                        <li>phrase queries</li>
+                        <li>wildcard queries</li>
+                        <li>proximity queries</li>
+                        <li>fuzzy queries</li>
+                        <li>range queries</li>
+                        <li>synonym searches</li>
+                        <li>similarity searches</li>
+                        <li>spellchecker / did you mean</li>
+                    </ol> 
+                </p>
             </subsection>
         </section>
         
