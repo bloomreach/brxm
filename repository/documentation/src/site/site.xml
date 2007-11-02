@@ -59,9 +59,9 @@
       </item>
       
       <item name="Default Hippo ECM Functionality" href="/default-functionality/index.html" collapse="true">
-        <item name="Facets" href="" collapse="true">
+        <item name="Facets" href="/default-functionality/facets/index.html" collapse="true">
         </item>
-        <item name="Workflow" href="" collapse="true">
+        <item name="Workflow" href="/default-functionality/workflow/index.html" collapse="true">
         </item>
       </item>
       
