@@ -68,8 +68,12 @@
             </ol>
         </section>
         
-        <section>
-            
+        <section name="Run">
+            <p>
+                <a href="http://jettylauncher.sourceforge.net/docs/quickstart.html">Create Jetty launcher configurations</a>
+                for the projects hippo-ecm-application-reviewed-action-repository and hippo-ecm-application-reviewed-action-frontend.
+                As a convention use port 8081 for the repository and 8082 for the frontend.
+            </p>
         </section>
     
 
