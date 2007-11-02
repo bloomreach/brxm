@@ -50,8 +50,8 @@
             <subsection name="Hippo Facet Engine">
                 <p>
                     Hippo Facet Engine works out of the box, and does not need any configuration to start with. 
-                    Browsing through faceted navigation gives you a virtual structured view with counting on your (unstructured)
-                    physical data. 
+                    Browsing through faceted navigation gives you multiple ordered views with counting on your (unstructured)
+                    physical data, instead of the classical single, pre-determined, hierarchical or taxonomic order.
                     The facet engine works through intelligent indexing in <a href="#Lucene">Apache Lucene</a>, and is extremely
                     fast, as if you are browsing through a (fast cached) File System. 
                 </p>
