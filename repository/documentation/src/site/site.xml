@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and 
   limitations under the License.
 -->
-<site>
+<site name="Hippo ECM">
   
   <bannerLeft>
     <name>Hippo ECM project documention</name>
@@ -24,8 +24,9 @@
   
   <body>
     <links>
-      <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
       <item name="Hippo" href="http://www.hippo.nl/"/>
+      <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
+      <item name="Hippo Portal" href="http://www.hippoportal.org/"/>
     </links>
     
     <menu name="Main">

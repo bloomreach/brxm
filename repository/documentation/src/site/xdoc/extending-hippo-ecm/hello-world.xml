@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-    <properties>
-        <author>Hippo</author>
-        <title>Hippo ECM Documentation: Hello World</title>
-    </properties>
-    <body>
-      <h1>Hello World</h1>
-        <p>Most programmers seem to be interested in telling the world "Hello World!"
-          Luckily, this is also possible with a plugin for Hippo ECM frontend
-          applications.  We'll show how to create </p>
-        <ul>
-        </ul>
+  <properties>
+      <title>Hello World</title>
+  </properties>
+  <body>
+    <h1>Hello World</h1>
+      <p>Most programmers seem to be interested in telling the world "Hello World!"
+        Luckily, this is also possible with a plugin for Hippo ECM frontend
+        applications. This tutorial describes how such a simple plugin can be created.
+      </p>
 
-        <section name="Plugin">
-          <p>The most basic plugin that exists is the root plugin, loaded
-            by the framework as the root Wicket component is rendered.</p>
+      <section name="Creating the Hello World plugin">
+        <p>
+          We'll create a small project to contain our Hello World Plugin, which we can
+          later on add to the Hippo ECM frontend application.
+        </p>
 
-          <subsection name="Maven structure">
-            <p>We'll use maven 2 to automate the build process.  The following
-              directory structure will serve our needs:</p>
+        <subsection name="Maven structure">
+          <p>
+            We'll use Maven 2 to automate the build process. In a location of your choice,
+            create a directory for our plugin project and create the following directory
+            structure:
+          </p>
 <source>
 |-- pom.xml
 `-- src
@@ -27,361 +30,263 @@
             `-- org
                 `-- example
                     `-- helloworld
-                        `-- frontend
-                            `-- plugins
-                                |-- HelloPlugin.html
-                                `-- HelloPlugin.java
+                        |-- HelloPlugin.html
+                        `-- HelloPlugin.java
 </source>
-            </subsection>
 
-            <subsection name="pom.xml">
+          <p>
+            The contents of the individual files are described in the following sections.
+          </p>            
+        </subsection>
+
+        <subsection name="pom.xml">
+          <p>
+            The Maven POM contains one dependency, on hippo-ecm-frontend-engine.
+            This component contains the abstract Plugin class which we need to extend
+            in our Hello World Plugin.
+          </p>
+          
+          <p>
+            We will package our plugin as a JAR so we can easily add it as a dependency
+            to the Hippo ECM frontend application.
+          </p>
 <source>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+<![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd"&gt;
-  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-  &lt;name&gt;Hello World&lt;/name&gt;
-  &lt;description&gt;Hello World plugin&lt;/description&gt;
-  &lt;artifactId&gt;hello-world-plugin&lt;/artifactId&gt;
-  &lt;packaging&gt;pom&lt;/packaging&gt;
+  <name>Hello World</name>
+  <description>Hello World plugin</description>
+  <groupId>org.example</groupId>
+  <artifactId>hello-world-plugin</artifactId>
+  <version>1.01.00</version>
+  <packaging>jar</packaging>
 
-  &lt;modules&gt;
-    &lt;module&gt;frontend&lt;/module&gt;
-  &lt;/modules&gt;
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>2.01.00-dev</version>
+    </dependency>    
+  </dependencies>
+  
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 
-  &lt;build&gt;
-    &lt;defaultGoal&gt;install&lt;/defaultGoal&gt;
-  &lt;/build&gt;
-
-&lt;/project&gt;
+</project>
+]]>
 </source>
-            </subsection>
+        </subsection>
 
-            <subsection name="HelloPlugin.java">
+        <subsection name="HelloPlugin.java">
+          <p>
+            Our HelloWorldPlugin class extends the Plugin class. In the constructor we
+            add a static label. Plugin contains an abstract method update we need to implement,
+            however because our plugin only contains static data at this point we can leave
+            the body of the method empty.
+          </p>
 <source>
-package org.example.helloworld.frontend.plugins;
+<![CDATA[
+package org.example.helloworld;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 
-public class HelloPlugin extends Plugin {
+public class HelloWorldPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    protected AjaxLink hello;
-
-    public HelloPlugin(String id, final JcrNodeModel model) {
+    public HelloWorldPlugin(String id, JcrNodeModel model) {
         super(id, model);
-
-        hello = new AjaxLink("hello") {
-            private static final long serialVersionUID = 1L;
-            public void onClick(AjaxRequestTarget target) {
-                System.out.println("Hello world!");
-            }
-        };
-        add(hello);
+        add(new Label("label", "Hello World!"));
     }
 
-    public void update(final AjaxRequestTarget target, JcrEvent jcrEvent) {
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
     }
+
 }
-
+]]>
 </source>
-            </subsection>
+        </subsection>
 
-            <subsection name="HelloPlugin.html">
+        <subsection name="HelloPlugin.html">
+          <p>
+            Just like any other Wicket component, a Plugin needs an HTML page defining its presentation.
+            For our HelloWorldPlugin this could look like this:
+          </p>
 <source>
-&lt;html xmlns:wicket=&quot;http://wicket.apache.org/&quot;&gt;
-
-    &lt;wicket:panel&gt;
-      &lt;p&gt;
-          &lt;a wicket:id="hello"&gt;click me&lt;/a&gt;
-      &lt;/p&gt;
-    &lt;/wicket:panel&gt;
-
-&lt;/html&gt;
-</source>
-            </subsection>
-        </section>
-
-
-        <section name="Application - Frontend">
-          <p>The frontend application that we're building does little more than use the 
-            above plugin to generate a web application.</p>
-
-          <subsection name="Maven structure">
-<source>
-|-- pom.xml
-`-- src
-    `-- main
-        `-- webapp
-            `-- WEB-INF
-                `-- web.xml
-</source>
-          </subsection>
-
-          <subsection name="pom.xml">
-            <p>The main functionality of the frontend application is obtained 
-              by extending the hippo-ecm-frontend-application package.</p>
-<source>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"&gt;
-
-  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-  &lt;name&gt;Hello world frontend web application&lt;/name&gt;
-  &lt;description&gt;Hello world frontend application&lt;/description&gt;
-  &lt;artifactId&gt;sample-application-hello-frontend&lt;/artifactId&gt;
-  &lt;packaging&gt;war&lt;/packaging&gt;
-
-  &lt;dependencies&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
-      &lt;artifactId&gt;hippo-ecm-frontend-application&lt;/artifactId&gt;
-      &lt;version&gt;2.01.00-dev&lt;/version&gt;
-      &lt;type&gt;war&lt;/type&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;org.example&lt;/groupId&gt;
-      &lt;artifactId&gt;hello-world-plugin&lt;/artifactId&gt;
-      &lt;version&gt;1.0&lt;/version&gt;
-      &lt;scope&gt;runtime&lt;/scope&gt;
-    &lt;/dependency&gt;
-  &lt;/dependencies&gt;
-
-  &lt;build&gt;
-    &lt;plugins&gt;
-      &lt;plugin&gt;
-        &lt;groupId&gt;org.mortbay.jetty&lt;/groupId&gt;
-        &lt;artifactId&gt;maven-jetty-plugin&lt;/artifactId&gt;
-        &lt;configuration&gt;
-          &lt;scanIntervalSeconds&gt;5&lt;/scanIntervalSeconds&gt;
-          &lt;connectors&gt;
-            &lt;connector implementation="org.mortbay.jetty.nio.SelectChannelConnector"&gt;
-              &lt;port&gt;8082&lt;/port&gt;
-            &lt;/connector&gt;
-          &lt;/connectors&gt;
-          &lt;contextPath&gt;/&lt;/contextPath&gt;
-        &lt;/configuration&gt;
-      &lt;/plugin&gt;
-    &lt;/plugins&gt;
-  &lt;/build&gt;
-
-&lt;/project&gt;
-</source>
-          </subsection>
-
-          <subsection name="web.xml">
-<source>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;web-app id="example-application-frontend"&gt;
-
-  &lt;!-- General configuration --&gt;
-  &lt;display-name&gt;Hello World frontend&lt;/display-name&gt;
-  &lt;description&gt;Hello World application for Hippo ECM.&lt;/description&gt;
-
-  &lt;!-- Remote repository lookup --&gt;
-  &lt;context-param&gt;
-    &lt;param-name&gt;repository-directory&lt;/param-name&gt;
-    &lt;param-value&gt;rmi://localhost:1099/jackrabbit.repository&lt;/param-value&gt;
-    &lt;description&gt;Connect to remote Hippo ECM Server&lt;/description&gt;
-  &lt;/context-param&gt;
-
-  &lt;!--
-    Frontend application plugin configuration factory, possible values:
-    'java'       ==&gt; Hard coded configuration
-    'repository' ==&gt; Reads plugin configuration from the repository
-    'properties' ==&gt; Reads plugin configuration from properties file (not implemented yet)
-    'spring'     ==&gt; Reads plugin configuration from Spring context (not implemented yet)
-  --&gt;
-  &lt;context-param&gt;
-    &lt;param-name&gt;frontend-plugin-config&lt;/param-name&gt;
-    &lt;param-value&gt;repository&lt;/param-value&gt;
-  &lt;/context-param&gt;
-
-  &lt;!--Frontend application--&gt;
-  &lt;filter&gt;
-    &lt;filter-name&gt;Frontend&lt;/filter-name&gt;
-    &lt;filter-class&gt;org.apache.wicket.protocol.http.WicketFilter&lt;/filter-class&gt;
-    &lt;init-param&gt;
-      &lt;param-name&gt;applicationClassName&lt;/param-name&gt;
-      &lt;param-value&gt;org.hippoecm.frontend.Main&lt;/param-value&gt;
-    &lt;/init-param&gt;
-  &lt;/filter&gt;
-
-  &lt;filter-mapping&gt;
-    &lt;filter-name&gt;Frontend&lt;/filter-name&gt;
-    &lt;url-pattern&gt;/browser/*&lt;/url-pattern&gt;
-    &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
-    &lt;dispatcher&gt;INCLUDE&lt;/dispatcher&gt;
-  &lt;/filter-mapping&gt;
-
-&lt;/web-app&gt;
-</source>
-          </subsection>
-
-        </section>
-
-        <section name="Application - Repository">
-          <p>The repository project creates a repository by extending the basic 
-            org.hippoecm.application.repository package with a initial content.</p>
-
-          <subsection name="Maven structure">
-            <p>We'll use maven 2 to automate the build process.  The following
-              directory structure will serve our needs:</p>
-<source>
-|-- pom.xml
-`-- src
-    `-- main
-        `-- resources
-            `-- org
-                `-- example
-                    `-- repository
-                        |-- configuration.xml
-                        |-- frontend.cnd
-                        `-- frontend.xml
-</source>
-            </subsection>
-
-            <subsection name="pom.xml">
-<source>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/maven-v4_0_0.xsd"&gt;
-  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-  &lt;name&gt;Hello World repository&lt;/name&gt;
-  &lt;description&gt;Hello World repository&lt;/description&gt;
-  &lt;artifactId&gt;hello-world-repository&lt;/artifactId&gt;
-  &lt;packaging&gt;war&lt;/packaging&gt;
-
-  &lt;dependencies&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
-      &lt;artifactId&gt;hippo-ecm-repository-application&lt;/artifactId&gt;
-      &lt;version&gt;2.01.00-dev&lt;/version&gt;
-      &lt;type&gt;war&lt;/type&gt;
-    &lt;/dependency&gt;
-  &lt;/dependencies&gt;
+<![CDATA[
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
     
-  &lt;build&gt;
-    &lt;plugins&gt;
-      &lt;plugin&gt;
-        &lt;groupId&gt;org.mortbay.jetty&lt;/groupId&gt;
-        &lt;artifactId&gt;maven-jetty-plugin&lt;/artifactId&gt;
-        &lt;configuration&gt;
-          &lt;scanIntervalSeconds&gt;5&lt;/scanIntervalSeconds&gt;
-          &lt;connectors&gt;
-            &lt;connector implementation="org.mortbay.jetty.nio.SelectChannelConnector"&gt;
-	          &lt;port&gt;8081&lt;/port&gt;
-            &lt;/connector&gt;
-          &lt;/connectors&gt;
-          &lt;contextPath&gt;/&lt;/contextPath&gt;
-        &lt;/configuration&gt;
-      &lt;/plugin&gt;
-    &lt;/plugins&gt;
-  &lt;/build&gt;
-
-&lt;/project&gt;
+    <div wicket:id="label">text goed here</div>
+    
+  </wicket:panel>
+</html>
+]]>
 </source>
-            </subsection>
-
-            <subsection name="configuration.xml">
+        </subsection>
+        
+      <subsection name="Building the plugin JAR">
+        <p>
+          Now build the JAR for the plugin and install it in your local Maven repository
+          using the following Maven command:
+        </p>
 <source>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
-         xmlns:jcr="http://www.jcp.org/jcr/1.0"
-         xmlns:rep="internal"
-         xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-         xmlns:xs="http://www.w3.org/2001/XMLSchema"
-         xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-         xmlns:hippo="http://www.hippoecm.org/nt/1.0"
-         xmlns:fn="http://www.w3.org/2005/xpath-functions" 
-         sv:name="configuration"&gt;
-  &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-    &lt;sv:value&gt;nt:unstructured&lt;/sv:value&gt;
-  &lt;/sv:property&gt;
-
-  &lt;sv:node sv:name="initialize"&gt;
-    &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-      &lt;sv:value&gt;hippo:initializefolder&lt;/sv:value&gt;
-    &lt;/sv:property&gt;
-
-    &lt;!--Frontend plugin configuration--&gt;
-    &lt;sv:node sv:name="frontend"&gt;
-      &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:initializeitem&lt;/sv:value&gt;
-      &lt;/sv:property&gt;
-      &lt;sv:property sv:name="hippo:nodetypes" sv:type="String"&gt;
-        &lt;sv:value&gt;frontend.cnd&lt;/sv:value&gt;
-      &lt;/sv:property&gt;
-      &lt;sv:property sv:name="hippo:content" sv:type="String"&gt;
-        &lt;sv:value&gt;frontend.xml&lt;/sv:value&gt;
-      &lt;/sv:property&gt;
-      &lt;sv:property sv:name="hippo:contentroot" sv:type="String"&gt;
-        &lt;sv:value&gt;/configuration/frontend&lt;/sv:value&gt;
-      &lt;/sv:property&gt;
-    &lt;/sv:node&gt;
-
-  &lt;/sv:node&gt;
-&lt;/sv:node&gt;
+mvn install
 </source>
-            </subsection>
+        </subsection>
+          
 
-            <subsection name="frontend.cnd">
-              <p>This file contains the node definitions for JCR nodes that are
-                used by the frontend.  This includes the configuration for plugins.</p>
+          
+      </section>
+
+
+      <section name="Testing the Hello World plugin">
+        <p>
+          To test our HelloWorldPlugin we can use the Showcase GUI [TODO: link]. Make sure you
+          have a complete SVN checkout of Hippo ECM [TODO: link].
+          To keep things simple we use the existing hippo-ecm-application-default-frontend application. 
+          
+        </p>
+        
+        <subsection name="Adding a dependency to our plugin">
+          <p>
+            To be able to use our plugin we need to add a dependency on it to Maven POM of the frontend
+            application.
+          </p>
+          <source>
+<![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  ...
+  
+  <dependencies>
+    
+    ...
+    
+    <dependency>
+      <groupId>org.example</groupId>
+      <artifactId>hello-world-plugin</artifactId>
+      <version>1.01.00</version>
+      <type>jar</type>
+    </dependency>
+    
+    ...
+    
+  </dependencies>
+  
+  ...
+  
+</project>
+]]>            
+          </source>
+      </subsection>
+      
+      <subsection name="Running the repository application">
+        <p>
+          To test our frontend plugin we need to have a repository running. We can use the
+          default repository application (hippo-ecm-application-default-repository).
+          Start up rmiregistry and the repository using the following commands:
+        </p>
 <source>
-&lt;rep='internal'&gt;
-&lt;jcr='http://www.jcp.org/jcr/1.0'&gt;
-&lt;nt='http://www.jcp.org/jcr/nt/1.0'&gt;
-&lt;mix='http://www.jcp.org/jcr/mix/1.0'&gt;
-&lt;hippo='http://www.hippoecm.org/nt/1.0'&gt;
-
-[hippo:frontendplugin] &gt; nt:base
-- hippo:renderer (string) mandatory
-+ * (hippo:frontendplugin) = hippo:frontendplugin
+rmiregistry
+mvn jetty:run-war
 </source>
-            </subsection>
-
-            <subsection name="frontend.xml">
-              <p>This file contains the node definitions for JCR nodes that are
-                used by the frontend.  This includes the configuration for plugins.</p>
-              <p>The node with name "rootPlugin", of type hippo:frontendplugin, 
-                tells the framework to instantiate the HelloPlugin.</p> 
+      </subsection>
+      
+      <subsection name="Running the frontend application">
+        <p>
+          Now run the frontend application using the following Maven command:
+        </p>
 <source>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-    xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
-    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-    xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-    sv:name="default"&gt;
-  &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-    &lt;sv:value&gt;nt:unstructured&lt;/sv:value&gt;
-  &lt;/sv:property&gt;
-  &lt;sv:node sv:name="rootPlugin"&gt;
-    &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-      &lt;sv:value&gt;hippo:frontendplugin&lt;/sv:value&gt;
-    &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:renderer" sv:type="String"&gt;
-      &lt;sv:value&gt;org.example.helloworld.HelloPlugin&lt;/sv:value&gt;
-    &lt;/sv:property&gt;
-  &lt;/sv:node&gt;
-&lt;/sv:node&gt;
+mvn jetty:run-war
 </source>
-            </subsection>
+        <p>
+          You should now be able to approach the frontend application with your web browser
+          on <a href="http://localhost:8082/browser/">http://localhost:8082/browser/</a>.
+        </p>
+      </subsection>
 
-        </section>
-    </body>
+      <subsection name="Configuring to application to use the plugin">
+        <p>
+          All it takes to see our plugin in all its glory is to replace one of the
+          standard plugins in the plugin configuration with our own. To do this, navigate to
+          /configuration/frontend/default/rootPlugin/contentPlugin.
+          in the tree, and click on contentPlugin node. The properties of the contentPlugin node
+          are displayed on the right side of the page. 
+          Now change the class name
+          in the hippo:renderer property of this node to org.example.helloworld.HelloWorldPlugin.
+        </p>
+        <img src="../images/configure-hello-world-plugin.jpg" style="border:1px solid grey;"/>
+        <p>
+          Refresh your browser, and admire your work!
+        </p>
+        <img src="../images/hello-world-plugin.jpg"  style="border:1px solid grey;"/>
+      </subsection>
+      
+    </section>
+
+
+    <!--
+    <section name="Making the Hello World plugin context sensitive">
+      <p>
+        TODO
+      </p>
+          
+<source>
+<![CDATA[
+    public HelloWorldPlugin(String id, JcrNodeModel model) {
+        super(id, model);
+        add(new Label("label", new PropertyModel(model, "path")));
+    }
+]]>    
+</source>
+          
+      <p>
+        TODO
+      </p>
+          
+<source>
+<![CDATA[
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
+        if (jcrEvent.getModel() != null) {
+            setModel(jcrEvent.getModel());
+        }
+        if (target != null) {
+            target.addComponent(this);
+        }
+    }
+]]>    
+</source>
+
+      <p>
+        Now rebuild your plugin project as described above, and restart the frontend application.
+        The Hello World plugin should now display the name of the node selected in the tree.
+      </p>
+      
+    </section>
+    -->
+
+  </body>
 </document>
