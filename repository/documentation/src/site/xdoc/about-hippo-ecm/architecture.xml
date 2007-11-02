@@ -14,20 +14,25 @@
             <subsection name="Overview">
                 <img src="../images/components-architecture.jpg"/>
                 <p>
-                    Introduction..
+                    The Hippo Repository has three main layers as illustrated with the diagram above. 
+                    The yellow layer represents the persistence layer, consisting of a database and a 
+                    lucene index. This is where all the actual data is stored. The blue layer represents 
+                    the main engine. The blue layer is where all the logic is done. The green layer is the 
+                    API layer. All applications that are connected to the Hippo Repository use these APIs to 
+                    communicate with the Hippo Repository. 
                 </p>
             </subsection>
             
-            <subsection name="The APIs">
-                <subsubsection name="JCR 1.0 API">
+            <subsection name="JCR 1.0 API">
+                The JCR 1.0 API is a fully compliant with <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" alt="JSR 170">JSR 170</a>.    
+            </subsection>
+            
+            <subsection name="Document API">
                     
-                </subsubsection>
-                <subsubsection name="Document API">
+            </subsection>
+            
+            <subsection name="Workflow API">
                     
-                </subsubsection>
-                <subsubsection name="Workflow API">
-                    
-                </subsubsection>
             </subsection>
             
             <subsection name="The Decorator">
@@ -46,13 +51,13 @@
                 
             </subsection>
             
-            
             <subsection name="Databases">
-                
+                The databse is used to store the actual content. A wide range of databases is supported, 
+                such as: MySQL, Oracle, MS SQL, Derby and PostgreSQL. 
             </subsection>
             
             <subsection name="Lucene">
-                
+                <a href="http://lucene.apache.org/" alt="Lucene">The Lucene</a> search engine is used to index all the content.
             </subsection>
         </section>
         
