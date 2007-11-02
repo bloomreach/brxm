@@ -2,7 +2,7 @@
 <document>
     <properties>
         <author>Hippo</author>
-        <title>Deploying the Hippo ECM wars</title>
+        <title>WAR deployments</title>
     </properties>
     <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
     <head>
