@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Hippo</author>
+        <title>Hippo ECM Documentation: Architecture</title>
+    </properties>
+    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
+    <head>
+        <meta />
+    </head>
+    <body>
+        <!-- The body of the document contains a number of sections -->
+        <section name="Hippo ECM Architecture">
+            <subsection name="Overview">
+                <img src="../images/components-architecture.jpg"/>
+                <p>
+                    Introduction..
+                </p>
+            </subsection>
+            
+            <subsection name="The APIs">
+                <subsubsection name="JCR 1.0 API">
+                    
+                </subsubsection>
+                <subsubsection name="Document API">
+                    
+                </subsubsection>
+                <subsubsection name="Workflow API">
+                    
+                </subsubsection>
+            </subsection>
+            
+            <subsection name="The Decorator">
+                
+            </subsection>
+            
+            <subsection name="OCM Engine">
+                
+            </subsection>
+            
+            <subsection name="Virtual Node Engine">
+                
+            </subsection>
+            
+            <subsection name="Hippo Facet Engine">
+                
+            </subsection>
+            
+            
+            <subsection name="Databases">
+                
+            </subsection>
+            
+            <subsection name="Lucene">
+                
+            </subsection>
+        </section>
+        
+    </body>
+</document>
