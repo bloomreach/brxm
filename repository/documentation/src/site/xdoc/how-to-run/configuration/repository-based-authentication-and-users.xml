@@ -25,7 +25,7 @@
                     &lt;param name="maxCacheTimeMilliSec" value="10000"/&gt;
                 --&gt;
             &lt;/LoginModule&gt;
-            <source>
+            </source>
             The defaults as shown in the comments can be simply overwritten by setting the 
             parameters. The parameters are:
             <table>
@@ -51,7 +51,7 @@
                         &lt;sv:value&gt;secret&lt;/sv:value&gt;
                     &lt;/sv:property&gt;
                 &lt;/sv:node&gt;
-                <source>
+                </source>
             </p>
             The password is currently stored in plain text. This will change in the near future. 
         </section>
