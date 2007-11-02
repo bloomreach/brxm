@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <author>Hippo</author>
-        <title>Hippo ECM Documentation: </title>
+        <title>Running Hippo ECM</title>
     </properties>
-    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
-    <head>
-        <meta />
-    </head>
     <body>
+      <section name="Running Hippo ECM">
+        
+        <p>
+          <ul>
+            <li>
+              <a href="requirements.html">Requirements</a>
+            </li>
+            <li>
+              <a href="deploying-the-wars.html">Deploying the WARs</a>
+            </li>
+            <li>
+              <a href="seeding-the-repository-bootstrap.html">Seeding the Repository</a>
+            </li>
+            <li>
+              <a href="configuration/index.html">Configuration</a>
+            </li>
+          </ul>
+        </p>
+        
+        
+      </section>
     </body>
 </document>
