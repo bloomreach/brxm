@@ -75,7 +75,7 @@
                 </p>
                 <p>
                     The Facet Engine can be configured if fast faceted browsing on some indirect value, like the week number of
-                    a date, is needed. See <a href="../configuration_files/searchindex.html">Search Index</a> at the bottom.
+                    a date, is needed. See <a href="../how-to-run/configuration/searchindex.html">Search Index</a> at the bottom.
                 </p>
             </subsection>
             
