@@ -7,7 +7,7 @@
     <body>
     
         <section name="Prepare">
-	        Hippo ECM is build using Maven 2 version >= 2.0.6 , follow the instructions found at
+	        Hippo ECM is built using Maven 2 version >= 2.0.6 , follow the instructions found at
 	        <a href="http://maven.apache.org/">here.</a>
         	<subsection name="WARNING (windows only)">
         		<p>
