@@ -1,242 +1,263 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-    <properties>
-        <author>Hippo</author>
-        <title>Project structure</title>
-    </properties>
-    <body>
-    
-<section name="Project Structure">
-	<source>
-    Directory                ArtifactId
-------------------------------------------------------------------------
-hippo-ecm
-|-- addon                    hippo-ecm-addon
-|   `-- reviewed-action      hippo-ecm-addon-reviewed-action
-|       |-- common           hippo-ecm-addon-reviewed-action-common
-|       |-- frontend         hippo-ecm-addon-reviewed-action-frontend
-|       |-- repository       hippo-ecm-addon-reviewed-action-repository
-|       `-- test             hippo-ecm-addon-reviewed-action-test
-|-- api                      hippo-ecm-api
-|-- application              hippo-ecm-application
-|   |-- default              hippo-ecm-application-default
-|   |   |-- frontend         hippo-ecm-application-default-frontend
-|   |   `-- repository       hippo-ecm-application-default-repository
-|   `-- demo                 hippo-ecm-application-demo
-|       |-- frontend         hippo-ecm-application-demo-frontend
-|       `-- repository       hippo-ecm-application-demo-repository
-|-- documentation            hippo-ecm-documentation
-|-- frontend                 hippo-ecm-frontend
-|   |-- engine               hippo-ecm-frontend-engine
-|   |-- application          hippo-ecm-frontend-application
-|   `-- plugins              hippo-ecm-frontend-plugins
-|-- repository               hippo-ecm-repository
-|   |-- engine               hippo-ecm-repository-engine
-|   `-- application          hippo-ecm-repository-application
-`-- tools                    hippo-ecm-tools
-    |-- migration            hippo-ecm-tools-migration
-    `-- testutils            hippo-ecm-tools-testutils
-	</source>
-</section>
-
-<section name="API">
-	<source>
-|-- api                      hippo-ecm-api
-	</source>
-	<p>
-		<b>hippo-ecm-api</b>:<br/>
-		To be determined
-	</p>
-</section>
-
-
-<section name="Repository">
-	<source>
-|-- repository              hippo-ecm-repository
-|   |-- engine              hippo-ecm-repository-engine
-|   `-- application         hippo-ecm-repository-application
-	</source>
-	<p>
-		<b>hippo-ecm-repository</b>:<br/> 
-		Pom project, bundles all repository modules
-	</p>
-	<p>
-		<b>hippo-ecm-repository-engine</b>:<br/>
-		Jar project, core implementation of the repository
-	</p>
-	<p>
-		<b>hippo-ecm-repository-application</b>:<br/>
-		War project, a minimal empty repository application
-	</p>
-</section>
-
-<section name="Frontend">
-	<source>
-|-- frontend                 hippo-ecm-frontend
-|   |-- engine               hippo-ecm-frontend-engine
-|   |-- plugins              hippo-ecm-frontend-plugins
-|   `-- application          hippo-ecm-frontend-application
-	</source>
-	<p>
-		<b>hippo-ecm-frontend</b>:<br/>
-		Pom project, bundles all frontend modules
-	</p>
-	<p>
-		<b>hippo-ecm-frontend-engine</b>:<br/>
-		Jar project, core implementation of the frontend
-	</p>
-	<p>
-		<b>hippo-ecm-frontend-plugins</b>:<br/>
-		Jar project, core frontend plugins
-	</p>
-	<p>
-		<b>hippo-ecm-frontend-application</b>:<br/>
-		War project, a minimal frontend application
-	</p>
-	<ol>
-  		<li>starts embedded repository</li>
-  		<li>uses hardcoded frontend plugin configuration</li>
-  		<li>portal configuration</li>
-  		<li>wicket configuration</li>
-	</ol>	
-</section>
-
-<section name="Default application">
-	<source>
-|-- application              hippo-ecm-application
-|   |-- default              hippo-ecm-application-default
-|   |   |-- frontend         hippo-ecm-application-default-frontend
-|   |   `-- repository       hippo-ecm-application-default-repository
-	</source>
-	<p>
-		<b>hippo-ecm-application</b>:<br/>
-		Pom project, bundles all application projects
-	</p>
-	<p>
-		<b>hippo-ecm-application-default</b>:<br/>
-		Pom project, bundles the 'default' application projects
-	</p>
-	<p>
-		<b>hippo-ecm-application-default-frontend</b>:<br/>
-		War overlay project, overlays hippo-ecm-frontend-application, adds:
-	</p> 
-	<ol>
-  		<li>repository location configuration</li>
-  		<li>frontend configuration</li>
-  		<li>site-specific configuration (web.xml, log4j.xml etc.)</li>
-	</ol>	
-	<p>	
-		<b>hippo-ecm-application-default-repository</b>:<br/>
-		War overlay project, overlays hippo-ecm-repository-application, adds:
-	</p>
-	<ol>
-  		<li>frontend plugin configuration (bootstrap import of repository export file under /configuration/frontend/)</li>
-  		<li>default user configuration (bootstrap import of repository export file under /configuration/users/)</li>
-  		<li>any other site-specific configuration (web.xml, log4j.xml etc.)</li>
-	</ol>	
-</section>
-
-
-<section name="Addons">
-	<source>
-|-- addon                    hippo-ecm-addon
-|   |-- reviewed-action      hippo-ecm-addon-reviewed-action
-|   |   |-- common           hippo-ecm-addon-reviewed-action-common
-|   |   |-- frontend         hippo-ecm-addon-reviewed-action-frontend
-|   |   `-- repository       hippo-ecm-addon-reviewed-action-repository
-	</source>
-	<p>
-		<b>hippo-ecm-addon</b>:<br/>
-		Pom project, bundles all addons
-	</p>
-	<p>
-		<b>hippo-ecm-addon-reviewed-action</b>:<br/>
-		Pom project, bundles the reviewed-action addon
-	</p>
-	<p>
-		<b>hippo-ecm-addon-reviewed-action-repository</b>:<br/>
-		Jar project, contains the repository-only part of the reviewed-action addon
-	</p>
-	<p>
-		<b>hippo-ecm-addon-reviewed-action-frontend</b>:<br/>
-		Jar project, contains the frontend-only part of the reviewed-action addon
-	</p>
-	<p>
-		<b>hippo-ecm-addon-reviewed-action-common</b>:<br/>
-		Jar project, contains the common part of the reviewed-action addon
-	</p>
-</section>
-
-<section name="Applications">
-	<source>
-|-- application              hippo-ecm-application
-|   |-- reviewed-action      hippo-ecm-application-reviewed-action
-|   |   |-- frontend         hippo-ecm-application-reviewed-action-frontend
-|   |   `-- repository       hippo-ecm-application-reviewed-action-repository
-	</source>
-	<p>
-		<b>hippo-ecm-application</b>:<br/>
-		Pom project, bundles all application projects
-	</p>
-	<p>
-		<b>hippo-ecm-application-reviewed-action</b>:<br/>
-		Pom project, bundles the 'reviewed-action' application projects
-	</p>
-	<p>
-		<b>hippo-ecm-application-reviewed-action-frontend</b>:<br/>
-		War overlay project, overlays hippo-ecm-application-default-frontend
-	</p>
-	<ol>
-  		<li>Adds maven dependency on hippo-ecm-addon-reviewed-action-frontend and hippo-ecm-addon-reviewed-action-common</li>
-	</ol>		
-	<p>
-		<b>hippo-ecm-application-reviewed-action-repository</b>:<br/>
-		War overlay project, overlays hippo-ecm-application-default-repository
-	</p>
-	<ol>
-  		<li>Adds maven dependency on hippo-ecm-addon-reviewed-action-repository and hippo-ecm-addon-reviewed-action-common</li>
-  		<li>Adds document model configuration</li>
-  		<li>Adds user configuration</li>
-  		<li>Adds workflow configuration</li>
-	</ol>	
-</section>
-
-<section name="Tools">
-	<source>
-|-- tools              hippo-ecm-tools
-|   |-- testutils      hippo-ecm-tools-testutils
-|   `-- migration      hippo-ecm-tools-migration
-	</source>
-	<p>
-		<b>hippo-ecm-tools</b>:<br/>
-		Pom project, bundles all tools
-	</p>
-	<p>
-		<b>hippo-ecm-tools-testutils</b>:<br/>
-		common utilities for testing
-	</p>
-	<ol>
-  		<li>Utility classes for writing Historical Performance Tests</li>
-  		<li>Tool for generating reports ofs Historical Performance Tests</li>
-	</ol>	
-	<p>
-		<b>hippo-ecm-tools-migration</b>:<br/>
-		Tool for migration from repository 1.X
-	</p>
-</section>
-
-<section name="Documentation">
-	<source>
-|-- documentation            hippo-ecm-documentation
-	</source>
-	<p>
-		<b>hippo-ecm-documentation</b>:<br/>
-		Project documentation 
-	</p>
-</section>
-
-
-    </body>
+	<properties>
+		<author>Hippo</author>
+		<title>Project structure</title>
+	</properties>
+	<body>
+		
+		<section name="Project Structure">
+			<p>
+				Hippo ECM is a Maven 2 project consisting of 
+				<a href="http://maven.apache.org/guides/getting-started/index.html#How_do_I_build_more_than_one_project_at_once">
+					multiple modules</a> which are hierarchically organized as shown below, each module produces exactly one
+				artifact. Modules come in three flavors, depending on the type of the artifact.
+			</p>
+			<ol>
+				<li>
+					<b>POM</b> projects act as 'glue' for binding together other projects. Examples are
+					hippo-ecm, hippo-ecm-application-default. 
+				</li>
+				<li>
+					<b>JAR</b> projects deliver a jar file that can be used in applications. Examples are
+					hippo-ecm-frontend-engine, hippo-ecm-addon-reviewed-action-repository
+				</li>
+				<li>
+					<b>WAR</b> projects deliver an application that can be deployed in an application container
+					(glassfish, jboss, tomcat etc.). Examples are hippo-ecm-application-default-frontend, 
+					hippo-ecm-repository-application. There are two types of WAR projects: repository and frontend
+				</li>
+			</ol>
+			<source>
+				Module                   ArtifactId
+				------------------------------------------------------------------------
+				hippo-ecm
+				|-- addon                    hippo-ecm-addon
+				|   `-- reviewed-action      hippo-ecm-addon-reviewed-action
+				|       |-- common           hippo-ecm-addon-reviewed-action-common
+				|       |-- frontend         hippo-ecm-addon-reviewed-action-frontend
+				|       |-- repository       hippo-ecm-addon-reviewed-action-repository
+				|       `-- test             hippo-ecm-addon-reviewed-action-test
+				|-- api                      hippo-ecm-api
+				|-- application              hippo-ecm-application
+				|   |-- default              hippo-ecm-application-default
+				|   |   |-- frontend         hippo-ecm-application-default-frontend
+				|   |   `-- repository       hippo-ecm-application-default-repository
+				|   `-- reviewed-action      hippo-ecm-application-reviewed-action
+				|       |-- frontend         hippo-ecm-application-reviewed-action-frontend
+				|       `-- repository       hippo-ecm-application-reviewed-action-repository
+				|-- documentation            hippo-ecm-documentation
+				|-- frontend                 hippo-ecm-frontend
+				|   |-- engine               hippo-ecm-frontend-engine
+				|   |-- application          hippo-ecm-frontend-application
+				|   `-- plugins              hippo-ecm-frontend-plugins
+				|-- repository               hippo-ecm-repository
+				|   |-- engine               hippo-ecm-repository-engine
+				|   `-- application          hippo-ecm-repository-application
+				`-- tools                    hippo-ecm-tools
+				|-- migration            hippo-ecm-tools-migration
+				`-- testutils            hippo-ecm-tools-testutils
+			</source>
+		</section>
+		
+		<section name="API">
+			<source>
+				|-- api                      hippo-ecm-api
+			</source>
+			
+			<b>hippo-ecm-api</b>:<br/>
+			To be determined    
+		</section>
+		
+		
+		<section name="Repository">
+			<source>
+				|-- repository              hippo-ecm-repository
+				|   |-- engine              hippo-ecm-repository-engine
+				|   `-- application         hippo-ecm-repository-application
+			</source>
+			
+			<b>hippo-ecm-repository</b>:<br/> 
+			Pom project, bundles all repository modules
+			
+			<br/><br/>
+			<b>hippo-ecm-repository-engine</b>:<br/>
+			Jar project, core implementation of the repository
+			
+			<br/><br/>
+			<b>hippo-ecm-repository-application</b>:<br/>
+			War project, a minimal empty repository application, all other repository
+			applications (under the application folder) are 
+			<a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">'WAR overlays'</a>
+			of this project. 
+			
+		</section>
+		
+		<section name="Frontend">
+			<source>
+				|-- frontend                 hippo-ecm-frontend
+				|   |-- engine               hippo-ecm-frontend-engine
+				|   |-- plugins              hippo-ecm-frontend-plugins
+				|   `-- application          hippo-ecm-frontend-application
+			</source>
+			
+			<b>hippo-ecm-frontend</b>:<br/>
+			Pom project, bundles all frontend modules
+			
+			<br/><br/>
+			<b>hippo-ecm-frontend-engine</b>:<br/>
+			Jar project, core implementation of the frontend
+			
+			<br/><br/>
+			<b>hippo-ecm-frontend-plugins</b>:<br/>
+			Jar project, core frontend plugins
+			
+			<br/><br/>
+			<b>hippo-ecm-frontend-application</b>:<br/>
+			War project, a minimal frontend application, all other frontend
+			applications (under the application folder) are 
+			<a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">'WAR overlays'</a>
+			of this project. 
+			
+			<ol>
+				<li>starts embedded repository</li>
+				<li>uses hard coded frontend plugin configuration</li>
+				<li>portal configuration</li>
+				<li>wicket configuration</li>
+			</ol>   
+		</section>
+		
+		<section name="Default application">
+			<source>
+				|-- application              hippo-ecm-application
+				|   |-- default              hippo-ecm-application-default
+				|   |   |-- frontend         hippo-ecm-application-default-frontend
+				|   |   `-- repository       hippo-ecm-application-default-repository
+			</source>
+			
+			<b>hippo-ecm-application</b>:<br/>
+			Pom project, bundles all application projects
+			
+			<br/><br/>
+			<b>hippo-ecm-application-default</b>:<br/>
+			Pom project, bundles the 'default' application projects
+			
+			<br/><br/>
+			<b>hippo-ecm-application-default-frontend</b>:<br/>
+			War overlay project, overlays hippo-ecm-frontend-application, adds:
+			
+			<ol>
+				<li>repository location configuration</li>
+				<li>frontend configuration</li>
+				<li>site-specific configuration (web.xml, log4j.xml etc.)</li>
+			</ol>   
+			
+			<b>hippo-ecm-application-default-repository</b>:<br/>
+			War overlay project, overlays hippo-ecm-repository-application, adds:
+			
+			<ol>
+				<li>frontend plugin configuration (bootstrap import of repository export file under /configuration/frontend/)</li>
+				<li>default user configuration (bootstrap import of repository export file under /configuration/users/)</li>
+				<li>any other site-specific configuration (web.xml, log4j.xml etc.)</li>
+			</ol>   
+		</section>
+		
+		
+		<section name="Addons">
+			<source>
+				|-- addon                    hippo-ecm-addon
+				|   |-- reviewed-action      hippo-ecm-addon-reviewed-action
+				|   |   |-- common           hippo-ecm-addon-reviewed-action-common
+				|   |   |-- frontend         hippo-ecm-addon-reviewed-action-frontend
+				|   |   `-- repository       hippo-ecm-addon-reviewed-action-repository
+			</source>   
+			<b>hippo-ecm-addon</b>:<br/>
+			Pom project, bundles all addons
+			
+			<br/><br/>
+			<b>hippo-ecm-addon-reviewed-action</b>:<br/>
+			Pom project, bundles the reviewed-action addon
+			
+			<br/><br/>
+			<b>hippo-ecm-addon-reviewed-action-repository</b>:<br/>
+			Jar project, contains the repository-only part of the reviewed-action addon
+			
+			<br/><br/>
+			<b>hippo-ecm-addon-reviewed-action-frontend</b>:<br/>
+			Jar project, contains the frontend-only part of the reviewed-action addon
+			
+			<br/><br/>
+			<b>hippo-ecm-addon-reviewed-action-common</b>:<br/>
+			Jar project, contains the common part of the reviewed-action addon
+		</section>
+		
+		<section name="Applications">
+			<source>
+				|-- application              hippo-ecm-application
+				|   |-- reviewed-action      hippo-ecm-application-reviewed-action
+				|   |   |-- frontend         hippo-ecm-application-reviewed-action-frontend
+				|   |   `-- repository       hippo-ecm-application-reviewed-action-repository
+			</source>
+			
+			<b>hippo-ecm-application</b>:<br/>
+			Pom project, bundles all application projects
+			
+			<br/><br/>
+			<b>hippo-ecm-application-reviewed-action</b>:<br/>
+			Pom project, bundles the 'reviewed-action' application projects
+			
+			<br/><br/>
+			<b>hippo-ecm-application-reviewed-action-frontend</b>:<br/>
+			War overlay project, overlays hippo-ecm-application-default-frontend
+			
+			<ol>
+				<li>Adds maven dependency on hippo-ecm-addon-reviewed-action-frontend and hippo-ecm-addon-reviewed-action-common</li>
+			</ol>       
+			
+			<b>hippo-ecm-application-reviewed-action-repository</b>:<br/>
+			War overlay project, overlays hippo-ecm-application-default-repository
+			
+			<ol>
+				<li>Adds maven dependency on hippo-ecm-addon-reviewed-action-repository and hippo-ecm-addon-reviewed-action-common</li>
+				<li>Adds document model configuration</li>
+				<li>Adds user configuration</li>
+				<li>Adds workflow configuration</li>
+			</ol>   
+		</section>
+		
+		<section name="Tools">
+			<source>
+				|-- tools              hippo-ecm-tools
+				|   |-- testutils      hippo-ecm-tools-testutils
+				|   `-- migration      hippo-ecm-tools-migration
+			</source>
+			
+			<b>hippo-ecm-tools</b>:<br/>
+			Pom project, bundles all tools
+			
+			<br/><br/>
+			<b>hippo-ecm-tools-testutils</b>:<br/>
+			common utilities for testing
+			
+			<ol>
+				<li>Utility classes for writing Historical Performance Tests</li>
+				<li>Tool for generating reports of Historical Performance Tests</li>
+			</ol>   
+			
+			<b>hippo-ecm-tools-migration</b>:<br/>
+			Tool for migration from repository 1.X
+		</section>
+		
+		<section name="Documentation">
+			<source>
+				|-- documentation            hippo-ecm-documentation
+			</source>
+			
+			<b>hippo-ecm-documentation</b>:<br/>
+			Project documentation 
+		</section>
+				
+	</body>
 </document>
 
 
