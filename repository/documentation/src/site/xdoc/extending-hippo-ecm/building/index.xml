@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <author>Hippo</author>
-        <title>Building</title>
+        <title>Building Hippo ECM</title>
     </properties>
-    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
-    <head>
-        <meta />
-    </head>
     <body>
+      <section name="Building Hippo ECM">
+        
+        <p>
+          <ul>
+            <li>
+              <a href="project-structure.html">Project structure</a>
+            </li>
+            <li>
+              <a href="maven.html">Building with Maven</a>
+            </li>
+            <li>
+              <a href="eclipse.html">Building with Eclipse</a>
+            </li>
+          </ul>
+        </p>
+        
+        
+      </section>
     </body>
 </document>

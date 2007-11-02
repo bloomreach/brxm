@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <title>Hippo ECM Plugins</title>
+        <title>Default Hippo ECM Functionality</title>
     </properties>
     <body>
+      <section name="Default Hippo ECM Functionality">
+        
+        <p>
+          <ul>
+            <li>
+              <a href="">Facets</a>
+            </li>
+            <li>
+              <a href="">Workflow</a>
+            </li>
+          </ul>
+        </p>
+        
+        
+      </section>
     </body>
 </document>

@@ -59,17 +59,17 @@
       </item>
       
       <item name="Default Hippo ECM Functionality" href="/default-functionality/index.html" collapse="true">
-        <item name="Facets" collapse="true">
+        <item name="Facets" href="" collapse="true">
         </item>
-        <item name="Workflow" collapse="true">
+        <item name="Workflow" href="" collapse="true">
         </item>
       </item>
       
       <item name="Extending Hippo ECM" href="/extending-hippo-ecm/index.html" collapse="true">
-        <item name="Building Hippo ECM From Source" href="/extending-hippo-ecm/building/index.html" collapse="true">
-          <item name="Project Structure" href="/extending-hippo-ecm/project-structure.html"/>
-          <item name="Maven" href="/extending-hippo-ecm/building/maven.html"/>
-          <item name="Eclipse" href="/extending-hippo-ecm/building/eclipse.html"/>
+        <item name="Building Hippo ECM" href="/extending-hippo-ecm/building/index.html" collapse="true">
+          <item name="Project Structure" href="/extending-hippo-ecm/building/project-structure.html"/>
+          <item name="Building with Maven" href="/extending-hippo-ecm/building/maven.html"/>
+          <item name="Building with Eclipse" href="/extending-hippo-ecm/building/eclipse.html"/>
         </item>
         <item name="Plugins" href="/extending-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extending-hippo-ecm/plugins/repository/index.html"></item>
@@ -83,8 +83,8 @@
     </menu>
     
     <menu name="Community">
-      <item name="Hippo Forge"/>
-      <item name="Contributing"/>
+      <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
+      <item name="Contributing" href="/community/contribute.html"/>
     </menu>
 
     <menu name="General">

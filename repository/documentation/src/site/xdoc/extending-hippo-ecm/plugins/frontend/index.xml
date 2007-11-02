@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <author>Hippo</author>
-        <title>User interface plugins</title>
+        <title>Frontend Plugins</title>
     </properties>
-    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
-    <head>
-        <meta />
-    </head>
     <body>
+      <section name="Frontend Plugins">
+        
+        <p>
+          <ul>
+            <li>
+              <a href="frontend-plugin-architecture.html">Frontend Plugin Architecture</a>
+            </li>
+          </ul>
+        </p>
+        
+        
+      </section>
     </body>
 </document>
