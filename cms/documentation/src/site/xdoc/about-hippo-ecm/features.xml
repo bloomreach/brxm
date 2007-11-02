@@ -18,7 +18,8 @@
 
         <section name="Hippo Repository / DMS">
             <subsection name="Faceted Navigation">
-                
+                Hippo Facet Navigation works out of the box. Browsing through faceted navigation gives you multiple ordered views 
+                with counting occurences on your (unstructured) physical data. 
             </subsection>  
             <subsection name="Workflow">
                 
