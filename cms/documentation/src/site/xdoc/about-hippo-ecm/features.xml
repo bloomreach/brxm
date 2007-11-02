@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Hippo</author>
+        <title>Hippo ECM Documentation: Future</title>
+    </properties>
+    <head>
+        <meta/>
+    </head>
+    <body>
+        <section name="Features"> 
+            <p>
+            Hippo Repository ships with numerous (customizable) default features, such as Workflow, Access Management, Authorization,
+            Versioning, Document templates, and <a href="#Faceted Navigation">Faceted Navigation</a>
+            </p>
+            See below for available (future) features
+        </section>
+
+        <section name="Hippo Repository / DMS">
+            <subsection name="Faceted Navigation">
+                
+            </subsection>  
+            <subsection name="Workflow">
+                
+            </subsection>  
+            <subsection name="Access Management">
+                
+            </subsection>  
+            <subsection name="Authorization">
+                
+            </subsection>  
+            <subsection name="Versioning">
+                
+            </subsection>  
+            <subsection name="Templating">
+                
+            </subsection>  
+        </section>
+        
+        <section name="Hippo CMS">
+            <subsection name="Document editor">
+                
+            </subsection>  
+            <subsection name="Document importer (pdf/word/excel...)">
+                
+            </subsection>  
+            
+            <subsection name="Newsletter manager">
+                
+            </subsection>  
+            <subsection name="Various plugins">
+                <ul>
+                <li>
+                    <span>Nieuws items (&amp; reacties)</span>
+                </li>
+                
+                <li>
+                    <span>Vacatures</span>
+                </li>
+                
+                <li>
+                    <span>Forum</span>
+                </li>
+                
+                <li>
+                    <span>Mailinglist</span>
+                </li>
+                
+                <li>
+                    <span>Agenda</span>
+                    
+                </li>
+                
+                <li>
+                    <span>Poll</span>
+                </li>
+                
+                <li>
+                    <span>FAQ</span>
+                </li>
+                
+                <li>
+                    <span>Mail-a-Friend</span>
+                </li>
+                
+                <li>
+                    <span>E-cards</span>
+                </li>
+                
+                <li>
+                    <span>Uitgebreide zoekmethode</span>
+                </li>
+                
+                <li>
+                    <span>Trefwoordenoverzicht</span>
+                </li>
+                
+                <li>
+                    <span>Medewerkersoverzicht / Telefoonlijst</span>
+                    
+                </li>
+                
+                <li>
+                    <span>Formulieren bouwen</span>
+                </li>
+                
+                <li>
+                    <span>Ideeenbus / prikbord</span>
+                </li>
+                
+                <li>
+                    <span>RSS feed manager</span>
+                </li>
+                
+                <li>
+                    <span>Kennismanagement module; relaties tussen content tonen aan de hand van:
+                        <ul class="content_list">
+                            
+                            <li>
+                                <span>Thesaurus</span>
+                            </li>
+                            
+                            <li>
+                                <span>Taxonomie</span>
+                            </li>
+                            
+                            <li>
+                                <span>Trefwoorden</span>
+                                
+                            </li>
+                            
+                        </ul>
+                     </span>
+                     </li>
+                     </ul>
+            </subsection>  
+            <subsection name="Poll">
+                
+            </subsection>  
+            <subsection name="FAQ">
+                
+            </subsection>  
+        </section> 
+        
+
+    </body>
+</document>
