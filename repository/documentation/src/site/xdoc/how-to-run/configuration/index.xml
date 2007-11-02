@@ -9,22 +9,22 @@
         <p>
           <ul>
             <li>
-              <a href="configuration/configuration.html">configuration.xml</a>
+              <a href="configuration.html">configuration.xml</a>
             </li>
             <li>
-              <a href="configuration/repository.html">repository.xml</a>
+              <a href="repository.html">repository.xml</a>
             </li>
             <li>
-              <a href="configuration/workspace.html">workspace.xml</a>
+              <a href="workspace.html">workspace.xml</a>
             </li>
             <li>
-              <a href="configuration/searchindex.html">Search index</a>
+              <a href="searchindex.html">Search index</a>
             </li>
             <li>
-              <a href="configuration/repository-based-authentication-and-users.html">Authentication and users</a>
+              <a href="repository-based-authentication-and-users.html">Authentication and users</a>
             </li>
             <li>
-              <a href="configuration/workflow-configuration.html">Workflow</a>
+              <a href="workflow-configuration.html">Workflow</a>
             </li>
           </ul>
         </p>
