@@ -5,6 +5,72 @@
         <title>Developing with Eclipse</title>
     </properties>
     <body>
+        
+        <section name="Prepare">
+            <p>
+                Follow all steps documented on the <a href="maven.html">Developing with Maven</a> page.
+                Don't continue with the instructions this page before you have seen a running application.
+            </p>
+        </section>
+        
+        <section name="Configure Eclipse">
+            <p>Install the Eclipse Subversion Plugin</p>
+            <ol>
+                <li>Help -> Software Updates -> Find and Install...</li>
+                <li>Search for new features to install</li>
+                <li>New remote site</li>
+                <li>Name='Subversive' URL='http://www.polarion.org/projects/subversive/download/1.1/update-site/'</li>
+                <li>Finish the wizard</li>
+            </ol>
+            <p>Configure the Eclipse Subversion Plugin</p>
+            <ol>
+                <li>Window -> Preferences -> Team -> SVN</li>
+                <li>Select 'SVN Client' tab</li>
+                <li>Set 'SVN Client' to 'SVN Kit'</li>
+                <li>Apply changes and close the dialog</li>
+            </ol>
+            <p>Install Jetty</p>
+            <ol>
+                <li>
+                    <a href="http://docs.codehaus.org/display/JETTY/Downloading+and+Installing">
+                    Download and install</a> Jetty version >= 6.0
+                </li>
+            </ol>
+            <p>Install the Eclipse Jetty Plugin</p>
+            <ol>
+                <li>Help -> Software Updates -> Find and Install...</li>
+                <li>Search for new features to install</li>
+                <li>New remote site</li>
+                <li>Name='Jetty launcher' URL='http://dbpowder.sourceforge.net/etc/jettylauncher6/updates/'</li>
+                <li>Finish the wizard</li>
+            </ol>            
+        </section>
+        
+        <section name="Create Eclipse projects">
+            <p>
+                Generate eclipse project files
+            </p>
+            <source>
+~/> cd hippo-ecm
+~/hippo-ecm> mvn install                
+~/hippo-ecm> mvn eclipse:eclipse
+            </source>
+            <ol>
+                <li>
+                    Start eclipse, the workspace directory can be any directory EXCEPT the directory
+                    under which you have checked out the source (~/hippo-ecm in the example)
+                </li>
+                <li>Run the import project wizard: File -> Import -> General -> Existing Projects into Workspace</li>
+                <li>Press 'Browse'</li>
+                <li>Select the 'hippo-ecm' directory, press OK</li>
+                <li>All hippo-ecm projects should be listed</li>
+                <li>Press 'Finish'</li>
+            </ol>
+        </section>
+        
+        <section>
+            
+        </section>
     
 
     </body>
