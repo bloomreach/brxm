@@ -27,24 +27,42 @@
                 The JCR 1.0 API is a fully compliant with <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" alt="JSR 170">JSR 170</a>.    
             </subsection>
             
+            <subsection name="The Decorator">
+                <p>
+		    The decorator bundles the individual APIs such of for the OCM, document and workflow API into the JCR API.
+		    Also provides JCR compliance for faceted search, faceted references and additional facilities to handle
+		    access to the same data in multiple paths of the JCR node tree.
+                </p>
+            </subsection>
+            
             <subsection name="Document API">
-                    
+		<p>
+                    Although all information is accessible through the JCR interface, a convienience API is accessible which
+		    allows access to the data in the JCR node tree as logical units, rather than single nodes and properties
+		    the document API provides facilities to this end, which use the OCM layer amongst others.
+		</p>
             </subsection>
             
             <subsection name="Workflow API">
-                    
-            </subsection>
-            
-            <subsection name="The Decorator">
-                
+		<p>
+                    The workflow API provides access to obtain applicable workflow on selected information in the repository.
+		    Workflow is exposed as an interface to clients, while execution of methods in the interface is executed
+		    in the repository itself.
+		</p>
             </subsection>
             
             <subsection name="OCM Engine">
-                
+		<p>
+                    The OCM Engine allows modules to access information available not just as a set of properties on nodes, but
+		    also mapped to and from regular Java objects, which can be user defined.
+		</p>
             </subsection>
             
             <subsection name="Virtual Node Engine">
-                
+                <p>
+		    Exposes faceted search and faceted reference as regular hierarchical nodes and handles mirrored persitency
+		    of the nodes that are exposed in multiple parts of the JCR tree.
+		</p>
             </subsection>
             
             <subsection name="Hippo Facet Engine">
