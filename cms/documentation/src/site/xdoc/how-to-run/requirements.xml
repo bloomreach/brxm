@@ -13,10 +13,10 @@
         <section name="Requirements">
             <subsection name="Operating Systems">
                 <p>
-                    The Hippo ECM software is known to run on at least the following Operating Systems:
+                    The Hippo ECM software is able to run on at least the following Operating Systems:
                     <ul>
                         <li>Windows XP/2000, Windows Server 2003</li>
-                        <li>Linux, RedHat (RHEL), SUSE (SLES), Debian, Ubuntu and other distributeions</li>
+                        <li>Linux, RedHat (RHEL), SUSE (SLES), Debian, Ubuntu and other distributions</li>
                         <li>FreeBSD and other BSD variants</li>
                         <li>Solaris 9/10 and OpenSolaris</li>
                         <li>IBM AIX</li>
