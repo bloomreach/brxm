@@ -162,7 +162,7 @@ mvn install
       <section name="Testing the Hello World plugin">
         <p>
           To test our HelloWorldPlugin we can use the Showcase GUI [TODO: link]. Make sure you
-          have a complete SVN checkout of Hippo ECM [TODO: link].
+          have a <a href="building/maven.html">complete SVN checkout of Hippo ECM</a>.
           To keep things simple we use the existing hippo-ecm-application-default-frontend application. 
           
         </p>
