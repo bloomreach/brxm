@@ -114,9 +114,7 @@ public class ChartsCreator implements XmlConstants {
 
             if (metric.Attribute.find(ATTR_FUZZY).equals("true")) {
                 
-                // TODO commented for now because it removes significant performance increases
-                // as 'wrong'. Uncomment later
-                //xySeries = removeExtremes(xySeries);
+                xySeries = removeExtremes(xySeries);
 
                 XYDataset movingAverage = new XYSeriesCollection(createMovingAverage(xySeries, 20));
                 plot.setDataset(1, movingAverage);
