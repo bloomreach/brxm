@@ -47,14 +47,14 @@
       <item name="Running Hippo ECM" href="/how-to-run/index.html" collapse="true">
         <item name="Requirements" href="/how-to-run/requirements.html"/>
         <item name="Deploying the WARs" href="/how-to-run/deploying-the-wars.html"/>
-        <item name="Seeding The Repository" href="/seeding-the-repository-bootstrap.html"/>
+        <item name="Seeding The Repository" href="/how-to-run/seeding-the-repository-bootstrap.html"/>
         <item name="Configuration" href="/how-to-run/configuration/index.html" collapse="true">
-          <item name="configuration.xml" href="/configuration_files/configuration.html"/>
-          <item name="repository.xml" href="/configuration_files/repository.html"/>
-          <item name="workspace.xml" href="/configuration_files/workspace.html"/>
-          <item name="Search Index" href="/configuration_files/searchindex.html"/>
-          <item name="Authentication and Users" href="/configuration_files/authentication-and-users.html"/>
-          <item name="Repository Based Authentication and Users" href="/configuration_files/repository-based-authentication-and-users.html"/>
+          <item name="configuration.xml" href="/how-to-run/configuration/configuration.html"/>
+          <item name="repository.xml" href="/how-to-run/configuration/repository.html"/>
+          <item name="workspace.xml" href="/how-to-run/configuration/workspace.html"/>
+          <item name="Search Index" href="/how-to-run/configuration/searchindex.html"/>
+          <item name="Authentication and Users" href="/how-to-run/configuration/repository-based-authentication-and-users.html"/>
+          <item name="Workflow" href="/how-to-run/configuration/workflow-configuration.html"/>
         </item>
       </item>
       
