@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
   <properties>
-      <title>Hello World</title>
+      <title>Example: Hello World plugin</title>
   </properties>
   <body>
     <h1>Hello World</h1>
