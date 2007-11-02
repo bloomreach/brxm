@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Hippo</author>
+        <title>Configuration</title>
+    </properties>
+    <head>
+        <meta />
+    </head>
+    <body>
+        <section name="Workspace configuration">
+            <p>
+                The Workspace element is used as a template for separate workspace configuration files created for each new workspace. 
+                Because of this the Workspace element is not interpreted directly from the repository 
+                configuration file. Instead the workspace configuration template is first copied into the 
+                workspace configuration file which is then interpreted to set up the configured workspace 
+                components. Thus modifying the workspace configuration template in the repository configuration 
+                file will not affect existing workspace configurations.
+            </p>
+            <p>
+                An example JackRabbit workspace configuration can be found at 
+                <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a>.
+                Hippo Repository has a custom workspace configuration for enabling fast faceted navigation through 
+                custom indexing. The main difference with a default JackRabbit workspace configuration is
+                the SearchIndex class and indexingConfigurationClass. See <a href="searchindex.html">Search Index</a> for
+                explanation of all &lt;SearchIndex&gt; parameters.  
+            </p>
+            <p>
+                <subsection name="Workspace Configuration">
+                    <p>
+                        The minimal Hippo Repository workspace configuration looks like:
+                    </p>
+                    <source>
+                        &lt;Workspace name="${wsp.name}"&gt;
+                            &lt;FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem"&gt;
+                                &lt;param name="path" value="${wsp.home}"/&gt;
+                            &lt;/FileSystem&gt;
+                            &lt;PersistenceManager class="org.apache.jackrabbit.core.persistence.db.DerbyPersistenceManager"&gt;
+                                &lt;param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/&gt;
+                                &lt;param name="schemaObjectPrefix" value="${wsp.name}_"/&gt;
+                            &lt;/PersistenceManager&gt;
+                            &lt;SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl"&gt;
+                                &lt;param name="indexingConfiguration" value="indexing_configuration.xml"/&gt;
+                                &lt;param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/&gt;
+                            &lt;/SearchIndex&gt;
+                        &lt;/Workspace&gt;
+                    </source>
+                </subsection>
+            </p> 
+            <p>
+                <b>Note:</b>
+                <br/>
+                At the moment of this writing indexing_configuration.xml is needed, but only used for a namespace lookup. 
+                Currently, every JackRabbit property is indexed as a possible facet. Through this indexing_configuration, 
+                a subset of nodes can be configured to be facets, which is more efficient. Also defining the type of facet
+                (date, long, etc) must be configurable, as well as some derived facet type (for example week number instead of 
+                the date to have faceted navigation on). For M2, the indexing_configuration.xml is planned to be replaced
+                by configuration in the repository itself.
+                See <a href="searchindex.html">Search Index</a> for further explanation.
+            </p>   
+         </section>       
+    </body>
+</document>
