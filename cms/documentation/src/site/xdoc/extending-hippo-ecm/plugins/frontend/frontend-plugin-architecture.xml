@@ -16,28 +16,42 @@
         Customising Hippo CMS comes down to extending the standards plugins, and/or writing your own,
         and configuring them to form your own custom application.
       </p>
-     
-      <p>Frontend plugins integrate extend the Wicket component model.  Wicket HTML fragments 
-        can contain references to plugins that are not added explicitly in the Java code.  Instead,
-        these references are resolved by the configuration in the Hippo repository.</p>
 
-      <p>The configuration is stored in nodes of (primary) type hippo:frontendplugin.
-        The property hippo:renderer determines what Java class is instantiated.</p>
+      <p>
+        Plugins are aware of the JCR context for the page and are notified when it changes.  This occurs
+        for example when the page contains a BrowserPlugin.  When a node is selected on the (JCR) tree,
+        all plugins will be notified.  This mechanism is e.g. used to show the workflow plugin for nodes that
+        have a workflow.
+      </p>
+
+      <p>
+        Frontend plugins extend the Wicket component model.  Wicket HTML fragments 
+        can contain references to plugins that are not added explicitly in the Java code.  Instead,
+        these references are resolved by the configuration in the Hippo repository.
+      </p>
+
+      <p>
+        The configuration is stored in nodes of (primary) type hippo:frontendplugin.
+        The property hippo:renderer determines what Java class is instantiated.
+      </p>
 
       <subsection name="Pages">
-        <p>Web applications that are completely configured from the repository consist of one page,
+        <p>
+          Web applications that are completely configured from the repository consist of one page,
           "Home".  The configuration can be found under the repository node
-          [TODO: link to repo viewer in demo war]</p>
+          [FIXME Frank: link to repo viewer in demo war]
+        </p>
 <source>
   /configuration/frontend/default
 </source>
-        <p></p>
       </subsection>
 
       <subsection name="Root plugin">
-        <p>The Home page in the application has a root plugin that is loaded when Wicket tries
+        <p>
+          The Home page in the application has a root plugin that is loaded when Wicket tries
           to render it.  This plugin must be a subclass of org.hippoecm.frontend.plugin.Plugin,
-         itself a Wicket Panel [TODO: link to API docs].  An example:</p>
+          itself a Wicket Panel [FIXME Frank: link to API docs].  An example:
+        </p>
 <source>
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
@@ -50,12 +64,16 @@ public class RootPlugin extends Plugin {
     }
 }
 </source>
-        <p>When the class is instantiated, the children of the repository node are instantiated
-          themselves as Plugins and added as Wicket components.</p>
+        <p>
+          When the class is instantiated, the children of the repository node are instantiated
+          themselves as Plugins and added as Wicket components.
+        </p>
 
-        <p>The plugins that are configured in the repository node structure must therefore
+        <p>
+          The plugins that are configured in the repository node structure must therefore
           correspond to missing Wicket components in the HTML for RootPlugin.  For example,
-          if the above root component has this html:</p>
+          if the above root component has this html:
+        </p>
 <source>
 &lt;html xmlns:wicket="http://wicket.apache.org/"&gt;
     &lt;wicket:panel&gt;
@@ -65,7 +83,9 @@ public class RootPlugin extends Plugin {
     &lt;/wicket:panel&gt;
 &lt;/html>
 </source>
-        <p>then the repository structure that will generate the correctc component hierarchy is:</p>
+        <p>
+          then the repository structure that will generate the correctc component hierarchy is:
+        </p>
 <source>
 [repository root]
 `-- configuration
@@ -74,10 +94,6 @@ public class RootPlugin extends Plugin {
             `-- RootPlugin [hippo:frontendplugin]
                 `-- subPlugin [hippo:frontendplugin]
 </source>
-      </subsection>
-
-      <subsection name="Dynamic reconfiguration">
-        <p>speciale content type</p>
       </subsection>
     </section>
   </body>
