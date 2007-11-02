@@ -17,16 +17,36 @@
           This site is separated into the following sections, depending on how you'd like to use Hippo ECM:
           <ul>
             <li>
-              Run Hippo ECM
+              <p>
+                <b><a href="how-to-run/index.html">Run Hippo ECM</a></b>
+              </p>
+              <p>
+                Information for those who need to get a standard Hippo ECM up and running.
+              </p>
             </li>
             <li>
-              Use Hippo ECM
+              <p>
+                <b><a href="default-functionality/index.html">Use Hippo ECM</a></b>
+              </p>
+              <p>
+                Information for those who need to work with a Hippo ECM system.
+              </p>
             </li>
             <li>
-              Customise Hippo ECM
+              <p>
+                <b><a href="extending-hippo-ecm/index.html">Customize Hippo ECM</a></b>
+              </p>
+              <p>
+                Information for developers of Hippo ECM add-ons.
+              </p>
             </li>
             <li>
-              Develop Hippo ECM
+              <p>
+                <b>Develop Hippo ECM</b>
+              </p>
+              <p>
+                Information for Hippo ECM core developers.
+              </p>
             </li>
           </ul>
         </p>
@@ -38,13 +58,16 @@
         </p>
 
         <p>
-          To get started, search the documentation, the wiki, issue tracker, or the mailing list archives 
+          To get started, search the documentation, the <a href="http://www.hippocms.org/display/HREPTWO">wiki</a>,
+          <a href="http://issues.hippo.nl/browse/HREPTWO">issue tracker</a>,
+          or the <a href="http://lists.hippo.nl/pipermail/hipporepos-dev/">mailing list archives</a> 
           to see if the problem has been solved or reported before.
         </p>
 
         <p>
           If the problem has not been reported before, the recommended way to get help is to subscribe to the 
-          Hippo ECM Users Mailing list . Many other users and Hippo ECM developers will answer your questions 
+          <a href="mail-lists.html">Hippo ECM Users Mailing list</a>. Many other users and Hippo ECM developers 
+          will answer your questions 
           there, and the answer will be archived for others in the future.
         </p>
 
