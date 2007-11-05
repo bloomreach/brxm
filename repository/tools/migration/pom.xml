@@ -173,9 +173,5 @@
     </dependencies>
   </dependencyManagement>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-tools-migration</outputDirectory>
-  </reporting>
-   
 </project>
 

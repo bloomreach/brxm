@@ -80,8 +80,4 @@
     </plugins>   
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-application</outputDirectory>
-  </reporting>
-  
 </project>

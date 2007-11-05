@@ -50,8 +50,4 @@
     <defaultGoal>install</defaultGoal>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-addon-reviewed-action</outputDirectory>
-  </reporting>
-
 </project>

@@ -45,8 +45,4 @@
     </dependency>
   </dependencies>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-api</outputDirectory>
-  </reporting>
-
 </project>

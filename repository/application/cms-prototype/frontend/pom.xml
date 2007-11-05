@@ -78,8 +78,4 @@
     </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-application-cms-prototype</outputDirectory>
-  </reporting> 
-  
 </project>
