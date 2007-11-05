@@ -6,7 +6,7 @@
     <body>
         <h1>Hippo ECM facets</h1>
         <p>
-          The Hippo Repository is build on top of
+          The Hippo Repository is built on top of
           <a href="http://jackrabbit.apache.org/" alt="Apache Jackrabbit">Apache Jackrabbit</a>.
           The Hippo Repository adds extra functionality to the default Jackrabbit distribution while
           keeping full compliance with the JCR 1.0
