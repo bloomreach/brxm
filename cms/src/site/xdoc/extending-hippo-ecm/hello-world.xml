@@ -136,7 +136,7 @@ public class HelloWorldPlugin extends Plugin {
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     
-    <div wicket:id="label">text goed here</div>
+    <div wicket:id="label">text goes here</div>
     
   </wicket:panel>
 </html>
