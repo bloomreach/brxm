@@ -8,21 +8,16 @@
     
         <section name="Install Maven">
         	Hippo ECM is built using Maven 2 version >= 2.0.6 , follow the Maven 
-        	<a href="http://maven.apache.org/">installation instructions</a>
-        	<subsection name="WARNING">
+        	<a href="http://maven.apache.org/download.html">installation instructions</a>
+        	<subsection name="For windows users">
         		<p>
-	        	    Due to <a href="http://forum.java.sun.com/thread.jspa?threadID=282485">this issue</a>
-			        you need to take care that your local Maven 2 repository is not located in a folder with
-			        spaces in the pathname.
-		        </p> 
-        		<p>
-	        	    By default the maven installation procedure will locate the local maven repository in your 
-	        	    home directory, on Windows this is a subdirectory of the "Documents and Settings" directory.
-        	    </p>
-        	    <p>
-					So if you are using windows you need to relocate your local maven repository. This is done 
-					like this: edit or create the file
-					c:\Documents and Settings\Your Name\.m2\settings.xml and enter the following block of text:
+			        You need to take care that your local Maven 2 repository is not located in a folder with
+			        spaces in the pathname. However the default maven installation procedure will locate
+			        it in your home directory which on Windows this is a subdirectory of the
+			        "Documents and Settings" directory.	This means that you need to relocate your local maven repository.
+			    </p>
+			    <p> Create and edit the file
+					c:\Documents and Settings\&lt;Your Name&gt;\.m2\settings.xml with the following content:
 				</p>
 				<source>
 					<![CDATA[
@@ -87,10 +82,10 @@ C:> %JAVA_HOME%\bin\rmiregistry.exe
 				For Unix:                  
 			</p>
 			<source>
-~/hippo-ecm> $JAVA_HOME/bin/rmiregistry.exe &amp;				
+~/hippo-ecm> $JAVA_HOME/bin/rmiregistry &amp;				
 			</source>
 			<p>	
-				To start an out-of-the-box application from the command line, execute the following commands:
+				To start a sample application from the command line, execute the following commands:
 			</p>
 			<source>
 ~/hippo-ecm> cd application/reviewed-action/repository
