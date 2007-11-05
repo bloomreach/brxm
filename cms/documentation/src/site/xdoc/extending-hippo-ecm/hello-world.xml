@@ -30,8 +30,8 @@
             `-- org
                 `-- example
                     `-- helloworld
-                        |-- HelloPlugin.html
-                        `-- HelloPlugin.java
+                        |-- HelloWorldPlugin.html
+                        `-- HelloWorldPlugin.java
 </source>
 
           <p>
@@ -93,7 +93,7 @@
 </source>
         </subsection>
 
-        <subsection name="HelloPlugin.java">
+        <subsection name="HelloWorldPlugin.java">
           <p>
             Our HelloWorldPlugin class extends the Plugin class. In the constructor we
             add a static label. Plugin contains an abstract method update we need to implement,
@@ -126,7 +126,7 @@ public class HelloWorldPlugin extends Plugin {
 </source>
         </subsection>
 
-        <subsection name="HelloPlugin.html">
+        <subsection name="HelloWorldPlugin.html">
           <p>
             Just like any other Wicket component, a Plugin needs an HTML page defining its presentation.
             For our HelloWorldPlugin this could look like this:
@@ -154,23 +154,28 @@ mvn install
 </source>
         </subsection>
           
-
-          
       </section>
-
 
       <section name="Testing the Hello World plugin">
         <p>
-          To test our HelloWorldPlugin we can use the Showcase GUI [TODO: link]. Make sure you
+          To test our HelloWorldPlugin we can use the "showcase GUI". Make sure you
           have a <a href="building/maven.html">complete SVN checkout of Hippo ECM</a>.
           To keep things simple we use the existing hippo-ecm-application-default-frontend application. 
-          
+          You will find this under <b>application/default</b> in the Hippo ECM project tree:
         </p>
-        
+
+<source>
+hippo-ecm
+`-- application              hippo-ecm-application
+    `-- default              hippo-ecm-application-default
+        |-- frontend         hippo-ecm-application-default-frontend
+        `-- repository       hippo-ecm-application-default-repository
+</source>
+
         <subsection name="Adding a dependency to our plugin">
           <p>
             To be able to use our plugin we need to add a dependency on it to Maven POM of the frontend
-            application.
+            application (<b>application/frontend/pom.xml</b>).
           </p>
           <source>
 <![CDATA[
@@ -206,8 +211,8 @@ mvn install
       <subsection name="Running the repository application">
         <p>
           To test our frontend plugin we need to have a repository running. We can use the
-          default repository application (hippo-ecm-application-default-repository).
-          Start up rmiregistry and the repository using the following commands:
+          default repository application (in <b>application/default/repository</b>).
+          Start up rmiregistry (this comes with your JDK installation) and the repository using the following commands:
         </p>
 <source>
 rmiregistry
