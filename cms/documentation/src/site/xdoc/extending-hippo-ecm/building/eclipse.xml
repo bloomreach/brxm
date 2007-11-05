@@ -9,7 +9,7 @@
         <section name="Prepare">
             <p>
                 Follow all steps documented on the <a href="maven.html">Developing with Maven</a> page.
-                Don't continue with the instructions this page before you have seen a running application.
+                Don't continue with the instructions on this page before you have seen a running application.
             </p>
         </section>
         
