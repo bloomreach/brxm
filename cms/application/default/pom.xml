@@ -64,8 +64,4 @@
     </plugins>   
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-application-default</outputDirectory>
-  </reporting>
-  
 </project>

@@ -192,8 +192,4 @@
    </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-addon-reviewed-action-repository</outputDirectory>
-  </reporting>
-  
 </project>

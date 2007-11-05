@@ -180,8 +180,4 @@
    </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-repository-application</outputDirectory>
-  </reporting> 
-
 </project>

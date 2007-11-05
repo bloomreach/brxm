@@ -45,7 +45,6 @@
     <module>repository</module>
     <module>application</module>
     <module>addon</module>    
-    <module>documentation</module>    
     <module>tools</module>
   </modules>
   

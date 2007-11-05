@@ -158,8 +158,4 @@
     </plugins>
   </build>
 
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-application-reviewed-action-test</outputDirectory>
-  </reporting>
-
 </project>

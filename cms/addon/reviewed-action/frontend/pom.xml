@@ -95,8 +95,4 @@
    </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-addon-reviewed-action-frontend</outputDirectory>
-  </reporting>
-  
 </project>

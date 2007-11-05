@@ -105,8 +105,4 @@
     </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-tools-testutils</outputDirectory>
-  </reporting> 
-
 </project>

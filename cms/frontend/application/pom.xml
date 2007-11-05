@@ -103,8 +103,4 @@
     </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-frontend-application</outputDirectory>
-  </reporting> 
-  
 </project>

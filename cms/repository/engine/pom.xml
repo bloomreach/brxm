@@ -447,8 +447,4 @@
    </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-repository-engine</outputDirectory>
-  </reporting>  
-
 </project>

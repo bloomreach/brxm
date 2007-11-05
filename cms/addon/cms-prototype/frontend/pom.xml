@@ -90,8 +90,4 @@
    </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-addon-cms-prototype-frontend</outputDirectory>
-  </reporting>
-  
 </project>

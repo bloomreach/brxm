@@ -88,8 +88,4 @@
     </plugins>
   </build>
 
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-application-reviewed-action-repository</outputDirectory>
-  </reporting> 
-
 </project>

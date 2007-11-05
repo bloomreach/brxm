@@ -129,8 +129,4 @@
     </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-frontend-plugins</outputDirectory>
-  </reporting> 
-  
 </project>

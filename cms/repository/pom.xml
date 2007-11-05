@@ -48,8 +48,4 @@
     <defaultGoal>package</defaultGoal>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-repository</outputDirectory>
-  </reporting>
-  
 </project>

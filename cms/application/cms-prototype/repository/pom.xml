@@ -66,8 +66,4 @@
     </plugins>
   </build>
 
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-application-cms-prototype-repository</outputDirectory>
-  </reporting> 
-
 </project>

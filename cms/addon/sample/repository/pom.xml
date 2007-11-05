@@ -186,8 +186,4 @@
    </plugins>
   </build>
   
-  <reporting>
-    <outputDirectory>../target/site/hippo-ecm-addon-sample-repository</outputDirectory>
-  </reporting>
-  
 </project>
