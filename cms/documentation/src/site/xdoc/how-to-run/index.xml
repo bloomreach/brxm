@@ -10,18 +10,23 @@
           <ul>
             <li>
               <a href="#Quick_Start">Quick Start</a>
+              - Get started with Hippo ECM quickly
             </li>
             <li>
               <a href="requirements.html">Requirements</a>
+              - What you need to run Hippo ECM
             </li>
             <li>
               <a href="deploying-the-wars.html">Deploying the WARs</a>
+              - Run Hippo ECM in your favourite application server
             </li>
             <li>
               <a href="seeding-the-repository-bootstrap.html">Seeding the Repository</a>
+              - How to get your initial data in
             </li>
             <li>
               <a href="configuration/index.html">Configuration</a>
+              - What you can configure, and how
             </li>
           </ul>
         </p>
