@@ -9,6 +9,9 @@
         <p>
           <ul>
             <li>
+              <a href="#Quick_Start">Quick Start</a>
+            </li>
+            <li>
               <a href="requirements.html">Requirements</a>
             </li>
             <li>
@@ -22,6 +25,51 @@
             </li>
           </ul>
         </p>
+        
+        <subsection name="Quick Start">
+          
+          <p>
+            At this moment Hippo ECM is still in an early development stage. To run it,
+            it is necessary to checkout the sources from the SVN repository, and build
+            them using Maven. A full guide can be found under 
+            <a href="../extending-hippo-ecm/building/maven.html">Building with Maven</a>.
+            The short version below is targeted at those people who know what they are
+            doing.
+          </p>
+          
+          <p>
+            <b>Checkout the sources</b>
+          </p>
+<source>
+~/> svn co https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
+</source>          
+          <p>
+            <b>Build Hippo ECM</b>
+          </p>
+<source>
+~/> cd hippo-ecm
+~/hippo-ecm> mvn install
+</source>          
+          <p>
+            <b>Run Hippo ECM</b>
+          </p>
+<source>
+~/hippo-ecm> $JAVA_HOME/bin/rmiregistry &amp;				
+~/hippo-ecm> cd application/reviewed-action/repository
+~/hippo-ecm/application/reviewed-action/repository> mvn jetty:run-war
+</source>          
+          <p>
+            And in a different console:
+          </p>
+<source>
+~/hippo-ecm> cd application/reviewed-action/frontend
+~/hippo-ecm/application/reviewed-action/frontend> mvn jetty:run-war
+</source>          
+          <p>
+            Finally, direct your browser to <a href="http://localhost:8082/">http://localhost:8082</a>.
+          </p>
+          
+        </subsection>
         
         
       </section>
