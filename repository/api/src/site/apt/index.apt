@@ -1,0 +1,14 @@
+Hippo OEM API
+
+  The Hippo OEM repository is a full JCR repository.  Therefor the
+  {{{http://www.day.com/maven/jsr170/javadocs/jcr-1.0/}JCR API}} as defined
+  in {{{http://jcp.org/en/jsr/detail?id=170}JSR 170}} is one level of the
+  API to the Hippo OEM.
+
+  Hippo OEM also defines a number of extensions which are available to the
+  {{{../apidocs/org/hippoecm/repository/api/package-summary.html}propertiary API}}
+  which extends or integrates with the JCR API.
+
+  There are also
+  {{{../apidocs/org/hippoecm/repository/api/package-summary.html}full
+  JavaDocs}} for internal development.
