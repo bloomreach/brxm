@@ -50,6 +50,10 @@
             <p>
                 Generate eclipse project files
             </p>
+            <dl>
+                WARNING: Make sure that there is no .project file in the toplevel (hippo-ecm) directory
+                before proceding. If there is one the eclipse import projects wizard will fail.
+            </dl>
             <source>
 ~/> cd hippo-ecm
 ~/hippo-ecm> mvn install                
