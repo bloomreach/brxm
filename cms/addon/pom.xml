@@ -30,6 +30,7 @@
   
   <name>Addons</name>
   <description>Hippo ECM addons</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon</artifactId>
   <packaging>pom</packaging>
 

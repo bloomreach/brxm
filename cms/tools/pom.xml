@@ -30,6 +30,7 @@
   
   <name>Tools</name>
   <description>Hippo ECM tools</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-tools</artifactId>
   <packaging>pom</packaging>
   

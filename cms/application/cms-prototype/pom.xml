@@ -30,6 +30,7 @@
   
   <name>CMS Prototype app</name>
   <description>Hippo ECM CMS Prototype application</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-cms-prototype</artifactId>
   <packaging>pom</packaging>
   

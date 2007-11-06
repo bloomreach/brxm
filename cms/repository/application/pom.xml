@@ -30,6 +30,7 @@
 
   <name>Minimal repository app</name>
   <description>Hippo ECM minimal repository application</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-repository-application</artifactId>
   <packaging>war</packaging>
   

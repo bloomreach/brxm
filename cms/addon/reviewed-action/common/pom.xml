@@ -30,6 +30,7 @@
   
   <name>Reviewed action common</name>
   <description>Hippo ECM reviewed action common addons</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
   <packaging>jar</packaging>
   

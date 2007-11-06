@@ -29,6 +29,7 @@
 
   <name>Reviewed Action App tests</name>
   <description>Hippo ECM reviewed action application tests</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-reviewed-action-test</artifactId>
   <packaging>jar</packaging>
 

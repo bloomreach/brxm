@@ -30,6 +30,7 @@
   
   <name>Repository engine</name>
   <description>Hippo ECM repository engine</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-repository-engine</artifactId>
   <packaging>jar</packaging>
   

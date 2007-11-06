@@ -30,6 +30,7 @@
 
   <name>CMS Prototype frontend app</name>
   <description>Hippo ECM CMS Prototype frontend application</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-cms-prototype-frontend</artifactId>
   <packaging>war</packaging>
   

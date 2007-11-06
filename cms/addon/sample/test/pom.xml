@@ -30,6 +30,7 @@
   
   <name>Sample addon tests</name>
   <description>Hippo ECM sample addon tests</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-sample-test</artifactId>
   <packaging>jar</packaging>
 

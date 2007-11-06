@@ -30,6 +30,7 @@
   
   <name>Frontend</name>
   <description>Hippo ECM frontend</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-frontend</artifactId>
   <packaging>pom</packaging>
   

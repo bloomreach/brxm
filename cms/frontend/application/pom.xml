@@ -30,6 +30,7 @@
 
   <name>Minimal frontend app</name>
   <description>Hippo ECM minimal frontend application</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-frontend-application</artifactId>
   <packaging>war</packaging>
   

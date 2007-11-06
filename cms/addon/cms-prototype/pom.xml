@@ -31,6 +31,7 @@
   <name>CMS Prototype</name>
   <description>Hippo ECM CMS Prototype addon</description>
   <artifactId>hippo-ecm-addon-cms-prototype</artifactId>
+  <groupId>org.hippoecm</groupId>
   <packaging>pom</packaging>
 
   <scm>
