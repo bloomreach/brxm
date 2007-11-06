@@ -44,7 +44,7 @@
     
     <menu name="Documentation">
       
-      <item name="Running Hippo ECM" href="/how-to-run/index.html" collapse="true">
+      <item name="Running Hippo ECM" href="/how-to-run/index.html" collapse="false" inherit="top">
         <item name="Requirements" href="/how-to-run/requirements.html"/>
         <item name="Deploying the WARs" href="/how-to-run/deploying-the-wars.html"/>
         <item name="Seeding The Repository" href="/how-to-run/seeding-the-repository-bootstrap.html"/>
@@ -82,14 +82,17 @@
       
     </menu>
     
+    <menu ref="modules"/>
+
     <menu name="Community">
       <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
       <item name="Contributing" href="/community/contribute.html"/>
     </menu>
 
     <menu ref="modules"/>
+
     <menu ref="reports"/>
-    
+
   </body>
   
 </site>
