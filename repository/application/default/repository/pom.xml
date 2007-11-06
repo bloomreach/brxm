@@ -30,6 +30,7 @@
 
   <name>Default repository app</name>
   <description>Hippo ECM default repository application</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-default-repository</artifactId>
   <packaging>war</packaging>
 

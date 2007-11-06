@@ -30,6 +30,7 @@
   
   <name>Reviewed action frontend</name>
   <description>Hippo ECM reviewed action frontend addons</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
   <packaging>jar</packaging>
 

@@ -30,6 +30,7 @@
   
   <name>Applications</name>
   <description>Hippo ECM applications</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application</artifactId>
   <packaging>pom</packaging>
   

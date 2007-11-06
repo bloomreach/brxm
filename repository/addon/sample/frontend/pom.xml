@@ -30,6 +30,7 @@
   
   <name>Sample frontend addon</name>
   <description>Hippo ECM sample frontend addon</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-sample-frontend</artifactId>
   <packaging>jar</packaging>
 

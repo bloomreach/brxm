@@ -30,6 +30,7 @@
   
   <name>Reviewed action app</name>
   <description>Hippo ECM reviewed action workflow demo application</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-reviewed-action</artifactId>
   <packaging>pom</packaging>
   

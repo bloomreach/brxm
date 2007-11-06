@@ -30,6 +30,7 @@
   
   <name>Repository</name>
   <description>Hippo ECM repository</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-repository</artifactId>
   <packaging>pom</packaging>
   

@@ -31,6 +31,7 @@
   <name>Reviewed action</name>
   <description>Hippo ECM reviewed action addon</description>
   <artifactId>hippo-ecm-addon-reviewed-action</artifactId>
+  <groupId>org.hippoecm</groupId>
   <packaging>pom</packaging>
 
   <scm>

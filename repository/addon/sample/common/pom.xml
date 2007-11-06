@@ -30,6 +30,7 @@
   
   <name>Sample common addon</name>
   <description>Hippo ECM sample common addon</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-sample-common</artifactId>
   <packaging>jar</packaging>
   

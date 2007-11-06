@@ -30,6 +30,7 @@
   
   <name>Default app</name>
   <description>Hippo ECM default application</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-default</artifactId>
   <packaging>pom</packaging>
   

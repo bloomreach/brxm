@@ -29,8 +29,9 @@
   </parent>
   
   <name>Reviewed action repository</name>
-  <description>Hippo ECM reviewed action repository addons</description>
+  <description>Hippo ECM reviewed action repository addon</description>
   <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
+  <groupId>org.hippoecm</groupId>
   <packaging>jar</packaging>
 
   <scm>

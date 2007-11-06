@@ -30,6 +30,7 @@
 
   <name>Default frontend app</name>
   <description>Hippo ECM default frontend application</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-default-frontend</artifactId>
   <packaging>war</packaging>
   

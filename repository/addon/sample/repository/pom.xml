@@ -30,6 +30,7 @@
   
   <name>Sample repository addon</name>
   <description>Hippo ECM sample repository addon</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-sample-repository</artifactId>
   <packaging>jar</packaging>
 

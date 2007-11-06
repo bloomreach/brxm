@@ -29,8 +29,8 @@
 
   <name>API</name>
   <description>Hippo ECM specific extensions to the JCR API</description>
+  <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-api</artifactId>
-
   
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/api</connection>
