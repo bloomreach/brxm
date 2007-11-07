@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <author>Hippo</author>
+        <title>Hippo ECM Documentation: Demo on interfacing with Hippo ECM Repository</title>
+    </properties>
+    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
+    <head>
+        <meta />
+    </head>
+    <body>
+        <!-- The body of the document contains a number of sections -->
+        <section name="Demo on interfacing with Hippo ECM Repository">
+            <subsection name="Intro">
+                <img src="../images/arch-dropbox.jpg" alt=""/>
+                <p>
+                    An typical application that interfaces with Hippo Repository most likely 
+                    has a architecture like the one depicted above. The application consists 
+                    of a custom software component and a JCR api for communicating in a standarized way with
+                    Hippo Repository. This makes it extremely simple to write an application that operates on the 
+                    content repository. All you have to know is where to get a repository instance and
+                    how to manipulate a JCR tree, which by the way has a very self explanatory interface. You'll be
+                    suprised by the simplicity of programming against Hippo Repository, while at the same time 
+                    taking advantage (with no extra effort) of the powerfull features build into Hippo Repository like 
+                    faceted search.
+                    <br/><br/>
+                    Oke lets get to the point and start with our demo, demostrating all stated above.   
+                </p>
+            </subsection>
+        </section>
+        <section name="The Demo">
+            <subsection name="What's the demo all about">
+                <p>
+                    In the demo you will walk recusively through a 
+                    arbitrary directory on the file system, extract some meta-data and store the file
+                    accordingly in Hippo Repsitory, then subsequently apply a faceted search on the stored data.
+                </p>
+            </subsection>
+            <subsection name="Give me the code!">
+                <p>
+                    <!--The code as shown below is actually nothing special, it does not deviate in any way from a standard application
+                    communicating with a JCR complient implementation. The Dropbox class recursively walks through a given 
+                    directory and tries to detect the file-type through the Java Activation Framework. 
+                    The DropboxExt, as the class name indicates is a extension on the Dropbox. 
+                    It adds a DocType property to a file which should contain a more understandable meaning
+                    of what the file is for non-tech users. Later on in this demo we will use the DocType 
+                    property to construct a faceted search.-->  
+                </p>
+                Dropbox.java
+                <source>
+                    <![CDATA[
+                    package org.hippoecm.tools.dropbox;
+
+                    import java.io.File;
+                    import java.io.FileNotFoundException;
+                    import java.io.IOException;
+                    
+                    import javax.activation.FileDataSource;
+                    import javax.activation.MimetypesFileTypeMap;
+                    import javax.jcr.Credentials;
+                    import javax.jcr.Node;
+                    import javax.jcr.RepositoryException;
+                    import javax.jcr.Session;
+                    import javax.jcr.SimpleCredentials;
+                    
+                    import org.hippoecm.repository.HippoRepository;
+                    import org.hippoecm.repository.HippoRepositoryFactory;
+                    
+                    public class Dropbox
+                    {
+                    	private String dropboxLocation;
+                    	private HippoRepository repo;
+                    	
+                    	private SimpleCredentials cred;
+                    	
+                    	/*
+                    	 * Create a new Dropbox with dropbox as location to look for files
+                    	 */
+                    	public Dropbox(String repoLoc, String dropbox) throws RepositoryException
+                    	{
+                    		this.dropboxLocation = dropbox;
+                    		repo = (HippoRepository) HippoRepositoryFactory.getHippoRepository(repoLoc);
+                    	}
+                    	
+                    	public Dropbox() throws RepositoryException {
+                    		this("rmi://localhost:1099/jackrabbit.repository", "");
+                    	}
+                    	
+                    	/*
+                    	 * Set the location of the dropbox
+                    	 */
+                    	public void setDropbox(String location) {
+                    		this.dropboxLocation = location;
+                    	}
+                    	
+                    	public void setCredentials(SimpleCredentials cred) {
+                    		this.cred = cred;
+                    	}
+                    	
+                    	public SimpleCredentials getCredentials() {
+                    		return cred;
+                    	}
+                    	
+                    	/*
+                    	 * Get all the files from the dropbox location and save them to the 
+                    	 * repository
+                    	 */
+                    	public void drop() throws RepositoryException {
+                    		// make a session request to the repository
+                    		Session session = repo.login(getCredentials());
+                    		
+                    		Node root = session.getRootNode();
+                    		
+                    		// put all the files in a node called dropbox
+                    		if(root.hasNode("dropbox")) {
+                    			root = root.getNode("dropbox");
+                    		} else {
+                    			root = root.addNode("dropbox");
+                    		}
+                    		
+                    		// Recusively walk through the dropbox directory and construct a JCR representation of
+                    		// the files.
+                    		File f = new File(dropboxLocation);
+                    		try {
+                    			dropFiles(f, session, root);
+                    		} catch (IOException e) {
+                    			e.printStackTrace();
+                    		}
+                    		
+                    		// leave the session
+                    		session.logout();
+                    		
+                    		System.out.println("done!");	
+                    	}
+                    	
+                    	/*
+                    	 * Recusively append all files (except hidden files) located in the dropbox folder to the
+                    	 * JCR tree, while doing so it saves the changes to the repository.
+                    	 * 
+                    	 * Note: - file names should not contain the following characters: ":"
+                    	 * 		 - node names encoded in ISO9075
+                    	 */
+                    	private void dropFiles(File f, Session session, Node folder) throws RepositoryException, IOException {
+                    		File[] files = f.listFiles();
+                    		
+                    		for(int i=0;i<files.length;i++) {
+                    			
+                    			if(files[i].getName().equals(".") || 
+                    					files[i].getName().equals("..") ||
+                    					files[i].isHidden()) {
+                    				continue;
+                    			}
+                    			
+                    			if(files[i].isDirectory()) {
+                    				dropFiles(files[i], session, folder.addNode(files[i].getName()));
+                    				continue;
+                    			}
+                    			
+                    			System.out.println("importing (" + files[i].getName() + ") ...");
+                    			
+                    			try {
+                    				createFile(folder, files[i]);
+                    			} catch (FileNotFoundException e) {
+                    				e.printStackTrace();
+                    			}
+                    			
+                    			session.save();
+                    		}
+                    	}
+                    	
+                    	/*
+                    	 * Creates a new file, node name encoded in ISO9075
+                    	 */
+                    	protected Node createFile(Node folder, File f) throws IOException, RepositoryException {
+                    		FileDataSource ds = new FileDataSource(f);
+                    		ds.setFileTypeMap(new MimetypesFileTypeMap(getClass().getResourceAsStream("mime.types")));
+                    		
+                    		Node n = folder.addNode( org.apache.jackrabbit.util.ISO9075.encode(f.getName()), "hippo:document");
+                    		n.setProperty("mimeType", ds.getContentType());	
+                    		n.setProperty("lastModified", f.lastModified());
+                    		n.setProperty("path", f.getAbsolutePath());
+                    		
+                    		return n;
+                    	}
+                    	
+                    	public static void main(String[] args) {
+                    		try {
+                    			Dropbox box = new Dropbox(args[0], args[1]);
+                    			box.setCredentials(new SimpleCredentials(args[2], args[3].toCharArray()));
+                    			box.drop();
+                    		} catch (RepositoryException e) {
+                    			e.printStackTrace();
+                    		}
+                    	}
+                    }
+                        ]]>
+                </source>
+                DropboxExt.java
+                <source>
+                    <![CDATA[
+                    package org.hippoecm.tools.dropbox;
+
+                    import java.io.File;
+                    import java.io.IOException;
+                    
+                    import javax.jcr.Node;
+                    import javax.jcr.Property;
+                    import javax.jcr.RepositoryException;
+                    import javax.jcr.SimpleCredentials;
+                    
+                    public class DropboxExt extends Dropbox 
+                    {
+                    	public DropboxExt(String repoLoc, String dropbox) throws RepositoryException {
+                    		super(repoLoc, dropbox);
+                    	}
+                    	
+                    	protected Node createFile(Node folder, File f) throws IOException, RepositoryException {
+                    		Node n = super.createFile(folder, f);
+                    		Property prop = n.getProperty("mimeType");
+                    		String mimeType = prop.getString();
+                    		
+                    		if(mimeType.equals("image/png") || 
+                    				mimeType.equals("image/jpg")) {
+                    			n.setProperty("DocType", "picture");
+                    		} else if (mimeType.equals("application/msword") || 
+                    					mimeType.equals("application/vnd.oasis.opendocument.text") ||
+                    					mimeType.equals("application/pdf")) {
+                    			n.setProperty("DocType", "document");
+                    		} else if (mimeType.equals("text/html")) {
+                    			n.setProperty("DocType", "webpage");
+                    		} else if (mimeType.equals("text/plain")) {
+                    			n.setProperty("DocType", "text");
+                    		} 
+                    		
+                    		return n;
+                    	}
+                    	
+                    	public static void main(String[] args) {
+                    		try {
+                    			DropboxExt box = new DropboxExt(args[0], args[1]);
+                    			box.setCredentials(new SimpleCredentials(args[2], args[3].toCharArray()));
+                    			box.drop();
+                    		} catch (RepositoryException e) {
+                    			e.printStackTrace();
+                    		}
+                    	}
+                    }
+                    ]]>
+                </source>
+            </subsection>
+            <subsection name="How to run">
+                
+                <p>
+                First checkout the source code from the svn repository and run maven2.
+                <source>
+                svn co https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
+                cd hippo-ecm/
+                mvn clean install
+                </source>
+                </p>
+                
+                <p>
+                Start the Wicket default user interface for browsing the repository.
+                <source>
+                cd hippo-ecm/application/default
+                mvn jetty:run-war
+                </source>
+                Open up <code>http://localhost:?</code> to check if everthing is working. 
+                (tip: the location is displayed in the last lines of the shell output) 
+                </p>
+                
+                <p>
+                Start the Hippo ECM Repository.
+                <source>
+                cd hippo-ecm/repository/application
+                mvn jetty:run-war
+                </source>
+                Open up <code>http://localhost:?</code> to check if everthing is working.  
+                </p>
+                
+                <p>
+                Now that we have everything up and running we need to configure the demo's pom.xml located in the root
+                of the project. Open pom.xml and look for the arguments tag. <br/>
+                argument 1: the location of your repository<br/>
+                argument 2: the location of your dropbox<br/>
+                argument 3: the username for logging into the repository<br/>
+                argument 4: and the password 
+                <br/><br/>
+                
+                Everything configured? Let's start the demo.
+                <source>
+                cd hipp-ecm/tools/dropbox
+                mvn clean install
+                mvn exec:java
+                </source>
+                
+                If everything went well the output should look something like this:<br/><br/>
+                <img src="../images/dropbox-running.jpg" alt=""/>
+                <br/><br/>
+                All content from your dropbox folder is now stored in Hippo Repository. You can explore
+                the contents through the provided user interface. 
+                </p>
+                
+                  
+            </subsection>
+            <subsection name="Applying Hippo Facets">
+            	Prerequisite: <a href="../default-functionality/facets/index.html">knowlegde of facets</a>
+            	<br/>
+            	<p>
+            	Goto the Wicket JCR browser and select the root node. <br/>
+            	Add a new node with an arbitrary name. <br/>
+            	Select this node and add the following properties, hippo:docbase -> dropbox, hippo:facets -> (multi-value) DocType. <br/> 
+            	Then again select the previously constructed node and the result should look like something as depicted below. <br/>
+            	<img src="../images/jcr-tree-facets.jpg" alt=""/> 
+            	<br/><br/>
+            	Congratulations you just run a custom application interfacing with the Hippo ECM Repository and
+            	applyed a facet search on the stored data.
+            	</p>
+            </subsection>
+        </section>
+    </body>
+</document>

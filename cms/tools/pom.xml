@@ -43,6 +43,7 @@
   <modules>
     <module>migration</module>
     <module>testutils</module>
+    <module>dropbox</module>
   </modules>
   
   
