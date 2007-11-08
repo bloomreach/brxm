@@ -29,9 +29,11 @@ import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
-import org.apache.jackrabbit.name.Path;
 import org.apache.jackrabbit.name.PathResolver;
 import org.apache.jackrabbit.name.QName;
+
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.Name;
 
 public class HippoHierarchyManager implements HierarchyManager {
     private static Logger log = LoggerFactory.getLogger(HippoHierarchyManager.class);
@@ -56,7 +58,7 @@ public class HippoHierarchyManager implements HierarchyManager {
         return hierMgr.getPath(id);
     }
 
-    public QName getName(ItemId id) throws ItemNotFoundException, RepositoryException {
+    public Name getName(ItemId id) throws ItemNotFoundException, RepositoryException {
         return hierMgr.getName(id);
     }
 

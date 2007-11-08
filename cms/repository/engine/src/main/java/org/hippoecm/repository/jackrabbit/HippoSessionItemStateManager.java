@@ -1,4 +1,10 @@
 /*
+  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
+  work has proceeded to a stable level, at which time this comment
+  will be removed.  -- Berry
+*/
+
+/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -28,14 +34,26 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.name.QName;
+import org.apache.jackrabbit.core.ItemId;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.StaleItemStateException;
+import javax.jcr.ReferentialIntegrityException;
+
+import org.apache.jackrabbit.spi.Name;
 
 class HippoSessionItemStateManager extends SessionItemStateManager {
+    protected final Logger log = LoggerFactory.getLogger(HippoSessionItemStateManager.class);
+
     HippoHierarchyManager wrappedHierMgr = null;
+    LocalItemStateManager localStateMgr;
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, SessionImpl session) {
         super(rootNodeId, manager, session);
+        localStateMgr = manager;
         if(wrappedHierMgr == null)
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
+        // stateMgr = new AugmentingStateManager(stateMgr);
     }
 
     @Override
@@ -55,21 +73,76 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
 
     @Override
     public NodeState createNew(NodeState transientState) throws IllegalStateException {
-        return super.createNew(transientState);
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.createNew#1 "+transientState.getNodeTypeName());
+        Name nodeTypeName = transientState.getNodeTypeName();
+        /*
+        if(nodeTypeName.toString().equals("{http://www.hippoecm.org/nt/1.0}base")) {
+            HippoNodeState virtualState = new HippoNodeState(transientState.getNodeId(), transientState.getNodeTypeName(), transientState.getParentId());
+            transientState.connect(virtualState);
+            NodeState persistentState = super.createNew(virtualState);
+            //return virtualState;
+            return persistentState;
+            //} else if(nodeTypeName.toString().equals("{http://www.hippoecm.org/nt/1.0}item")) {
+        } else
+        */
+           return super.createNew(transientState);
     }
 
     @Override
-    public PropertyState createNew(QName propName, NodeId parentId) throws IllegalStateException {
+    public PropertyState createNew(Name propName, NodeId parentId) throws IllegalStateException {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.createNew#2 "+parentId+" "+propName);
         return super.createNew(propName, parentId);
     }
 
     @Override
     public PropertyState createNew(PropertyState transientState) throws IllegalStateException {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.createNew#3 "+transientState.getId());
         return super.createNew(transientState);
     }
 
     @Override
     public void store(ItemState state) throws IllegalStateException {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.store "+state.getId());
         super.store(state);
     }
+
+    @Override
+    public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.getItemState ");
+        return super.getItemState(id);
+    }
+
+    @Override
+    public boolean hasItemState(ItemId id) {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.hasItemState ");
+        return super.hasItemState(id);
+    }
+
+    @Override
+    public ItemState getTransientItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.getTransientItemState ");
+        return super.getTransientItemState(id);
+    }
+
+    @Override
+    public boolean hasTransientItemState(ItemId id) {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.hasTransientItemState ");
+        return super.hasTransientItemState(id);
+    }
+
+    @Override
+    public void update() throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.update ");
+        super.update();
+    }
+
 }
