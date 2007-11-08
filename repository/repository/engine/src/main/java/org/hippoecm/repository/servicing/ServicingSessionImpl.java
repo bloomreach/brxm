@@ -49,7 +49,7 @@ import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.name.AbstractNamespaceResolver;
 import org.apache.jackrabbit.name.NameException;
-import org.apache.jackrabbit.name.Path;
+import org.apache.jackrabbit.spi.Path;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -118,10 +118,12 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
 
     String[] getQPath(String absPath) throws NameException, NamespaceException, RepositoryException {
         NamespaceRegistry nsreg = session.getWorkspace().getNamespaceRegistry();
-        Path.PathElement[] elements = ((SessionImpl) session).getQPath(absPath.startsWith("/") ? absPath.substring(1) : absPath).getElements();
+        Path.Element[] elements = ((SessionImpl) session).getQPath(absPath.startsWith("/") ? absPath.substring(1)
+                                                                                           : absPath).getElements();
         String[] rtelements = new String[elements.length];
         for(int i=0; i<elements.length; i++) {
-            rtelements[i] = elements[i].toJCRName((AbstractNamespaceResolver)nsreg);
+            rtelements[i] = nsreg.getPrefix(elements[i].getName().getNamespaceURI()) + ":"
+                          + elements[i].getName().getLocalName();
         }
         return rtelements;
     }

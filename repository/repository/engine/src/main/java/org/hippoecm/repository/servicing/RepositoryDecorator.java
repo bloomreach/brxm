@@ -88,7 +88,14 @@ public class RepositoryDecorator implements Repository {
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
         Session session = repository.login(credentials, workspaceName);
+	/* FIXME: should get username from credentials and have some method to map these to facets
+	 * match
+	 */
         ServicingSessionImpl servicingSession = (ServicingSessionImpl) factory.getSessionDecorator(this, session);
+	/* FIXME: then should initialize faceted engine this way, but missing input
+         * FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, servicingSession);
+	 * servicingSession.setFacetedNavigationContext(context);
+	 */
         return servicingSession;
     }
 

@@ -28,10 +28,14 @@ public class XAWorkspaceImpl extends org.apache.jackrabbit.core.XAWorkspace {
     protected XAWorkspaceImpl(WorkspaceConfig wspConfig, SharedItemStateManager stateMgr,
             org.apache.jackrabbit.core.RepositoryImpl rep, org.apache.jackrabbit.core.SessionImpl session) {
         super(wspConfig, stateMgr, rep, session);
+	if (log.isDebugEnabled())
+          System.err.println("XAWorkspaceImpl.WorkspaceImpl");
     }
 
     protected LocalItemStateManager createItemStateManager(SharedItemStateManager shared) {
-        LocalItemStateManager localItemStateManager = super.createItemStateManager(shared);
+        if (log.isDebugEnabled())
+          System.err.println("XAWorkspaceImpl.createItemStateManager "+rep);
+        LocalItemStateManager localItemStateManager = new HippoLocalItemStateManager(shared, this, rep.getItemStateCacheFactory(), ((RepositoryImpl)rep).getNodeTypeRegistry());
         return localItemStateManager;
     }
 }
