@@ -26,8 +26,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
  */
 public abstract class AbstractMenuPlugin extends Plugin {
 
-    public AbstractMenuPlugin(String id, JcrNodeModel model) {
-        super(id, model);
+    public AbstractMenuPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
     }
 
     /**

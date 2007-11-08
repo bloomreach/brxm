@@ -32,7 +32,7 @@ public class PluginPropertiesConfig implements PluginConfig {
         return null;
     }
 
-    public PluginDescriptor getPlugin(String path) {
+    public PluginDescriptor getPlugin(String pluginId) {
         // TODO Auto-generated method stub
         return null;
     }

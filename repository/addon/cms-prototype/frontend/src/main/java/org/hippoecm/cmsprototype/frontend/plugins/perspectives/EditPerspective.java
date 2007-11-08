@@ -16,39 +16,22 @@
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 /**
  * Panel representing the content panel for the first tab.
  */
-public class EditPerspective extends Plugin
-{
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class EditPerspective extends Plugin {
+    private static final long serialVersionUID = 1L;
 
-	/**
-     * Constructor
-     * 
-     * @param id
-     *            component id
-     */
-    public EditPerspective(String id, JcrNodeModel model)
-    {
-        super(id, model);
-        
-        //add(new EditorPlugin("editor", model));
+    public EditPerspective(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
     }
 
-    @Override
     public void update(AjaxRequestTarget target, JcrEvent model) {
         // TODO Auto-generated method stub
-        
     }
 }
-
-

@@ -21,11 +21,14 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.EventConsumer;
+import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginManager;
 
-public class DialogWindow extends ModalWindow {
+public class DialogWindow extends ModalWindow implements EventConsumer {
     private static final long serialVersionUID = 1L;
 
-    protected JcrEvent jcrEvent;
+    protected JcrEvent dialogResult; 
     private JcrNodeModel nodeModel;
 
     public DialogWindow(String id, JcrNodeModel nodeModel, final boolean resetOnClose) {
@@ -36,11 +39,13 @@ public class DialogWindow extends ModalWindow {
         setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
-                Home home = (Home) getWebPage();
-                if (jcrEvent != null) {
-                    home.update(target, jcrEvent);
+                if (dialogResult != null) {
+                    Plugin owningPlugin = (Plugin)findParent(Plugin.class);
+                    PluginManager pluginManager = owningPlugin.getPluginManager();      
+                    pluginManager.update(target, dialogResult);
                 }
                 if (resetOnClose) {
+                    Home home = (Home) getWebPage();
                     setResponsePage(home);
                     setRedirect(true);
                 }
@@ -57,12 +62,12 @@ public class DialogWindow extends ModalWindow {
         };
     }
 
-    public void setJcrEvent(JcrEvent event) {
-        this.jcrEvent = event;
+    public void setDialogResult(JcrEvent event) {
+        this.dialogResult = event;
     }
-
-    public void setNodeModel(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
+    
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
+        this.nodeModel = jcrEvent.getModel();
     }
 
     public JcrNodeModel getNodeModel() {

@@ -18,30 +18,87 @@ package org.hippoecm.frontend.plugin;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.WorkflowMappingException;
 
-public abstract class Plugin extends Panel {
+public abstract class Plugin extends Panel implements EventConsumer {
 
-    public Plugin(String id, JcrNodeModel model) {
-        super(id, model);
+    private PluginManager pluginManager;
+    private PluginDescriptor pluginDescriptor;
+    private Plugin parentPlugin;
+    
+    public Plugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor.getWicketId(), model);
         setOutputMarkupId(true);
+        this.parentPlugin = parentPlugin;
+        this.pluginDescriptor = pluginDescriptor;
     }
 
-    public void addChildren(PluginConfig pluginConfig) {
-        List children = pluginConfig.getChildren(new PluginDescriptor(this));
+    public PluginDescriptor getDescriptor() {
+        return pluginDescriptor;
+    }
+
+    public PluginManager getPluginManager() {
+        if (pluginManager == null) {
+            return parentPlugin.getPluginManager();
+        }
+        return pluginManager;
+    }
+    
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+
+    public Plugin getParentPlugin() {
+        return parentPlugin;
+    }
+
+    public void addChildren() {
+        PluginDescriptor descriptor = getDescriptor();
+        PluginConfig pluginConfig = getPluginManager().getPluginConfig();
+        List children = pluginConfig.getChildren(descriptor);
         Iterator it = children.iterator();
         while (it.hasNext()) {
             PluginDescriptor childDescriptor = (PluginDescriptor) it.next();
-            Plugin child = new PluginFactory(childDescriptor).getPlugin((JcrNodeModel) getModel());
-            add(child);
-            child.addChildren(pluginConfig);
+            Plugin child = addChild(childDescriptor);
+            child.addChildren();
         }
     }
+    
+    public Plugin addChild(PluginDescriptor childDescriptor) {
+        PluginFactory pluginFactory = new PluginFactory(pluginManager);
+        Plugin child = pluginFactory.createPlugin(childDescriptor, (JcrNodeModel) getModel(), this);
 
-    public abstract void update(AjaxRequestTarget target, JcrEvent model);
+        add(child);
+        return child;
+    }
+    
+    public void removeChild(PluginDescriptor childDescriptor) {
+        remove(childDescriptor.getWicketId());
+    }
+    
+    protected Workflow getWorkflow() {
+        Workflow workflow = null;
+        try {
+            JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+            WorkflowManager manager = getPluginManager().getWorkflowManager();
+            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(getId(), nodeModel.getNode());
+            workflow = manager.getWorkflow(descriptor);
+        } catch (WorkflowMappingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return workflow;
+    }
 
 }

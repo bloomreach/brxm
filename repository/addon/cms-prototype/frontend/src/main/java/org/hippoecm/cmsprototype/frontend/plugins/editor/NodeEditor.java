@@ -31,9 +31,8 @@ public class NodeEditor extends Form {
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        JcrNodeModel model = jcrEvent.getModel();
-        setModel(model);
-        if (target != null) {
+        setModel(jcrEvent.getModel());
+        if (target != null && findPage() != null) {
             target.addComponent(this);
         }
     }

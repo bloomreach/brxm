@@ -1,30 +1,30 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.WorkflowPlugin;
+import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.acceptrequest.AcceptRequestDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.CancelRequestDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest.RejectRequestDialog;
-import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
-public class FullRequestWorkflowPlugin extends WorkflowPlugin {
+public class FullRequestWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public FullRequestWorkflowPlugin(String id, final JcrNodeModel model, WorkflowManager workflowManager,
-            WorkflowDescriptor workflowDescriptor) {
-        super(id, model, workflowManager, workflowDescriptor);
+    public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
 
         final DialogWindow acceptRequestDialog = new DialogWindow("acceptRequest-dialog", model, false);
         acceptRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new AcceptRequestDialog(acceptRequestDialog, (FullRequestWorkflow) getWorkflow());
+                FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
+                return new AcceptRequestDialog(acceptRequestDialog, workflow);
             }
         });
         add(acceptRequestDialog);
@@ -34,7 +34,8 @@ public class FullRequestWorkflowPlugin extends WorkflowPlugin {
         rejectRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new RejectRequestDialog(rejectRequestDialog, (FullRequestWorkflow) getWorkflow());
+                FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
+                return new RejectRequestDialog(rejectRequestDialog, workflow);
             }
         });
         add(rejectRequestDialog);
@@ -44,14 +45,15 @@ public class FullRequestWorkflowPlugin extends WorkflowPlugin {
         cancelRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
-                return new CancelRequestDialog(cancelRequestDialog, (FullRequestWorkflow) getWorkflow());
+                FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
+                return new CancelRequestDialog(cancelRequestDialog, workflow);
             }
         });
         add(cancelRequestDialog);
         add(cancelRequestDialog.dialogLink("cancelRequest"));
     }
 
-    public void update(JcrEvent jcrEvent) {
+    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         //Nothing much to do here
     }
 

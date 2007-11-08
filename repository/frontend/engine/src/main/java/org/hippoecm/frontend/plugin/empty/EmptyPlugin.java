@@ -19,12 +19,13 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class EmptyPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public EmptyPlugin(String id, JcrNodeModel model) {
-        super(id, model);
+    public EmptyPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {

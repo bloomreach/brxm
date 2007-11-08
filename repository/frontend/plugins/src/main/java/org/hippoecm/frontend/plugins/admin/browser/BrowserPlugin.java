@@ -18,10 +18,10 @@ package org.hippoecm.frontend.plugins.admin.browser;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.tree.JcrTree;
 
 public class BrowserPlugin extends Plugin {
@@ -29,8 +29,8 @@ public class BrowserPlugin extends Plugin {
 
     private JcrTree tree;
 
-    public BrowserPlugin(String id, JcrNodeModel model) {
-        super(id, model);
+    public BrowserPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
         JcrNodeModel treeNode = new JcrNodeModel(null, model.getNode());
         
         tree = new JcrTree("tree", treeNode) {
@@ -38,9 +38,9 @@ public class BrowserPlugin extends Plugin {
 
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
                 JcrNodeModel jcrTreeNode = (JcrNodeModel) clickedNode;
-                Home home = (Home) getWebPage();
                 JcrEvent jcrEvent = new JcrEvent(jcrTreeNode, false);
-                home.update(target, jcrEvent);
+                
+                getPluginManager().update(target, jcrEvent);
             }
         };
         add(tree);

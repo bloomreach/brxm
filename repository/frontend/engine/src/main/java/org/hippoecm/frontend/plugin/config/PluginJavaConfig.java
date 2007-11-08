@@ -33,16 +33,11 @@ public class PluginJavaConfig implements PluginConfig {
     private PluginDescriptor contentPlugin;
 
     public PluginJavaConfig() {
-        rootPlugin = new PluginDescriptor("0:rootPlugin", 
-                "org.hippoecm.frontend.plugins.admin.RootPlugin");
-        navigationPlugin = new PluginDescriptor("0:rootPlugin:navigationPlugin",
-                "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin");
-        menuPlugin = new PluginDescriptor("0:rootPlugin:menuPlugin",
-                "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin");
-        loginPlugin = new PluginDescriptor("0:rootPlugin:loginPlugin",
-                "org.hippoecm.frontend.plugins.admin.login.LoginPlugin");
-        contentPlugin = new PluginDescriptor("0:rootPlugin:contentPlugin",
-                "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin");
+        rootPlugin = new PluginDescriptor("rootPlugin", "org.hippoecm.frontend.plugins.admin.RootPlugin");
+        navigationPlugin = new PluginDescriptor("navigationPlugin", "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin");
+        menuPlugin = new PluginDescriptor("menuPlugin", "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin");
+        loginPlugin = new PluginDescriptor("loginPlugin", "org.hippoecm.frontend.plugins.admin.login.LoginPlugin");
+        contentPlugin = new PluginDescriptor("contentPlugin", "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin");
     }
 
     public PluginDescriptor getRoot() {
@@ -52,7 +47,7 @@ public class PluginJavaConfig implements PluginConfig {
 
     public List getChildren(PluginDescriptor pluginDescriptor) {
         List result = new ArrayList();
-        if (pluginDescriptor.getPath().endsWith(":rootPlugin")) {
+        if (pluginDescriptor.getPluginId().equals("rootPlugin")) {
             result.add(navigationPlugin);
             result.add(menuPlugin);
             result.add(loginPlugin);
@@ -60,18 +55,18 @@ public class PluginJavaConfig implements PluginConfig {
         }
         return result;
     }
-
-    public PluginDescriptor getPlugin(String path) {
+    
+    public PluginDescriptor getPlugin(String pluginId) {
         PluginDescriptor result = null;
-        if (path.endsWith(":rootPlugin")) {
+        if (pluginId.equals("rootPlugin")) {
             result = rootPlugin;
-        } else if (path.endsWith(":navigationPlugin")) {
+        } else if (pluginId.equals("navigationPlugin")) {
             return navigationPlugin;
-        } else if (path.endsWith(":menuPlugin")) {
+        } else if (pluginId.equals("menuPlugin")) {
             return menuPlugin;
-        } else if (path.endsWith(":loginPlugin")) {
+        } else if (pluginId.equals("loginPlugin")) {
             return loginPlugin;
-        } else if (path.endsWith(":contentPlugin")) {
+        } else if (pluginId.equals("contentPlugin")) {
             return contentPlugin;
         }
         return result;

@@ -21,6 +21,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
+import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.admin.menu.export.ExportDialog;
 import org.hippoecm.frontend.plugins.admin.menu.move.MoveDialog;
@@ -33,8 +35,8 @@ import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 public class MenuPlugin extends AbstractMenuPlugin {
     private static final long serialVersionUID = 1L;
 
-    public MenuPlugin(String id, final JcrNodeModel model) {
-        super(id, model);
+    public MenuPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
 
         addMenuOption("node-dialog", "node-dialog-link", NodeDialog.class.getName(), model);
         addMenuOption("delete-dialog", "delete-dialog-link", DeleteDialog.class.getName(), model);
