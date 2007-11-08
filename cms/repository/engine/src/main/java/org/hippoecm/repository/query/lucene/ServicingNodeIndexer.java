@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
@@ -35,9 +36,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.extractor.TextExtractor;
-import org.apache.jackrabbit.name.NameFormat;
-import org.apache.jackrabbit.name.NoPrefixDeclaredException;
-import org.apache.jackrabbit.name.QName;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.slf4j.Logger;
@@ -72,7 +71,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         // plus index our facet specifics 
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
-            QName propName = (QName) it.next();
+            Name propName = (Name) it.next();
             PropertyId id = new PropertyId(node.getNodeId(), propName);
             try {
                 PropertyState propState = (PropertyState) stateProvider.getItemState(id);
@@ -95,11 +94,11 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     // below: When the QName is configured to be a facet, also index like one
-    private void addValue(Document doc, InternalValue value, QName name) {
-        String fieldName = name.getLocalName();
+    private void addValue(Document doc, InternalValue value, Name name) {
+    	String fieldName = name.getLocalName();
         try {
-            fieldName = NameFormat.format(name, mappings);
-        } catch (NoPrefixDeclaredException e) {
+            fieldName = resolver.getJCRName(name);
+        } catch (NamespaceException e) {
             // will never happen
         }
         switch (value.getType()) {
@@ -152,7 +151,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 Field.TermVector.YES));
     }
     
-    private void indexPath(Document doc, InternalValue[] values, QName name) {
+    private void indexPath(Document doc, InternalValue[] values, Name name) {
         String deepestPath = "";
         // index each level of the path for searching
         for (int i = 0; i < values.length; i++) {
@@ -190,7 +189,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
      * @return <code>true</code> if the property is a facet;
      *         <code>false</code> otherwise.
      */
-    protected boolean isFacet(QName propertyName) {
+    protected boolean isFacet(Name propertyName) {
         if (servicingIndexingConfig == null) {
             return false;
         } else {
@@ -206,7 +205,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
      * @return <code>true</code> if the property is a hippo path;
      *         <code>false</code> otherwise.
      */
-    protected boolean isHippoPath(QName propertyName) {
+    protected boolean isHippoPath(Name propertyName) {
         if (servicingIndexingConfig == null) {
             return false;
         } else {

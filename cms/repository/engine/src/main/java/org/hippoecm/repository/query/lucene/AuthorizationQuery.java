@@ -1,20 +1,31 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.repository.query.lucene;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.NamespaceException;
-
+import org.apache.jackrabbit.conversion.NameException;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.name.NameException;
-import org.apache.jackrabbit.name.NoPrefixDeclaredException;
-import org.apache.jackrabbit.name.ParsingNameResolver;
-import org.apache.jackrabbit.name.QName;
+import org.apache.jackrabbit.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,12 +69,12 @@ public class AuthorizationQuery {
         this.query = new BooleanQuery(true);
         
         if(authorizationQuery!=null){
-            ParsingNameResolver pnr = new ParsingNameResolver(nsMappings);   
-            for(Map.Entry<String,String[]> entry : authorizationQuery.entrySet()) {
-                QName nodeName;
+        	
+        	for(Map.Entry<String,String[]> entry : authorizationQuery.entrySet()) {
+                Name nodeName;
                 String internalName = "";
                 try {
-                    nodeName = pnr.getQName(entry.getKey());
+                	nodeName = NameFactoryImpl.getInstance().create("", entry.getKey());
                     if(indexingConfig.isFacet(nodeName)){
                         internalName = ServicingNameFormat.getInternalFacetName(nodeName,nsMappings);
                         String[] facetValues = entry.getValue();
@@ -92,14 +103,10 @@ public class AuthorizationQuery {
                                 "Add the property to the indexing configuration to be defined as FACET");
                     }
                     
-                } catch (NoPrefixDeclaredException e) {
-                    e.printStackTrace();
-                } catch (NameException e) {
-                    e.printStackTrace();
-                } catch (NamespaceException e) {
-                    e.printStackTrace();
-                }
-                
+                } 
+                 catch (NameException e) {
+                	log.error(e.toString());
+                } 
               }
         }
     }

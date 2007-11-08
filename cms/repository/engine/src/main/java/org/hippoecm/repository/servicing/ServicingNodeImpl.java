@@ -1131,9 +1131,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
                     return node;
                 } catch (ClassCastException ex2) {
                     throw ex;
-                } catch (NameException ex2) {
-                    throw ex;
-                }
+                } 
             }
           }
     }
@@ -1300,9 +1298,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
                     return false;
                 } catch (ClassCastException ex2) {
                     throw ex;
-                } catch (NameException ex2) {
-                    throw ex;
-                }
+                } 
             }
           }
     }

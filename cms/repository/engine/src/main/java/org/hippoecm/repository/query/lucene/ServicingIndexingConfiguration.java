@@ -16,7 +16,7 @@
 package org.hippoecm.repository.query.lucene;
 
 import org.apache.jackrabbit.core.query.lucene.IndexingConfiguration;
-import org.apache.jackrabbit.name.QName;
+import org.apache.jackrabbit.spi.Name;
 
 public interface ServicingIndexingConfiguration extends IndexingConfiguration{
    
@@ -28,7 +28,7 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration{
      * @return <code>true</code> if the property is facet; <code>false</code>
      *         otherwise.
      */
-    boolean isFacet(QName propertyName);
+    boolean isFacet(Name propertyName);
     
     /**
      * Returns <code>true</code> if the property with the given name is a hippo path
@@ -37,5 +37,5 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration{
      * @return <code>true</code> if the property is path; <code>false</code>
      *         otherwise.
      */
-    boolean isHippoPath(QName propertyName);
+    boolean isHippoPath(Name propertyName);
 }

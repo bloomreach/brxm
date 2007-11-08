@@ -19,25 +19,24 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.jackrabbit.conversion.NameResolver;
+import org.apache.jackrabbit.conversion.ParsingNameResolver;
+import org.apache.jackrabbit.core.nodetype.xml.AdditionalNamespaceResolver;
+import org.apache.jackrabbit.core.query.QueryHandlerContext;
+import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationImpl;
+import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.name.NameFactoryImpl;
+import org.apache.jackrabbit.namespace.NamespaceResolver;
+import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-            
-import org.apache.jackrabbit.core.nodetype.xml.AdditionalNamespaceResolver;
-import org.apache.jackrabbit.core.query.QueryHandlerContext;
-import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationImpl;
-import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.name.NameFormat;
-import org.apache.jackrabbit.name.NamespaceResolver;
-import org.apache.jackrabbit.name.QName;
-
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImpl implements ServicingIndexingConfiguration {
 
@@ -55,17 +54,13 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     /**
      * QName Hippo Path qualified name
      */
-    private QName hippoPath;
-    
-    /**
-     * A namespace resolver for parsing QNames in the configuration.
-     */
-    private NamespaceResolver nsResolver;
+    private Name hippoPath;
     
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
         super.init(config, context, nsMappings);
-        nsResolver = new AdditionalNamespaceResolver(getNamespaces(config));
+        NamespaceResolver nsResolver = new AdditionalNamespaceResolver(getNamespaces(config));
+        NameResolver resolver = new ParsingNameResolver(NameFactoryImpl.getInstance(), nsResolver);
         NodeList indexingConfigs = config.getChildNodes();
         for (int i = 0; i < indexingConfigs.getLength(); i++) {
             Node configNode = indexingConfigs.item(i);
@@ -75,17 +70,17 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                     Node propertyNode = propertyChildNodes.item(k);
                     if (propertyNode.getNodeName().equals("property")) {
                         // get property name
-                        QName propName = NameFormat.parse(getTextContent(propertyNode), nsResolver);     
+                        Name propName = resolver.getQName(getTextContent(propertyNode));
                         facetProperties.add(propName);
                         log.debug("Added property '"+propName.getNamespaceURI()+":"+propName.getLocalName()+"' to be indexed as facet.");
                     }
                 }
             }
         }
-        hippoPath = NameFormat.parse(HippoNodeType.HIPPO_PATHS, nsResolver);
+        hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
     }
 
-    public boolean isFacet(QName propertyName) {
+    public boolean isFacet(Name propertyName) {
         if(facetProperties.contains(propertyName)){
           return true;  
         }
@@ -96,7 +91,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         //return false;
     }
     
-    public boolean isHippoPath(QName propertyName) {
+    public boolean isHippoPath(Name propertyName) {
         if(this.hippoPath.equals(propertyName)){
             return true;
         }
