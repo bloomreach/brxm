@@ -1,17 +1,27 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.repository.query.lucene;
 
-import javax.jcr.NamespaceException;
-
+import org.apache.jackrabbit.conversion.IllegalNameException;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.name.NameException;
-import org.apache.jackrabbit.name.NameFormat;
-import org.apache.jackrabbit.name.NoPrefixDeclaredException;
-import org.apache.jackrabbit.name.ParsingNameResolver;
-import org.apache.jackrabbit.name.QName;
+import org.apache.jackrabbit.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +42,13 @@ public class FacetPropExistsQuery {
     public FacetPropExistsQuery(String facet, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig) {
         this.query = new BooleanQuery(true);
         
-        ParsingNameResolver pnr = new ParsingNameResolver(nsMappings);
-        QName nodeName;
+        Name nodeName;
         String internalName = "";
         try {
-            nodeName = pnr.getQName(facet);
+        	// TODO Assume empty namespace for facet. Is this always true?
+            nodeName = NameFactoryImpl.getInstance().create("", facet);
             if(indexingConfig.isFacet(nodeName)){
-                internalName = NameFormat.format(nodeName,nsMappings);
+            	internalName = nsMappings.translatePropertyName(nodeName);
                 Query q = new FixedScoreTermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,internalName));
                 this.query.add(q, Occur.MUST);
             } else {
@@ -46,13 +56,9 @@ public class FacetPropExistsQuery {
                         "Add the property to the indexing configuration to be defined as FACET");
             }
             
-        } catch (NoPrefixDeclaredException e) {
-            log.error(e.toString());
-        } catch (NameException e) {
-            log.error(e.toString());
-        } catch (NamespaceException e) {
-            log.error(e.toString());
-        }
+        } catch (IllegalNameException e) {
+        	log.error(e.toString());
+		}
     }
 
     public BooleanQuery getQuery() {
