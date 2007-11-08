@@ -1,4 +1,4 @@
-<!--
+/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -12,22 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
--->
-<html>
-	<head>
-		<title>Hippo Repository 2</title>
-	</head>
-	<body>
-		<h1>Hippo Repository 2</h1>
-	    <p>
-		    <ul>
-				<li>
-					<a href="browser">Wicket browser</a>
-				</li>
-				<li>
-					<a href="jcrviewer.jsp">JSP viewer</a>
-				</li>
-			</ul>
-	    </p>
-	</body>
-</html>
+ */
+package org.hippoecm.frontend.plugin;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.hippoecm.frontend.model.JcrEvent;
+
+public interface EventConsumer {
+    
+    public void update(AjaxRequestTarget target, JcrEvent model);
+
+}

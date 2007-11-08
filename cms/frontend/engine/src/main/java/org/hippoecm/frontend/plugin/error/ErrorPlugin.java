@@ -19,12 +19,13 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class ErrorPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public ErrorPlugin(String id, Exception exception, String message) {
-        super(id, null);
+    public ErrorPlugin(PluginDescriptor pluginDescriptor, Exception exception, String message) {
+        super(pluginDescriptor, null, null);
         String errorMessage = "";
         if (exception != null) {
             errorMessage = exception.getClass().getName() + ": " + exception.getMessage();

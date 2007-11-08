@@ -16,39 +16,22 @@
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 /**
  * Panel representing the content panel for the first tab.
  */
-public class BrowserPerspective extends Plugin
-{
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class BrowserPerspective extends Plugin {
+    private static final long serialVersionUID = 1L;
 
-	/**
-     * Constructor
-     * 
-     * @param id
-     *            component id
-     */
-    public BrowserPerspective(String id, JcrNodeModel model)
-    {
-        super(id, model);
-        
-        //add(new BrowserPlugin("tree", model));
+    public BrowserPerspective(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
     }
 
-    @Override
     public void update(AjaxRequestTarget target, JcrEvent model) {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub        
     }
 }
-
-

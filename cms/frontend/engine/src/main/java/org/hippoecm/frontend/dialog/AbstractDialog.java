@@ -41,7 +41,7 @@ public abstract class AbstractDialog extends WebPage {
             private static final long serialVersionUID = 1L;
             public void onClick(AjaxRequestTarget target) {
                 try {
-                    dialogWindow.setJcrEvent(ok());
+                    dialogWindow.setDialogResult(ok());
                     dialogWindow.close(target);
                 } catch (Exception e) {
                     setException(e.getClass().getName() + ": " + e.getMessage());

@@ -1,8 +1,6 @@
 package org.hippoecm.cmsprototype.frontend.plugins.tabs;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
@@ -15,60 +13,42 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
-import org.hippoecm.frontend.plugin.config.PluginConfig;
-
-import org.hippoecm.cmsprototype.frontend.plugins.tabs.IConsumer;
 
 public class TabsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    ArrayList tabs;
-    private List listeners;
+    private ArrayList tabs;
 
-    public TabsPlugin(String id, JcrNodeModel model) {
-        super(id, model);
+    public TabsPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
         tabs = new ArrayList();
-        listeners = new ArrayList();
-    }
-
-    public void addChildren(PluginConfig pluginConfig) {
-        List children = pluginConfig.getChildren(new PluginDescriptor(this));
-        Iterator it = children.iterator();
-        List plugins = new ArrayList();
-        while (it.hasNext()) {
-            PluginDescriptor childDescriptor = (PluginDescriptor) it.next();
-            PluginDescriptor tabDescriptor = new PluginDescriptor(childDescriptor.getPath(), childDescriptor
-                    .getClassName(), TabbedPanel.TAB_PANEL_ID);
-            final Plugin child = new PluginFactory(tabDescriptor).getPlugin((JcrNodeModel) getModel());
-
-            // tell child that there is a browser
-            if (child instanceof IConsumer) {
-                listeners.add(child);
-            }
-
-            tabs.add(new AbstractTab(new Model(childDescriptor.getId())) {
-                private static final long serialVersionUID = 1L;
-
-                public Panel getPanel(String panelId) {
-                    return child;
-                }
-            });
-            plugins.add(child);
-        }
         add(new AjaxTabbedPanel("tabs", tabs));
-        //        it= plugins.iterator();
-        //        while(it.hasNext()) {
-        //            Plugin child = (Plugin) it.next();
-        //            child.addChildren(pluginConfig);
-        //        }
+        
     }
 
     @Override
+    public Plugin addChild(PluginDescriptor childDescriptor) {
+        childDescriptor.setWicketId(TabbedPanel.TAB_PANEL_ID);
+        PluginFactory pluginFactory = new PluginFactory(getPluginManager());
+        final Plugin child = pluginFactory.createPlugin(childDescriptor, (JcrNodeModel) getModel(), this);
+
+        AbstractTab tab = new AbstractTab(new Model(childDescriptor.getPluginId())) {
+            private static final long serialVersionUID = 1L;
+            public Panel getPanel(String panelId) {
+                return child;
+            }
+        };
+        
+        tabs.add(tab);
+        return child;
+    }
+    
+    @Override
+    //FIXME: list 'tabs' contains AbstractTab instances, not PluginDescriptors
+    public void removeChild(PluginDescriptor childDescriptor) {
+        tabs.remove(childDescriptor);
+    }
+
     public void update(AjaxRequestTarget target, JcrEvent event) {
-        Iterator it = listeners.iterator();
-        while (it.hasNext()) {
-            IConsumer child = (IConsumer) it.next();
-            child.setModel(event.getModel());
-        }
     }
 }

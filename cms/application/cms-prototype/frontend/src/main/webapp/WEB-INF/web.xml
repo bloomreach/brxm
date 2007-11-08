@@ -14,10 +14,10 @@
 	* See the License for the specific language governing permissions and
 	* limitations under the License.
 -->
-<web-app id="hippo-ecm-application-default-frontend">
+<web-app id="hippo-ecm-application-cms-prototype-frontend">
 
 	<!-- General configuration -->
-	<display-name>Hippo ECM default frontend</display-name>
+	<display-name>Hippo CMS prototype frontend</display-name>
 	<description>A repository-configurable frontend that connects to a remote repository with default configuration.</description>
 	
     <!--
@@ -62,7 +62,7 @@
 
 	<filter-mapping>
 		<filter-name>Frontend</filter-name>
-		<url-pattern>/browser/*</url-pattern>
+		<url-pattern>/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>

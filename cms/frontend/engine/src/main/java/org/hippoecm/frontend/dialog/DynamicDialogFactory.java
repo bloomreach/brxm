@@ -23,9 +23,6 @@ import org.hippoecm.frontend.dialog.error.ErrorDialog;
 
 /**
  * Class for on-the-fly page creation based on a dynamic className attribute.
- *
- * TODO: merge with ContextDialogFactory?
- * 
  */
 public class DynamicDialogFactory implements PageCreator {
     private static final long serialVersionUID = 1L;

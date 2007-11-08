@@ -30,7 +30,7 @@ public class NodeDialog extends AbstractDialog {
     private String name;
     private String type = "nt:unstructured";
 
-    public NodeDialog(final DialogWindow dialogWindow) {
+    public NodeDialog(DialogWindow dialogWindow) {
         super(dialogWindow);
         dialogWindow.setTitle("Add a new Node");
 

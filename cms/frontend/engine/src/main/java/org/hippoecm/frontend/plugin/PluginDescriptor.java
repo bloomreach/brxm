@@ -15,52 +15,76 @@
  */
 package org.hippoecm.frontend.plugin;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public class PluginDescriptor implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    private String id;
+    private String pluginId;
+    private String wicketId;
     private String className;
-    
-    //wicket component path, looks like 0:some:path:id 
-    private String path;
 
-    public PluginDescriptor(String path, String className) {
-        this.id = path.substring(path.lastIndexOf(":") + 1);
+    public PluginDescriptor(String pluginId, String className) {
+        this.pluginId = pluginId;
+        this.wicketId = pluginId;
         this.className = className;
-        this.path = path;
-    }
-    
-    public PluginDescriptor(String path, String className, String id) {
-        this.id = id;
-        this.className = className;
-        this.path = path;
     }
 
-    public PluginDescriptor(String path, WorkflowDescriptor workflowDescriptor) {
-        this.id = path.substring(path.lastIndexOf(":") + 1);
-        this.className = workflowDescriptor.getRendererName();
-        this.path = path;
+    public String getPluginId() {
+        return pluginId;
     }
 
-    public PluginDescriptor(Plugin plugin) {
-        this.id = plugin.getId();
-        this.className = plugin.getClass().getName();
-        this.path = plugin.getPath();
+    public String getWicketId() {
+        return wicketId;
     }
 
-    public String getId() {
-        return id;
+    public void setWicketId(String wicketId) {
+        this.wicketId = wicketId;
     }
 
     public String getClassName() {
         return className;
     }
+    
+    public void setClassName(String className) {
+        this.className = className;
+    }
+    
+    // override Object
 
-    public String getPath() {
-        return path;
+    public String toString() {
+       return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+           .append("pluginId", pluginId)
+           .append("wicketId", wicketId)
+           .append("className", className)
+           .toString();
+    }
+    
+    public boolean equals(Object object) {
+        if (object instanceof PluginDescriptor == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        PluginDescriptor pluginDescriptor = (PluginDescriptor) object;
+        return new EqualsBuilder()
+            .append(pluginId, pluginDescriptor.pluginId)
+            .append(wicketId, pluginDescriptor.wicketId)
+            .append(className, pluginDescriptor.className)
+            .isEquals();
+    }
+    
+    public int hashCode() {
+        return new HashCodeBuilder(17, 313)
+            .append(pluginId)
+            .append(wicketId)
+            .append(className)
+            .toHashCode();
     }
 
 }

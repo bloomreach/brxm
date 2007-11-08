@@ -19,15 +19,15 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.cmsprototype.frontend.plugins.tabs.IConsumer;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
-public class EditorPlugin extends Plugin implements IConsumer {
+public class EditorPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     private NodeEditor editor;
 
-    public EditorPlugin(String id, JcrNodeModel model) {
-        super(id, model);        
+    public EditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);        
         editor = new NodeEditor("editor", model);
         add(editor);
     }

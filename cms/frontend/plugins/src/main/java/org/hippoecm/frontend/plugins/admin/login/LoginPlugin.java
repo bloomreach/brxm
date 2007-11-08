@@ -26,6 +26,7 @@ import org.hippoecm.frontend.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class LoginPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
@@ -40,8 +41,8 @@ public class LoginPlugin extends Plugin {
     private String username;
     private Label loginDialogLinkLabel;
 
-    public LoginPlugin(String id, JcrNodeModel model) {
-        super(id, model);
+    public LoginPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
 
         UserSession session = (UserSession) getSession();
         ValueMap credentials = session.getCredentials();
