@@ -50,7 +50,7 @@
   
   <properties>
     <!-- Versions -->
-    <jackrabbit.version>1.4-SNAPSHOT</jackrabbit.version>
+    <jackrabbit.version>1.4-r593117</jackrabbit.version>
 
     <!-- Build Dependency Version Properties -->
     <jmock.version>1.2.0</jmock.version>
