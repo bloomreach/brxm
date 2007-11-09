@@ -38,7 +38,7 @@ public abstract class HippoRepository {
     protected Repository repository;
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
     
-    private String JTSLookupName = "java:comp/UserTransaction"; // or "javax.jts.UserTransaction"
+    private String JTSLookupName = "java:comp/env/TransactionManager";
 
     private void initialize() {
     }

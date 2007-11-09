@@ -168,15 +168,5 @@
     </dependency>
   </dependencies>
   
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-        <version>1.0.1</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  
 </project>
 
