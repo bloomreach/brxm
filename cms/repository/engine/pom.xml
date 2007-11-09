@@ -98,11 +98,6 @@
         <version>3.1</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-        <version>1.0.1</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
         <version>${jackrabbit.version}</version>
@@ -229,6 +224,12 @@
       <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
       <version>1.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+      <version>1.0.1</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
@@ -294,18 +295,16 @@
       <version>3.1.4</version>
       <scope>test</scope>
     </dependency>
-
-<!--
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo</artifactId>
-      <version>1.0.1</version>
-    </dependency>
--->
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
       <version>2.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>geronimo-spec</groupId>
+          <artifactId>geronimo-spec-jta</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- FIXME: should not be reliant on jpox, but on general JDO -->
     <dependency>
@@ -321,26 +320,12 @@
           <groupId>javax.resource</groupId>
           <artifactId>connector</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>geronimo-spec</groupId>
+          <artifactId>geronimo-spec-jta</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
-<!--
-    <dependency>
-      <groupId>javax.resource</groupId>
-      <artifactId>connector</artifactId>
-      <version>1.0</version>
-      <scope>system</scope>
-      <! systemPath>${java.home}/../lib/javaee.jar</systemPath >
-      <systemPath>${java.home}/../lib/tools.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>javax.resource</groupId>
-      <artifactId>jta</artifactId>
-      <version>1.0.1B</version>
-      <scope>system</scope>
-      <!- systemPath>${java.home}/../lib/javaee.jar</systemPath ->
-      <systemPath>${java.home}/../lib/j2ee.jar</systemPath>
-    </dependency>
--->
   </dependencies>
 
   <build>
