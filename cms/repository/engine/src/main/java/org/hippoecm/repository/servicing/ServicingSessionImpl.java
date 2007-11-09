@@ -55,7 +55,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 //FIXME: depend only on JTA, not on Atomikos
-import com.atomikos.icatch.jta.UserTransactionManager;
+//import com.atomikos.icatch.jta.UserTransactionManager;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -72,11 +72,11 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
 
     protected final Session session;
 
-    protected UserTransactionManager utm = null;
+    //protected UserTransactionManager utm = null;
 
-    public UserTransactionManager getUserTransactionManager() {
-        return utm;
-    }
+    //public UserTransactionManager getUserTransactionManager() {
+    //    return utm;
+    //}
 
     ServicingSessionImpl(DecoratorFactory factory, Repository repository, Session session) {
         this.factory = factory;
@@ -88,6 +88,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
+        /*
         try {
             utm = new UserTransactionManager();
             utm.setStartupTransactionService(false);
@@ -95,13 +96,16 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
         } catch (SystemException ex) {
             throw new RepositoryException("cannot initialize transaction manager", ex);
         }
+        */
     }
 
     protected void finalize() {
+        /*
         if (utm != null) {
             utm.close();
             utm = null;
         }
+        */
     }
 
     FacetedNavigationEngine getFacetedNavigationEngine() {
