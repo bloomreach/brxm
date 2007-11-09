@@ -63,6 +63,7 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
         return wrappedHierMgr;
     }
 
+    @Override
     public HierarchyManager getAtticAwareHierarchyMgr() {
         return new HippoHierarchyManager(this, super.getAtticAwareHierarchyMgr());
     }
@@ -75,18 +76,7 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
     public NodeState createNew(NodeState transientState) throws IllegalStateException {
         if (log.isDebugEnabled())
             System.err.println("HippoSessionItemStateManager.createNew#1 "+transientState.getNodeTypeName());
-        Name nodeTypeName = transientState.getNodeTypeName();
-        /*
-        if(nodeTypeName.toString().equals("{http://www.hippoecm.org/nt/1.0}base")) {
-            HippoNodeState virtualState = new HippoNodeState(transientState.getNodeId(), transientState.getNodeTypeName(), transientState.getParentId());
-            transientState.connect(virtualState);
-            NodeState persistentState = super.createNew(virtualState);
-            //return virtualState;
-            return persistentState;
-            //} else if(nodeTypeName.toString().equals("{http://www.hippoecm.org/nt/1.0}item")) {
-        } else
-        */
-           return super.createNew(transientState);
+        return super.createNew(transientState);
     }
 
     @Override
@@ -145,4 +135,32 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
         super.update();
     }
 
+
+    @Override
+    public void stateCreated(ItemState created) {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.stateCreated "+created.getId());
+        super.stateCreated(created);
+    }
+    
+    @Override
+    public void stateModified(ItemState modified) {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.stateModified "+modified.getId());
+        super.stateModified(modified);
+    }
+
+    @Override
+    public void stateDestroyed(ItemState destroyed) {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.stateDestroyed "+destroyed.getId());
+        super.stateDestroyed(destroyed);
+    }
+
+    @Override
+    public void stateDiscarded(ItemState discarded) {
+        if (log.isDebugEnabled())
+            System.err.println("HippoSessionItemStateManager.stateDiscarded "+discarded.getId());
+        super.stateDiscarded(discarded);
+    }
 }
