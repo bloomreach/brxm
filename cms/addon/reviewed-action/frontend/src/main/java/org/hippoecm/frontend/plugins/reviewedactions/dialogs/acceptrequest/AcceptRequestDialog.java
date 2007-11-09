@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.acceptrequest;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
 public class AcceptRequestDialog extends AbstractWorkflowDialog {

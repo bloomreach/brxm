@@ -17,8 +17,8 @@ package org.hippoecm.cmsprototype.frontend.plugins.editor;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugins.admin.editor.PropertiesEditor;
 
 public class NodeEditor extends Form {

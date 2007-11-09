@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
+import org.hippoecm.frontend.plugin.JcrEvent;
 
 public class ErrorDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;

@@ -22,8 +22,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.JcrEvent;
 
 public class MoveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;

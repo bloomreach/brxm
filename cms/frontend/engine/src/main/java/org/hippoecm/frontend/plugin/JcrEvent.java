@@ -1,10 +1,11 @@
-package org.hippoecm.frontend.model;
+package org.hippoecm.frontend.plugin;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class JcrEvent implements IClusterable {
     private static final long serialVersionUID = 1L;

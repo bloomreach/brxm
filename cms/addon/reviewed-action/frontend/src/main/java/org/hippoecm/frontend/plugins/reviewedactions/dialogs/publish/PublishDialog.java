@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.publish;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
 public class PublishDialog extends AbstractWorkflowDialog {

@@ -1,7 +1,7 @@
 package org.hippoecm.frontend.dialog;
 
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.JcrEvent;
 
 public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
