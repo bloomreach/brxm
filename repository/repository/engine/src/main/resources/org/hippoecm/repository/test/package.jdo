@@ -1,0 +1,12 @@
+<jdo>
+  <package name="org.hippoecm.repository.test">
+    <class name="SuperClass" detachable="true" identity-type="datastore">
+      <inheritance strategy="subclass-table"/>
+      <field name="superfield" column="a"/>
+    </class>
+    <class name="SubClass" detachable="true" identity-type="datastore">
+      <inheritance strategy="subclass-table"/>
+      <field name="subfield" column="b"/>
+    </class>
+  </package>
+</jdo>
