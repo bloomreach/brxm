@@ -16,53 +16,31 @@
 package org.hippoecm.repository;
 
 import java.io.File;
-import java.util.Properties;
 
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
+import org.hippoecm.repository.api.UserTransactionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.atomikos.icatch.config.TSInitInfo;
-import com.atomikos.icatch.config.UserTransactionService;
-import com.atomikos.icatch.config.UserTransactionServiceImp;
 
 public abstract class HippoRepository {
-    private static UserTransactionService uts = null;
 
     protected Repository repository;
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
+    
+    private String JTSLookupName = "java:comp/UserTransaction"; // or "javax.jts.UserTransaction"
 
     private void initialize() {
-        // HREPTWO-40: disable because of problems reinitializing.
-        // FIXME: bring these properties into resource
-        if (uts == null) { // FIXME not thread safe
-            uts = new UserTransactionServiceImp();
-            TSInitInfo initInfo = uts.createTSInitInfo();
-            Properties initProperties = new Properties();
-            initProperties.setProperty("com.atomikos.icatch.service",
-                    "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
-            initProperties.setProperty("com.atomikos.icatch.console_file_name", "tm.out");
-            initProperties.setProperty("com.atomikos.icatch.console_file_limit", "-1");
-            initProperties.setProperty("com.atomikos.icatch.console_file_count", "1");
-            initProperties.setProperty("com.atomikos.icatch.checkpoint_interval", "500");
-            initProperties.setProperty("com.atomikos.icatch.output_dir", getWorkingDirectory());
-            initProperties.setProperty("com.atomikos.icatch.log_base_dir", getWorkingDirectory());
-            initProperties.setProperty("com.atomikos.icatch.log_base_name", "tmlog");
-            initProperties.setProperty("com.atomikos.icatch.max_actives", "50");
-            initProperties.setProperty("com.atomikos.icatch.max_timeout", "60000");
-            initProperties.setProperty("com.atomikos.icatch.tm_unique_name", "tm");
-            initProperties.setProperty("com.atomikos.icatch.serial_jta_transactions", "true");
-            initProperties.setProperty("com.atomikos.icatch.automatic_resource_registration", "true");
-            initProperties.setProperty("com.atomikos.icatch.console_log_level", "WARN");
-            initProperties.setProperty("com.atomikos.icatch.enable_logging", "true");
-            initInfo.setProperties(initProperties);
-            uts.init(initInfo);
-        }
     }
 
     private String workingDirectory;
@@ -108,9 +86,9 @@ public abstract class HippoRepository {
         }
         
         if (credentials == null) {
-            session = repository.login();
+            session = (Session) repository.login();
         } else {
-            session = repository.login(credentials);
+            session = (Session) repository.login(credentials);
         }
         
         if (session != null) {
@@ -126,10 +104,39 @@ public abstract class HippoRepository {
     }
 
     public void close() {
-        if (uts != null) {
-            uts.shutdownWait();
-            uts = null;
-        }
         HippoRepositoryFactory.unregister(this);
+    }
+    
+    /**
+     * Get a UserTransaction from the JTA transaction manager through JNDI
+     * @param session
+     * @return a new UserTransactionImpl object
+     * @throws RepositoryException
+     * @throws NotSupportedException
+     */
+    public UserTransaction getUserTransaction(Session session) throws RepositoryException, NotSupportedException {
+        TransactionManager tm = null;
+        InitialContext ic;
+        try {
+            ic = new InitialContext();
+            tm = (TransactionManager)ic.lookup(JTSLookupName);
+            log.info("Got TransactionManager through JNDI from " + JTSLookupName);
+        } catch (NamingException e) {
+            log.error("Failed to get TransactionManager", e);
+            throw new RepositoryException("Failed to get TransactionManager.");
+        }
+        return getUserTransaction(tm, session);
+    }
+
+    /**
+     * Get a UserTransaction from the JTA transaction manager. 
+     * @param tm the (external) transaction manager
+     * @param session
+     * @return a new UserTransactionImpl object
+     * @throws NotSupportedException when Session is not a XASession
+     */
+    public UserTransaction getUserTransaction(TransactionManager tm, Session session) throws NotSupportedException {
+        UserTransaction ut = new UserTransactionImpl(tm, session);
+        return ut;
     }
 }

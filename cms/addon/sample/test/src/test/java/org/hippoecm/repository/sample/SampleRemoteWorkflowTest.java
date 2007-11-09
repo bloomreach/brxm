@@ -16,44 +16,32 @@
 package org.hippoecm.repository.sample;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.rmi.AlreadyBoundException;
-
-import javax.transaction.SystemException;
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.RollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.xa.XAResource;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
 
 import junit.framework.TestCase;
-
-import org.apache.jackrabbit.core.XASession;
-
-import com.atomikos.icatch.jta.UserTransactionManager;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
-import org.hippoecm.repository.api.DocumentManager;
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+
+import com.atomikos.icatch.jta.UserTransactionManager;
 
 public class SampleRemoteWorkflowTest extends TestCase {
     private HippoRepositoryServer backgroundServer;
     private HippoRepository server;
 
     public void setUp() throws Exception {
+        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
         backgroundServer = new HippoRepositoryServer();
         backgroundServer.run(true);
         Thread.sleep(3000);
@@ -65,18 +53,25 @@ public class SampleRemoteWorkflowTest extends TestCase {
         backgroundServer.close();
         Thread.sleep(3000);
     }
-
+    
+    /**
+     * Create Atomikos UserTransActionManger instance
+     * @return
+     * @throws NotSupportedException
+     */
+    public TransactionManager getTransactionManager() throws NotSupportedException {
+        TransactionManager tm = new UserTransactionManager();
+        return tm;
+    }
+    
     public void testWorkflow() throws RepositoryException, WorkflowException, IOException, Exception {
         SampleWorkflowSetup.commonStart(backgroundServer);
         try {
-            //UserTransactionManager utm = new UserTransactionManager();
-            //utm.setStartupTransactionService(false);
-
-            //utm.init();
-            //TransactionManager tm = utm;
-            //tm.begin();
 
             Session session = server.login("dummy", "dummy".toCharArray());
+
+            // UserTransaction ut = server.getUserTransaction(getTransactionManager(), session);
+            // ut.begin();
 
             Node root = session.getRootNode();
 
@@ -85,26 +80,19 @@ public class SampleRemoteWorkflowTest extends TestCase {
 
             WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
 
-            //Transaction tx = tm.getTransaction();
-            //XAResource sessionXARes = ((XASession) session).getXAResource();
-            //tx.enlistResource(sessionXARes);
             try {
                 Workflow workflow = manager.getWorkflow("mycategory", node);
                 assertNotNull(workflow);
                 if (workflow instanceof SampleWorkflow) {
                     SampleWorkflow myworkflow = (SampleWorkflow) workflow;
                     myworkflow.renameAuthor("Jan Smit");
-                } else
+                } else {
                     fail("workflow not of proper type " + workflow.getClass().getName());
-
-                //tx.commit();
+                }
             } catch (Exception ex) {
                 System.err.println(ex.getMessage());
                 ex.printStackTrace(System.err);
-                //if(tx.getStatus() == Status.STATUS_ACTIVE || tx.getStatus() == Status.STATUS_UNKNOWN) {
-                //  tx.rollback();
-                //}
-                //tx.delistResource(sessionXARes, XAResource.TMSUCCESS);
+                // ut.rollback();
                 throw ex;
             }
 
