@@ -21,7 +21,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.apache.jackrabbit.core.XASession;
+import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.rmi.server.ServerSession;
 import org.hippoecm.repository.servicing.ServicingSessionImpl;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
