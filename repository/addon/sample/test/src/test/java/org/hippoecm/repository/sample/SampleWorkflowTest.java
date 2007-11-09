@@ -24,6 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import junit.framework.TestCase;
 
@@ -35,56 +37,57 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 
+import com.atomikos.icatch.jta.UserTransactionManager;
+
 public class SampleWorkflowTest extends TestCase {
     private HippoRepository server;
 
     public void setUp() throws Exception {
+        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
         server = HippoRepositoryFactory.getHippoRepository();
     }
 
     public void tearDown() throws Exception {
         server.close();
     }
+    
+    /**
+     * Create Atomikos UserTransActionManger instance
+     * @return
+     * @throws NotSupportedException
+     */
+    public TransactionManager getTransactionManager() throws NotSupportedException {
+        TransactionManager tm = new UserTransactionManager();
+        return tm;
+    }
 
     public void testWorkflow() throws RepositoryException, WorkflowException, IOException, Exception {
         SampleWorkflowSetup.commonStart(server);
         try {
-            //UserTransactionManager utm = new UserTransactionManager();
-            //utm.setStartupTransactionService(false);
-
-            //utm.init();
-            //TransactionManager tm = utm;
-            //tm.begin();
-
             Session session = server.login("systemuser","systempass".toCharArray());
+            
+            UserTransaction ut = server.getUserTransaction(getTransactionManager(), session);
+            ut.begin();
 
             Node root = session.getRootNode();
-
             Node node = root.getNode("files/myarticle");
             assertEquals(node.getProperty("hippo:authorId").getLong(), SampleWorkflowSetup.oldAuthorId);
-
             WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-
-            //Transaction tx = tm.getTransaction();
-            //XAResource sessionXARes = ((XASession) session).getXAResource();
-            //tx.enlistResource(sessionXARes);
             try {
                 Workflow workflow = manager.getWorkflow("mycategory", node);
                 assertNotNull(workflow);
                 if (workflow instanceof SampleWorkflow) {
                     SampleWorkflow myworkflow = (SampleWorkflow) workflow;
                     myworkflow.renameAuthor("Jan Smit");
-                } else
+                } else {
                     fail("workflow not of proper type " + workflow.getClass().getName());
+                }
 
-                //tx.commit();
+                ut.commit();
             } catch (Exception ex) {
                 System.err.println(ex.getMessage());
                 ex.printStackTrace(System.err);
-                //if(tx.getStatus() == Status.STATUS_ACTIVE || tx.getStatus() == Status.STATUS_UNKNOWN) {
-                //  tx.rollback();
-                //}
-                //tx.delistResource(sessionXARes, XAResource.TMSUCCESS);
+                ut.rollback();
                 throw ex;
             }
 

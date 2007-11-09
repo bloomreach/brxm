@@ -16,31 +16,18 @@
 package org.hippoecm.repository.sample;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
 
 import junit.framework.TestCase;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowManager;
-
-import org.apache.jackrabbit.core.XASession;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.RollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.xa.XAResource;
-import com.atomikos.icatch.jta.UserTransactionManager;
 
 public class SamplePersistencyTest extends TestCase
 {
