@@ -20,7 +20,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.model.JcrEvent;
+import org.hippoecm.frontend.plugin.JcrEvent;
 
 public abstract class AbstractDialog extends WebPage {
 

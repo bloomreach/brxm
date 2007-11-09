@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.plugin.empty;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 

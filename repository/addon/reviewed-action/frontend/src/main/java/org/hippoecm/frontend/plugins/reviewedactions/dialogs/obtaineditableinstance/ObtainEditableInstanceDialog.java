@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinst
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrEvent;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class ObtainEditableInstanceDialog extends AbstractWorkflowDialog {

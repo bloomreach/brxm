@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.model.JcrEvent;
 
 public interface EventConsumer {
     
