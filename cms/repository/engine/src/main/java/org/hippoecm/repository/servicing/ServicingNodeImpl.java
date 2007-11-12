@@ -160,8 +160,9 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     protected void instantiate(String relPath) throws ValueFormatException, PathNotFoundException, VersionException,
                                                       UnsupportedRepositoryOperationException, ItemNotFoundException,
                                                       LockException, ConstraintViolationException, RepositoryException {
-        if(instantiated)
+        if(instantiated) {
             return;
+        }
         Node node = (this.node != null ? this.node : this);
         if(isNodeType(HippoNodeType.NT_FACETSEARCH)) {
             ServicingSessionImpl session = (ServicingSessionImpl) this.session;
@@ -860,11 +861,14 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             try {
                 String path = node.getPath();
-                if(path.startsWith("/"))
+                if(path.startsWith("/")) {
                     path = path.substring(1);
+                }
                 String[] pathElements = path.split("/");
-                for(int i=1; i<pathElements.length; i++)
-                pathElements[i] = pathElements[i-1] + "/" + pathElements[i];
+                pathElements[0] = "/"+pathElements[0];
+                for(int i=1; i<pathElements.length; i++) {
+                	pathElements[i] = pathElements[i-1] + "/" + pathElements[i];
+                }
                 node.setProperty(HippoNodeType.HIPPO_PATHS, pathElements);
             } catch(ValueFormatException ex) {
                 // FIXME: log some serious error
@@ -1111,10 +1115,12 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         } else {
             try {
                 Node n;
-                if(isNodeType(HippoNodeType.NT_FACETSELECT) && selection != null)
+                if(isNodeType(HippoNodeType.NT_FACETSELECT) && selection != null) {
                     n = selection.getNode(node.getNodes(relPath));
-                else
+                }
+                else {
                     n = node.getNode(relPath);
+                }
                 return factory.getNodeDecorator(session,n,getChildPath(relPath),getDepth()+1,selection);
             } catch (PathNotFoundException ex) {
                 ServicingSessionImpl session = (ServicingSessionImpl) this.session;

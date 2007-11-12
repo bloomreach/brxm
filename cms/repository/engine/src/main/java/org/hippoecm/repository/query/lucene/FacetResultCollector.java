@@ -74,10 +74,7 @@ public class FacetResultCollector extends HitCollector {
                     Document d = reader.document(docid,fieldSelector);
                     Field f = d.getField(ServicingFieldNames.HIPPO_PATH);
                     if(f!=null){
-                        // aparantly, path that is returned is expected to start with a "/"
-                        // TODO sort out why without starting "/" it breaks
-                        // TODO Instead of absolute path, we could also return the relative path
-                        hits.add("/"+f.stringValue());
+                        hits.add(f.stringValue());
                     }
                 } else if (offset > 0){
                     // decrement offset untill it is 0. Then start gathering results above

@@ -78,6 +78,9 @@ public class PathsTest extends TestCase {
             Node sub3 = sub2.addNode("node", HippoNodeType.NT_DOCUMENT);
             session.save();
             Node node = session.getRootNode().getNode("test/sub/node");
+            
+            System.out.println("node " + node);
+            
             Property prop = node.getProperty(HippoNodeType.HIPPO_PATHS);
             Value[] values = prop.getValues();
             Set valuesSet = new HashSet();
@@ -85,9 +88,9 @@ public class PathsTest extends TestCase {
                 valuesSet.add(values[i].getString());
             }
             assertTrue(values.length == 3);
-            assertTrue(valuesSet.contains("test"));
-            assertTrue(valuesSet.contains("test/sub"));
-            assertTrue(valuesSet.contains("test/sub/node"));
+            assertTrue(valuesSet.contains("/test"));
+            assertTrue(valuesSet.contains("/test/sub"));
+            assertTrue(valuesSet.contains("/test/sub/node"));
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
             firstException = ex;
