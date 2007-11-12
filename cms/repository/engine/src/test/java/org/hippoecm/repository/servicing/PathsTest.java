@@ -78,9 +78,7 @@ public class PathsTest extends TestCase {
             Node sub3 = sub2.addNode("node", HippoNodeType.NT_DOCUMENT);
             session.save();
             Node node = session.getRootNode().getNode("test/sub/node");
-            
-            System.out.println("node " + node);
-            
+           
             Property prop = node.getProperty(HippoNodeType.HIPPO_PATHS);
             Value[] values = prop.getValues();
             Set valuesSet = new HashSet();
