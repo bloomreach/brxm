@@ -17,7 +17,7 @@
       <sv:value>hippo:facetsearch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>files</sv:value>
+      <sv:value>/files</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
       <sv:value>bySectionSource</sv:value>
@@ -41,7 +41,7 @@
       <sv:value>hippo:facetsearch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>files</sv:value>
+      <sv:value>/files</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
       <sv:value>bySectionDate</sv:value>
@@ -65,7 +65,7 @@
       <sv:value>hippo:facetsearch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>files</sv:value>
+      <sv:value>/files</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
       <sv:value>bySourceSection</sv:value>
@@ -89,7 +89,7 @@
       <sv:value>hippo:facetsearch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>files</sv:value>
+      <sv:value>/files</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
       <sv:value>bySourceDate</sv:value>
@@ -113,7 +113,7 @@
       <sv:value>hippo:facetsearch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>files</sv:value>
+      <sv:value>/files</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
       <sv:value>byAuthorDate</sv:value>
@@ -137,7 +137,7 @@
       <sv:value>hippo:facetsearch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>files</sv:value>
+      <sv:value>/files</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
       <sv:value>byAuthorSource</sv:value>
@@ -161,7 +161,7 @@
       <sv:value>hippo:facetsearch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>files</sv:value>
+      <sv:value>/files</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
       <sv:value>byDateAuthor</sv:value>
@@ -186,7 +186,7 @@
       <sv:value>hippo:facetsearch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>files</sv:value>
+      <sv:value>/files</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
       <sv:value>byDateSection</sv:value>
