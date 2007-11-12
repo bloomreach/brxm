@@ -20,27 +20,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.core.SearchManager;
+import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-
-import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetResultCollector;
@@ -50,7 +40,8 @@ import org.hippoecm.repository.query.lucene.FixedScoreTermQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.hippoecm.repository.servicing.RepositoryDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
   implements FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl,
