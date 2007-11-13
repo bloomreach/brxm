@@ -92,10 +92,5 @@ public class PersistanceInheritanceTest extends TestCase
         HippoWorkspace wsp = (HippoWorkspace)(session.getWorkspace());
         DocumentManager dmngr = wsp.getDocumentManager();
         SubClass document = (SubClass) dmngr.getDocument("test", "mydocument");
-System.err.println("\n\n\n\n\n");
-System.err.println(document);
-System.err.println("a=" + document.superfield);
-System.err.println("b=" + document.subfield);
-System.err.println("\n\n\n\n\n");
     }
 }
