@@ -55,7 +55,7 @@ public class BasicTest extends TestCase {
     public void testDummy() throws Exception {
         try {
             selenium.open("/");
-            assertEquals("Add Node", selenium.getText("//a[@id='node-dialog-link4']"));
+            assertEquals("Add Node", selenium.getText("//a[@id='node_dialog_link4']"));
         } 
         catch (SeleniumException ex) {
             fail(ex.getMessage());
@@ -88,7 +88,7 @@ public class BasicTest extends TestCase {
             selenium.click("//div[8]/div/a[2]/span[2]");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
-                try { if (selenium.isElementPresent("obtainEditableInstance61")) break; } catch (Exception e) {}
+                try { if (selenium.isElementPresent("obtainEditableInstance62")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
 
@@ -108,7 +108,7 @@ public class BasicTest extends TestCase {
     public void testLogin() throws Exception {
         selenium.open("/");
         assert(selenium.isTextPresent("Logged in as anonymous"));
-        selenium.click("login-dialog-link21");
+        selenium.click("login_dialog_link21");
         for (int second = 0;; second++) {
             if (second >= 60) fail("timeout");
             try { if (selenium.isElementPresent("ok8")) break; } catch (Exception e) {}
