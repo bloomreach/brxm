@@ -47,7 +47,7 @@ public class LoginDialog extends AbstractDialog {
         credentials.add("password", oldCredentials.getString("password"));
 
         add(new AjaxEditableLabel("username", new PropertyModel(credentials, "username")));
-        add(new AjaxEditableLabel("password", new PropertyModel(credentials, "password")));
+        add(new PasswordLabel("password", new PropertyModel(credentials, "password")));
     }
 
     public JcrEvent ok() throws Exception {
