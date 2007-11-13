@@ -31,6 +31,11 @@ public class DialogWindow extends ModalWindow implements EventConsumer {
     protected JcrEvent dialogResult; 
     private JcrNodeModel nodeModel;
 
+    /**
+     * @param id
+     * @param nodeModel
+     * @param resetOnClose    Indicates whether the whole page should be reloaded on closing this dialog.
+     */
     public DialogWindow(String id, JcrNodeModel nodeModel, final boolean resetOnClose) {
         super(id);
         setCookieName(id);
