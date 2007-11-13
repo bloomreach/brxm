@@ -1,16 +1,16 @@
 - Algemeen verhaal
-	- What is Hippo ECM? -> AC. SETUP DONE
+	+ What is Hippo ECM? -> AC. SETUP DONE
 	- Usages for Hippo ECM -> AC. SETUP DONE
 	- Features 
 		- Facets -> AS
-	- Architectuur -> BvdS 
-	- Wat zijn de componenten -> BvdS
-	- Future -> AC
+	+ Architectuur -> BvdS 
+	+ Wat zijn de componenten -> BvdS
+	+ Future -> AC
 - How to run
-	- Requirements
-		- Operating system -> BvdS
-		- Java -> BvdS
-		- Container: Tomcat, JBoss, Jetty -> BvdS
+	+ Requirements
+		+ Operating system -> BvdS
+		+ Java -> BvdS
+		+ Container: Tomcat, JBoss, Jetty -> BvdS
 	- From a pre-built WAR -> BvdS
 	- As a zip (including a container)
 	- Starting and stopping -> AS
@@ -18,14 +18,14 @@
 	- Where is your data stored
 		- Databases (how to connect to a production database)
 	- Getting the demo data
-	- Seeding the repository (bootstrap) -> BvH
+	+ Seeding the repository (bootstrap) -> BvH
 	- Configuration files
 		- Configuration.xml -> AS
-		- repository.xml -> AS
-		- Lucene options -> AS
+		+ repository.xml -> AS
+		+ Lucene options -> AS
 		- Frontend plugin configuration -> WG
-		- User configuration (setting up users) -> BvdS 
-		- Workflow configuration -> BvH
+		+ User configuration (setting up users) -> BvdS 
+		+ Workflow configuration -> BvH
 - Default Hippo ECM functionality
 	- Configuring facets -> AS
 		- Physical structure vs virtual structure -> AS
@@ -36,12 +36,12 @@
 - Extending Hippo ECM
 	- Configuring vs building -> WG
 	- How to build from scratch
-		- SVN structure -> WG
-		- Eclipse multiproject -> WG
-		- Running, starting stopping -> WG
-		- Netbeans?
+		+ SVN structure -> WG
+		+ Eclipse multiproject -> WG
+		+ Running, starting stopping -> WG
+		+ Netbeans?
 	- Plugins: UI plugins vs repository plugins -> WG, NvK, FvL
-		- Uitleg plugins voor UI, plugins voor repo, plugins voor allebei -> BvH
+		+ Uitleg plugins voor UI, plugins voor repo, plugins voor allebei -> BvH
 		- UI: how to work with plugins
 			- Hello World plugin -> WG
 			- Wicket -> WG
