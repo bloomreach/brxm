@@ -62,8 +62,8 @@ public class PluginManager implements IClusterable {
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        reconfigurePlugins(target, jcrEvent);
         updateEventConsumers(target, jcrEvent);
+        reconfigurePlugins(target, jcrEvent);
     }
 
     public PluginConfig getPluginConfig() {
