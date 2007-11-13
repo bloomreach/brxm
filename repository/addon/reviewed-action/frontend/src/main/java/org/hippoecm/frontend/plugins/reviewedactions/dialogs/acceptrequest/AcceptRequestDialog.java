@@ -17,26 +17,22 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.acceptrequest;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
 public class AcceptRequestDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private FullRequestWorkflow workflow;
-
-    public AcceptRequestDialog(DialogWindow dialogWindow, FullRequestWorkflow workflow) {
+    public AcceptRequestDialog(DialogWindow dialogWindow) {
         super(dialogWindow);
         dialogWindow.setTitle("Accept request");       
-        this.workflow = workflow;
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public JcrEvent ok() throws Exception {
+    protected void doOk() throws Exception {
+        FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
         workflow.acceptRequest();
-        return super.ok();
     }
 
     public void cancel() {
