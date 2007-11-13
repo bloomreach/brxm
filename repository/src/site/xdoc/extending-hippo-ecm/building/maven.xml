@@ -32,15 +32,15 @@
           <p>
             <b>For Windows users</b>
             <br/>
-  	        You need to take care that your local Maven 2 repository is not located in a folder with
-  	        spaces in the pathname. The default Maven installation procedure will locate
-  	        it in your home directory which on Windows is a subdirectory of the
-  	        "Documents and Settings" directory.	This means that you need to relocate your local Maven repository.
-  		    </p>
-  		    <p>
-  		      Create and edit the file
-  				  <b>c:\Documents and Settings\&lt;Your Name&gt;\.m2\settings.xml</b> with the following content:
-  			  </p>
+            You need to take care that your local Maven 2 repository is not located in a folder with
+            spaces in the pathname. The default Maven installation procedure will locate
+            it in your home directory which on Windows is a subdirectory of the
+            "Documents and Settings" directory.  This means that you need to relocate your local Maven repository.
+          </p>
+          <p>
+            Create and edit the file
+            <b>c:\Documents and Settings\&lt;Your Name&gt;\.m2\settings.xml</b> with the following content:
+          </p>
 <source>
 <![CDATA[
 <settings xmlns="http://maven.apache.org/POM/4.0.0" 
@@ -50,91 +50,91 @@
 </settings>
 ]]>
 </source>
-        	<p>
-        		This effectively relocates your local Maven repository to <b>c:\mvnhome</b>.
-        	</p>				       	
-      	</div>
+          <p>
+            This effectively relocates your local Maven repository to <b>c:\mvnhome</b>.
+          </p>                 
+        </div>
       
       </subsection>
           
-  		<subsection name="Get the Hippo ECM source">
-  			<p>
-  				The source can be found at <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm">https://svn.hippocms.org/repos/hippo/hippo-ecm</a>
-  				and can be anonymously checked out using any <a href="http://subversion.tigris.org/">Subversion</a> client.
-  				Instructions on Subversion use can be found at <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>.
-  				The following command checks out the trunk to a directory called 'hippo-ecm'
-  			</p>
-	        <source>
+      <subsection name="Get the Hippo ECM source">
+        <p>
+          The source can be found at <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm">https://svn.hippocms.org/repos/hippo/hippo-ecm</a>
+          and can be anonymously checked out using any <a href="http://subversion.tigris.org/">Subversion</a> client.
+          Instructions on Subversion use can be found at <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>.
+          The following command checks out the trunk to a directory called 'hippo-ecm'
+        </p>
+          <source>
 ~/> svn co https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
-    	    </source>
-  		</subsection>
-  		
-  		<subsection name="Build">
-  			<p>
-  				Assuming that you have checked out the Hippo ECM source in the directory
-  				~/hippo-ecm
-  			</p>
+          </source>
+      </subsection>
+      
+      <subsection name="Build">
+        <p>
+          Assuming that you have checked out the Hippo ECM source in the directory
+          ~/hippo-ecm
+        </p>
         <source>
 ~/> cd hippo-ecm
 ~/hippo-ecm> mvn install
         </source>
         <p>
-        	This will take a while and put all project artifacts (jars, wars) in your local maven repository
+          This will take a while and put all project artifacts (jars, wars) in your local maven repository
         </p>
-  		</subsection>
-  		
-  		<subsection name="Run">
-  			<p>
-  				The preferred way of running Hippo ECM is by <a href="../../how-to-run/deploying-the-wars.html">
-  				deploying the application wars in an application server</a>.
-  			</p>
-  			<p>	
-  				To facilitate development it is also possible to run Hippo ECM from the commandline using Jetty,
-  				this needs some preparation:
-  			</p>
-  			<p>
-  				Start the <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/rmiregistry.html">rmiregistry</a>
-  				This is a small program that is shipped with the JDK, it can be found in $JAVA_HOME/bin
-  			</p>
-  			<p>
-  				For Windows: ,  				
-  			</p>
-  			<source>
+      </subsection>
+      
+      <subsection name="Run">
+        <p>
+          The preferred way of running Hippo ECM is by <a href="../../how-to-run/deploying-the-wars.html">
+          deploying the application wars in an application server</a>.
+        </p>
+        <p>  
+          To facilitate development it is also possible to run Hippo ECM from the commandline using Jetty,
+          this needs some preparation:
+        </p>
+        <p>
+          Start the <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/rmiregistry.html">rmiregistry</a>
+          This is a small program that is shipped with the JDK, it can be found in $JAVA_HOME/bin
+        </p>
+        <p>
+          For Windows: ,          
+        </p>
+        <source>
 C:> %JAVA_HOME%\bin\rmiregistry.exe
-  			</source>
-  			<p>
-  				For Unix:                  
-  			</p>
-  			<source>
-~/hippo-ecm> $JAVA_HOME/bin/rmiregistry &amp;				
-  			</source>
-  			<p>	
-  				To start a sample application from the command line, execute the following commands:
-  			</p>
-  			<source>
+        </source>
+        <p>
+          For Unix:                  
+        </p>
+        <source>
+~/hippo-ecm> $JAVA_HOME/bin/rmiregistry &amp;        
+        </source>
+        <p>  
+          To start a sample application from the command line, execute the following commands:
+        </p>
+        <source>
 ~/hippo-ecm> cd application/reviewed-action/repository
 ~/hippo-ecm/application/reviewed-action/repository> mvn jetty:run-war
-  			</source>
-  			<p>
-  				This will start a repository server. 
-  				Open a browser and go to <a href="http://localhost:8081/repository">http://localhost:8081/repository</a>
-  				to view its contents.
-  			</p>
-  			<p>
-  				In another console execute the following commands:
-  			</p>
-  			<source>
+        </source>
+        <p>
+          This will start a repository server. 
+          Open a browser and go to <a href="http://localhost:8081/repository">http://localhost:8081/repository</a>
+          to view its contents.
+        </p>
+        <p>
+          In another console execute the following commands:
+        </p>
+        <source>
 ~/hippo-ecm> cd application/reviewed-action/frontend
 ~/hippo-ecm/application/reviewed-action/frontend> mvn jetty:run-war
-  			</source>				
-  			<p>
-  				This will start the content browser.
-  				Open a web browser and go to <a href="http://localhost:8082">http://localhost:8082</a> 
-  				to navigate and edit your repository.
-  			</p>
-  		</subsection>
+        </source>        
+        <p>
+          This will start the content browser.
+          Open a web browser and go to <a href="http://localhost:8082">http://localhost:8082</a> 
+          to navigate and edit your repository.
+        </p>
+      </subsection>
 
     </section>
-		
+    
   </body>
 </document>
