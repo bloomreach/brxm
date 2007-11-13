@@ -70,6 +70,7 @@
           <item name="Project Structure" href="/extending-hippo-ecm/building/project-structure.html"/>
           <item name="Building with Maven" href="/extending-hippo-ecm/building/maven.html"/>
           <item name="Building with Eclipse" href="/extending-hippo-ecm/building/eclipse.html"/>
+          <item name="Building with Netbeans" href="/extending-hippo-ecm/building/netbeans.html"/>
         </item>
         <item name="Plugins" href="/extending-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extending-hippo-ecm/plugins/repository/index.html"></item>
