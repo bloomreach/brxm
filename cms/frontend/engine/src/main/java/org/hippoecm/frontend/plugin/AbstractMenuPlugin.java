@@ -38,7 +38,7 @@ public abstract class AbstractMenuPlugin extends Plugin {
      * @param model the current model
      */
     protected void addMenuOption(String dialogId, String dialogLinkId, String dialogClassName, JcrNodeModel model) {
-        final DialogWindow dialog = new DialogWindow(dialogId, model, true);
+        final DialogWindow dialog = new DialogWindow(dialogId, model, false);
         dialog.setPageCreator(new DynamicDialogFactory(dialog, dialogClassName));
         add(dialog);
         add(dialog.dialogLink(dialogLinkId));
