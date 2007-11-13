@@ -81,6 +81,10 @@
         <item name="Hello World" href="/extending-hippo-ecm/hello-world.html"/>
       </item>
       
+      <item name="Integrating Hippo ECM" href="/integrating-hippo-ecm/index.html" collapse="true">
+        <item name="Interfacing with Hippo Repository" href="/integrating-hippo-ecm/demo-on-interfacing-with-hippo-repository.html"/>
+      </item>
+      
     </menu>
     
     <menu ref="modules"/>

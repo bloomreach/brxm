@@ -40,6 +40,14 @@
                 Information for developers of Hippo ECM add-ons.
               </p>
             </li>
+            <li>
+              <p>
+                <b><a href="integrating-hippo-ecm/index.html">Integrate Hippo ECM</a></b>
+              </p>
+              <p>
+                Integrate Hippo ECM in an existing environment.
+              </p>
+            </li>
             <!--<li>
               <p>
                 <b>Develop Hippo ECM</b>
