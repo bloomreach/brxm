@@ -86,8 +86,8 @@ public class ExportDialog extends AbstractDialog {
         format.setLineWidth(80);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XMLSerializer serializer = new XMLSerializer(out, format);
-        serializer.serialize(doc);
+        XMLSerializer xmlSerializer = new XMLSerializer(out, format);
+        xmlSerializer.serialize(doc);
         return out.toString("UTF-8");
     }
 

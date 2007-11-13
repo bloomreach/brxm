@@ -24,6 +24,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.api.HippoNode;
 
 public class UserSession extends WebSession {
     private static final long serialVersionUID = 1L;
@@ -49,6 +50,16 @@ public class UserSession extends WebSession {
     
     public ValueMap getCredentials() {
         return jcrSessionModel.getCredentials();
+    }
+
+    public HippoNode getRootNode() {
+        HippoNode result;
+        try {
+            result = (HippoNode) jcrSessionModel.getSession().getRootNode();
+        } catch (RepositoryException e) {
+            result = null;
+        }
+        return result;
     }
 
     private class JcrSessionModel extends LoadableDetachableModel {

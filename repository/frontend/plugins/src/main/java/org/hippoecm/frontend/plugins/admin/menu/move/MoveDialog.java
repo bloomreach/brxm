@@ -23,7 +23,9 @@ import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.repository.api.HippoNode;
 
 public class MoveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -36,7 +38,10 @@ public class MoveDialog extends AbstractDialog {
         dialogWindow.setTitle("Move selected node");
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
-        JcrNodeModel rootModel = JcrNodeModel.getRootModel();
+        UserSession session = (UserSession)getSession();
+        HippoNode rootNode = session.getRootNode();
+        JcrNodeModel rootModel = new JcrTreeNode(null, rootNode);
+        
         tree = new MoveTargetTreeView("tree", rootModel, this);
         tree.getTreeState().expandNode(rootModel);
         add(tree);
@@ -72,7 +77,7 @@ public class MoveDialog extends AbstractDialog {
             
             //TODO: use common ancestor iso root
             JcrNodeModel rootNodeModel = targetNodeModel;
-            while (!rootNodeModel.getNode().getPath().equals("/")) {
+            while (nodeModel.getParent() != null) {
                 rootNodeModel = (JcrNodeModel)rootNodeModel.getParent();
             }
             result = new JcrEvent(rootNodeModel, true);

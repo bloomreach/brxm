@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -31,119 +32,113 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public class JcrPropertyModel implements IChainingModel, IDataProvider {
+public class JcrPropertiesProvider implements IChainingModel, IDataProvider {
     private static final long serialVersionUID = 1L;
 
     // The Item model that this model chains using the IChainingModel interface
-    private JcrItemModel itemModel;
+    private JcrNodeModel nodeModel;
 
-    //  Constructor
-    public JcrPropertyModel(Property prop) {
-        this.itemModel = new JcrItemModel(prop);
+    // Constructor
+
+    public JcrPropertiesProvider(JcrNodeModel nodeModel) {
+        this.nodeModel = nodeModel;
     }
 
-    // Convenience methods, not part of an api
-
-    public Property getProperty() {
-        return (Property) itemModel.getObject();
-    }
-    
     //Implement IChainingModel
-    
+
     public IModel getChainedModel() {
-        return itemModel;
+        return nodeModel;
     }
 
     public void setChainedModel(IModel model) {
-        if (model instanceof JcrItemModel) {
-            itemModel = (JcrItemModel)model;
+        if (model instanceof JcrNodeModel) {
+            nodeModel = (JcrNodeModel)model;
         }
     }
 
     public Object getObject() {
-        return itemModel.getObject();
+        return nodeModel.getObject();
     }
 
     public void setObject(Object object) {
-        itemModel.setObject(object);
+        nodeModel.setObject(object);
     }
 
     public void detach() {
-        itemModel.detach();
+        nodeModel.detach();
     }
-    
 
-    //  IDataProvider implementation for use in DataViews
-    // (subclasses of org.apache.wicket.markup.repeater.data.DataViewBase)
+    // IDataProvider implementation, provides the properties of the chained nodeModel
 
     public Iterator iterator(int first, int count) {
         List list = new ArrayList();
         try {
-            Property prop = getProperty();
-            if (prop.getDefinition().isMultiple()) {
-                Value[] values = prop.getValues();
-                for (int i = 0; i < values.length; i++) {
-                    list.add(new IndexedValue(values[i].getString(), i));
+            if (nodeModel.getNode() != null) {
+                PropertyIterator it = nodeModel.getNode().getProperties();
+                if (it.getSize() > 0) {
+                    it.skip(first);
+                    for (int i = 0; i < count; i++) {
+                        Property prop = it.nextProperty();
+                        if (prop != null) {
+                            list.add(prop);
+                        }
+                    }
                 }
-            } else {
-                list.add(new IndexedValue(prop.getValue().getString(), 0));
             }
+        } catch (InvalidItemStateException e) {
+            // This can happen after a node has been deleted and the tree hasn't been refreshed yet
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return list.iterator();
     }
 
     public IModel model(Object object) {
-        IndexedValue indexedValue = (IndexedValue) object;
-        return new JcrValueModel(indexedValue.index, indexedValue.value, this);
+        Property prop = (Property) object;
+        return new JcrPropertyModel(prop);
     }
 
     public int size() {
-        int result = 1;
+        int result = 0;
         try {
-            Property prop = getProperty();
-            if (prop.getDefinition().isMultiple()) {
-                result = prop.getValues().length;
+            if (nodeModel.getNode() != null) {
+                PropertyIterator it = nodeModel.getNode().getProperties();
+                result = new Long(it.getSize()).intValue();
             }
+        } catch (InvalidItemStateException e) {
+            // This can happen after a node has been deleted and the tree hasn't been refreshed yet
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return result;
     }
 
-    private class IndexedValue {
-        protected String value;
-        protected int index;
-
-        IndexedValue(String value, int index) {
-            this.index = index;
-            this.value = value;
-        }
-    }
-
     // override Object
 
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("item", itemModel.toString())
-                .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+            .append("item", nodeModel.toString())
+            .toString();
     }
 
     public boolean equals(Object object) {
-        if (object instanceof JcrPropertyModel == false) {
+        if (object instanceof JcrPropertiesProvider == false) {
             return false;
         }
         if (this == object) {
             return true;
         }
-        JcrPropertyModel propertyModel = (JcrPropertyModel) object;
-        return new EqualsBuilder().append(itemModel, propertyModel.itemModel).isEquals();
+        JcrPropertiesProvider propertiesProvider = (JcrPropertiesProvider) object;
+        return new EqualsBuilder()
+            .append(nodeModel, propertiesProvider.nodeModel)
+            .isEquals();
+
     }
 
     public int hashCode() {
-        return new HashCodeBuilder(473, 17).append(itemModel).toHashCode();
+        return new HashCodeBuilder(17, 37)
+            .append(nodeModel)
+            .toHashCode();
     }
 
 }

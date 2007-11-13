@@ -87,14 +87,14 @@ public class PluginManager implements IClusterable {
                 try {
                     //TODO: add optional property 'workflowcategory' to 
                     //frontend plugin configuration nodes and use that instead of the plugin id.
-                    String workflowCategory = plugin.getDescriptor().getPluginId();
+                    String workflowCategory = descriptor.getPluginId();
                     WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
 
                     String newPluginClass;
                     if (workflowDescriptor != null) {
                         newPluginClass = workflowDescriptor.getRendererName();
                     } else {
-                        String pluginId = plugin.getDescriptor().getPluginId();
+                        String pluginId = descriptor.getPluginId();
                         newPluginClass = pluginConfig.getPlugin(pluginId).getClassName();
                     }
 

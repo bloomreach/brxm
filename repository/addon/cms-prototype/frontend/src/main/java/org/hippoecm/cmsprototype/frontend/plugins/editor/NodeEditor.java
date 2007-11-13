@@ -18,29 +18,29 @@ package org.hippoecm.cmsprototype.frontend.plugins.editor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrPropertiesProvider;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugins.admin.editor.PropertiesEditor;
 
 public class NodeEditor extends Form {
     private static final long serialVersionUID = 1L;
 
-    public NodeEditor(String id, final JcrNodeModel model) {
+    public NodeEditor(String id, final JcrPropertiesProvider model) {
         super(id, model);
         setOutputMarkupId(true);
         add(new PropertiesEditor("properties", model));
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        setModel(jcrEvent.getModel());
+        if (jcrEvent.getModel() != null) {
+            JcrPropertiesProvider propertiesProvider = (JcrPropertiesProvider) getModel();
+            JcrNodeModel nodeModel = (JcrNodeModel)propertiesProvider.getChainedModel();
+            nodeModel.impersonate(jcrEvent.getModel());
+        }
         if (target != null && findPage() != null) {
             target.addComponent(this);
         }
     }
 
-    public void setModel(JcrNodeModel model) {
-        if (model != null) {
-            JcrNodeModel editorNodeModel = (JcrNodeModel) getModel();
-            editorNodeModel.impersonate(model);
-        }
-    }
+ 
 }
