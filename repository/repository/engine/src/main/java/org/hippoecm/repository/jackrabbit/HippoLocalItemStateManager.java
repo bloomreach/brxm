@@ -21,49 +21,57 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.apache.commons.collections.map.LinkedMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.NamespaceException;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.state.ItemStateManager;
-import org.apache.jackrabbit.core.state.LocalItemStateManager;
-import org.apache.jackrabbit.core.state.XAItemStateManager;
-
-import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.core.state.ItemState;
-import org.apache.jackrabbit.name.QName;
-
+import org.apache.jackrabbit.conversion.IllegalNameException;
+import org.apache.jackrabbit.conversion.NamePathResolver;
 import org.apache.jackrabbit.core.ItemId;
+import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.nodetype.NodeDef;
+import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.nodetype.PropDef;
+import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
+import org.apache.jackrabbit.core.state.ChangeLog;
+import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.ItemStateReferenceCache;
+import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeReferences;
 import org.apache.jackrabbit.core.state.NodeReferencesId;
+import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
-
+import org.apache.jackrabbit.core.state.XAItemStateManager;
+import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.core.virtual.VirtualNodeState;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-
-import org.apache.jackrabbit.core.state.ChangeLog;
-
+import org.apache.jackrabbit.name.NameConstants;
+import org.apache.jackrabbit.name.QName;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.uuid.UUID;
 
 class HippoLocalItemStateManager extends XAItemStateManager
 {
@@ -71,6 +79,7 @@ class HippoLocalItemStateManager extends XAItemStateManager
 
     private final ItemStateReferenceCache cache;
     private NodeTypeRegistry ntReg;
+    private NamePathResolver namePathResolver;
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
                                       ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg)
@@ -78,6 +87,13 @@ class HippoLocalItemStateManager extends XAItemStateManager
         super(sharedStateMgr, factory, cacheFactory);
         this.ntReg = ntReg;
         cache = new ItemStateReferenceCache(cacheFactory);
+    }
+
+    @Override
+    public synchronized void edit() throws IllegalStateException {
+        if(inEditMode())
+            return;
+        super.edit();
     }
 
     @Override
@@ -95,7 +111,10 @@ class HippoLocalItemStateManager extends XAItemStateManager
         }
     }
 
-    @Override
+    void setNamePathResolver(NamePathResolver namePathResolver) {
+        this.namePathResolver = namePathResolver;
+    }
+
     public PropertyState createNew(Name propName, NodeId parentId) throws IllegalStateException {
         PropertyState propertyState = super.createNew(propName, parentId);
         if (log.isDebugEnabled())
@@ -121,28 +140,49 @@ class HippoLocalItemStateManager extends XAItemStateManager
         super.cancel();
     }
 
+    FilteredChangeLog filteredChangeLog = null;
+
     @Override
-    protected void update(ChangeLog changeLog) throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
+    protected void update(ChangeLog changeLog) throws ReferentialIntegrityException,StaleItemStateException,ItemStateException {
         if (log.isDebugEnabled())
             System.err.println("HippoLocalItemStateManager.update start ");
-        FilteredChangeLog filteredChangeLog = new FilteredChangeLog(changeLog);
+        filteredChangeLog = new FilteredChangeLog(changeLog);
         filteredChangeLog.invalidate();
         super.update(filteredChangeLog);
         if (log.isDebugEnabled())
             System.err.println("HippoLocalItemStateManager.update end ");
     }
 
-    public void update() throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
+    public void update() throws ReferentialIntegrityException, StaleItemStateException,ItemStateException,IllegalStateException {
         if (log.isDebugEnabled())
             System.err.println("HippoLocalItemStateManager.update ");
+        virtualChildren.clear();
         super.update();
+        edit();
+        filteredChangeLog.repopulate();
+        filteredChangeLog = null;
     }
     
     @Override
     protected NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException {
         if (log.isDebugEnabled())
             System.err.println("HippoLocalItemStateManager.getNodeState "+id);
-        return super.getNodeState(id);
+        if(virtualChildren.containsKey(id)) {
+            try {
+                return populate(id, virtualChildren.get(id));
+            } catch(NamespaceException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch(IllegalNameException ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
+        }
+        NodeState state = super.getNodeState(id);
+        if(state.getNodeTypeName().toString().equals("{http://www.hippoecm.org/nt/1.0}external")) {
+            populate(state);
+        }
+        return state;
     }
   
     @Override
@@ -164,6 +204,8 @@ class HippoLocalItemStateManager extends XAItemStateManager
     public boolean hasItemState(ItemId id) {
         if (log.isDebugEnabled())
             System.err.println("HippoLocalItemStateManager.hasItemState "+id);
+        if(virtualChildren.containsKey(id))
+            return true;
         return super.hasItemState(id);
     }
     
@@ -209,11 +251,120 @@ class HippoLocalItemStateManager extends XAItemStateManager
             System.err.println("HippoLocalItemStateManager.stateDiscarded "+discarded.getId());
         super.stateDiscarded(discarded);
     }
-    
+
+
+    static PropDefImpl propDef = null;
+    static NodeDefImpl nodeDef = null;
+    PropDef getPropertyDefinition() {
+        if(propDef == null) {
+            try {
+                propDef = new PropDefImpl();
+                propDef.setRequiredType(PropertyType.LONG);
+                propDef.setProtected(true);
+                propDef.setDeclaringNodeType(namePathResolver.getQName("hippo:external"));
+                propDef.setName(namePathResolver.getQName("hippo:property"));
+            } catch(NamespaceException ex) {
+                System.err.print(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch(IllegalNameException ex) {
+                System.err.print(ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
+        }
+        return propDef;
+    }
+    NodeDef getNodeDefinition() {
+        if(nodeDef == null) {
+            try {
+                nodeDef = new NodeDefImpl();
+                nodeDef.setDefaultPrimaryType(NameConstants.NT_BASE);
+                nodeDef.setAllowsSameNameSiblings(true);
+                nodeDef.setProtected(true);
+                nodeDef.setDeclaringNodeType(namePathResolver.getQName("hippo:external"));
+                nodeDef.setName(namePathResolver.getQName("hippo:virtual"));
+            } catch(NamespaceException ex) {
+                System.err.print(ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch(IllegalNameException ex) {
+                System.err.print(ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
+        }
+        return nodeDef;
+    }
+
+    static NodeId workaroundNodeId;
+    static void workaround(NodeId nodeId) {
+        workaroundNodeId = nodeId;
+    }
+
+    Map<NodeId,NodeId> virtualChildren = new LinkedMap();
+    void populate(NodeState state) {
+        edit();
+        try {
+            Name name = namePathResolver.getQName("hippo:property");
+            PropertyState propState = createNew(name, state.getNodeId());
+            propState.setType(PropertyType.LONG);
+            propState.setMultiValued(false);
+            propState.setDefinitionId(getPropertyDefinition().getId());
+            propState.setValues(new InternalValue[] { InternalValue.create(2) });
+            state.addPropertyName(name);
+
+            NodeId childNodeId = new NodeId(UUID.randomUUID());
+            state.addChildNodeEntry(namePathResolver.getQName("test"), childNodeId);
+            virtualChildren.put(childNodeId, state.getNodeId());
+
+            childNodeId = new NodeId(UUID.randomUUID());
+            NodeState realNodeState = getNodeState(workaroundNodeId);
+            NodeState realParentState = getNodeState(realNodeState.getParentId());
+            NodeState.ChildNodeEntry entry = realParentState.getChildNodeEntry(realNodeState.getNodeId());
+            state.addChildNodeEntry(entry.getName(), childNodeId);
+            Name nodeTypeName = namePathResolver.getQName("hippo:virtual");
+            NodeState childNodeState = createNew(childNodeId, nodeTypeName, state.getNodeId());
+            childNodeState.setNodeTypeName(realNodeState.getNodeTypeName());
+            childNodeState.setMixinTypeNames(realNodeState.getMixinTypeNames());
+            childNodeState.setDefinitionId(realNodeState.getDefinitionId());
+            childNodeState.setPropertyNames(realNodeState.getPropertyNames());
+            for(Iterator iter = realNodeState.getPropertyNames().iterator(); iter.hasNext(); ) {
+                Name propName = (Name) iter.next();
+                PropertyId realPropId = new PropertyId(realNodeState.getNodeId(), propName);
+                PropertyState realPropState = getPropertyState(realPropId);
+                PropertyState copyPropState = createNew(propName, childNodeState.getNodeId());
+                copyPropState.setType(realPropState.getType());
+                copyPropState.setDefinitionId(realPropState.getDefinitionId());
+                copyPropState.setValues(realPropState.getValues());
+                copyPropState.setMultiValued(realPropState.isMultiValued());
+            }
+            //childNodeState.setChildNodeEntries(realNodeState.getChildNodeEntries()); TODO
+            stateCreated(childNodeState);
+
+            stateModified(state);
+        } catch(NoSuchItemStateException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch(ItemStateException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch(NamespaceException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch(IllegalNameException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    NodeState populate(NodeId nodeId, NodeId parentId) throws IllegalNameException, NamespaceException {
+        NodeState state = createNew(nodeId, namePathResolver.getQName("hippo:virtual"), parentId);
+        state.setDefinitionId(getNodeDefinition().getId());
+        populate(state);
+        return state;
+    }
 
     class FilteredChangeLog extends ChangeLog {
         private ChangeLog upstream;
         private final Set<ItemId> virtuals = new HashSet<ItemId>();
+        private final Set<ItemId> externals = new HashSet<ItemId>();
 
         class FilteredStateIterator implements Iterator {
             Iterator actualIterator;
@@ -226,7 +377,7 @@ class HippoLocalItemStateManager extends XAItemStateManager
                     if(!actualIterator.hasNext())
                         return false;
                     current = (ItemState) actualIterator.next();
-                    if(isVirtual(current))
+                    if(isVirtual(current) == ITEM_TYPE_VIRTUAL)
                         current = null;
                 }
                 return true;
@@ -237,7 +388,7 @@ class HippoLocalItemStateManager extends XAItemStateManager
                     if(!actualIterator.hasNext())
                         return false;
                     current = (ItemState) actualIterator.next();
-                    if(isVirtual(current))
+                    if(isVirtual(current) == ITEM_TYPE_VIRTUAL)
                         current = null;
                 }
                 rtValue = current;
@@ -255,82 +406,110 @@ class HippoLocalItemStateManager extends XAItemStateManager
         FilteredChangeLog() {
             upstream = null;
         }
-        private boolean isVirtual(ItemState state) {
+        public static final int ITEM_TYPE_REGULAR  = 0;
+        public static final int ITEM_TYPE_EXTERNAL = 1;
+        public static final int ITEM_TYPE_VIRTUAL  = 2;
+        private int isVirtual(ItemState state) {
             ItemId parentId = state.getParentId();
-            if(parentId != null && virtuals.contains(parentId))
-                return true;
+            if(parentId != null && (externals.contains(parentId) || virtuals.contains(parentId)))
+                return ITEM_TYPE_VIRTUAL;
             if(state.isNode()) {
                 String name = ((NodeState)state).getNodeId().toString();
                 if(((NodeState)state).getNodeTypeName().toString().equals("{http://www.hippoecm.org/nt/1.0}external")) {
                     if (log.isDebugEnabled())
                         System.err.println("FilterChangeLog.isVirtual#1 not virtual "+state.getId()+" "+name);
-                    virtuals.add(state.getId());
-                    return false;
+                    externals.add(state.getId());
+                    return ITEM_TYPE_EXTERNAL;
                 } else if(((NodeState)state).getNodeTypeName().toString().equals("{http://www.hippoecm.org/nt/1.0}virtual")) {
                     if (log.isDebugEnabled())
                         System.err.println("FilterChangeLog.isVirtual#2 virtual "+state.getId()+" "+name);
-                    return true;
+                    return ITEM_TYPE_VIRTUAL;
                 } else {
                     if (log.isDebugEnabled())
                         System.err.println("FilterChangeLog.isVirtual#3 not virtual "+state.getId()+" "+name);
-                    return false;
+                    return ITEM_TYPE_REGULAR;
                 }
            } else {
                 Name name = ((PropertyState)state).getName();
                 if(name.toString().equals("{http://www.hippoecm.org/nt/1.0}property")) {
                     if (log.isDebugEnabled())
                         System.err.println("FilterChangeLog.isVirtual#4 virtual "+state.getId()+" "+name.toString());
-                    return true;
+                    return ITEM_TYPE_VIRTUAL;
                 } else {
                     if (log.isDebugEnabled())
                         System.err.println("FilterChangeLog.isVirtual#5 not virtual "+state.getId()+" "+name.toString());
-                    return false;
+                    return ITEM_TYPE_REGULAR;
                 }
             }
         }
-        @Override public void added(ItemState state) {
-            /*
-            if (log.isDebugEnabled())
-                System.err.println("FilteredChangeLog.added "+state.getId());
-            */
-            if(upstream != null)
-                upstream.added(state);
-            else
-                super.added(state);
-        }
-        @Override public void modified(ItemState state) {
-            /*
-            if (log.isDebugEnabled())
-                System.err.println("FilteredChangeLog.modified "+state);
-            */
-            if(upstream != null)
-                upstream.modified(state);
-            else
-                super.modified(state);
-        }
-        @Override public void deleted(ItemState state) {
-            /*
-            if (log.isDebugEnabled())
-                System.err.println("FilteredChangeLog.deleted "+state);
-            */
-            if(upstream != null)
-                upstream.deleted(state);
-            else
-                super.deleted(state);
-        }
-        @Override public void modified(NodeReferences refs) {
-            /*
-            if (log.isDebugEnabled())
-                System.err.println("FilteredChangeLog.modifiedRefs");
-            */
-            if(upstream != null)
-                upstream.modified(refs);
-            else
-                super.modified(refs);
+
+        List<ItemState> states = new LinkedList<ItemState>();
+
+        void invalidate() {
+            for(Iterator iter = addedStates(); iter.hasNext(); ) {
+                ItemState state = (ItemState) iter.next();
+                if(isVirtual(state) == ITEM_TYPE_VIRTUAL) {
+                    if(state.isNode()) {
+                        NodeState nodeState = (NodeState) state;
+                        try {
+                            nodeState = (NodeState) get(nodeState.getParentId());
+                            nodeState.removeAllChildNodeEntries();
+                        } catch(org.apache.jackrabbit.core.state.NoSuchItemStateException ex) {
+                            System.err.println("FilteredChangeLog.invalidate exception "+ex.getMessage());
+                        }
+                    }
+                    state.setStatus(ItemState.STATUS_STALE_MODIFIED);
+                    stateModified(state);
+                }
+            }
+
+            for(Iterator iter = addedStates(); iter.hasNext(); ) {
+                ItemState state = (ItemState) iter.next();
+                if(isVirtual(state) == ITEM_TYPE_EXTERNAL) {
+                    states.add(state);
+                }
+            }
         }
 
+        void repopulate() {
+            for(Iterator iter = states.iterator(); iter.hasNext(); ) {
+                ItemState state = (ItemState) iter.next();
+                if(isVirtual(state) == ITEM_TYPE_EXTERNAL) {
+                    populate((NodeState)state);
+                }
+            }
+        }
+
+        /*
+        Map newAddedStates = new LinkedMap();
+        Map newModifiedStates = new LinkedMap();
+        Map newDeletedStates = new LinkedMap();
+        Map newModifiedRefs = new LinkedMap();
+
+        @Override public void added(ItemState state) {
+            if (log.isDebugEnabled())
+                System.err.println("FilteredChangeLog.added "+state);
+            newAddedStates.put(state.getId(), state);
+        }
+        @Override public void modified(ItemState state) {
+            if (log.isDebugEnabled())
+                System.err.println("FilteredChangeLog.modified "+state);
+            newModifiedStates.put(state.getId(), state);
+        }
+        @Override public void deleted(ItemState state) {
+            if (log.isDebugEnabled())
+                System.err.println("FilteredChangeLog.deleted "+state);
+            newDeletedStates.put(state.getId(), state);
+        }
+        @Override public void modified(NodeReferences refs) {
+            if (log.isDebugEnabled())
+                System.err.println("FilteredChangeLog.modifiedRefs");
+            newModifiedStates.put(state.getId(), state);
+        }
+        */
+
         @Override public ItemState get(ItemId id) throws NoSuchItemStateException {
-            /*          
+            /*
             if (log.isDebugEnabled())
                 System.err.println("FilteredChangeLog.get "+id);
             */
@@ -426,24 +605,6 @@ class HippoLocalItemStateManager extends XAItemStateManager
                 upstream.persisted();
             else
                 super.persisted();
-        }
-        void invalidate() {
-            for(Iterator iter = addedStates(); iter.hasNext(); ) {
-                ItemState state = (ItemState) iter.next();
-                if(isVirtual(state)) {
-                    if(state.isNode()) {
-                        NodeState nodeState = (NodeState) state;
-                        try {
-                            nodeState = (NodeState) get(nodeState.getParentId());
-                            nodeState.removeAllChildNodeEntries();
-                        } catch(org.apache.jackrabbit.core.state.NoSuchItemStateException ex) {
-                            System.err.println("FilteredChangeLog.invalidate exception "+ex.getMessage());
-                        }
-                    }
-                    state.setStatus(ItemState.STATUS_STALE_MODIFIED);
-                    stateModified(state);
-                }
-            }
         }
         @Override public void reset() {
             if (log.isDebugEnabled())

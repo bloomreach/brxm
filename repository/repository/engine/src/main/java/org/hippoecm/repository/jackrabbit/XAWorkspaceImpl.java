@@ -21,21 +21,22 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
+import org.apache.jackrabbit.conversion.NamePathResolver;
 
 public class XAWorkspaceImpl extends org.apache.jackrabbit.core.XAWorkspace {
     private static Logger log = LoggerFactory.getLogger(XAWorkspaceImpl.class);
 
     protected XAWorkspaceImpl(WorkspaceConfig wspConfig, SharedItemStateManager stateMgr,
-            org.apache.jackrabbit.core.RepositoryImpl rep, org.apache.jackrabbit.core.SessionImpl session) {
+            org.apache.jackrabbit.core.RepositoryImpl rep, XASessionImpl session) {
         super(wspConfig, stateMgr, rep, session);
 	if (log.isDebugEnabled())
           System.err.println("XAWorkspaceImpl.WorkspaceImpl");
+        ((HippoLocalItemStateManager)this.stateMgr).setNamePathResolver(((XASessionImpl)session).getNamePathResolver());
     }
 
     protected LocalItemStateManager createItemStateManager(SharedItemStateManager shared) {
         if (log.isDebugEnabled())
           System.err.println("XAWorkspaceImpl.createItemStateManager "+rep);
-        LocalItemStateManager localItemStateManager = new HippoLocalItemStateManager(shared, this, rep.getItemStateCacheFactory(), ((RepositoryImpl)rep).getNodeTypeRegistry());
-        return localItemStateManager;
+        return new HippoLocalItemStateManager(shared, this, rep.getItemStateCacheFactory(), ((RepositoryImpl)rep).getNodeTypeRegistry());
     }
 }

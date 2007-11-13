@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
+import org.apache.jackrabbit.conversion.NamePathResolver;
 
 public class WorkspaceImpl extends org.apache.jackrabbit.core.WorkspaceImpl {
     private static Logger log = LoggerFactory.getLogger(WorkspaceImpl.class);
@@ -30,6 +31,7 @@ public class WorkspaceImpl extends org.apache.jackrabbit.core.WorkspaceImpl {
         super(wspConfig, stateMgr, rep, session);
 	if (log.isDebugEnabled())
           System.err.println("WorkspaceImpl.WorkspaceImpl");
+        ((HippoLocalItemStateManager)this.stateMgr).setNamePathResolver(((SessionImpl)session).getNamePathResolver());
     }
 
     protected LocalItemStateManager createItemStateManager(SharedItemStateManager shared) {

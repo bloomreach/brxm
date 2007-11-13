@@ -23,15 +23,20 @@ package org.hippoecm.repository.jackrabbit;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import junit.framework.TestCase;
 
-import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.servicing.ServicingNodeImpl;
+
+import org.apache.jackrabbit.core.NodeImpl;
 
 public class WorkTest extends TestCase
 {
@@ -42,42 +47,66 @@ public class WorkTest extends TestCase
 
     private HippoRepository server;
 
+    private void checkSessionData(Session session) throws RepositoryException {
+        assertFalse(session.getRootNode().hasProperty("hippo:property"));
+        assertTrue(session.getRootNode().hasNode("hippo"));
+        assertFalse(session.getRootNode().getNode("hippo").hasNode("testing"));
+        assertTrue(session.getRootNode().getNode("hippo").hasProperty("hippo:property"));
+        assertTrue(session.getRootNode().getNode("hippo").hasNode("test"));
+        assertTrue(session.getRootNode().getNode("hippo").getNode("test").hasProperty("hippo:property"));
+        assertTrue(session.getRootNode().getNode("hippo").getProperty("hippo:property").getLong() > 1);
+        assertTrue(session.getRootNode().getNode("hippo").getNode("test").getProperty("hippo:property").getLong() > 1);
+
+        assertTrue(session.getRootNode().getNode("hippo").getNode("test").hasNode("oosteinde"));
+        assertTrue(session.getRootNode().getNode("hippo").getNode("test").getNode("oosteinde").hasProperty("ape"));
+        assertTrue(session.getRootNode().getNode("hippo").getNode("test").getNode("oosteinde").hasProperty("leesplank"));
+        assertEquals("nootjes", session.getRootNode().getNode("hippo").getNode("test").getNode("oosteinde").getProperty("ape").getString());
+        Property p = session.getRootNode().getNode("hippo").getNode("test").getNode("oosteinde").getProperty("leesplank");
+        assertTrue(p.getDefinition().isMultiple());
+        Value[] values = p.getValues();
+        assertEquals(3, values.length);
+        assertEquals("mies", values[0].getString());
+        assertEquals("vuur", values[1].getString());
+        assertEquals("gijs", values[2].getString());
+    }
+
     public void test() throws RepositoryException {
         server = HippoRepositoryFactory.getHippoRepository();
         assertNotNull(server);
 
-        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        Session alternate, session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node, root = session.getRootNode();
 
-        root.setProperty("hippo:property","aap");
-        node = root.addNode("foo","hippo:external");
-        node.addNode("bar","hippo:virtual").addNode("qux","hippo:virtual").setProperty("hippo:property","mies");
-        node.setProperty("hippo:property","noot");
+        node = root.addNode("oosteinde");
+        node.setProperty("ape","nootjes");
+        node.setProperty("leesplank",new String[] { "mies", "vuur", "gijs" });
+        session.save();
+
+        HippoLocalItemStateManager.workaround(((NodeImpl)(((ServicingNodeImpl)(session.getRootNode().getNode("oosteinde"))).unwrap())).getNodeId());
+
+        root.setProperty("hippo:property",0);
+        node = root.addNode("hippo","hippo:external");
+        node.addNode("testing","hippo:virtual").setProperty("hippo:property",1);
 
         node = null;
-        assertTrue(session.getRootNode().getNode("foo").hasProperty("hippo:property"));
-        assertTrue(session.getRootNode().getNode("foo").hasNode("bar"));
-        assertTrue(session.getRootNode().getNode("foo").getNode("bar").hasNode("qux"));
-        assertTrue(session.getRootNode().getNode("foo").getNode("bar").getNode("qux").hasProperty("hippo:property"));
         assertTrue(session.getRootNode().hasProperty("hippo:property"));
-        assertEquals("aap", session.getRootNode().getProperty("hippo:property").getString());
-        assertEquals("noot", session.getRootNode().getNode("foo").getProperty("hippo:property").getString());
-        assertEquals("mies", session.getRootNode().getNode("foo").getNode("bar").getNode("qux").getProperty("hippo:property").getString());
+        assertTrue(session.getRootNode().hasNode("hippo"));
+        assertTrue(session.getRootNode().getNode("hippo").hasNode("testing"));
+        assertTrue(session.getRootNode().getNode("hippo").getNode("testing").hasProperty("hippo:property"));
+        assertFalse(session.getRootNode().hasNode("test"));
+        assertEquals(0, session.getRootNode().getProperty("hippo:property").getLong());
+        assertEquals(1, session.getRootNode().getNode("hippo").getNode("testing").getProperty("hippo:property").getLong());
 
         session.save();
         session.refresh(false);
-        //Utilities.dump(session.getRootNode());
-        assertTrue(session.getRootNode().hasNode("foo"));
-        assertFalse(session.getRootNode().getNode("foo").hasNode("bar"));
-        assertFalse(session.getRootNode().getNode("foo").hasProperty("hippo:property"));
-        assertFalse(session.getRootNode().hasProperty("hippo:property"));
-
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        assertFalse(session.getRootNode().getNode("foo").hasNode("bar"));
-        assertFalse(session.getRootNode().getNode("foo").hasProperty("hippo:property"));
-        assertFalse(session.getRootNode().hasProperty("hippo:property"));
+        checkSessionData(session);
 
         session.logout();
+
+        alternate = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        checkSessionData(alternate);
+        alternate.logout();
+
         server.close();
     }
 }
