@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -31,102 +29,21 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.publish.PublishDial
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion.RequestDeletionDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdepublication.RequestDePublicationDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication.RequestPublicationDialog;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
-public class FullReviewedActionsWorkflowPlugin extends Plugin {
+public class FullReviewedActionsWorkflowPlugin extends AbstractMenuPlugin {
     private static final long serialVersionUID = 1L;
 
     public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-
-        final DialogWindow obtainEditableInstanceDialog = new DialogWindow("obtainEditableInstance-dialog", model, false);
-        obtainEditableInstanceDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                return new ObtainEditableInstanceDialog(obtainEditableInstanceDialog, workflow);
-            }
-        });
-        add(obtainEditableInstanceDialog);
-        add(obtainEditableInstanceDialog.dialogLink("obtainEditableInstance"));
         
-        final DialogWindow disposeEditableInstanceDialog = new DialogWindow("disposeEditableInstance-dialog", model, false);
-        disposeEditableInstanceDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                return new DisposeEditableInstanceDialog(disposeEditableInstanceDialog, workflow);
-            }
-        });
-        add(disposeEditableInstanceDialog);
-        add(disposeEditableInstanceDialog.dialogLink("disposeEditableInstance"));
-
-        final DialogWindow requestPublicationDialog = new DialogWindow("requestPublication-dialog", model, false);
-        requestPublicationDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                return new RequestPublicationDialog(requestPublicationDialog, workflow);
-            }
-        });
-        add(requestPublicationDialog);
-        add(requestPublicationDialog.dialogLink("requestPublication"));
-
-        final DialogWindow requestDePublicationDialog = new DialogWindow("requestDePublication-dialog", model, false);
-        requestDePublicationDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                return new RequestDePublicationDialog(requestDePublicationDialog, workflow);
-            }
-        });
-        add(requestDePublicationDialog);
-        add(requestDePublicationDialog.dialogLink("requestDePublication"));
-
-        final DialogWindow requestDeletionDialog = new DialogWindow("requestDeletion-dialog", model, false);
-        requestDeletionDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                return new RequestDeletionDialog(requestDeletionDialog, workflow);
-            }
-        });
-        add(requestDeletionDialog);
-        add(requestDeletionDialog.dialogLink("requestDeletion"));
-
-
-        final DialogWindow publishDialog = new DialogWindow("publish-dialog", model, false);
-        publishDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                return new PublishDialog(publishDialog, workflow);
-            }
-        });
-        add(publishDialog);
-        add(publishDialog.dialogLink("publish"));
-        
-        final DialogWindow dePublishDialog = new DialogWindow("dePublish-dialog", model, false);
-        dePublishDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                return new DePublishDialog(dePublishDialog, workflow);
-            }
-        });
-        add(dePublishDialog);
-        add(dePublishDialog.dialogLink("dePublish"));
-
-        final DialogWindow deleteDialog = new DialogWindow("delete-dialog", model, false);
-        deleteDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                return new DeleteDialog(deleteDialog, workflow);
-            }
-        });
-        add(deleteDialog);
-        add(deleteDialog.dialogLink("delete"));
+        addMenuOption("obtainEditableInstance-dialog", "obtainEditableInstance", ObtainEditableInstanceDialog.class.getName(), model);
+        addMenuOption("disposeEditableInstance-dialog", "disposeEditableInstance", DisposeEditableInstanceDialog.class.getName(), model);
+        addMenuOption("requestPublication-dialog", "requestPublication", RequestPublicationDialog.class.getName(), model);
+        addMenuOption("requestDePublication-dialog", "requestDePublication", RequestDePublicationDialog.class.getName(), model);
+        addMenuOption("requestDeletion-dialog", "requestDeletion", RequestDeletionDialog.class.getName(), model);
+        addMenuOption("publish-dialog", "publish", PublishDialog.class.getName(), model);
+        addMenuOption("dePublish-dialog", "dePublish", DePublishDialog.class.getName(), model);
+        addMenuOption("delete-dialog", "delete", DeleteDialog.class.getName(), model);
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {

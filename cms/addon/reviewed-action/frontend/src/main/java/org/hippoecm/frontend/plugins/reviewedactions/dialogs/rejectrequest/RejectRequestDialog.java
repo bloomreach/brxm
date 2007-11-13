@@ -25,13 +25,11 @@ import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 public class RejectRequestDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private FullRequestWorkflow workflow;
     private String reason;
 
-    public RejectRequestDialog(DialogWindow dialogWindow, FullRequestWorkflow workflow) {
+    public RejectRequestDialog(DialogWindow dialogWindow) {
         super(dialogWindow);
         dialogWindow.setTitle("Reject request");       
-        this.workflow = workflow;
 
         add(new AjaxEditableLabel("reason", new PropertyModel(this, "reason")));
         if (dialogWindow.getNodeModel().getNode() == null) {
@@ -39,9 +37,9 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
         }
     }
 
-    public JcrEvent ok() throws Exception {
+    protected void doOk() throws Exception {
+        FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
         workflow.rejectRequest(reason);
-        return super.ok();
     }
 
     public void cancel() {

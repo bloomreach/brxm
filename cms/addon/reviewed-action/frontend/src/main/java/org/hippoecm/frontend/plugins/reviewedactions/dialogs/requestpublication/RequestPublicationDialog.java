@@ -23,20 +23,17 @@ import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 public class RequestPublicationDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private BasicReviewedActionsWorkflow workflow;
-
-    public RequestPublicationDialog(DialogWindow dialogWindow, BasicReviewedActionsWorkflow workflow) {
+    public RequestPublicationDialog(DialogWindow dialogWindow) {
         super(dialogWindow);
         dialogWindow.setTitle("Request publication");
-        this.workflow = workflow;
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public JcrEvent ok() throws Exception {
+    protected void doOk() throws Exception {
+        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
         workflow.requestPublication();
-        return super.ok();
     }
 
     public void cancel() {

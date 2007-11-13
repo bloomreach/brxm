@@ -17,26 +17,22 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.depublish;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
 public class DePublishDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private FullReviewedActionsWorkflow workflow;
-
-    public DePublishDialog(DialogWindow dialogWindow, FullReviewedActionsWorkflow workflow) {
+    public DePublishDialog(DialogWindow dialogWindow) {
         super(dialogWindow);
         dialogWindow.setTitle("Unpublish");
-        this.workflow = workflow;
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
-    public JcrEvent ok() throws Exception {
+    protected void doOk() throws Exception {
+        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
         workflow.depublish();
-        return super.ok();
     }
 
     public void cancel() {

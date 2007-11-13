@@ -1,56 +1,39 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.acceptrequest.AcceptRequestDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.CancelRequestDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest.RejectRequestDialog;
-import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
-public class FullRequestWorkflowPlugin extends Plugin {
+public class FullRequestWorkflowPlugin extends AbstractMenuPlugin {
     private static final long serialVersionUID = 1L;
 
     public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        final DialogWindow acceptRequestDialog = new DialogWindow("acceptRequest-dialog", model, false);
-        acceptRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
-                return new AcceptRequestDialog(acceptRequestDialog, workflow);
-            }
-        });
-        add(acceptRequestDialog);
-        add(acceptRequestDialog.dialogLink("acceptRequest"));
-
-        final DialogWindow rejectRequestDialog = new DialogWindow("rejectRequest-dialog", model, false);
-        rejectRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
-                return new RejectRequestDialog(rejectRequestDialog, workflow);
-            }
-        });
-        add(rejectRequestDialog);
-        add(rejectRequestDialog.dialogLink("rejectRequest"));
-
-        final DialogWindow cancelRequestDialog = new DialogWindow("cancelRequest-dialog", model, false);
-        cancelRequestDialog.setPageCreator(new ModalWindow.PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
-                return new CancelRequestDialog(cancelRequestDialog, workflow);
-            }
-        });
-        add(cancelRequestDialog);
-        add(cancelRequestDialog.dialogLink("cancelRequest"));
+        addMenuOption("acceptRequest-dialog", "acceptRequest", AcceptRequestDialog.class.getName(), model);
+        addMenuOption("rejectRequest-dialog", "rejectRequest", RejectRequestDialog.class.getName(), model);
+        addMenuOption("cancelRequest-dialog", "cancelRequest", CancelRequestDialog.class.getName(), model);
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
