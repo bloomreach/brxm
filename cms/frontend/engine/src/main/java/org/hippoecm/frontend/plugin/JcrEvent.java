@@ -10,10 +10,12 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 public class JcrEvent implements IClusterable {
     private static final long serialVersionUID = 1L;
 
+    private boolean structureChanged;
     private JcrNodeModel nodeModel;
 
     public JcrEvent(JcrNodeModel nodeModel, boolean structureChanged) {
         this.nodeModel = nodeModel;
+        this.structureChanged = structureChanged;
         if (structureChanged) {
             nodeModel.markReload();
         }
@@ -22,6 +24,11 @@ public class JcrEvent implements IClusterable {
     public JcrNodeModel getModel() {
         return nodeModel;
     }
+    
+    public boolean structureChanged() {
+        return structureChanged;
+    }
+
 
     // override Object
 

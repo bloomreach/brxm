@@ -26,14 +26,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrPropertiesProvider;
 import org.hippoecm.frontend.model.JcrPropertyModel;
 
 public class PropertiesEditor extends DataView {
     private static final long serialVersionUID = 1L;
 
-    public PropertiesEditor(String id, JcrNodeModel dataProvider) {
-        super(id, dataProvider);
+    public PropertiesEditor(String id, JcrPropertiesProvider model) {
+        super(id, model);
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
 

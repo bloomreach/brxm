@@ -43,7 +43,7 @@ public class PropertyDialog extends AbstractDialog {
                 return true;
             }
             protected void onSelectionChanged(Object newSelection) {
-                PropertyDialog.this.isMultiple = (Boolean)newSelection;
+                setMultiple((Boolean)newSelection);
             }
         });
         add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
@@ -55,15 +55,13 @@ public class PropertyDialog extends AbstractDialog {
 
     public JcrEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        PropertyDialog page = (PropertyDialog) getPage();
         if (isMultiple.booleanValue()) {
-            String value = page.getValue();
             if (value == null || value.equals("")) {
                 value = "...";
             }
-            nodeModel.getNode().setProperty(page.getName(), new String[] { value });
+            nodeModel.getNode().setProperty(name, new String[] { value });
         } else {
-            nodeModel.getNode().setProperty(page.getName(), page.getValue());
+            nodeModel.getNode().setProperty(name, value);
         }
         return new JcrEvent(nodeModel, false);
     }

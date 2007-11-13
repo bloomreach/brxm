@@ -19,6 +19,7 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -31,7 +32,7 @@ public class BrowserPlugin extends Plugin {
 
     public BrowserPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        JcrNodeModel treeNode = new JcrNodeModel(null, model.getNode());
+        JcrNodeModel treeNode = new JcrTreeNode(null, model.getNode());
         
         tree = new JcrTree("tree", treeNode) {
             private static final long serialVersionUID = 1L;
@@ -47,7 +48,7 @@ public class BrowserPlugin extends Plugin {
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        if (jcrEvent.getModel().needsReload()) {
+        if (jcrEvent.structureChanged()) {
             JcrNodeModel treeNode = jcrEvent.getModel();
             tree.nodeStructureChanged(treeNode);
             tree.updateTree(target);
