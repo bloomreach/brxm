@@ -66,49 +66,6 @@
     </dependencies>
   </dependencyManagement>
   
-  <repositories>
-    <repository>
-      <snapshots><enabled>true</enabled></snapshots>
-      <id>repository.hippocms.org</id>
-      <name>Hippo Repository for Maven2</name>
-      <url>http://repository.hippocms.org/maven2/</url>
-      <layout>default</layout>
-    </repository>
-    <repository>
-      <snapshots><enabled>true</enabled></snapshots>
-      <id>day.com</id>
-      <name>Day Repository for JCR</name>
-      <url>http://www.day.com/maven/</url>
-      <layout>legacy</layout>
-    </repository>
-    <repository>
-      <!-- For the Atomikos JARs -->
-      <id>logicblaze.deps</id>
-      <url>http://repo.logicblaze.com/maven2-all</url>
-      <snapshots><enabled>true</enabled><updatePolicy>never</updatePolicy></snapshots>
-      <releases><enabled>true</enabled><updatePolicy>never</updatePolicy></releases>
-    </repository>
-    <repository>
-      <!-- For JPOX dependencies -->
-      <id>JPOX Maven repository</id>
-      <url>http://www.jpox.org/downloads/maven/</url>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><enabled>true</enabled></releases>
-      <layout>legacy</layout>
-    </repository>
-  </repositories>
-  
-  <pluginRepositories>
-    <pluginRepository>
-      <id>JPOX Maven2 plugin repository</id>
-      <name>Repository for JPOX</name>
-      <url>http://www.jpox.org/downloads/maven2//</url>
-      <layout>default</layout>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><updatePolicy>never</updatePolicy></releases>
-    </pluginRepository>
-  </pluginRepositories>
-  
   <build>
     <defaultGoal>install</defaultGoal>
   </build>  
