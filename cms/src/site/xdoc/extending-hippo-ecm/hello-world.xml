@@ -122,15 +122,16 @@ package org.example.helloworld;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.model.JcrEvent;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class HelloWorldPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public HelloWorldPlugin(String id, JcrNodeModel model) {
-        super(id, model);
+    public HelloWorldPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(descriptor, model, parentPlugin);
         add(new Label("label", "Hello World!"));
     }
 
