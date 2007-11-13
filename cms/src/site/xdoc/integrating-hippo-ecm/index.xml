@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <author>Hippo</author>
-        <title>Hippo ECM Documentation: Integrating Hippo ECM</title>
+        <title>Integrating Hippo ECM</title>
     </properties>
-    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
-    <head>
-        <meta />
-    </head>
     <body>
+      <section name="Integrating Hippo ECM">
+        
+        <p>
+          <ul>
+            <li>
+              <a href="demo-on-interfacing-with-hippo-repository.html">Demo on interfacing with Hippo ECM Repository</a>
+            </li>
+          </ul>
+        </p>
+        
+        
+      </section>
     </body>
 </document>
