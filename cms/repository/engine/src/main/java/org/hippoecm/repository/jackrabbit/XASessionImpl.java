@@ -64,7 +64,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
           org.apache.jackrabbit.core.SessionImpl session) {
         if (log.isDebugEnabled())
 	  System.err.println("XASessionImpl.createWorkspaceInstance");
-        return new XAWorkspaceImpl(wspConfig, stateMgr, rep, session);
+        return new XAWorkspaceImpl(wspConfig, stateMgr, rep, this);
     }
 
     @Override
