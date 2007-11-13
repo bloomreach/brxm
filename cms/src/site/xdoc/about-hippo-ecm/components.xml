@@ -1,60 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+-->
 <document>
-    <properties>
-        <author>Hippo</author>
-        <title>Components</title>
-    </properties>
-    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
-    <head>
-        <meta />
-    </head>
-    <body>
-        <!-- The body of the document contains a number of sections -->
-        <section name="Hippo ECM Components">
-            
-            
-            <subsection name="Hippo Repository">
-                <p>
-                    The Hippo Repository is build on top of <a href="http://jackrabbit.apache.org/" alt="Apache Jackrabbit">Apache Jackrabbit</a>.
-                    The Hippo Repository adds extra fuctionality to the default Jackrabbit distribution while keeping full compliance with the 
-                    JCR 1.0 <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" alt="JSR 170">JSR 170</a>. The main added features 
-                    are facets, virtual nodes and workflow.
-                </p>
-            </subsection>
-            
-            <subsection name="Hippo CMS">
-                <p>
-                    Hippo CMS is a user-friendly content management system for maintaining all your 
-                    information in a structured publication on Internet, intranet or extranet. The key 
-                    points of Hippo CMS are user-friendliness, interoperability and expandability.
-                </p>
-            </subsection>
-            
-            <subsection name="Hippo Portal">
-                <p>
-                    ippo Portal allows partners, employees and customers to chose their user experience, 
-                    with personalized applications based on role, context, actions, location, preferences 
-                    and team collaboration needs. Hippo Portal software provides a composite application or 
-                    business mashup framework and the advanced tooling needed to build flexible, SOA-based 
-                    solutions, as well as the unmatched scalability required by any size organization.
-                </p>
-            </subsection>
-            
-            <subsection name="Hippo Sample Applications">
-                <p>
-                    The Hippo Sample Application are included to show the possibilities of Hippo ECM. The sample 
-                    applications can be used as an example for and starting of the development of third party 
-                    application that want to integrate with Hippo ECM. The sample application can also be used 
-                    out of the box.
-                </p>
-                <p>
-                    Sample applications:
-                    <ul>
-                        <li>Wicket applicaiton</li>
-                        <li>Document importer</li>
-                    </ul>
-                </p>
-            </subsection>
-        </section>
-    </body>
+  <properties>
+    <title>Components</title>
+  </properties>
+  <body>
+    <section name="Hippo ECM Components">
+
+      <subsection name="Hippo Repository">
+        <p> 
+          Hippo Repository is built on top of <a href="http://jackrabbit.apache.org/"
+            alt="Apache Jackrabbit">Apache Jackrabbit</a>. Hippo Repository adds extra
+          fuctionality to the default Jackrabbit distribution while keeping full compliance with the
+          JCR 1.0 <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html"
+            alt="JSR 170">JSR 170</a>. The main added features are facets, virtual nodes and
+          workflow. 
+        </p>
+      </subsection>
+
+      <subsection name="Hippo CMS">
+        <p> 
+          Hippo CMS is a user-friendly content management system for maintaining all your
+          information in a structured publication on Internet, intranet or extranet. The key points
+          of Hippo CMS are user-friendliness, interoperability and expandability. 
+        </p>
+      </subsection>
+
+      <subsection name="Hippo Portal">
+        <p> 
+          Hippo Portal allows partners, employees and customers to choose their user experience,
+          with personalized applications based on role, context, actions, location, preferences and
+          team collaboration needs. Hippo Portal software provides a composite application or
+          business mashup framework and the advanced tooling needed to build flexible, SOA-based
+          solutions, as well as the unmatched scalability required by any size organization. 
+        </p>
+      </subsection>
+
+      <subsection name="Hippo Sample Applications">
+        <p> 
+          The Hippo Sample Application are included to show the possibilities of Hippo ECM. The
+          sample applications can be used as an example for and starting of the development of third
+          party application that want to integrate with Hippo ECM. The sample applications can also
+          be used out of the box. 
+        </p>
+        <p> 
+          Sample applications: 
+          <ul>
+            <li>Wicket application</li>
+            <li>Document importer</li>
+          </ul>
+        </p>
+      </subsection>
+    </section>
+  </body>
 </document>

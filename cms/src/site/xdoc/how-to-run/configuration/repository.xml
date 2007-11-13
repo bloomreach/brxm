@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+-->
 <document>
     <properties>
-        <author>Hippo</author>
         <title>Configuration</title>
     </properties>
-    <head>
-        <meta />
-    </head>
     <body>
         <section name="Repository configuration">
             <p>
-                Hippo Repository by default ships with a repository.xml. You only need
-                to know about this configuration file if you need a different other than default PersistenceManager, AccessManager, LoginModule or SearchIndex.
+                Hippo Repository by default ships with a repository.xml configuration file.
+                You only need to know about this configuration file if you need a non-default 
+                PersistenceManager, AccessManager, LoginModule or SearchIndex.
                  
             </p>
             <p>
@@ -36,33 +48,32 @@
                     <li><a href="#SearchIndex element">SearchIndex element</a></li>
                 </ul>
                 The configuration file has the following overall outline:
-                    <source>
-                    &lt;Repository&gt;
-                        &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
-                        &lt;Security&gt;
-                        &lt;AccessManager class=&quot;...&quot;&gt;...&lt;/AccessManager&gt;
-                        
-                        [ &lt;LoginModule class=&quot;...&quot;&gt;...&lt;/LoginModule&gt; ]
-                        &lt;/Security&gt;
-                        &lt;Workspaces rootPath=&quot;...&quot; defaultWorkspace=&quot;...&quot;/&gt;
-                        
-                        &lt;Workspace name=&quot;...&quot;&gt;
-                        &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
-                        &lt;PersistenceManager class=&quot;...&quot;&gt;...&lt;/PersistenceManager&gt;
-                        [ &lt;SearchIndex class=&quot;...&quot;&gt;
-                        
-                        ...
-                        [ &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt; ]
-                        &lt;/SearcIndex&gt; ]
-                        &lt;/Workspace&gt;
-                        &lt;Versioning rootPath=&quot;...&quot;&gt;
-                        
-                        &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
-                        &lt;PersistenceManager class=&quot;...&quot;&gt;...&lt;/PersistenceManager&gt;
-                        &lt;/Versioning&gt;
-                    &lt;/Repository&gt;
-                        
-                    </source>
+<source>
+&lt;Repository&gt;
+    &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
+    &lt;Security&gt;
+    &lt;AccessManager class=&quot;...&quot;&gt;...&lt;/AccessManager&gt;
+    
+    [ &lt;LoginModule class=&quot;...&quot;&gt;...&lt;/LoginModule&gt; ]
+    &lt;/Security&gt;
+    &lt;Workspaces rootPath=&quot;...&quot; defaultWorkspace=&quot;...&quot;/&gt;
+    
+    &lt;Workspace name=&quot;...&quot;&gt;
+    &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
+    &lt;PersistenceManager class=&quot;...&quot;&gt;...&lt;/PersistenceManager&gt;
+    [ &lt;SearchIndex class=&quot;...&quot;&gt;
+    
+    ...
+    [ &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt; ]
+    &lt;/SearcIndex&gt; ]
+    &lt;/Workspace&gt;
+    &lt;Versioning rootPath=&quot;...&quot;&gt;
+    
+    &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
+    &lt;PersistenceManager class=&quot;...&quot;&gt;...&lt;/PersistenceManager&gt;
+    &lt;/Versioning&gt;
+&lt;/Repository&gt;
+</source>
             </p>
             <p>
                 The XML attribute values in the configuration file are interpreted as plain strings 
@@ -80,25 +91,25 @@
             a Security element that specifies the name of the app-entry
             in the JAAS config and the access manager. 
             Hippo Repository by default uses the following configuration:
-                <source>
-                    &lt;Security appName="Jackrabbit"&gt;
-                        &lt;AccessManager
-                            class="org.hippoecm.repository.security.SimpleAccessManager"&gt;
-                        &lt;/AccessManager&gt;
-                        &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
-                            &lt;param name="anonymousId" value="anonymous"/&gt;
-                        &lt;/LoginModule&gt;
-                    &lt;/Security&gt;
-                </source>
+<source>
+&lt;Security appName="Jackrabbit"&gt;
+    &lt;AccessManager
+        class="org.hippoecm.repository.security.SimpleAccessManager"&gt;
+    &lt;/AccessManager&gt;
+    &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
+        &lt;param name="anonymousId" value="anonymous"/&gt;
+    &lt;/LoginModule&gt;
+&lt;/Security&gt;
+</source>
                 The SimpleAccessManager is the Hippo Repository default access manager implementation, and RepositoryLoginModule
                 the default login implementation. See <a href="repository-based-authentication-and-users.html">repository-based-authentication-and-users.html</a> 
                 for explanation about the RepositoryLoginModule. 
             </subsection>
             <subsection name="Workspaces root directory element">
             location of workspaces root directory and name of default workspace. 
-                <source>
-                    &lt;Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/&gt;
-                </source>
+<source>
+&lt;Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/&gt;
+</source>
             </subsection>
             <subsection name="Workspace element">
                 The Workspace element is used as a template for separate workspace configuration files created for each new workspace. 
@@ -113,14 +124,14 @@
             <subsection name="SearchIndex element">
             Search index for content that is shared repository wide
             (/jcr:system tree, contains mainly versions). This configuration never needs adjustments, and looks like
-                <source>
-                    &lt;SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex"&gt;
-                        &lt;param name="path" value="${rep.home}/repository/index"/&gt;
-                    &lt;/SearchIndex&gt;
-                </source>
+<source>
+&lt;SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex"&gt;
+    &lt;param name="path" value="${rep.home}/repository/index"/&gt;
+&lt;/SearchIndex&gt;
+</source>
             </subsection>
             <subsection name="Versioning element">
-            a Versioning element that is used for configuring
+            A Versioning element that is used for configuring
             versioning-related settings. At the moment of this writing this is not yet implemented.
             </subsection>
         </section>

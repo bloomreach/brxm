@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+-->
 <document>
   <properties>
     <title>Frontend Plugin Architecture</title>
@@ -6,7 +21,6 @@
   <head>
   </head>
   <body>
-    <!-- The body of the document contains a number of sections -->
     <section name="Frontend Plugin Architecture">
     
       <p>
@@ -39,10 +53,10 @@
         <p>
           Web applications that are completely configured from the repository consist of one page,
           "Home".  The configuration can be found under the repository node
-          [FIXME Frank: link to repo viewer in demo war]
+          <!-- FIXME Frank: link to repo viewer in demo war -->
         </p>
 <source>
-  /configuration/frontend/default
+/configuration/frontend/default
 </source>
       </subsection>
 
@@ -50,7 +64,7 @@
         <p>
           The Home page in the application has a root plugin that is loaded when Wicket tries
           to render it.  This plugin must be a subclass of org.hippoecm.frontend.plugin.Plugin,
-          itself a Wicket Panel [FIXME Frank: link to API docs].  An example:
+          itself a Wicket Panel <!-- FIXME Frank: link to API docs -->.  An example:
         </p>
 <source>
 public class RootPlugin extends Plugin {
