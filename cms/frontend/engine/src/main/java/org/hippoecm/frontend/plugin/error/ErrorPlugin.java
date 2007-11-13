@@ -39,6 +39,11 @@ public class ErrorPlugin extends Plugin {
         add(new MultiLineLabel("message", errorMessage));
     }
 
+    @Override
+    public void addChildren() {
+        
+    }
+
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         // nothing much to do here
     }
