@@ -47,7 +47,7 @@
       <item name="Running Hippo ECM" href="/how-to-run/index.html" collapse="false" inherit="top">
         <item name="Requirements" href="/how-to-run/requirements.html"/>
         <item name="Deploying the WARs" href="/how-to-run/deploying-the-wars.html"/>
-        <item name="Seeding The Repository" href="/how-to-run/seeding-the-repository-bootstrap.html"/>
+        <item name="Bootstrapping the Repository" href="/how-to-run/seeding-the-repository-bootstrap.html"/>
         <item name="Configuration" href="/how-to-run/configuration/index.html" collapse="true">
           <item name="configuration.xml" href="/how-to-run/configuration/configuration.html"/>
           <item name="repository.xml" href="/how-to-run/configuration/repository.html"/>

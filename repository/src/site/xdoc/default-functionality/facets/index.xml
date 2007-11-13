@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+-->
 <document>
     <properties>
         <title>Facets</title>
     </properties>
     <body>
-        <h1>Hippo ECM facets</h1>
-        <p>
-          The Hippo Repository is built on top of
-          <a href="http://jackrabbit.apache.org/" alt="Apache Jackrabbit">Apache Jackrabbit</a>.
-          The Hippo Repository adds extra functionality to the default Jackrabbit distribution while
-          keeping full compliance with the JCR 1.0
-          <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" alt="JSR 170">JSR 170</a>.
-          The main added features are facets, virtual nodes and workflow.
-        </p>
+        <section name="Hippo ECM facets">
+          <p>
+            The Hippo Repository is built on top of
+            <a href="http://jackrabbit.apache.org/" alt="Apache Jackrabbit">Apache Jackrabbit</a>.
+            The Hippo Repository adds extra functionality to the default Jackrabbit distribution while
+            keeping full compliance with the JCR 1.0
+            <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" alt="JSR 170">JSR 170</a>.
+            The main added features are facets, virtual nodes and workflow.
+          </p>
+        </section>
 
         <section name="Faceted navigation">
           <p>
-            [FIXME Frank: ripped from Arje's blog]
+            <!-- [FIXME Frank: ripped from Arje's blog] -->
             By (not) organizing the hierarchy of the content repository upfront, but by allowing
             it to grow dynamically based on meta data, I hope we can adhere to David Neuscheler's
             Rule #1, which was inspired by Stefano's "Data first vs Structure first" blogposting.
@@ -64,12 +80,13 @@
           <p>
           </p>
 <!--
+        TODO:
         faceted select
-        - geen filter
-        - andere boom structuur (net editable)
-        - getCanonincalNode (wel editable)
+        - no filter
+        - different tree structuur (not editable)
+        - getCanonincalNode (editable)
 
-        geen facet search op search: hoor je niet te doen.
+        no facet search on search: should not be done.
 -->
         </section>        
     </body>

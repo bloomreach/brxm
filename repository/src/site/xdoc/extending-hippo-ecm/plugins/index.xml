@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+-->
 <document>
     <properties>
         <title>Hippo ECM Plugins</title>
@@ -8,56 +23,38 @@
         
         <p>
           Customizability of Hippo ECM is achieved by means of a configurable plugin framework.
-          All standard functionality is implemented as plugins, which can be extended and customized.
+          All functionality outside the core is implemented as plugins, which can be extended and customized.
           New plugins can be written to add functionality. New functionality will typically be 
           implemented as an add-on, consisting of a number of plugins.
         </p>
 
-<p>
-FIXME: Berry; not all standard functionality is implemented as plugins.
-E.g. the repository core itself has JCR functionality.  This is not ment to be
-extended.
-</p>
-        
         <subsection name="Repository plugins vs. frontend plugins">
           
           <p>
-            Plugins can be divided into two groups: repository plugins and frontend plugins.
-            An add-on can consist of only repository plugins, or only frontend plugins, or both,
-            depending on the kind of functionality implemented.
+            Plugins come in various shapes and sizes.  One class of plugins, even though
+            configured and stored in the repository only affects the front-end
+            application.  It can define additional GUI elements, different look and feel,
+            new functionality, etcetera.  However these components are not supposted to
+            perform serious data transformations or computations.  
           </p>
-
-<p>
-FIXME: Berry; it is better to not seperate them into two groups.  I propose
-the following paragraph, and to rename the subsection to "Different types of
-plugins"
-</p>
-
-<p>
-Plugins come in various shapes and sizes.  One class of plugins, even though
-configured and stored in the repository only affects the front-end
-application.  It can define additional GUI elements, different look and feel,
-new functionality, etcetera.  However these components are not supposted to
-perform serious data transformations or computations.  
-</p>
-
-<p>
-Another class of plugins perform processing and implements business logic.
-These plugins define logic to be executed in the repository upon events,
-triggers or explicit invocation by a front-end application.
-Because these plugins are either expose themselves to a front-end application,
-or perform data mapping which is also available outside of the repository,
-there is a third class of plugin.
-</p>
-
-<p>
-This third class of plugin should not contain any executable code, but defines
-interfaces and data-mappings.  This such that a repository based plugin can
-talk to a plugin that is pure front-end.  At this time, add-ons consist of
-only only front-end plugins (the front-end application is a single add-on
-itself), or consist of the three classes of plugins.
-At M3, there will also be addons that are pure repository plugins.
-</p>
+          
+          <p>
+            Another class of plugins perform processing and implements business logic.
+            These plugins define logic to be executed in the repository upon events,
+            triggers or explicit invocation by a front-end application.
+            Because these plugins are either expose themselves to a front-end application,
+            or perform data mapping which is also available outside of the repository,
+            there is a third class of plugin.
+          </p>
+          
+          <p>
+            This third class of plugin should not contain any executable code, but defines
+            interfaces and data-mappings.  This such that a repository based plugin can
+            talk to a plugin that is pure front-end.  At this time, add-ons consist of
+            only only front-end plugins (the front-end application is a single add-on
+            itself), or consist of the three classes of plugins.
+            At M3, there will also be addons that are pure repository plugins.
+          </p>
 
           <p>
             The classes of plugins are explained in the following subsections:

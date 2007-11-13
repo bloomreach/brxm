@@ -1,35 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+-->
 <document>
-    <properties>
-        <author>Hippo</author>
-        <title>Usages for Hippo ECM</title>
-    </properties>
-    <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
-    <head>
-        <meta/>
-    </head>
-    <body>
-        <!-- The body of the document contains a number of sections -->
-        <section name="Introduction">
+  <properties>
+    <title>Usages for Hippo ECM</title>
+  </properties>
+  <body>
+    <section name="Usages for Hippo ECM">
 
-            <p>Hippo ECM can be used in a wide variety of cases, and can be tailored where needed.
-                Hippo does not enforce structure, although it does bring clarity in the enormous
-                amount of content that users have to cope with on a day to day basis. Some of the
-                most common usages are listed in this section. </p>
-        </section>
+      <subsection name="Introduction">
 
-        <section name="Using Hippo ECM for Document Management">
-            <p>Out of the box, Hippo ECM provides Document Management functionalities that allows
-                users to share and collaborate on documents. Hippo ECM extends standard Document
-                Management functionalities by allowing users to organize all information in a way
-                that is most useful to themselves or to the group they participate in, without
-                forcing anyone to use a certain predefined structure.</p>
-            <p> By using the Hippo ECM Faceted interface, anyone can start adding documents in no
-                time without having to worry about the structure in which information should be
-                stored. </p>
-        </section>
+        <p>Hippo ECM can be used in a wide variety of cases, and can be tailored where needed. Hippo
+          does not enforce structure, although it does bring clarity in the enormous amount of
+          content that users have to cope with on a day to day basis. Some of the most common usages
+          are listed in this section. </p>
+      </subsection>
 
-        <section name="Using Hippo ECM for Web Content Management"> </section>
+      <subsection name="Using Hippo ECM for Document Management">
+        <p>Out of the box, Hippo ECM provides Document Management functionalities that allows users
+          to share and collaborate on documents. Hippo ECM extends standard Document Management
+          functionalities by allowing users to organize all information in a way that is most useful
+          to themselves or to the group they participate in, without forcing anyone to use a certain
+          predefined structure.</p>
+        <p> By using the Hippo ECM Faceted interface, anyone can start adding documents in no time
+          without having to worry about the structure in which information should be stored. </p>
+      </subsection>
 
-    </body>
+      <subsection name="Using Hippo ECM for Web Content Management"> </subsection>
+
+    </section>
+
+  </body>
 </document>

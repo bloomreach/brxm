@@ -1,30 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License"); 
+  you may not use this file except in compliance with the License. 
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" 
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and 
+  limitations under the License.
+-->
 <document>
     <properties>
-        <author>Hippo</author>
         <title>Configuration</title>
     </properties>
-    <head>
-        <meta />
-    </head>
     <body>
         <section name="SearchIndex configuration">
             <p>
                 The SearchIndex element is part of the Workspace configuration. See <a href="workspace.html">Workspace</a> for 
-                a minimal SearchIndex configuration. 
-                <br/> 
-                See 
-                <br/>
-                <a href="http://wiki.apache.org/jackrabbit/Search">http://wiki.apache.org/jackrabbit/Search</a> for the JackRabbit wiki about JackRabbit
-                SearchIndex configuration,
-                <br/> 
-                and 
-                <br/>
-                <a href="http://wiki.apache.org/jackrabbit/IndexingConfiguration">http://wiki.apache.org/jackrabbit/IndexingConfiguration</a> for the 
+                a minimal SearchIndex configuration. See 
+            </p>
+            <p>
+                <a href="http://wiki.apache.org/jackrabbit/Search">http://wiki.apache.org/jackrabbit/Search</a>
+            </p>
+            <p>
+                for the JackRabbit wiki about JackRabbit SearchIndex configuration, and 
+            </p>
+            <p>
+                <a href="http://wiki.apache.org/jackrabbit/IndexingConfiguration">http://wiki.apache.org/jackrabbit/IndexingConfiguration</a>
+            </p>
+            <p>
+                for the 
                 JackRabbit wiki about the JackRabbit IndexingConfigurationImpl.
+            </p>
                 
-                <br/><br/>
-                This page elaborates a little on "best practice" SearchIndex params, the custom Hippo Repository 
+            <p>
+                This page elaborates on "best practice" SearchIndex params, the custom Hippo Repository 
                 ServicingSearchIndex, and the custom Hippo Repository ServicingIndexingConfigurationImpl. 
             </p>
             <p>
