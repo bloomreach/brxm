@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -42,7 +45,6 @@
                 This page elaborates on "best practice" SearchIndex params, the custom Hippo Repository 
                 ServicingSearchIndex, and the custom Hippo Repository ServicingIndexingConfigurationImpl. 
             </p>
-            <p>
                 <subsection name="SearchIndex Configuration">
                     <p>
                         For M1, the minimal SearchIndex configuration looks like (for M2, the indexingConfiguration will probably 
@@ -80,22 +82,21 @@
                     </p>
                     <p>
                         Two other interesting SearchIndex params are
-                        <ol>
-                            <li>textFilterClasses  : Sets the list of text filters (and text extractors) to use for extracting text content 
-                            from binary properties. The list must be comma (or whitespace) separated, and contain 
-                            fully qualified class names of the TextFilter (and since 1.3 TextExtractor ) classes to 
-                            be used. The configured classes must all have a public default constructor.
-                            </li>
-                            <li> analyzer: Default, JackRabbit ships with a JackrabbitAnalyzer. The analyzer configured 
-                                in &lt;param name="analyzer" value="..."&gt; is used as default text analyzer. If needed, this 
-                                analyzer can be replaced by for example org.apache.lucene.analysis.Analyzer.GermanAnalyzer for
-                                german texts. 
-                                At <a href="http://wiki.apache.org/jackrabbit/IndexingConfiguration">IndexingConfiguration</a> at the bottom,
-                                there is described how to set different analyzers per property.
-                            </li>
-                        </ol>
-                        
                     </p>
+                    <ol>
+                        <li>textFilterClasses  : Sets the list of text filters (and text extractors) to use for extracting text content 
+                        from binary properties. The list must be comma (or whitespace) separated, and contain 
+                        fully qualified class names of the TextFilter (and since 1.3 TextExtractor ) classes to 
+                        be used. The configured classes must all have a public default constructor.
+                        </li>
+                        <li> analyzer: Default, JackRabbit ships with a JackrabbitAnalyzer. The analyzer configured 
+                            in &lt;param name="analyzer" value="..."&gt; is used as default text analyzer. If needed, this 
+                            analyzer can be replaced by for example org.apache.lucene.analysis.Analyzer.GermanAnalyzer for
+                            german texts. 
+                            At <a href="http://wiki.apache.org/jackrabbit/IndexingConfiguration">IndexingConfiguration</a> at the bottom,
+                            there is described how to set different analyzers per property.
+                        </li>
+                    </ol>
                     <p>
                         At the moment of this writing we have forceConsistencyCheck, enableConsistencyCheck and autoRepair set to true.
                         Still needed investigation wether this is needed.
@@ -152,7 +153,6 @@
                     a document as a <i>facet</i> value. 
                     Currently, some JCR properties are indexed as facet, and some are never. See below:
                     </p>
-                    <p>
                     <table>
                         <tr>
                             <th>property</th>
@@ -195,20 +195,19 @@
                             <td>NO</td>
                         </tr>
                     </table>
-                    </p>
                     <p>
                         <b>Future:</b><br/>
                         The indexing_configuration might be extended to support (multiple) formatting of 
                         dates/long/string. 
                         <br/>
                         For example define:
-                        <ol>
-                            <li>Define the type of property for conversion to String and back</li>
-                            <li>Double/Long/Date granularity for effective range searches</li>
-                            <li>Date formatting option to index a Date property as weeknumber for example (yyyyWW)</li>
-                            <li>max string length for facet</li>
-                        </ol>
                     </p>
+                    <ol>
+                        <li>Define the type of property for conversion to String and back</li>
+                        <li>Double/Long/Date granularity for effective range searches</li>
+                        <li>Date formatting option to index a Date property as weeknumber for example (yyyyWW)</li>
+                        <li>max string length for facet</li>
+                    </ol>
                     <p>   
                         The first option is probably quite essential and must be implemented.
                         Obviously, the other parameters might be considered as tuning performance, becoming important for >10.000.000
@@ -222,6 +221,7 @@
                         Date formatting indexing options might be very useful if for example faceted navigation is wanted 
                         on something like year-month-weeknumber basis, on a single Date property. Configuration might for example
                         look like
+                    </p>
                         <source>
 NOT YET AVAILABLE:
 &lt;facets&gt;
@@ -238,7 +238,7 @@ or for single property to multiple facets
     &lt;/property&gt;
 &lt;/facets&gt;
                         </source>
-                        
+                    <p>    
                         <b>Note:</b>
                         If these option become available, do realize that after changing the indexing_configuration 
                         re-indexing must be done for the entire workspace. Deleting the workspace index and restarting
@@ -247,8 +247,6 @@ or for single property to multiple facets
                     
                 </subsection>
                 
-            </p> 
-             
         </section>       
     </body>
 </document>

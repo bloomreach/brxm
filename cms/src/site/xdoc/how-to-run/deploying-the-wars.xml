@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -41,7 +44,7 @@
             
             <subsection name="Download the wars">
                 Currently there are no pre-built WARs available and a 
-                <a href="../extending-hippo-ecm/building/maven.html" alt="building from source">source build</a>
+                <a href="../extending-hippo-ecm/building/maven.html" title="building from source">source build</a>
                 is required to run Hippo ECM.
             </subsection>
             

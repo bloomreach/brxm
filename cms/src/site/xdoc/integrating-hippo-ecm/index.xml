@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -21,14 +24,11 @@
     <body>
       <section name="Integrating Hippo ECM">
         
-        <p>
-          <ul>
-            <li>
-              <a href="demo-on-interfacing-with-hippo-repository.html">Demo on interfacing with Hippo ECM Repository</a>
-            </li>
-          </ul>
-        </p>
-        
+        <ul>
+          <li>
+            <a href="demo-on-interfacing-with-hippo-repository.html">Demo on interfacing with Hippo ECM Repository</a>
+          </li>
+        </ul>
         
       </section>
     </body>

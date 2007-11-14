@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -85,13 +88,15 @@
         </section>
 
         <section name="Create Eclipse projects">
+            <div style="border:1px solid black; padding:1em;">
+              <p>
+                  WARNING: Make sure that there is no .project file in the toplevel (hippo-ecm) directory
+                  before proceding. If there is one the eclipse import projects wizard will fail.
+              </p>
+            </div>
             <p>
                 Generate eclipse project files
             </p>
-            <dl>
-                WARNING: Make sure that there is no .project file in the toplevel (hippo-ecm) directory
-                before proceding. If there is one the eclipse import projects wizard will fail.
-            </dl>
             <source>
 ~/> cd hippo-ecm
 ~/hippo-ecm> mvn install                

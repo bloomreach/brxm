@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -22,7 +25,7 @@
         <section name="Repository based Authentication">
             The repository can be configured to store the users as nodes inside the repository itself. 
             To achieve this the RepositoryLoginModule is configured in the <code>repository.xml</code> in the Security section.
-            The authentication module is based on <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" alt="Sun JAAS">JAAS</a>. 
+            The authentication module is based on <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" title="Sun JAAS">JAAS</a>. 
             By default this moduled is enabled.
 <source>
 &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
@@ -51,6 +54,7 @@
                 The users are stored in the repository as childeren of the node 
                 <code>/configuration/users</code>.
                 A user node has the following configuration:
+            </p>
 <source>
 &lt;sv:node sv:name="johndoe"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
@@ -61,8 +65,9 @@
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
-            </p>
-            The password is currently stored in plain text. This will change in the near future. 
+          <p>
+            The password is currently stored in plain text. This will change in the near future.
+          </p> 
         </section>
     </body>
 </document>

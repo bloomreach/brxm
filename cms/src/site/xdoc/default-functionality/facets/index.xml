@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -22,10 +25,10 @@
         <section name="Hippo ECM facets">
           <p>
             The Hippo Repository is built on top of
-            <a href="http://jackrabbit.apache.org/" alt="Apache Jackrabbit">Apache Jackrabbit</a>.
+            <a href="http://jackrabbit.apache.org/" title="Apache Jackrabbit">Apache Jackrabbit</a>.
             The Hippo Repository adds extra functionality to the default Jackrabbit distribution while
             keeping full compliance with the JCR 1.0
-            <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" alt="JSR 170">JSR 170</a>.
+            <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
             The main added features are facets, virtual nodes and workflow.
           </p>
         </section>
@@ -50,6 +53,7 @@
                 Facets are defined by nodes of type <code>hippo:facetsearch</code>.  These nodes will
                 form the root of the virtual folder structure.  They have the following JCR properties:
               </p>
+              <dl>
                   <dt>hippo:queryname</dt>
                   <dd>This property contains the name of the query.  It is used to ...</dd>
                   <dt>hippo:docbase</dt>
@@ -62,6 +66,7 @@
                     This multivalued property contains the names of the properties that will be 
                     comprise the virtual folder structure.
                   </dd>
+              </dl>
             </subsection>
 
             <subsection name="Screencast">
@@ -69,7 +74,7 @@
                 A screenshot showing off the faceted navigation features can be found on Arj&#233; Cahn's blog
                 posting 11/09/2007 with embedded screencast:<br />
                 <a href="http://blogs.hippo.nl/arje/2007/09/status_update_defining_facets.html">
-                  <img src="../../images/facets-screenshot.jpg" width="421" height="410" />
+                  <img src="../../images/facets-screenshot.jpg" width="421" height="410" alt="Facets screenshot" />
                 </a>
               </p>
             </subsection>
