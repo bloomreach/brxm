@@ -14,12 +14,12 @@
   See the License for the specific language governing permissions and 
   limitations under the License.
 -->
-<site name="Hippo ECM">
+<project name="Hippo ECM">
   
   <bannerLeft>
-    <name>Hippo ECM project documention</name>
-    <src>http://wiki.hippo.nl/download/userResources/logo</src>
-    <href>http://www.hippoecm.org/</href>
+    <name>Hippo ECM</name>
+    <src>/images/style/hippo-logo.gif</src>
+    <href>/</href>
   </bannerLeft>
   
   <body>
@@ -100,4 +100,4 @@
 
   </body>
   
-</site>
+</project>
