@@ -75,6 +75,39 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
         super.close();
         initialized = false;
     }
+    
+    protected boolean canAccessItem(ItemId id, int permissions) {
+        for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
+            String username = principal.getName();
+            // FIXME: here the username could be used to determin the role
+            // and allow or deny access
+        }
+
+        // FIXME Current simple implementation to be removed for M2 or M3 at the latest.
+        try {
+            ItemState itemState = ((HippoHierarchyManager)hierMgr).getItemState(id);
+            if(itemState.isNode()) {
+                NodeState nodeState = (NodeState) itemState;
+                if(anonymous) {
+                    Name typeName = nodeState.getNodeTypeName();
+                    if(typeName.getNamespaceURI().equals("http://www.hippoecm.org/nt/1.0")
+                            && typeName.getLocalName().equals("workflow")) {
+                        return false;
+                    }
+                }
+                for(Object mixin : nodeState.getMixinTypeNames()) {
+                    Name mixinName = (Name) mixin;
+                    if(mixinName.getNamespaceURI().equals("http://www.hippoecm.org/nt/1.0")
+                            && mixinName.getLocalName().equals("restricted")) {
+                        return false;
+                    }
+                }
+            }
+        } catch(NoSuchItemStateException ex) {
+        } catch(ItemStateException ex) {
+        }
+        return true; // FIXME: should default be false
+    }
 
     /**
      * {@inheritDoc}
@@ -92,26 +125,9 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
         }
 
         super.checkPermission(id, permissions);
-
-        for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
-            String username = principal.getName();
-            // FIXME: here the username could be used to determin the role
-            // and allow or deny access
-        }
-
-        // FIXME Current simple implementation to be removed for M2.
-        try {
-            ItemState itemState = ((HippoHierarchyManager)hierMgr).getItemState(id);
-            if(itemState.isNode()) {
-                NodeState nodeState = (NodeState) itemState;
-                for(Object mixin : nodeState.getMixinTypeNames()) {
-                    Name mixinName = (Name) mixin;
-		    if((mixinName.getNamespaceURI() + ":" + mixinName.getLocalName()).equals("{http://www.hippoecm.org/nt/1.0}restricted"))
-                        throw new AccessDeniedException();
-                }
-            }
-        } catch(NoSuchItemStateException ex) {
-        } catch(ItemStateException ex) {
+        
+        if(!canAccessItem(id, permissions)) {
+            throw new AccessDeniedException();
         }
     }
 
@@ -131,39 +147,8 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
 
         if(super.isGranted(id, permissions) == false)
             return false;
-
-        for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
-            String username = principal.getName();
-            // FIXME: here the username could be used to determin the role
-            // and allow or deny access
-        }
-
-        // FIXME Current simple implementation to be removed for M2 or M3 at the latest.
-        try {
-            ItemState itemState = ((HippoHierarchyManager)hierMgr).getItemState(id);
-            if(itemState.isNode()) {
-                NodeState nodeState = (NodeState) itemState;
-                if(anonymous) {
-                    Name typeName = nodeState.getNodeTypeName();
-                    System.out.println("NS: " + typeName.getNamespaceURI() + ", local: " + typeName.getLocalName());
-                    if(typeName.getNamespaceURI().equals("http://www.hippoecm.org/nt/1.0")
-                            && typeName.getLocalName().equals("workflow")) {
-                        return false;
-                    }
-                }
-                for(Object mixin : nodeState.getMixinTypeNames()) {
-                    Name mixinName = (Name) mixin;
-                    if(mixinName.getNamespaceURI().equals("http://www.hippoecm.org/nt/1.0")
-                            && mixinName.getLocalName().equals("restricted")) {
-                        return false;
-                    }
-                }
-            }
-        } catch(NoSuchItemStateException ex) {
-        } catch(ItemStateException ex) {
-        }
-
-        return true; // FIXME: should default be false
+        
+        return canAccessItem(id, permissions);
     }
 
     /**
