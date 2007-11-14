@@ -143,10 +143,20 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
             ItemState itemState = ((HippoHierarchyManager)hierMgr).getItemState(id);
             if(itemState.isNode()) {
                 NodeState nodeState = (NodeState) itemState;
+                if(anonymous) {
+                    Name typeName = nodeState.getNodeTypeName();
+                    System.out.println("NS: " + typeName.getNamespaceURI() + ", local: " + typeName.getLocalName());
+                    if(typeName.getNamespaceURI().equals("http://www.hippoecm.org/nt/1.0")
+                            && typeName.getLocalName().equals("workflow")) {
+                        return false;
+                    }
+                }
                 for(Object mixin : nodeState.getMixinTypeNames()) {
                     Name mixinName = (Name) mixin;
-		    if((mixinName.getNamespaceURI() + ":" + mixinName.getLocalName()).equals("{http://www.hippoecm.org/nt/1.0}restricted"))
+                    if(mixinName.getNamespaceURI().equals("http://www.hippoecm.org/nt/1.0")
+                            && mixinName.getLocalName().equals("restricted")) {
                         return false;
+                    }
                 }
             }
         } catch(NoSuchItemStateException ex) {
