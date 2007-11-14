@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -260,11 +263,11 @@ mvn jetty:run-war
           Now change the class name
           in the hippo:renderer property of this node to org.example.helloworld.HelloWorldPlugin.
         </p>
-        <img src="../images/configure-hello-world-plugin.jpg" style="border:1px solid grey;"/>
+        <img src="../images/configure-hello-world-plugin.jpg" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
         <p>
           Refresh your browser, and admire your work!
         </p>
-        <img src="../images/hello-world-plugin.jpg"  style="border:1px solid grey;"/>
+        <img src="../images/hello-world-plugin.jpg" alt="Hello World screenshot"  style="border:1px solid grey;"/>
       </subsection>
       
     </section>
