@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -16,12 +19,8 @@
 -->
 <document>
     <properties>
-        <author>Hippo</author>
         <title>Future</title>
     </properties>
-    <head>
-        <meta/>
-    </head>
     <body>
         <section name="Roadmap of Hippo ECM"> </section>
 
@@ -37,8 +36,8 @@
             <subsection name="Central point for information management">
                 <p> Hippo ECM will act as a central point for information management, with its main
                     focus on a generic content repository that allows for integration with a diverse
-                    set of applications. <br clear="both"/>
-                    <img src="../images/roadmap-medium.jpg"/>
+                    set of applications. <br clear="all"/>
+                    <img src="../images/roadmap-medium.jpg" alt="Roadmap"/>
                 </p>
             </subsection>
 

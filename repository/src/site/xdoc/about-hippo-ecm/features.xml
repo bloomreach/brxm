@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -16,12 +19,8 @@
 -->
 <document>
     <properties>
-        <author>Hippo</author>
         <title>Features</title>
     </properties>
-    <head>
-        <meta/>
-    </head>
     <body>
         <section name="Features"> 
             <p>

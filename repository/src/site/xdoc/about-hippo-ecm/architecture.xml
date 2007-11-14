@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -21,31 +24,31 @@
     <body>
       <section name="Hippo ECM Architecture">
         <subsection name="Overview">
-          <img src="../images/components-architecture.jpg"/>
+          <img src="../images/components-architecture.jpg" alt="Architecture"/>
           <p>
             Hippo Repository consists of three main layers, as illustrated in the diagram above.
-            <ul>
-              <li>
-                The <b>green</b> layer is the 
-                API layer. All applications that are connected to the Hippo Repository use these APIs to 
-                communicate with the Hippo Repository. 
-              </li>
-              <li>
-                The <b>blue</b> layer represents 
-                the main engine. The blue layer is where all the logic is done.
-              </li>
-              <li>
-                The <b>yellow</b> layer represents the persistence layer, consisting of a database and a 
-                lucene index. This is where all the actual data is stored.                      
-              </li>
-            </ul> 
           </p>
+          <ul>
+            <li>
+              The <b>green</b> layer is the 
+              API layer. All applications that are connected to the Hippo Repository use these APIs to 
+              communicate with the Hippo Repository. 
+            </li>
+            <li>
+              The <b>blue</b> layer represents 
+              the main engine. The blue layer is where all the logic is done.
+            </li>
+            <li>
+              The <b>yellow</b> layer represents the persistence layer, consisting of a database and a 
+              lucene index. This is where all the actual data is stored.                      
+            </li>
+          </ul> 
         </subsection>
         
         <subsection name="JCR 1.0 API">
           <p>
             The JCR 1.0 API is a fully compliant with 
-            <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" alt="JSR 170">JSR 170</a>.
+            <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
           </p>    
         </subsection>
         
@@ -114,19 +117,19 @@
           </p>
           <p>
             Some of the possible searches through Lucene that are enabled are listed below
-            <ol>
-              <li>and/not/or queries</li>
-              <li>faceted searching</li>
-              <li>phrase queries</li>
-              <li>wildcard queries</li>
-              <li>proximity queries</li>
-              <li>fuzzy queries</li>
-              <li>range queries</li>
-              <li>synonym searches</li>
-              <li>similarity searches</li>
-              <li>spellchecker / did you mean</li>
-            </ol> 
           </p>
+          <ol>
+            <li>and/not/or queries</li>
+            <li>faceted searching</li>
+            <li>phrase queries</li>
+            <li>wildcard queries</li>
+            <li>proximity queries</li>
+            <li>fuzzy queries</li>
+            <li>range queries</li>
+            <li>synonym searches</li>
+            <li>similarity searches</li>
+            <li>spellchecker / did you mean</li>
+          </ol> 
         </subsection>
       </section>
         
