@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -36,11 +39,10 @@
                 the SearchIndex class and indexingConfigurationClass. See <a href="searchindex.html">Search Index</a> for
                 explanation of all &lt;SearchIndex&gt; parameters.  
             </p>
-            <p>
-                <subsection name="Workspace Configuration">
-                    <p>
-                        The minimal Hippo Repository workspace configuration looks like:
-                    </p>
+            <subsection name="Workspace Configuration">
+                <p>
+                    The minimal Hippo Repository workspace configuration looks like:
+                </p>
 <source>
 &lt;Workspace name="${wsp.name}"&gt;
     &lt;FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem"&gt;
@@ -56,8 +58,7 @@
     &lt;/SearchIndex&gt;
 &lt;/Workspace&gt;
 </source>
-                </subsection>
-            </p> 
+            </subsection>
             <p>
                 <b>Note:</b>
                 <br/>

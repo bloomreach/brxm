@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -21,23 +24,20 @@
     <body>
       <section name="Building Hippo ECM">
         
-        <p>
-          <ul>
-            <li>
-              <a href="project-structure.html">Project structure</a>
-            </li>
-            <li>
-              <a href="maven.html">Building with Maven</a>
-            </li>
-            <li>
-              <a href="eclipse.html">Building with Eclipse</a>
-            </li>
-            <li>
-              <a href="netbeans.html">Building with Netbeans</a>
-            </li>
-          </ul>
-        </p>
-        
+        <ul>
+          <li>
+            <a href="project-structure.html">Project structure</a>
+          </li>
+          <li>
+            <a href="maven.html">Building with Maven</a>
+          </li>
+          <li>
+            <a href="eclipse.html">Building with Eclipse</a>
+          </li>
+          <li>
+            <a href="netbeans.html">Building with Netbeans</a>
+          </li>
+        </ul>
         
       </section>
     </body>

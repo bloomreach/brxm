@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -15,6 +18,9 @@
   limitations under the License.
 -->
 <document>
+  <properties>
+    <title>Workflow configuration</title>
+  </properties>
 <body>
 
 <section name="Workflow configuration">

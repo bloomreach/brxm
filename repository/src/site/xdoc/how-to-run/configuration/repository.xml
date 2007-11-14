@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -38,16 +41,18 @@
                 
                 <br/>
                 it consists of
-            
-                <ul>
-                    <li><a href="#FileSystem element">FileSystem element</a></li>
-                    <li><a href="#Security element">Security element</a></li>
-                    <li><a href="#Workspaces root directory element">Workspaces root directory element</a></li>
-                    <li><a href="#Workspace element">Workspace element</a></li>
-                    <li><a href="#Versioning element">Versioning element</a></li>
-                    <li><a href="#SearchIndex element">SearchIndex element</a></li>
-                </ul>
+            </p>
+            <ul>
+                <li><a href="#FileSystem element">FileSystem element</a></li>
+                <li><a href="#Security element">Security element</a></li>
+                <li><a href="#Workspaces root directory element">Workspaces root directory element</a></li>
+                <li><a href="#Workspace element">Workspace element</a></li>
+                <li><a href="#Versioning element">Versioning element</a></li>
+                <li><a href="#SearchIndex element">SearchIndex element</a></li>
+            </ul>
+            <p>
                 The configuration file has the following overall outline:
+            </p>
 <source>
 &lt;Repository&gt;
     &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
@@ -74,7 +79,6 @@
     &lt;/Versioning&gt;
 &lt;/Repository&gt;
 </source>
-            </p>
             <p>
                 The XML attribute values in the configuration file are interpreted as plain strings 
                 except for a few special variables, namely ${rep.home}, ${wsp.name} and ${wsp.home}.
