@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
   
@@ -24,10 +27,10 @@
       <subsection name="Hippo Repository">
         <p> 
           Hippo Repository is built on top of <a href="http://jackrabbit.apache.org/"
-            alt="Apache Jackrabbit">Apache Jackrabbit</a>. Hippo Repository adds extra
+            title="Apache Jackrabbit">Apache Jackrabbit</a>. Hippo Repository adds extra
           fuctionality to the default Jackrabbit distribution while keeping full compliance with the
           JCR 1.0 <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html"
-            alt="JSR 170">JSR 170</a>. The main added features are facets, virtual nodes and
+            title="JSR 170">JSR 170</a>. The main added features are facets, virtual nodes and
           workflow. 
         </p>
       </subsection>
@@ -59,11 +62,11 @@
         </p>
         <p> 
           Sample applications: 
-          <ul>
-            <li>Wicket application</li>
-            <li>Document importer</li>
-          </ul>
         </p>
+        <ul>
+          <li>Wicket application</li>
+          <li>Document importer</li>
+        </ul>
       </subsection>
     </section>
   </body>
