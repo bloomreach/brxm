@@ -23,7 +23,7 @@
     </properties>
     <body>
       
-      <section name="Building with Eclipse"></section>
+        <section name="Building with Eclipse"></section>
 
         <section name="Prepare">
             <p>
@@ -32,7 +32,7 @@
             </p>
         </section>
 
-        <section name="Configure Eclipse">
+        <section name="Install plugins">
             <p>Install the Eclipse Subversion Plugin</p>
             <ol>
                 <li>Help -&gt; Software Updates -&gt; Find and Install...</li>
@@ -80,6 +80,7 @@
                 <li>Finish the wizard</li>
                 <li>Window -&gt; Preferences</li>
                 <li>Select JPOX Eclipse Plugin -&gt; General</li>
+                <li>Uncheck 'Use project classpath when running tools'</li>
 		        <li>Add the jars for jpox-core, jpox-enhancer and bcel to the classpath.  Currently
                     the version 1.2.0-beta-2 is used for JPOX and 5.1 for BCEL; to maintain
                     consistency with the maven build, check these values in the jpox-maven-plugin
@@ -88,18 +89,16 @@
         </section>
 
         <section name="Create Eclipse projects">
-            <div style="border:1px solid black; padding:1em;">
-              <p>
-                  WARNING: Make sure that there is no .project file in the toplevel (hippo-ecm) directory
-                  before proceding. If there is one the eclipse import projects wizard will fail.
-              </p>
-            </div>
+            <p style="bgcolor: yellow;">
+                WARNING: Make sure that there is no .project file in the toplevel (hippo-ecm) directory
+                before proceding. If there is one the eclipse import projects wizard will fail.
+            </p>
             <p>
                 Generate eclipse project files
             </p>
             <source>
 ~/> cd hippo-ecm
-~/hippo-ecm> mvn install                
+~/hippo-ecm> mvn clean
 ~/hippo-ecm> mvn eclipse:eclipse
             </source>
             <ol>
@@ -113,7 +112,50 @@
                 <li>All hippo-ecm projects should be listed</li>
                 <li>Press 'Finish'</li>
             </ol>
+            <subsection name="Fix dependencies">
+                <p>
+                    There is a bug in the maven eclipse plugin; maven dependencies of type war are not converted to
+                    eclipse project depencies.  These dependencies have to be set manually.
+                </p>
+                <ol>
+                    <li>Open project hippo-ecm-application-reviewed-action-repository</li>
+                    <li>In the configuration panel (Project -&gt; Properties), select 'Java Build Path'</li>
+                    <li>Under tab 'Projects', add hippo-ecm-repository-application</li>
+                    <li>Repeat the procedure to add project hippoecm-frontend-application as a requirement
+                        for hippo-ecm-application-reviewed-action-frontend</li>
+                </ol>
+            </subsection>
         </section>
+
+        <section name="Configure plugins for projects">
+            <subsection name="RMI">
+                <p>
+                    For projects that provide objects that can be accessed remotely,
+                    (hippo-ecm-repository-engine, hippo-ecm-repository-application,
+                    hippo-ecm-addon-sample-repository, hippo-ecm-addon-reviewed-action-repository)
+                    stubs must be created by rmic.  The plugin can be used to do this:
+                </p>
+                <ol>
+                    <li>right-click project -&gt; RMI -&gt; Enable Stubs generation</li>
+                </ol>
+            </subsection>
+            <subsection name="JPOX">
+                <p>
+                    This is only required for Eclipse 3.2, in version 3.3 JPOX bytecode enhancement
+                    is enabled by default.
+                </p>
+                <p>
+                    Projects that provide document types (hippoecm-repository-engine,
+                    hippo-ecm-addon-sample-repository, hippo-ecm-addon-reviewed-action-repository)
+                    must be enhanced by the JPOX plugin:
+                </p>
+                <ol>
+                    <li>Right-click the project -&gt; JPOX -&gt; Add JPOX Support</li>
+                    <li>Right-click -&gt; JPOX -&gt; Enable Auto-Enhancement</li>
+                </ol>
+            </subsection>
+        </section>
+
 
         <section name="Jetty launcher">
             <p>
@@ -121,57 +163,46 @@
                 launcher configurations</a> for the projects
                 hippo-ecm-application-reviewed-action-repository and
                 hippo-ecm-application-reviewed-action-frontend.
-                As a convention use port 8081 for the repository and 8082 for the frontend.
+                As a convention port 8081 is used for the repository and 8082 for the frontend.
             </p>
-        </section>
+            <p>
+                Additional configuration is necessary to enable RMI.
+            </p>
 
-        <section name="Manual configuration update">
             <subsection name="Repository application">
-                <p>Update the repository application config update:</p>
+                <p>Update the repository application configuration:</p>
                 <ol>
                     <li>Open the debug configuration panel (e.g. Run -&gt; Debug)</li>
                     <li>Set the webapp dir to src/main/webapp</li>
                     <li>Set the port to 8081</li>
-                    <li>Add <code>-Djava.rmi.server.codebase="file://&lt;path-to-jackrabbit&gt;/jackrabbit-jcr-rmi-1.4.jar file://&lt;path-to-jcr&gt;/jcr-1.0.jar file://&lt;add-on-project&gt;/target/classes/"</code>
-                      to the VM Arguments (tab "Arguments").  Use full local filesystem paths, e.g. file:///home/developer/.m2/repository/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4-r593117/jackrabbit-jcr-rmi-1.4-r593117.jar.</li>
+                    <li>Select the 'Arguments' tab</li>
+                    <li>Define the variable <code>m2_loc</code> (Variables -&gt; Edit -&gt; New)
+                        as the path to the local maven repository (e.g. /home/user/.m2/repository on Unix systems)</li>
+                    <li>Define the variable <code>ecm_loc</code> as the path of the toplevel directory
+                        (e.g. /home/user/hippo-ecm)</li>
+                    <li>Add
+<source>
+-Djava.rmi.server.codebase="file://${m2_loc}/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4-r593117/jackrabbit-jcr-rmi-1.4-r593117.jar
+     file://${m2_loc}/javax/jcr/jcr/1.0/jcr-1.0.jar
+     file://${ecm_loc}/addon/reviewed-action/repository/target/classes/"
+</source>
+                        to the VM Arguments (tab "Arguments")</li>
                 </ol>
-                <p>
-                    The project hippo-ecm-repository-application must be added as a required project
-                    to hippo-ecm-application-reviewed-action-repository.  (this is due a bug in the
-                    maven eclipse plugin; maven dependencies of type war are not converted to
-                    eclipse project depencies)
-                </p>
-                <p>
-                    Projects that provide document types (hippoecm-repository-engine,
-                    hippo-ecm-addon-sample-repository, hippo-ecm-addon-reviewed-action-repository)
-                    must be enhanced by the JPOX plugin.  
-                    Right-click the project -&gt; JPOX -&gt; Add JPOX Support.  To enable
-                    auto-enhancement, right-click -&gt; JPOX -&gt; Enable Auto-Enhancement.
-                </p>
-                <p>
-                    For projects that provide objects that can be accessed remotely,
-                    (hippo-ecm-repository-engine, hippo-ecm-repository-application,
-                    hippo-ecm-addon-sample-repository, hippo-ecm-addon-reviewed-action-repository)
-                    stubs must be created by rmic.  The plugin can be used to do this; right-click
-                    project -&gt; RMI -&gt; Enable Stubs generation.
-                </p>
             </subsection>
 
             <subsection name="Frontend application">
-                <p>Update the frontend application config update:</p>
+                <p>Update the frontend application configuration:</p>
                 <ol>
                     <li>Open the debug configuration panel (e.g. Run -&gt; Debug)</li>
                     <li>Set the webapp dir to src/main/webapp</li>
                     <li>Set the port to 8082</li>
-                    <li>Add <code>-Djava.security.manager
-                      -Djava.security.policy=&lt;path-to-project&gt;/src/main/webapp/WEB-INF/client.policy</code>
+                    <li>Add
+<source>
+-Djava.security.manager
+    -Djava.security.policy=file://${ecm_loc}/application/reviewed-action/frontend/src/main/webapp/WEB-INF/client.policy
+</source>
                       to the VM Arguments (tab "Arguments")</li>
                 </ol>
-                <p>
-                    The project hippoecm-frontend-application must be added to the frontend
-                    application hippo-ecm-application-reviewed-action-frontend as a required project.
-                    (a war type dependency)
-                </p>
             </subsection>
         </section>
 
