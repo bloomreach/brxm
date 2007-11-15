@@ -45,10 +45,5 @@
     <module>testutils</module>
     <module>dropbox</module>
   </modules>
-  
-  
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
-  
+
 </project>

@@ -46,8 +46,4 @@
     <module>plugins</module>
   </modules>
   
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
-  
 </project>

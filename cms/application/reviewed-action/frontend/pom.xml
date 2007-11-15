@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Default frontend app</name>
+  <name>Reviewed action frontend app</name>
   <description>Hippo ECM reviewed action frontend application</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-reviewed-action-frontend</artifactId>
@@ -44,25 +44,24 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-application</artifactId>
-      <version>2.01.00-dev</version>
+      <version>${parent.version}</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-      <version>2.01.00-dev</version>
+      <version>${parent.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
-      <version>2.01.00-dev</version>
+      <version>${parent.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>${org.slf4j.version}</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

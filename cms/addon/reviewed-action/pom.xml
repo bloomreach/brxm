@@ -46,9 +46,5 @@
     <module>frontend</module>
     <module>test</module>
   </modules>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-  </build>
   
 </project>

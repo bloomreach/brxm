@@ -39,162 +39,12 @@
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/engine</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/engine</url>
   </scm>
-  
-  <properties>
-    <jackrabbit.version>1.4-r593117</jackrabbit.version>
-  </properties>
-  
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>1.0</version>
-      </dependency>
-      <dependency>
-        <groupId>concurrent</groupId>
-        <artifactId>concurrent</artifactId>
-        <version>1.3.4</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>3.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-api</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-jcr-commons</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-text-extractors</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-jcr-rmi</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-core</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-jcr-tests</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-webdav</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-jcr-server</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.4.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>1.4.0</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl104-over-slf4j</artifactId>
-        <version>1.4.0</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>3.0</version>
-        <!-- JCR-683: Exclude bad transitive dependencies -->
-        <exclusions>
-          <exclusion>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derby</artifactId>
-        <version>10.2.1.6</version>
-      </dependency>
-      <dependency>
-        <groupId>poi</groupId>
-        <artifactId>poi</artifactId>
-        <version>2.5.1-final-20040804</version>
-      </dependency>
-      <dependency>
-        <groupId>pdfbox</groupId>
-        <artifactId>pdfbox</artifactId>
-        <version>0.6.4</version>
-      </dependency>
-      <dependency>
-        <groupId>org.textmining</groupId>
-        <artifactId>tm-extractors</artifactId>
-        <version>0.4</version>
-      </dependency>
-      <dependency>
-        <groupId>nekohtml</groupId>
-        <artifactId>nekohtml</artifactId>
-        <version>0.9.4</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>1.0</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.3</version>
-      </dependency>
-      <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>2.8.1</version>
-      </dependency>
-      <dependency>
-        <groupId>cglib</groupId>
-        <artifactId>cglib</artifactId>
-        <version>2.1_3</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
  
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <version>1.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-      <version>1.0.1</version>
-      <scope>provided</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-core</artifactId>
@@ -206,89 +56,65 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.4.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.0</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- JCR-683: Use jcl104-over-slf4j instead of the commons-logging -->
-    <!-- dependency excluded above                                     -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl104-over-slf4j</artifactId>
-      <version>1.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jpox</groupId>
+      <artifactId>jpox-core</artifactId>
+    </dependency>
+    
+    <!-- provided -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- test -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-tools-testutils</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.01.00-dev</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
-
+    
     <!-- Testing needs a JTA implementation -->
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
-      <version>3.1.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions</artifactId>
-      <version>3.1.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
-      <version>3.1.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>atomikos-util</artifactId>
-      <version>3.1.4</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-      <version>2.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>geronimo-spec</groupId>
-          <artifactId>geronimo-spec-jta</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!-- FIXME: should not be reliant on jpox, but on general JDO -->
-    <dependency>
-      <groupId>jpox</groupId>
-      <artifactId>jpox-core</artifactId>
-      <version>1.2.0-beta-3</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.transaction</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.resource</groupId>
-          <artifactId>connector</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>geronimo-spec</groupId>
-          <artifactId>geronimo-spec-jta</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 
