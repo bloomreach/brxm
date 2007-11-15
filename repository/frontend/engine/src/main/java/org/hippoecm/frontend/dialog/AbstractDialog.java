@@ -39,6 +39,7 @@ public abstract class AbstractDialog extends WebPage {
 
         ok = new AjaxLink("ok") {
             private static final long serialVersionUID = 1L;
+            @Override
             public void onClick(AjaxRequestTarget target) {
                 try {
                     dialogWindow.setDialogResult(ok());
@@ -53,6 +54,7 @@ public abstract class AbstractDialog extends WebPage {
 
         cancel = new AjaxLink("cancel") {
             private static final long serialVersionUID = 1L;
+            @Override
             public void onClick(AjaxRequestTarget target) {
                 cancel();
                 dialogWindow.close(target);

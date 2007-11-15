@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class RequestPublicationDialog extends AbstractWorkflowDialog {
@@ -31,11 +30,13 @@ public class RequestPublicationDialog extends AbstractWorkflowDialog {
         }
     }
 
+    @Override
     protected void doOk() throws Exception {
         BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
         workflow.requestPublication();
     }
 
+    @Override
     public void cancel() {
     }
 

@@ -15,27 +15,12 @@
  */
 package org.hippoecm.repository.sample;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.rmi.RemoteException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.Value;
-import javax.jcr.ItemExistsException;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.version.VersionException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.lock.LockException;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;

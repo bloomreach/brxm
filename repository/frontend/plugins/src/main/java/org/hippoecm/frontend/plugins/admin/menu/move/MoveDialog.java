@@ -54,6 +54,7 @@ public class MoveDialog extends AbstractDialog {
         }
     }
 
+    @Override
     public JcrEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
@@ -86,6 +87,7 @@ public class MoveDialog extends AbstractDialog {
         return result;
     }
 
+    @Override
     public void cancel() {
     }
 

@@ -19,6 +19,7 @@ public class JcrNodeTypeModel extends AbstractReadOnlyModel {
         name = nodeType.getName();
     }
 
+    @Override
     public Object getObject() {
         return name;
     }
@@ -26,12 +27,14 @@ public class JcrNodeTypeModel extends AbstractReadOnlyModel {
     
     // override Object
     
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("name", name)
             .toString();
      }
     
+    @Override
     public boolean equals(Object object) {
         if (object instanceof JcrNodeTypeModel == false) {
             return false;
@@ -45,6 +48,7 @@ public class JcrNodeTypeModel extends AbstractReadOnlyModel {
             .isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(73, 217)
             .append(name)

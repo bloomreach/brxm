@@ -87,12 +87,14 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
 
     // override Object
 
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("nodeModel", nodeModel.toString())
             .toString();
     }
 
+    @Override
     public boolean equals(Object object) {
         if (object instanceof JcrPropertiesProvider == false) {
             return false;
@@ -107,6 +109,7 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
 
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
             .append(nodeModel)

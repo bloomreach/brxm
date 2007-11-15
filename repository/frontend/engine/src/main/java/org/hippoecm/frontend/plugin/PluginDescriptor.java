@@ -56,6 +56,7 @@ public class PluginDescriptor implements IClusterable {
     
     // override Object
 
+    @Override
     public String toString() {
        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
            .append("pluginId", pluginId)
@@ -64,6 +65,7 @@ public class PluginDescriptor implements IClusterable {
            .toString();
     }
     
+    @Override
     public boolean equals(Object object) {
         if (object instanceof PluginDescriptor == false) {
             return false;
@@ -79,6 +81,7 @@ public class PluginDescriptor implements IClusterable {
             .isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 313)
             .append(pluginId)

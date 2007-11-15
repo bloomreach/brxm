@@ -37,6 +37,7 @@ public class BrowserPlugin extends Plugin {
         tree = new JcrTree("tree", treeNode) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
                 JcrNodeModel jcrTreeNode = (JcrNodeModel) clickedNode;
                 JcrEvent jcrEvent = new JcrEvent(jcrTreeNode, false);

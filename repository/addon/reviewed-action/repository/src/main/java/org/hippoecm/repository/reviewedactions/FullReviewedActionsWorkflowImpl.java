@@ -18,20 +18,14 @@ package org.hippoecm.repository.reviewedactions;
 import java.util.Date;
 import java.rmi.RemoteException;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowMappingException;
-import org.hippoecm.repository.servicing.WorkflowImpl;
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
     public FullReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
+    @Override
     public void obtainEditableInstance() throws WorkflowException {
         System.err.println("obtain editable instance on document "+unpublished.getJcrIdentity());
         if(draft == null) {
@@ -47,11 +41,13 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         }
     }
 
+    @Override
     public void disposeEditableInstance() throws WorkflowException {
         System.err.println("dispose editable instance on document ");
         draft = null;
     }
 
+    @Override
     public void requestDeletion() throws WorkflowException {
         System.err.println("deletion request on document ");
         if(current == null) {
@@ -61,6 +57,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         }            
     }
 
+    @Override
     public void requestPublication() throws WorkflowException {
         System.err.println("publication request on document ");
         if(current == null) {
@@ -70,6 +67,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         }
     }
 
+    @Override
     public void requestPublication(Date publicationDate) throws WorkflowException {
         System.err.println("publication request on document ");
         if(current == null) {
@@ -79,11 +77,13 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         }
     }
 
+    @Override
     public void requestPublication(Date publicationDate, Date depublicationDate) throws WorkflowException {
         System.err.println("publication request on document ");
         throw new WorkflowException("unsupported");
     }
 
+    @Override
     public void requestDepublication() throws WorkflowException {
         System.err.println("depublication request on document ");
         if(current == null) {
@@ -93,6 +93,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         }
     }
 
+    @Override
     public void requestDepublication(Date publicationDate) throws WorkflowException {
         throw new WorkflowException("Unsupported operation");
     }

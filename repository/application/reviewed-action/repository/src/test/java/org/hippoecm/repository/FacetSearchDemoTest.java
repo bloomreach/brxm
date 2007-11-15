@@ -16,20 +16,11 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
-
 import junit.framework.TestCase;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -60,11 +51,13 @@ public class FacetSearchDemoTest extends TestCase {
         }
     }
 
+    @Override
     public void setUp() throws Exception {
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
     }
 
+    @Override
     public void tearDown() throws Exception {
         session.save();
         if(session != null) {

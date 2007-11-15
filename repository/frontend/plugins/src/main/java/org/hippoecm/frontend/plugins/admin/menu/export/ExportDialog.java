@@ -64,10 +64,12 @@ public class ExportDialog extends AbstractDialog {
         cancel.setVisible(false);
     }
 
+    @Override
     public JcrEvent ok() {
         return new JcrEvent(dialogWindow.getNodeModel(), false);
     }
 
+    @Override
     public void cancel() {
     }
 

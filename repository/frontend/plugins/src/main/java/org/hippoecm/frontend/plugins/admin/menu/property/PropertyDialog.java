@@ -39,9 +39,11 @@ public class PropertyDialog extends AbstractDialog {
         
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
             private static final long serialVersionUID = 1L;
+            @Override
             protected boolean wantOnSelectionChangedNotifications() {
                 return true;
             }
+            @Override
             protected void onSelectionChanged(Object newSelection) {
                 setMultiple((Boolean)newSelection);
             }
@@ -53,6 +55,7 @@ public class PropertyDialog extends AbstractDialog {
         }
     }
 
+    @Override
     public JcrEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         if (isMultiple.booleanValue()) {
@@ -66,6 +69,7 @@ public class PropertyDialog extends AbstractDialog {
         return new JcrEvent(nodeModel, false);
     }
 
+    @Override
     public void cancel() {
     }
 

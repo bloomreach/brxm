@@ -50,6 +50,7 @@ public class LoginDialog extends AbstractDialog {
         add(new PasswordLabel("password", new PropertyModel(credentials, "password")));
     }
 
+    @Override
     public JcrEvent ok() throws Exception {
         String username = credentials.getString("username");
         String password = credentials.getString("password");
@@ -68,6 +69,7 @@ public class LoginDialog extends AbstractDialog {
         return new JcrEvent(nodeModel, true);
     }
 
+    @Override
     public void cancel() {
         credentials = oldCredentials;
     }

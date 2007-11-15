@@ -30,11 +30,13 @@ public class PublishDialog extends AbstractWorkflowDialog {
         }
     }
 
+    @Override
     protected void doOk() throws Exception {
         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
         workflow.publish();
     }
 
+    @Override
     public void cancel() {
     }
 

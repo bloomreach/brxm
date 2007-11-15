@@ -37,6 +37,7 @@ public class PropertiesEditor extends DataView {
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
 
+    @Override
     protected void populateItem(Item item) {
         JcrPropertyModel model = (JcrPropertyModel) item.getModel();
         if (model.getProperty() != null) {
@@ -71,6 +72,7 @@ public class PropertiesEditor extends DataView {
         } else {
             result = new AjaxLink(id, model) {
                 private static final long serialVersionUID = 1L;
+                @Override
                 public void onClick(AjaxRequestTarget target) {
                     try {
                         Property prop = model.getProperty();
@@ -90,6 +92,7 @@ public class PropertiesEditor extends DataView {
     private AjaxLink addLink(String id, final JcrPropertyModel model) {
         return new AjaxLink(id, model) {
             private static final long serialVersionUID = 1L;
+            @Override
             public void onClick(AjaxRequestTarget target) {
                 try {
                     Property prop = model.getProperty();

@@ -19,7 +19,6 @@ import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
 public class RejectRequestDialog extends AbstractWorkflowDialog {
@@ -37,11 +36,13 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
         }
     }
 
+    @Override
     protected void doOk() throws Exception {
         FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
         workflow.rejectRequest(reason);
     }
 
+    @Override
     public void cancel() {
     }
 

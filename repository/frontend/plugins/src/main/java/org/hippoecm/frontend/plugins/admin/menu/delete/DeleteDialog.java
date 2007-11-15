@@ -43,6 +43,7 @@ public class DeleteDialog extends AbstractDialog {
         }
     }
 
+    @Override
     public JcrEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         nodeModel.getNode().remove();
@@ -51,6 +52,7 @@ public class DeleteDialog extends AbstractDialog {
         return new JcrEvent(parentModel, true);
     }
 
+    @Override
     public void cancel() {
     }
 

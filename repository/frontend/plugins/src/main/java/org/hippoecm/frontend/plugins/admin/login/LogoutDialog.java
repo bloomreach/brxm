@@ -37,9 +37,11 @@ public class LogoutDialog extends AbstractDialog {
         add(new Label("logout-message", "Do you want to logout?"));
     }
 
+    @Override
     protected void cancel() {
     }
 
+    @Override
     protected JcrEvent ok() throws Exception {
         Main main = (Main) Application.get();
         HippoRepository repository = main.getRepository();
