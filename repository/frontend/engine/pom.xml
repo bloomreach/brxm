@@ -40,71 +40,38 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/frontend/engine</url>
   </scm>
   
-  <properties>
-    <wicket.version>1.3.0-rc1</wicket.version>
-  </properties>
-  
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>1.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  
-  <dependencies>     
-    <!-- 
-    Hippo repository
-    TODO shouldn't this be hippo-ecm-api + jcr-api ?
-    -->
+  <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.01.00-dev</version>
+      <version>${parent.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.01.00-dev</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <!-- Wicket web gui toolkit-->
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket</artifactId>
-      <version>${wicket.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-extensions</artifactId>
-      <version>${wicket.version}</version>
     </dependency>
-    
-    <!--common stuff-->
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
+    
+    <!-- provided -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-    </dependency>
-    
-    <!-- only for testing-->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-      <version>1.0.1</version>
       <scope>provided</scope>
+    </dependency>
+    
+    <!-- test -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-tools-testutils</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   

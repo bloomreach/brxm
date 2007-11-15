@@ -45,45 +45,28 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.01.00-dev</version>
+      <version>${parent.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-sample-common</artifactId>
-      <version>2.01.00-dev</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+      <version>${parent.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
-      <version>2.0</version>
     </dependency>
-    <!-- FIXME: should not be reliant on jpox, but on general JDO -->
     <dependency>
       <groupId>jpox</groupId>
       <artifactId>jpox-core</artifactId>
-      <version>1.2.0-beta-3</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.transaction</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.resource</groupId>
-          <artifactId>connector</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
+    
+    <!-- test -->
+   <!-- <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>-->
   </dependencies>
 
   <build>
