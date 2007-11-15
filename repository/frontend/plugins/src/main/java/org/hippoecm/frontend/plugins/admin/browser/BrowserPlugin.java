@@ -19,10 +19,10 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugins.admin.model.BrowserModel;
 import org.hippoecm.frontend.tree.JcrTree;
 
 public class BrowserPlugin extends Plugin {
@@ -32,7 +32,7 @@ public class BrowserPlugin extends Plugin {
 
     public BrowserPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        JcrNodeModel treeNode = new JcrTreeNode(null, model.getNode());
+        JcrNodeModel treeNode = new BrowserModel(null, model.getNode());
         
         tree = new JcrTree("tree", treeNode) {
             private static final long serialVersionUID = 1L;

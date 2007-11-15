@@ -1,4 +1,4 @@
-package org.hippoecm.frontend.model;
+package org.hippoecm.frontend.plugins.admin.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,13 +15,14 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class JcrTreeNode extends JcrNodeModel {
+public class BrowserModel extends JcrNodeModel {
     private static final long serialVersionUID = 1L;
 
-    protected JcrTreeNode parent;
+    protected BrowserModel parent;
     private List children = new ArrayList();
     
     private boolean reload = true;
@@ -31,24 +32,24 @@ public class JcrTreeNode extends JcrNodeModel {
 
     // Constructor
 
-    public JcrTreeNode(JcrTreeNode parent, Node node) {
+    public BrowserModel(BrowserModel parent, Node node) {
         super(node);
         this.parent = parent;
     }
     
-    // Convenience methods, not part of an api
+    // Convenience method, not part of an api
         
     public void markReload() {
         Iterator it = children.iterator();
         while (it.hasNext()) {
-            JcrTreeNode child = (JcrTreeNode) it.next();
+            BrowserModel child = (BrowserModel) it.next();
             child.markReload();
         }
         this.reload = true;
         this.reloadChildCount = true;
     }
     
-    // TreeNode implementation for use in trees
+    // TreeNode implementation
     
     public Enumeration children() {
         ensureChildrenLoaded();
@@ -87,18 +88,18 @@ public class JcrTreeNode extends JcrNodeModel {
 
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("item", itemModel.toString())
+            .append("itemModel", itemModel.toString())
             .toString();
     }
 
     public boolean equals(Object object) {
-        if (object instanceof JcrTreeNode == false) {
+        if (object instanceof BrowserModel == false) {
             return false;
         }
         if (this == object) {
             return true;
         }
-        JcrTreeNode treeNode = (JcrTreeNode) object;
+        BrowserModel treeNode = (BrowserModel) object;
         return new EqualsBuilder()
             .append(itemModel, treeNode.itemModel)
             .isEquals();
@@ -155,7 +156,7 @@ public class JcrTreeNode extends JcrNodeModel {
                 while (jcrChildren.hasNext()) {
                     Node jcrChild = jcrChildren.nextNode();
                     if (jcrChild != null) {
-                        JcrNodeModel childModel = new JcrTreeNode(this, jcrChild);
+                        JcrNodeModel childModel = new BrowserModel(this, jcrChild);
                         newChildren.add(childModel);
                     }
                 }

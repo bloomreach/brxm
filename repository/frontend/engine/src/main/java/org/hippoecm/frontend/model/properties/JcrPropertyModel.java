@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.model;
+package org.hippoecm.frontend.model.properties;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,53 +28,26 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.ItemModelWrapper;
 
-public class JcrPropertyModel implements IChainingModel, IDataProvider {
+public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
-
-    // The Item model that this model chains using the IChainingModel interface
-    private JcrItemModel itemModel;
 
     //  Constructor
     public JcrPropertyModel(Property prop) {
-        this.itemModel = new JcrItemModel(prop);
+        super(prop);
     }
 
-    // Convenience methods, not part of an api
+    // The wrapped jcr property
 
     public Property getProperty() {
         return (Property) itemModel.getObject();
     }
-    
-    //Implement IChainingModel
-    
-    public IModel getChainedModel() {
-        return itemModel;
-    }
+        
 
-    public void setChainedModel(IModel model) {
-        if (model instanceof JcrItemModel) {
-            itemModel = (JcrItemModel)model;
-        }
-    }
-
-    public Object getObject() {
-        return itemModel.getObject();
-    }
-
-    public void setObject(Object object) {
-        itemModel.setObject(object);
-    }
-
-    public void detach() {
-        itemModel.detach();
-    }
-    
-
-    //  IDataProvider implementation for use in DataViews
-    // (subclasses of org.apache.wicket.markup.repeater.data.DataViewBase)
+    // IDataProvider implementation for use in DataViews
+    // (lists and tables)
 
     public Iterator iterator(int first, int count) {
         List list = new ArrayList();
@@ -97,7 +70,7 @@ public class JcrPropertyModel implements IChainingModel, IDataProvider {
 
     public IModel model(Object object) {
         IndexedValue indexedValue = (IndexedValue) object;
-        return new JcrValueModel(indexedValue.index, indexedValue.value, this);
+        return new JcrPropertyValueModel(indexedValue.index, indexedValue.value, this);
     }
 
     public int size() {
@@ -127,8 +100,9 @@ public class JcrPropertyModel implements IChainingModel, IDataProvider {
     // override Object
 
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("item", itemModel.toString())
-                .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+            .append("itemModel", itemModel.toString())
+            .toString();
     }
 
     public boolean equals(Object object) {

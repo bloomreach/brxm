@@ -17,7 +17,7 @@ package org.hippoecm.cmsprototype.frontend.plugins.editor;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrPropertiesProvider;
+import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;

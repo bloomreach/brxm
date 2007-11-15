@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.model;
+package org.hippoecm.frontend.model.properties;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,43 +29,17 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 
-public class JcrPropertiesProvider implements IChainingModel, IDataProvider {
+public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
-
-    // The Item model that this model chains using the IChainingModel interface
-    private JcrNodeModel nodeModel;
 
     // Constructor
 
     public JcrPropertiesProvider(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
-    }
-
-    //Implement IChainingModel
-
-    public IModel getChainedModel() {
-        return nodeModel;
-    }
-
-    public void setChainedModel(IModel model) {
-        if (model instanceof JcrNodeModel) {
-            nodeModel = (JcrNodeModel)model;
-        }
-    }
-
-    public Object getObject() {
-        return nodeModel.getObject();
-    }
-
-    public void setObject(Object object) {
-        nodeModel.setObject(object);
-    }
-
-    public void detach() {
-        nodeModel.detach();
+        super(nodeModel);
     }
 
     // IDataProvider implementation, provides the properties of the chained nodeModel
@@ -105,8 +79,6 @@ public class JcrPropertiesProvider implements IChainingModel, IDataProvider {
                 PropertyIterator it = nodeModel.getNode().getProperties();
                 result = new Long(it.getSize()).intValue();
             }
-        } catch (InvalidItemStateException e) {
-            // This can happen after a node has been deleted and the tree hasn't been refreshed yet
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
@@ -117,7 +89,7 @@ public class JcrPropertiesProvider implements IChainingModel, IDataProvider {
 
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("item", nodeModel.toString())
+            .append("nodeModel", nodeModel.toString())
             .toString();
     }
 

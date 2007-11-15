@@ -28,13 +28,13 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.hippoecm.frontend.model.JcrPropertyModel;
-import org.hippoecm.frontend.model.JcrValueModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 
 public class PropertyValueEditor extends DataView {
     private static final long serialVersionUID = 1L;
 
-    private JcrPropertyModel propertyModel;
+    protected JcrPropertyModel propertyModel;
 
     public PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
         super(id, dataProvider);
@@ -47,7 +47,7 @@ public class PropertyValueEditor extends DataView {
         try {
             boolean isProtected = propertyModel.getProperty().getDefinition().isProtected();
             boolean isMultiple = propertyModel.getProperty().getDefinition().isMultiple();
-            final JcrValueModel valueModel = (JcrValueModel) item.getModel();
+            final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
 
             //Value editor
             if (isProtected) {
