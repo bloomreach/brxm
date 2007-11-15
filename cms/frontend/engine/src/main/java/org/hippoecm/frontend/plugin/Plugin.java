@@ -73,7 +73,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
     }
     
     public Plugin addChild(PluginDescriptor childDescriptor) {
-        PluginFactory pluginFactory = new PluginFactory(pluginManager);
+        PluginFactory pluginFactory = new PluginFactory(getPluginManager());
         Plugin child = pluginFactory.createPlugin(childDescriptor, (JcrNodeModel) getModel(), this);
 
         add(child);
