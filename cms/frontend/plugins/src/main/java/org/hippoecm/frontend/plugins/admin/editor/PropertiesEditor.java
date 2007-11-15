@@ -26,8 +26,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.hippoecm.frontend.model.JcrPropertiesProvider;
-import org.hippoecm.frontend.model.JcrPropertyModel;
+import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 
 public class PropertiesEditor extends DataView {
     private static final long serialVersionUID = 1L;

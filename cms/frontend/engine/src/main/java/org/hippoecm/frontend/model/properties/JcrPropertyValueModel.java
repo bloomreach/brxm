@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.model;
+package org.hippoecm.frontend.model.properties;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -25,14 +25,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.model.Model;
 
-public class JcrValueModel extends Model {
+public class JcrPropertyValueModel extends Model {
     private static final long serialVersionUID = 1L;
 
     private JcrPropertyModel propertyModel;
     private String value;
     private int index;
 
-    public JcrValueModel(int index, String value, JcrPropertyModel propertyModel) {
+    public JcrPropertyValueModel(int index, String value, JcrPropertyModel propertyModel) {
         this.propertyModel = propertyModel;
         this.index = index;
         this.value = value;
@@ -82,13 +82,13 @@ public class JcrValueModel extends Model {
      }
     
     public boolean equals(Object object) {
-        if (object instanceof JcrValueModel == false) {
+        if (object instanceof JcrPropertyValueModel == false) {
             return false;
         }
         if (this == object) {
             return true;
         }
-        JcrValueModel valueModel = (JcrValueModel) object;
+        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) object;
         return new EqualsBuilder()
             .append(value, valueModel.value)
             .append(index, valueModel.index)

@@ -23,8 +23,8 @@ import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugins.admin.model.BrowserModel;
 import org.hippoecm.repository.api.HippoNode;
 
 public class MoveDialog extends AbstractDialog {
@@ -40,7 +40,7 @@ public class MoveDialog extends AbstractDialog {
 
         UserSession session = (UserSession)getSession();
         HippoNode rootNode = session.getRootNode();
-        JcrNodeModel rootModel = new JcrTreeNode(null, rootNode);
+        JcrNodeModel rootModel = new BrowserModel(null, rootNode);
         
         tree = new MoveTargetTreeView("tree", rootModel, this);
         tree.getTreeState().expandNode(rootModel);
