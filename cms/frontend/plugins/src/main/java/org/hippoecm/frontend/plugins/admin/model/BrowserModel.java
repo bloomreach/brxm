@@ -127,14 +127,9 @@ public class BrowserModel extends JcrNodeModel {
                  * When the node is of type NT_FACETRESULT or NT_FACETSEARCH, always show a folder! Therefore, 
                  * a place holder childCount = 1 is used. Note that not the real count 
                  * getNode().getNodes().getSize() is used, because this might be extremely expensive.
-                 * When opening a folder, the real childCount is set on the parent to ensure a correct drawn tree.
-                 * Setting the correct number on the parent is not expensive anymore, because you already opened
-                 * the folder. Setting the correct number directly will result in extreme slow results.
                  */
                 if(node.isNodeType(HippoNodeType.NT_FACETRESULT) || node.isNodeType(HippoNodeType.NT_FACETSEARCH)){
                     childCount = 1;
-                    HippoNode parentNode = (HippoNode) parent.getObject();
-                    parent.childCount = (int) parentNode.getNodes().getSize();
                 }
                 else {
                     childCount = (int) node.getNodes().getSize();
@@ -169,6 +164,13 @@ public class BrowserModel extends JcrNodeModel {
             }
             reload = false;
             children = newChildren;
+
+            /*
+             * When the node is of type NT_FACETRESULT or NT_FACETSEARCH, the child count
+             * could be incorrect because it may have been set without retrieving the child nodes.
+             */
+            childCount = newChildren.size();
+            reloadChildCount = false;
         }
     }
 
