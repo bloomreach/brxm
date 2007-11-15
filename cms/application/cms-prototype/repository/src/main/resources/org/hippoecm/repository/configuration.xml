@@ -46,6 +46,32 @@
         <sv:value>/configuration</sv:value>
       </sv:property>
     </sv:node>
+
+    <!--Workflows configuration-->
+    <sv:node sv:name="workflows">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>workflow-config.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/configuration</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <!--Workflow demo-->
+    <sv:node sv:name="workflowdata">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>workflow-demodata.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>
     
   </sv:node>
 </sv:node>
