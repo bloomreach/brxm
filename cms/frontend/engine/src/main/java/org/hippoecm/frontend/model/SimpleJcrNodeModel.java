@@ -12,10 +12,6 @@ public class SimpleJcrNodeModel extends JcrNodeModel {
         super(node);
     }
 
-    @Override
-    public void markReload() {
-    }
-
     public Enumeration children() {
         return null;
     }
