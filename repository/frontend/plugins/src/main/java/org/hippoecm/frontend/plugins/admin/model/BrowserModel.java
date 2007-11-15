@@ -39,7 +39,6 @@ public class BrowserModel extends JcrNodeModel {
     
     // Convenience method, not part of an api
         
-    @Override
     public void markReload() {
         Iterator it = children.iterator();
         while (it.hasNext()) {

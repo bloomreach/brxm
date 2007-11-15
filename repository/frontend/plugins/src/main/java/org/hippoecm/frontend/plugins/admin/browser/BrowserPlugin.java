@@ -51,6 +51,10 @@ public class BrowserPlugin extends Plugin {
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         if (jcrEvent.structureChanged()) {
             JcrNodeModel treeNode = jcrEvent.getModel();
+            if (treeNode instanceof BrowserModel) {
+                BrowserModel browserModel = (BrowserModel)treeNode;
+                browserModel.markReload();
+            }
             tree.nodeStructureChanged(treeNode);
             tree.updateTree(target);
         }

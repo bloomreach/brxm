@@ -43,6 +43,5 @@ public abstract class JcrNodeModel extends ItemModelWrapper implements TreeNode 
         }
     }
 
-    public abstract void markReload();
     
 }
