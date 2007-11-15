@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.security;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,6 +41,7 @@ import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.api.PasswordHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,31 +106,34 @@ public class RepositoryLoginModule implements LoginModule {
         }
         
         // try to use authentication cache
-        synchronized (userCache) {
-            long now = System.currentTimeMillis();
-            if ((maxCacheTime == 0) || ((now - lastCachePurge) > maxCacheTime)) {
-                userCache.clear();
-                lastCachePurge = now;
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("userCache.size() = " + userCache.size());
-                log.debug("Looking for user in cache: " + username);
-            }
-
-            if (userCache.containsKey(username)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("User found in cache: " + username);
-                }
-                if (new String(password).equals(new String(userCache.get(username)))) {
-                    return true;
-                }
-            }
-        }
-
-        // look for user in the repository
-        HippoRepository repository;
         try {
+            synchronized (userCache) {
+                long now = System.currentTimeMillis();
+                if ((maxCacheTime == 0) || ((now - lastCachePurge) > maxCacheTime)) {
+                    userCache.clear();
+                    lastCachePurge = now;
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("userCache.size() = " + userCache.size());
+                    log.debug("Looking for user in cache: " + username);
+                }
+
+                if (userCache.containsKey(username)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("User found in cache: " + username);
+                    }
+
+                    boolean authenticated = false;
+                    authenticated = PasswordHelper.checkHash(new String(password), new String(userCache.get(username)));
+                    if (authenticated) {
+                        return true;
+                    }
+                }
+            }
+
+            // look for user in the repository
+            HippoRepository repository;
             repository = HippoRepositoryFactory.getHippoRepository();
             Session session = repository.login(new SimpleCredentials(systemuserId, systemuserPassword));
             Node root = session.getRootNode();
@@ -150,7 +156,9 @@ public class RepositoryLoginModule implements LoginModule {
             }
 
             if (node.hasProperty("password")) {
-                if (new String(password).equals(node.getProperty("password").getValue().getString())) {
+                boolean authenticated = false;
+                authenticated = PasswordHelper.checkHash(new String(password), node.getProperty("password").getValue().getString()); 
+                if (authenticated) {
                     synchronized (userCache) {
                         userCache.put(username, password);
                     }
@@ -159,6 +167,12 @@ public class RepositoryLoginModule implements LoginModule {
             }
 
         } catch (RepositoryException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
             e.printStackTrace();
         }
         return false;
