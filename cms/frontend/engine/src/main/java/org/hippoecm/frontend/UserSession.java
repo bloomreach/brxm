@@ -101,6 +101,7 @@ public class UserSession extends WebSession {
             return (Session) getObject();
         }
 
+        @Override
         protected Object load() {
             javax.jcr.Session result = null;
             try {

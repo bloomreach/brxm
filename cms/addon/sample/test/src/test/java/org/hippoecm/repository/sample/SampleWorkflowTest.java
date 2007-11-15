@@ -42,11 +42,13 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 public class SampleWorkflowTest extends TestCase {
     private HippoRepository server;
 
+    @Override
     public void setUp() throws Exception {
         System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
         server = HippoRepositoryFactory.getHippoRepository();
     }
 
+    @Override
     public void tearDown() throws Exception {
         server.close();
     }

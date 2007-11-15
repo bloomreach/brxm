@@ -30,11 +30,13 @@ public class AcceptRequestDialog extends AbstractWorkflowDialog {
         }
     }
 
+    @Override
     protected void doOk() throws Exception {
         FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
         workflow.acceptRequest();
     }
 
+    @Override
     public void cancel() {
     }
 

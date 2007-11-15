@@ -41,6 +41,7 @@ public class NodeDialog extends AbstractDialog {
         }
     }
 
+    @Override
     public JcrEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         nodeModel.getNode().addNode(getName(), getType());
@@ -48,6 +49,7 @@ public class NodeDialog extends AbstractDialog {
         return new JcrEvent(nodeModel, true);
     }
 
+    @Override
     public void cancel() {
     }
 

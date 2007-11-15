@@ -60,6 +60,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     }
     
 
+    @Override
     protected JcrEvent ok() throws Exception {
         doOk();
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();

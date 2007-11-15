@@ -42,10 +42,12 @@ public class JcrPropertyValueModel extends Model {
         return index;
     }
 
+    @Override
     public Object getObject() {
         return value;
     }
 
+    @Override
     public void setObject(Object object) {
         if (object != null) {
             value = object.toString();
@@ -74,6 +76,7 @@ public class JcrPropertyValueModel extends Model {
     
     // override Object
     
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("index", index)
@@ -81,6 +84,7 @@ public class JcrPropertyValueModel extends Model {
             .toString();
      }
     
+    @Override
     public boolean equals(Object object) {
         if (object instanceof JcrPropertyValueModel == false) {
             return false;
@@ -95,6 +99,7 @@ public class JcrPropertyValueModel extends Model {
             .isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(33, 113)
             .append(value)

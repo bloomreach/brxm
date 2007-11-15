@@ -39,6 +39,7 @@ public class BrowserModel extends JcrNodeModel {
     
     // Convenience method, not part of an api
         
+    @Override
     public void markReload() {
         Iterator it = children.iterator();
         while (it.hasNext()) {
@@ -86,12 +87,14 @@ public class BrowserModel extends JcrNodeModel {
     
     // override Object
 
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("itemModel", itemModel.toString())
             .toString();
     }
 
+    @Override
     public boolean equals(Object object) {
         if (object instanceof BrowserModel == false) {
             return false;
@@ -105,6 +108,7 @@ public class BrowserModel extends JcrNodeModel {
             .isEquals();
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(87, 335)
             .append(itemModel)

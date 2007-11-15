@@ -33,12 +33,14 @@ public class SamplePersistencyTest extends TestCase
 {
   private HippoRepository server;
 
-  public void setUp() throws RepositoryException, IOException {
+  @Override
+public void setUp() throws RepositoryException, IOException {
     server = HippoRepositoryFactory.getHippoRepository();
     SampleWorkflowSetup.commonStart(server);
   }
 
-  public void tearDown() throws RepositoryException {
+  @Override
+public void tearDown() throws RepositoryException {
     SampleWorkflowSetup.commonEnd(server);
     server.close();
   }

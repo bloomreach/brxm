@@ -32,10 +32,12 @@ public class ErrorDialog extends AbstractDialog {
     }
  
 
+    @Override
     public JcrEvent ok() throws RepositoryException {
         return new JcrEvent(dialogWindow.getNodeModel(), false);
     }
 
+    @Override
     public void cancel() {
     }
 

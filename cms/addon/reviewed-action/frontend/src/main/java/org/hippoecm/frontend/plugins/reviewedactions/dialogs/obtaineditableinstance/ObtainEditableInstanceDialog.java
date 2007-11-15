@@ -30,11 +30,13 @@ public class ObtainEditableInstanceDialog extends AbstractWorkflowDialog {
         }
     }
 
+    @Override
     protected void doOk() throws Exception {
         BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
         workflow.obtainEditableInstance();
     }
 
+    @Override
     public void cancel() {
     }
 

@@ -5,11 +5,6 @@ import java.util.Enumeration;
 import javax.jcr.Node;
 import javax.swing.tree.TreeNode;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
 public class SimpleJcrNodeModel extends JcrNodeModel {
     private static final long serialVersionUID = 1L;
     
@@ -17,6 +12,7 @@ public class SimpleJcrNodeModel extends JcrNodeModel {
         super(node);
     }
 
+    @Override
     public void markReload() {
     }
 

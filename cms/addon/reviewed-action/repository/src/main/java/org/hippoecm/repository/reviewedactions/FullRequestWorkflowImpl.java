@@ -17,15 +17,10 @@ package org.hippoecm.repository.reviewedactions;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.Utilities;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowMappingException;
-import org.hippoecm.repository.servicing.WorkflowImpl;
 
 public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
 
@@ -52,7 +47,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
         System.err.println("rejecting request for document ");
         request.type = PublicationRequest.REJECTED;
         request.reason = reason;
-        workflow.draft.state = workflow.draft.STALE;
+        workflow.draft.state = PublishableDocument.STALE;
     }
 
 }

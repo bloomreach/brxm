@@ -32,6 +32,7 @@ public class Main extends WebApplication {
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
 
+    @Override
     protected void init() {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(false);
@@ -50,14 +51,17 @@ public class Main extends WebApplication {
         }
     }
 
+    @Override
     protected void onDestroy() {
         repository.close();
     }
 
+    @Override
     public Class getHomePage() {
         return Home.class;
     }
 
+    @Override
     public Session newSession(Request request, Response response) {
         return new UserSession(request);
     }

@@ -40,6 +40,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
     private HippoRepositoryServer backgroundServer;
     private HippoRepository server;
 
+    @Override
     public void setUp() throws Exception {
         System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
         backgroundServer = new HippoRepositoryServer();
@@ -48,6 +49,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
         server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
     }
 
+    @Override
     public void tearDown() throws Exception {
         server.close();
         backgroundServer.close();

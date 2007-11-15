@@ -61,6 +61,7 @@ public class DialogWindow extends ModalWindow implements EventConsumer {
     public AjaxLink dialogLink(String id) {
         return new AjaxLink(id) {
             private static final long serialVersionUID = 1L;
+            @Override
             public void onClick(AjaxRequestTarget target) {
                 show(target);
             }

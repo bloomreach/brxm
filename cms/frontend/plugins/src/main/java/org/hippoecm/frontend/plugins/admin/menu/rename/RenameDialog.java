@@ -54,6 +54,7 @@ public class RenameDialog extends AbstractDialog {
         }
     }
 
+    @Override
     protected JcrEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
@@ -78,6 +79,7 @@ public class RenameDialog extends AbstractDialog {
         return result;
     }
 
+    @Override
     protected void cancel() {
     }
 

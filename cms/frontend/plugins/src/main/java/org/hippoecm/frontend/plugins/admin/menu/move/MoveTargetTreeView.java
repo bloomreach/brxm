@@ -32,6 +32,7 @@ public class MoveTargetTreeView extends JcrTree {
         this.dialog = dialog;
     }
 
+    @Override
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
         this.selectedNode = treeNode;
         JcrNodeModel jcrNodeModel = (JcrNodeModel) treeNode;

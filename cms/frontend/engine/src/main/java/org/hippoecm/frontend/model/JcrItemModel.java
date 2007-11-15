@@ -45,6 +45,7 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     // LoadableDetachableModel
 
+    @Override
     protected Object load() {
         Item result = null;
         try {
@@ -59,12 +60,14 @@ public class JcrItemModel extends LoadableDetachableModel {
     
     // override Object
     
+    @Override
     public String toString() {
        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
            .append("path", path)
            .toString();
     }
     
+    @Override
     public boolean equals(Object object) {
         if (object instanceof JcrItemModel == false) {
             return false;
@@ -78,6 +81,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             .isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(177, 3)
             .append(path)

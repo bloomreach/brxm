@@ -38,6 +38,7 @@ public abstract class JcrTree extends Tree {
         treeState.expandNode(rootNode);
     }
 
+    @Override
     protected String renderNode(TreeNode treeNode) {
         JcrNodeModel nodeModel = (JcrNodeModel) treeNode;
         HippoNode node = nodeModel.getNode();

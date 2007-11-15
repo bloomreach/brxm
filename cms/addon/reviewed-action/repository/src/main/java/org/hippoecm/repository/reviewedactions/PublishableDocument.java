@@ -28,9 +28,11 @@ public class PublishableDocument extends Document {
         System.out.println("PublishableDocument.document "+getJcrIdentity());
         this.state = UNPUBLISHED;
     }
+    @Override
     public final String getJcrIdentity() {
         return jcrIdentity;
     }
+    @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }

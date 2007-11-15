@@ -47,6 +47,7 @@ public class ResetDialog extends AbstractDialog {
         add(label);
     }
 
+    @Override
     public JcrEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         nodeModel.getNode().getSession().refresh(false);
@@ -57,6 +58,7 @@ public class ResetDialog extends AbstractDialog {
         return new JcrEvent(nodeModel, hasPendingChanges);
     }
 
+    @Override
     public void cancel() {
     }
 

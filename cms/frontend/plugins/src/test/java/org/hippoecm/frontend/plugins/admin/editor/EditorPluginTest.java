@@ -13,11 +13,13 @@ public class EditorPluginTest extends TestCase {
 
     private WicketTester tester;
 
+    @Override
     public void setUp() {
         tester = new WicketTester();
         tester.startPage(EditorPluginTestPage.class);
     }
 
+    @Override
     public void tearDown() {
         EditorPluginTestPage testPage = (EditorPluginTestPage) tester.getLastRenderedPage();
         testPage.tearDown();

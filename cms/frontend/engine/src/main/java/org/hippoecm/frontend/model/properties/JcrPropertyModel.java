@@ -99,12 +99,14 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
 
     // override Object
 
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("itemModel", itemModel.toString())
             .toString();
     }
 
+    @Override
     public boolean equals(Object object) {
         if (object instanceof JcrPropertyModel == false) {
             return false;
@@ -116,6 +118,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
         return new EqualsBuilder().append(itemModel, propertyModel.itemModel).isEquals();
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(473, 17).append(itemModel).toHashCode();
     }

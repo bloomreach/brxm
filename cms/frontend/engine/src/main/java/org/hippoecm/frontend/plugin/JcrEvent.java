@@ -32,10 +32,12 @@ public class JcrEvent implements IClusterable {
 
     // override Object
 
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeModel", nodeModel).toString();
     }
 
+    @Override
     public boolean equals(Object object) {
         if (object instanceof JcrEvent == false) {
             return false;
@@ -47,6 +49,7 @@ public class JcrEvent implements IClusterable {
         return new EqualsBuilder().append(nodeModel, event.nodeModel).isEquals();
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(11, 99).append(nodeModel).toHashCode();
     }

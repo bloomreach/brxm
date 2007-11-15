@@ -28,7 +28,8 @@ public class SampleWorkflowRenderer extends GenericWorkflowRenderer
   public SampleWorkflowRenderer(WorkflowManager manager, WorkflowDescriptor descriptor) {
     super(manager, descriptor);
   }
-  public void invoke() throws WorkflowException, RepositoryException, RemoteException {
+  @Override
+public void invoke() throws WorkflowException, RepositoryException, RemoteException {
     SampleWorkflow myworkflow = (SampleWorkflow) workflowManager.getWorkflow(workflowDescriptor);
     if(myworkflow != null)
       myworkflow.renameAuthor("Jan Smit");

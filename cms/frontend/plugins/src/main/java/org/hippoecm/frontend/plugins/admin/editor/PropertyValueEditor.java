@@ -43,6 +43,7 @@ public class PropertyValueEditor extends DataView {
     }
     
     // Implement DataView
+    @Override
     protected void populateItem(Item item) {
         try {
             boolean isProtected = propertyModel.getProperty().getDefinition().isProtected();
@@ -57,6 +58,7 @@ public class PropertyValueEditor extends DataView {
                 if (valueModel.getObject().toString().contains("\n")) {
                     AjaxEditableMultiLineLabel editor = new AjaxEditableMultiLineLabel("value", valueModel) {
                         private static final long serialVersionUID = 1L;
+                        @Override
                         protected void onSubmit(AjaxRequestTarget target) {
                             super.onSubmit(target);
                         }
@@ -67,6 +69,7 @@ public class PropertyValueEditor extends DataView {
                 } else {
                     AjaxEditableLabel editor = new AjaxEditableLabel("value", valueModel) {
                         private static final long serialVersionUID = 1L;
+                        @Override
                         protected void onSubmit(AjaxRequestTarget target) {
                             super.onSubmit(target);
                         }
@@ -79,6 +82,7 @@ public class PropertyValueEditor extends DataView {
             if (isMultiple) {
                 item.add(new AjaxLink("remove", valueModel) {
                     private static final long serialVersionUID = 1L;
+                    @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
                             Property prop = propertyModel.getProperty();

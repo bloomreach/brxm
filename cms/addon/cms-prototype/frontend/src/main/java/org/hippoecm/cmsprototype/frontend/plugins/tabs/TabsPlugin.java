@@ -34,6 +34,7 @@ public class TabsPlugin extends Plugin {
 
         AbstractTab tab = new AbstractTab(new Model(childDescriptor.getPluginId())) {
             private static final long serialVersionUID = 1L;
+            @Override
             public Panel getPanel(String panelId) {
                 return child;
             }
