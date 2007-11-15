@@ -53,6 +53,21 @@
       <version>2.01.00-dev</version>
       <scope>runtime</scope>
     </dependency>
+
+    <!-- Reviewed Action Workflow -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+      <version>2.01.00-dev</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
+      <version>2.01.00-dev</version>
+      <scope>runtime</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
