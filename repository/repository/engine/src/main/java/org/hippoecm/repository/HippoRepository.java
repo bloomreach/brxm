@@ -72,6 +72,10 @@ public abstract class HippoRepository {
 
     public Session login(String username, char[] password) throws LoginException, RepositoryException {
         if (username != null && !username.equals("")) {
+            // SimpleCredentials give NPE on null as password
+            if (password == null) {
+                throw new LoginException("Password is null");
+            }
             return login(new SimpleCredentials(username, password));
         } else {
             return login(null);

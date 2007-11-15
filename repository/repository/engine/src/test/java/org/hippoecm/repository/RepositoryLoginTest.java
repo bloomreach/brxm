@@ -32,33 +32,52 @@ public class RepositoryLoginTest extends TestCase {
     private Session systemSession;
     private Node users;
 
-    private static final String TESTUSER_ID = "testuser";
-    private static final String TESTUSER_PASS = "testpass";
-
-    private static final String USERS_PATH = "configuration/users";
     private static final String ANONYMOUS_ID = "anonymous";
     private static final String SYSTEMUSER_ID = "systemuser";
     private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
+
+    private static final String USERS_PATH = "configuration/users";
+    
+    private static final String TESTUSER_PASS = "testpass";
+    private static final String TESTUSER_ID_PLAIN = "testuser-plain";
+    private static final String TESTUSER_ID_MD5 = "testuser-md5";
+    private static final String TESTUSER_ID_SHA1 = "testuser-sha1";
+    private static final String TESTUSER_ID_SHA256 = "testuser-sha256";
+    private static final String TESTUSER_HASH_MD5 = "$MD5$LDiazWf2qBc=$JIW7oSBflwFdxzKDnFHKPw==";
+    private static final String TESTUSER_HASH_SHA1 = "$SHA-1$LDiazWf2qBc=$VjcsDMKtiRKYushsjTNDuk5a//4=";
+    private static final String TESTUSER_HASH_SHA256 = "$SHA-256$LDiazWf2qBc=$/bzV6rjHX+fgx4dVz6oaPcW3kX1ynSJ+vGv1mbbm+v4=";
+    
+    
 
     public void setUp() throws RepositoryException, IOException {
         server = HippoRepositoryFactory.getHippoRepository();
         systemSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         
+        // create user config path
         Node node = systemSession.getRootNode();
         StringTokenizer tokenizer = new StringTokenizer(USERS_PATH, "/");
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             node = node.addNode(token);
         }
+        
+        // create test users
+        Node testuser;
         users = systemSession.getRootNode().getNode(USERS_PATH);
-        Node testuser = users.addNode(TESTUSER_ID);
+        testuser = users.addNode(TESTUSER_ID_PLAIN);
         testuser.setProperty("password", TESTUSER_PASS);
+        testuser = users.addNode(TESTUSER_ID_MD5);
+        testuser.setProperty("password", TESTUSER_HASH_MD5);
+        testuser = users.addNode(TESTUSER_ID_SHA1);
+        testuser.setProperty("password", TESTUSER_HASH_SHA1);
+        testuser = users.addNode(TESTUSER_ID_SHA256);
+        testuser.setProperty("password", TESTUSER_HASH_SHA256);
         systemSession.save();
     }
 
     public void tearDown() throws RepositoryException {
-        if (users.getNode(TESTUSER_ID) != null) {
-            users.getNode(TESTUSER_ID).remove();
+        if (users != null) {
+            users.remove();
         }
         if (systemSession != null) {
             systemSession.save();
@@ -69,22 +88,64 @@ public class RepositoryLoginTest extends TestCase {
         }
     }
 
-    public void testLoginSuccess() throws Exception {
+    public void testLoginPlainSuccess() throws Exception {
         try {
-            Session session = server.login(TESTUSER_ID, TESTUSER_PASS.toCharArray());
-            assertEquals(TESTUSER_ID, session.getUserID());
+            Session session = server.login(TESTUSER_ID_PLAIN, TESTUSER_PASS.toCharArray());
+            assertEquals(TESTUSER_ID_PLAIN, session.getUserID());
             session.logout();
         } catch (LoginException e) {
-            fail("Login failed with valid credentials");
+            fail("Plain login failed with valid credentials");
+        }
+    }
+    
+    public void testLoginMD5Success() throws Exception {
+        try {
+            Session session = server.login(TESTUSER_ID_MD5, TESTUSER_PASS.toCharArray());
+            assertEquals(TESTUSER_ID_MD5, session.getUserID());
+            session.logout();
+        } catch (LoginException e) {
+            fail("MD5 login failed with valid credentials");
         }
     }
 
-    public void testLoginFail() throws Exception {
+    public void testLoginSHA1Success() throws Exception {
+        try {
+            Session session = server.login(TESTUSER_ID_SHA1, TESTUSER_PASS.toCharArray());
+            assertEquals(TESTUSER_ID_SHA1, session.getUserID());
+            session.logout();
+        } catch (LoginException e) {
+            fail("SHA-1 login failed with valid credentials");
+        }
+    }
+
+    public void testLoginSHA256Success() throws Exception {
+        try {
+            Session session = server.login(TESTUSER_ID_SHA256, TESTUSER_PASS.toCharArray());
+            assertEquals(TESTUSER_ID_SHA256, session.getUserID());
+            session.logout();
+        } catch (LoginException e) {
+            fail("SHA-256 login failed with valid credentials");
+        }
+    }
+    
+
+    public void testLoginPlainFail() throws Exception {
         Session session = null;
         try {
-            session = server.login(TESTUSER_ID, "wrongpassword".toCharArray());
+            session = server.login(TESTUSER_ID_PLAIN, "wrongpassword".toCharArray());
             session.logout();
-            fail("Login succeeded with invalid credentials");
+            fail("Plain login succeeded with invalid credentials");
+        } catch (LoginException ex) {
+            assertEquals(null, session);
+        }
+    }
+    
+    public void testLoginHashFail() throws Exception {
+        Session session = null;
+        try {
+            session = server.login(TESTUSER_ID_SHA1, "wrongpassword".toCharArray());
+            session.logout();
+            fail("Hashed login succeeded with invalid credentials");
         } catch (LoginException ex) {
             assertEquals(null, session);
         }
@@ -93,11 +154,44 @@ public class RepositoryLoginTest extends TestCase {
     public void testLoginNoEmptyPassword() throws Exception {
         Session session = null;
         try {
-            session = server.login(TESTUSER_ID, "".toCharArray());
+            session = server.login(TESTUSER_ID_SHA1, "".toCharArray());
             session.logout();
             fail("Login succeeded with empty password");
         } catch (LoginException ex) {
             assertEquals(null, session);
+        }
+    }
+    
+    public void testLoginNoNullPassword() throws Exception {
+        Session session = null;
+        try {
+            session = server.login(TESTUSER_ID_SHA1, null);
+            session.logout();
+            fail("Login succeeded with null password");
+        } catch (LoginException ex) {
+            assertEquals(null, session);
+        }
+    }
+
+    public void testLoginNullUsername() throws Exception {
+        Session session = null;
+        try {
+            session = server.login(null, TESTUSER_PASS.toCharArray());
+            assertEquals(ANONYMOUS_ID, session.getUserID());
+            session.logout();
+        } catch (LoginException ex) {
+            fail("Anonymous login failed with username null");
+        }
+    }
+
+    public void testLoginNullUsernameNullPassword() throws Exception {
+        Session session = null;
+        try {
+            session = server.login(null, null);
+            assertEquals(ANONYMOUS_ID, session.getUserID());
+            session.logout();
+        } catch (LoginException ex) {
+            fail("Anonymous login failed with username null");
         }
     }
 
