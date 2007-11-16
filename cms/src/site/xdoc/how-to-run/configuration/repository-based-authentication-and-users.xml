@@ -56,18 +56,28 @@
                 A user node has the following configuration:
             </p>
 <source>
-&lt;sv:node sv:name="johndoe"&gt;
+&lt;sv:node sv:name="demo"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
         &lt;sv:value&gt;nt:unstructured&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="password" sv:type="String"&gt;    
+    &lt;sv:property sv:name="demo" sv:type="String"&gt;    
         &lt;sv:value&gt;secret&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
           <p>
-            The password is currently stored in plain text. This will change in the near future.
-          </p> 
+              The password can be stored in plain text or with a hash. A hash has the following form:
+          </p>
+          <pre><code>$&lt;hash alogrith&gt;$&lt;salt&gt;$&lt;hash&gt;</code></pre>
+          <p>
+              For example the password "admin" could result in the following hash:
+          </p>
+          <pre><code>$SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=</code></pre>
+          <p>
+              The hashing alogrithm can be any alogrith supported by MessageDigest like MD5, SHA-1 and SHA-256. The 
+              password utility class "PasswordHelper" can be used to generate hashes with the static method
+              PasswordHelper.getHash(String password).
+          </p>
         </section>
     </body>
 </document>
