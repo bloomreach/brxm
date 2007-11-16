@@ -20,7 +20,10 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.repository.api.Workflow;
@@ -33,12 +36,14 @@ public abstract class Plugin extends Panel implements EventConsumer {
     private PluginManager pluginManager;
     private PluginDescriptor pluginDescriptor;
     private Plugin parentPlugin;
+    private JcrNodeModel model;
     
     public Plugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor.getWicketId(), model);
+        super(pluginDescriptor.getWicketId(), new CompoundPropertyModel(model));
         setOutputMarkupId(true);
         this.parentPlugin = parentPlugin;
         this.pluginDescriptor = pluginDescriptor;
+        this.model = model;
     }
 
     public PluginDescriptor getDescriptor() {
@@ -59,6 +64,21 @@ public abstract class Plugin extends Panel implements EventConsumer {
     public Plugin getParentPlugin() {
         return parentPlugin;
     }
+    
+    public JcrNodeModel getNodeModel() {
+        return model;
+    }
+    
+    @Override
+    public Component setModel(IModel model) {
+        if(model instanceof JcrNodeModel) {
+            this.model = (JcrNodeModel) model;
+            return super.setModel(new CompoundPropertyModel(model));
+        }
+        else {
+            throw new IllegalArgumentException("Model must be of type JcrNodeModel");
+        }
+    }
 
     public void addChildren() {
         PluginDescriptor descriptor = getDescriptor();
@@ -74,12 +94,12 @@ public abstract class Plugin extends Panel implements EventConsumer {
     
     public Plugin addChild(PluginDescriptor childDescriptor) {
         PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-        Plugin child = pluginFactory.createPlugin(childDescriptor, (JcrNodeModel) getModel(), this);
+        Plugin child = pluginFactory.createPlugin(childDescriptor, model, this);
 
         add(child);
         return child;
     }
-    
+
     public void removeChild(PluginDescriptor childDescriptor) {
         remove(childDescriptor.getWicketId());
     }
@@ -87,9 +107,8 @@ public abstract class Plugin extends Panel implements EventConsumer {
     protected Workflow getWorkflow() {
         Workflow workflow = null;
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) getModel();
             WorkflowManager manager = getPluginManager().getWorkflowManager();
-            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(getId(), nodeModel.getNode());
+            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(getId(), model.getNode());
             workflow = manager.getWorkflow(descriptor);
         } catch (WorkflowMappingException e) {
             // TODO Auto-generated catch block
@@ -100,5 +119,4 @@ public abstract class Plugin extends Panel implements EventConsumer {
         }
         return workflow;
     }
-
 }

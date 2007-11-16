@@ -35,13 +35,4 @@ public abstract class JcrNodeModel extends ItemModelWrapper implements TreeNode 
         return (HippoNode) itemModel.getObject();
     }
     
-    // Convenience methods, not part of an api
-
-    public void impersonate(JcrNodeModel model) {
-        if (model != null) {
-            itemModel = new JcrItemModel(model.getNode());
-        }
-    }
-
-    
 }
