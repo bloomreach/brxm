@@ -12,12 +12,21 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
     </sv:property>
-    <sv:node sv:name="johndoe">
+    <sv:node sv:name="demo">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>nt:unstructured</sv:value>
         </sv:property>
         <sv:property sv:name="password" sv:type="String">
-            <sv:value>secret</sv:value>
+            <sv:value>demo</sv:value>
+        </sv:property>
+    </sv:node>
+    <sv:node sv:name="admin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>nt:unstructured</sv:value>
+        </sv:property>
+        <!-- password is "admin" -->
+        <sv:property sv:name="password" sv:type="String">
+            <sv:value>$SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

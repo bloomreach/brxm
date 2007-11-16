@@ -103,7 +103,7 @@ public class BasicTest extends TestCase {
     
     
     /**
-     * Opens the frontend in a browser and logs in as user "johndoe".
+     * Opens the frontend in a browser and logs in as user "demo".
      */
     public void testLogin() throws Exception {
         selenium.open("/");
@@ -122,7 +122,7 @@ public class BasicTest extends TestCase {
             Thread.sleep(1000);
         }
 
-        selenium.type("editor10", "johndoe");
+        selenium.type("editor10", "demo");
         selenium.keyPress("editor10", "\\13");
         selenium.click("label6");
         for (int second = 0;; second++) {
@@ -131,12 +131,12 @@ public class BasicTest extends TestCase {
             Thread.sleep(1000);
         }
 
-        selenium.type("editor11", "secret");
+        selenium.type("editor11", "demo");
         selenium.keyPress("editor11", "\\13");
         selenium.click("ok8");
         for (int second = 0;; second++) {
             if (second >= 60) fail("timeout");
-            try { if (selenium.isTextPresent("Logged in as johndoe")) break; } catch (Exception e) {}
+            try { if (selenium.isTextPresent("Logged in as demo")) break; } catch (Exception e) {}
             Thread.sleep(1000);
         }
     }
