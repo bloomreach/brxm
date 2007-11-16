@@ -55,7 +55,6 @@ public class ReviewedActionsWorkflowTest extends TestCase
 
         // set up the workflow specification as a node "/configuration/hippo:workflows/default/reviewedactions"
         node = root.getNode("configuration");
-        node.addNode("documents").addMixin("mix:referenceable");
         if(node.hasNode("hippo:workflows"))
             node.getNode("hippo:workflows").remove();
         node = node.addNode("hippo:workflows","hippo:workflowfolder");
@@ -106,7 +105,6 @@ public class ReviewedActionsWorkflowTest extends TestCase
     }
 
     public void tearDown() throws Exception {
-        session.getRootNode().getNode("configuration/hippo:workflows").remove();
         session.getRootNode().getNode("documents").remove();
         session.save();
         server.close();

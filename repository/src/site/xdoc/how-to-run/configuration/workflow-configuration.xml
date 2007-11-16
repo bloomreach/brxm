@@ -101,8 +101,19 @@ workflow defined in workflow-config.xml.
          xmlns:fn="http://www.w3.org/2005/xpath-functions"
          sv:name="configuration"&gt;
   &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-    &lt;sv:value&gt;nt:unstructured&lt;/sv:value&gt;
+    &lt;sv:value&gt;hippo:configuration&lt;/sv:value&gt;
   &lt;/sv:property&gt;
+
+  &lt;sv:node sv:name="hippo:documents"&gt;
+    &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
+      &lt;sv:value&gt;hippo:queryfolder&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+  &lt;/sv:node&gt;
+  &lt;sv:node sv:name="hippo:workflows"&gt;
+    &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
+      &lt;sv:value&gt;hippo:workflowfolder&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+  &lt;/sv:node&gt;
 
   &lt;sv:node sv:name="initialize"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;

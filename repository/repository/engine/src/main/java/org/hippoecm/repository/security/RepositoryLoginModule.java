@@ -155,9 +155,9 @@ public class RepositoryLoginModule implements LoginModule {
                 return false;
             }
 
-            if (node.hasProperty("password")) {
+            if (node.hasProperty("hippo:password")) {
                 boolean authenticated = false;
-                authenticated = PasswordHelper.checkHash(new String(password), node.getProperty("password").getValue().getString()); 
+                authenticated = PasswordHelper.checkHash(new String(password), node.getProperty("hippo:password").getValue().getString()); 
                 if (authenticated) {
                     synchronized (userCache) {
                         userCache.put(username, password);

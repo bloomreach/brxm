@@ -58,10 +58,10 @@
 <source>
 &lt;sv:node sv:name="demo"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;nt:unstructured&lt;/sv:value&gt;
+        &lt;sv:value&gt;hippo:user&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="demo" sv:type="String"&gt;    
-        &lt;sv:value&gt;secret&lt;/sv:value&gt;
+    &lt;sv:property sv:name="hippo:password" sv:type="String"&gt;    
+        &lt;sv:value&gt;demo&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
