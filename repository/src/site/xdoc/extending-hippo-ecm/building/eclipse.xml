@@ -141,10 +141,6 @@
             </subsection>
             <subsection name="JPOX">
                 <p>
-                    This is only required for Eclipse 3.2, in version 3.3 JPOX bytecode enhancement
-                    is enabled by default.
-                </p>
-                <p>
                     Projects that provide document types (hippoecm-repository-engine,
                     hippo-ecm-addon-sample-repository, hippo-ecm-addon-reviewed-action-repository)
                     must be enhanced by the JPOX plugin:
