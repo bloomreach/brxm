@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.admin.menu;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
@@ -47,7 +48,7 @@ public class MenuPlugin extends AbstractMenuPlugin {
         addMenuOption("save-dialog", "save-dialog-link", SaveDialog.class.getName(), model);
         addMenuOption("reset-dialog", "reset-dialog-link", ResetDialog.class.getName(), model);
 
-        add(new Label("path", new PropertyModel(model, "path")));
+        add(new Label("path"));
     }
     
     

@@ -34,8 +34,7 @@ public class NodeEditor extends Form {
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         if (jcrEvent.getModel() != null) {
             JcrPropertiesProvider propertiesProvider = (JcrPropertiesProvider) getModel();
-            JcrNodeModel nodeModel = (JcrNodeModel)propertiesProvider.getChainedModel();
-            nodeModel.impersonate(jcrEvent.getModel());
+            propertiesProvider.setChainedModel(jcrEvent.getModel());
         }
         if (target != null && findPage() != null) {
             target.addComponent(this);
