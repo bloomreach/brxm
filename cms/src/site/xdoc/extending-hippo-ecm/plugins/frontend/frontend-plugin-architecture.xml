@@ -107,7 +107,7 @@ public class RootPlugin extends Plugin {
 [repository root]
 `-- configuration
     `-- frontend
-        `-- default [nt:unstructured]
+        `-- default [hippo:page]
             `-- RootPlugin [hippo:frontendplugin]
                 `-- subPlugin [hippo:frontendplugin]
 </source>

@@ -10,22 +10,22 @@
     xmlns:fn="http://www.w3.org/2005/xpath-functions" 
     sv:name="users">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippo:userfolder</sv:value>
     </sv:property>
     <sv:node sv:name="demo">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>nt:unstructured</sv:value>
+            <sv:value>hippo:user</sv:value>
         </sv:property>
-        <sv:property sv:name="password" sv:type="String">
+        <sv:property sv:name="hippo:password" sv:type="String">
             <sv:value>demo</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="admin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>nt:unstructured</sv:value>
+            <sv:value>hippo:user</sv:value>
         </sv:property>
         <!-- password is "admin" -->
-        <sv:property sv:name="password" sv:type="String">
+        <sv:property sv:name="hippo:password" sv:type="String">
             <sv:value>$SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=</sv:value>
         </sv:property>
     </sv:node>

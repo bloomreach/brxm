@@ -10,8 +10,20 @@
          xmlns:fn="http://www.w3.org/2005/xpath-functions" 
          sv:name="configuration">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>nt:unstructured</sv:value>
+    <sv:value>hippo:configuration</sv:value>
   </sv:property>
+
+  <sv:node sv:name="hippo:documents">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:queryfolder</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:workflows">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:workflowfolder</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="initialize">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializefolder</sv:value>

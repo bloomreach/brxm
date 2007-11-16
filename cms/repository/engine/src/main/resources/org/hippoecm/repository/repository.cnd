@@ -76,6 +76,14 @@
 [hippo:initializefolder] > nt:base
 + * (hippo:initializeitem) = hippo:initializeitem
 
+[hippo:application] > nt:base
+
+[hippo:user] > nt:base
+- hippo:password (string) mandatory
+
+[hippo:userfolder] > nt:base
++ * (hippo:user) = hippo:user
+
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:queryfolder) = hippo:queryfolder mandatory
