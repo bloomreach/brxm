@@ -16,97 +16,11 @@
 
 package org.hippoecm.repository;
 
-import java.lang.String;
-import java.lang.Integer;
-import java.lang.UnsupportedOperationException;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Session;
-
-/**
-
-This interface is to be used internally only by the Hippo Repository.  It
-defines how the engine that is responsible for faceted navigation interacts
-with the remainder of the repository other than set-up.<p>
-
-<DL><DT><B>Description</B></DT><DD>
-
-The main responsibility of the search engine is to return a facet key-value
-count for a authorized faceted query.
-Given a result set after a query, the faceted key-value count is an
-enumeration of the number of matching documents per facet key-value pair.<p>
-
-The query result set starting off with, is split into multiple parts:
-<dl>
-<dt>Initial query</dt>
-<dd>any query that remains the same any time this faceted navigation query is
-run.  There may be multiple of such initial queries, but this will be a
-limited set and they refer to different queries, not just different instances
-of the query.</dd>
-<dt>Faceted query</dt>
-<dd>When browsing through a faceted search, certain choices which part of the
-search tree is displayed are being made by the user.  Each time the user fixes
-a facet-key to a certain value, the result set is limited to the documents
-with that facet.</dd>
-<dt>Authorization query</dt>
-<dd>Even when the faceted search query is the same, the result set of the
-query may be different if the query is performed with different authorization
-credentials.  The authorization is also faceted based, but with the
-authorization query a document is included in the result set not when all
-specified facets have the indicated keys, but when at least one of the terms
-listed in the authorization query matches.  The idea is that a user seeks for
-a specific document (i.e. all terms must match in faceted search), but that a
-user sees all documents for which it has a right in any search.</dd>
-<dt>Open Query</dt>
-<dd>Finally, a user may perform a specific search.  E.g. a full text search on
-the remaining documents in the result set.  As this search is totally unbound,
-open queries should not be common and may imply a significant performance
-penalty.  Also it may be that only specific implementations of this interface
-can operate with open-queries.
-</dl><p>
-
-A BNF description of the composed query is:
-
-<pre nowrap>
-start ::= <b>(</b> initial-query <b>)</b> authorization-query facets-query open-query ;
-initial-query        ::= <i>any valid lucene query</i> ;
-authorization-query  ::= <b>AND</b> <b>(</b> authorization-cont <b>)</b>
-                      |  <i>empty</i> ;
-authorization-cont   ::= facet-key <b>=</b> facet-value
-                      |  facet-key <b>=</b> facet-value <b>OR</b> authorization-cont ;
-facets-query         ::= <b>AND</b> facets-cont
-                      |  <i>empty</i> ;
-facets-cont          ::= facet-key <b>=</b> facet-value
-                      |  facet-key <b>=</b> facet-value <b>AND</b> facets-cont ;
-open-query           ::= <b>AND</b> <b>(</b> <i>any valid lucene query</i> <b>)</b>;
-                      |  <i>empty</i> ;
-</pre>
-
-Given this query, the faceted navigation engine implementation is supposed to
-return a mapping of classes of documents to a count how many documents match
-the class.  The sum of this count can be larger that the result set, as
-certain documents fall into multiple classes.  Classes are composed of the
-possible facet key-value pairs.  A collection of these key-value pairs is
-presented to the faceted engine in a map with an (initially) null reference to
-an integer object.  The faceted search engine should fill this map with the
-document count it has discovered.
-
-<i>Optional extension:</i><p>
-
-Certain implementations can evaluate not just a single faceted search, but
-also look up the navigation structure of a faceted search of one or more
-levels deeper.  To expose this result set, the operator of this interface may
-provide a structure which represents the future faceted searches and the facet
-count template that go with them.
-
-</DD></DL>
-
- *
- * @version draft
- */
-
-import java.util.Iterator;
 
 public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query,C extends FacetedNavigationEngine.Context>
 {

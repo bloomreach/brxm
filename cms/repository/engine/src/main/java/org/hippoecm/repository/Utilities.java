@@ -17,9 +17,6 @@ package org.hippoecm.repository;
 
 import java.io.PrintStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -38,6 +35,8 @@ import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Utilities {
     private final static Logger log = LoggerFactory.getLogger(Utilities.class);

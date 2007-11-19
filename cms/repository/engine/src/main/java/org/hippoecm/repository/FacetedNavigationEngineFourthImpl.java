@@ -16,8 +16,6 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
-import java.util.BitSet;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,30 +26,22 @@ import java.util.WeakHashMap;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.core.SearchManager;
-import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.MultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldSelector;
-import org.apache.lucene.document.SetBasedFieldSelector;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searchable;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.CachingFacetResultCollector;
-import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
+import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.ParallelMultiSearcher;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
-import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.servicing.RepositoryDecorator;
 
 public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex

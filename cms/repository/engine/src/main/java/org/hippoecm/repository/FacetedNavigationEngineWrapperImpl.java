@@ -15,15 +15,8 @@
  */
 package org.hippoecm.repository;
 
-import java.lang.String;
-import java.lang.Integer;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.LinkedList;
-import java.io.IOException;
+import java.util.Map;
 
 import javax.jcr.Session;
 

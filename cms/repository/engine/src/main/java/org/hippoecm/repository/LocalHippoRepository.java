@@ -30,6 +30,7 @@ import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
+import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -39,16 +40,14 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
-import javax.jcr.LoginException;
-import javax.jcr.ValueFormatException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
-
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -57,12 +56,11 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.servicing.ServicingDecoratorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 
 class LocalHippoRepository extends HippoRepository {
     /** SVN id placeholder */
