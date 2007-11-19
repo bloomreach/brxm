@@ -18,7 +18,6 @@ package org.hippoecm.repository.test;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -26,11 +25,8 @@ import junit.framework.TestCase;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.Utilities;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HippoWorkspace;
 
 public class PersistanceInheritanceTest extends TestCase
 {

@@ -21,12 +21,10 @@ import java.util.TreeMap;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import junit.framework.TestCase;
@@ -34,7 +32,6 @@ import junit.framework.TestCase;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.Utilities;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class FacetedReferenceTest extends TestCase {
     private final static String SVN_ID = "$$";
