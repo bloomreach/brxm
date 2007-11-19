@@ -36,6 +36,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 
 public class ReviewedActionsWorkflowTest extends TestCase
 {
+    @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final String SYSTEMUSER_ID = "admin";
@@ -115,8 +116,8 @@ public class ReviewedActionsWorkflowTest extends TestCase
             HippoWorkspace wsp = (HippoWorkspace) node.getSession().getWorkspace();
             workflowMgr = wsp.getWorkflowManager();
         }
-        node = ((HippoNode)node).getCanonicalNode();
-        return workflowMgr.getWorkflow(category, node);
+        Node canonicalNode = ((HippoNode)node).getCanonicalNode();
+        return workflowMgr.getWorkflow(category, canonicalNode);
     }
 
     public void testReviewedAction()

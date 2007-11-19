@@ -75,9 +75,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
             this.model = (JcrNodeModel) model;
             return super.setModel(new CompoundPropertyModel(model));
         }
-        else {
-            throw new IllegalArgumentException("Model must be of type JcrNodeModel");
-        }
+        throw new IllegalArgumentException("Model must be of type JcrNodeModel");
     }
 
     public void addChildren() {

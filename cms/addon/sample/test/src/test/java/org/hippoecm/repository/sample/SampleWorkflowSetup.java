@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.sample;
 
-import java.io.IOException;
 import java.util.Random;
 
 import javax.jcr.Node;
@@ -30,7 +29,7 @@ abstract class SampleWorkflowSetup
   static int oldAuthorId;
   static int newAuthorId;
 
-  static void commonStart(HippoRepository server) throws RepositoryException, IOException {
+  static void commonStart(HippoRepository server) throws RepositoryException {
     Random rnd = new Random(8675687);
     oldAuthorId = rnd.nextInt();
     newAuthorId = rnd.nextInt();

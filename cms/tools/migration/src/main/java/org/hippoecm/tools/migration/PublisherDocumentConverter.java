@@ -1,5 +1,6 @@
 package org.hippoecm.tools.migration;
 
+/*
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -30,7 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
+*/
 
 /**
  * DISABLED
