@@ -27,8 +27,8 @@ package org.hippoecm.repository.api;
 
 public interface HippoNodeType {
 
-    final public static String CONFIGURATION_PATH = "configuration";
-    final public static String INITIALIZE_PATH = "initialize";
+    final public static String CONFIGURATION_PATH = "hippo:configuration";
+    final public static String INITIALIZE_PATH = "hippo:initialize";
     final public static String WORKFLOWS_PATH = "hippo:workflows";
     final public static String DOCUMENTS_PATH = "hippo:documents";
 

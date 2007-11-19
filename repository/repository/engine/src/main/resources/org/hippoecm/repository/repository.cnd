@@ -73,8 +73,7 @@
 [hippo:initializefolder] > nt:base
 + * (hippo:initializeitem) = hippo:initializeitem
 
-[hippo:application] > nt:base
-+ *
+[hippo:application] > nt:unstructured
 
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
@@ -86,4 +85,5 @@
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:queryfolder) = hippo:queryfolder mandatory
 + hippo:initialize (hippo:initializefolder) = hippo:initializefolder
-+ *
++ hippo:users (hippo:userfolder) = hippo:userfolder
++ hippo:frontend (hippo:application) = hippo:application

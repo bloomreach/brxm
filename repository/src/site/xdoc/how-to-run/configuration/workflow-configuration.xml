@@ -115,7 +115,7 @@ workflow defined in workflow-config.xml.
     &lt;/sv:property&gt;
   &lt;/sv:node&gt;
 
-  &lt;sv:node sv:name="initialize"&gt;
+  &lt;sv:node sv:name="hippo:initialize"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
       &lt;sv:value&gt;hippo:initializefolder&lt;/sv:value&gt;
     &lt;/sv:property&gt;

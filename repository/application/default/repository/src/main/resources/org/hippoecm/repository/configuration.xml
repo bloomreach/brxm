@@ -8,7 +8,7 @@
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:hippo="http://www.hippoecm.org/nt/1.0"
          xmlns:fn="http://www.w3.org/2005/xpath-functions" 
-         sv:name="configuration">
+         sv:name="hippo:configuration">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:configuration</sv:value>
   </sv:property>
@@ -23,14 +23,13 @@
       <sv:value>hippo:workflowfolder</sv:value>
     </sv:property>
   </sv:node>
-    
-  <sv:node sv:name="frontend">
+  <sv:node sv:name="hippo:frontend">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:application</sv:value>
     </sv:property>
   </sv:node>
   
-  <sv:node sv:name="initialize">
+  <sv:node sv:name="hippo:initialize">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializefolder</sv:value>
     </sv:property>
@@ -47,7 +46,7 @@
         <sv:value>frontend.xml</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:contentroot" sv:type="String">
-        <sv:value>/configuration/frontend</sv:value>
+        <sv:value>/hippo:configuration/hippo:frontend</sv:value>
       </sv:property>
     </sv:node>
     
@@ -60,7 +59,7 @@
         <sv:value>users-config.xml</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:contentroot" sv:type="String">
-        <sv:value>/configuration</sv:value>
+        <sv:value>/hippo:configuration</sv:value>
       </sv:property>
     </sv:node>
     

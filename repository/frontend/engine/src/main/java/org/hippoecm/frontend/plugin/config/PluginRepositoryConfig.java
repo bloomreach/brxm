@@ -33,7 +33,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
-    private static final String pluginConfigRoot = "configuration/frontend/default";
+    private static final String pluginConfigRoot = "hippo:configuration/hippo:frontend/default";
     private static final String rootPluginId = "rootPlugin";
 
     public PluginRepositoryConfig() {

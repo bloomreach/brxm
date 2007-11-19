@@ -48,7 +48,7 @@ public class PersistanceInheritanceTest extends TestCase
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node, root = session.getRootNode();
 
-        node = root.addNode("configuration","hippo:configuration");
+        node = root.addNode("hippo:configuration","hippo:configuration");
         node.addNode("hippo:workflows","hippo:workflowfolder");
 
         node = node.addNode("hippo:documents","hippo:queryfolder");
@@ -79,7 +79,7 @@ public class PersistanceInheritanceTest extends TestCase
     }
 
     public void tearDown() throws Exception {
-        session.getRootNode().getNode("configuration").remove();
+        session.getRootNode().getNode("hippo:configuration").remove();
         session.getRootNode().getNode("documents").remove();
         session.save();
         server.close();

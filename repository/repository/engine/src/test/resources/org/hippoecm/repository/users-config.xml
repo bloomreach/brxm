@@ -8,7 +8,7 @@
     xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
     xmlns:hippo="http://www.hippoecm.org/nt/1.0"
     xmlns:fn="http://www.w3.org/2005/xpath-functions" 
-    sv:name="users">
+    sv:name="hippo:users">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:userfolder</sv:value>
     </sv:property>
