@@ -28,8 +28,9 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory;
 
 public class HippoRepositoryServer extends LocalHippoRepository {
-    public static int RMI_PORT = 1099;
-    public static String RMI_NAME = "jackrabbit.repository";
+    public final static int RMI_PORT = 1099;
+    public final static String RMI_HOST = "localhost";
+    public final static String RMI_NAME = "jackrabbit.repository";
 
     static Registry registry = null;
     private Remote rmiRepository;
@@ -60,7 +61,7 @@ public class HippoRepositoryServer extends LocalHippoRepository {
 
     public void run(String name, boolean background) throws RemoteException, AlreadyBoundException {
         if (name == null || name.equals(""))
-            name = "rmi://localhost:1099/jackrabbit.repository";
+            name = "rmi://" + RMI_HOST + ":" + RMI_PORT + "/" + RMI_NAME;
         String host = null;
         int port = 0;
         if (name.startsWith("rmi://")) {
