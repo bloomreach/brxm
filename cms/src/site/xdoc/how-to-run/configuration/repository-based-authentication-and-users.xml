@@ -52,7 +52,7 @@
         <section name="Configure users for the RepositoryLoginModule">
             <p>
                 The users are stored in the repository as childeren of the node 
-                <code>/configuration/users</code>.
+                <code>/hippo:configuration/hippo:users</code>.
                 A user node has the following configuration:
             </p>
 <source>

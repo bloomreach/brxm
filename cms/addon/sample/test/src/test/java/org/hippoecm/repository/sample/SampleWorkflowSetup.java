@@ -38,8 +38,8 @@ abstract class SampleWorkflowSetup
     Session session = server.login("admin","admin".toCharArray());
     Node root = session.getRootNode();
 
-    // set up the workflow specification as a node "/configuration/hippo:workflows/mycategory/myworkflow"
-    Node node = root.getNode("configuration");
+    // set up the workflow specification as a node "/hippo:configuration/hippo:workflows/mycategory/myworkflow"
+    Node node = root.getNode("hippo:configuration");
     node = node.getNode("hippo:workflows");
     node = node.addNode("mycategory","hippo:workflowcategory");
     node = node.addNode("myworkflow","hippo:workflow");
@@ -58,7 +58,7 @@ abstract class SampleWorkflowSetup
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.ArticleDocument");
 
     // set up the queryable document specification as a node "/configuration/hippo:documents/authors"
-    node = root.getNode("configuration");
+    node = root.getNode("hippo:configuration");
     node = node.getNode("hippo:documents");
     node = node.addNode("authors","hippo:query");
     node.setProperty("hippo:query","files//*[@jcr:primaryType='hippo:author' and @hippo:name='?']");
@@ -91,11 +91,11 @@ abstract class SampleWorkflowSetup
     Node root = session.getRootNode();
     root.getNode("files").remove();
 
-    root.getNode("configuration/hippo:workflows").remove();
-    root.addNode("configuration/hippo:workflows", "hippo:workflowfolder");
+    root.getNode("hippo:configuration/hippo:workflows").remove();
+    root.addNode("hippo:configuration/hippo:workflows", "hippo:workflowfolder");
 
-    root.getNode("configuration/hippo:documents").remove();
-    root.addNode("configuration/hippo:documents", "hippo:queryfolder");
+    root.getNode("hippo:configuration/hippo:documents").remove();
+    root.addNode("hippo:configuration/hippo:documents", "hippo:queryfolder");
     session.save();
     session.logout();
   }

@@ -233,7 +233,7 @@ class LocalHippoRepository extends HippoRepository {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
             }
 
-            if (!rootSession.getRootNode().hasNode("configuration")) {
+            if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
                 log.info("Initializing configuration content");
                 try {
                     InputStream configuration = getClass().getResourceAsStream("configuration.xml");
@@ -262,11 +262,11 @@ class LocalHippoRepository extends HippoRepository {
 
             Node configurationNode = null;
             try {
-                configurationNode = rootSession.getRootNode().getNode("configuration");
-                if (configurationNode.hasNode("initialize")) {
+                configurationNode = rootSession.getRootNode().getNode("hippo:configuration");
+                if (configurationNode.hasNode("hippo:initialize")) {
                     Node initializationNode = null;
                     try {
-                        initializationNode = configurationNode.getNode("initialize");
+                        initializationNode = configurationNode.getNode("hippo:initialize");
                     } catch (PathNotFoundException ex) {
                         assert (initializationNode != null); // cannot happen
                     }
