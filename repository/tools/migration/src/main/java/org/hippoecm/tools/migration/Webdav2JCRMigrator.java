@@ -15,12 +15,7 @@
  */
 package org.hippoecm.tools.migration;
 
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -37,10 +32,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.hippoecm.tools.migration.jcr.JCRHelper;
-import org.hippoecm.tools.migration.webdav.WebdavHelper;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.tools.migration.jcr.JCRHelper;
+import org.hippoecm.tools.migration.webdav.WebdavHelper;
 
 
 /**

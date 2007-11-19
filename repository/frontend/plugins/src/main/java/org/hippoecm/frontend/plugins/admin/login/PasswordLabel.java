@@ -14,6 +14,7 @@ public class PasswordLabel extends AjaxEditableLabel {
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     private String label;
 
     public PasswordLabel(String id) {

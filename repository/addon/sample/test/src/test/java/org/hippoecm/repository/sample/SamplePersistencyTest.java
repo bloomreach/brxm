@@ -17,7 +17,6 @@ package org.hippoecm.repository.sample;
 
 import java.io.IOException;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -47,7 +46,6 @@ public void tearDown() throws RepositoryException {
 
   public void testAuthorDocument() throws RepositoryException {
     Session session = server.login("dummy","dummy".toCharArray());
-    Node root = session.getRootNode();
 
     DocumentManager manager = ((HippoWorkspace)session.getWorkspace()).getDocumentManager();
     Document document = manager.getDocument("authors","Jan Smit");

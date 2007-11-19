@@ -17,8 +17,6 @@ package org.hippoecm.frontend.plugins.admin.menu;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugin.JcrEvent;

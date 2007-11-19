@@ -15,12 +15,12 @@
  */
 package org.hippoecm.repository;
 
-import java.io.IOException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
 import junit.framework.TestCase;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -68,7 +68,7 @@ public class FacetSearchDemoTest extends TestCase {
         }
     }
 
-    public void testTraversal() throws RepositoryException, IOException {
+    public void testTraversal() throws RepositoryException {
         Utilities.dump(session.getRootNode().getNode("facetsearch-demo"));
 	String[] tests = {
             "facetsearch-demo/demo/By Brand/hippo:resultset/DeWalt Drill-Saw Kit 19.2v 9884CS",

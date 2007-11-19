@@ -54,13 +54,11 @@ public class SampleWorkflowTest extends TestCase {
     }
     
     /**
-     * Create Atomikos UserTransActionManger instance
+     * Create UserTransActionManger instance
      * @return
-     * @throws NotSupportedException
      */
-    public TransactionManager getTransactionManager() throws NotSupportedException {
-        TransactionManager tm = new UserTransactionManager();
-        return tm;
+    public TransactionManager getTransactionManager() {
+        return new UserTransactionManager();
     }
 
     public void testWorkflow() throws RepositoryException, WorkflowException, IOException, Exception {
@@ -111,7 +109,7 @@ public class SampleWorkflowTest extends TestCase {
         }
     }
 
-    public void testWorkflowGui() throws RepositoryException, WorkflowException, IOException, ClassNotFoundException,
+    public void testWorkflowGui() throws RepositoryException, IOException, ClassNotFoundException,
             NoSuchMethodException, NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
         SampleWorkflowSetup.commonStart(server);
