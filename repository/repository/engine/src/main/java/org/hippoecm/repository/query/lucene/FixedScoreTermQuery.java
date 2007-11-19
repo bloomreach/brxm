@@ -18,9 +18,10 @@ package org.hippoecm.repository.query.lucene;
 import java.io.IOException;
 import java.util.Set;
 
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ComplexExplanation;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.HitCollector;

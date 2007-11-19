@@ -16,19 +16,19 @@
 package org.hippoecm.repository.servicing;
 
 import javax.jcr.Item;
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.jcr.Workspace;
 import javax.jcr.ValueFactory;
-import javax.jcr.ItemVisitor;
-import javax.jcr.query.QueryResult;
+import javax.jcr.Workspace;
+import javax.jcr.lock.Lock;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.lock.Lock;
 
 /**
  * Factory interface for creating decorator instances. The decorator

@@ -16,11 +16,8 @@
 package org.hippoecm.repository.servicing;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;

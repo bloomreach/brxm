@@ -17,13 +17,9 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
 
-import javax.security.auth.Subject;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.RepositoryException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemManager;
@@ -35,9 +31,10 @@ import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.namespace.NamespaceResolver;
-
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.security.AMContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implements HippoSession {
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);

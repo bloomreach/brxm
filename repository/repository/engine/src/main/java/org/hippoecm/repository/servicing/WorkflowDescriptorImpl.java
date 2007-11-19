@@ -17,18 +17,13 @@ package org.hippoecm.repository.servicing;
 
 import java.io.Serializable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowManager;
 
 public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serializable {
 

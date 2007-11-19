@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.AccessControlException;
 
-import javax.transaction.SystemException;
-import javax.transaction.xa.XAResource;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.InvalidItemStateException;
@@ -44,22 +41,15 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
+import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.SessionImpl;
-import org.apache.jackrabbit.name.AbstractNamespaceResolver;
-import org.apache.jackrabbit.name.NameException;
 import org.apache.jackrabbit.spi.Path;
-
+import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.jackrabbit.HippoSession;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
-//FIXME: depend only on JTA, not on Atomikos
-//import com.atomikos.icatch.jta.UserTransactionManager;
-
-import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.jackrabbit.HippoSession;
 
 /**
  */

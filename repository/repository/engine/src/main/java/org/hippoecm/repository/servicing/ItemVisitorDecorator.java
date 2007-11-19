@@ -16,9 +16,9 @@
 package org.hippoecm.repository.servicing;
 
 import javax.jcr.ItemVisitor;
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Node;
 import javax.jcr.Session;
 
 /**

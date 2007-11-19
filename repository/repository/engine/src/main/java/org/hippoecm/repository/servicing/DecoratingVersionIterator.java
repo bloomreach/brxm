@@ -15,9 +15,9 @@
  */
 package org.hippoecm.repository.servicing;
 
-import javax.jcr.version.VersionIterator;
-import javax.jcr.version.Version;
 import javax.jcr.Session;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionIterator;
 
 /**
  */

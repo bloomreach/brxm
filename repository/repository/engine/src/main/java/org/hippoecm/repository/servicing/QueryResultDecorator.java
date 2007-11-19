@@ -15,11 +15,11 @@
  */
 package org.hippoecm.repository.servicing;
 
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.RowIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.NodeIterator;
-import javax.jcr.Session;
 
 /**
  */

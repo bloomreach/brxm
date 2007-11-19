@@ -15,13 +15,11 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.state.LocalItemStateManager;
+import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.jackrabbit.core.config.WorkspaceConfig;
-import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.core.state.LocalItemStateManager;
-import org.apache.jackrabbit.conversion.NamePathResolver;
 
 public class XAWorkspaceImpl extends org.apache.jackrabbit.core.XAWorkspace {
     private static Logger log = LoggerFactory.getLogger(XAWorkspaceImpl.class);

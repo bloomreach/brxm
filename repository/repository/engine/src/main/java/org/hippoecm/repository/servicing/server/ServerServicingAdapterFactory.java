@@ -21,12 +21,12 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
-import org.hippoecm.repository.api.DocumentManager;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
+import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
 import org.hippoecm.repository.servicing.ServicingSessionImpl;
 import org.hippoecm.repository.servicing.ServicingWorkspaceImpl;

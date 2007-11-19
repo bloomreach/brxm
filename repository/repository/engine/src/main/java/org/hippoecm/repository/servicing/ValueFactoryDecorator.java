@@ -15,14 +15,15 @@
  */
 package org.hippoecm.repository.servicing;
 
-import javax.jcr.ValueFactory;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
+import java.io.InputStream;
+import java.util.Calendar;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import java.util.Calendar;
-import java.io.InputStream;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 
 /**
  */

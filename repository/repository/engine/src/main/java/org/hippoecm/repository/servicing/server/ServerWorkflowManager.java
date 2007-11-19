@@ -21,12 +21,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerObject;
-
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
+import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ServerWorkflowManager extends ServerObject implements RemoteWorkflowManager {
     private WorkflowManager workflowManager;
