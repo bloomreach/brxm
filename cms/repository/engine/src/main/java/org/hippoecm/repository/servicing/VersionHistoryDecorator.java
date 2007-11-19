@@ -15,15 +15,15 @@
  */
 package org.hippoecm.repository.servicing;
 
-import javax.jcr.version.VersionHistory;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionIterator;
-import javax.jcr.version.VersionException;
-import javax.jcr.Session;
-import javax.jcr.RepositoryException;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.AccessDeniedException;
+import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionIterator;
 
 /**
  */

@@ -17,17 +17,16 @@ package org.hippoecm.repository.servicing.client;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.Session;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.ClientWorkspace;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
-
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
+import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ClientServicingWorkspace extends ClientWorkspace implements HippoWorkspace {

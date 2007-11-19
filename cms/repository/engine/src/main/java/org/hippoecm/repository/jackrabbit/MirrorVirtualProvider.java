@@ -17,9 +17,6 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.util.Iterator;
 
-import javax.jcr.RepositoryException;
-
-import org.apache.jackrabbit.conversion.NamePathResolver;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.state.NodeState;

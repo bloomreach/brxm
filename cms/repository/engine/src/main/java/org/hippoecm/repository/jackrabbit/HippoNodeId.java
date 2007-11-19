@@ -18,8 +18,8 @@ package org.hippoecm.repository.jackrabbit;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.uuid.UUID;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.uuid.UUID;
 
 public class HippoNodeId extends NodeId
 {

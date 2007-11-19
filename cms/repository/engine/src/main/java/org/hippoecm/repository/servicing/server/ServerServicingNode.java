@@ -19,12 +19,11 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.rmi.server.ServerNode;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
-
+import org.apache.jackrabbit.rmi.server.ServerNode;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
-import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
+import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
 
 public class ServerServicingNode extends ServerNode implements RemoteServicingNode {
     private ServicingNodeImpl node;

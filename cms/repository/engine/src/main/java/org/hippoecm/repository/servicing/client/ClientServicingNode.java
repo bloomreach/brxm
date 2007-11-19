@@ -18,12 +18,11 @@ package org.hippoecm.repository.servicing.client;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.ClientNode;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
-
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
 

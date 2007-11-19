@@ -28,13 +28,13 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.jdo.spi.PersistenceCapable;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.jpox.ClassLoaderResolver;
 import org.jpox.ConnectionFactory;
 import org.jpox.ConnectionManager;
@@ -65,11 +65,8 @@ import org.jpox.store.scostore.CollectionStore;
 import org.jpox.store.scostore.MapStore;
 import org.jpox.util.ClassUtils;
 import org.jpox.util.MacroString.IdentifierMacro;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class StoreManagerImpl extends StoreManager {
     protected final Logger log = LoggerFactory.getLogger(StoreManagerImpl.class);

@@ -15,11 +15,12 @@
  */
 package org.hippoecm.repository.servicing;
 
-import javax.jcr.Session;
+import java.util.Calendar;
+
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
-import java.util.Calendar;
 
 /**
  */

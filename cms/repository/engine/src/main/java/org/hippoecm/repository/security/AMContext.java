@@ -15,12 +15,14 @@
  */
 package org.hippoecm.repository.security;
 
-import org.apache.jackrabbit.core.HierarchyManager;
-import org.apache.jackrabbit.core.fs.FileSystem;
-import org.apache.jackrabbit.namespace.NamespaceResolver;
+import java.io.File;
 
 import javax.security.auth.Subject;
-import java.io.File;
+
+import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.security.AccessManager;
+import org.apache.jackrabbit.namespace.NamespaceResolver;
 
 /**
  * An <code>AMContext</code> is used to provide context information for the

@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
-
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.ServicingWorkspaceImpl;

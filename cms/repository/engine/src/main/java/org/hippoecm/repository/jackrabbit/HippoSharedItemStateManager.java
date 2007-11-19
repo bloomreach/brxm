@@ -15,14 +15,11 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import org.apache.jackrabbit.core.state.SharedItemStateManager;
-
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
-import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 
 public class HippoSharedItemStateManager extends SharedItemStateManager {

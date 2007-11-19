@@ -33,22 +33,18 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
-
 import javax.jdo.spi.PersistenceCapable;
-
-import org.jpox.StateManager;
-import org.jpox.exceptions.JPOXDataStoreException;
-import org.jpox.state.StateManagerFactory;
-import org.jpox.store.fieldmanager.AbstractFieldManager;
-import org.jpox.metadata.ClassMetaData;
-import org.jpox.metadata.AbstractClassMetaData;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.jpox.StateManager;
+import org.jpox.exceptions.JPOXDataStoreException;
+import org.jpox.metadata.AbstractClassMetaData;
+import org.jpox.state.StateManagerFactory;
+import org.jpox.store.fieldmanager.AbstractFieldManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class FieldManagerImpl extends AbstractFieldManager {
     protected final Logger log = LoggerFactory.getLogger(FieldManagerImpl.class);

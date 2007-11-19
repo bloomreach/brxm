@@ -18,7 +18,6 @@ package org.hippoecm.repository.servicing.client;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.LocalAdapterFactory;
-
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;

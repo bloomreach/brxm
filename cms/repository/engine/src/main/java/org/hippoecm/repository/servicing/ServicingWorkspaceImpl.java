@@ -37,11 +37,10 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.xml.sax.ContentHandler;
-
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.xml.sax.ContentHandler;
 
 /**
  * Simple workspace decorator.

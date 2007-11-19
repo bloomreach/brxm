@@ -22,11 +22,10 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.apache.jackrabbit.core.SearchManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 
 /**
  * Simple {@link Repository Repository} decorator.

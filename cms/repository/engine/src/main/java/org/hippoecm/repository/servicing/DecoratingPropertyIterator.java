@@ -15,9 +15,9 @@
  */
 package org.hippoecm.repository.servicing;
 
-import javax.jcr.Session;
-import javax.jcr.PropertyIterator;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.Session;
 
 /**
  */

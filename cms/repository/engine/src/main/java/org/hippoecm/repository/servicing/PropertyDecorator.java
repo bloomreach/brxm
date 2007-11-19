@@ -15,18 +15,19 @@
  */
 package org.hippoecm.repository.servicing;
 
-import javax.jcr.Property;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.RepositoryException;
-import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.PropertyDefinition;
-import javax.jcr.lock.LockException;
-import javax.jcr.version.VersionException;
 import java.io.InputStream;
 import java.util.Calendar;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.version.VersionException;
 
 /**
  */

@@ -18,7 +18,6 @@ package org.hippoecm.repository.servicing.remote;
 import java.rmi.RemoteException;
 
 import org.apache.jackrabbit.rmi.server.RemoteAdapterFactory;
-
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
 
