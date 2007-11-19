@@ -88,7 +88,7 @@
         <sv:value>workflow-config.xml</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:contentroot" sv:type="String">
-        <sv:value>/configuration/workflows</sv:value>
+        <sv:value>/configuration/hippo:workflows</sv:value>
       </sv:property>
     </sv:node>
     

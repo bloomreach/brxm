@@ -77,6 +77,7 @@
 + * (hippo:initializeitem) = hippo:initializeitem
 
 [hippo:application] > nt:base
++ *
 
 [hippo:user] > nt:base
 - hippo:password (string) mandatory

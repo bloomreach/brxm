@@ -4,9 +4,9 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
 
-[hippo:page] > nt:base
-+ rootPlugin (hippo:frontendplugin) mandatory
-
 [hippo:frontendplugin] > nt:base
 - hippo:renderer (string) mandatory
 + * (hippo:frontendplugin) = hippo:frontendplugin
+
+[hippo:page] > nt:base
++ *
