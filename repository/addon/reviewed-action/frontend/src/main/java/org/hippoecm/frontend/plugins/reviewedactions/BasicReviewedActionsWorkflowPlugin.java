@@ -15,10 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableinstance.DisposeEditableInstanceDialog;
@@ -39,10 +37,6 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractMenuPlugin {
         addMenuOption("requestDePublication-dialog", "requestDePublication", RequestDePublicationDialog.class.getName(), model);
         addMenuOption("requestDeletion-dialog", "requestDeletion", RequestDeletionDialog.class.getName(), model);
 
-    }
-
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        //Nothing much to do here
     }
 
 }

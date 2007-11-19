@@ -40,7 +40,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         Plugin owningPlugin = (Plugin)dialogWindow.findParent(Plugin.class);
         Workflow workflow = null;
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) owningPlugin.getModel();
+            JcrNodeModel nodeModel = owningPlugin.getNodeModel();
             WorkflowManager manager = owningPlugin.getPluginManager().getWorkflowManager();
 
             //TODO: add optional property 'workflowcategory' to 

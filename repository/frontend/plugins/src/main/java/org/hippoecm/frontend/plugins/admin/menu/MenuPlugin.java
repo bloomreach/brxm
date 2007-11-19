@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.admin.menu;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugin.JcrEvent;
@@ -34,6 +35,8 @@ import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 public class MenuPlugin extends AbstractMenuPlugin {
     private static final long serialVersionUID = 1L;
 
+    private String nodePath;
+    
     public MenuPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
@@ -46,13 +49,15 @@ public class MenuPlugin extends AbstractMenuPlugin {
         addMenuOption("save-dialog", "save-dialog-link", SaveDialog.class.getName(), model);
         addMenuOption("reset-dialog", "reset-dialog-link", ResetDialog.class.getName(), model);
 
-        add(new Label("path"));
+        nodePath = model.getItemModel().getPath();
+        add(new Label("path", new PropertyModel(this, "nodePath")));
     }
-    
     
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         if (jcrEvent.getModel() != null) {
-            setModel(jcrEvent.getModel());
+            JcrNodeModel nodeModel = jcrEvent.getModel();
+            setNodeModel(nodeModel);
+            nodePath = nodeModel.getItemModel().getPath();
         }
         if (target != null) {
             target.addComponent(this);
