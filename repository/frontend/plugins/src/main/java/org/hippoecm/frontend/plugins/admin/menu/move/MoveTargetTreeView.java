@@ -18,7 +18,8 @@ package org.hippoecm.frontend.plugins.admin.menu.move;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.tree.JcrTree;
 
 public class MoveTargetTreeView extends JcrTree {
@@ -27,16 +28,16 @@ public class MoveTargetTreeView extends JcrTree {
     private TreeNode selectedNode;
     private MoveDialog dialog;
 
-    public MoveTargetTreeView(String id, TreeNode treeNode, MoveDialog dialog) {
-        super(id, treeNode);
+    public MoveTargetTreeView(String id, JcrTreeModel treeModel, MoveDialog dialog) {
+        super(id, treeModel);
         this.dialog = dialog;
     }
 
     @Override
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
         this.selectedNode = treeNode;
-        JcrNodeModel jcrNodeModel = (JcrNodeModel) treeNode;
-        dialog.update(target, jcrNodeModel);
+        JcrTreeNode treeNodeModel = (JcrTreeNode) treeNode;
+        dialog.update(target, treeNodeModel.getNodeModel());
     }
 
     public TreeNode getSelectedNode() {

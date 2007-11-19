@@ -17,7 +17,6 @@ package org.hippoecm.frontend;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.SimpleJcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
@@ -43,7 +42,7 @@ public class Home extends WebPage {
             PluginFactory pluginFactory = new PluginFactory(pluginManager);
             
             PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
-            JcrNodeModel rootModel = new SimpleJcrNodeModel(rootNode);
+            JcrNodeModel rootModel = new JcrNodeModel(null, rootNode);
             Plugin rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
             rootPlugin.setPluginManager(pluginManager);
 

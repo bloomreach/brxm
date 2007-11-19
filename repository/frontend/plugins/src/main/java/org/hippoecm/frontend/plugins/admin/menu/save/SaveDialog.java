@@ -52,8 +52,8 @@ public class SaveDialog extends AbstractDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         nodeModel.getNode().getSession().save();
 
-        while (nodeModel.getParent() != null) {
-            nodeModel = (JcrNodeModel) nodeModel.getParent();
+        while (nodeModel.getParentModel() != null) {
+            nodeModel = nodeModel.getParentModel();
         }
         return new JcrEvent(nodeModel, hasPendingChanges);
     }

@@ -16,23 +16,59 @@
 package org.hippoecm.frontend.model;
 
 import javax.jcr.Node;
-import javax.swing.tree.TreeNode;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.repository.api.HippoNode;
 
-public abstract class JcrNodeModel extends ItemModelWrapper implements TreeNode {
+public class JcrNodeModel extends ItemModelWrapper {
     private static final long serialVersionUID = 1L;
 
-    // Constructor
+    private JcrNodeModel parent;
 
-    public JcrNodeModel(Node node) {
+    public JcrNodeModel(JcrNodeModel parent, Node node) {
         super(node);
+        this.parent = parent;
     }
-
-    // The wrapped repository node
 
     public HippoNode getNode() {
         return (HippoNode) itemModel.getObject();
+    }
+
+    public JcrNodeModel getParentModel() {
+        return parent;
+    }
+    
+    // override Object
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+            .append("itemModel", itemModel.toString())
+            .toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof JcrNodeModel == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        JcrNodeModel nodeModel = (JcrNodeModel) object;
+        return new EqualsBuilder()
+            .append(itemModel, nodeModel.itemModel)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(57, 433)
+            .append(itemModel)
+            .toHashCode();
     }
     
 }

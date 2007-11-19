@@ -23,8 +23,9 @@ import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugins.admin.model.BrowserModel;
 import org.hippoecm.repository.api.HippoNode;
 
 public class MoveDialog extends AbstractDialog {
@@ -40,10 +41,13 @@ public class MoveDialog extends AbstractDialog {
 
         UserSession session = (UserSession)getSession();
         HippoNode rootNode = session.getRootNode();
-        JcrNodeModel rootModel = new BrowserModel(null, rootNode);
+        JcrNodeModel rootModel = new JcrNodeModel(null, rootNode);
+
+        JcrTreeNode rootNodeModel = new JcrTreeNode(rootModel);
+        JcrTreeModel treeModel = new JcrTreeModel(rootNodeModel);
         
-        tree = new MoveTargetTreeView("tree", rootModel, this);
-        tree.getTreeState().expandNode(rootModel);
+        tree = new MoveTargetTreeView("tree", treeModel, this);
+        tree.getTreeState().expandNode(rootNodeModel);
         add(tree);
 
         infoPanel = new MoveDialogInfoPanel("info", nodeModel);
@@ -59,14 +63,14 @@ public class MoveDialog extends AbstractDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
         JcrEvent result;
-        if (nodeModel.getParent() == null) {
+        if (nodeModel.getParentModel() == null) {
             result = new JcrEvent(nodeModel, false);
         } else {
             String nodeName = nodeModel.getNode().getName();
             String sourcePath = nodeModel.getNode().getPath();
 
-            JcrNodeModel targetNodeModel = (JcrNodeModel) tree.getSelectedNode();            
-            String targetPath = targetNodeModel.getNode().getPath();
+            JcrTreeNode targetNodeModel = (JcrTreeNode) tree.getSelectedNode();            
+            String targetPath = targetNodeModel.getNodeModel().getNode().getPath();
             if (!targetPath.endsWith("/")) {
                 targetPath += "/";
             }
@@ -77,9 +81,9 @@ public class MoveDialog extends AbstractDialog {
             jcrSession.move(sourcePath, targetPath);
             
             //TODO: use common ancestor iso root
-            JcrNodeModel rootNodeModel = targetNodeModel;
-            while (nodeModel.getParent() != null) {
-                rootNodeModel = (JcrNodeModel)rootNodeModel.getParent();
+            JcrNodeModel rootNodeModel = targetNodeModel.getNodeModel();
+            while (nodeModel.getParentModel() != null) {
+                rootNodeModel = nodeModel.getParentModel();
             }
             result = new JcrEvent(rootNodeModel, true);
         }

@@ -43,6 +43,10 @@ public class JcrItemModel extends LoadableDetachableModel {
         }
     }
 
+    public String getPath() {
+        return path;
+    }
+
     // LoadableDetachableModel
 
     @Override

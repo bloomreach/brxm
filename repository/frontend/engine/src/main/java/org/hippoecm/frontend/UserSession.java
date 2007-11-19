@@ -53,11 +53,14 @@ public class UserSession extends WebSession {
     }
 
     public HippoNode getRootNode() {
-        HippoNode result;
+        HippoNode result = null;
         try {
-            result = (HippoNode) jcrSessionModel.getSession().getRootNode();
+            Session jcrSession = jcrSessionModel.getSession();
+            if (jcrSession != null) {
+                result = (HippoNode) jcrSession.getRootNode();
+            }
         } catch (RepositoryException e) {
-            result = null;
+            //
         }
         return result;
     }

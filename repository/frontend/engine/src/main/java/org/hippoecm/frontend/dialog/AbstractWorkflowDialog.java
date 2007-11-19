@@ -67,8 +67,8 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         nodeModel.getNode().getSession().save();
         nodeModel.getNode().getSession().refresh(true);
 
-        while (!nodeModel.getNode().getPath().equals("/")) {
-            nodeModel = (JcrNodeModel) nodeModel.getParent();
+        while (nodeModel.getParentModel() != null) {
+            nodeModel = nodeModel.getParentModel();
         }
         return new JcrEvent(nodeModel, true);
     }

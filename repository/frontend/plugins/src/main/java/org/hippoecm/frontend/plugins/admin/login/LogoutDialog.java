@@ -50,8 +50,8 @@ public class LogoutDialog extends AbstractDialog {
         userSession.setJcrSession(jcrSession, new ValueMap());
         
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        while (nodeModel.getParent() != null) {
-            nodeModel = (JcrNodeModel)nodeModel.getParent();
+        while (nodeModel.getParentModel() != null) {
+            nodeModel = nodeModel.getParentModel();
         }
         return new JcrEvent(nodeModel, true);
     }

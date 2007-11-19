@@ -19,29 +19,33 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.admin.model.BrowserModel;
 import org.hippoecm.frontend.tree.JcrTree;
 
 public class BrowserPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     private JcrTree tree;
+    private JcrTreeNode rootNodeModel;
 
-    public BrowserPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
-        JcrNodeModel treeNode = new BrowserModel(null, model.getNode());
-        
-        tree = new JcrTree("tree", treeNode) {
+    public BrowserPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel nodeModel, Plugin parentPlugin) {
+        super(pluginDescriptor, nodeModel, parentPlugin);
+
+        rootNodeModel = new JcrTreeNode(nodeModel);
+        JcrTreeModel treeModel = new JcrTreeModel(rootNodeModel);
+
+        tree = new JcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                JcrNodeModel jcrTreeNode = (JcrNodeModel) clickedNode;
-                JcrEvent jcrEvent = new JcrEvent(jcrTreeNode, false);
-                
+                JcrTreeNode treeNodeModel = (JcrTreeNode) clickedNode;
+                JcrEvent jcrEvent = new JcrEvent(treeNodeModel.getNodeModel(), false);
+
                 getPluginManager().update(target, jcrEvent);
             }
         };
@@ -50,12 +54,11 @@ public class BrowserPlugin extends Plugin {
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         if (jcrEvent.structureChanged()) {
-            JcrNodeModel treeNode = jcrEvent.getModel();
-            if (treeNode instanceof BrowserModel) {
-                BrowserModel browserModel = (BrowserModel)treeNode;
-                browserModel.markReload();
-            }
-            tree.nodeStructureChanged(treeNode);
+            JcrTreeModel treeModel = rootNodeModel.getTreeModel();
+            JcrTreeNode treeNodeModel = treeModel.lookup(jcrEvent.getModel());
+
+            treeNodeModel.markReload();
+            tree.getTreeModel().nodeStructureChanged(treeNodeModel);
             tree.updateTree(target);
         }
     }
