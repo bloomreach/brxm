@@ -34,8 +34,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class PathsTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "systemuser";
-    private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
+    private static final String SYSTEMUSER_ID = "admin";
+    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     protected HippoRepository repository;
     protected Session session;

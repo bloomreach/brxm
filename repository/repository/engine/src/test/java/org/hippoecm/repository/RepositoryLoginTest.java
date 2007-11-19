@@ -29,12 +29,12 @@ public class RepositoryLoginTest extends TestCase {
     private final static String SVN_ID = "$Id:RepositoryLoginTest.java 8167 2007-09-14 13:37:17Z wgrevink $";
 
     private HippoRepository server;
-    private Session systemSession;
+    private Session serverSession;
     private Node users;
 
     private static final String ANONYMOUS_ID = "anonymous";
-    private static final String SYSTEMUSER_ID = "systemuser";
-    private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
+    private static final String SYSTEMUSER_ID = "admin";
+    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     private static final String USERS_PATH = "configuration/users";
     
@@ -51,10 +51,10 @@ public class RepositoryLoginTest extends TestCase {
 
     public void setUp() throws RepositoryException, IOException {
         server = HippoRepositoryFactory.getHippoRepository();
-        systemSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        serverSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         
         // create user config path
-        Node node = systemSession.getRootNode();
+        Node node = serverSession.getRootNode();
         StringTokenizer tokenizer = new StringTokenizer(USERS_PATH, "/");
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
@@ -63,7 +63,7 @@ public class RepositoryLoginTest extends TestCase {
         
         // create test users
         Node testuser;
-        users = systemSession.getRootNode().getNode(USERS_PATH);
+        users = serverSession.getRootNode().getNode(USERS_PATH);
         testuser = users.addNode(TESTUSER_ID_PLAIN);
         testuser.setProperty("hippo:password", TESTUSER_PASS);
         testuser = users.addNode(TESTUSER_ID_MD5, "hippo:user");
@@ -72,16 +72,16 @@ public class RepositoryLoginTest extends TestCase {
         testuser.setProperty("hippo:password", TESTUSER_HASH_SHA1);
         testuser = users.addNode(TESTUSER_ID_SHA256, "hippo:user");
         testuser.setProperty("hippo:password", TESTUSER_HASH_SHA256);
-        systemSession.save();
+        serverSession.save();
     }
 
     public void tearDown() throws RepositoryException {
         if (users != null) {
             users.remove();
         }
-        if (systemSession != null) {
-            systemSession.save();
-            systemSession.logout();
+        if (serverSession != null) {
+            serverSession.save();
+            serverSession.logout();
         }
         if (server != null) {
             server.close();

@@ -16,7 +16,6 @@
 package org.hippoecm.repository;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,10 +36,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
@@ -200,8 +197,9 @@ class LocalHippoRepository extends HippoRepository {
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
 
         try {
-            Session session = login(new SimpleCredentials("systemuser", "systempass".toCharArray()));
-            Workspace workspace = session.getWorkspace();
+            // get the current root/system session for the default workspace
+            Session rootSession =  ((RepositoryImpl)jackrabbitRepository).getRootSession(null);
+            Workspace workspace = rootSession.getWorkspace();
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
 
             try {
@@ -216,7 +214,7 @@ class LocalHippoRepository extends HippoRepository {
                 String cndName = "repository.cnd";
                 log.info("Initializing nodetypes from: " + cndName);
                 initializeNodetypes(workspace, getClass().getResourceAsStream(cndName), cndName);
-                session.save();
+                rootSession.save();
             } catch (ConstraintViolationException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
             } catch (InvalidItemStateException ex) {
@@ -235,13 +233,13 @@ class LocalHippoRepository extends HippoRepository {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
             }
 
-            if (!session.getRootNode().hasNode("configuration")) {
+            if (!rootSession.getRootNode().hasNode("configuration")) {
                 log.info("Initializing configuration content");
                 try {
                     InputStream configuration = getClass().getResourceAsStream("configuration.xml");
                     if (configuration != null) {
-                        initializeNodecontent(session, "/", configuration);
-                        session.save();
+                        initializeNodecontent(rootSession, "/", configuration);
+                        rootSession.save();
                     }
                 } catch (AccessDeniedException ex) {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
@@ -264,7 +262,7 @@ class LocalHippoRepository extends HippoRepository {
 
             Node configurationNode = null;
             try {
-                configurationNode = session.getRootNode().getNode("configuration");
+                configurationNode = rootSession.getRootNode().getNode("configuration");
                 if (configurationNode.hasNode("initialize")) {
                     Node initializationNode = null;
                     try {
@@ -325,7 +323,7 @@ class LocalHippoRepository extends HippoRepository {
                                             rootProperty.remove();
                                         }
                                         log.info("Initializing content from: " + contentName + " to " + root);
-                                        initializeNodecontent(session, root, contentStream);
+                                        initializeNodecontent(rootSession, root, contentStream);
                                         contentProperty.remove();
                                     }
                                 } catch (PathNotFoundException ex) {
@@ -333,47 +331,43 @@ class LocalHippoRepository extends HippoRepository {
                                     assert (rootProperty != null); // cannot happen
                                 }
                             }
-                            for (PropertyIterator propiter = node.getProperties(); propiter.hasNext();) {
-                                Property p = propiter.nextProperty();
-                            }
-                            session.save();
+                            rootSession.save();
                         } catch (ParseException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (AccessDeniedException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (ConstraintViolationException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (InvalidItemStateException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (ItemExistsException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (LockException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (NoSuchNodeTypeException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (UnsupportedRepositoryOperationException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (ValueFormatException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         } catch (VersionException ex) {
                             log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                            session.refresh(false);
+                            rootSession.refresh(false);
                         }
                     }
                 }
             } catch (PathNotFoundException ex) {
                 log.error("configuration node still not present");
             }
-            session.logout();
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
         }
@@ -393,7 +387,6 @@ class LocalHippoRepository extends HippoRepository {
 
     private void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws ParseException,
             RepositoryException {
-        BufferedReader cndInput = new BufferedReader(new InputStreamReader(cndStream));
         CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
         List ntdList = cndReader.getNodeTypeDefs();
         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();

@@ -19,10 +19,9 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import javax.jcr.RepositoryException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
     private final static String SVN_ID = "$Id$";
@@ -48,10 +47,8 @@ public class HippoRepositoryFactory {
             return defaultRepository;
         } 
         if (defaultLocation != null) {
-            defaultRepository = getHippoRepository(defaultLocation);
-            return defaultRepository;
+            return getHippoRepository(defaultLocation);
         }
-
         defaultRepository = new LocalHippoRepository();
         return defaultRepository;
     }
@@ -70,6 +67,7 @@ public class HippoRepositoryFactory {
         // remote?
         if (location.startsWith("rmi://")) {
             try {
+                defaultLocation = location;
                 return new RemoteHippoRepository(location);
             } catch (RemoteException ex) {
                 return null;
@@ -85,6 +83,7 @@ public class HippoRepositoryFactory {
 
         if(location.startsWith("java:")) {
           try {
+            defaultLocation = location;
             InitialContext ctx = new InitialContext();
             return (HippoRepository) ctx.lookup(location);
           } catch (NamingException ex) {

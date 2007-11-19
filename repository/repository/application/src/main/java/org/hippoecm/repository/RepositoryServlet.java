@@ -202,8 +202,7 @@ public class RepositoryServlet extends HttpServlet {
         writer.println("  <h2>Referenced node</h2>");
         Session session = null;
         try {
-            //TODO: add login prompt here
-            session = repository.login("systemuser", "systempass".toCharArray());
+            session = repository.login();
             Node node = session.getRootNode();
             if (path.startsWith("//")) {
                 path = path.substring("//".length());
