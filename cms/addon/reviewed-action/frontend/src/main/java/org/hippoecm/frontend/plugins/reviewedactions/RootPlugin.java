@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -26,9 +24,6 @@ public class RootPlugin extends Plugin {
 
     public RootPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-    }
-
-    public void update(final AjaxRequestTarget target, JcrEvent jcrEvent) {
     }
 
 }

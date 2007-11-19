@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
@@ -39,7 +40,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
     private JcrNodeModel model;
     
     public Plugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor.getWicketId(), new CompoundPropertyModel(model));
+        super(pluginDescriptor.getWicketId(), null);
         setOutputMarkupId(true);
         this.parentPlugin = parentPlugin;
         this.pluginDescriptor = pluginDescriptor;
@@ -69,13 +70,8 @@ public abstract class Plugin extends Panel implements EventConsumer {
         return model;
     }
     
-    @Override
-    public Component setModel(IModel model) {
-        if(model instanceof JcrNodeModel) {
-            this.model = (JcrNodeModel) model;
-            return super.setModel(new CompoundPropertyModel(model));
-        }
-        throw new IllegalArgumentException("Model must be of type JcrNodeModel");
+    public void setNodeModel(JcrNodeModel model) {
+        this.model = model;
     }
 
     public void addChildren() {
@@ -116,5 +112,9 @@ public abstract class Plugin extends Panel implements EventConsumer {
             e.printStackTrace();
         }
         return workflow;
+    }
+
+    public void update(AjaxRequestTarget target, JcrEvent event) {
+        setNodeModel(event.getModel());
     }
 }

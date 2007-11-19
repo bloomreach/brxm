@@ -15,10 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.CancelRequestDialog;
@@ -30,11 +28,6 @@ public class BasicRequestWorkflowPlugin extends AbstractMenuPlugin {
         super(pluginDescriptor, model, parentPlugin);
 
         addMenuOption("cancelRequest-dialog", "cancelRequest", CancelRequestDialog.class.getName(), model);
-        
-    }
-
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        //Nothing much to do here
     }
 
 }
