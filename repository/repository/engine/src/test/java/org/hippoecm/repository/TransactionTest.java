@@ -24,7 +24,6 @@ import javax.transaction.UserTransaction;
 
 import junit.framework.TestCase;
 
-
 import com.atomikos.icatch.jta.UserTransactionManager;
 
 public class TransactionTest extends TestCase {

@@ -15,14 +15,14 @@
  */
 package org.hippoecm.repository.servicing;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Property;
 import javax.jcr.Value;
 
 import junit.framework.TestCase;

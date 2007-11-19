@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import java.io.IOException;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;

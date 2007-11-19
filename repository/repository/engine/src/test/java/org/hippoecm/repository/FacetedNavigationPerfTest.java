@@ -25,7 +25,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.hippoecm.testutils.history.HistoryWriter;
 
 public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
