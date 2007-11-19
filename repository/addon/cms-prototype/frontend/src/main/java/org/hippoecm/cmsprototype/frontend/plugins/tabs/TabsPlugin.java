@@ -30,7 +30,7 @@ public class TabsPlugin extends Plugin {
     public Plugin addChild(PluginDescriptor childDescriptor) {
         childDescriptor.setWicketId(TabbedPanel.TAB_PANEL_ID);
         PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-        final Plugin child = pluginFactory.createPlugin(childDescriptor, (JcrNodeModel) getModel(), this);
+        final Plugin child = pluginFactory.createPlugin(childDescriptor, getNodeModel(), this);
 
         AbstractTab tab = new AbstractTab(new Model(childDescriptor.getPluginId())) {
             private static final long serialVersionUID = 1L;
