@@ -35,6 +35,19 @@
       <sv:value>hippo:initializefolder</sv:value>
     </sv:property>
     
+    <!--Document model-->
+    <sv:node sv:name="model">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:nodetypes" sv:type="String">
+        <sv:value>model.cnd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>
+    
     <!--Frontend plugin configuration-->
     <sv:node sv:name="frontend">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -76,7 +89,33 @@
         <sv:value>/hippo:configuration/hippo:workflows</sv:value>
       </sv:property>
     </sv:node>
-
+    
+    <!--Facet Reference demo-->
+    <sv:node sv:name="facetreference">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>facetreference-demodata.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!--Facet search demo-->
+    <sv:node sv:name="facetsearch">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>facetsearch-demodata.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>
+    
     <!--Workflow demo-->
     <sv:node sv:name="workflowdata">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

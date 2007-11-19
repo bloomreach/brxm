@@ -40,6 +40,15 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.BrowserPerspective</sv:value>
         </sv:property>
+        
+        <sv:node sv:name="browserBreadcrumbPlugin">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:frontendplugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin</sv:value>
+          </sv:property>
+        </sv:node>
 
         <sv:node sv:name="browserPlugin">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -77,6 +86,15 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.EditPerspective</sv:value>
         </sv:property>
+
+        <!--<sv:node sv:name="editingBreadcrumbPlugin">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:frontendplugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin</sv:value>
+          </sv:property>
+        </sv:node>-->
 
         <sv:node sv:name="editor">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
