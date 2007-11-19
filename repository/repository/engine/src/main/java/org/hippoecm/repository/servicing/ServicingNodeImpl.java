@@ -66,7 +66,7 @@ import org.apache.jackrabbit.name.NameException;
 import org.apache.jackrabbit.name.Path;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.HitsRequested;
+import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 

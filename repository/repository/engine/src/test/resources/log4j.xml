@@ -29,6 +29,12 @@
     </layout>
   </appender>
 
+  <appender name="debugging" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.err"/>
+    <layout class="org.apache.log4j.SimpleLayout">
+    </layout>
+  </appender>
+
   <!-- log4j.log -->
   <appender name="root" class="org.apache.log4j.FileAppender">
     <param name="File" value="target/log4j.log"/>
@@ -54,6 +60,15 @@
   <category additivity="false" name="org.jpox">
     <level value="warn"/>
     <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="true" name="org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager">
+    <level value="debug"/>
+    <appender-ref ref="debugging"/>
+  </category>
+  <category additivity="true" name="org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager">
+    <level value="debug"/>
+    <appender-ref ref="debugging"/>
   </category>
 
   <root>

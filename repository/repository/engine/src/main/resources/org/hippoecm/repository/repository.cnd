@@ -4,9 +4,6 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
 
-[hippo:external] > nt:unstructured
-[hippo:virtual] > nt:unstructured
-
 [hippo:facetresult]
 + * multiple
 

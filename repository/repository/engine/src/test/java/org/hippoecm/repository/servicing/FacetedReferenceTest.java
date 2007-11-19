@@ -246,6 +246,4 @@ public class FacetedReferenceTest extends TestCase {
         }
            
     }
-    
-    
 }
