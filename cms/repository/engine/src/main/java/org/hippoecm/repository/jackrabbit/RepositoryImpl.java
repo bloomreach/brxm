@@ -15,21 +15,13 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.io.PrintStream;
-
-import javax.security.auth.Subject;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
@@ -39,16 +31,13 @@ import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
-import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
-import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
+import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
 {
@@ -152,6 +141,19 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         return ((WorkspaceInfo)getWorkspaceInfo(workspaceName)).getSearchManager();
     }
 
+    /**
+     * Get the root/system session for a workspace
+     * @param workspaceName if the workspaceName equals null the default namespace is taken
+     * @return Session the rootSession
+     * @throws RepositoryException
+     */
+    public Session getRootSession(String workspaceName) throws RepositoryException {
+        if (workspaceName == null) {
+            workspaceName = super.repConfig.getDefaultWorkspaceName();
+        }
+        return ((WorkspaceInfo)getWorkspaceInfo(workspaceName)).getRootSession();
+    }
+    
     protected WorkspaceInfo createWorkspaceInfo(WorkspaceConfig wspConfig) {
         return new WorkspaceInfo(wspConfig);
     }
@@ -164,6 +166,16 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
 
         protected SearchManager getSearchManager() throws RepositoryException {
             return super.getSearchManager();
+        }
+        
+        /**
+         * Returns the system session for this workspace.
+         *
+         * @return the system session for this workspace
+         * @throws RepositoryException if the system session could not be created
+         */
+        protected Session getRootSession() throws RepositoryException {
+            return super.getSystemSession();
         }
     }
     

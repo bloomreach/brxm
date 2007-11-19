@@ -17,6 +17,7 @@ package org.hippoecm.repository.security;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -42,10 +43,16 @@ import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.PasswordHelper;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RepositoryLoginModule implements LoginModule {
+
+    /**
+     * Alogrithm to use for random number generation
+     */
+    private static final String randomAlogrithm = "SHA1PRNG";
 
     // initial state
     private Subject subject;
@@ -83,8 +90,6 @@ public class RepositoryLoginModule implements LoginModule {
 
     // defaults
     private static final String DEFAULT_ANONYMOUS_ID = "anonymous";
-    private static final String DEFAULT_SYSTEMUSER_ID = "systemuser";
-    private static final char[] DEFAULT_SYSTEMUSER_PASSWORD = "systempass".toCharArray();
     private static final String DEFAULT_USERS_NODE = "configuration/users";
     private static final long DEFAULT_MAX_CACHE_TIME = 10000L;
 
@@ -93,11 +98,15 @@ public class RepositoryLoginModule implements LoginModule {
      */
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private static String oneTimeUser;
+    private static char[] oneTimePass;
+    
     /**
      * Constructor
      */
     public RepositoryLoginModule() {
     }
+    
 
     private boolean authenticate(String username, char[] password) {
         if (username == null || password == null || "".equals(username) || password.length == 0) {
@@ -135,7 +144,10 @@ public class RepositoryLoginModule implements LoginModule {
             // look for user in the repository
             HippoRepository repository;
             repository = HippoRepositoryFactory.getHippoRepository();
-            Session session = repository.login(new SimpleCredentials(systemuserId, systemuserPassword));
+            generateOneTimeCredentials();
+            Session session = repository.login(new SimpleCredentials(this.oneTimeUser, this.oneTimePass));
+            clearOneTimeCredentials();
+
             Node root = session.getRootNode();
 
             if (log.isDebugEnabled()) {
@@ -193,8 +205,6 @@ public class RepositoryLoginModule implements LoginModule {
 
         // set defaults
         this.anonymousId = DEFAULT_ANONYMOUS_ID;
-        this.systemuserId = DEFAULT_SYSTEMUSER_ID;
-        this.systemuserPassword = DEFAULT_SYSTEMUSER_PASSWORD;
         this.usersNode = DEFAULT_USERS_NODE;
         this.maxCacheTime = DEFAULT_MAX_CACHE_TIME;
 
@@ -269,24 +279,23 @@ public class RepositoryLoginModule implements LoginModule {
                     SimpleCredentials sc = (SimpleCredentials) creds;
                     username = sc.getUserID();
 
-                    if (systemuserId.equals(username)) {
+                    if (oneTimeUser != null && oneTimeUser.equals(username)) {
                         if (log.isDebugEnabled()) {
                             log.debug("Trying to authenticate as: systemuser (" + sc.getUserID() + ")");
                         }
-                        if (new String(systemuserPassword).equals(new String(sc.getPassword()))) {
+                        if (new String(oneTimePass).equals(new String(sc.getPassword()))) {
                             authenticated = true;
                             principals.add(new SystemPrincipal());
                             log.info("Authenticated as the systemuser");
                         }
                     } else if (username != null) {
                         if (debug) {
-                            System.out.println("Trying to authenticate as: " + sc.getUserID());
+                            log.debug("Trying to authenticate as: " + sc.getUserID());
                         }
                         if (authenticate(username, sc.getPassword())) {
                             authenticated = true;
                             principals.add(new UserPrincipal(username));
                             log.info("Authenticated as " + username);
-
                         }
                     }
                 }
@@ -346,5 +355,23 @@ public class RepositoryLoginModule implements LoginModule {
         principals.clear();
         return true;
     }
+    
+
+    private void generateOneTimeCredentials() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        byte[] user = new byte[16];
+        byte[] pass = new byte[16];
+        SecureRandom random = SecureRandom.getInstance(randomAlogrithm);
+        random.setSeed(System.nanoTime());
+        random.nextBytes(user);
+        random.nextBytes(pass);
+        this.oneTimeUser = new String(user);
+        this.oneTimePass = new String(pass).toCharArray();
+    }
+    
+    private void clearOneTimeCredentials() {
+        this.oneTimeUser = null;
+        this.oneTimePass = null;
+    }
+            
 
 }

@@ -26,8 +26,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
-    private static final String SYSTEMUSER_ID = "systemuser";
-    private static final char[] SYSTEMUSER_PASSWORD = "systempass".toCharArray();
+    private static final String SYSTEMUSER_ID = "admin";
+    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     public void testTraversal() throws RepositoryException, IOException {
         Node node = commonStart();

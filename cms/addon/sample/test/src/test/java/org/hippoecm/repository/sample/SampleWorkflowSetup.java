@@ -35,7 +35,7 @@ abstract class SampleWorkflowSetup
     oldAuthorId = rnd.nextInt();
     newAuthorId = rnd.nextInt();
 
-    Session session = server.login("systemuser","systempass".toCharArray());
+    Session session = server.login("admin","admin".toCharArray());
     Node root = session.getRootNode();
 
     // set up the workflow specification as a node "/configuration/hippo:workflows/mycategory/myworkflow"

@@ -66,7 +66,7 @@ public class SampleWorkflowTest extends TestCase {
     public void testWorkflow() throws RepositoryException, WorkflowException, IOException, Exception {
         SampleWorkflowSetup.commonStart(server);
         try {
-            Session session = server.login("systemuser","systempass".toCharArray());
+            Session session = server.login("admin","admin".toCharArray());
             
             UserTransaction ut = server.getUserTransaction(getTransactionManager(), session);
             ut.begin();
