@@ -36,7 +36,7 @@ public class RepositoryLoginTest extends TestCase {
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
-    private static final String USERS_PATH = "configuration/users";
+    private static final String USERS_PATH = "hippo:configuration/hippo:users";
     
     private static final String TESTUSER_PASS = "testpass";
     private static final String TESTUSER_ID_PLAIN = "testuser-plain";

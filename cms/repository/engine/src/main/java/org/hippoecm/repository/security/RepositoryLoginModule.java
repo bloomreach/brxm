@@ -90,7 +90,7 @@ public class RepositoryLoginModule implements LoginModule {
 
     // defaults
     private static final String DEFAULT_ANONYMOUS_ID = "anonymous";
-    private static final String DEFAULT_USERS_NODE = "configuration/users";
+    private static final String DEFAULT_USERS_NODE = "hippo:configuration/hippo:users";
     private static final long DEFAULT_MAX_CACHE_TIME = 10000L;
 
     /**
