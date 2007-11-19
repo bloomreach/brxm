@@ -7,10 +7,16 @@ public abstract class NodeModelWrapper implements IChainingModel {
 
     protected JcrNodeModel nodeModel;
 
-    public NodeModelWrapper(JcrNodeModel itemModel) {
-        this.nodeModel = itemModel;
+    public NodeModelWrapper(JcrNodeModel nodeModel) {
+        this.nodeModel = nodeModel;
     }
-    
+
+    public JcrNodeModel getNodeModel() {
+        return nodeModel;
+    }
+
+    // Implement IChainingModel
+
     public IModel getChainedModel() {
         return nodeModel;
     }

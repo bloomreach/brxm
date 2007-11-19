@@ -18,7 +18,6 @@ package org.hippoecm.frontend.dialog;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.EventConsumer;
 import org.hippoecm.frontend.plugin.JcrEvent;
@@ -36,7 +35,7 @@ public class DialogWindow extends ModalWindow implements EventConsumer {
      * @param nodeModel
      * @param resetOnClose    Indicates whether the whole page should be reloaded on closing this dialog.
      */
-    public DialogWindow(String id, JcrNodeModel nodeModel, final boolean resetOnClose) {
+    public DialogWindow(String id, JcrNodeModel nodeModel) {
         super(id);
         setCookieName(id);
         this.nodeModel = nodeModel;
@@ -48,11 +47,6 @@ public class DialogWindow extends ModalWindow implements EventConsumer {
                     Plugin owningPlugin = (Plugin)findParent(Plugin.class);
                     PluginManager pluginManager = owningPlugin.getPluginManager();      
                     pluginManager.update(target, dialogResult);
-                }
-                if (resetOnClose) {
-                    Home home = (Home) getWebPage();
-                    setResponsePage(home);
-                    setRedirect(true);
                 }
             }
         });

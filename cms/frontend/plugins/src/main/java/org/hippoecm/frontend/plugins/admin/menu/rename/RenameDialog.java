@@ -59,10 +59,10 @@ public class RenameDialog extends AbstractDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
         JcrEvent result;
-        if (nodeModel.getParent() == null) {
+        if (nodeModel.getParentModel() == null) {
             result = new JcrEvent(nodeModel, false);
         } else {
-            JcrNodeModel parentModel = (JcrNodeModel)nodeModel.getParent();            
+            JcrNodeModel parentModel = nodeModel.getParentModel();            
             
             //The actual move
             String oldPath = nodeModel.getNode().getPath();

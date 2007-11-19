@@ -63,7 +63,7 @@ public class LoginPlugin extends Plugin {
 
         add(new Label("username", new PropertyModel(this, "username")));
 
-        final DialogWindow loginDialog = new DialogWindow("login-dialog", model, true);
+        DialogWindow loginDialog = new DialogWindow("login-dialog", model);
         add(loginDialog);
         
         // the login/logout dialog link

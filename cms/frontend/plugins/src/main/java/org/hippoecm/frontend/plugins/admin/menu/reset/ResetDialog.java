@@ -52,8 +52,8 @@ public class ResetDialog extends AbstractDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         nodeModel.getNode().getSession().refresh(false);
 
-        while (nodeModel.getParent() != null) {
-            nodeModel = (JcrNodeModel) nodeModel.getParent();
+        while (nodeModel.getParentModel() != null) {
+            nodeModel = nodeModel.getParentModel();
         }
         return new JcrEvent(nodeModel, hasPendingChanges);
     }

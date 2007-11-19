@@ -21,27 +21,36 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeState;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
 
-    public JcrTree(String id, TreeNode rootNode) {
-        super(id, new DefaultTreeModel(rootNode));
+    private JcrTreeModel treeModel;
+    
+    public JcrTree(String id, JcrTreeModel treeModel) {
+        super(id, treeModel);
+        this.treeModel = treeModel;
+        
         setLinkType(LinkType.AJAX);
 
         ITreeState treeState = getTreeState();
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
-        treeState.expandNode(rootNode);
+        treeState.expandNode((JcrTreeNode)treeModel.getRoot());
+    }
+    
+    public DefaultTreeModel getTreeModel() {
+        return treeModel;
     }
 
     @Override
     protected String renderNode(TreeNode treeNode) {
-        JcrNodeModel nodeModel = (JcrNodeModel) treeNode;
-        HippoNode node = nodeModel.getNode();
+        JcrTreeNode treeNodeModel = (JcrTreeNode) treeNode;
+        HippoNode node = treeNodeModel.getNodeModel().getNode();
         String result = "null";
         if (node != null) {
             try {
@@ -54,11 +63,6 @@ public abstract class JcrTree extends Tree {
             }
         }
         return result;
-    }
-
-    public void nodeStructureChanged(TreeNode treeNode) {
-        DefaultTreeModel treeModel = (DefaultTreeModel) getModelObject();
-        treeModel.nodeStructureChanged(treeNode);
     }
 
 }

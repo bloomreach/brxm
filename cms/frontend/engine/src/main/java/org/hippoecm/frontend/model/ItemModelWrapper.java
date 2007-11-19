@@ -12,7 +12,13 @@ public abstract class ItemModelWrapper implements IChainingModel {
     public ItemModelWrapper(Item item) {
         itemModel = new JcrItemModel(item);
     }
-    
+
+    public JcrItemModel getItemModel() {
+        return itemModel;
+    }
+
+    // Implement IChainingModel
+
     public IModel getChainedModel() {
         return itemModel;
     }

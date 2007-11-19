@@ -63,8 +63,8 @@ public class LoginDialog extends AbstractDialog {
         userSession.setJcrSession(jcrSession, credentials);
         
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        while (nodeModel.getParent() != null) {
-            nodeModel = (JcrNodeModel)nodeModel.getParent();
+        while (nodeModel.getParentModel() != null) {
+            nodeModel = nodeModel.getParentModel();
         }
         return new JcrEvent(nodeModel, true);
     }
