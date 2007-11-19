@@ -128,6 +128,48 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
       }
     }
 
+    public static class HitsRequested {
+        /**
+         * Wether results should be returned at all.
+         */
+        private boolean resultRequested;
+
+        /**
+         * How many results should be returned.  Defaults to 10, large values imply slow responses.
+         */    
+        private int limit = 10;
+
+        /**
+         * The offset in the resultset to start from.
+         */
+        private int offset = 0;
+    
+        public int getLimit() {
+            return limit;
+        }
+
+        public void setLimit(int limit) {
+            this.limit = limit;
+        }
+
+        public int getOffset() {
+            return offset;
+        }
+
+        public void setOffset(int offset) {
+            this.offset = offset;
+        }
+
+        public boolean isResultRequested() {
+            return resultRequested;
+        }
+
+        public void setResultRequested(boolean resultRequested) {
+            this.resultRequested = resultRequested;
+        }
+    }
+
+
     /** An instance of a Result class contains the matching documents of a faceted view.
      */
     abstract class Result {

@@ -53,7 +53,6 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
         localStateMgr = manager;
         if(wrappedHierMgr == null)
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
-        // stateMgr = new AugmentingStateManager(stateMgr);
     }
 
     @Override
@@ -70,97 +69,5 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, XASessionImpl session) {
         super(rootNodeId, manager, session);
-    }
-
-    @Override
-    public NodeState createNew(NodeState transientState) throws IllegalStateException {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.createNew#1 "+transientState.getNodeTypeName());
-        return super.createNew(transientState);
-    }
-
-    @Override
-    public PropertyState createNew(Name propName, NodeId parentId) throws IllegalStateException {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.createNew#2 "+parentId+" "+propName);
-        return super.createNew(propName, parentId);
-    }
-
-    @Override
-    public PropertyState createNew(PropertyState transientState) throws IllegalStateException {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.createNew#3 "+transientState.getId());
-        return super.createNew(transientState);
-    }
-
-    @Override
-    public void store(ItemState state) throws IllegalStateException {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.store "+state.getId());
-        super.store(state);
-    }
-
-    @Override
-    public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.getItemState ");
-        return super.getItemState(id);
-    }
-
-    @Override
-    public boolean hasItemState(ItemId id) {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.hasItemState ");
-        return super.hasItemState(id);
-    }
-
-    @Override
-    public ItemState getTransientItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.getTransientItemState ");
-        return super.getTransientItemState(id);
-    }
-
-    @Override
-    public boolean hasTransientItemState(ItemId id) {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.hasTransientItemState ");
-        return super.hasTransientItemState(id);
-    }
-
-    @Override
-    public void update() throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.update ");
-        super.update();
-    }
-
-
-    @Override
-    public void stateCreated(ItemState created) {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.stateCreated "+created.getId());
-        super.stateCreated(created);
-    }
-    
-    @Override
-    public void stateModified(ItemState modified) {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.stateModified "+modified.getId());
-        super.stateModified(modified);
-    }
-
-    @Override
-    public void stateDestroyed(ItemState destroyed) {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.stateDestroyed "+destroyed.getId());
-        super.stateDestroyed(destroyed);
-    }
-
-    @Override
-    public void stateDiscarded(ItemState discarded) {
-        if (log.isDebugEnabled())
-            System.err.println("HippoSessionItemStateManager.stateDiscarded "+discarded.getId());
-        super.stateDiscarded(discarded);
     }
 }

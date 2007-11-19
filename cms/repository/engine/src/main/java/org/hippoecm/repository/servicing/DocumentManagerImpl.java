@@ -63,7 +63,6 @@ public class DocumentManagerImpl
                                                           HippoNodeType.DOCUMENTS_PATH).getUUID();
         } catch(RepositoryException ex) {
             log.error("document manager configuration failed: "+ex.getMessage());
-            // ex.printStackTrace(System.err);
         }
         try {
             Properties properties = new Properties();
@@ -76,7 +75,6 @@ public class DocumentManagerImpl
             sm.setSession(session);
         } catch(IOException ex) {
             log.error("failed to initialize JDO layer: "+ex.getMessage());
-            ex.printStackTrace(System.err);
         }
     }
 

@@ -69,6 +69,15 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         facetedEngine = engine;
     }
 
+    void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,
+                                         org.apache.jackrabbit.core.SessionImpl session)
+    {
+        stateMgr.initialize(session.getNamePathResolver(), session.getHierarchyManager(),
+                            getFacetedNavigationEngine(),
+                            session instanceof XASessionImpl ? ((XASessionImpl)session).getFacetedNavigationContext()
+                                                             : ((SessionImpl)session).getFacetedNavigationContext());
+    }
+
     public static RepositoryImpl create(RepositoryConfig config)
         throws RepositoryException {
         return new RepositoryImpl(config);
@@ -157,5 +166,5 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
             return super.getSearchManager();
         }
     }
-
+    
 }
