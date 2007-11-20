@@ -111,7 +111,7 @@
       <param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/>
       <param name="path" value="${wsp.home}/index"/>
       <param name="useCompoundFile" value="true"/>
-      <param name="minMergeDocs" value="100"/>
+      <param name="minMergeDocs" value="1000"/>
       <param name="volatileIdleTime" value="10"/>
       <param name="maxMergeDocs" value="1000000000"/>
       <param name="mergeFactor" value="5"/>
