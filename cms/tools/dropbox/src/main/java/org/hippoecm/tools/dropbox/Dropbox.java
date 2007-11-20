@@ -2,6 +2,8 @@ package org.hippoecm.tools.dropbox;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.activation.FileDataSource;
 import javax.activation.MimetypesFileTypeMap;
@@ -12,13 +14,17 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class Dropbox {
-    
-    private String dropboxLocation;
-    private HippoRepository repo;
 
-    private SimpleCredentials cred;
+    private String dropboxLocation;
+    HippoRepository repo;
+
+    SimpleCredentials cred;
+
+    /* format yyyyMMddMMHHss = 20040124114558 */
+    protected static final SimpleDateFormat fileDate = new SimpleDateFormat("yyyyMMddHHmmssZ");
 
     /*
      * Create a new Dropbox with dropbox as location to look for files
@@ -51,16 +57,19 @@ public class Dropbox {
      * Get all the files from the dropbox location and save them to the 
      * repository
      */
-    public void drop() throws RepositoryException {
+    public void drop(String relPath) throws RepositoryException {
         // make a session request to the repository
         Session session = repo.login(getCredentials());
-        Node root = session.getRootNode();
+
+        // Initialize facets
+        initFacets(session);
 
         // put all the files in a node called dropbox
-        if (root.hasNode("dropbox")) {
-            root = root.getNode("dropbox");
+        Node root = session.getRootNode();
+        if (root.hasNode(relPath)) {
+            root = root.getNode(relPath);
         } else {
-            root = root.addNode("dropbox");
+            root = root.addNode(relPath);
         }
 
         // Recusively walk through the dropbox directory and construct a JCR representation of
@@ -91,29 +100,59 @@ public class Dropbox {
                 continue;
             }
             if (files[i].isDirectory()) {
-                dropFiles(files[i], session, folder.addNode(files[i].getName()));
+                String nodeName = org.apache.jackrabbit.util.ISO9075.encode(files[i].getName());
+                if (folder.hasNode(nodeName)) {
+                    dropFiles(files[i], session, folder.getNode(nodeName));
+                } else {
+                    dropFiles(files[i], session, folder.addNode(nodeName));
+                }
                 continue;
             }
 
-            System.out.println("importing (" + files[i].getName() + ") ...");
+            System.out.println("importing (" + files[i].getPath() + ") ...");
             createFile(folder, files[i]);
             session.save();
         }
     }
 
+    protected Node createFile(Node folder, File f) throws RepositoryException {
+        return createFile(folder, f, true);
+    }
+
     /*
      * Creates a new file, node name encoded in ISO9075
      */
-    protected Node createFile(Node folder, File f) throws RepositoryException {
+    protected Node createFile(Node folder, File f, boolean recreate) throws RepositoryException {
         FileDataSource ds = new FileDataSource(f);
         ds.setFileTypeMap(new MimetypesFileTypeMap(getClass().getResourceAsStream("mime.types")));
 
-        Node n = folder.addNode(org.apache.jackrabbit.util.ISO9075.encode(f.getName()), "hippo:document");
+        String nodeName = org.apache.jackrabbit.util.ISO9075.encode(f.getName());
+        nodeName.replace(":", " "); // fix for colons in filenames, clashes with xmlns
+        if (folder.hasNode(nodeName)) {
+            if (recreate) {
+                folder.getNode(nodeName).remove();
+                folder.addNode(nodeName, "hippo:document");
+            }
+        } else {
+            folder.addNode(nodeName, "hippo:document");
+        }
+        Node n = folder.getNode(nodeName);
         n.setProperty("mimeType", ds.getContentType());
-        n.setProperty("lastModified", f.lastModified());
-        n.setProperty("path", f.getAbsolutePath());
+        n.setProperty("lastModified", fileDate.format(new Date(f.lastModified())));
+        n.setProperty("filePath", f.getAbsolutePath());
 
         return n;
+    }
+
+    protected void initFacets(Session session) throws RepositoryException {
+    }
+
+    protected Node createFacet(Node navRoot, String docbase, String name, String[] facets) throws RepositoryException {
+        Node nav = navRoot.addNode(name, HippoNodeType.NT_FACETSEARCH);
+        nav.setProperty(HippoNodeType.HIPPO_QUERYNAME, name);
+        nav.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
+        nav.setProperty(HippoNodeType.HIPPO_FACETS, facets);
+        return nav;
     }
 
     public static void main(String[] args) {
@@ -123,13 +162,13 @@ public class Dropbox {
             try {
                 Dropbox box = new Dropbox(args[0], args[1]);
                 box.setCredentials(new SimpleCredentials(args[2], args[3].toCharArray()));
-                box.drop();
+                box.drop("dropbox");
             } catch (RepositoryException e) {
                 e.printStackTrace();
             }
         }
     }
-    
+
     public static void usage() {
         System.err.println("Wrong number of arguments!");
         System.out.println("* Arguments: <repopath> <localpath> <username> <password>");
