@@ -31,6 +31,7 @@ public class PluginJavaConfig implements PluginConfig {
     private PluginDescriptor menuPlugin;
     private PluginDescriptor loginPlugin;
     private PluginDescriptor contentPlugin;
+    private PluginDescriptor breadcrumbPlugin;
 
     public PluginJavaConfig() {
         rootPlugin = new PluginDescriptor("rootPlugin", "org.hippoecm.frontend.plugins.admin.RootPlugin");
@@ -38,6 +39,7 @@ public class PluginJavaConfig implements PluginConfig {
         menuPlugin = new PluginDescriptor("menuPlugin", "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin");
         loginPlugin = new PluginDescriptor("loginPlugin", "org.hippoecm.frontend.plugins.admin.login.LoginPlugin");
         contentPlugin = new PluginDescriptor("contentPlugin", "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin");
+        breadcrumbPlugin = new PluginDescriptor("breadcrumbPlugin", "org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin");
     }
 
     public PluginDescriptor getRoot() {
@@ -52,6 +54,7 @@ public class PluginJavaConfig implements PluginConfig {
             result.add(menuPlugin);
             result.add(loginPlugin);
             result.add(contentPlugin);
+            result.add(breadcrumbPlugin);
         }
         return result;
     }
@@ -68,6 +71,8 @@ public class PluginJavaConfig implements PluginConfig {
             return loginPlugin;
         } else if (pluginId.equals("contentPlugin")) {
             return contentPlugin;
+        } else if (pluginId.equals("breadcrumbPlugin")) {
+            return breadcrumbPlugin;
         }
         return result;
     }
