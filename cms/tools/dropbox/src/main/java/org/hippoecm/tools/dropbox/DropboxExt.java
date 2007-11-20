@@ -32,12 +32,16 @@ public class DropboxExt extends Dropbox {
     }
 
     public static void main(String[] args) {
-        try {
-            DropboxExt box = new DropboxExt(args[0], args[1]);
-            box.setCredentials(new SimpleCredentials(args[2], args[3].toCharArray()));
-            box.drop();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
+        if (args == null || args.length != 4) {
+            usage();
+        } else {
+            try {
+                DropboxExt box = new DropboxExt(args[0], args[1]);
+                box.setCredentials(new SimpleCredentials(args[2], args[3].toCharArray()));
+                box.drop();
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
