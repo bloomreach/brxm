@@ -35,8 +35,6 @@ import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 public class MenuPlugin extends AbstractMenuPlugin {
     private static final long serialVersionUID = 1L;
 
-    private String nodePath;
-    
     public MenuPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
@@ -48,16 +46,12 @@ public class MenuPlugin extends AbstractMenuPlugin {
         addMenuOption("property-dialog", "property-dialog-link", PropertyDialog.class.getName(), model);
         addMenuOption("save-dialog", "save-dialog-link", SaveDialog.class.getName(), model);
         addMenuOption("reset-dialog", "reset-dialog-link", ResetDialog.class.getName(), model);
-
-        nodePath = model.getItemModel().getPath();
-        add(new Label("path", new PropertyModel(this, "nodePath")));
     }
     
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         if (jcrEvent.getModel() != null) {
             JcrNodeModel nodeModel = jcrEvent.getModel();
             setNodeModel(nodeModel);
-            nodePath = nodeModel.getItemModel().getPath();
         }
         if (target != null) {
             target.addComponent(this);
