@@ -117,12 +117,21 @@ public class Dropbox {
     }
 
     public static void main(String[] args) {
-        try {
-            Dropbox box = new Dropbox(args[0], args[1]);
-            box.setCredentials(new SimpleCredentials(args[2], args[3].toCharArray()));
-            box.drop();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
+        if (args == null || args.length != 4) {
+            usage();
+        } else {
+            try {
+                Dropbox box = new Dropbox(args[0], args[1]);
+                box.setCredentials(new SimpleCredentials(args[2], args[3].toCharArray()));
+                box.drop();
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
         }
+    }
+    
+    public static void usage() {
+        System.err.println("Wrong number of arguments!");
+        System.out.println("* Arguments: <repopath> <localpath> <username> <password>");
     }
 }
