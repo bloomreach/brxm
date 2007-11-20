@@ -68,8 +68,6 @@ public class RepositoryLoginModule implements LoginModule {
 
     // configurable Repository auth options
     private String anonymousId;
-    private String systemuserId;
-    private char[] systemuserPassword;
     private String usersNode;
     private long maxCacheTime;
 
@@ -82,8 +80,6 @@ public class RepositoryLoginModule implements LoginModule {
 
     // options
     private static final String OPT_ANONYMOUS_ID = "anonymousId";
-    private static final String OPT_SYSTEMUSER_ID = "systemuserId";
-    private static final String OPT_SYSTEMUSER_PASSWORD = "systemuserPassword";
     private static final String OPT_USERS_NODE = "usersPath";
     private static final String OPT_MAX_CACHE_TIME = "maxCacheTimeMilliSec";
 
@@ -216,19 +212,11 @@ public class RepositoryLoginModule implements LoginModule {
 
         // fetch repository auth paramaters
         String anonymous = (String) options.get(OPT_ANONYMOUS_ID);
-        String id = (String) options.get(OPT_SYSTEMUSER_ID);
-        String password = (String) options.get(OPT_SYSTEMUSER_PASSWORD);
         String node = (String) options.get(OPT_USERS_NODE);
         String cacheTime = (String) options.get(OPT_MAX_CACHE_TIME);
 
         if (anonymous != null) {
             this.anonymousId = anonymous;
-        }
-        if (id != null) {
-            this.systemuserId = id;
-        }
-        if (password != null) {
-            this.systemuserPassword = password.toCharArray();
         }
         if (node != null) {
             this.usersNode = node;
@@ -245,8 +233,6 @@ public class RepositoryLoginModule implements LoginModule {
         if (log.isDebugEnabled()) {
             log.debug("RepositoryLoginModule config:");
             log.debug("* anonymousId    : " + anonymousId);
-            log.debug("* systemuserId   : " + systemuserId);
-            log.trace("* systemPassword : " + new String(systemuserPassword));
             log.debug("* usersNode      : " + usersNode);
             //log.debug("* tryFirstPass   : " + tryFirstPass);
             //log.debug("* useFirstPass   : " + useFirstPass);
@@ -280,12 +266,14 @@ public class RepositoryLoginModule implements LoginModule {
 
                     if (oneTimeUser != null && oneTimeUser.equals(username)) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Trying to authenticate as: systemuser (" + sc.getUserID() + ")");
+                            log.debug("Trying to authenticate as: oneTimeUser (" + sc.getUserID() + ")");
                         }
                         if (new String(oneTimePass).equals(new String(sc.getPassword()))) {
                             authenticated = true;
                             principals.add(new SystemPrincipal());
-                            log.info("Authenticated as the systemuser");
+                            if (log.isDebugEnabled()) {
+                                log.debug("Authenticated as: oneTimeUser (" + sc.getUserID() + ")");
+                            }
                         }
                     } else if (username != null) {
                         if (debug) {
