@@ -8,7 +8,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
 public class DropboxExt extends Dropbox {
-    
+
     public DropboxExt(String repoLoc, String dropbox) throws RepositoryException {
         super(repoLoc, dropbox);
     }
@@ -38,7 +38,7 @@ public class DropboxExt extends Dropbox {
             try {
                 DropboxExt box = new DropboxExt(args[0], args[1]);
                 box.setCredentials(new SimpleCredentials(args[2], args[3].toCharArray()));
-                box.drop();
+                box.drop("dropbox");
             } catch (RepositoryException e) {
                 e.printStackTrace();
             }
