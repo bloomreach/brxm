@@ -59,6 +59,15 @@
           </sv:property>
         </sv:node>
 
+        <sv:node sv:name="listPlugin">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:frontendplugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+                <sv:value>org.hippoecm.cmsprototype.frontend.plugins.list.ListPlugin</sv:value>
+            </sv:property>
+        </sv:node>
+
         <sv:node sv:name="actionsPlugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:frontendplugin</sv:value>
