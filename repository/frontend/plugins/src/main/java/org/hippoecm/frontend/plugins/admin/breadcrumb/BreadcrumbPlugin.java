@@ -43,7 +43,7 @@ public class BreadcrumbPlugin extends Plugin {
             setNodeModel(nodeModel);
             nodePath = nodeModel.getItemModel().getPath();
         }
-        if (target != null) {
+        if (target != null && findPage() != null) {
             target.addComponent(this);
         }
     }

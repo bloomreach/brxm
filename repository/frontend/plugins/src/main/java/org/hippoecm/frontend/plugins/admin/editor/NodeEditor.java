@@ -34,7 +34,7 @@ public class NodeEditor extends Form {
             JcrPropertiesProvider propertiesProvider = (JcrPropertiesProvider) getModel();
             propertiesProvider.setChainedModel(jcrEvent.getModel());
         }
-        if (target != null) {
+        if (target != null && findPage() != null) {
             target.addComponent(this);
         }
     }
