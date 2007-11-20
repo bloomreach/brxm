@@ -114,15 +114,20 @@
             </ol>
             <subsection name="Fix dependencies">
                 <p>
-                    There is a bug in the maven eclipse plugin; maven dependencies of type war are not converted to
-                    eclipse project depencies.  These dependencies have to be set manually.
+                    Not all dependencies are correctly set by the maven eclipse plugin,
+                    these dependencies have to be set manually.
                 </p>
                 <ol>
-                    <li>Open project hippo-ecm-application-reviewed-action-repository</li>
+                    <li>Select project hippo-ecm-application-reviewed-action-repository</li>
                     <li>In the configuration panel (Project -&gt; Properties), select 'Java Build Path'</li>
                     <li>Under tab 'Projects', add hippo-ecm-repository-application</li>
-                    <li>Repeat the procedure to add project hippoecm-frontend-application as a requirement
-                        for hippo-ecm-application-reviewed-action-frontend</li>
+                </ol>
+                <p>.</p>
+                <ol>
+                    <li>Select project hippo-ecm-application-reviewed-action-frontend</li>
+                    <li>In the configuration panel (Project -&gt; Properties), select 'Java Build Path'</li>
+                    <li>Under tab 'Projects', add hippo-ecm-frontend-application</li>
+                    <li>Under tab 'Projects', add hippo-ecm-frontend-plugins</li>
                 </ol>
             </subsection>
         </section>
@@ -143,7 +148,7 @@
                 <p>
                     Projects that provide document types (hippoecm-repository-engine,
                     hippo-ecm-addon-sample-repository, hippo-ecm-addon-reviewed-action-repository)
-                    must be enhanced by the JPOX plugin:
+                    must be enhanced by the JPOX plugin: open the 'Package explorer' view and:
                 </p>
                 <ol>
                     <li>Right-click the project -&gt; JPOX -&gt; Add JPOX Support</li>
@@ -168,7 +173,7 @@
             <subsection name="Repository application">
                 <p>Update the repository application configuration:</p>
                 <ol>
-                    <li>Open the debug configuration panel (e.g. Run -&gt; Debug)</li>
+                    <li>Open the debug configuration panel (e.g. Run -&gt; Open Debug Dialog...)</li>
                     <li>Set the webapp dir to src/main/webapp</li>
                     <li>Set the port to 8081</li>
                     <li>Select the 'Arguments' tab</li>
@@ -189,7 +194,7 @@
             <subsection name="Frontend application">
                 <p>Update the frontend application configuration:</p>
                 <ol>
-                    <li>Open the debug configuration panel (e.g. Run -&gt; Debug)</li>
+                    <li>Open the debug configuration panel (e.g. Run -&gt; Open Debug Dialog...)</li>
                     <li>Set the webapp dir to src/main/webapp</li>
                     <li>Set the port to 8082</li>
                     <li>Add

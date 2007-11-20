@@ -195,7 +195,7 @@ hippo-ecm
         <subsection name="Adding a dependency to our plugin">
           <p>
             To be able to use our plugin we need to add a dependency on it to Maven POM of the frontend
-            application (<b>application/frontend/pom.xml</b>).
+            application (<b>application/default/frontend/pom.xml</b>).
           </p>
           <source>
 <![CDATA[
@@ -235,7 +235,8 @@ hippo-ecm
           Start up rmiregistry (this comes with your JDK installation) and the repository using the following commands:
         </p>
 <source>
-rmiregistry
+rmiregistry &amp;
+cd hippo-ecm/application/default/repository
 mvn jetty:run-war
 </source>
       </subsection>
@@ -245,6 +246,7 @@ mvn jetty:run-war
           Now run the frontend application using the following Maven command:
         </p>
 <source>
+cd hippo-ecm/application/default/frontend
 mvn jetty:run-war
 </source>
         <p>
