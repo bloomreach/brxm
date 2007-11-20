@@ -105,6 +105,13 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <dependentWarExcludes>WEB-INF/classes/org/hippoecm/repository/**</dependentWarExcludes>   
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   
