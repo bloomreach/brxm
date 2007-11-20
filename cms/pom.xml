@@ -242,6 +242,10 @@
       <releases><updatePolicy>never</updatePolicy></releases>
       <layout>legacy</layout>
     </repository>
+    <repository>
+      <id>openqa</id>
+      <url>http://maven.openqa.org</url>
+    </repository>
   </repositories>
   
   <pluginRepositories>
@@ -521,7 +525,7 @@
       <dependency>
         <groupId>org.openqa.selenium.client-drivers</groupId>
         <artifactId>selenium-java-client-driver</artifactId>
-        <version>{selenium.version}</version>
+        <version>${selenium.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
