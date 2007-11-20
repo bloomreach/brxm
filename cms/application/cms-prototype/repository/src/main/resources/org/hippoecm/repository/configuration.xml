@@ -99,7 +99,7 @@
         <sv:value>facetreference-demodata.xml</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:contentroot" sv:type="String">
-        <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+        <sv:value>/</sv:value>
       </sv:property>
     </sv:node>
     
