@@ -24,23 +24,23 @@
     <body>
         <section name="Repository configuration">
             <p>
-                Hippo Repository by default ships with a repository.xml configuration file.
+                The repository configuration file is an XML file that specifies the components 
+                and configuration of the content repository. Hippo Repository by default ships 
+                with a repository.xml configuration file.
                 You only need to know about this configuration file if you need a non-default 
                 PersistenceManager, AccessManager, LoginModule or SearchIndex.
                  
             </p>
             <p>
-                The standard repository configuration for JackRabbit
+                The standard repository configuration for Jackrabbit
                 can be found at 
                 <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a>.
-                This page refers to this page for parts that are the same, and elaborates on those parts that are specific for Hippo Repository.
-                </p>
-                <p>
-                The repository configuration file is an XML file that specifies 
-                the components and configuration of a Jackrabbit content repository.
-                
-                <br/>
-                it consists of
+                This page refers to that page for parts that are the same, and elaborates on those parts 
+                that are specific for Hippo Repository.
+            </p>
+
+            <p>
+                The repository configuration file consists of:
             </p>
             <ul>
                 <li><a href="#FileSystem element">FileSystem element</a></li>
@@ -85,16 +85,21 @@
                 See <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a>
             </p> 
             <subsection name="FileSystem element">
+              <p>
                 a FileSystem element (the virtual file system
                 used by the repository to persist global state such as
                 registered namespaces, custom node types, etc..) 
-                <br/>
+              </p>
+              <p>
                 See <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a> at Virtual file systems
+              </p>
             </subsection>
             <subsection name="Security element">
-            a Security element that specifies the name of the app-entry
-            in the JAAS config and the access manager. 
-            Hippo Repository by default uses the following configuration:
+              <p>
+                A Security element that specifies the name of the app-entry
+                in the JAAS config and the access manager. 
+                Hippo Repository by default uses the following configuration:
+              </p>
 <source>
 &lt;Security appName="Jackrabbit"&gt;
     &lt;AccessManager
@@ -105,38 +110,52 @@
     &lt;/LoginModule&gt;
 &lt;/Security&gt;
 </source>
+              <p>
                 The SimpleAccessManager is the Hippo Repository default access manager implementation, and RepositoryLoginModule
                 the default login implementation. See <a href="repository-based-authentication-and-users.html">repository-based-authentication-and-users.html</a> 
                 for explanation about the RepositoryLoginModule. 
+              </p>
             </subsection>
             <subsection name="Workspaces root directory element">
-            location of workspaces root directory and name of default workspace. 
+              <p>
+                Location of workspaces root directory and name of default workspace. 
+              </p>
 <source>
 &lt;Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/&gt;
 </source>
             </subsection>
             <subsection name="Workspace element">
+              <p>
                 The Workspace element is used as a template for separate workspace configuration files created for each new workspace. 
                 Because of this the Workspace element is not interpreted directly from the repository 
                 configuration file. Instead the workspace configuration template is first copied into the 
                 workspace configuration file which is then interpreted to set up the configured workspace 
                 components. Thus modifying the workspace configuration template in the repository configuration 
                 file will not affect existing workspace configurations.
-                <br/>
-                See <a href="workspace.html">Workspace</a> for Hippo Repository configuration
+              </p>
+              <p>
+                See <a href="workspace.html">Workspace</a> for more information.
+              </p>
             </subsection>
             <subsection name="SearchIndex element">
-            Search index for content that is shared repository wide
-            (/jcr:system tree, contains mainly versions). This configuration never needs adjustments, and looks like
+              <p>
+                Search index for content that is shared repository wide
+                (/jcr:system tree, contains mainly versions). This configuration never needs adjustments, and looks like
+              </p>
 <source>
 &lt;SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex"&gt;
     &lt;param name="path" value="${rep.home}/repository/index"/&gt;
 &lt;/SearchIndex&gt;
 </source>
+              <p>
+                See <a href="searchindex.html">Search Index</a> for more information.
+              </p>
             </subsection>
             <subsection name="Versioning element">
-            A Versioning element that is used for configuring
-            versioning-related settings. At the moment of this writing this is not yet implemented.
+              <p>
+                A Versioning element that is used for configuring
+                versioning-related settings. At the moment of this writing this is not yet implemented.
+              </p>
             </subsection>
         </section>
         
