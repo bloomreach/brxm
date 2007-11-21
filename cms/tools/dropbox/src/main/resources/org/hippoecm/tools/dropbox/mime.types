@@ -8,6 +8,6 @@ application/msword doc
 application/pdf pdf
 text/html htm html
 application/vnd.oasis.opendocument.text odt 
-audio/mpeg mpga mpega mp2 mp3 m4a
+audio/mpeg mp3
 # this would map file.txt, file.text, and file.TXT to
 # the mime type "text/plain"
