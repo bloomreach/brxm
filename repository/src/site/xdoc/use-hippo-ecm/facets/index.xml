@@ -18,81 +18,92 @@
   limitations under the License.
 -->
 <document>
-    <properties>
-        <title>Facets</title>
-    </properties>
-    <body>
-        <section name="Hippo ECM facets">
-          <p>
-            The Hippo Repository is built on top of
-            <a href="http://jackrabbit.apache.org/" title="Apache Jackrabbit">Apache Jackrabbit</a>.
-            The Hippo Repository adds extra functionality to the default Jackrabbit distribution while
-            keeping full compliance with the JCR 1.0
-            <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
-            The main added features are facets, virtual nodes and workflow.
-          </p>
-        </section>
+  <properties>
+    <title>Facets</title>
+  </properties>
+  <body>
+    <section name="Facets">
+      <p>
+        Hippo Repository is built on top of
+        <a href="http://jackrabbit.apache.org/" title="Apache Jackrabbit">Apache Jackrabbit</a>.
+        Hippo Repository adds extra functionality to the default Jackrabbit distribution while
+        keeping full compliance with JCR 1.0
+        <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
+        The main added features are facets, virtual nodes and workflow.
+      </p>
+    </section>
 
-        <section name="Faceted navigation">
-          <p>
-            <!-- [FIXME Frank: ripped from Arje's blog] -->
-            By (not) organizing the hierarchy of the content repository upfront, but by allowing
-            it to grow dynamically based on meta data, I hope we can adhere to David Neuscheler's
-            Rule #1, which was inspired by Stefano's "Data first vs Structure first" blogposting.
-          </p>
+    <section name="Faceted navigation">
+      <p>
+        Faceted navigation allows the assignment of multiple classifications to an object,
+        enabling the classifications to be ordered in multiple ways, rather than a single,
+        pre-determined order. This means objects can be navigated to along different
+        paths, each based on different classifications or properties of those objects.
+      </p>
+      <p>
+        Hippo Repository supports a faceted representation of physical
+        nodes. These representations are again exposed as 'normal' JCR nodes, and
+        can be used to represent all kinds of data in all kinds of different structures purely
+        defined by their meta information. This results in virtual node trees
+        providing a faceted navigation.
+      </p>
 
-          <p>
-            In the core of Hippo Repository 2, there is a faceted representation of physical
-            folders in Jackrabbit.  Those virtual trees are again exposed as 'normal' JCR nodes, and
-            can be used to represent all kinds of data in all kinds of different structures purely
-            defined by their meta information.
-          </p>
+      <subsection name="Defining the facets">
+        <p>
+          Facets are defined by nodes of type <code>hippo:facetsearch</code>.  These nodes will
+          form the root of the virtual folder structure.  They have the following JCR properties:
+        </p>
+        <ul>
+          <li>
+            <b>hippo:queryname</b>
+            <br/>
+            The name of the query. You can choose any name you like.
+          </li>
+          <li>
+            <b>hippo:docbase</b>
+            <br/>
+            The base physical folder whose contents will be used to generate the
+            virtual folder
+          </li>
+          <li>
+            <b>hippo:facets</b>
+            <br/>
+            This multivalued property contains the names of the properties that will be 
+            comprise the virtual folder structure.
+          </li>
+        </ul>
+      </subsection>
+        
+      <!--
+      <subsection name="Example">
+        
+      </subsection>
+      -->
 
-            <subsection name="Defining the facets">
-              <p>
-                Facets are defined by nodes of type <code>hippo:facetsearch</code>.  These nodes will
-                form the root of the virtual folder structure.  They have the following JCR properties:
-              </p>
-              <dl>
-                  <dt>hippo:queryname</dt>
-                  <dd>This property contains the name of the query.  It is used to ...</dd>
-                  <dt>hippo:docbase</dt>
-                  <dd>
-                    The base physical (?) folder whose contents will be used to generate the
-                    virtual folder
-                  </dd>
-                  <dt>hippo:facets</dt>
-                  <dd>
-                    This multivalued property contains the names of the properties that will be 
-                    comprise the virtual folder structure.
-                  </dd>
-              </dl>
-            </subsection>
+      <subsection name="Screencast">
+        <p>
+          A screenshot showing off the faceted navigation features can be found on Arj&#233; Cahn's blog
+          posting 11/09/2007 with embedded screencast:<br />
+          <a href="http://blogs.hippo.nl/arje/2007/09/status_update_defining_facets.html">
+            <img src="../../images/facets-screenshot.jpg" width="421" height="410" alt="Facets screenshot" />
+          </a>
+        </p>
+      </subsection>
 
-            <subsection name="Screencast">
-              <p>
-                A screenshot showing off the faceted navigation features can be found on Arj&#233; Cahn's blog
-                posting 11/09/2007 with embedded screencast:<br />
-                <a href="http://blogs.hippo.nl/arje/2007/09/status_update_defining_facets.html">
-                  <img src="../../images/facets-screenshot.jpg" width="421" height="410" alt="Facets screenshot" />
-                </a>
-              </p>
-            </subsection>
+    </section>
 
-        </section>
-
-        <section name="Faceted selection">
-          <p>
-          </p>
+    <section name="Faceted selection">
+      <p>
+      </p>
 <!--
-        TODO:
-        faceted select
-        - no filter
-        - different tree structuur (not editable)
-        - getCanonincalNode (editable)
+    TODO:
+    faceted select
+    - no filter
+    - different tree structuur (not editable)
+    - getCanonincalNode (editable)
 
-        no facet search on search: should not be done.
+    no facet search on search: should not be done.
 -->
-        </section>        
-    </body>
+    </section>        
+  </body>
 </document>
