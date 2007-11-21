@@ -39,13 +39,13 @@ public class MoveDialog extends AbstractDialog {
         dialogWindow.setTitle("Move selected node");
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
-        UserSession session = (UserSession)getSession();
+        UserSession session = (UserSession) getSession();
         HippoNode rootNode = session.getRootNode();
         JcrNodeModel rootModel = new JcrNodeModel(null, rootNode);
 
         JcrTreeNode rootNodeModel = new JcrTreeNode(rootModel);
         JcrTreeModel treeModel = new JcrTreeModel(rootNodeModel);
-        
+
         tree = new MoveTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(rootNodeModel);
         add(tree);
@@ -65,25 +65,26 @@ public class MoveDialog extends AbstractDialog {
         JcrEvent result;
         if (nodeModel.getParentModel() == null) {
             result = new JcrEvent(nodeModel, false);
-        } else {
+        } 
+        else {
             String nodeName = nodeModel.getNode().getName();
             String sourcePath = nodeModel.getNode().getPath();
 
-            JcrTreeNode targetNodeModel = (JcrTreeNode) tree.getSelectedNode();            
+            JcrTreeNode targetNodeModel = (JcrTreeNode) tree.getSelectedNode();
             String targetPath = targetNodeModel.getNodeModel().getNode().getPath();
             if (!targetPath.endsWith("/")) {
                 targetPath += "/";
             }
-            targetPath += nodeName; 
-            
+            targetPath += nodeName;
+
             // The actual move
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(sourcePath, targetPath);
-            
+
             //TODO: use common ancestor iso root
             JcrNodeModel rootNodeModel = targetNodeModel.getNodeModel();
-            while (nodeModel.getParentModel() != null) {
-                rootNodeModel = nodeModel.getParentModel();
+            while (rootNodeModel.getParentModel() != null) {
+                rootNodeModel = rootNodeModel.getParentModel();
             }
             result = new JcrEvent(rootNodeModel, true);
         }
@@ -99,7 +100,8 @@ public class MoveDialog extends AbstractDialog {
         if (model != null) {
             try {
                 infoPanel.setDestinationPath(model.getNode().getPath());
-            } catch (RepositoryException e) {
+            } 
+            catch (RepositoryException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
