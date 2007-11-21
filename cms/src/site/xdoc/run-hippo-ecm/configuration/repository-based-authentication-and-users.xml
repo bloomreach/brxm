@@ -33,8 +33,6 @@
 &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
     &lt;!-- default values:
         &lt;param name="anonymousId" value="anonymous"/&gt;
-        &lt;param name="systemuserId" value="systemuser"/&gt;
-        &lt;param name="systemuserPassword" value="password"/&gt;
         &lt;param name="debug" value="false"/&gt;
         &lt;param name="maxCacheTimeMilliSec" value="10000"/&gt;
     --&gt;
@@ -44,8 +42,6 @@
             parameters. The parameters are:
             <table>
                 <tr><td>anonymousId</td><td>The id given to a user in a non authenticated session.</td></tr>
-                <tr><td>systemuserId</td><td>The id of the systemuser. The system user is used to lookup the user nodes in the repository.</td></tr>
-                <tr><td>systemuserPassword</td><td>The password of the systemuser.</td></tr>
                 <tr><td>debug</td><td>Enable or disable debug info.</td></tr>
                 <tr><td>maxCacheTimeMilliSec</td><td>Time in miliseconds between user credential cache purges.</td></tr>
             </table>
