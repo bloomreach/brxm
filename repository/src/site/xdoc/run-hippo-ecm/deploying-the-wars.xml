@@ -44,7 +44,7 @@
             
             <subsection name="Download the wars">
                 Currently there are no pre-built WARs available and a 
-                <a href="../extending-hippo-ecm/building/maven.html" title="building from source">source build</a>
+                <a href="../extend-hippo-ecm/building/maven.html" title="building from source">source build</a>
                 is required to run Hippo ECM.
             </subsection>
             

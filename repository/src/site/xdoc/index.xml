@@ -37,7 +37,7 @@
           <ul>
             <li>
               <p>
-                <b><a href="how-to-run/index.html">Run Hippo ECM</a></b>
+                <b><a href="run-hippo-ecm/index.html">Run Hippo ECM</a></b>
               </p>
               <p>
                 Information for those who need to get a standard Hippo ECM up and running.
@@ -45,7 +45,7 @@
             </li>
             <li>
               <p>
-                <b><a href="default-functionality/index.html">Use Hippo ECM</a></b>
+                <b><a href="use-hippo-ecm/index.html">Use Hippo ECM</a></b>
               </p>
               <p>
                 Information for those who need to work with a Hippo ECM system.
@@ -53,7 +53,7 @@
             </li>
             <li>
               <p>
-                <b><a href="extending-hippo-ecm/index.html">Extend Hippo ECM</a></b>
+                <b><a href="extend-hippo-ecm/index.html">Extend Hippo ECM</a></b>
               </p>
               <p>
                 Information for developers of Hippo ECM add-ons.
@@ -61,7 +61,7 @@
             </li>
             <li>
               <p>
-                <b><a href="integrating-hippo-ecm/index.html">Integrate Hippo ECM</a></b>
+                <b><a href="integrate-hippo-ecm/index.html">Integrate Hippo ECM</a></b>
               </p>
               <p>
                 Integrate Hippo ECM in an existing environment.

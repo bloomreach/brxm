@@ -322,7 +322,7 @@ mvn exec:java
                   
             </subsection>
             <subsection name="Applying Hippo Facets">
-            	Prerequisite: <a href="../default-functionality/facets/index.html">knowlegde of facets</a>
+            	Prerequisite: <a href="../use-hippo-ecm/facets/index.html">knowlegde of facets</a>
             	<br/>
             	<p>
             	Goto the Wicket JCR browser and select the root node. <br/>

@@ -54,7 +54,7 @@
           At this moment Hippo ECM is still in an early development stage. To run it,
           it is necessary to checkout the sources from the SVN repository, and build
           them using Maven. A full guide can be found under 
-          <a href="../extending-hippo-ecm/building/maven.html">Building with Maven</a>.
+          <a href="../extend-hippo-ecm/building/maven.html">Building with Maven</a>.
           The short version below is targeted at those people who know what they are
           doing.
         </p>
