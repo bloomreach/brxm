@@ -55,10 +55,9 @@
 
       <subsection name="Hippo Sample Applications">
         <p> 
-          The Hippo Sample Application are included to show the possibilities of Hippo ECM. The
-          sample applications can be used as an example for and starting of the development of third
-          party application that want to integrate with Hippo ECM. The sample applications can also
-          be used out of the box. 
+          The Hippo Sample Applications are included to demonstrate the possibilities of Hippo ECM.
+          They can be used as a base to start development of your own application from. The sample 
+          applications can also be used out of the box. 
         </p>
         <p> 
           Sample applications: 
