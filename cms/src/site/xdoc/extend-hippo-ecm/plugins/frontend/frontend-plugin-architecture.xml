@@ -28,9 +28,9 @@
     
       <p>
         Hippo ECM provides an <a href="http://wicket.apache.org">Apache Wicket</a> based
-        plugin architecture to facilitate a customisable GUI. All standard GUI components are written
+        plugin architecture to facilitate a customizable GUI. All standard GUI components are written
         as plugins. The Hippo CMS application offers a default configuration for these plugins.
-        Customising Hippo CMS comes down to extending the standards plugins, and/or writing your own,
+        Customizing Hippo CMS comes down to extending the standards plugins, and/or writing your own,
         and configuring them to form your own custom application.
       </p>
 

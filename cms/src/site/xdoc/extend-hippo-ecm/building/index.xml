@@ -24,6 +24,12 @@
     <body>
       <section name="Building Hippo ECM">
         
+        <p>
+          Getting the Hippo ECM source code and building it is easy. Hippo ECM
+          uses a Maven build environment, but it is also possible to use
+          a Java IDE like Eclipse or Netbeans. 
+        </p>
+        
         <ul>
           <li>
             <a href="project-structure.html">Project structure</a>

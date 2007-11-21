@@ -103,7 +103,7 @@
           For Windows: ,          
         </p>
         <source>
-C:> %JAVA_HOME%\bin\rmiregistry.exe
+C:\> %JAVA_HOME%\bin\rmiregistry.exe
         </source>
         <p>
           For Unix:                  
