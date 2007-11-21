@@ -23,7 +23,7 @@
   </properties>
   <body>
     <section name="Requirements">
-      <subsection name="Operating Systems">
+      <subsection name="Operating System">
         <p>
           The Hippo ECM software is able to run on at least the following Operating Systems:
         </p> 
@@ -39,7 +39,7 @@
         </p>
       </subsection>
 
-      <subsection name="Java versions">
+      <subsection name="Java version">
         <p>
           To run Hippo ECM Java 1.4, Java 5 or Java 6 is required. The following JVMs can be used: 
         </p>
@@ -50,7 +50,7 @@
         </ul>
       </subsection>
 
-      <subsection name="Application Containers">
+      <subsection name="Application Container">
         <p>
           Hippo ECM requires an application container. One of the following can be used:
         </p> 
@@ -64,7 +64,7 @@
         </ul>
       </subsection>
 
-      <subsection name="Databases">
+      <subsection name="Database">
         <p> 
           Hippo ECM requires a relational database for it's datastorage. By default Apache Derby
           is embedded and configured and runs "out of the box". It is however possible to configure

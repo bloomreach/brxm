@@ -44,45 +44,45 @@
     
     <menu name="Documentation">
       
-      <item name="Running Hippo ECM" href="/how-to-run/index.html" collapse="false" inherit="top">
-        <item name="Requirements" href="/how-to-run/requirements.html"/>
-        <item name="Deploying the WARs" href="/how-to-run/deploying-the-wars.html"/>
-        <item name="Bootstrapping the Repository" href="/how-to-run/seeding-the-repository-bootstrap.html"/>
-        <item name="Configuration" href="/how-to-run/configuration/index.html" collapse="true">
-          <item name="configuration.xml" href="/how-to-run/configuration/configuration.html"/>
-          <item name="repository.xml" href="/how-to-run/configuration/repository.html"/>
-          <item name="workspace.xml" href="/how-to-run/configuration/workspace.html"/>
-          <item name="Search Index" href="/how-to-run/configuration/searchindex.html"/>
-          <item name="Authentication and Users" href="/how-to-run/configuration/repository-based-authentication-and-users.html"/>
-          <item name="Workflow" href="/how-to-run/configuration/workflow-configuration.html"/>
+      <item name="Running Hippo ECM" href="/run-hippo-ecm/index.html" collapse="false" inherit="top">
+        <item name="Requirements" href="/run-hippo-ecm/requirements.html"/>
+        <item name="Deploying the WARs" href="/run-hippo-ecm/deploying-the-wars.html"/>
+        <item name="Bootstrapping the Repository" href="/run-hippo-ecm/repository-bootstrap.html"/>
+        <item name="Configuration" href="/run-hippo-ecm/configuration/index.html" collapse="true">
+          <item name="Repository" href="/run-hippo-ecm/configuration/repository.html"/>
+          <item name="Configuration Nodes" href="/run-hippo-ecm/configuration/configuration.html"/>
+          <item name="Workspace" href="/run-hippo-ecm/configuration/workspace.html"/>
+          <item name="Search Index" href="/run-hippo-ecm/configuration/searchindex.html"/>
+          <item name="Authentication and Users" href="/run-hippo-ecm/configuration/repository-based-authentication-and-users.html"/>
+          <item name="Workflow" href="/run-hippo-ecm/configuration/workflow-configuration.html"/>
         </item>
       </item>
       
-      <item name="Default Hippo ECM Functionality" href="/default-functionality/index.html" collapse="true">
-        <item name="Facets" href="/default-functionality/facets/index.html" collapse="true">
+      <item name="Using Hippo ECM" href="/use-hippo-ecm/index.html" collapse="true">
+        <item name="Facets" href="/use-hippo-ecm/facets/index.html" collapse="true">
         </item>
-        <item name="Workflow" href="/default-functionality/workflow/index.html" collapse="true">
+        <item name="Workflow" href="/use-hippo-ecm/workflow/index.html" collapse="true">
         </item>
       </item>
       
-      <item name="Extending Hippo ECM" href="/extending-hippo-ecm/index.html" collapse="true">
-        <item name="Building Hippo ECM" href="/extending-hippo-ecm/building/index.html" collapse="true">
-          <item name="Project Structure" href="/extending-hippo-ecm/building/project-structure.html"/>
-          <item name="Building with Maven" href="/extending-hippo-ecm/building/maven.html"/>
-          <item name="Building with Eclipse" href="/extending-hippo-ecm/building/eclipse.html"/>
-          <item name="Building with Netbeans" href="/extending-hippo-ecm/building/netbeans.html"/>
+      <item name="Extending Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
+        <item name="Building Hippo ECM" href="/extend-hippo-ecm/building/index.html" collapse="true">
+          <item name="Project Structure" href="/extend-hippo-ecm/building/project-structure.html"/>
+          <item name="Building with Maven" href="/extend-hippo-ecm/building/maven.html"/>
+          <item name="Building with Eclipse" href="/extend-hippo-ecm/building/eclipse.html"/>
+          <item name="Building with Netbeans" href="/extend-hippo-ecm/building/netbeans.html"/>
         </item>
-        <item name="Plugins" href="/extending-hippo-ecm/plugins/index.html" collapse="true">
-          <item name="Repository Plugins" href="/extending-hippo-ecm/plugins/repository/index.html"></item>
-          <item name="Frontend Plugins" href="/extending-hippo-ecm/plugins/frontend/index.html" collapse="true">
-            <item name="Frontend Plugin Architecture" href="/extending-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
+        <item name="Plugins" href="/extend-hippo-ecm/plugins/index.html" collapse="true">
+          <item name="Repository Plugins" href="/extend-hippo-ecm/plugins/repository/index.html"></item>
+          <item name="Frontend Plugins" href="/extend-hippo-ecm/plugins/frontend/index.html" collapse="true">
+            <item name="Frontend Plugin Architecture" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
           </item>
         </item>
-        <item name="Hello World" href="/extending-hippo-ecm/hello-world.html"/>
+        <item name="Hello World" href="/extend-hippo-ecm/hello-world.html"/>
       </item>
       
-      <item name="Integrating Hippo ECM" href="/integrating-hippo-ecm/index.html" collapse="true">
-        <item name="Interfacing with Hippo Repository" href="/integrating-hippo-ecm/demo-on-interfacing-with-hippo-repository.html"/>
+      <item name="Integrating Hippo ECM" href="/integrate-hippo-ecm/index.html" collapse="true">
+        <item name="Interfacing with Hippo Repository" href="/integrate-hippo-ecm/demo-on-interfacing-with-hippo-repository.html"/>
       </item>
       
     </menu>

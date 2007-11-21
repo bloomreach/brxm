@@ -19,13 +19,15 @@
 -->
 <document>
     <properties>
-        <title>Repository based Authentication and Users</title>
+        <title>Repository Based Authentication and Users</title>
     </properties>
     <body>
-        <section name="Repository based Authentication">
+        <section name="Repository based authentication">
             The repository can be configured to store the users as nodes inside the repository itself. 
-            To achieve this the RepositoryLoginModule is configured in the <code>repository.xml</code> in the Security section.
-            The authentication module is based on <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" title="Sun JAAS">JAAS</a>. 
+            To achieve this the RepositoryLoginModule is configured in
+            <a href="repository.html"><code>repository.xml</code></a> in the Security section.
+            The authentication module is based on 
+            <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" title="Sun JAAS">JAAS</a>. 
             By default this moduled is enabled.
 <source>
 &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;

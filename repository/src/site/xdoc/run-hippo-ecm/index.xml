@@ -35,10 +35,10 @@
           </li>
           <li>
             <a href="deploying-the-wars.html">Deploying the WARs</a>
-            - Run Hippo ECM in your favourite application server
+            - Run Hippo ECM in your application server of choice
           </li>
           <li>
-            <a href="seeding-the-repository-bootstrap.html">Seeding the Repository</a>
+            <a href="repository-bootstrap.html">Bootstrapping the Repository</a>
             - How to get your initial data in
           </li>
           <li>
@@ -55,8 +55,7 @@
           it is necessary to checkout the sources from the SVN repository, and build
           them using Maven. A full guide can be found under 
           <a href="../extend-hippo-ecm/building/maven.html">Building with Maven</a>.
-          The short version below is targeted at those people who know what they are
-          doing.
+          The short version below is targeted at those who know what they are doing.
         </p>
         
         <subsection name="Checkout the sources">
@@ -72,9 +71,14 @@
 </source>          
         </subsection>          
 
-        <subsection name="Run Hippo ECM">
+        <subsection name="Start RMI Registry">
 <source>
 ~/hippo-ecm> $JAVA_HOME/bin/rmiregistry &amp;				
+</source>          
+        </subsection>          
+
+        <subsection name="Run Hippo ECM">
+<source>
 ~/hippo-ecm> cd application/reviewed-action/repository
 ~/hippo-ecm/application/reviewed-action/repository> mvn jetty:run-war
 </source>          
