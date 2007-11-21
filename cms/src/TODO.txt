@@ -1,3 +1,23 @@
+-------------------
+Unfinished sections
+-------------------
+
+- About Hippo ECM -> Usages for Hippo ECM
+- About Hippo ECM -> Features
+- About Hippo ECM -> Architecture [only repository, should be total overview too]
+
+- Running Hippo ECM -> Requirements [mention only supported environments]
+- Running Hippo ECM -> Configuration -> Configuration Nodes [empty!]
+
+- Using Hippo ECM -> Facets [incomplete, faceted selection missing, no examples]
+
+- Extending Hippo ECM -> Plugins -> Repository Plugins [empty!]
+- Extending Hippo ECM -> Plugins -> Frontend Plugins [incomplete]
+
+
+--------------------------------------------------------------------------------
+
+
 - Algemeen verhaal
 	+ What is Hippo ECM? -> AC. SETUP DONE
 	- Usages for Hippo ECM -> AC. SETUP DONE
