@@ -24,15 +24,26 @@
     <body>
       <section name="Extending Hippo ECM">
         
+        <p>
+          Hippo ECM provides a full enterprise content management system that
+          can be used straight out of the box. Should the default functionality
+          however not suit your organization's needs, then Hippo ECM's open 
+          component based architecture allows for easy customization and extension 
+          of the system.
+        </p>
+        
         <ul>
           <li>
             <a href="building/index.html">Building Hippo ECM from source</a>
+            - Build the Java sources
           </li>
           <li>
             <a href="plugins/index.html">Plugins</a>
+            - Extend Hippo ECM with your own plugins
           </li>
           <li>
             <a href="hello-world.html">Hello World add-on</a>
+            - Create a trivial front end plugin in this step-by-step tutorial
           </li>
         </ul>
         
