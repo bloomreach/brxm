@@ -36,7 +36,7 @@
             <subsection name="Central point for information management">
                 <p> Hippo ECM will act as a central point for information management, with its main
                     focus on a generic content repository that allows for integration with a diverse
-                    set of applications. <br clear="all"/>
+                    set of applications.
                     <img src="../images/roadmap-medium.jpg" alt="Roadmap"/>
                 </p>
             </subsection>
@@ -82,8 +82,6 @@
                             </li>
                             <li>Management info <ul>
                                     <li>How many changes</li>
-                                    <li></li>
-
                                 </ul>
                             </li>
                         </ul>
@@ -206,7 +204,6 @@
                     <li>Database independent (Derby, MySQL, Oracle, MS SQL)</li>
                     <li>Conform common repository standards (WebDAV, JSR-170, JSR-283)</li>
                     <li>Ability to use and index meta information from external systems ()</li>
-                    <li></li>
                 </ul>
 
             </subsection>
@@ -220,8 +217,6 @@
                     <li>'Easy install' <ul>
                             <li>A clean deploy of the Hippo Repository should work out-of-the-box
                                 and not need manual tweaking of databases</li>
-                            <li></li>
-
                         </ul>
                     </li>
                     <li>Clustering / load balancing</li>
@@ -284,10 +279,7 @@
                     </li>
                     <li>Users / groups / roles</li>
 
-                    <li>Indexing and searching <ul>
-                            <li></li>
-                        </ul>
-                    </li>
+                    <li>Indexing and searching</li>
                     <li>Workflow <ul>
                             <li>A workflow state per language, per revision, per version on the
                                 object as a whole, and on a group of objects together</li>
@@ -304,7 +296,6 @@
 
                             <li>Mailinglist functionality (personalized or not)</li>
                             <li>Microsoft Office importer (server side conversion of Office to XML)</li>
-                            <li></li>
                         </ul>
                     </li>
                 </ul>
@@ -318,7 +309,6 @@
                 <li>Critical error messages on any level should propagate back to the client where
                     the user should be notified appropriately</li>
                 <li>Support for different browser based editors: form based, Xopus</li>
-                <li></li>
             </ul>
         </section>
 
