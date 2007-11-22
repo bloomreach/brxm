@@ -30,9 +30,11 @@
         <ul>
           <li>Windows XP/2000, Windows Server 2003</li>
           <li>Linux, RedHat (RHEL), SUSE (SLES), Debian, Ubuntu and other distributions</li>
+          <!--
           <li>FreeBSD and other BSD variants</li>
           <li>Solaris 9/10 and OpenSolaris</li>
           <li>IBM AIX</li>
+          -->
         </ul>
         <p>  
            It should be possible to run the software on any POSIX compliant Operating System.
@@ -45,8 +47,10 @@
         </p>
         <ul>
           <li>Sun JVM</li>
+          <!--
           <li>IBM JVM</li>
           <li>BEA JRockit</li>
+          -->
         </ul>
       </subsection>
 
@@ -57,9 +61,11 @@
         <ul>
           <li>Jetty 6</li>
           <li>Tomcat 5.5 and 6</li>
+          <!--
           <li>IBM WebSphere Application Server 6</li>
           <li>BEA WebLogic Server 10</li>
           <li>JBoss Application Server 4</li>
+          -->
           <li>Sun ONE Application Server and Sun Glassfish V2</li>
         </ul>
       </subsection>
@@ -67,9 +73,13 @@
       <subsection name="Database">
         <p> 
           Hippo ECM requires a relational database for it's datastorage. By default Apache Derby
-          is embedded and configured and runs "out of the box". It is however possible to configure
-          other databases such as: 
+          is embedded and configured and runs "out of the box". 
+          <!--
+          It is however possible to configure
+          other databases such as:
+          --> 
         </p>
+        <!--
         <ul>
           <li>MySQL 4.1, 5.0 and 5.1</li>
           <li>PosgreSQL 8</li>
@@ -77,6 +87,7 @@
           <li>MS SQLServer</li>
           <li>Derby</li>
         </ul>
+        -->
       </subsection>
     </section>
   </body>
