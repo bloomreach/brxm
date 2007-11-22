@@ -15,9 +15,19 @@
  */
 package org.hippoecm.repository;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.VersionException;
+
+import org.hippoecm.repository.api.ISO9075Helper;
 
 import junit.framework.TestCase;
 
@@ -27,25 +37,86 @@ public class TrivialServerTest extends TestCase {
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     private HippoRepository server;
-
-    public void test() throws RepositoryException {
+    private Session session;
+    private Node root;
+    
+    public void setUp() throws RepositoryException {
         server = HippoRepositoryFactory.getHippoRepository();
-        assertNotNull(server);
-
-        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        Node root = session.getRootNode();
-
-        root.addNode("x");
-        root.addNode("y");
-        root.addNode("z");
-
-        assertNotNull(root.getNode("x"));
-        assertNotNull(root.getNode("y"));
-        assertNotNull(root.getNode("z"));
-
-        session.save();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        root = session.getRootNode();
+    }
+    
+    public void tearDown() throws Exception {
         session.logout();
-
         server.close();
     }
+    
+    public void testTrivialNodeOperations()  {
+        try {
+            root.addNode("x");
+        } catch (RepositoryException e) {
+            fail("Failed to add node: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // transient
+        try {
+            assertNotNull(root.getNode("x"));
+        } catch (RepositoryException e) {
+            fail("Failed to find node: " + e.getMessage());
+            e.printStackTrace();
+        }
+        try {
+            session.save();
+        } catch (RepositoryException e) {
+            fail("Failed to save node: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        // after persist
+        try {
+            assertNotNull(root.getNode("x"));
+        } catch (RepositoryException e) {
+            fail("Failed to find node: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        try {
+            root.getNode("x").remove();
+        } catch (RepositoryException e) {
+            fail("Failed to delete node: " + e.getMessage());
+            e.printStackTrace();
+        }
+        try {
+            session.save();
+        } catch (RepositoryException e) {
+            fail("Failed to save node deletion: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        try {
+            root.getNode("x");
+            fail("Deleted node found.");
+        } catch (PathNotFoundException e) {
+            // ok
+        } catch (RepositoryException e) {
+            fail("Failed to not find node: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+    }
+    
+    public void testEncodedNode() throws RepositoryException {
+        String name = "2..,!@#$%^&*()_-[]{}|\\:;'\".,/?testnode";
+        Node root = session.getRootNode();
+        Node encodedNode = root.addNode(ISO9075Helper.encodeLocalName(name));
+        assertNotNull(encodedNode);
+        assertEquals(ISO9075Helper.encodeLocalName(name),encodedNode.getName());
+        session.save();
+        Node encodedNode2 = root.getNode(ISO9075Helper.encodeLocalName(name));
+        assertEquals(encodedNode, encodedNode2);
+        assertEquals(ISO9075Helper.encodeLocalName(name),encodedNode.getName());
+        encodedNode2.remove();
+    }
+
 }

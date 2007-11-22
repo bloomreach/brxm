@@ -30,6 +30,7 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 
 public class Dropbox {
 
@@ -114,8 +115,13 @@ public class Dropbox {
             if (files[i].getName().equals(".") || files[i].getName().equals("..") || files[i].isHidden()) {
                 continue;
             }
-            if (files[i].isDirectory()) {
-                String nodeName = org.apache.jackrabbit.util.ISO9075.encode(files[i].getName());
+            if (files[i].isDirectory()) { 
+                
+                //String nodeName = org.apache.jackrabbit.util.ISO9075.encode(files[i].getName());
+                //nodeName = files[i].getName().replace(":", "_x003A_");
+                
+                String nodeName = ISO9075Helper.encodeLocalName(files[i].getName());
+                
                 if (folder.hasNode(nodeName)) {
                     dropFiles(files[i], session, folder.getNode(nodeName));
                 } else {
@@ -141,8 +147,11 @@ public class Dropbox {
         FileDataSource ds = new FileDataSource(f);
         ds.setFileTypeMap(new MimetypesFileTypeMap(getClass().getResourceAsStream("mime.types")));
 
-        String nodeName = org.apache.jackrabbit.util.ISO9075.encode(f.getName());
-        nodeName.replace(":", " "); // fix for colons in filenames, clashes with xmlns
+        //String nodeName = f.getName().replace(":", "_"); // fix for colons in filenames, clashes with xmlns
+        //String nodeName = org.apache.jackrabbit.util.ISO9075.encode(f.getName());
+
+        String nodeName = ISO9075Helper.encodeLocalName(f.getName() + ":testing...");
+        
         if (folder.hasNode(nodeName)) {
             if (recreate) {
                 folder.getNode(nodeName).remove();
