@@ -29,7 +29,7 @@
   <description>Hippo ECM suite</description>
   <packaging>pom</packaging>  
   
-  <url>http://wiki.hippo.nl/display/HREPTWO/Hippo+Repository+2+project+documentation</url>
+  <url>http://wiki.hippo.nl/display/HIPPOECM</url>
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
