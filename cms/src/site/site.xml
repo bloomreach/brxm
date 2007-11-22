@@ -87,18 +87,12 @@
       
     </menu>
 
-    <!--    
-    <menu ref="modules"/>
-    -->
-
     <menu name="Community">
       <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
       <item name="Contributing" href="/community/contribute.html"/>
     </menu>
 
-    <menu ref="modules"/>
-
-    <menu ref="reports"/>
+    <menu ref="reports" name="Other"/>
 
   </body>
   
