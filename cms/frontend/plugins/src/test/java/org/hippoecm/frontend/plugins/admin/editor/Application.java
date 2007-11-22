@@ -3,17 +3,24 @@ package org.hippoecm.frontend.plugins.admin.editor;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.wicket.Request;
+import org.apache.wicket.Response;
+import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.MockControl;
+import org.hippoecm.frontend.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 
-public class MockJcr {
-    
+public class Application extends WicketTester.DummyWebApplication {
+
     public MockControl sessionControl;
-    public Session session;
+    public javax.jcr.Session session;
 
     public MockControl nodeControl;
     public HippoNode node;
@@ -29,11 +36,40 @@ public class MockJcr {
 
     public MockControl valueControl;
     public Value value;
+    
+    public MockControl workspaceControl;
+    public Workspace workspace;
+    
+    public MockControl ntmgrControl;
+    public NodeTypeManager ntmgr;
+    
+    public MockControl ntiterControl;
+    public NodeTypeIterator ntiter;
 
-    public MockJcr() {
-        sessionControl = MockControl.createControl(Session.class);
-        session = (Session) sessionControl.getMock();
+    public MockControl nodeTypeControl;
+    public NodeType nodeType;
+    
+    // custom Session; since UserSession is not an interface, we have to provide
+    // an explicit implementation.
+    private class Session extends UserSession {
+        private static final long serialVersionUID = 1L;
+
+        public Session(Request request) {
+            super(request);
+        }
         
+        @Override
+        public javax.jcr.Session getJcrSession() {
+            return session;
+        }
+    }
+    
+    public Application() {
+        super();
+
+        sessionControl = MockControl.createControl(javax.jcr.Session.class);
+        session = (javax.jcr.Session) sessionControl.getMock();
+
         nodeControl = MockControl.createControl(HippoNode.class);
         node = (HippoNode) nodeControl.getMock();
 
@@ -48,6 +84,18 @@ public class MockJcr {
 
         propertyDefinitionControl = MockControl.createControl(PropertyDefinition.class);
         propertyDefinition = (PropertyDefinition) propertyDefinitionControl.getMock();
+        
+        workspaceControl = MockControl.createControl(Workspace.class);
+        workspace = (Workspace) workspaceControl.getMock();
+        
+        ntmgrControl = MockControl.createControl(NodeTypeManager.class);
+        ntmgr = (NodeTypeManager) ntmgrControl.getMock();
+        
+        ntiterControl = MockControl.createControl(NodeTypeIterator.class);
+        ntiter = (NodeTypeIterator) ntiterControl.getMock();
+        
+        nodeTypeControl = MockControl.createControl(NodeType.class);
+        nodeType = (NodeType) nodeTypeControl.getMock();
     }
 
     public void setUp() {
@@ -93,12 +141,41 @@ public class MockJcr {
             value.getString();
             valueControl.setReturnValue("testvalue", MockControl.ONE_OR_MORE);
 
+            // set up the node types editor
+            node.getMixinNodeTypes();
+            nodeControl.setReturnValue(new NodeType[0], MockControl.ONE_OR_MORE);
+            
+            session.getWorkspace();
+            sessionControl.setReturnValue(workspace, MockControl.ONE);
+
+            workspace.getNodeTypeManager();
+            workspaceControl.setReturnValue(ntmgr, MockControl.ONE);
+
+            ntmgr.getMixinNodeTypes();
+            ntmgrControl.setReturnValue(ntiter, MockControl.ONE);
+            
+            ntiter.hasNext();
+            ntiterControl.setReturnValue(true, MockControl.ONE);
+
+            ntiter.nextNodeType();
+            ntiterControl.setReturnValue(nodeType, MockControl.ONE);
+
+            nodeType.getName();
+            nodeTypeControl.setReturnValue("test type", MockControl.ONE_OR_MORE);
+
+            ntiter.hasNext();
+            ntiterControl.setReturnValue(false, MockControl.ONE_OR_MORE);
+
             sessionControl.replay();
             nodeControl.replay();
             propertyIteratorControl.replay();
             propertyControl.replay();
             valueControl.replay();
             propertyDefinitionControl.replay();
+            workspaceControl.replay();
+            ntmgrControl.replay();
+            ntiterControl.replay();
+            nodeTypeControl.replay();
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -114,4 +191,8 @@ public class MockJcr {
         propertyDefinitionControl.reset();
     }
 
+    @Override
+    public Session newSession(Request request, Response response) {
+        return new Session(request);
+    }
 }
