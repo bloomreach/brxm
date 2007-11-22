@@ -52,7 +52,11 @@
   
   <servlet-mapping>
     <servlet-name>RepositoryServlet</servlet-name>
-    <url-pattern>/repository/*</url-pattern>
+    <url-pattern>/repository/*</url-pattern>      
+    <description>
+      Hippo Repository Console servlet.
+    </description>
+    
   </servlet-mapping>
   
   <!-- Timeout in minutes -->
