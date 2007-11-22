@@ -282,7 +282,9 @@ public class RepositoryLoginModule implements LoginModule {
                         if (authenticate(username, sc.getPassword())) {
                             authenticated = true;
                             principals.add(new UserPrincipal(username));
-                            log.info("Authenticated as " + username);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Authenticated as " + username);
+                            }
                         }
                     }
                 }
