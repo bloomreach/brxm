@@ -73,13 +73,9 @@
       <subsection name="Database">
         <p> 
           Hippo ECM requires a relational database for it's datastorage. By default Apache Derby
-          is embedded and configured and runs "out of the box". 
-          <!--
-          It is however possible to configure
+          is embedded and configured and runs "out of the box".  It is however possible to configure
           other databases such as:
-          --> 
         </p>
-        <!--
         <ul>
           <li>MySQL 4.1, 5.0 and 5.1</li>
           <li>PosgreSQL 8</li>
@@ -87,7 +83,6 @@
           <li>MS SQLServer</li>
           <li>Derby</li>
         </ul>
-        -->
       </subsection>
     </section>
   </body>
