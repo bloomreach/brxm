@@ -32,8 +32,11 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 public class PropertiesEditor extends DataView {
     private static final long serialVersionUID = 1L;
 
+    private JcrPropertiesProvider provider;
+    
     public PropertiesEditor(String id, JcrPropertiesProvider model) {
         super(id, model);
+        provider = model;
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
 
@@ -113,5 +116,8 @@ public class PropertiesEditor extends DataView {
         };
     }
     
+    public void setProvider(JcrPropertiesProvider provider) {
+        this.provider.setChainedModel(provider.getChainedModel());
+    }
 
 }

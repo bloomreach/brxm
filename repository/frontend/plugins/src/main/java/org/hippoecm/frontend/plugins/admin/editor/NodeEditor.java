@@ -15,24 +15,60 @@
  */
 package org.hippoecm.frontend.plugins.admin.editor;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.plugin.JcrEvent;
 
 public class NodeEditor extends Form {
     private static final long serialVersionUID = 1L;
+    
+    private PropertiesEditor properties;
+    private NodeTypesEditor types;
 
-    public NodeEditor(String id, JcrPropertiesProvider model) {
+    public NodeEditor(String id, JcrNodeModel model) {
         super(id, model);
         setOutputMarkupId(true);
-        add(new PropertiesEditor("properties", model));
+        
+        properties = new PropertiesEditor("properties", new JcrPropertiesProvider(model));
+        add(properties);
+
+        types = new NodeTypesEditor("types", new JcrNodeTypesProvider(model)) {
+            private static final long serialVersionUID = 1L;
+
+            protected void onAddNodeType(String type) {
+                try {
+                    JcrNodeModel model = (JcrNodeModel) NodeEditor.this.getModel();
+                    Node node = model.getNode();
+                    node.addMixin(type);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            protected void onRemoveNodeType(String type) {
+                try {
+                    JcrNodeModel model = (JcrNodeModel) NodeEditor.this.getModel();
+                    Node node = model.getNode();
+                    node.removeMixin(type);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        add(types);
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
         if (jcrEvent.getModel() != null) {
-            JcrPropertiesProvider propertiesProvider = (JcrPropertiesProvider) getModel();
-            propertiesProvider.setChainedModel(jcrEvent.getModel());
+            properties.setProvider(new JcrPropertiesProvider(jcrEvent.getModel()));
+            types.setProvider(new JcrNodeTypesProvider(jcrEvent.getModel()));
+            setModel(jcrEvent.getModel());
         }
         if (target != null && findPage() != null) {
             target.addComponent(this);

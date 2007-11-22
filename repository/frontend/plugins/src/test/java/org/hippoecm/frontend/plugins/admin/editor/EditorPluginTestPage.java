@@ -6,18 +6,11 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class EditorPluginTestPage extends WebPage {
     private static final long serialVersionUID = 1L;
-    
-    private MockJcr mockJcr;
 
     public EditorPluginTestPage() {
-        mockJcr = new MockJcr();
-        mockJcr.setUp();
+        Application app = (Application) getSession().getApplication();
         PluginDescriptor editorDescriptor = new PluginDescriptor("editorPlugin", null);
-        add(new EditorPlugin(editorDescriptor, new JcrNodeModel(null, mockJcr.node), null));
-    }
-
-    public void tearDown() {
-        mockJcr.tearDown();
+        add(new EditorPlugin(editorDescriptor, new JcrNodeModel(null, app.node), null));
     }
 
 }

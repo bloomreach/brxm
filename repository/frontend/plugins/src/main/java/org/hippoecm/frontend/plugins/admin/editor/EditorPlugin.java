@@ -29,8 +29,8 @@ public class EditorPlugin extends Plugin {
 
     public EditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        
-        editor = new NodeEditor("editor", new JcrPropertiesProvider(model));
+
+        editor = new NodeEditor("editor", model);
         add(editor);
     }
 
