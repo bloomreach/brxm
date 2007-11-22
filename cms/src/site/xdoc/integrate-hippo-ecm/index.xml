@@ -24,9 +24,14 @@
     <body>
       <section name="Integrating Hippo ECM">
         
+        <p>
+          Hippo ECM's use of open standards like JCR, makes it especially easy
+          to integrate in any environment.
+        </p>
+        
         <ul>
           <li>
-            <a href="demo-on-interfacing-with-hippo-repository.html">Demo on interfacing with Hippo ECM Repository</a>
+            <a href="example.html">Example: Interfacing with Hippo ECM Repository</a>
           </li>
         </ul>
         

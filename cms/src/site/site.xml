@@ -82,12 +82,14 @@
       </item>
       
       <item name="Integrating Hippo ECM" href="/integrate-hippo-ecm/index.html" collapse="true">
-        <item name="Interfacing with Hippo Repository" href="/integrate-hippo-ecm/demo-on-interfacing-with-hippo-repository.html"/>
+        <item name="Example" href="/integrate-hippo-ecm/example.html"/>
       </item>
       
     </menu>
-    
+
+    <!--    
     <menu ref="modules"/>
+    -->
 
     <menu name="Community">
       <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
