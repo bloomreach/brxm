@@ -105,7 +105,9 @@ public class RepositoryLoginModule implements LoginModule {
 
     private boolean authenticate(String username, char[] password) {
         if (username == null || password == null || "".equals(username) || password.length == 0) {
-            log.info("Empty username or password not allowed.");
+            if (log.isDebugEnabled()) {
+                log.debug("Empty username or password not allowed.");
+            }
             return false;
         }
         
@@ -293,7 +295,9 @@ public class RepositoryLoginModule implements LoginModule {
             // check for anonymous login
             if (creds == null || username == null) {
                 authenticated = true;
-                log.info("Authenticated as anonymous.");
+                if (log.isDebugEnabled()) {
+                    log.debug("Authenticated as anonymous.");
+                }
                 principals.add(new AnonymousPrincipal());
             }
         } catch (java.io.IOException ioe) {
