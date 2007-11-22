@@ -27,7 +27,6 @@ public class WorkspaceImpl extends org.apache.jackrabbit.core.WorkspaceImpl {
     protected WorkspaceImpl(WorkspaceConfig wspConfig, SharedItemStateManager stateMgr,
             org.apache.jackrabbit.core.RepositoryImpl rep, org.apache.jackrabbit.core.SessionImpl session) {
         super(wspConfig, stateMgr, rep, session);
-        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)this.stateMgr, session);
     }
 
     protected LocalItemStateManager createItemStateManager(SharedItemStateManager shared) {

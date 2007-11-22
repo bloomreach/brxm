@@ -24,9 +24,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.conversion.IllegalNameException;
 import org.apache.jackrabbit.conversion.NamePathResolver;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
@@ -48,19 +53,21 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.spi.Name;
+
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.hippoecm.repository.api.HippoNodeType;
 
 class HippoLocalItemStateManager extends XAItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
     
     protected NodeTypeRegistry ntReg;
+    protected HierarchyManager hierMgr;
+    protected NamePathResolver resolver;
     protected FilteredChangeLog filteredChangeLog = null;
     protected Map<Name,HippoVirtualProvider> virtualProviders;
     protected Set<Name> virtualProperties;
-    protected HierarchyManager hierMgr;
-    protected NamePathResolver resolver;
+    private List<ItemState> virtualStates = new LinkedList<ItemState>();
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
             ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg) {
@@ -81,21 +88,30 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         this.resolver = resolver;
         this.hierMgr = hierMgr;
 
-        /* Include the following for issue HREPTWO-179:
+        MirrorVirtualProvider  mirrorProvider = null;
+        ViewVirtualProvider    viewProvider = null;
+        FacetResultSetProvider resultSetProvider = null;
+        FacetSelectProvider    facetSelectProvider = null;
+        FacetSearchProvider    facetSearchProvider = null;
 
-        MirrorVirtualProvider  mirrorProvider;
-        ViewVirtualProvider    viewProvider;
-        FacetResultSetProvider resultSetProvider;
-        FacetSelectProvider    facetSelectProvider;
-        FacetSearchProvider    facetSearchProvider;
+        try {
+            mirrorProvider = new MirrorVirtualProvider(this);
+        } catch(RepositoryException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
 
-        mirrorProvider      = new MirrorVirtualProvider(this);
-        viewProvider        = new ViewVirtualProvider(this);
-        resultSetProvider   = new FacetResultSetProvider(this, mirrorProvider);
+        try {
+            viewProvider = new ViewVirtualProvider(this);
+        } catch(RepositoryException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
+
+        /*
 
         try {
             facetSelectProvider = new FacetSelectProvider(this, viewProvider);
-            facetSelectProvider.register(this);
         } catch(IllegalNameException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
@@ -107,9 +123,10 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             ex.printStackTrace(System.err);
         }
 
+        resultSetProvider = new FacetResultSetProvider(this, mirrorProvider, facetedEngine, facetedContext);
+
         try {
             facetSearchProvider = new FacetSearchProvider(this, resultSetProvider, facetedEngine, facetedContext);
-            register(resolver.getQName(HippoNodeType.NT_FACETSEARCH), facetSearchProvider);
         } catch(IllegalNameException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
@@ -122,7 +139,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         }
 
         */
-
     }
 
     @Override
@@ -136,6 +152,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     protected void update(ChangeLog changeLog)
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
         filteredChangeLog = new FilteredChangeLog(changeLog);
+        virtualStates.clear();
         filteredChangeLog.invalidate();
         super.update(filteredChangeLog);
     }
@@ -145,22 +162,56 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
         super.update();
         edit();
-        filteredChangeLog.repopulate();
         filteredChangeLog = null;
     }
-    
+
+    @Override
+    public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+        ItemState state = super.getItemState(id);
+        if(state == null && id instanceof HippoNodeId) {
+            edit();
+            return ((HippoNodeId)id).populate();
+        }
+        if(state instanceof NodeState) {
+            NodeState nodeState = (NodeState) state;
+            Name nodeTypeName = nodeState.getNodeTypeName();
+            if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                edit();
+                try {
+                    virtualStates.add(state);
+                    state = virtualProviders.get(nodeTypeName).populate(nodeState);
+                    stateModified(nodeState);
+                    store(state);
+                    return nodeState;
+                } catch(RepositoryException ex) {
+                    System.err.println(ex.getMessage());
+                    ex.printStackTrace(System.err);
+                    return null;
+                }
+            }
+        }
+        return state;
+    }
+
     @Override
     public NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException {
         if(id instanceof HippoNodeId) {
             edit();
             return ((HippoNodeId)id).populate();
         }
+        /* It is important that the super.getNodeState() is called after the
+         * check on id being instance of HippoNodeId.
+         */
         NodeState state = super.getNodeState(id);
         Name nodeTypeName = state.getNodeTypeName();
-        if(virtualProviders.containsKey(nodeTypeName)) {
+        if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
             edit();
             try {
-                return virtualProviders.get(nodeTypeName).populate(state);
+                virtualStates.add(state);
+                state = virtualProviders.get(nodeTypeName).populate(state);
+                stateModified(state);
+                store(state);                
+                return state;
             } catch(RepositoryException ex) {
                 System.err.println(ex.getMessage());
                 ex.printStackTrace(System.err);
@@ -200,7 +251,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         private static final int ITEM_TYPE_VIRTUAL  = 0x02;
         
         private ChangeLog upstream;
-        private List<ItemState> virtualStates = new LinkedList<ItemState>();
         
         FilteredChangeLog(ChangeLog changelog) {
             upstream = changelog;
@@ -228,47 +278,45 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     return ITEM_TYPE_VIRTUAL;
                 else if(virtualProperties.contains(propState.getName()))
                     return ITEM_TYPE_VIRTUAL;
+                else if(propState.getParentId() instanceof HippoNodeId)
+                    return ITEM_TYPE_VIRTUAL;
                 else
                     return ITEM_TYPE_REGULAR;
             }
         }
         
         void invalidate() {
-            for(Iterator iter = addedStates(); iter.hasNext(); ) {
+            for(Iterator iter = upstream.addedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
                 if((isVirtual(state) & ITEM_TYPE_VIRTUAL) != 0) {
                     if(state.isNode()) {
                         NodeState nodeState = (NodeState) state;
                         try {
                             nodeState = (NodeState) get(nodeState.getParentId());
-                            nodeState.removeAllChildNodeEntries();
-                        } catch(org.apache.jackrabbit.core.state.NoSuchItemStateException ex) {
-                            System.err.println("FilteredChangeLog.invalidate exception "+ex.getMessage());
+                            if(nodeState != null) {
+                                nodeState.removeChildNodeEntry(nodeState.getNodeId());
+                                stateModified(state);
+                                nodeState.setStatus(ItemState.STATUS_STALE_MODIFIED);
+                            }
+                        } catch(NoSuchItemStateException ex) {
                         }
+                    } else {
+                        stateDiscarded(state);
+                        state.setStatus(ItemState.STATUS_UNDEFINED);
                     }
+                }
+                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+                    ((NodeState)state).removeAllChildNodeEntries();
                     state.setStatus(ItemState.STATUS_STALE_MODIFIED);
                     stateModified(state);
                 }
             }
-            
-            for(Iterator iter = addedStates(); iter.hasNext(); ) {
+            for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    virtualStates.add(state);
-                }
-            }
-        }
-        
-        void repopulate() {
-            for(Iterator iter = virtualStates.iterator(); iter.hasNext(); ) {
-                ItemState state = (ItemState) iter.next();
-                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    try {
-                        virtualProviders.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
-                    } catch(RepositoryException ex) {
-                        System.err.println(ex.getMessage());
-                        ex.printStackTrace(System.err);
-                    }
+                    ((NodeState)state).removeAllChildNodeEntries();
+                    stateModified(state);
+                    state.setStatus(ItemState.STATUS_STALE_MODIFIED);
                 }
             }
         }
@@ -354,4 +402,4 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         }
         
     }
-    }
+}

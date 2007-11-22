@@ -17,35 +17,56 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.util.Iterator;
 
+import javax.jcr.RepositoryException;
+
+import org.apache.jackrabbit.conversion.NamePathResolver;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 public class MirrorVirtualProvider extends HippoVirtualProvider
 {
+    final static private String SVN_ID = "$Id$";
+
     protected class MirrorNodeId extends HippoNodeId {
         NodeId upstream;
+
         protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, NodeId upstream) {
             super(provider, parent);
             this.upstream = upstream;
         }
+
         MirrorNodeId(NodeId parent, NodeId upstream) {
             super(MirrorVirtualProvider.this, parent);
             this.upstream = upstream;
         }
     }
 
-    MirrorVirtualProvider(HippoLocalItemStateManager stateMgr) {
-        super(stateMgr);
+    MirrorVirtualProvider(HippoLocalItemStateManager stateMgr) throws RepositoryException {
+        super(stateMgr, stateMgr.resolver.getQName("hippo:mirror"), null);
     }
 
-    public NodeState populate(NodeState state) {
+    protected MirrorVirtualProvider(HippoLocalItemStateManager stateMgr, Name external, Name virtual) throws RepositoryException {
+        super(stateMgr, external, virtual);
+    }
+
+    public NodeState populate(NodeState state) throws RepositoryException {
+        NodeId nodeId = state.getNodeId();
+        String docbase = getProperty(nodeId, "hippo:docbase")[0];
+        NodeState upstream = getNodeState(docbase);
+        for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
+            NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+            NodeId childNodeId = new MirrorNodeId(nodeId, entry.getId());
+            state.addChildNodeEntry(entry.getName(), childNodeId);
+        }
         return state;
     }
 
-    public NodeState populate(NodeId nodeId, NodeId parentId) {
+    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState upstream = getNodeState(((MirrorNodeId)nodeId).upstream);
         NodeState state = createNew(nodeId, upstream.getNodeTypeName(), parentId);
         state.setNodeTypeName(upstream.getNodeTypeName());
@@ -69,7 +90,8 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            state.addChildNodeEntry(entry.getName(), new MirrorNodeId(nodeId, entry.getId()));
+            MirrorNodeId childNodeId = new MirrorNodeId(nodeId, entry.getId());
+            state.addChildNodeEntry(entry.getName(), childNodeId);
         }
     }
 }

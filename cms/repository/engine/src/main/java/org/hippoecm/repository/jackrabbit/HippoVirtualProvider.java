@@ -42,7 +42,6 @@ public abstract class HippoVirtualProvider
     protected Name externalNodeName;
     protected Name virtualNodeName;
     protected NodeDef virtualNodeDef;
-    protected PropDef propDef;
 
     NodeDef defineNodeDef(Name name, Name declaringName) {
         NodeDefImpl nodeDef;
@@ -55,21 +54,13 @@ public abstract class HippoVirtualProvider
         return nodeDef;
     }
 
-    PropDef definePropDef() {
+    PropDef definePropDef(Name name, int type) {
         PropDefImpl propDef = null;
-        try {
-            propDef = new PropDefImpl();
-            propDef.setRequiredType(PropertyType.LONG);
-            propDef.setProtected(true);
-            propDef.setDeclaringNodeType(stateMgr.resolver.getQName("hippo:external"));
-            propDef.setName(stateMgr.resolver.getQName("hippo:property"));
-        } catch(NamespaceException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-        } catch(IllegalNameException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
-        }
+        propDef = new PropDefImpl();
+        propDef.setRequiredType(type);
+        propDef.setProtected(true);
+        propDef.setDeclaringNodeType(externalNodeName);
+        propDef.setName(name);
         return propDef;
     }
 
@@ -77,21 +68,20 @@ public abstract class HippoVirtualProvider
     }
 
     HippoVirtualProvider(HippoLocalItemStateManager stateMgr) {
-        this.stateMgr = stateMgr;
-        externalNodeName = null;
-        virtualNodeName = null;
-        virtualNodeDef = null;
+        this(stateMgr, null, null);
     }
 
     HippoVirtualProvider(HippoLocalItemStateManager stateMgr, Name external, Name virtual) {
         this.stateMgr = stateMgr;
         externalNodeName = external;
         virtualNodeName = virtual;
-        virtualNodeDef = defineNodeDef(virtualNodeName, externalNodeName);
-    }
-
-    public void register(HippoLocalItemStateManager manager) {
-        manager.register(externalNodeName, this);
+        if(virtualNodeName != null) {
+            virtualNodeDef = defineNodeDef(virtualNodeName, externalNodeName);
+        } else {
+            virtualNodeDef = null;
+        }
+        if(external != null)
+            stateMgr.register(externalNodeName, this);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
@@ -136,7 +126,10 @@ public abstract class HippoVirtualProvider
     public String[] getProperty(NodeId nodeId, String name) {
         try {
             Name propName = stateMgr.resolver.getQName(name);
-            InternalValue[] values = getPropertyState(new PropertyId(nodeId, propName)).getValues();
+            PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
+            if(propState == null)
+                return null;
+            InternalValue[] values = propState.getValues();
             String[] strings = new String[values.length];
             for(int i=0; i<values.length; i++)
                 strings[i] = values[i].getString();
@@ -162,7 +155,7 @@ public abstract class HippoVirtualProvider
 
     public NodeId getNodeId(String absPath) throws RepositoryException {
         ItemId itemId = stateMgr.hierMgr.resolvePath(stateMgr.resolver.getQPath(absPath));
-        if(itemId.denotesNode())
+        if(itemId != null && itemId.denotesNode())
             return (NodeId) itemId;
         else
             return null;

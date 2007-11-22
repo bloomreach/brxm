@@ -41,17 +41,17 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     protected XASessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
+        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)((XAWorkspaceImpl)wsp).getItemStateManager(), this);
     }
 
     protected XASessionImpl(RepositoryImpl rep, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
             RepositoryException {
         super(rep, subject, wspConfig);
+        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)((XAWorkspaceImpl)wsp).getItemStateManager(), this);
     }
 
     @Override
     protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
-        if (log.isDebugEnabled())
-	  System.err.println("XASessionImpl.createSessionItemStateManager ");
         return new HippoSessionItemStateManager(((RepositoryImpl) rep).getRootNodeId(), manager, this);
     }
 
@@ -59,15 +59,11 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     protected org.apache.jackrabbit.core.WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig,
           SharedItemStateManager stateMgr, org.apache.jackrabbit.core.RepositoryImpl rep,
           org.apache.jackrabbit.core.SessionImpl session) {
-        if (log.isDebugEnabled())
-	  System.err.println("XASessionImpl.createWorkspaceInstance");
         return new XAWorkspaceImpl(wspConfig, stateMgr, rep, this);
     }
 
     @Override
     protected ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
-	if (log.isDebugEnabled())
-          System.err.println("XASessionImpl.createItemManager");
         return  super.createItemManager(itemStateMgr, hierMgr);
     }
 
