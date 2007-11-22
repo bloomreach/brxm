@@ -82,15 +82,20 @@ public class MP3Box extends Dropbox {
         }
         Node navRoot = root.addNode(navRootName);
 
-        // some example facets
+        // some demo facets
+        createFacet(navRoot, docbase, "byGenreYearArtist", new String[] { "genre", "year", "artist" });
+        createFacet(navRoot, docbase, "byYearGenreArtist", new String[] { "year", "genre", "artist" });
         createFacet(navRoot, docbase, "byArtistAlbum", new String[] { "artist", "album" });
         createFacet(navRoot, docbase, "byArtistTitle", new String[] { "artist", "title" });
         createFacet(navRoot, docbase, "byArtistYear", new String[] { "artist", "year" });
         createFacet(navRoot, docbase, "byYearAlbum", new String[] { "year", "album" });
         createFacet(navRoot, docbase, "byYearTitle", new String[] { "year", "title" });
         createFacet(navRoot, docbase, "byYearArtist", new String[] { "year", "artist" });
+        createFacet(navRoot, docbase, "byGenreArtist", new String[] { "genre", "artist" });
         createFacet(navRoot, docbase, "byAlbum", new String[] { "album" });
         createFacet(navRoot, docbase, "byTitle", new String[] { "title" });
+        createFacet(navRoot, docbase, "byYear", new String[] { "year" });
+        createFacet(navRoot, docbase, "byGenre", new String[] { "genre" });
     }
 
     /**

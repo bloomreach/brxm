@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory;
@@ -190,74 +191,83 @@ public class RepositoryServlet extends HttpServlet {
         res.setStatus(HttpServletResponse.SC_OK);
         res.setContentType("text/html");
         PrintWriter writer = res.getWriter();
-        writer.println("<html><body>");
-        writer.println("  <h1>Hippo Repository Console</h1>");
-        writer.println("  <h2>Request parameters</h2>");
-        writer.println("    <table><tr><th>name</th><th>value</th></tr>");
-        writer.println("    <tr><td>context path</td><td>" + req.getContextPath() + "</td></tr>");
-        writer.println("    <tr><td>servlet path</td><td>" + req.getServletPath() + "</td></tr>");
-        writer.println("    <tr><td>request uri</td><td>" + req.getRequestURI() + "</td></tr>");
-        writer.println("    <tr><td>relative path</td><td>" + path + "</td></tr>");
+
+        writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
+        writer.println("    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
+        writer.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+        writer.println("<head><title>Hippo Repository Console</title>");
+        writer.println("<style type=\"text/css\">");
+        writer.println(" table.params {font-size:small}");
+        writer.println("</style>");
+        writer.println("</head>");
+        writer.println("<body>");
+        writer.println("  <h2>Hippo Repository Console</h2>");
+        writer.println("  <h3>Request parameters</h3>");
+        writer.println("    <table style=\"params\" summary=\"request parameters\"><tr><th>name</th><th>value</th></tr>");
+        //writer.println("    <tr><td>context path</td><td>: <code>" + req.getContextPath() + "</code></td></tr>");
+        writer.println("    <tr><td>servlet path</td><td>: <code>" + req.getServletPath() + "</code></td></tr>");
+        writer.println("    <tr><td>request uri</td><td>: <code>" + req.getRequestURI() + "</code></td></tr>");
+        writer.println("    <tr><td>relative path</td><td>: <code>" + path + "</code></td></tr>");
         writer.println("    </table>");
-        writer.println("  <h2>Referenced node</h2>");
+        writer.println("  <h3>Referenced node</h3>");
         Session session = null;
         try {
             session = repository.login();
             Node node = session.getRootNode();
-            if (path.startsWith("//")) {
-                path = path.substring("//".length());
-                if (path.equals("/") || path.equals("")) {
-                    writer.println("Accessing root node");
-                } else {
-                    if (path.startsWith("/"))
-                        path = path.substring(1);
-                    writer.print("Accessing node <code>");
-                    String currentPath = "";
-                    String previousPath = "";
-                    for (StringTokenizer pathElts = new StringTokenizer(path, "/"); pathElts.hasMoreTokens(); previousPath = currentPath) {
-                        String pathElt = pathElts.nextToken();
-                        currentPath += "/" + pathElt;
-                        writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/"
-                                + (previousPath.equals("") ? "/" : previousPath) + "\">/</a><a href=\""
-                                + req.getContextPath() + req.getServletPath() + "/" + currentPath + "\">" + pathElt
-                                + "</a>");
-                        node = node.getNode(pathElt);
-                    }
-                    writer.println("</code>");
-                }
-                writer.println("    <ul>");
-                for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-                    Node child = iter.nextNode();
-                    writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath()
-                            + "/" + child.getPath() + "/" + "\">");
-                    if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
-                        writer.print(((HippoNode) child).getDisplayName() + " ["
-                                + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
-                    } else {
-                        writer.print(((HippoNode) child).getDisplayName());
-                    }
-                    writer.println("</a>");
-                }
-                for (PropertyIterator iter = node.getProperties(); iter.hasNext();) {
-                    Property prop = iter.nextProperty();
-                    writer.print("    <li type=\"disc\">");
-                    writer.print(prop.getPath() + " [name=" + prop.getName() + "] = ");
-                    if (prop.getDefinition().isMultiple()) {
-                        Value[] values = prop.getValues();
-                        writer.print("[ ");
-                        for (int i = 0; i < values.length; i++) {
-                            writer.print((i > 0 ? ", " : "") + values[i].getString());
-                        }
-                        writer.println(" ]");
-                    } else {
-                        writer.println(prop.getString());
-                    }
-                }
-                writer.println("    </ul>");
-            } else {
-                writer.println("No node accessed, start browsing at the <a href=\"" + req.getContextPath()
-                        + req.getServletPath() + "//\">root</a> node.");
+
+            while (path.startsWith("/")) {
+                path = path.substring(1);
             }
+            writer.print("Accessing node <code>");
+
+            writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "//\">/root</a>");
+
+            String pathElt = "";
+            String pathEltName = "";
+            String currentPath = "";
+            StringTokenizer pathElts = new StringTokenizer(path, "/");
+            while (pathElts.hasMoreTokens()) {
+                pathElt = pathElts.nextToken();
+                pathEltName = ISO9075Helper.decodeLocalName(pathElt);
+
+                currentPath += "/" + pathElt;
+                writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/" + currentPath + "/\">/"
+                        + pathEltName + "</a>");
+            }
+            writer.println("</code>");
+
+            if (!"".equals(path)) {
+                node = node.getNode(path);
+            }
+            writer.println("    <ul>");
+            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                Node child = iter.nextNode();
+                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/"
+                        + child.getPath() + "/" + "\">");
+                String displayName = ISO9075Helper.decodeLocalName(((HippoNode) child).getDisplayName());
+                if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                    writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
+                } else {
+                    writer.print(displayName);
+                }
+                writer.println("</a>");
+            }
+            for (PropertyIterator iter = node.getProperties(); iter.hasNext();) {
+                Property prop = iter.nextProperty();
+                writer.print("    <li type=\"disc\">");
+                writer.print("[name=" + prop.getName() + "] = ");
+                if (prop.getDefinition().isMultiple()) {
+                    Value[] values = prop.getValues();
+                    writer.print("[ ");
+                    for (int i = 0; i < values.length; i++) {
+                        writer.print((i > 0 ? ", " : "") + values[i].getString());
+                    }
+                    writer.println(" ]");
+                } else {
+                    writer.println(prop.getString());
+                }
+            }
+            writer.println("    </ul>");
         } catch (RepositoryException ex) {
             writer.println("<p>Error while accessing the repository, exception reads as follows:");
             writer.println("<pre>" + ex.getClass().getName() + ": " + ex.getMessage());
