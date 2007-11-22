@@ -2,12 +2,13 @@ package org.hippoecm.repository;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.jcr.RepositoryException;
 
 import junit.framework.TestCase;
 
 public class ConfigurationTest extends TestCase {
 
-    private final static String SVN_ID = "$Id: TransactionTest.java 9051 2007-11-22 09:42:40Z bvanhalderen $";
+    private final static String SVN_ID = "$Id$";
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
@@ -23,6 +24,13 @@ public class ConfigurationTest extends TestCase {
     }
    
     public void tearDown() throws Exception {
+        Node root = session.getRootNode();
+        try {
+            root.getNode("configtest").remove();
+            root.getNode("hippo:configuration/hippo:initialize/testnode").remove();
+        } catch (RepositoryException e) {
+            // ignore
+        }
         session.save();
         session.logout();
         server.close();
