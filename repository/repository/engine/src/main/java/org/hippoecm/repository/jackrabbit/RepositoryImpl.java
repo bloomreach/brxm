@@ -120,7 +120,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         Session session = super.login(credentials, workspaceName);
 
         /*
-         * TODO Below facet authorizationQuery must be fetched. The authorizationQuery looks like below.
+         * TODO/FIXME: Below facet authorizationQuery must be fetched. The authorizationQuery looks like below.
          * These authorizations needs to be fetched from the repository.
          * Map<String,String[]> authorizationQuery = new HashMap<String,String[]>();
          * authorizationQuery.put("x", new String[]{"x1","x2"});

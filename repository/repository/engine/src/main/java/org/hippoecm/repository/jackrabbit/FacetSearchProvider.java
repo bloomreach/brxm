@@ -20,11 +20,15 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
+
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -34,10 +38,12 @@ public class FacetSearchProvider extends HippoVirtualProvider
     final static private String SVN_ID = "$Id$";
 
     protected class FacetSearchNodeId extends HippoNodeId {
+        Map<Name,String[]> properties;
         FacetSearchNodeId(NodeId parent) {
             super(FacetSearchProvider.this, parent);
         }
         void setProperty(Name propName, String[] propValue) {
+            properties.put(propName, propValue);
         }
     }
 
@@ -50,6 +56,11 @@ public class FacetSearchProvider extends HippoVirtualProvider
     FacetedNavigationEngine facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
 
+    PropDef docbasePropDef;
+    PropDef facetsPropDef;
+    PropDef searchPropDef;
+    PropDef valuesPropDef;
+
     FacetSearchProvider(HippoLocalItemStateManager stateMgr, FacetResultSetProvider subNodesProvider,
                         FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
         throws RepositoryException
@@ -58,6 +69,11 @@ public class FacetSearchProvider extends HippoVirtualProvider
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
         this.subNodesProvider = subNodesProvider;
+
+        docbasePropDef = definePropDef(stateMgr.resolver.getQName(HippoNodeType.HIPPO_DOCBASE), PropertyType.STRING);
+        facetsPropDef = definePropDef(stateMgr.resolver.getQName(HippoNodeType.HIPPO_FACETS), PropertyType.STRING);
+        searchPropDef = definePropDef(stateMgr.resolver.getQName(HippoNodeType.HIPPO_SEARCH), PropertyType.STRING);
+        valuesPropDef = definePropDef(stateMgr.resolver.getQName(HippoNodeType.HIPPO_VALUES), PropertyType.STRING);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
@@ -119,6 +135,16 @@ public class FacetSearchProvider extends HippoVirtualProvider
     }
 
     public NodeState populate(NodeId nodeId, NodeId parentId) throws RepositoryException {
-        throw new RepositoryException("Illegal internal state");
+        FacetSearchNodeId searchNodeId = (FacetSearchNodeId) nodeId;
+        NodeState state = createNew(nodeId, virtualNodeName, parentId);
+        state.setDefinitionId(virtualNodeDef.getId());
+        for(Map.Entry<Name,String[]> propEntry : searchNodeId.properties.entrySet()) {
+            PropertyState propState = createNew(propEntry.getKey(), state.getNodeId());
+            propState.setType(PropertyType.STRING);
+            propState.setDefinitionId(facetsPropDef.getId()); // should be distinct per property
+            //propState.setValues(propEntry.getValue());
+            propState.setMultiValued(true); // false for docbase
+        }
+        return populate(state);
     }
 }

@@ -18,6 +18,8 @@ package org.hippoecm.repository.jackrabbit;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 
@@ -25,18 +27,17 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
 {
     final static private String SVN_ID = "$Id$";
 
-    class ViewNodeId extends MirrorNodeId {
-        Map<String,String> view; // should be immutable
+    protected class ViewNodeId extends MirrorNodeId {
+        Map<String,String> view; // must be immutable
 
         ViewNodeId(NodeId parent, NodeId upstream, Map view) {
-            super(ViewVirtualProvider.this, upstream, parent);
+            super(ViewVirtualProvider.this, parent, upstream);
             this.view = view;
         }
-
     }
 
-    ViewVirtualProvider(HippoLocalItemStateManager stateMgr) {
-        super(stateMgr);
+    ViewVirtualProvider(HippoLocalItemStateManager stateMgr) throws RepositoryException {
+        super(stateMgr, null, null);
     }
 
     public NodeState populate(NodeState state) {
@@ -48,15 +49,16 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
             String facet = entry.getKey();
             String value = entry.getValue();
             String[] matching = getProperty(candidate, facet);
-            if(matching != null)
+            if(matching != null && matching.length > 0) {
                 if(value != null && !value.equals("") && !value.equals("*")) {
                     int i;
                     for(i=0; i<matching.length; i++)
-                        if(matching.equals(value))
+                        if(matching[i].equals(value))
                             break;
-                    if(i < matching.length)
+                    if(i == matching.length)
                         return false;
                 }
+            }
         }
         return true;
     }
@@ -65,8 +67,10 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         ViewNodeId viewId = (ViewNodeId) nodeId;
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            if(match(viewId.view, entry.getId()))
-                state.addChildNodeEntry(entry.getName(), new MirrorNodeId(nodeId, entry.getId()));
+            if(match(viewId.view, entry.getId())) {
+                ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), viewId.view);
+                state.addChildNodeEntry(entry.getName(), childNodeId);
+            }
         }
     }
 }

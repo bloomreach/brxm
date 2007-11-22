@@ -4,6 +4,10 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
 
+[hippo:mirror]
+- hippo:docbase (string) mandatory
++ * multiple
+
 [hippo:facetresult]
 + * multiple
 

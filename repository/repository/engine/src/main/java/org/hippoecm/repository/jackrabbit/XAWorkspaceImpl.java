@@ -27,7 +27,6 @@ public class XAWorkspaceImpl extends org.apache.jackrabbit.core.XAWorkspace {
     protected XAWorkspaceImpl(WorkspaceConfig wspConfig, SharedItemStateManager stateMgr,
             org.apache.jackrabbit.core.RepositoryImpl rep, XASessionImpl session) {
         super(wspConfig, stateMgr, rep, session);
-        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)this.stateMgr, session);
     }
 
     protected LocalItemStateManager createItemStateManager(SharedItemStateManager shared) {

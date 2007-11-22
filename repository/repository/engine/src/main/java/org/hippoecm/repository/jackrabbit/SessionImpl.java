@@ -42,21 +42,17 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     protected SessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
-	if (log.isDebugEnabled())
-          System.err.println("SessionImpl.SessionImpl#1");
+        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)((WorkspaceImpl)wsp).getItemStateManager(), this);
     }
 
     protected SessionImpl(RepositoryImpl rep, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
             RepositoryException {
         super(rep, subject, wspConfig);
-	if (log.isDebugEnabled())
-          System.err.println("SessionImpl.SessionImpl#2");
+        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)((WorkspaceImpl)wsp).getItemStateManager(), this);
     }
 
     @Override
     protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
-	if (log.isDebugEnabled())
-          System.err.println("SessionImpl.createSessionItemStateManager");
         return new HippoSessionItemStateManager(((RepositoryImpl) rep).getRootNodeId(), manager, this);
     }
 
@@ -64,15 +60,11 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     protected org.apache.jackrabbit.core.WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig,
           SharedItemStateManager stateMgr, org.apache.jackrabbit.core.RepositoryImpl rep,
           org.apache.jackrabbit.core.SessionImpl session) {
-	if (log.isDebugEnabled())
-          System.err.println("SessionImpl.createWorkspaceInstance");
         return new WorkspaceImpl(wspConfig, stateMgr, rep, session);
     }
 
     @Override
     protected ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
-	if (log.isDebugEnabled())
-          System.err.println("SessionImpl.createItemManager");
         return super.createItemManager(itemStateMgr, hierMgr);
     }
 

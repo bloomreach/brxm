@@ -42,6 +42,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
         String[] newFacets = getProperty(nodeId, "hippo:facets");
         String[] newValues = getProperty(nodeId, "hippo:values");
         String[] newModes  = getProperty(nodeId, "hippo:modes");
+
         Map<String,String> view = new HashMap<String,String>();
         if(newFacets.length != newValues.length || newFacets.length != newModes.length)
             throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
@@ -56,7 +57,8 @@ public class FacetSelectProvider extends HippoVirtualProvider
         for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
             if(subNodesProvider.match(view, entry.getId())) {
-                state.addChildNodeEntry(entry.getName(), subNodesProvider.new ViewNodeId(state.getNodeId(),entry.getId(),view));
+                NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(), view);
+                state.addChildNodeEntry(entry.getName(), childNodeId);
             }
         }
         return state;

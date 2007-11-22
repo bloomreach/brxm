@@ -24,7 +24,7 @@ import javax.transaction.UserTransaction;
 
 import junit.framework.TestCase;
 
-import com.atomikos.icatch.jta.UserTransactionManager;
+import com.atomikos.icatch.jta.UserTransactionManager; // FIXME
 
 public class TransactionTest extends TestCase {
 
@@ -39,14 +39,13 @@ public class TransactionTest extends TestCase {
      * Handle atomikos setup and create transaction test node
      */
     public void setUp() throws Exception {
-        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
+        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties"); // FIXME
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node root = session.getRootNode();
         root.addNode("transactiontest");
         session.save();
     }
-    
    
     public void tearDown() throws Exception {
         session.getRootNode().getNode("transactiontest").remove();
@@ -64,7 +63,7 @@ public class TransactionTest extends TestCase {
         TransactionManager tm = new UserTransactionManager();
         return tm;
     }
-    
+
     public void testTransactionCommit() throws Exception {
         boolean rollback = true;
         UserTransaction ut = null;
@@ -77,6 +76,7 @@ public class TransactionTest extends TestCase {
             txRoot.addNode("x1");
             assertNotNull(txRoot.getNode("x1"));
             session.save();
+            assertNotNull(txRoot.getNode("x1"));
             rollback = false;
         } finally {
             if (rollback) {
@@ -89,7 +89,7 @@ public class TransactionTest extends TestCase {
         }
         assertNotNull(txRoot.getNode("x1"));
     }
-    
+
     public void testTransactionRollback() throws Exception {
         UserTransaction ut = null;
         Node root = session.getRootNode();
@@ -111,7 +111,7 @@ public class TransactionTest extends TestCase {
             txRoot.getNode("x2");
             fail("Node node not removed after rollback.");
         } catch (PathNotFoundException e) {
-            //expected
+            // expected
         }
     }
 }

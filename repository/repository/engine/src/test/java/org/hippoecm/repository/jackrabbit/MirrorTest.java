@@ -35,52 +35,27 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.Utilities;
 
-public class FacetedReferenceTest extends TestCase {
-    private final static String SVN_ID = "$$";
+public class MirrorTest extends TestCase {
+    private final static String SVN_ID = "$Id$";
 
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
    
-    protected HippoRepository repository;
-    protected Session session;
-    
     private static String[] contents = new String[] {
-        "/documents",                                                   "nt:unstructured",
-        "/documents/pages",                                             "nt:unstructured",
-        "/documents/pages/index",                                       "hippo:handle",
-        "/documents/pages/index/index",                                 "hippo:document",
-        "/documents/pages/index/index/links",                           "nt:unstructured",
-        "/documents/pages/index/index/thema",                           "nt:unstructured",
-        "/documents/articles",                                          "nt:unstructured",
-        "/documents/articles/brave-new-world",                          "hippo:handle",
-        "/documents/articles/brave-new-world/brave-new-world",          "hippo:document",
-        "language","english",
-        "/documents/articles/the-invisible-man",                        "hippo:handle",
-        "/documents/articles/the-invisible-man/the-invisible-man",      "hippo:document",
-        "language","english",
-        "/documents/articles/war-of-the-worlds",                        "hippo:handle",
-        "/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:document",
-        "language","english",
-        "/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:document",
-        "language","dutch",
-        "/documents/articles/nineteeneightyfour",                       "hippo:handle",
-        "/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:document",
-        "language","dutch",
-        "/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:document",
-        "language","english",
-        "/english",                                                     "hippo:facetselect",
+        "/documents", "nt:unstructured",
+        "niet", "hier",
+        "/navigation", "nt:unstructured",
+        "/navigation/mirror", "hippo:mirror",
         "hippo:docbase", "/documents",
-        "hippo:facets",  "language",
-        "hippo:values",  "english",
-        "hippo:modes",   "stick",
-        "/dutch",                                                       "hippo:facetselect",
-        "hippo:docbase", "/documents/articles/war-of-the-worlds",
-        "hippo:facets",  "language",
-        "hippo:facets",  "state",
-        "hippo:values",  "dutch",
-        "hippo:values",  "published",
-        "hippo:modes",   "stick",
-        "hippo:modes",   "clear"
+
+        "/documents/test1", "nt:unstructured",
+        "/documents/test2", "nt:unstructured",
+        "wel","anders",
+        "/documents/test3", "nt:unstructured",
+        "/documents/test3/test4", "nt:unstructured",
+        "lachen", "zucht",
+        "/documents/test3/test4/test5", "nt:unstructured",
+        "/documents/test3/test4/test5", "nt:unstructured"
     };
 
     private void build(Session session, String[] contents) throws RepositoryException {
@@ -189,48 +164,50 @@ public class FacetedReferenceTest extends TestCase {
         return node;
     }
 
-    public void testFacetedReference() throws Exception {
-        Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        System.out.println("==============================================");
-        PrintStream ostream = new PrintStream("dump.txt");
-        Utilities.dump(ostream, session.getRootNode());
-        System.out.println("==============================================");
-        assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds"));
-        assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
-        assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
-        assertNotNull(traverse(session,"/english/articles/brave-new-world/brave-new-world"));
-        assertNotNull(traverse(session,"/english/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
-        assertNull(traverse(session,"/english/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
-        assertNotNull(traverse(session,"/dutch/war-of-the-worlds[language='dutch']"));
-        assertNull(traverse(session,"/dutch/war-of-the-worlds[language='english']"));
-        session.logout();
-    }
+    public void testMirror() throws Exception {
+        PrintStream pstream = new PrintStream("dump.txt");
 
-    public void setUp() throws Exception {
-        repository = null;
-        repository = HippoRepositoryFactory.getHippoRepository();
-        session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
+        Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         build(session, contents);
         session.save();
         session.logout();
-    }
 
-    public void tearDownX() throws Exception {
         session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        Node node = session.getRootNode();
-        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            if (!child.getPath().equals("/jcr:system")) {
-                child.remove();
-            }
-        }
+
+        Utilities.dump(pstream, session.getRootNode());
+        pstream.println("===");
+
+        assertNotNull(session.getRootNode());
+        assertTrue(session.getRootNode().hasNode("navigation"));
+        assertNotNull(session.getRootNode().getNode("navigation"));
+        assertTrue(session.getRootNode().getNode("navigation").hasNode("mirror"));
+        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror"));
+        assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").hasProperty("hippo:docbase"));
+        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getProperty("hippo:docbase"));
+        assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").hasNode("test1"));
+        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test1"));
+
+        Utilities.dump(pstream, session.getRootNode());
+        pstream.println("===");
+
+        session.getRootNode().addNode("dummy");
+        session.getRootNode().getNode("documents").addNode("test-a","nt:unstructured").setProperty("test-b","test-c");
+        session.getRootNode().getNode("documents").getNode("test1").addNode("test-x");
         session.save();
-        if(session != null) {
-            session.logout();
-        }
-        if (repository != null) {
-            repository.close();
-            repository = null;
-        }
+        session.refresh(true);
+
+        Utilities.dump(pstream, session.getRootNode());
+        pstream.println("===");
+
+        assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").hasNode("test-a"));
+        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test-a"));
+        assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test1").hasNode("test-x"));
+        assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test1").getNode("test-x"));
+        assertFalse(session.getRootNode().getNode("navigation").getNode("mirror").hasNode("test1[2]"));
+
+        session.logout();
+
+        repository.close();
     }
 }
