@@ -120,8 +120,8 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         }
 
         public javax.transaction.xa.XAResource getXAResource() {
-            if (session instanceof org.apache.jackrabbit.core.XASession) {
-                return ((org.apache.jackrabbit.core.XASession) session).getXAResource();
+            if (session instanceof org.apache.jackrabbit.api.XASession) {
+                return ((org.apache.jackrabbit.api.XASession) session).getXAResource();
             } else {
                 return null;
             }
@@ -155,8 +155,8 @@ class ConnectionFactoryImpl implements ConnectionFactory {
 
         public javax.transaction.xa.XAResource getXAResource() {
             /*
-              if (session instanceof org.apache.jackrabbit.core.XASession) {
-                  return ((org.apache.jackrabbit.core.XASession) session).getXAResource();
+              if (session instanceof org.apache.jackrabbit.api.XASession) {
+                  return ((org.apache.jackrabbit.api.XASession) session).getXAResource();
                   } else */{
                 return null;
             }
