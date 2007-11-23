@@ -140,14 +140,10 @@ public class FacetedNavigationHippoCountIssueTest extends TestCase
     }
 
 	
-	public void setUp() {
-		 try {
-	            HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
-	            session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-		 } catch(RepositoryException e) {
-			 System.out.println(e);
-		 }
-	}
+	public void setUp() throws RepositoryException {
+        HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
+        session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+    }
 	
 	public void testHippoCount() {
 		try {
