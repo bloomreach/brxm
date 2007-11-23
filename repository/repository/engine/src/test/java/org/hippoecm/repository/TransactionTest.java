@@ -83,9 +83,7 @@ public class TransactionTest extends TestCase {
                 ut.rollback();
                 fail("Unable to commit UserTransaction.");
             } else {
-                ut.commit();
-                System.out.println("After commit: " + ut.getStatus());
-            }
+                ut.commit();            }
         }
         assertNotNull(txRoot.getNode("x1"));
     }
@@ -97,12 +95,10 @@ public class TransactionTest extends TestCase {
         Node txRoot = root.getNode("transactiontest");
         try {
             ut = server.getUserTransaction(getTransactionManager(), session);
-            System.out.println("Before begin: " + ut.getStatus());
             ut.begin();
             txRoot.addNode("x2");
             assertNotNull(txRoot.getNode("x2"));
             session.save();
-            System.out.println("After save: " + ut.getStatus());
         } finally {
             // always rollback for test
             ut.rollback();
