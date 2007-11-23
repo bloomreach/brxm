@@ -310,6 +310,7 @@ class LocalHippoRepository extends HippoRepository {
                             try {
                                 String namespace = node.getProperty(HippoNodeType.HIPPO_NAMESPACE).getString();
                                 log.info("Initializing namespace: " + namespace);
+                                // Add namespace if it doesn't exist
                                 initializeNamespace(nsreg, node.getName(), namespace);
                                 p.remove();
                             } catch (PathNotFoundException ex) {
@@ -415,8 +416,9 @@ class LocalHippoRepository extends HippoRepository {
         } catch (NamespaceException ex) {
             if (ex.getMessage().endsWith("mapping already exists")) {
                 log.debug("Namespace already exists: " + prefix + ":" + uri);
+            } else {
+                log.warn(ex.getMessage());
             }
-            log.warn(ex.getMessage());
         }
     }
 
