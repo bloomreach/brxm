@@ -21,10 +21,8 @@ import java.util.Properties;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jdo.JDOHelper;
@@ -116,36 +114,19 @@ public class DocumentManagerImpl
     }
 
     public Document getDocument(String category, String identifier) throws RepositoryException {
-        try {
-            Node queryNode = session.getNodeByUUID(configuration).getNode(category);
-            String queryLanguage = queryNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-            String queryString = queryNode.getProperty(HippoNodeType.HIPPO_QUERY).getString();
-            queryString = queryString.replace("?", identifier);
-            Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
-            QueryResult result = query.execute();
-            NodeIterator iter = result.getNodes();
-            if(iter.hasNext()) {
-                Node resultNode = iter.nextNode();
-                String uuid = resultNode.getUUID();
-                return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
-                                            queryNode.getNode(HippoNodeType.NT_TYPES));
-            } else {
-                return null;
-            }
-        } catch(javax.jdo.JDODataStoreException ex) {
-            System.err.println("JDODataStoreException: "+ex.getMessage());
-            ex.printStackTrace(System.err);
-            return null;
-        } catch(UnsupportedRepositoryOperationException ex) {
-            System.err.println("UnsupportedRepositoryOperationException: "+ex.getMessage());
-            ex.printStackTrace(System.err);
-            return null;
-        } catch(PathNotFoundException ex) {
-            System.err.println("PathNotFoundException: "+ex.getMessage());
-            ex.printStackTrace(System.err);
-            /* getDocument cannot and should not be used to create documents.
-             * null is a valid way to check whether the document looked for exist.
-             */
+        Node queryNode = session.getNodeByUUID(configuration).getNode(category);
+        String queryLanguage = queryNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+        String queryString = queryNode.getProperty(HippoNodeType.HIPPO_QUERY).getString();
+        queryString = queryString.replace("?", identifier);
+        Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
+        QueryResult result = query.execute();
+        NodeIterator iter = result.getNodes();
+        if (iter.hasNext()) {
+            Node resultNode = iter.nextNode();
+            String uuid = resultNode.getUUID();
+            return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
+                    queryNode.getNode(HippoNodeType.NT_TYPES));
+        } else {
             return null;
         }
     }
