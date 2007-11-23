@@ -54,11 +54,10 @@ public class FacetedNavigationIssueTest extends FacetedNavigationAbstractTest {
         assertNotNull(facetNode);
         try {
             facetNode.hashCode(); // <= NPE
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!" + facetNode.getName());
             assertEquals(ISO9075Helper.encodeLocalName("success"), facetNode.getName());
             fail("!!!!!!!!!!!!!! ISSUE Resolved !!!!!!!!");
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.out.println("!!!!!!!!!!!!!! ISSUE HREPTWO-269 STILL OPEN !!!!!!!!");
         }
         
@@ -74,11 +73,10 @@ public class FacetedNavigationIssueTest extends FacetedNavigationAbstractTest {
             assertEquals(ISO9075Helper.encodeLocalName(encodeMe), facetNode.getName());
             nodeFromFacet = (Node) facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
             assertEquals(docNode, nodeFromFacet);
-            
             fail("!!!!!!!!!!!!!! ISSUE Resolved !!!!!!!!");
         } catch (PathNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("!!!!!!!!!!!!!! ISSUE STILL OPEN !!!!!!!!");
+            //e.printStackTrace();
+            System.out.println("!!!!!!!!!!!!!! ISSUE HREPTWO-270 STILL OPEN !!!!!!!!");
         }
 
         session.refresh(false);
