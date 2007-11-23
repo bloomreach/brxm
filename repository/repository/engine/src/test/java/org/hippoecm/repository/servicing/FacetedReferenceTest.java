@@ -215,7 +215,7 @@ public class FacetedReferenceTest extends TestCase {
         session.logout();
     }
 
-    public void tearDownX() throws Exception {
+    public void tearDown() throws Exception {
         session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node = session.getRootNode();
         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
