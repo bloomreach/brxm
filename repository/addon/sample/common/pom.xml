@@ -109,7 +109,7 @@
         <version>1.2.0-beta-2</version>
         <configuration>
           <!-- log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration -->
-          <verbose>true</verbose>
+          <verbose>false</verbose>
         </configuration>
         <executions>
           <execution>
