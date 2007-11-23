@@ -60,8 +60,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
                                                           HippoNodeType.WORKFLOWS_PATH).getUUID();
-        } catch(RepositoryException ex) {
-            log.error("workflow manager configuration failed: "+ex.getMessage());
+        } catch (PathNotFoundException ex) {
+            log.info("No workflow configuration found. Workflow not started.");
+        }catch(RepositoryException ex) {
+            log.error("workflow manager configuration failed: "+ex.getMessage(), ex);
         }
     }
     
