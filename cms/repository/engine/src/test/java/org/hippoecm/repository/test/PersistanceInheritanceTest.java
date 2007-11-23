@@ -18,6 +18,7 @@ package org.hippoecm.repository.test;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -81,12 +82,9 @@ public class PersistanceInheritanceTest extends TestCase
         server.close();
     }
 
-    public void testInheritance()
-        throws RepositoryException, RemoteException
-    {
-        Node node, root = session.getRootNode();
+    public void testInheritance() throws RepositoryException {
         HippoWorkspace wsp = (HippoWorkspace)(session.getWorkspace());
         DocumentManager dmngr = wsp.getDocumentManager();
-        SubClass document = (SubClass) dmngr.getDocument("test", "mydocument");
+        //SubClass document = (SubClass) dmngr.getDocument("test", "mydocument");
     }
 }
