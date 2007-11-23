@@ -42,10 +42,10 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:content", "configtest.xml");
         node.setProperty("hippo:contentroot", "/configtest");
         session.save();
-    
+
         // observation manager calls listeners asynchronously  
-        wait(100);
-        
+        wait(1000);
+
         node = root.getNode("configtest");
         assertNotNull(node.getNode("testnode"));
     }
