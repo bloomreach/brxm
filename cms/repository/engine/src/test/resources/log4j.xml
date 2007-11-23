@@ -63,11 +63,11 @@
   </category>
 
   <category additivity="true" name="org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager">
-    <level value="debug"/>
+    <level value="info"/>
     <appender-ref ref="debugging"/>
   </category>
   <category additivity="true" name="org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager">
-    <level value="debug"/>
+    <level value="info"/>
     <appender-ref ref="debugging"/>
   </category>
 
