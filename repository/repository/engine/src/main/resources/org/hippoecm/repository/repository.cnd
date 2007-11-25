@@ -9,6 +9,7 @@
 + * multiple
 
 [hippo:facetresult]
+- hippo:count (long)
 + * multiple
 
 [hippo:facetsearch]
@@ -17,7 +18,7 @@
 - hippo:facets (string) mandatory multiple
 - hippo:search (string) multiple
 - hippo:count (long)
-+ hippo:resultset (hippo:facetresult) = hippo:facetresult mandatory autocreated
++ hippo:resultset (hippo:facetresult) = hippo:facetresult
 + * (hippo:facetsearch) = hippo:facetsearch multiple
 
 [hippo:request] > nt:unstructured, mix:referenceable

@@ -15,13 +15,14 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import javax.security.auth.Subject;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
@@ -35,6 +36,7 @@ import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
@@ -59,12 +61,22 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
     }
 
     void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,
-                                         org.apache.jackrabbit.core.SessionImpl session)
+                                         org.apache.jackrabbit.core.SessionImpl session, Subject subject)
     {
+        FacetedNavigationEngine facetedEngine = getFacetedNavigationEngine();
+        /*
+         * TODO/FIXME: Below facet authorizationQuery must be fetched. The authorizationQuery looks like below.
+         * These authorizations needs to be fetched from the repository.
+         * Map<String,String[]> authorizationQuery = new HashMap<String,String[]>();
+         * authorizationQuery.put("x", new String[]{"x1","x2"});
+         * authorizationQuery.put("y", new String[]{"y1","y2"});
+         * authorizationQuery.put("z", new String[]{"z1","z2"});
+         * String username = ((Principal)subject.getPrincipals().iterator().next()).getName(); // FIXME
+         * FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare("abc", authorizationQuery, null, servicingSession);
+         */
+        FacetedNavigationEngine.Context facetedContext = facetedEngine.prepare(null, null, null, session);
         stateMgr.initialize(session.getNamePathResolver(), session.getHierarchyManager(),
-                            getFacetedNavigationEngine(),
-                            session instanceof XASessionImpl ? ((XASessionImpl)session).getFacetedNavigationContext()
-                                                             : ((SessionImpl)session).getFacetedNavigationContext());
+                            facetedEngine, facetedContext);
     }
 
     public static RepositoryImpl create(RepositoryConfig config)
@@ -115,28 +127,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         return super.getNamespaceRegistry();
     }
 
-    @Override
-    public Session login(Credentials credentials, String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
-        Session session = super.login(credentials, workspaceName);
-
-        /*
-         * TODO/FIXME: Below facet authorizationQuery must be fetched. The authorizationQuery looks like below.
-         * These authorizations needs to be fetched from the repository.
-         * Map<String,String[]> authorizationQuery = new HashMap<String,String[]>();
-         * authorizationQuery.put("x", new String[]{"x1","x2"});
-         * authorizationQuery.put("y", new String[]{"y1","y2"});
-         * authorizationQuery.put("z", new String[]{"z1","z2"});
-         * FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare("abc", authorizationQuery, null, servicingSession);
-         */
-        FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, session);
-        if(session instanceof HippoSession)
-            ((HippoSession)session).setFacetedNavigationContext(context);
-        else
-            throw new RepositoryException("programming fault");
-
-        return session;
-    }
-
     public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
         return ((WorkspaceInfo)getWorkspaceInfo(workspaceName)).getSearchManager();
     }
@@ -178,5 +168,4 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
             return super.getSystemSession();
         }
     }
-    
 }

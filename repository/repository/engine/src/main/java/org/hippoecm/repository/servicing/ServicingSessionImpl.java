@@ -46,8 +46,6 @@ import javax.transaction.xa.XAResource;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Path;
-import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.jackrabbit.HippoSession;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -96,18 +94,6 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
             utm = null;
         }
         */
-    }
-
-    FacetedNavigationEngine getFacetedNavigationEngine() {
-        return ((RepositoryDecorator) repository).getFacetedNavigationEngine();
-    }
-
-    FacetedNavigationEngine.Context getFacetedNavigationContext() {
-        return ((HippoSession)session).getFacetedNavigationContext();
-    }
-
-    void setFacetedNavigationContext(FacetedNavigationEngine.Context context) {
-        ((HippoSession)session).setFacetedNavigationContext(context);
     }
 
     String[] getQPath(String absPath) throws  NamespaceException, RepositoryException {
@@ -187,7 +173,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      */
     public Node getRootNode() throws RepositoryException {
         Node root = session.getRootNode();
-        return factory.getNodeDecorator(this, root, null);
+        return factory.getNodeDecorator(this, root);
     }
 
     /**
@@ -198,7 +184,7 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      */
     public Node getNodeByUUID(String uuid) throws ItemNotFoundException, RepositoryException {
         Node node = session.getNodeByUUID(uuid);
-        return factory.getNodeDecorator(this, node, null);
+        return factory.getNodeDecorator(this, node);
     }
 
     /**
@@ -210,30 +196,8 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      * @return decorated item, property, or node
      */
     public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
-        try {
-            Item item = session.getItem(absPath);
-            return factory.getItemDecorator(this, item);
-        } catch (PathNotFoundException ex) {
-            try {
-                Node node = getRootNode();
-                String[] elements = getQPath(absPath);
-                if (elements.length == 1)
-                    throw ex;
-                for (int i = 0; i < elements.length-1; i++) {
-                    node = node.getNode(elements[i]);
-                }
-                try {
-                    node = node.getNode(elements[elements.length - 1]);
-                    if(!(node instanceof ServicingNodeImpl))
-                        node = new ServicingNodeImpl(factory, this, node, absPath, node.getDepth() + 1, null);
-                    return node;
-                } catch (PathNotFoundException ex2) {
-                    return node.getProperty(elements[elements.length - 1]);
-                }
-            } catch (ClassCastException ex2) {
-                throw ex;
-            } 
-        }
+        Item item = session.getItem(absPath);
+        return factory.getItemDecorator(this, item);
     }
 
     /**
@@ -367,7 +331,6 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
      */
     public void logout() {
         session.logout();
-        ((RepositoryDecorator) repository).getFacetedNavigationEngine().unprepare(getFacetedNavigationContext());
     }
 
     /**

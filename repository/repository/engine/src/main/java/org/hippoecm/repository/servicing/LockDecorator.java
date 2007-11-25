@@ -37,7 +37,7 @@ public class LockDecorator extends AbstractDecorator implements Lock {
      * @inheritDoc
      */
     public Node getNode() {
-        return factory.getNodeDecorator(session, lock.getNode(), null);
+        return factory.getNodeDecorator(session, lock.getNode());
     }
 
     /**

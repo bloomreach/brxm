@@ -180,8 +180,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
      * @inheritDoc
      */
     public Node getNode() throws ValueFormatException, RepositoryException {
-        /* FIXME, we do not have access to the faceted selection NodeView at this point */
-        return factory.getNodeDecorator(session, property.getNode(), null);
+        return factory.getNodeDecorator(session, property.getNode());
     }
 
     /**

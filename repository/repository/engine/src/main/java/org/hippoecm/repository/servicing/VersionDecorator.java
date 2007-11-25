@@ -29,13 +29,7 @@ public class VersionDecorator extends ServicingNodeImpl implements Version {
     protected final Version version;
 
     public VersionDecorator(DecoratorFactory factory, Session session, Version version) {
-        super(factory, session, version, null);
-        this.version = version;
-    }
-
-    public VersionDecorator(DecoratorFactory factory, Session session, Version version, String path, int depth)
-            throws RepositoryException {
-        super(factory, session, version, path, depth, null);
+        super(factory, session, version);
         this.version = version;
     }
 

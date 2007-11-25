@@ -37,7 +37,7 @@
 
   <!-- log4j.log -->
   <appender name="root" class="org.apache.log4j.FileAppender">
-    <param name="File" value="target/log4j.log"/>
+    <param name="File" value="log4j.log"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </layout>
@@ -47,7 +47,7 @@
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
   <category additivity="false" name="org.apache.jackrabbit.core">
-    <level value="warn"/>
+    <level value="error"/>
     <appender-ref ref="root"/>
   </category>
 
@@ -62,13 +62,13 @@
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="true" name="org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager">
-    <level value="info"/>
-    <appender-ref ref="debugging"/>
+  <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetSearchProvider">
+    <level value="debug"/>
+    <appender-ref ref="root"/>
   </category>
-  <category additivity="true" name="org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager">
-    <level value="info"/>
-    <appender-ref ref="debugging"/>
+  <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetResultSetProvider">
+    <level value="debug"/>
+    <appender-ref ref="root"/>
   </category>
 
   <root>

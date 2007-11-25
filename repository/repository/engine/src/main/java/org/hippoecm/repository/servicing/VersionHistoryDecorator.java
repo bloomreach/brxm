@@ -32,13 +32,7 @@ public class VersionHistoryDecorator extends ServicingNodeImpl implements Versio
     protected final VersionHistory versionHistory;
 
     public VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {
-        super(factory, session, versionHistory, null);
-        this.versionHistory = versionHistory;
-    }
-
-    public VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory,
-            String path, int depth) throws RepositoryException {
-        super(factory, session, versionHistory, path, depth, null);
+        super(factory, session, versionHistory);
         this.versionHistory = versionHistory;
     }
 

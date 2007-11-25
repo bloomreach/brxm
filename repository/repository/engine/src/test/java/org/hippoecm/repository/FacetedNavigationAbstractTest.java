@@ -149,7 +149,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
                 node = node.getNode(pathElements[i]);
             }
             if(verbose)
-                System.out.println(facetPath + "\t" + node.getProperty(HippoNodeType.HIPPO_COUNT));
+                System.out.println(facetPath + "\t" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
             node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
             NodeIterator iter = node.getNodes();
             realCount = 0;
@@ -228,7 +228,9 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME,"xyz");
         node.setProperty(HippoNodeType.HIPPO_DOCBASE,"/documents");
         node.setProperty(HippoNodeType.HIPPO_FACETS,new String[] { "x", "y", "z" });
-        return node;
+        session.save();
+        session.refresh(false);
+        return session.getRootNode().getNode("navigation").getNode("xyz");
     }
     protected void commonEnd() throws RepositoryException {
         session.refresh(false);
@@ -243,7 +245,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         commonEnd();
     }
     
-    public boolean getVerbose(){
+    public boolean getVerbose() {
         return verbose;
     }
 }
