@@ -125,20 +125,23 @@ public abstract class HippoVirtualProvider
 
     public String[] getProperty(NodeId nodeId, String name) {
         try {
-            Name propName = stateMgr.resolver.getQName(name);
-            PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
-            if(propState == null)
-                return null;
-            InternalValue[] values = propState.getValues();
-            String[] strings = new String[values.length];
-            for(int i=0; i<values.length; i++)
-                strings[i] = values[i].getString();
-            return strings;
+            return getProperty(nodeId, stateMgr.resolver.getQName(name));
         } catch(IllegalNameException ex) {
             return null;
         } catch(NamespaceException ex) {
             return null;
         }
+    }
+
+    public String[] getProperty(NodeId nodeId, Name propName) {
+        PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
+        if(propState == null)
+            return null;
+        InternalValue[] values = propState.getValues();
+        String[] strings = new String[values.length];
+        for(int i=0; i<values.length; i++)
+            strings[i] = values[i].getString();
+        return strings;
     }
 
     public NodeState getNodeState(String absPath) throws RepositoryException {

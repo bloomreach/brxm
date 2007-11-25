@@ -64,10 +64,13 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     protected NodeTypeRegistry ntReg;
     protected HierarchyManager hierMgr;
     protected NamePathResolver resolver;
+    private FacetedNavigationEngine facetedEngine;
+    private FacetedNavigationEngine.Context facetedContext;
     protected FilteredChangeLog filteredChangeLog = null;
     protected Map<Name,HippoVirtualProvider> virtualProviders;
     protected Set<Name> virtualProperties;
-    private List<ItemState> virtualStates = new LinkedList<ItemState>();
+    private Set<ItemState> virtualStates = new HashSet<ItemState>();
+    private Map<NodeId,ItemState> virtualNodes = new HashMap<NodeId,ItemState>();
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
             ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg) {
@@ -87,6 +90,8 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
         this.resolver = resolver;
         this.hierMgr = hierMgr;
+        this.facetedEngine = facetedEngine;
+        this.facetedContext = facetedContext;
 
         MirrorVirtualProvider  mirrorProvider = null;
         ViewVirtualProvider    viewProvider = null;
@@ -101,14 +106,14 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             ex.printStackTrace(System.err);
         }
 
+        /*
+
         try {
             viewProvider = new ViewVirtualProvider(this);
         } catch(RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
-
-        /*
 
         try {
             facetSelectProvider = new FacetSelectProvider(this, viewProvider);
@@ -123,7 +128,15 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             ex.printStackTrace(System.err);
         }
 
-        resultSetProvider = new FacetResultSetProvider(this, mirrorProvider, facetedEngine, facetedContext);
+        try {
+            resultSetProvider = new FacetResultSetProvider(this, mirrorProvider, facetedEngine, facetedContext);
+        } catch(IllegalNameException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch(NamespaceException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
 
         try {
             facetSearchProvider = new FacetSearchProvider(this, resultSetProvider, facetedEngine, facetedContext);
@@ -139,6 +152,12 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         }
 
         */
+
+    }
+
+    @Override
+    public void dispose() {
+        facetedEngine.unprepare(facetedContext);
     }
 
     @Override
@@ -153,6 +172,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
         filteredChangeLog = new FilteredChangeLog(changeLog);
         virtualStates.clear();
+        virtualNodes.clear();
         filteredChangeLog.invalidate();
         super.update(filteredChangeLog);
     }
@@ -162,20 +182,32 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
         super.update();
         edit();
+        filteredChangeLog.repopulate();
         filteredChangeLog = null;
     }
 
     @Override
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
         ItemState state = super.getItemState(id);
-        if(state == null && id instanceof HippoNodeId) {
+        if(id instanceof HippoNodeId && !virtualNodes.containsKey(id)) {
+            //System.err.println("BERRY LOCALISM.getItemState(id).HippoNodeId");
             edit();
-            return ((HippoNodeId)id).populate();
+            NodeState nodeState;
+            if(state != null) {
+                nodeState = (NodeState) state;
+                nodeState = ((HippoNodeId)id).populate(nodeState);
+            } else
+                nodeState = ((HippoNodeId)id).populate();
+            virtualNodes.put((HippoNodeId)id, nodeState);
+            stateModified(nodeState);
+            store(nodeState);
+            return nodeState;
         }
-        if(state instanceof NodeState) {
+        if(!(id instanceof HippoNodeId) && (state instanceof NodeState)) {
             NodeState nodeState = (NodeState) state;
             Name nodeTypeName = nodeState.getNodeTypeName();
             if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                //System.err.println("BERRY LOCALISM.getItemState(id).external");
                 edit();
                 try {
                     virtualStates.add(state);
@@ -195,16 +227,33 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
     @Override
     public NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException {
+        NodeState state = null;
+        try {
+            //System.err.println("BERRY LOCALISM.getNodeState(id).unexpected#TRY");
+            state = super.getNodeState(id);
+        } catch(NoSuchItemStateException ex) {
+            if(!(id instanceof HippoNodeId)) {
+                //System.err.println("BERRY LOCALISM.getNodeState(id).unexpected#1");
+                throw ex;
+            }
+        } catch(ItemStateException ex) {
+            //System.err.println("BERRY LOCALISM.getNodeState(id).unexpected#2");
+        }
         if(id instanceof HippoNodeId) {
+            //System.err.println("BERRY LOCALISM.getNodeState(id).HippoNodeId");
             edit();
-            return ((HippoNodeId)id).populate();
+            NodeState nodeState = ((HippoNodeId)id).populate();
+            virtualNodes.put((HippoNodeId)id, nodeState);
+            stateModified(nodeState);
+            store(nodeState);
+            return nodeState;
         }
         /* It is important that the super.getNodeState() is called after the
          * check on id being instance of HippoNodeId.
          */
-        NodeState state = super.getNodeState(id);
         Name nodeTypeName = state.getNodeTypeName();
         if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+            //System.err.println("BERRY LOCALISM.getNodeState(id).external");
             edit();
             try {
                 virtualStates.add(state);
@@ -217,9 +266,8 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 ex.printStackTrace(System.err);
                 return null;
             }
-        } else {
-            return state;
         }
+        return state;
     }
     
     @Override
@@ -294,6 +342,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                         try {
                             nodeState = (NodeState) get(nodeState.getParentId());
                             if(nodeState != null) {
+nodeState.removeAllChildNodeEntries();
                                 nodeState.removeChildNodeEntry(nodeState.getNodeId());
                                 stateModified(state);
                                 nodeState.setStatus(ItemState.STATUS_STALE_MODIFIED);
@@ -309,6 +358,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     ((NodeState)state).removeAllChildNodeEntries();
                     state.setStatus(ItemState.STATUS_STALE_MODIFIED);
                     stateModified(state);
+                    virtualStates.add(state);
                 }
             }
             for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); ) {
@@ -320,7 +370,21 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 }
             }
         }
-        
+
+        void repopulate() {
+            for(Iterator iter = virtualStates.iterator(); iter.hasNext(); ) {
+                ItemState state = (ItemState) iter.next();
+                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+                    try {
+                        virtualProviders.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
+                    } catch(RepositoryException ex) {
+                        System.err.println(ex.getMessage());
+                        ex.printStackTrace(System.err);
+                    }
+                }
+            }
+        }
+
         @Override public ItemState get(ItemId id) throws NoSuchItemStateException {
             return upstream.get(id);
         }

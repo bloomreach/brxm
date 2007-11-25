@@ -21,59 +21,114 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.NamespaceException;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.conversion.IllegalNameException;
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.jackrabbit.FacetSearchProvider.FacetSearchNodeId;
 
 public class FacetResultSetProvider extends HippoVirtualProvider
 {
     final static private String SVN_ID = "$Id$";
+    protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
 
     private static Pattern facetPropertyPattern;
     static {
         facetPropertyPattern = Pattern.compile("^@([^=]+)='(.+)'$");
     }
 
+    protected class FacetResultSetNodeId extends HippoNodeId {
+        String queryname;
+        String docbase;
+        String[] search;
+        long count;
+        FacetResultSetNodeId(NodeId parent) {
+            super(FacetResultSetProvider.this, parent);
+        }
+        FacetResultSetNodeId(NodeId parent, String queryname, String docbase, String[] search, long count) {
+            super(FacetResultSetProvider.this, parent);
+            this.queryname = queryname;
+            this.docbase = docbase;
+            this.search = search;
+            this.count = count;
+        }
+    }
+
     MirrorVirtualProvider subNodesProvider;
     FacetedNavigationEngine facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
 
+    Name countName;
+
+    PropDef countPropDef;
+
     FacetResultSetProvider(HippoLocalItemStateManager stateMgr, MirrorVirtualProvider subNodesProvider,
-                           FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext) {
-        super(stateMgr);
+                           FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext) throws IllegalNameException, NamespaceException {
+        super(stateMgr, stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT), stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT));
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
         this.subNodesProvider = subNodesProvider;
+
+        countName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_COUNT);
+        countPropDef = definePropDef(countName, PropertyType.LONG);
     }
 
     public NodeState populate(NodeState state) {
+        FacetResultSetNodeId nodeId = (FacetResultSetNodeId) state.getNodeId();
+        String queryname = nodeId.queryname;
+        String docbase = nodeId.docbase;
+        String[] search = nodeId.search;
+        long count = nodeId.count;
+
         Map<String,String> currentFacetQuery = new TreeMap<String,String>();
-        String[] currentFacetPath = getProperty(state.getNodeId(), HippoNodeType.HIPPO_SEARCH);
-        for(int i=0; currentFacetPath != null && i < currentFacetPath.length; i++) {
-            Matcher matcher = facetPropertyPattern.matcher(currentFacetPath[i]);
+        for(int i=0; search != null && i < search.length; i++) {
+            Matcher matcher = facetPropertyPattern.matcher(search[i]);
             if(matcher.matches() && matcher.groupCount() == 2) {
                 currentFacetQuery.put(matcher.group(1), matcher.group(2));
             }
         }
         FacetedNavigationEngine.Query initialQuery;
-        initialQuery = facetedEngine.parse(getProperty(state.getNodeId(), HippoNodeType.HIPPO_DOCBASE)[0]);
-        String queryname = getProperty(state.getNodeId(), HippoNodeType.HIPPO_QUERYNAME)[0];
+        initialQuery = facetedEngine.parse(docbase);
       
         HitsRequested hitsRequested = new HitsRequested();
         hitsRequested.setResultRequested(true);
         hitsRequested.setLimit(1000000);
         hitsRequested.setOffset(0);
 
-        FacetedNavigationEngine.Result result = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery,
-                                                                   null, hitsRequested);
-        
-        for(Iterator<String> iter = result.iterator(); iter.hasNext(); ) {
-            String foundNodePath = iter.next();
+        FacetedNavigationEngine.Result facetedResult;
+        long t1 = 0, t2;
+        if(log.isDebugEnabled())
+            t1 = System.currentTimeMillis();
+        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, null,
+                                           hitsRequested);
+        if(log.isDebugEnabled()) {
+            t2 = System.currentTimeMillis();
+            log.debug("facetsearch turnaround="+(t2-t1));
+        }
+        count = facetedResult.length();
+
+        PropertyState propState = createNew(countName, state.getNodeId());
+        propState.setType(PropertyType.LONG);
+        propState.setDefinitionId(countPropDef.getId());
+        propState.setValues(new InternalValue[] { InternalValue.create(count) });
+        propState.setMultiValued(false);
+        state.addPropertyName(countName);
+
+        for(String foundNodePath : facetedResult) {
             try {
                 NodeId upstream = getNodeId(foundNodePath);
                 /* The next statement is painfull performance wise.
@@ -88,9 +143,5 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         }
 
         return state;
-    }
-
-    public NodeState populate(NodeId nodeId, NodeId parentId) throws RepositoryException {
-        throw new RepositoryException("Illegal internal state");
     }
 }

@@ -247,7 +247,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
 
     /** An instance of a Result class contains the matching documents of a faceted view.
      */
-    abstract class Result {
+    abstract class Result implements Iterable<String> {
       /**
        * Total number of matches (even if iterator will return only a few.
        * @return the number of hits

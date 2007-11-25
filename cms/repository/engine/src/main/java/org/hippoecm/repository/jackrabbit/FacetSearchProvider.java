@@ -20,6 +20,9 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
@@ -27,6 +30,7 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
@@ -36,14 +40,19 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class FacetSearchProvider extends HippoVirtualProvider
 {
     final static private String SVN_ID = "$Id$";
+    protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
 
-    protected class FacetSearchNodeId extends HippoNodeId {
-        Map<Name,String[]> properties;
+    class FacetSearchNodeId extends HippoNodeId {
+        String queryname;
+        String docbase;
+        String[] facets;
+        String[] search;
+        long count;
+        protected FacetSearchNodeId(HippoVirtualProvider provider, NodeId parent) {
+            super(provider, parent);
+        }
         FacetSearchNodeId(NodeId parent) {
             super(FacetSearchProvider.this, parent);
-        }
-        void setProperty(Name propName, String[] propValue) {
-            properties.put(propName, propValue);
         }
     }
 
@@ -56,95 +65,169 @@ public class FacetSearchProvider extends HippoVirtualProvider
     FacetedNavigationEngine facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
 
+    Name querynameName;
+    Name docbaseName;
+    Name facetsName;
+    Name searchName;
+    Name countName;
+
+    PropDef querynamePropDef;
     PropDef docbasePropDef;
     PropDef facetsPropDef;
     PropDef searchPropDef;
-    PropDef valuesPropDef;
+    PropDef countPropDef;
 
     FacetSearchProvider(HippoLocalItemStateManager stateMgr, FacetResultSetProvider subNodesProvider,
                         FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
         throws RepositoryException
     {
-        super(stateMgr, stateMgr.resolver.getQName(HippoNodeType.NT_FACETSEARCH), null);
+        super(stateMgr, stateMgr.resolver.getQName(HippoNodeType.NT_FACETSEARCH), stateMgr.resolver.getQName(HippoNodeType.NT_FACETSEARCH));
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
         this.subNodesProvider = subNodesProvider;
 
-        docbasePropDef = definePropDef(stateMgr.resolver.getQName(HippoNodeType.HIPPO_DOCBASE), PropertyType.STRING);
-        facetsPropDef = definePropDef(stateMgr.resolver.getQName(HippoNodeType.HIPPO_FACETS), PropertyType.STRING);
-        searchPropDef = definePropDef(stateMgr.resolver.getQName(HippoNodeType.HIPPO_SEARCH), PropertyType.STRING);
-        valuesPropDef = definePropDef(stateMgr.resolver.getQName(HippoNodeType.HIPPO_VALUES), PropertyType.STRING);
+        querynameName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_QUERYNAME);
+        docbaseName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_DOCBASE);
+        facetsName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_FACETS);
+        searchName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_SEARCH);
+        countName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_COUNT);
+
+        querynamePropDef = definePropDef(querynameName, PropertyType.STRING);
+        docbasePropDef = definePropDef(docbaseName, PropertyType.STRING);
+        facetsPropDef = definePropDef(facetsName, PropertyType.STRING);
+        searchPropDef = definePropDef(searchName, PropertyType.STRING);
+        countPropDef = definePropDef(countName, PropertyType.LONG);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
-        String docbase = getProperty(nodeId, HippoNodeType.HIPPO_DOCBASE)[0];
-        String[] newFacets = getProperty(nodeId, HippoNodeType.HIPPO_FACETS);
-        String[] newValues = getProperty(nodeId, HippoNodeType.HIPPO_SEARCH);
-        String[] newModes  = getProperty(nodeId, HippoNodeType.HIPPO_VALUES);
+        String queryname;
+        String docbase;
+        String[] facets;
+        String[] search;
+        long count = 0;
+        if(nodeId instanceof FacetSearchNodeId) {
+            FacetSearchNodeId facetSearchNodeId = (FacetSearchNodeId) nodeId;
+            queryname = facetSearchNodeId.queryname;
+            docbase = facetSearchNodeId.docbase;
+            facets = facetSearchNodeId.facets;
+            search = facetSearchNodeId.search;
+            count = facetSearchNodeId.count;
+        } else {
+            queryname = getProperty(nodeId, querynameName)[0];
+            docbase = getProperty(nodeId, docbaseName)[0];
+            facets = getProperty(nodeId, facetsName);
+            search = getProperty(nodeId, searchName);
+        }
 
-        String[] currentFacetPath = getProperty(state.getNodeId(), HippoNodeType.HIPPO_SEARCH);
+        if(facets != null && facets.length > 0) {
+            Map<String,Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count>> facetSearchResultMap;
+            facetSearchResultMap = new TreeMap<String,Map<String,FacetedNavigationEngine.Count>>();
+            Map<String,FacetedNavigationEngine.Count> facetSearchResult;
+            facetSearchResult = new TreeMap<String,FacetedNavigationEngine.Count>();
+            facetSearchResultMap.put(facets[0], facetSearchResult);
 
-        Map<String,Map<String,org.hippoecm.repository.FacetedNavigationEngine.Count>> facetSearchResultMap;
-        facetSearchResultMap = new TreeMap<String,Map<String,FacetedNavigationEngine.Count>>();
-        Map<String,FacetedNavigationEngine.Count> facetSearchResult;
-        facetSearchResult = new TreeMap<String,FacetedNavigationEngine.Count>();
-        facetSearchResultMap.put(currentFacetPath[0], facetSearchResult);
+            Map<String,String> currentFacetQuery = new TreeMap<String,String>();
+            for(int i=0; search != null && i < search.length; i++) {
+                Matcher matcher = facetPropertyPattern.matcher(search[i]);
+                if(matcher.matches() && matcher.groupCount() == 2) {
+                    currentFacetQuery.put(matcher.group(1), matcher.group(2));
+                }
+            }
+            FacetedNavigationEngine.Query initialQuery;
+            initialQuery = facetedEngine.parse(docbase);
+      
+            HitsRequested hitsRequested = new HitsRequested();
+            hitsRequested.setResultRequested(false);
 
-        Map<String,String> currentFacetQuery = new TreeMap<String,String>();
-        for(int i=0; currentFacetPath != null && i < currentFacetPath.length; i++) {
-            Matcher matcher = facetPropertyPattern.matcher(currentFacetPath[i]);
-            if(matcher.matches() && matcher.groupCount() == 2) {
-                currentFacetQuery.put(matcher.group(1), matcher.group(2));
+            FacetedNavigationEngine.Result facetedResult;
+            long t1 = 0, t2;
+            if(log.isDebugEnabled())
+                t1 = System.currentTimeMillis();
+            facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, null,
+                                               facetSearchResultMap, null, hitsRequested);
+            if(log.isDebugEnabled()) {
+                t2 = System.currentTimeMillis();
+                log.debug("facetsearch turnaround="+(t2-t1));
+            }
+            count = facetedResult.length();
+
+            PropertyState propState = createNew(countName, state.getNodeId());
+            propState.setType(PropertyType.LONG);
+            propState.setDefinitionId(countPropDef.getId());
+            propState.setValues(new InternalValue[] { InternalValue.create(count) });
+            propState.setMultiValued(false);
+            state.addPropertyName(countName);
+
+            for(Map.Entry<String,FacetedNavigationEngine.Count> facetValue : facetSearchResult.entrySet()) {
+                String[] newFacets = new String[Math.max(0, facets.length - 1)];
+                if(facets.length > 1)
+                    System.arraycopy(facets, 1, newFacets, 0, facets.length - 1);
+                String[] newSearch = new String[search != null ? search.length + 1 : 1];
+                if(search != null && search.length > 0)
+                    System.arraycopy(search, 0, newSearch, 0, search.length);
+                if(facets[0].indexOf("#") == -1)
+                    newSearch[newSearch.length-1] = "@" + facets[0] + "='" + facetValue.getKey() + "'";
+                else
+                    newSearch[newSearch.length-1] = "@" + facets[0].substring(0,facets[0].indexOf("#")) + "='" + facetValue.getKey() + "'" + facets[0].substring(facets[0].indexOf("#"));
+                
+                FacetSearchNodeId childNodeId = new FacetSearchNodeId(state.getNodeId());
+                state.addChildNodeEntry(stateMgr.resolver.getQName(facetValue.getKey()), childNodeId);
+                childNodeId.queryname = queryname;
+                childNodeId.docbase = docbase;
+                childNodeId.facets = newFacets;
+                childNodeId.search = newSearch;
+                childNodeId.count = facetValue.getValue().count;
             }
         }
-        FacetedNavigationEngine.Query initialQuery;
-        initialQuery = facetedEngine.parse(getProperty(state.getNodeId(), HippoNodeType.HIPPO_DOCBASE)[0]);
-        String queryname = getProperty(state.getNodeId(), HippoNodeType.HIPPO_QUERYNAME)[0];
-      
-        HitsRequested hitsRequested = new HitsRequested();
-        hitsRequested.setResultRequested(false);
 
-        facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, null, facetSearchResultMap, null, hitsRequested);
-
-
-        for(Map.Entry<String,FacetedNavigationEngine.Count> facetValue : facetSearchResult.entrySet()) {
-            FacetSearchNodeId childNodeId = new FacetSearchNodeId(state.getNodeId());
-            state.addChildNodeEntry(stateMgr.resolver.getQName(facetValue.getKey()), childNodeId);
-
-            String[] newFacetPath = new String[Math.max(0, currentFacetPath.length - 1)];
-            if(currentFacetPath.length > 0)
-                System.arraycopy(currentFacetPath, 1, newFacetPath, 0, currentFacetPath.length - 1);
-            String[] oldSearchPath = getProperty(nodeId, HippoNodeType.HIPPO_SEARCH);
-            String[] newSearchPath = new String[oldSearchPath.length + 1];
-            System.arraycopy(oldSearchPath, 0, newSearchPath, 0, oldSearchPath.length);
-            // check for xpath separator
-            if(currentFacetPath[0].indexOf("#") == -1)
-                newSearchPath[oldSearchPath.length] = "@" + currentFacetPath[0] + "='" + facetValue.getKey() + "'";
-            else
-                newSearchPath[oldSearchPath.length] = "@" + currentFacetPath[0].substring(0,currentFacetPath[0].indexOf("#")) + "='" + facetValue.getKey() + "'" + currentFacetPath[0].substring(currentFacetPath[0].indexOf("#"));
-
-            childNodeId.setProperty(stateMgr.resolver.getQName(HippoNodeType.HIPPO_QUERYNAME), getProperty(nodeId, HippoNodeType.HIPPO_QUERYNAME));
-            childNodeId.setProperty(stateMgr.resolver.getQName(HippoNodeType.HIPPO_DOCBASE), getProperty(nodeId, HippoNodeType.HIPPO_DOCBASE));
-            childNodeId.setProperty(stateMgr.resolver.getQName(HippoNodeType.HIPPO_FACETS), newFacetPath);
-            childNodeId.setProperty(stateMgr.resolver.getQName(HippoNodeType.HIPPO_SEARCH), newSearchPath);
-            childNodeId.setProperty(stateMgr.resolver.getQName(HippoNodeType.HIPPO_COUNT), new String[] { Integer.toString(facetValue.getValue().count) } ); // FIXME
-        }
+        FacetResultSetProvider.FacetResultSetNodeId childNodeId;
+        childNodeId = subNodesProvider . new FacetResultSetNodeId(state.getNodeId(),queryname,docbase,search,count);
+        state.addChildNodeEntry(stateMgr.resolver.getQName("hippo:resultset"), childNodeId);
 
         return state;
     }
 
-    public NodeState populate(NodeId nodeId, NodeId parentId) throws RepositoryException {
+    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         FacetSearchNodeId searchNodeId = (FacetSearchNodeId) nodeId;
-        NodeState state = createNew(nodeId, virtualNodeName, parentId);
+        NodeState state = createNew(nodeId, externalNodeName, parentId);
         state.setDefinitionId(virtualNodeDef.getId());
-        for(Map.Entry<Name,String[]> propEntry : searchNodeId.properties.entrySet()) {
-            PropertyState propState = createNew(propEntry.getKey(), state.getNodeId());
-            propState.setType(PropertyType.STRING);
-            propState.setDefinitionId(facetsPropDef.getId()); // should be distinct per property
-            //propState.setValues(propEntry.getValue());
-            propState.setMultiValued(true); // false for docbase
-        }
+
+        PropertyState propState = createNew(querynameName, nodeId);
+        propState.setType(PropertyType.STRING);
+        propState.setDefinitionId(querynamePropDef.getId());
+        propState.setValues(new InternalValue[] { InternalValue.create(searchNodeId.queryname) });
+        propState.setMultiValued(false);
+        state.addPropertyName(querynameName);
+
+        propState = createNew(docbaseName, nodeId);
+        propState.setType(PropertyType.STRING);
+        propState.setDefinitionId(docbasePropDef.getId());
+        propState.setValues(new InternalValue[] { InternalValue.create(searchNodeId.docbase) });
+        propState.setMultiValued(false);
+        state.addPropertyName(docbaseName);
+
+        propState = createNew(facetsName, nodeId);
+        propState.setType(PropertyType.STRING);
+        propState.setDefinitionId(facetsPropDef.getId());
+        propState.setValues(InternalValue.create(searchNodeId.facets));
+        propState.setMultiValued(true);
+        state.addPropertyName(facetsName);
+
+        propState = createNew(searchName, nodeId);
+        propState.setType(PropertyType.STRING);
+        propState.setDefinitionId(searchPropDef.getId());
+        propState.setValues(InternalValue.create(searchNodeId.search));
+        propState.setMultiValued(true);
+        state.addPropertyName(searchName);
+
+        propState = createNew(countName, nodeId);
+        propState.setType(PropertyType.LONG);
+        propState.setDefinitionId(countPropDef.getId());
+        propState.setValues(new InternalValue[] { InternalValue.create(searchNodeId.count) });
+        propState.setMultiValued(false);
+        state.addPropertyName(countName);
+
         return populate(state);
     }
 }

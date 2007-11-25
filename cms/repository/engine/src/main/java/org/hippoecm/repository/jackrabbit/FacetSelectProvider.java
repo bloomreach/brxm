@@ -38,18 +38,18 @@ public class FacetSelectProvider extends HippoVirtualProvider
 
     public NodeState populate(NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
-        String docbase = getProperty(nodeId, "hippo:docbase")[0];
-        String[] newFacets = getProperty(nodeId, "hippo:facets");
-        String[] newValues = getProperty(nodeId, "hippo:values");
-        String[] newModes  = getProperty(nodeId, "hippo:modes");
+        String docbase = getProperty(nodeId, HippoNodeType.HIPPO_DOCBASE)[0];
+        String[] newFacets = getProperty(nodeId, HippoNodeType.HIPPO_FACETS);
+        String[] newValues = getProperty(nodeId, HippoNodeType.HIPPO_VALUES);
+        String[] newModes  = getProperty(nodeId, HippoNodeType.HIPPO_MODES);
 
         Map<String,String> view = new HashMap<String,String>();
         if(newFacets.length != newValues.length || newFacets.length != newModes.length)
             throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
         for(int i=0; i<newFacets.length; i++) {
-            if(newModes[i].equals("stick") || newModes[i].equals("select")) {
+            if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select")) {
                 view.put(newFacets[i], newValues[i]);
-            } else if(newModes[i].equals("clear")) {
+            } else if(newModes[i].equalsIgnoreCase("clear")) {
                 view.remove(newFacets[i]);
             }
         }
