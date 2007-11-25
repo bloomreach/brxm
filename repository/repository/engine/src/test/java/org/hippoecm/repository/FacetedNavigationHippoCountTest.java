@@ -14,7 +14,7 @@ import javax.jcr.nodetype.PropertyDefinition;
 
 import junit.framework.TestCase;
 
-public class FacetedNavigationHippoCountIssueTest extends TestCase
+public class FacetedNavigationHippoCountTest extends TestCase
 {
 	private Session session;
 	
@@ -150,7 +150,7 @@ public class FacetedNavigationHippoCountIssueTest extends TestCase
 			build(session, contents);
 			session.getRootNode().getNode("docsearch/byType").setProperty("hippo:facets", new String[]{"type"});
 			session.save();
-			assertFalse(traverse(session, "/docsearch/byType/hippo:resultset").hasProperty("hippo:count"));
+			assertTrue(traverse(session, "/docsearch/byType/hippo:resultset").hasProperty("hippo:count"));
 		} catch(RepositoryException e) {
 			e.printStackTrace();
 		}
