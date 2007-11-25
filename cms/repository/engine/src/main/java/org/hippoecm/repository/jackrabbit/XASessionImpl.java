@@ -35,19 +35,21 @@ import org.hippoecm.repository.security.AMContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl implements HippoSession {
+public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     private static Logger log = LoggerFactory.getLogger(XASessionImpl.class);
 
     protected XASessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
-        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)((XAWorkspaceImpl)wsp).getItemStateManager(), this);
+        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager) ((XAWorkspaceImpl)wsp).getItemStateManager();
+        ((RepositoryImpl)rep).initializeLocalItemStateManager(localISM, this, loginContext.getSubject());
     }
 
     protected XASessionImpl(RepositoryImpl rep, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
             RepositoryException {
         super(rep, subject, wspConfig);
-        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)((XAWorkspaceImpl)wsp).getItemStateManager(), this);
+        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager) ((XAWorkspaceImpl)wsp).getItemStateManager();
+        ((RepositoryImpl)rep).initializeLocalItemStateManager(localISM, this, subject);
     }
 
     @Override
@@ -82,15 +84,5 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
             log.error(msg, ex);
             throw new RepositoryException(msg, ex);
         }
-    }
-
-    protected FacetedNavigationEngine.Context facetedContext;
-
-    public void setFacetedNavigationContext(FacetedNavigationEngine.Context context) {
-        facetedContext = context;
-    }
-
-    public FacetedNavigationEngine.Context getFacetedNavigationContext() {
-        return facetedContext;
     }
 }

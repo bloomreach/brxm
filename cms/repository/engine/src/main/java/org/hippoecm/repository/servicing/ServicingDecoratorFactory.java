@@ -60,6 +60,7 @@ public class ServicingDecoratorFactory
         } else
             return repositoryDecorators.get(repository);
     }
+
     public Session getSessionDecorator(Repository repository, Session session) {
         if(!sessionDecorators.containsKey(session)) {
             ServicingSessionImpl wrapper;
@@ -79,6 +80,7 @@ public class ServicingDecoratorFactory
         } else
             return sessionDecorators.get(session);
     }
+    
     public Workspace getWorkspaceDecorator(Session session, Workspace workspace) {
         if(!workspaceDecorators.containsKey(workspace)) {
             ServicingWorkspaceImpl wrapper = new ServicingWorkspaceImpl(this, session, workspace);
@@ -87,91 +89,71 @@ public class ServicingDecoratorFactory
         } else
             return workspaceDecorators.get(workspace);
     }
-    public Node getNodeDecorator(Session session, Node node, NodeView selection) {
+    
+    public Node getNodeDecorator(Session session, Node node) {
         if (node instanceof Version) {
             return getVersionDecorator(session, (Version) node);
         } else if (node instanceof VersionHistory) {
             return getVersionHistoryDecorator(session, (VersionHistory) node);
         } else {
-            try {
-                return new ServicingNodeImpl(this, session, node, node.getPath(), node.getDepth(), selection);
-            } catch(RepositoryException ex) {
-                log.error("cannot compose virtual node, reverting to regular node");
-            }
-            return new ServicingNodeImpl(this, session, node, selection);
+            return new ServicingNodeImpl(this, session, node);
         }
     }
-    public Node getNodeDecorator(Session session, Node node, String path, int depth, NodeView selection) {
-        if (node instanceof Version) {
-            return getVersionDecorator(session, (Version) node, path, depth);
-        } else if (node instanceof VersionHistory) {
-            return getVersionHistoryDecorator(session, (VersionHistory) node, path, depth);
-        } else {
-            try {
-                return new ServicingNodeImpl(this, session, node, path, depth, selection);
-            } catch(RepositoryException ex) {
-                log.error("cannot compose virtual node, reverting to regular node");
-            }
-            return new ServicingNodeImpl(this, session, node, selection);
-        }
-    }
+    
     public Property getPropertyDecorator(Session session, Property property) {
         return new PropertyDecorator(this, session, property);
     }
+    
     public Lock getLockDecorator(Session session, Lock lock) {
         return new LockDecorator(this, session, lock);
     }
+    
     public Version getVersionDecorator(Session session, Version version) {
         return new VersionDecorator(this, session, version);
     }
+    
     public Version getVersionDecorator(Session session, Version version, String path, int depth) {
         return new VersionDecorator(this, session, version);
     }
+    
     public VersionHistory getVersionHistoryDecorator(Session session,
                                                      VersionHistory versionHistory) {
         return new VersionHistoryDecorator(this, session, versionHistory);
     }
-    public VersionHistory getVersionHistoryDecorator(Session session,
-                                                     VersionHistory versionHistory,
-                                                     String path, int depth) {
-        try {
-            return new VersionHistoryDecorator(this, session, versionHistory, path, depth);
-        } catch(RepositoryException ex) {
-            log.error("cannot compose virtual node, reverting to regular node");
-            return new VersionHistoryDecorator(this, session, versionHistory);
-        }
-    }
+    
     public Item getItemDecorator(Session session, Item item) {
         if (item instanceof Version) {
             return getVersionDecorator(session, (Version) item);
         } else if (item instanceof VersionHistory) {
             return getVersionHistoryDecorator(session, (VersionHistory) item);
         } else if (item instanceof Node) {
-            /* FIXME: this clears any NodeView we have in place, because we do
-             * not have access to the current NodeView
-             */
-            return getNodeDecorator(session, (Node) item, null);
+            return getNodeDecorator(session, (Node) item);
         } else if (item instanceof Property) {
             return getPropertyDecorator(session, (Property) item);
         } else {
             return new ItemDecorator(this, session, item);
         }
     }
+    
     public QueryManager getQueryManagerDecorator(Session session,
                                                  QueryManager queryManager) {
         return new QueryManagerDecorator(this, session, queryManager);
     }
+    
     public Query getQueryDecorator(Session session, Query query) {
         return new QueryDecorator(this, session, query);
     }
+    
     public QueryResult getQueryResultDecorator(Session session,
                                                QueryResult result) {
         return new QueryResultDecorator(this, session, result);
     }
+    
     public ValueFactory getValueFactoryDecorator(Session session,
                                                  ValueFactory valueFactory) {
         return new ValueFactoryDecorator(this, session, valueFactory);
     }
+    
     public ItemVisitor getItemVisitorDecorator(Session session,
                                                ItemVisitor visitor) {
         return new ItemVisitorDecorator(this, session, visitor);

@@ -47,14 +47,17 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
             Node node = commonStart();
             long count, tBefore, tAfter;
             tBefore = System.currentTimeMillis();
-            count = node.getNode("x1").getNode("y2").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET)
-                    .getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+            node = node.getNode("x1");
+            node = node.getNode("y2");
+            node = node.getNode("z2");
+            node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
+            count = node.getProperty(HippoNodeType.HIPPO_COUNT).getLong();
             tAfter = System.currentTimeMillis();
             historyWriter.write("FacetedNavigationPerfTest" + numDocs, Long.toString(tAfter - tBefore), "ms");
         }
         commonEnd();
     }
-    
+
     public void testFullFacetedNavigationTraversal() throws RepositoryException, IOException {
         numDocs = 500;
         long tBefore, tAfter;

@@ -17,9 +17,13 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
 
+import javax.security.auth.Subject;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.RepositoryException;
-import javax.security.auth.Subject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemManager;
@@ -31,24 +35,25 @@ import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.namespace.NamespaceResolver;
+
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.security.AMContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implements HippoSession {
+public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
 
     protected SessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
-        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)((WorkspaceImpl)wsp).getItemStateManager(), this);
+        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager) ((WorkspaceImpl)wsp).getItemStateManager();
+        ((RepositoryImpl)rep).initializeLocalItemStateManager(localISM, this, loginContext.getSubject());
     }
 
     protected SessionImpl(RepositoryImpl rep, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
             RepositoryException {
         super(rep, subject, wspConfig);
-        ((RepositoryImpl)rep).initializeLocalItemStateManager((HippoLocalItemStateManager)((WorkspaceImpl)wsp).getItemStateManager(), this);
+        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager) ((WorkspaceImpl)wsp).getItemStateManager();
+        ((RepositoryImpl)rep).initializeLocalItemStateManager(localISM, this, subject);
     }
 
     @Override
@@ -83,15 +88,5 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
             log.error(msg, ex);
             throw new RepositoryException(msg, ex);
         }
-    }
-
-    protected FacetedNavigationEngine.Context facetedContext;
-
-    public void setFacetedNavigationContext(FacetedNavigationEngine.Context context) {
-        facetedContext = context;
-    }
-
-    public FacetedNavigationEngine.Context getFacetedNavigationContext() {
-        return facetedContext;
     }
 }

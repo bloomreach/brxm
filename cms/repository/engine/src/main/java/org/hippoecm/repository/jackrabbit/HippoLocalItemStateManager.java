@@ -106,8 +106,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             ex.printStackTrace(System.err);
         }
 
-        /*
-
         try {
             viewProvider = new ViewVirtualProvider(this);
         } catch(RepositoryException ex) {
@@ -150,8 +148,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
-
-        */
 
     }
 

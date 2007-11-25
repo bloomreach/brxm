@@ -43,6 +43,6 @@ public class ItemVisitorDecorator extends AbstractDecorator implements ItemVisit
      * @inheritDoc
      */
     public void visit(Node node) throws RepositoryException {
-        visitor.visit(factory.getNodeDecorator(session, node, null));
+        visitor.visit(factory.getNodeDecorator(session, node));
     }
 }

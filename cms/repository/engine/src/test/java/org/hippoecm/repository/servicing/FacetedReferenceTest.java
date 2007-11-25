@@ -191,10 +191,8 @@ public class FacetedReferenceTest extends TestCase {
 
     public void testFacetedReference() throws Exception {
         Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        System.out.println("==============================================");
-        PrintStream ostream = new PrintStream("dump.txt");
-        Utilities.dump(ostream, session.getRootNode());
-        System.out.println("==============================================");
+        //PrintStream ostream = new PrintStream("dump.txt");
+        //Utilities.dump(ostream, session.getRootNode());
         assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds"));
         assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
         assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));

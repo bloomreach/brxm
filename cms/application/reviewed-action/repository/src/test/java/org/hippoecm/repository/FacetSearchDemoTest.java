@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository;
 
+import java.io.IOException;
+import java.io.PrintStream;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -68,8 +71,9 @@ public class FacetSearchDemoTest extends TestCase {
         }
     }
 
-    public void testTraversal() throws RepositoryException {
-        Utilities.dump(session.getRootNode().getNode("facetsearch-demo"));
+    public void testTraversal() throws RepositoryException, IOException {
+        PrintStream pstream =  new PrintStream("facetsearch-demo.dmp");
+        Utilities.dump(pstream, session.getRootNode().getNode("facetsearch-demo"));
 	String[] tests = {
             "facetsearch-demo/demo/By Brand/hippo:resultset/DeWalt Drill-Saw Kit 19.2v 9884CS",
             "facetsearch-demo/demo/By Brand/Bosch/hippo:resultset/Bosch 18-Volt Brute Tough Drill-Driver 33618"
