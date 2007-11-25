@@ -48,4 +48,14 @@ public class HippoNodeId extends NodeId
             return null;
         }
     }
+
+    public NodeState populate(NodeState state) {
+        try {
+            return provider.populate(state);
+        } catch(RepositoryException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+            return null;
+        }
+    }
 }
