@@ -114,7 +114,7 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
             throw new IllegalStateException("not initialized");
         }
 
-        if (system) {
+        if (system || (principal != null && principal.getName().equals("admin"))) {
             // system has always all permissions
             return;
         }
@@ -135,7 +135,7 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
             throw new IllegalStateException("not initialized");
         }
 
-        if (system) {
+        if (system || (principal != null && principal.getName().equals("admin"))) {
             // system has always all permissions
             return true;
         }
