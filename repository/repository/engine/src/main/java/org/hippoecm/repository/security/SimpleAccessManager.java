@@ -120,13 +120,11 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
             return;
         }
 
-        /*
         // FIXME; HREPTWO-281 resolvement, but should be replaced
         for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
             if("admin".equals(principal.getName()))
                 return;
         }
-        */
 
         super.checkPermission(id, permissions);
         
@@ -149,13 +147,11 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
             return true;
         }
 
-        /*
         // FIXME; HREPTWO-281 resolvement, but should be replaced
         for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
             if("admin".equals(principal.getName()))
                 return true;
         }
-        */
 
         if(super.isGranted(id, permissions) == false)
             return false;
