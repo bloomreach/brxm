@@ -29,4 +29,10 @@
   <name>Hippo ECM Maven Site Skin</name>
   <description>Maven site skin for Hippo ECM documentation</description>
 
+  <scm>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/maven-skin</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/maven-skin</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/maven-skin</url>
+  </scm>
+
 </project>
