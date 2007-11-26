@@ -115,16 +115,18 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
         }
 
 
+        if (system) {
+            // system has always all permissions
+            return;
+        }
+
+        /*
         // FIXME; HREPTWO-281 resolvement, but should be replaced
         for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
             if("admin".equals(principal.getName()))
                 return;
         }
-
-        if (system) {
-            // system has always all permissions
-            return;
-        }
+        */
 
         super.checkPermission(id, permissions);
         
@@ -142,16 +144,18 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
             throw new IllegalStateException("not initialized");
         }
 
+        if (system) {
+            // system has always all permissions
+            return true;
+        }
+
+        /*
         // FIXME; HREPTWO-281 resolvement, but should be replaced
         for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
             if("admin".equals(principal.getName()))
                 return true;
         }
-
-        if (system) {
-            // system has always all permissions
-            return true;
-        }
+        */
 
         if(super.isGranted(id, permissions) == false)
             return false;
