@@ -317,6 +317,12 @@
           </links>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <templateFile>src/site/site.vm</templateFile>
+        </configuration>
+      </plugin>      
     </plugins>
   </build>
 
