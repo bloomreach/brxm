@@ -45,7 +45,7 @@ public class PasswordLabel extends AjaxEditableLabel {
     @Override
     protected void onSubmit(AjaxRequestTarget target)
     {
-        this.label = "***";
+        this.label = "****************";
         super.onSubmit(target);
     }
 
