@@ -55,7 +55,8 @@ public class PropertyValueEditor extends DataView {
                 Label label = new Label("value", valueModel);
                 item.add(label);
             } else {
-                if (valueModel.getObject().toString().contains("\n")) {
+                String value = valueModel.getObject().toString();
+                if (value.contains("\n") || value.length() > 80) {
                     AjaxEditableMultiLineLabel editor = new AjaxEditableMultiLineLabel("value", valueModel) {
                         private static final long serialVersionUID = 1L;
                         @Override
