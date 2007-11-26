@@ -8,6 +8,9 @@
 - hippo:docbase (string) mandatory
 + * multiple
 
+[hippo:referenceable] mixin
+- hippo:uuid (string) mandatory
+
 [hippo:facetresult]
 - hippo:count (long)
 + * multiple

@@ -38,10 +38,12 @@ public interface HippoNodeType {
     final public static String NT_FACETSEARCH = "hippo:facetsearch";
     final public static String NT_FACETSELECT = "hippo:facetselect";
     final public static String NT_HANDLE = "hippo:handle";
+    final public static String NT_MIRROR = "hippo:mirror";
     final public static String NT_INITIALIZEFOLDER = "hippo:initializefolder";
     final public static String NT_INITIALIZEITEM = "hippo:initializeitem";
     final public static String NT_QUERY = "hippo:query";
     final public static String NT_QUERYFOLDER = "hippo:queryfolder";
+    final public static String NT_REFERENCEABLE = "hippo:referenceable";
     final public static String NT_TYPES = "hippo:types";
     final public static String NT_WORKFLOW = "hippo:workflow";
     final public static String NT_WORKFLOWCATEGORY = "hippo:workflowcategory";
@@ -69,6 +71,7 @@ public interface HippoNodeType {
     final public static String HIPPO_SEARCH = "hippo:search";
     final public static String HIPPO_SERVICE = "hippo:classname";
     final public static String HIPPO_TYPES = "hippo:types";
+    final public static String HIPPO_UUID = "hippo:uuid";
     final public static String HIPPO_VALUES = "hippo:values";
     final public static String HIPPO_WORKFLOWS = "hippo:workflows";
 
