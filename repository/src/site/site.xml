@@ -16,6 +16,12 @@
 -->
 <project name="Hippo ECM">
   
+  <skin>
+    <groupId>org.hippoecm</groupId>
+    <artifactId>hippo-ecm-maven-skin</artifactId>
+    <version>2.01.00-dev</version>
+  </skin>  
+  
   <bannerLeft>
     <name>Hippo ECM</name>
     <src>/images/style/hippo-logo.gif</src>
