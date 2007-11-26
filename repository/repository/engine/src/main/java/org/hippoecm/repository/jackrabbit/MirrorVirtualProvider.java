@@ -15,13 +15,19 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.conversion.NamePathResolver;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.nodetype.PropDef;
+import org.apache.jackrabbit.core.nodetype.PropDefId;
+import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
@@ -46,17 +52,45 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         }
     }
 
+    Name docbaseName;
+    Name jcrUUIDdocbaseName;
+    Name hippoUUIDName;
+    Name hippoReferenceableName;
+    Name mixinReferenceableName;
+
+    PropDef hippoUUIDPropDef;
+
+    private void initialize() throws RepositoryException {
+        docbaseName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_DOCBASE);
+        jcrUUIDdocbaseName = stateMgr.resolver.getQName("jcr:uuid");
+        hippoUUIDName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_UUID);
+        hippoReferenceableName = stateMgr.resolver.getQName(HippoNodeType.NT_REFERENCEABLE);
+        mixinReferenceableName = stateMgr.resolver.getQName("mix:referenceable");
+
+        PropDef[] propDefs = stateMgr.ntReg.getNodeTypeDef(hippoReferenceableName).getPropertyDefs();
+        int i;
+        for(i=0; i<propDefs.length; i++)
+            if(propDefs[i].getName().equals(hippoUUIDName)) {
+               hippoUUIDPropDef = propDefs[i];
+               break;
+            }
+        if(i == propDefs.length)
+            throw new RepositoryException("required nodetype "+HippoNodeType.NT_REFERENCEABLE+" not or badly defined");
+    }
+
     MirrorVirtualProvider(HippoLocalItemStateManager stateMgr) throws RepositoryException {
-        super(stateMgr, stateMgr.resolver.getQName("hippo:mirror"), null);
+        super(stateMgr, stateMgr.resolver.getQName(HippoNodeType.NT_MIRROR), null);
+        initialize();
     }
 
     protected MirrorVirtualProvider(HippoLocalItemStateManager stateMgr, Name external, Name virtual) throws RepositoryException {
         super(stateMgr, external, virtual);
+        initialize();
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
-        String docbase = getProperty(nodeId, "hippo:docbase")[0];
+        String docbase = getProperty(nodeId, docbaseName)[0];
         NodeState upstream = getNodeState(docbase);
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
@@ -70,19 +104,35 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         NodeState upstream = getNodeState(((MirrorNodeId)nodeId).upstream);
         NodeState state = createNew(nodeId, upstream.getNodeTypeName(), parentId);
         state.setNodeTypeName(upstream.getNodeTypeName());
-        state.setMixinTypeNames(upstream.getMixinTypeNames());
+
+        Set mixins = ((NodeState) state).getMixinTypeNames();
+        if(mixins.contains(mixinReferenceableName)) {
+            mixins = new HashSet(mixins);
+            mixins.remove(mixinReferenceableName);
+            mixins.add(hippoReferenceableName);
+            state.setMixinTypeNames(mixins);
+        } else {
+            state.setMixinTypeNames(mixins);
+        }
+
         state.setDefinitionId(upstream.getDefinitionId());
-        state.setPropertyNames(upstream.getPropertyNames());
         for(Iterator iter = upstream.getPropertyNames().iterator(); iter.hasNext(); ) {
             Name propName = (Name) iter.next();
             PropertyId upstreamPropId = new HippoPropertyId(upstream.getNodeId(), propName);
             PropertyState upstreamPropState = getPropertyState(upstreamPropId);
+            PropDefId propDefId = upstreamPropState.getDefinitionId();
+            if(propName.equals(jcrUUIDdocbaseName)) {
+                propName = hippoUUIDName;
+                propDefId = hippoUUIDPropDef.getId();
+            }
+            state.addPropertyName(propName);
             PropertyState propState = createNew(propName, state.getNodeId());
             propState.setType(upstreamPropState.getType());
-            propState.setDefinitionId(upstreamPropState.getDefinitionId());
+            propState.setDefinitionId(propDefId);
             propState.setValues(upstreamPropState.getValues());
             propState.setMultiValued(upstreamPropState.isMultiValued());
         }
+
         populateChildren(nodeId, state, upstream);
         return state;
     }

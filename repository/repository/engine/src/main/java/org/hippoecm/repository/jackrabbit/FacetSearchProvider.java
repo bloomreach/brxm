@@ -185,7 +185,7 @@ public class FacetSearchProvider extends HippoVirtualProvider
 
         FacetResultSetProvider.FacetResultSetNodeId childNodeId;
         childNodeId = subNodesProvider . new FacetResultSetNodeId(state.getNodeId(),queryname,docbase,search,count);
-        state.addChildNodeEntry(stateMgr.resolver.getQName("hippo:resultset"), childNodeId);
+        state.addChildNodeEntry(stateMgr.resolver.getQName(HippoNodeType.HIPPO_RESULTSET), childNodeId);
 
         return state;
     }

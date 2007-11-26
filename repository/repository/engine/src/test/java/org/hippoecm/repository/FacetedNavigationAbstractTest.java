@@ -205,6 +205,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     }
 
     public void tearDown() throws Exception {
+        session.refresh(false);
         if(session.getRootNode().hasNode("navigation")) {
             session.getRootNode().getNode("navigation").remove();
         }
@@ -224,14 +225,15 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     protected Node commonStart() throws RepositoryException {
         documents = fill();
         Node node = session.getRootNode().getNode("navigation");
-        node = node.addNode("xyz",HippoNodeType.NT_FACETSEARCH);
-        node.setProperty(HippoNodeType.HIPPO_QUERYNAME,"xyz");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE,"/documents");
-        node.setProperty(HippoNodeType.HIPPO_FACETS,new String[] { "x", "y", "z" });
+        node = node.addNode("xyz", HippoNodeType.NT_FACETSEARCH);
+        node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/documents");
+        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
         session.save();
         session.refresh(false);
         return session.getRootNode().getNode("navigation").getNode("xyz");
     }
+
     protected void commonEnd() throws RepositoryException {
         session.refresh(false);
     }

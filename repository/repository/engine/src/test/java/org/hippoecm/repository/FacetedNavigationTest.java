@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -73,7 +74,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         commonEnd();
     }
 
-    public void getGetItemFromNode() throws RepositoryException {
+    public void testGetItemFromNode() throws RepositoryException {
         commonStart();
         
         String basePath = "/navigation/xyz/x1/y1/z2";
@@ -87,6 +88,27 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         
         Node resultSetNode_2 = (Node)session.getItem(basePath + "/" + HippoNodeType.HIPPO_RESULTSET);
         assertNotNull(resultSetNode_2);
+        
+        commonEnd();
+    }
+
+    public void testVirtualNodeHasNoJcrUUID() throws RepositoryException {
+        commonStart();
+        
+        Node node = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1").getNode("y1").getNode("z2");
+        node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
+
+        // deliberate while loop to force that we have at least one child node to traverse
+        NodeIterator iter = node.getNodes();
+        do {
+            node = iter.nextNode();
+            assertFalse(node.hasProperty("jcr:uuid"));
+            assertTrue(node.hasProperty("hippo:uuid"));
+            /* FIXME: enable these for checks for HREPTWO-283
+               assertFalse(node.isNodeType("mix:referenceable"));
+               assertTrue(node.isNodeType("hippo:referenceable"));
+            */
+        } while(iter.hasNext());
         
         commonEnd();
     }

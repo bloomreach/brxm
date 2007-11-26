@@ -61,7 +61,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 class HippoLocalItemStateManager extends XAItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
     
-    protected NodeTypeRegistry ntReg;
+    NodeTypeRegistry ntReg;
     protected HierarchyManager hierMgr;
     protected NamePathResolver resolver;
     private FacetedNavigationEngine facetedEngine;
@@ -82,6 +82,10 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     
     void register(Name nodeTypeName, HippoVirtualProvider provider) {
         virtualProviders.put(nodeTypeName, provider);
+    }
+
+    void registerProperty(Name propName) {
+        virtualProperties.add(propName);
     }
 
     void initialize(NamePathResolver resolver, HierarchyManager hierMgr,
@@ -186,7 +190,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
         ItemState state = super.getItemState(id);
         if(id instanceof HippoNodeId && !virtualNodes.containsKey(id)) {
-            //System.err.println("BERRY LOCALISM.getItemState(id).HippoNodeId");
             edit();
             NodeState nodeState;
             if(state != null) {
@@ -203,7 +206,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             NodeState nodeState = (NodeState) state;
             Name nodeTypeName = nodeState.getNodeTypeName();
             if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
-                //System.err.println("BERRY LOCALISM.getItemState(id).external");
                 edit();
                 try {
                     virtualStates.add(state);
@@ -225,18 +227,14 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     public NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException {
         NodeState state = null;
         try {
-            //System.err.println("BERRY LOCALISM.getNodeState(id).unexpected#TRY");
             state = super.getNodeState(id);
         } catch(NoSuchItemStateException ex) {
             if(!(id instanceof HippoNodeId)) {
-                //System.err.println("BERRY LOCALISM.getNodeState(id).unexpected#1");
                 throw ex;
             }
         } catch(ItemStateException ex) {
-            //System.err.println("BERRY LOCALISM.getNodeState(id).unexpected#2");
         }
         if(id instanceof HippoNodeId) {
-            //System.err.println("BERRY LOCALISM.getNodeState(id).HippoNodeId");
             edit();
             NodeState nodeState = ((HippoNodeId)id).populate();
             virtualNodes.put((HippoNodeId)id, nodeState);
@@ -249,7 +247,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
          */
         Name nodeTypeName = state.getNodeTypeName();
         if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
-            //System.err.println("BERRY LOCALISM.getNodeState(id).external");
             edit();
             try {
                 virtualStates.add(state);
@@ -338,7 +335,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                         try {
                             nodeState = (NodeState) get(nodeState.getParentId());
                             if(nodeState != null) {
-nodeState.removeAllChildNodeEntries();
                                 nodeState.removeChildNodeEntry(nodeState.getNodeId());
                                 stateModified(state);
                                 nodeState.setStatus(ItemState.STATUS_STALE_MODIFIED);
