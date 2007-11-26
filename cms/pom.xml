@@ -46,6 +46,7 @@
     <module>application</module>
     <module>addon</module>    
     <module>tools</module>
+    <module>maven-skin</module>
   </modules>
   
   <properties>
