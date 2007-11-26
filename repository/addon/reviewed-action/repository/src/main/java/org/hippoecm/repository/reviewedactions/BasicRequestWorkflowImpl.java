@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.servicing.WorkflowImpl;
 
 public class BasicRequestWorkflowImpl extends WorkflowImpl implements BasicRequestWorkflow {
@@ -31,7 +31,7 @@ public class BasicRequestWorkflowImpl extends WorkflowImpl implements BasicReque
     public BasicRequestWorkflowImpl() throws RemoteException {
     }
 
-    public void cancelRequest() throws WorkflowException, WorkflowMappingException, RepositoryException {
+    public void cancelRequest() throws WorkflowException, MappingException, RepositoryException {
         document = null;
         request = null;
     }

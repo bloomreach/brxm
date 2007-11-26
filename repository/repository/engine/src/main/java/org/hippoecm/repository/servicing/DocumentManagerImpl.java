@@ -21,23 +21,28 @@ import java.util.Properties;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.jpox.PersistenceManagerFactoryImpl;
+
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.pojo.JCROID;
 import org.hippoecm.repository.pojo.StoreManagerImpl;
-import org.jpox.PersistenceManagerFactoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DocumentManagerImpl
   implements DocumentManager
@@ -113,20 +118,38 @@ public class DocumentManagerImpl
         }
     }
 
-    public Document getDocument(String category, String identifier) throws RepositoryException {
-        Node queryNode = session.getNodeByUUID(configuration).getNode(category);
-        String queryLanguage = queryNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-        String queryString = queryNode.getProperty(HippoNodeType.HIPPO_QUERY).getString();
-        queryString = queryString.replace("?", identifier);
-        Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
-        QueryResult result = query.execute();
-        NodeIterator iter = result.getNodes();
-        if (iter.hasNext()) {
-            Node resultNode = iter.nextNode();
-            String uuid = resultNode.getUUID();
-            return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
-                    queryNode.getNode(HippoNodeType.NT_TYPES));
-        } else {
+    public Document getDocument(String category, String identifier) throws MappingException, RepositoryException {
+        try {
+            Node queryNode = session.getNodeByUUID(configuration).getNode(category);
+            String queryLanguage = queryNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+            String queryString = queryNode.getProperty(HippoNodeType.HIPPO_QUERY).getString();
+            queryString = queryString.replace("?", identifier);
+            if(log.isDebugEnabled()) {
+                log.debug("executing query"+queryString);
+            }
+            Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
+            QueryResult result = query.execute();
+            NodeIterator iter = result.getNodes();
+            if (iter.hasNext()) {
+                Node resultNode = iter.nextNode();
+                String uuid = resultNode.getUUID();
+                return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
+                                            queryNode.getNode(HippoNodeType.NT_TYPES));
+            } else {
+                return null;
+            }
+        } catch(javax.jdo.JDODataStoreException ex) {
+            System.err.println("JDODataStoreException: "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            throw new MappingException("Representing JCR data to Java object failed", ex);
+        } catch(PathNotFoundException ex) {
+            System.err.println("PathNotFoundException: "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            /* getDocument cannot and should not be used to create documents.
+             * null is a valid way to check whether the document looked for exist,
+             * as this is the only way for e.g. Workflow plugins to lookup
+             * documents.
+             */
             return null;
         }
     }

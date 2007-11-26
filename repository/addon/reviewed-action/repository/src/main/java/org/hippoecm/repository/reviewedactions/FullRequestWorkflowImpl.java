@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 
 public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
 
@@ -29,7 +29,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
     public FullRequestWorkflowImpl() throws RemoteException {
     }
 
-    public void acceptRequest() throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException {
+    public void acceptRequest() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         System.err.println("accepting request for document ");
         if(PublicationRequest.DELETE.equals(request.type)) {
             workflow.delete();
@@ -40,10 +40,10 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
         } else if(PublicationRequest.REJECTED.equals(request.type)) {
             throw new WorkflowException("request has already been rejected");
         } else
-            throw new WorkflowMappingException("unknown publication request");
+            throw new MappingException("unknown publication request");
     }
 
-    public void rejectRequest(String reason) throws WorkflowException, WorkflowMappingException, RepositoryException {
+    public void rejectRequest(String reason) throws WorkflowException, MappingException, RepositoryException {
         System.err.println("rejecting request for document ");
         request.type = PublicationRequest.REJECTED;
         request.reason = reason;

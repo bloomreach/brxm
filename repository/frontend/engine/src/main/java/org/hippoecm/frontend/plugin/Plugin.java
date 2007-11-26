@@ -30,7 +30,7 @@ import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 
 public abstract class Plugin extends Panel implements EventConsumer {
 
@@ -104,7 +104,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
             WorkflowManager manager = getPluginManager().getWorkflowManager();
             WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(getId(), model.getNode());
             workflow = manager.getWorkflow(descriptor);
-        } catch (WorkflowMappingException e) {
+        } catch (MappingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (RepositoryException e) {

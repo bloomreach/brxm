@@ -20,18 +20,18 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 
 public interface FullRequestWorkflow extends BasicRequestWorkflow {
     /**
      * Approve and execute or schedule request
      */
     public void acceptRequest()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Rejects request with given reason
      */
     public void rejectRequest(String reason)
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

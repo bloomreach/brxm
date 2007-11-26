@@ -19,7 +19,7 @@ import java.util.Date;
 import java.rmi.RemoteException;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.servicing.WorkflowImpl;
 
 public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements FullReviewedActionsWorkflow {
@@ -70,7 +70,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
         }            
     }
 
-    public void publish() throws WorkflowException, WorkflowMappingException {
+    public void publish() throws WorkflowException, MappingException {
         System.err.println("publication on document ");
         try {
             if(draft != null) {

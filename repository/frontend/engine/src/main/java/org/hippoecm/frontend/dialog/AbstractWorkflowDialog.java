@@ -23,7 +23,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 
 /**
  * A dialog operating in a workflow context. Each workflow action should
@@ -49,7 +49,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
             WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, nodeModel.getNode());
             workflow = manager.getWorkflow(workflowDescriptor);
 
-        } catch (WorkflowMappingException e) {
+        } catch (MappingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (RepositoryException e) {

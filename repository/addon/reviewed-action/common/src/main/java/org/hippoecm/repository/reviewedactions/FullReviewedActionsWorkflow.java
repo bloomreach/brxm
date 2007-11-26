@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 
 public interface FullReviewedActionsWorkflow extends BasicReviewedActionsWorkflow {
     /**
@@ -29,39 +29,39 @@ public interface FullReviewedActionsWorkflow extends BasicReviewedActionsWorkflo
      * The current user must have authorization for this.
      */
     public void delete()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request unpublication and deletion of document.
      */
     public void requestDeletion()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Immediate unpublication.
      * The current user must have authorization for this.
      */
     public void depublish()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Immediate publication.
      * The current user must have authorization for this.
      */
     public void publish()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Publish at the requested date.
      * The current user must have authorization for this.
      */
     public void publish(Date publicationDate)
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Publish at the requested date, and depublish at the requested second date
      * The current user must have authorization for this.
      */
     public void publish(Date publicationDate, Date unpublicationDate)
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
