@@ -33,9 +33,10 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 
-import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
+import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 
 public class FacetSearchProvider extends HippoVirtualProvider
 {
@@ -172,7 +173,8 @@ public class FacetSearchProvider extends HippoVirtualProvider
                     newSearch[newSearch.length-1] = "@" + facets[0].substring(0,facets[0].indexOf("#")) + "='" + facetValue.getKey() + "'" + facets[0].substring(facets[0].indexOf("#"));
                 
                 FacetSearchNodeId childNodeId = new FacetSearchNodeId(state.getNodeId());
-                state.addChildNodeEntry(stateMgr.resolver.getQName(facetValue.getKey()), childNodeId);
+                Name childName = stateMgr.resolver.getQName(ISO9075Helper.encodeLocalName(facetValue.getKey()));
+                state.addChildNodeEntry(childName, childNodeId);
                 childNodeId.queryname = queryname;
                 childNodeId.docbase = docbase;
                 childNodeId.facets = newFacets;
