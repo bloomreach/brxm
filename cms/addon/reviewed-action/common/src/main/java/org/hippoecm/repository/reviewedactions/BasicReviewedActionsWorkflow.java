@@ -22,57 +22,57 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 
 public interface BasicReviewedActionsWorkflow extends Workflow {
     /**
      * Request this editable copy of the document.
      */
     public void obtainEditableInstance()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Do away with the editable copy of the document which was previously
      * obtained.
      */
     public void disposeEditableInstance()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request unpublication and deletion of document.
      */
     public void requestDeletion()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request unpublication.
      */
     public void requestDepublication()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request unpublication at given date.
      */
     public void requestDepublication(Date publicationDate)
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request for this instance of the document to be published.
      */
     public void requestPublication()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request for this instance of the document to be published at the given
      * date.
      */
     public void requestPublication(Date publicationDate)
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request for this instance of the document to be published at the given
      * date and to be scheduled for unpublication.
      */
     public void requestPublication(Date publicationDate, Date unpublicationDate)
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException;
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

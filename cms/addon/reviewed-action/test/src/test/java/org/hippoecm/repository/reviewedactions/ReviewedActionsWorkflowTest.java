@@ -30,7 +30,7 @@ import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowMappingException;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 
@@ -121,7 +121,7 @@ public class ReviewedActionsWorkflowTest extends TestCase
     }
 
     public void testReviewedAction()
-        throws WorkflowException, WorkflowMappingException, RepositoryException, RemoteException
+        throws WorkflowException, MappingException, RepositoryException, RemoteException
     {
         Node node, root = session.getRootNode();
 

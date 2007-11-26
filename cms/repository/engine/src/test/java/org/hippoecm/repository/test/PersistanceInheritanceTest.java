@@ -45,10 +45,8 @@ public class PersistanceInheritanceTest extends TestCase
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node, root = session.getRootNode();
 
-        node = root.addNode("hippo:configuration","hippo:configuration");
-        node.addNode("hippo:workflows","hippo:workflowfolder");
-
-        node = node.addNode("hippo:documents","hippo:queryfolder");
+        node = root.getNode("hippo:configuration");
+        node = node.getNode("hippo:documents");
         node = node.addNode("test");
         node.setProperty("hippo:query","documents/?");
         node.setProperty("hippo:language",javax.jcr.query.Query.XPATH);
@@ -85,6 +83,9 @@ public class PersistanceInheritanceTest extends TestCase
     public void testInheritance() throws RepositoryException {
         HippoWorkspace wsp = (HippoWorkspace)(session.getWorkspace());
         DocumentManager dmngr = wsp.getDocumentManager();
-        //SubClass document = (SubClass) dmngr.getDocument("test", "mydocument");
+        SubClass document = (SubClass) dmngr.getDocument("test", "mydocument");
+        assertNotNull(document);
+        assertEquals("1", document.superfield);
+        assertEquals("2", document.subfield);
     }
 }

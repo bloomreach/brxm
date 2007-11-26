@@ -17,12 +17,12 @@ package org.hippoecm.repository.api;
 
 import javax.jcr.RepositoryException;
 
-public class WorkflowMappingException extends RepositoryException {
-    public WorkflowMappingException(String message) {
+public class MappingException extends RepositoryException {
+    public MappingException(String message) {
         super(message);
     }
 
-    public WorkflowMappingException(String message, Exception reason) {
+    public MappingException(String message, Exception reason) {
         super(message, reason);
     }
 }

@@ -24,7 +24,7 @@ public interface WorkflowManager {
     
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException;
 
-    public Workflow getWorkflow(String category, Node item) throws WorkflowMappingException, RepositoryException;
+    public Workflow getWorkflow(String category, Node item) throws MappingException, RepositoryException;
 
-    public Workflow getWorkflow(WorkflowDescriptor descriptor) throws WorkflowMappingException, RepositoryException;
+    public Workflow getWorkflow(WorkflowDescriptor descriptor) throws MappingException, RepositoryException;
 }
