@@ -163,9 +163,6 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <excludes>
-            <exclude>**/FacetedNavigationIssueTest.java</exclude>
-          </excludes>
           <systemProperties>
             <property>
               <name>history.points</name>
