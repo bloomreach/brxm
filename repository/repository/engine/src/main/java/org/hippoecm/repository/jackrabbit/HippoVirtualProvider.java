@@ -146,7 +146,11 @@ public abstract class HippoVirtualProvider
 
     public NodeState getNodeState(String absPath) throws RepositoryException {
         try {
-            return stateMgr.getNodeState(getNodeId(absPath));
+            NodeId nodeId = getNodeId(absPath);
+            if(nodeId != null)
+                return stateMgr.getNodeState(nodeId);
+            else
+                return null;
         } catch(NoSuchItemStateException ex) {
             return null;
         } catch(ItemStateException ex) {

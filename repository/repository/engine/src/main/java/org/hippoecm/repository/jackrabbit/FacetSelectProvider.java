@@ -43,24 +43,29 @@ public class FacetSelectProvider extends HippoVirtualProvider
         String[] newValues = getProperty(nodeId, HippoNodeType.HIPPO_VALUES);
         String[] newModes  = getProperty(nodeId, HippoNodeType.HIPPO_MODES);
 
-        Map<String,String> view = new HashMap<String,String>();
-        if(newFacets.length != newValues.length || newFacets.length != newModes.length)
-            throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
-        for(int i=0; i<newFacets.length; i++) {
-            if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select")) {
-                view.put(newFacets[i], newValues[i]);
-            } else if(newModes[i].equalsIgnoreCase("clear")) {
-                view.remove(newFacets[i]);
-            }
-        }
         NodeState dereference = getNodeState(docbase);
-        for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-            NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            if(subNodesProvider.match(view, entry.getId())) {
-                NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(), view);
-                state.addChildNodeEntry(entry.getName(), childNodeId);
+
+        if(dereference != null) {
+
+            Map<String,String> view = new HashMap<String,String>();
+            if(newFacets.length != newValues.length || newFacets.length != newModes.length)
+                throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
+            for(int i=0; i<newFacets.length; i++) {
+                if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select")) {
+                    view.put(newFacets[i], newValues[i]);
+                } else if(newModes[i].equalsIgnoreCase("clear")) {
+                    view.remove(newFacets[i]);
+                }
+            }
+            for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
+                NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+                if(subNodesProvider.match(view, entry.getId())) {
+                    NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(), view);
+                    state.addChildNodeEntry(entry.getName(), childNodeId);
+                }
             }
         }
+
         return state;
     }
 
