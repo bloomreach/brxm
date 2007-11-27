@@ -59,7 +59,7 @@
           <!-- FIXME Frank: link to repo viewer in demo war -->
         </p>
 <source>
-/configuration/frontend/default
+/hippo:configuration/hippo:frontend/default
 </source>
       </subsection>
 
