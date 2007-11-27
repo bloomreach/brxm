@@ -89,8 +89,9 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     }
 
     public String getDisplayName() throws RepositoryException {
-        if (hasProperty("hippo:uuid")) {
-            
+        //if (hasProperty(HippoNodeType.HIPPO_UUID) && hasProperty(HippoNodeType.HIPPO_SEARCH)) {
+        if (hasProperty(HippoNodeType.HIPPO_SEARCH)) {
+
             // hippo:authorId#//element(*,hippo:author)[hippo:id=?]/@hippo:name
             // just return the resultset
             if (getName().equals(HippoNodeType.HIPPO_RESULTSET)) {

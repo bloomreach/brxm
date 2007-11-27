@@ -225,6 +225,13 @@ public class FacetSearchProvider extends HippoVirtualProvider
         propState.setMultiValued(true);
         state.addPropertyName(searchName);
 
+        propState = createNew(countName, nodeId);
+        propState.setType(PropertyType.LONG);
+        propState.setDefinitionId(countPropDef.getId());
+        propState.setValues(new InternalValue[] { InternalValue.create(searchNodeId.count) });
+        propState.setMultiValued(false);
+        state.addPropertyName(countName);
+
         return populate(state);
     }
 }
