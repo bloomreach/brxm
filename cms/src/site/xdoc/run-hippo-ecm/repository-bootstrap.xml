@@ -66,10 +66,11 @@
       
         <p>
           A new functionality package is described using a JCR node of node-type
-          <b>hippo:initializeitem</b> and this node should be placed in the repository at the
-          location <code>/configuration/initialize</code>. Certain (optional) properties describe
-          how to bootstrap the repository to include the new features which are executed
-          upon having saved (see note below) the node.
+          <b>hippo:initializeitem</b> and this node should be placed in the
+          repository at the location
+          <code>/hippo:configuration/hippo:initialize</code>. Certain (optional)
+          properties describe how to bootstrap the repository to include the new
+          features which are executed upon having saved (see note below) the node.
         </p>
         
         <p>
@@ -131,7 +132,7 @@
       
         <source>
 Session session = ...;
-Node node = session.getRootNode().addNode("/configuration/initialize", "hippo:initializefolder");
+Node node = session.getRootNode().addNode("/hippo:configuration/hippo:initialize", "hippo:initializefolder");
 node = node.addNode("demo","hippo:initializeitem");
 node.setProperty("hippo:namespace", "http://www.revolutionware.org/nt/1.0");
 node.setProperty("hippo:nodetypes", "nodetypes.cnd");

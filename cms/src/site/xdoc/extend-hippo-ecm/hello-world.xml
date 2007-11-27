@@ -259,7 +259,7 @@ mvn jetty:run-war
         <p>
           All it takes to see our plugin in all its glory is to replace one of the
           standard plugins in the plugin configuration with our own. To do this, navigate to
-          /configuration/frontend/default/rootPlugin/contentPlugin.
+          /hippo:configuration/hippo:frontend/default/rootPlugin/contentPlugin.
           in the tree, and click on contentPlugin node. The properties of the contentPlugin node
           are displayed on the right side of the page. 
           Now change the class name
