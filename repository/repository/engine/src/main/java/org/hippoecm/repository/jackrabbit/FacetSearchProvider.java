@@ -93,11 +93,13 @@ public class FacetSearchProvider extends HippoVirtualProvider
         searchName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_SEARCH);
         countName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_COUNT);
 
-        querynamePropDef = definePropDef(querynameName, PropertyType.STRING);
-        docbasePropDef = definePropDef(docbaseName, PropertyType.STRING);
-        facetsPropDef = definePropDef(facetsName, PropertyType.STRING);
-        searchPropDef = definePropDef(searchName, PropertyType.STRING);
-        countPropDef = definePropDef(countName, PropertyType.LONG);
+        stateMgr.registerProperty(countName);
+
+        querynamePropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSEARCH), querynameName);
+        docbasePropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSEARCH), docbaseName);
+        facetsPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSEARCH), facetsName);
+        searchPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSEARCH), searchName);
+        countPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSEARCH), countName);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
@@ -222,13 +224,6 @@ public class FacetSearchProvider extends HippoVirtualProvider
         propState.setValues(InternalValue.create(searchNodeId.search));
         propState.setMultiValued(true);
         state.addPropertyName(searchName);
-
-        propState = createNew(countName, nodeId);
-        propState.setType(PropertyType.LONG);
-        propState.setDefinitionId(countPropDef.getId());
-        propState.setValues(new InternalValue[] { InternalValue.create(searchNodeId.count) });
-        propState.setMultiValued(false);
-        state.addPropertyName(countName);
 
         return populate(state);
     }
