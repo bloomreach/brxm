@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.admin.editor;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
@@ -43,8 +42,8 @@ public class NodeEditor extends Form {
 
             protected void onAddNodeType(String type) {
                 try {
-                    JcrNodeModel model = (JcrNodeModel) NodeEditor.this.getModel();
-                    Node node = model.getNode();
+                    JcrNodeModel editorModel = (JcrNodeModel) NodeEditor.this.getModel();
+                    Node node = editorModel.getNode();
                     node.addMixin(type);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -53,8 +52,8 @@ public class NodeEditor extends Form {
             
             protected void onRemoveNodeType(String type) {
                 try {
-                    JcrNodeModel model = (JcrNodeModel) NodeEditor.this.getModel();
-                    Node node = model.getNode();
+                    JcrNodeModel editorModel = (JcrNodeModel) NodeEditor.this.getModel();
+                    Node node = editorModel.getNode();
                     node.removeMixin(type);
                 } catch (Exception e) {
                     e.printStackTrace();
