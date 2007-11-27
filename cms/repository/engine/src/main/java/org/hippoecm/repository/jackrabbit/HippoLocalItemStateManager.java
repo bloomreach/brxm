@@ -337,19 +337,19 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                             if(nodeState != null) {
                                 nodeState.removeChildNodeEntry(nodeState.getNodeId());
                                 stateModified(state);
-                                nodeState.setStatus(ItemState.STATUS_STALE_MODIFIED);
+                                nodeState.setStatus(ItemState.STATUS_EXISTING);
                             }
                         } catch(NoSuchItemStateException ex) {
                         }
                     } else {
-                        stateDiscarded(state);
-                        state.setStatus(ItemState.STATUS_UNDEFINED);
+                        stateDestroyed(state);
+                        state.setStatus(ItemState.STATUS_EXISTING);
                     }
                 }
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     ((NodeState)state).removeAllChildNodeEntries();
-                    state.setStatus(ItemState.STATUS_STALE_MODIFIED);
                     stateModified(state);
+                    state.setStatus(ItemState.STATUS_EXISTING);
                     virtualStates.add(state);
                 }
             }
@@ -358,7 +358,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     ((NodeState)state).removeAllChildNodeEntries();
                     stateModified(state);
-                    state.setStatus(ItemState.STATUS_STALE_MODIFIED);
+                    state.setStatus(ItemState.STATUS_EXISTING);
                 }
             }
         }

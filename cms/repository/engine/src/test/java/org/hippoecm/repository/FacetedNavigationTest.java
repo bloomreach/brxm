@@ -105,31 +105,64 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
             assertFalse(node.hasProperty("jcr:uuid"));
             assertTrue(node.hasProperty("hippo:uuid"));
             /* FIXME: enable these for checks for HREPTWO-283
-               assertFalse(node.isNodeType("mix:referenceable"));
-               assertTrue(node.isNodeType("hippo:referenceable"));
-            */
+             *  assertFalse(node.isNodeType("mix:referenceable"));
+             *  assertTrue(node.isNodeType("hippo:referenceable"));
+             */
         } while(iter.hasNext());
         
         commonEnd();
     }
 
-    public static void main(String[] args) {
-        try {
-            String location = args.length > 0 ? args[0] : "rmi://localhost:1099/jackrabbit.repository";
-            HippoRepository repository;
-            if (location != null) {
-                repository = HippoRepositoryFactory.getHippoRepository(location);
-            } else {
-                repository = HippoRepositoryFactory.getHippoRepository();
-            }
-            FacetedNavigationTest filler = new FacetedNavigationTest();
-            Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-            filler.fill();
-            session.logout();
-            repository.close();
-        } catch (Exception ex) {
-            System.err.println("RepositoryException: " + ex.getMessage());
-            ex.printStackTrace(System.err);
-        }
+    public void testAddingNodesOpenFacetSearch() throws RepositoryException {
+        commonStart();
+
+        Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+        traverse(searchNode);
+
+        assertFalse(searchNode.getNode("x1").hasNode("yy"));
+        session.refresh(false);
+        session.save();
+
+        node = session.getRootNode().getNode("documents");
+        child = node.addNode("test", HippoNodeType.NT_DOCUMENT);
+        child.setProperty("x", "x1");
+        child.setProperty("y", "yy");
+        node.save();
+
+        searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+        assertTrue(searchNode.getNode("x1").hasNode("yy"));
+        assertTrue(searchNode.getNode("x1").getNode("yy").hasNode(HippoNodeType.HIPPO_RESULTSET));
+        assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test"));
+        assertFalse(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test[2]"));
+
+        node = session.getRootNode().getNode("documents");
+        child = node.addNode("test", HippoNodeType.NT_DOCUMENT);
+        child.setProperty("x", "x1");
+        child.setProperty("y", "yy");
+        session.save();
+
+        searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+        assertTrue(searchNode.getNode("x1").hasNode("yy"));
+        assertTrue(searchNode.getNode("x1").getNode("yy").hasNode(HippoNodeType.HIPPO_RESULTSET));
+        assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test"));
+        assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test[2]"));
+
+        session.getRootNode().getNode("documents").getNode("test").setProperty("y","zz");
+        session.save();
+        session.refresh(false);
+
+        /*
+        searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+        assertTrue(searchNode.getNode("x1").hasNode("yy"));
+        assertTrue(searchNode.getNode("x1").getNode("yy").hasNode(HippoNodeType.HIPPO_RESULTSET));
+        assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test"));
+        assertFalse(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test[2]"));
+        assertTrue(searchNode.getNode("x1").getNode("zz").hasNode(HippoNodeType.HIPPO_RESULTSET));
+        */
+
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+
+        commonEnd();
     }
 }

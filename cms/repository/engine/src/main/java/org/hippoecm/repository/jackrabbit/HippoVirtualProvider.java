@@ -64,6 +64,16 @@ public abstract class HippoVirtualProvider
         return propDef;
     }
 
+    PropDef lookupPropDef(Name nodeName, Name propName) throws RepositoryException {
+        PropDef[] propDefs = stateMgr.ntReg.getNodeTypeDef(nodeName).getPropertyDefs();
+        int i;
+        for(i=0; i<propDefs.length; i++)
+            if(propDefs[i].getName().equals(propName)) {
+               return propDefs[i];
+            }
+        throw new RepositoryException("required nodetype not or badly defined");
+    }
+
     private HippoVirtualProvider() {
     }
 

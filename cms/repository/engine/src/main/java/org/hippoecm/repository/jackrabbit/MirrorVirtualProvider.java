@@ -67,15 +67,8 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         hippoReferenceableName = stateMgr.resolver.getQName(HippoNodeType.NT_REFERENCEABLE);
         mixinReferenceableName = stateMgr.resolver.getQName("mix:referenceable");
 
-        PropDef[] propDefs = stateMgr.ntReg.getNodeTypeDef(hippoReferenceableName).getPropertyDefs();
-        int i;
-        for(i=0; i<propDefs.length; i++)
-            if(propDefs[i].getName().equals(hippoUUIDName)) {
-               hippoUUIDPropDef = propDefs[i];
-               break;
-            }
-        if(i == propDefs.length)
-            throw new RepositoryException("required nodetype "+HippoNodeType.NT_REFERENCEABLE+" not or badly defined");
+        hippoUUIDPropDef = lookupPropDef(hippoReferenceableName, hippoUUIDName);
+
     }
 
     MirrorVirtualProvider(HippoLocalItemStateManager stateMgr) throws RepositoryException {
