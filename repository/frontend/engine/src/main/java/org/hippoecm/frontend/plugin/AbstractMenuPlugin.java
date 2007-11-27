@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;

@@ -50,6 +50,10 @@ public class PluginManager implements IClusterable {
         plugins.put(id, plugin);
     }
 
+    public PluginConfig getPluginConfig() {
+        return pluginConfig;
+    }
+
     public WorkflowManager getWorkflowManager() {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
@@ -62,31 +66,19 @@ public class PluginManager implements IClusterable {
     }
 
     public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        updateEventConsumers(target, jcrEvent);
-        reconfigurePlugins(target, jcrEvent);
-    }
-
-    public PluginConfig getPluginConfig() {
-        return pluginConfig;
-    }
-
-    // privates
-
-    private void reconfigurePlugins(AjaxRequestTarget target, JcrEvent jcrEvent) {
         Iterator it = plugins.values().iterator();
 
         while (it.hasNext()) {
             Plugin plugin = (Plugin) it.next();
-            Plugin parentPlugin = plugin.getParentPlugin();
+            updatePlugin(plugin, target, jcrEvent);
+
             Node node = jcrEvent.getModel().getNode();
-
-            if (parentPlugin != null && node != null) {
+            if (node != null) {
                 PluginDescriptor descriptor = plugin.getDescriptor();
-                WorkflowManager manager = getWorkflowManager();
-
                 try {
                     //TODO: add optional property 'workflowcategory' to 
                     //frontend plugin configuration nodes and use that instead of the plugin id.
+                    WorkflowManager manager = getWorkflowManager();
                     String workflowCategory = descriptor.getPluginId();
                     WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
 
@@ -100,11 +92,16 @@ public class PluginManager implements IClusterable {
 
                     String currentPluginClass = plugin.getClass().getName();
                     if (!newPluginClass.equals(currentPluginClass)) {
-                        parentPlugin.removeChild(descriptor);
-                        descriptor.setClassName(newPluginClass);
-                        parentPlugin.addChild(descriptor);
-                        target.addComponent(parentPlugin);
+                        Plugin parentPlugin = plugin.getParentPlugin();
+                        if (parentPlugin != null) {
+                            parentPlugin.removeChild(descriptor);
+                            descriptor.setClassName(newPluginClass);
+                            plugin = parentPlugin.addChild(descriptor);
+                            updatePlugin(plugin, target, jcrEvent);
+                            target.addComponent(parentPlugin);
+                        }
                     }
+
                 } catch (RepositoryException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -113,22 +110,20 @@ public class PluginManager implements IClusterable {
         }
     }
 
-    private void updateEventConsumers(final AjaxRequestTarget target, final JcrEvent jcrEvent) {
-        Iterator it = plugins.values().iterator();
-        while (it.hasNext()) {
-            Plugin plugin = (Plugin) it.next();
-            plugin.update(target, jcrEvent);
+    // privates
 
-            //Plugins can have DialogWindows as children, 
-            //these need to be updated to.
-            plugin.visitChildren(DialogWindow.class, new IVisitor() {
-                public Object component(Component component) {
-                    DialogWindow dialogWindow = (DialogWindow) component;
-                    dialogWindow.update(target, jcrEvent);
-                    return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
-                }
-            });
-        }
+    private void updatePlugin(Plugin plugin, final AjaxRequestTarget target, final JcrEvent jcrEvent) {
+        plugin.update(target, jcrEvent);
+
+        //Plugins can have DialogWindows as children, 
+        //these need to be updated to.
+        plugin.visitChildren(DialogWindow.class, new IVisitor() {
+            public Object component(Component component) {
+                DialogWindow dialogWindow = (DialogWindow) component;
+                dialogWindow.update(target, jcrEvent);
+                return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+            }
+        });
     }
 
 }

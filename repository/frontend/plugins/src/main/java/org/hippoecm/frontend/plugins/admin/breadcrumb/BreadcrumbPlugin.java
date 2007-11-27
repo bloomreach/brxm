@@ -29,6 +29,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 public class BreadcrumbPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     private String nodePath;
 
     public BreadcrumbPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {

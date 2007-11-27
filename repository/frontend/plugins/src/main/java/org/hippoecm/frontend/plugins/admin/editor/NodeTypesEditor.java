@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.admin.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +33,6 @@ import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListItemModel;
 import org.apache.wicket.markup.html.list.ListView;
-
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
 
@@ -100,7 +98,7 @@ public abstract class NodeTypesEditor extends CheckGroup {
 
     public void setProvider(JcrNodeTypesProvider provider) {
         current.clear();
-        Iterator<NodeType> types = (Iterator<NodeType>) provider.iterator(0, provider.size());
+        Iterator<NodeType> types = provider.iterator(0, provider.size());
         while(types.hasNext()) {
             NodeType type = types.next();
             current.add(type.getName());
