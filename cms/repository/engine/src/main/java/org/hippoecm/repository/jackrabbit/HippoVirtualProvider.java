@@ -15,17 +15,24 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.ConstraintViolationException;
 
 import org.apache.jackrabbit.conversion.IllegalNameException;
 import org.apache.jackrabbit.conversion.MalformedPathException;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.NodeDef;
 import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
+import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -33,6 +40,7 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.name.NameConstants;
 import org.apache.jackrabbit.spi.Name;
 
 public abstract class HippoVirtualProvider
@@ -41,37 +49,37 @@ public abstract class HippoVirtualProvider
 
     protected Name externalNodeName;
     protected Name virtualNodeName;
-    protected NodeDef virtualNodeDef;
 
-    NodeDef defineNodeDef(Name name, Name declaringName) {
-        NodeDefImpl nodeDef;
-        nodeDef = new NodeDefImpl();
-        nodeDef.setDefaultPrimaryType(name);
-        nodeDef.setAllowsSameNameSiblings(true);
-        nodeDef.setProtected(true);
-        nodeDef.setDeclaringNodeType(declaringName);
-        nodeDef.setName(name);
-        return nodeDef;
-    }
-
-    PropDef definePropDef(Name name, int type) {
-        PropDefImpl propDef = null;
-        propDef = new PropDefImpl();
-        propDef.setRequiredType(type);
-        propDef.setProtected(true);
-        propDef.setDeclaringNodeType(externalNodeName);
-        propDef.setName(name);
-        return propDef;
-    }
-
-    PropDef lookupPropDef(Name nodeName, Name propName) throws RepositoryException {
-        PropDef[] propDefs = stateMgr.ntReg.getNodeTypeDef(nodeName).getPropertyDefs();
+    PropDef lookupPropDef(Name nodeTypeName, Name propName) throws RepositoryException {
+        PropDef[] propDefs = stateMgr.ntReg.getNodeTypeDef(nodeTypeName).getPropertyDefs();
         int i;
         for(i=0; i<propDefs.length; i++)
             if(propDefs[i].getName().equals(propName)) {
                return propDefs[i];
             }
-        throw new RepositoryException("required nodetype not or badly defined");
+        throw new RepositoryException("required property "+propName+" in nodetype "+nodeTypeName+" not or badly defined");
+    }
+
+    NodeDef lookupNodeDef(NodeState parent, Name nodeTypeName, Name nodeName) throws RepositoryException {
+        EffectiveNodeType effNodeType;
+        try {
+            HashSet set = new HashSet(parent.getMixinTypeNames());
+            set.add(parent.getNodeTypeName());
+            effNodeType = stateMgr.ntReg.getEffectiveNodeType((Name[]) set.toArray(new Name[set.size()]));
+            try {
+                return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.ntReg);
+            } catch (RepositoryException re) {
+                // hack, use nt:unstructured as parent
+                effNodeType = stateMgr.ntReg.getEffectiveNodeType(NameConstants.NT_UNSTRUCTURED);
+                return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.ntReg);
+            }
+        } catch (NoSuchNodeTypeException ex) {
+            throw new RepositoryException("internal error: failed to build effective node type for node " + parent.getNodeId(),
+                                          ex);
+        } catch (NodeTypeConflictException ex) {
+            throw new RepositoryException("internal error: failed to build effective node type for node " + parent.getNodeId(),
+                                          ex);
+        }
     }
 
     private HippoVirtualProvider() {
@@ -85,11 +93,6 @@ public abstract class HippoVirtualProvider
         this.stateMgr = stateMgr;
         externalNodeName = external;
         virtualNodeName = virtual;
-        if(virtualNodeName != null) {
-            virtualNodeDef = defineNodeDef(virtualNodeName, externalNodeName);
-        } else {
-            virtualNodeDef = null;
-        }
         if(external != null)
             stateMgr.register(externalNodeName, this);
     }
@@ -99,10 +102,17 @@ public abstract class HippoVirtualProvider
     }
 
     public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
-        NodeState state = createNew(nodeId, virtualNodeName, parentId);
-        state.setDefinitionId(virtualNodeDef.getId());
-        populate(state);
-        return state;
+        try {
+            NodeState state = createNew(nodeId, virtualNodeName, parentId);
+            NodeState parentState = stateMgr.getNodeState(parentId);
+            state.setDefinitionId(lookupNodeDef(parentState, virtualNodeName, nodeId.name).getId());
+            populate(state);
+            return state;
+        } catch(NoSuchItemStateException ex) {
+            throw new RepositoryException("impossible state");
+        } catch(ItemStateException ex) {
+            throw new RepositoryException("item state exception", ex);
+        }
     }
 
     public NodeState createNew(NodeId nodeId, Name nodeTypeName, NodeId parentId) {

@@ -151,18 +151,17 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         session.save();
         session.refresh(false);
 
-        /*
         searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
         assertTrue(searchNode.getNode("x1").hasNode("yy"));
         assertTrue(searchNode.getNode("x1").getNode("yy").hasNode(HippoNodeType.HIPPO_RESULTSET));
         assertTrue(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test"));
         assertFalse(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test[2]"));
         assertTrue(searchNode.getNode("x1").getNode("zz").hasNode(HippoNodeType.HIPPO_RESULTSET));
-        */
 
         session.logout();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
         commonEnd();
     }
+
 }

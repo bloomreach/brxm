@@ -65,7 +65,7 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
         Node node = commonStart();
         
         tBefore = System.currentTimeMillis();
-        facetedNavigationNodeTraversal(node,1 , node.getDepth() + 10);
+        facetedNavigationNodeTraversal(node, 1, node.getDepth() + 10);
         tAfter = System.currentTimeMillis();
 
         historyWriter.write("FullFacetedNavigationTraversal" + numDocs, Long.toString(tAfter - tBefore), "ms");
@@ -77,15 +77,17 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
         Iterator nodeIterator = node.getNodes();
         while(nodeIterator.hasNext()){
             Node childNode = (Node)nodeIterator.next();
-            if (childNode.hasProperty("hippo:count") && !childNode.getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
-                if(this.getVerbose()){
-                    System.out.println(s.substring(0, Math.min(indent,s.length())) + childNode.getName() + " ("+childNode.getProperty("hippo:count").getString() +")");
+            if (childNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
+                if (childNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
+                    if (this.getVerbose()) {
+                        System.out.println(s.substring(0, Math.min(indent,s.length())) + childNode.getName() + " ("+childNode.getProperty("hippo:count").getString() +")");
+                    }
+                }
+            } else {
+                if(childNode.getDepth() <= depth) {
+                    facetedNavigationNodeTraversal(childNode, indent + 6, depth);
                 }
             }
-            if(childNode.getDepth() <= depth && !childNode.getName().equals(HippoNodeType.HIPPO_RESULTSET)){
-                facetedNavigationNodeTraversal(childNode, indent + 6, depth);
-            } 
         }
     }
-    
 }

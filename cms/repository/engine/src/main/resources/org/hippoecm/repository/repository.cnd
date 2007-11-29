@@ -15,14 +15,22 @@
 - hippo:count (long)
 + * multiple
 
-[hippo:facetsearch]
+[hippo:facetsubsearch]
 - hippo:queryname (string) mandatory
 - hippo:docbase (string) mandatory
 - hippo:facets (string) mandatory multiple
 - hippo:search (string) multiple
 - hippo:count (long)
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
-+ * (hippo:facetsearch) = hippo:facetsearch multiple
++ * (hippo:facetsubsearch) = hippo:facetsubsearch multiple
+
+[hippo:facetsearch]
+- hippo:queryname (string) mandatory
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
+- hippo:count (long)
++ hippo:resultset (hippo:facetresult) = hippo:facetresult
++ * (hippo:facetsubsearch) = hippo:facetsubsearch multiple
 
 [hippo:request] > nt:unstructured, mix:referenceable
 

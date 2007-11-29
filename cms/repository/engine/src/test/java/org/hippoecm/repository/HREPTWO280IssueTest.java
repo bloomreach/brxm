@@ -41,30 +41,20 @@ public class HREPTWO280IssueTest extends FacetedNavigationAbstractTest {
         session.save();
 
         searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
-        try {
-            traverse(searchNode);
-            fail("ISSUE HREPTWO- resolved (part 1)");
-        } catch(NullPointerException ex) {
-            System.err.println("ISSUE HREPTWO- still present (part 1)");
-            System.err.println(ex.getMessage());
-            // ex.printStackTrace(System.err);
-        } finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        }
+        traverse(searchNode);
 
         try {
             session.getRootNode().getNode("documents").remove();
             session.getRootNode().getNode("navigation").remove();
             session.save();
             session.refresh(false);
-            fail("ISSUE HREPTWO- resolved (part 2, 3)");
+            fail("ISSUE HREPTWO-280 resolved (part 2, 3)");
         } catch(NullPointerException ex) {
-            System.err.println("ISSUE HREPTWO- still present (part 2)");
+            System.err.println("ISSUE HREPTWO-280 still present (part 2)");
             System.err.println(ex.getMessage());
             // ex.printStackTrace(System.err);
         } catch(RepositoryException ex) {
-            System.err.println("ISSUE HREPTWO- still present (part 3)");
+            System.err.println("ISSUE HREPTWO-280 still present (part 3)");
             System.err.println(ex.getMessage());
             // ex.printStackTrace(System.err);
         } finally {
