@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.StringTokenizer;
@@ -219,9 +220,11 @@ public class RepositoryServlet extends HttpServlet {
                 path = path.substring(1);
             }
             writer.print("Accessing node <code>");
-
+            
             writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "//\">/root</a>");
-
+            
+            path = URLDecoder.decode(path, "UTF-8");
+            
             String pathElt = "";
             String pathEltName = "";
             String currentPath = "";
