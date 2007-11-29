@@ -17,7 +17,5 @@ package org.hippoecm.repository.servicing;
 
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.api.XASession;
-
-public interface ServicingSession extends Session, XASession {
+public interface ServicingSession extends Session {
 }
