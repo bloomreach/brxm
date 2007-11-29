@@ -39,7 +39,7 @@ import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.FacetSearchProvider.FacetSearchNodeId;
+import org.hippoecm.repository.jackrabbit.AbstractFacetSearchProvider.FacetSearchNodeId;
 
 public class FacetResultSetProvider extends HippoVirtualProvider
 {
@@ -56,11 +56,11 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         String docbase;
         String[] search;
         long count;
-        FacetResultSetNodeId(NodeId parent) {
-            super(FacetResultSetProvider.this, parent);
+        FacetResultSetNodeId(NodeId parent, Name name) {
+            super(FacetResultSetProvider.this, parent, name);
         }
-        FacetResultSetNodeId(NodeId parent, String queryname, String docbase, String[] search, long count) {
-            super(FacetResultSetProvider.this, parent);
+        FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, String[] search, long count) {
+            super(FacetResultSetProvider.this, parent, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.search = search;
@@ -77,14 +77,16 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     PropDef countPropDef;
 
     FacetResultSetProvider(HippoLocalItemStateManager stateMgr, MirrorVirtualProvider subNodesProvider,
-                           FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext) throws IllegalNameException, NamespaceException {
-        super(stateMgr, stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT), stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT));
+                           FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
+        throws IllegalNameException, NamespaceException, RepositoryException {
+        super(stateMgr, null, stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT));
+
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
         this.subNodesProvider = subNodesProvider;
 
         countName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_COUNT);
-        countPropDef = definePropDef(countName, PropertyType.LONG);
+        countPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT), countName);
     }
 
     public NodeState populate(NodeState state) {
@@ -131,11 +133,13 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         for(String foundNodePath : facetedResult) {
             try {
                 NodeId upstream = getNodeId(foundNodePath);
+                if(upstream == null)
+                    continue;
                 /* The next statement is painfull performance wise.
                  * Only to obtain the child node name, we have to retrieve the parent state.
                  */
                 Name name = getNodeState(getNodeState(upstream).getParentId()).getChildNodeEntry(upstream).getName();
-                state.addChildNodeEntry(name, subNodesProvider . new MirrorNodeId(state.getNodeId(), upstream));
+                state.addChildNodeEntry(name, subNodesProvider . new MirrorNodeId(state.getNodeId(), upstream, name));
             } catch(RepositoryException ex) {
                 System.err.println(ex.getMessage());
                 ex.printStackTrace(System.err);

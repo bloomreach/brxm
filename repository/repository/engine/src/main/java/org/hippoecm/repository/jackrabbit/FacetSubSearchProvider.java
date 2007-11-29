@@ -41,22 +41,18 @@ import org.hippoecm.repository.api.ISO9075Helper;
 
 import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
 
-public class FacetSearchProvider extends AbstractFacetSearchProvider
+public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 {
     final static private String SVN_ID = "$Id$";
 
-    FacetSearchProvider(HippoLocalItemStateManager stateMgr,
-                        FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext,
-                        FacetSubSearchProvider subSearchProvider, FacetResultSetProvider subNodesProvider)
+    FacetSubSearchProvider(HippoLocalItemStateManager stateMgr,
+                           FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext,
+                           FacetResultSetProvider subNodesProvider)
         throws RepositoryException
     {
-        super(stateMgr, HippoNodeType.NT_FACETSEARCH, HippoNodeType.NT_FACETSUBSEARCH, facetedEngine, facetedContext);
+        super(stateMgr, null, HippoNodeType.NT_FACETSUBSEARCH, facetedEngine, facetedContext);
 
-        this.subSearchProvider = subSearchProvider;
+        this.subSearchProvider = this;
         this.subNodesProvider  = subNodesProvider;
-    }
-
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
-        throw new RepositoryException("Cannot populate top facetsearch node");
     }
 }

@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.spi.Name;
 
 public class ViewVirtualProvider extends MirrorVirtualProvider
 {
@@ -30,8 +31,8 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
     protected class ViewNodeId extends MirrorNodeId {
         Map<String,String> view; // must be immutable
 
-        ViewNodeId(NodeId parent, NodeId upstream, Map view) {
-            super(ViewVirtualProvider.this, parent, upstream);
+        ViewNodeId(NodeId parent, NodeId upstream, Name name, Map view) {
+            super(ViewVirtualProvider.this, parent, name, upstream);
             this.view = view;
         }
     }
@@ -68,7 +69,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
             if(match(viewId.view, entry.getId())) {
-                ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), viewId.view);
+                ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view);
                 state.addChildNodeEntry(entry.getName(), childNodeId);
             }
         }

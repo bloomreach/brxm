@@ -60,7 +60,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                 NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
                 if(subNodesProvider.match(view, entry.getId())) {
-                    NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(), view);
+                    NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view);
                     state.addChildNodeEntry(entry.getName(), childNodeId);
                 }
             }

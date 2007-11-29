@@ -19,29 +19,27 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
 
 public class HippoNodeId extends NodeId
 {
     NodeId parentId;
+    Name name;
 
     HippoVirtualProvider provider;
 
-    public HippoNodeId(HippoVirtualProvider provider, NodeId parent) {
+    public HippoNodeId(HippoVirtualProvider provider, NodeId parent, Name name) {
         super(UUID.randomUUID());
         this.provider = provider;
         parentId = parent;
-    }
-
-    public HippoNodeId(UUID uuid) {
-        super(uuid);
-        this.provider = provider;
-        parentId = null;
+        this.name = name;
     }
 
     public NodeState populate() {
         try {
-            return provider.populate(this, parentId);
+            NodeState nodeState = provider.populate(this, parentId);
+            return nodeState;
         } catch(RepositoryException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);

@@ -97,11 +97,12 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
 
-        MirrorVirtualProvider  mirrorProvider = null;
-        ViewVirtualProvider    viewProvider = null;
-        FacetResultSetProvider resultSetProvider = null;
-        FacetSelectProvider    facetSelectProvider = null;
-        FacetSearchProvider    facetSearchProvider = null;
+        MirrorVirtualProvider  mirrorProvider         = null;
+        ViewVirtualProvider    viewProvider           = null;
+        FacetResultSetProvider resultSetProvider      = null;
+        FacetSelectProvider    facetSelectProvider    = null;
+        FacetSubSearchProvider facetSubSearchProvider = null;
+        FacetSearchProvider    facetSearchProvider    = null;
 
         try {
             mirrorProvider = new MirrorVirtualProvider(this);
@@ -138,10 +139,27 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         } catch(NamespaceException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
+        } catch(RepositoryException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
         }
 
         try {
-            facetSearchProvider = new FacetSearchProvider(this, resultSetProvider, facetedEngine, facetedContext);
+            facetSubSearchProvider = new FacetSubSearchProvider(this, facetedEngine, facetedContext, resultSetProvider);
+        } catch(IllegalNameException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch(NamespaceException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch(RepositoryException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace(System.err);
+        }
+
+        try {
+            facetSearchProvider = new FacetSearchProvider(this, facetedEngine, facetedContext,
+                                                          facetSubSearchProvider, resultSetProvider);
         } catch(IllegalNameException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
@@ -189,34 +207,37 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     @Override
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
         ItemState state = super.getItemState(id);
-        if(id instanceof HippoNodeId && !virtualNodes.containsKey(id)) {
-            edit();
-            NodeState nodeState;
-            if(state != null) {
-                nodeState = (NodeState) state;
-                nodeState = ((HippoNodeId)id).populate(nodeState);
-            } else
-                nodeState = ((HippoNodeId)id).populate();
-            virtualNodes.put((HippoNodeId)id, nodeState);
-            stateModified(nodeState);
-            store(nodeState);
-            return nodeState;
-        }
-        if(!(id instanceof HippoNodeId) && (state instanceof NodeState)) {
-            NodeState nodeState = (NodeState) state;
-            Name nodeTypeName = nodeState.getNodeTypeName();
-            if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+        if(id instanceof HippoNodeId) {
+            if(!virtualNodes.containsKey(id)) {
                 edit();
-                try {
-                    virtualStates.add(state);
-                    state = virtualProviders.get(nodeTypeName).populate(nodeState);
-                    stateModified(nodeState);
-                    store(state);
-                    return nodeState;
-                } catch(RepositoryException ex) {
-                    System.err.println(ex.getMessage());
-                    ex.printStackTrace(System.err);
-                    return null;
+                NodeState nodeState;
+                if(state != null) {
+                    nodeState = (NodeState) state;
+                    nodeState = ((HippoNodeId)id).populate(nodeState);
+                } else
+                    nodeState = ((HippoNodeId)id).populate();
+                virtualNodes.put((HippoNodeId)id, nodeState);
+                stateDiscarded(nodeState);
+                store(nodeState);
+                return nodeState;
+            }
+        } else {
+            if(state instanceof NodeState) {
+                NodeState nodeState = (NodeState) state;
+                Name nodeTypeName = nodeState.getNodeTypeName();
+                if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                    edit();
+                    try {
+                        virtualStates.add(state);
+                        state = virtualProviders.get(nodeTypeName).populate(nodeState);
+                        stateDiscarded(nodeState);
+                        store(state);
+                        return nodeState;
+                    } catch(RepositoryException ex) {
+                        System.err.println(ex.getMessage());
+                        ex.printStackTrace(System.err);
+                        return null;
+                    }
                 }
             }
         }
@@ -233,32 +254,20 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 throw ex;
             }
         } catch(ItemStateException ex) {
+            if(!(id instanceof HippoNodeId)) {
+                throw ex;
+            }
         }
-        if(id instanceof HippoNodeId) {
+
+        if(virtualNodes.containsKey(id)) {
+            state = (NodeState) virtualNodes.get(id);
+        } else if(state == null && id instanceof HippoNodeId) {
             edit();
             NodeState nodeState = ((HippoNodeId)id).populate();
             virtualNodes.put((HippoNodeId)id, nodeState);
-            stateModified(nodeState);
+            stateDiscarded(nodeState);
             store(nodeState);
             return nodeState;
-        }
-        /* It is important that the super.getNodeState() is called after the
-         * check on id being instance of HippoNodeId.
-         */
-        Name nodeTypeName = state.getNodeTypeName();
-        if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
-            edit();
-            try {
-                virtualStates.add(state);
-                state = virtualProviders.get(nodeTypeName).populate(state);
-                stateModified(state);
-                store(state);                
-                return state;
-            } catch(RepositoryException ex) {
-                System.err.println(ex.getMessage());
-                ex.printStackTrace(System.err);
-                return null;
-            }
         }
         return state;
     }
@@ -327,38 +336,43 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         }
         
         void invalidate() {
+            Set<ItemState> deletedExternals = new HashSet();
+            for(Iterator iter = deletedStates(); iter.hasNext(); ) {
+                ItemState state = (ItemState) iter.next();
+                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0)
+                    deletedExternals.add(state);
+            }
             for(Iterator iter = upstream.addedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
                 if((isVirtual(state) & ITEM_TYPE_VIRTUAL) != 0) {
                     if(state.isNode()) {
                         NodeState nodeState = (NodeState) state;
                         try {
-                            nodeState = (NodeState) get(nodeState.getParentId());
-                            if(nodeState != null) {
-                                nodeState.removeChildNodeEntry(nodeState.getNodeId());
-                                stateModified(state);
-                                nodeState.setStatus(ItemState.STATUS_EXISTING);
+                            NodeState parentNodeState = (NodeState) get(nodeState.getParentId());
+                            if(parentNodeState != null) {
+                                parentNodeState.removeChildNodeEntry(nodeState.getNodeId());
+                                stateDiscarded(nodeState);
+                                stateDiscarded(parentNodeState);
                             }
                         } catch(NoSuchItemStateException ex) {
                         }
                     } else {
-                        stateDestroyed(state);
-                        state.setStatus(ItemState.STATUS_EXISTING);
+                        stateDiscarded(state); // stateDestroyed(state);
+                        //state.setStatus(ItemState.STATUS_EXISTING);
                     }
-                }
-                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    ((NodeState)state).removeAllChildNodeEntries();
-                    stateModified(state);
-                    state.setStatus(ItemState.STATUS_EXISTING);
-                    virtualStates.add(state);
+                } else if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+                    if(!deletedExternals.contains(state)) {
+                        ((NodeState)state).removeAllChildNodeEntries();
+                        stateDiscarded((NodeState)state);
+                        virtualStates.add(state);
+                    }
                 }
             }
             for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     ((NodeState)state).removeAllChildNodeEntries();
-                    stateModified(state);
-                    state.setStatus(ItemState.STATUS_EXISTING);
+                    stateDiscarded((NodeState)state);
                 }
             }
         }

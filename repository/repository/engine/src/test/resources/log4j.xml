@@ -47,10 +47,21 @@
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
   <category additivity="false" name="org.apache.jackrabbit.core">
-    <level value="error"/>
+    <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-
+    <category additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
+      <level value="error"/>
+      <appender-ref ref="root"/>
+    </category>
+    <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap">
+      <level value="error"/>
+      <appender-ref ref="root"/>
+    </category>
+    <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
+      <level value="error"/>
+      <appender-ref ref="root"/>
+    </category>
   
   <category additivity="false" name="org.jpox.util">
     <level value="warn"/>

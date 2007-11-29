@@ -41,13 +41,13 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     protected class MirrorNodeId extends HippoNodeId {
         NodeId upstream;
 
-        protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, NodeId upstream) {
-            super(provider, parent);
+        protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, Name name, NodeId upstream) {
+            super(provider, parent, name);
             this.upstream = upstream;
         }
 
-        MirrorNodeId(NodeId parent, NodeId upstream) {
-            super(MirrorVirtualProvider.this, parent);
+        MirrorNodeId(NodeId parent, NodeId upstream, Name name) {
+            super(MirrorVirtualProvider.this, parent, name);
             this.upstream = upstream;
         }
     }
@@ -87,7 +87,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         NodeState upstream = getNodeState(docbase);
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            NodeId childNodeId = new MirrorNodeId(nodeId, entry.getId());
+            NodeId childNodeId = new MirrorNodeId(nodeId, entry.getId(), entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }
         return state;
@@ -133,7 +133,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            MirrorNodeId childNodeId = new MirrorNodeId(nodeId, entry.getId());
+            MirrorNodeId childNodeId = new MirrorNodeId(nodeId, entry.getId(), entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }
     }
