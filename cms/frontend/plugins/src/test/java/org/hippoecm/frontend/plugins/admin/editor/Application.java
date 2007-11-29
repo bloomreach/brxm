@@ -1,6 +1,7 @@
 package org.hippoecm.frontend.plugins.admin.editor;
 
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -137,6 +138,9 @@ public class Application extends WicketTester.DummyWebApplication {
 
             propertyDefinition.isMultiple();
             propertyDefinitionControl.setReturnValue(false, MockControl.ONE_OR_MORE);
+
+            value.getType();
+            valueControl.setReturnValue(PropertyType.STRING, MockControl.ONE_OR_MORE);
 
             value.getString();
             valueControl.setReturnValue("testvalue", MockControl.ONE_OR_MORE);
