@@ -83,18 +83,10 @@ public abstract class HippoRepository {
     }
 
     public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
-        Session session = null;
-        
         if (repository == null) {
             throw new RepositoryException("Repository not initialized yet.");
-        }
-        
-        if (credentials == null) {
-            session = (Session) repository.login();
-        } else {
-            session = (Session) repository.login(credentials);
-        }
-        
+        }        
+        Session session = (Session) repository.login(credentials);
         if (session != null) {
             log.info("Logged in as " + session.getUserID() + " to a "
                     + repository.getDescriptor(Repository.REP_NAME_DESC) + " repository.");
@@ -103,7 +95,6 @@ public abstract class HippoRepository {
         } else {
             log.error("Failed to login to repository with credentials " + credentials.toString());
         }
-        
         return session;
     }
 

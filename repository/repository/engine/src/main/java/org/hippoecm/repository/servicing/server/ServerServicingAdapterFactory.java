@@ -18,17 +18,14 @@ package org.hippoecm.repository.servicing.server;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
-import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
-import org.hippoecm.repository.servicing.ServicingSessionImpl;
 import org.hippoecm.repository.servicing.ServicingWorkspaceImpl;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
@@ -36,13 +33,6 @@ import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
     public ServerServicingAdapterFactory() {
-    }
-
-    public RemoteSession getRemoteSession(Session session) throws RemoteException {
-        if (session instanceof ServicingSessionImpl)
-            return new ServerServicingSession((ServicingSessionImpl) session, this);
-        else
-            return super.getRemoteSession(session);
     }
 
     public RemoteWorkspace getRemoteWorkspace(Workspace workspace) throws RemoteException {

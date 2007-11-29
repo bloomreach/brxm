@@ -30,7 +30,6 @@ import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.security.AMContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

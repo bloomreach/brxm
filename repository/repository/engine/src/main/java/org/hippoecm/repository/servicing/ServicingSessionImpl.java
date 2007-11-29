@@ -41,7 +41,9 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.SessionImpl;
@@ -51,7 +53,7 @@ import org.xml.sax.SAXException;
 
 /**
  */
-public class ServicingSessionImpl implements ServicingSession, XASession {
+public class ServicingSessionImpl implements XASession {
     private final static String SVN_ID = "$Id$";
 
     protected final DecoratorFactory factory;
@@ -59,12 +61,6 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
     protected final Repository repository;
 
     protected final Session session;
-
-    //protected UserTransactionManager utm = null;
-
-    //public UserTransactionManager getUserTransactionManager() {
-    //    return utm;
-    //}
 
     ServicingSessionImpl(DecoratorFactory factory, Repository repository, Session session) {
         this.factory = factory;
@@ -76,15 +72,6 @@ public class ServicingSessionImpl implements ServicingSession, XASession {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
-        /*
-        try {
-            utm = new UserTransactionManager();
-            utm.setStartupTransactionService(false);
-            utm.init();
-        } catch (SystemException ex) {
-            throw new RepositoryException("cannot initialize transaction manager", ex);
-        }
-        */
     }
 
     protected void finalize() {
