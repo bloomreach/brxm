@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.admin.editor;
 
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
@@ -41,17 +42,21 @@ public class PropertyValueEditor extends DataView {
         this.propertyModel = dataProvider;
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
-    
+
     // Implement DataView
     @Override
     protected void populateItem(Item item) {
         try {
             boolean isProtected = propertyModel.getProperty().getDefinition().isProtected();
             boolean isMultiple = propertyModel.getProperty().getDefinition().isMultiple();
+            boolean isBinary = (propertyModel.getProperty().getValue().getType() == PropertyType.BINARY);
             final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
 
             //Value editor
-            if (isProtected) {
+            if (isBinary) {
+                Label label = new Label("value", "(binary)");
+                item.add(label);
+            } else if (isProtected) {
                 Label label = new Label("value", valueModel);
                 item.add(label);
             } else {
@@ -59,6 +64,7 @@ public class PropertyValueEditor extends DataView {
                 if (value.contains("\n") || value.length() > 80) {
                     AjaxEditableMultiLineLabel editor = new AjaxEditableMultiLineLabel("value", valueModel) {
                         private static final long serialVersionUID = 1L;
+
                         @Override
                         protected void onSubmit(AjaxRequestTarget target) {
                             super.onSubmit(target);
@@ -70,6 +76,7 @@ public class PropertyValueEditor extends DataView {
                 } else {
                     AjaxEditableLabel editor = new AjaxEditableLabel("value", valueModel) {
                         private static final long serialVersionUID = 1L;
+
                         @Override
                         protected void onSubmit(AjaxRequestTarget target) {
                             super.onSubmit(target);
@@ -83,6 +90,7 @@ public class PropertyValueEditor extends DataView {
             if (isMultiple) {
                 item.add(new AjaxLink("remove", valueModel) {
                     private static final long serialVersionUID = 1L;
+
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         try {
