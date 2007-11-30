@@ -172,7 +172,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             workflow.obtainEditableInstance();
             session.save();
             session.refresh(true);
-            Utilities.dump(root.getNode("documents"));
+            //Utilities.dump(root.getNode("documents"));
             node = Utilities.getNode(root, "documents/myarticle/myarticle[state='draft']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + "!");
