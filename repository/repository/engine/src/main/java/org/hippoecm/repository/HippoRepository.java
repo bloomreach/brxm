@@ -66,6 +66,12 @@ public abstract class HippoRepository {
         return workingDirectory;
     }
 
+    /**
+     * Mimic jcr repository login. 
+     * @return Session with Anonymous credentials
+     * @throws LoginException
+     * @throws RepositoryException
+     */
     public Session login() throws LoginException, RepositoryException {
         return login(null);
     }
@@ -76,17 +82,19 @@ public abstract class HippoRepository {
             if (password == null) {
                 throw new LoginException("Password is null");
             }
-            return login(new SimpleCredentials(username, password));
+            return login(new SimpleCredentials(username, password), null);
         } else {
             return login(null);
         }
     }
 
-    public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
+    public Session login(SimpleCredentials credentials, String workspaceName) throws LoginException, RepositoryException {
         if (repository == null) {
             throw new RepositoryException("Repository not initialized yet.");
-        }        
-        Session session = (Session) repository.login(credentials);
+        }
+
+        // try to login with credentials
+        Session session = (Session) repository.login(credentials, workspaceName);
         if (session != null) {
             log.info("Logged in as " + session.getUserID() + " to a "
                     + repository.getDescriptor(Repository.REP_NAME_DESC) + " repository.");
@@ -96,6 +104,10 @@ public abstract class HippoRepository {
             log.error("Failed to login to repository with credentials " + credentials.toString());
         }
         return session;
+    }
+    
+    public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
+        return login(credentials, null);
     }
 
     public void close() {

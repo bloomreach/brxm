@@ -187,7 +187,7 @@ public class RepositoryLoginTest extends TestCase {
     public void testLoginNullUsernameNullPassword() throws Exception {
         Session session = null;
         try {
-            session = server.login(null, null);
+            session = server.login(null);
             assertEquals(ANONYMOUS_ID, session.getUserID());
             session.logout();
         } catch (LoginException ex) {
