@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and 
   limitations under the License.
 -->
-<site name="Hippo ECM">
+<project name="Hippo ECM">
   
   <bannerLeft>
     <name>Hippo ECM API documention</name>
@@ -40,4 +40,4 @@
 
   </body>
   
-</site>
+</project>
