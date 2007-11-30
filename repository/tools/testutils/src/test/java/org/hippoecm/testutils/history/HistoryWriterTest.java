@@ -26,6 +26,15 @@ public class HistoryWriterTest extends TestCase {
         }
     }
     
+    public void test100MeasurePointsMean() {
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) {
+            somethingExpensive(379);
+        }
+        long end = System.currentTimeMillis();
+        historyWriter.write("Duration", String.valueOf( (end - start)/100.0 ), "Milliseconds");
+    }
+    
     public void testOneMeasurePoint() {
         long start = System.currentTimeMillis();
         somethingExpensive(501);
