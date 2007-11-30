@@ -23,6 +23,8 @@ import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
@@ -167,5 +169,56 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         protected Session getRootSession() throws RepositoryException {
             return super.getSystemSession();
         }
+    }
+
+    
+    /**
+     * Wrapper for login, adds rootSession to credentials if credentials are of SimpleCredentials.
+     * @return session the authenticated session
+     */
+    public Session login(Credentials credentials, String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+        if (credentials != null) {
+            if (credentials instanceof SimpleCredentials) {
+                SimpleCredentials sc = (SimpleCredentials) credentials;
+                
+                Session rootSession = getRootSession(workspaceName);
+                if (rootSession == null) {
+                    throw new RepositoryException("Unable to get the roorSession for workspace: " + workspaceName);
+                }
+                sc.setAttribute("rootSession", rootSession);
+                return super.login(sc, workspaceName);   
+            }
+        }
+        return super.login(credentials, workspaceName);
+    }
+
+    /**
+     * Calls <code>login(credentials, null)</code>.
+     *
+     * @return session
+     * @see #login(Credentials, String)
+     */
+    public Session login(Credentials credentials) throws LoginException, RepositoryException {
+        return login(credentials, null);
+    }
+
+    /**
+     * Calls <code>login(null, workspaceName)</code>.
+     *
+     * @return session
+     * @see #login(Credentials, String)
+     */
+    public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+        return login(null, workspaceName);
+    }
+
+    /**
+     * Calls <code>login(null, null)</code>.
+     *
+     * @return session
+     * @see #login(Credentials, String)
+     */
+    public Session login() throws LoginException, RepositoryException {
+        return login(null, null);
     }
 }

@@ -17,7 +17,6 @@ package org.hippoecm.repository.security;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -38,20 +37,13 @@ import javax.security.auth.spi.LoginModule;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.CredentialsCallback;
-import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.PasswordHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RepositoryLoginModule implements LoginModule {
 
-    /**
-     * Alogrithm to use for random number generation
-     */
-    private static final String randomAlogrithm = "SHA1PRNG";
 
     // initial state
     private Subject subject;
@@ -93,17 +85,20 @@ public class RepositoryLoginModule implements LoginModule {
      */
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static String oneTimeUser;
-    private static char[] oneTimePass;
-    
     /**
      * Constructor
      */
     public RepositoryLoginModule() {
     }
     
-
-    private boolean authenticate(String username, char[] password) {
+    /**
+     * Authenticate the user against the cache or the repository
+     * @param session A privileged session which can read usernames and passwords
+     * @param username
+     * @param password
+     * @return true when authenticated
+     */
+    private boolean authenticate(Session session, String username, char[] password) {
         if (username == null || password == null || "".equals(username) || password.length == 0) {
             if (log.isDebugEnabled()) {
                 log.debug("Empty username or password not allowed.");
@@ -137,13 +132,6 @@ public class RepositoryLoginModule implements LoginModule {
                     }
                 }
             }
-
-            // look for user in the repository
-            HippoRepository repository;
-            repository = HippoRepositoryFactory.getHippoRepository();
-            generateOneTimeCredentials();
-            Session session = repository.login(new SimpleCredentials(this.oneTimeUser, this.oneTimePass));
-            clearOneTimeCredentials();
 
             Node root = session.getRootNode();
 
@@ -264,24 +252,16 @@ public class RepositoryLoginModule implements LoginModule {
             if (creds != null) {
                 if (creds instanceof SimpleCredentials) {
                     SimpleCredentials sc = (SimpleCredentials) creds;
+                    Session rootSession = (Session) sc.getAttribute("rootSession");
+                    if (rootSession == null) {
+                        throw new LoginException("RootSession not set.");
+                    }
                     username = sc.getUserID();
-
-                    if (oneTimeUser != null && oneTimeUser.equals(username)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Trying to authenticate as: oneTimeUser (" + sc.getUserID() + ")");
-                        }
-                        if (new String(oneTimePass).equals(new String(sc.getPassword()))) {
-                            authenticated = true;
-                            principals.add(new SystemPrincipal());
-                            if (log.isDebugEnabled()) {
-                                log.debug("Authenticated as: oneTimeUser (" + sc.getUserID() + ")");
-                            }
-                        }
-                    } else if (username != null) {
+                    if (username != null) {
                         if (debug) {
                             log.debug("Trying to authenticate as: " + sc.getUserID());
                         }
-                        if (authenticate(username, sc.getPassword())) {
+                        if (authenticate(rootSession, username, sc.getPassword())) {
                             authenticated = true;
                             principals.add(new UserPrincipal(username));
                             if (log.isDebugEnabled()) {
@@ -348,23 +328,4 @@ public class RepositoryLoginModule implements LoginModule {
         principals.clear();
         return true;
     }
-    
-
-    private void generateOneTimeCredentials() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        byte[] user = new byte[16];
-        byte[] pass = new byte[16];
-        SecureRandom random = SecureRandom.getInstance(randomAlogrithm);
-        random.setSeed(System.nanoTime());
-        random.nextBytes(user);
-        random.nextBytes(pass);
-        this.oneTimeUser = new String(user);
-        this.oneTimePass = new String(pass).toCharArray();
-    }
-    
-    private void clearOneTimeCredentials() {
-        this.oneTimeUser = null;
-        this.oneTimePass = null;
-    }
-            
-
 }
