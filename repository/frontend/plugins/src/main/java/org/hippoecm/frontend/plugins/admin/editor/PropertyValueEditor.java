@@ -49,10 +49,9 @@ public class PropertyValueEditor extends DataView {
         try {
             boolean isProtected = propertyModel.getProperty().getDefinition().isProtected();
             boolean isMultiple = propertyModel.getProperty().getDefinition().isMultiple();
-            boolean isBinary = (propertyModel.getProperty().getValue().getType() == PropertyType.BINARY);
-            final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
+            boolean isBinary = isBinary(propertyModel.getProperty());
 
-            //Value editor
+            final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
             if (isBinary) {
                 Label label = new Label("value", "(binary)");
                 item.add(label);
@@ -114,6 +113,22 @@ public class PropertyValueEditor extends DataView {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    
+    private boolean isBinary(Property property) throws RepositoryException {
+        boolean isBinary;
+        if (property.getDefinition().isMultiple()) {
+            Value[] values = propertyModel.getProperty().getValues();
+            if (values.length > 0) {
+                isBinary = values[0].getType() == PropertyType.BINARY;
+            } else {
+                isBinary = false;
+            }                
+        } else {
+            isBinary = (propertyModel.getProperty().getValue().getType() == PropertyType.BINARY);
+        }
+        return isBinary;
     }
 
 }
