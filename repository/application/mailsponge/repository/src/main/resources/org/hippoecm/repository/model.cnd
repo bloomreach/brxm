@@ -1,0 +1,14 @@
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.hippoecm.org/nt/1.0'>
+<mailsponge='http://www.hippoecm.org/nt/1.0'>
+
+[mailsponge:part] > nt:base
+- mailsponge:content (string) mandatory
+
+[mailsponge:message] > nt:unstructured
+- mailsponge:subject (string)
+- mailsponge:recipient (string) multiple
++ * (mailsponge:part) mailsponge:part
