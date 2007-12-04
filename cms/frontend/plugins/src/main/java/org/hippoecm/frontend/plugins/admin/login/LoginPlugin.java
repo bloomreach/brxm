@@ -20,6 +20,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.IAuthenticatedWebPage;
+import org.hippoecm.frontend.SignIn;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.DynamicDialogFactory;
@@ -86,6 +88,12 @@ public class LoginPlugin extends Plugin {
             username = "anonymous";
             loginDialogFactory.setClassName(LOGIN_DIALOG_CLASSNAME);
             loginDialogLinkLabel.setModelObject(LOGIN_DIALOG_LABEL);
+
+            // FIXME should this be here?
+            if (IAuthenticatedWebPage.class.isAssignableFrom(getApplication().getHomePage())) {
+            	findPage().setResponsePage(SignIn.class);
+            }
+        
         }
         else {
             loginDialogFactory.setClassName(LOGOUT_DIALOG_CLASSNAME);
