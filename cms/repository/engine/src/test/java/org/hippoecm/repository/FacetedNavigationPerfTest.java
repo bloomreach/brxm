@@ -77,17 +77,14 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
         Iterator nodeIterator = node.getNodes();
         while(nodeIterator.hasNext()){
             Node childNode = (Node)nodeIterator.next();
-            if (childNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                if (childNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                    if (this.getVerbose()) {
+            if (childNode.isNodeType(HippoNodeType.NT_FACETSUBSEARCH)) {
+                if (this.getVerbose()) {
                         System.out.println(s.substring(0, Math.min(indent,s.length())) + childNode.getName() + " ("+childNode.getProperty("hippo:count").getString() +")");
-                    }
                 }
-            } else {
-                if(childNode.getDepth() <= depth) {
+                if(childNode.getDepth() <= depth ) {
                     facetedNavigationNodeTraversal(childNode, indent + 6, depth);
                 }
-            }
+            } 
         }
     }
 }
