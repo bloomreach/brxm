@@ -163,6 +163,9 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+	  <excludes>
+	    <exclude>**/HREPTWO280IssueTest.java</exclude>
+	  </excludes>
           <systemProperties>
             <property>
               <name>history.points</name>
