@@ -35,16 +35,16 @@ import org.hippoecm.repository.HippoRepository;
  * Basic sign in page to let a user sign in to the repository.
  *
  */
-public final class SignIn extends WebPage
+public final class LoginPage extends WebPage
 {
     private static final long serialVersionUID = 1L;
 
-    public SignIn()
+    public LoginPage()
     {
         this(null);
     }
 
-    public SignIn(final PageParameters parameters)
+    public LoginPage(final PageParameters parameters)
     {
         final FeedbackPanel feedback = new FeedbackPanel("feedback");
         add(feedback);

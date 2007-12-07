@@ -31,6 +31,10 @@ public class Main extends WebApplication {
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
+    
+    public final static String AUTHORIZATION_STRATEGY_PARAM = "authorization-strategy";
+    public final static String AUTHORIZATION_STRATEGY_ANONYMOUS = "anonymous";
+    public final static String AUTHORIZATION_STRATEGY_LOGIN = "login";
 
     @Override
     protected void init() {
@@ -48,6 +52,11 @@ public class Main extends WebApplication {
         } catch (RepositoryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        
+        String authorizationStrategy = getConfigurationParameter(AUTHORIZATION_STRATEGY_PARAM, AUTHORIZATION_STRATEGY_ANONYMOUS);
+        if (AUTHORIZATION_STRATEGY_LOGIN.equals(authorizationStrategy)) {
+            getSecuritySettings().setAuthorizationStrategy(new LoginAuthorizationStrategy());
         }
     }
 
