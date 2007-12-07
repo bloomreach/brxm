@@ -20,8 +20,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.IAuthenticatedWebPage;
-import org.hippoecm.frontend.SignIn;
+import org.hippoecm.frontend.LoginPage;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.DynamicDialogFactory;
@@ -89,9 +89,9 @@ public class LoginPlugin extends Plugin {
             loginDialogFactory.setClassName(LOGIN_DIALOG_CLASSNAME);
             loginDialogLinkLabel.setModelObject(LOGIN_DIALOG_LABEL);
 
-            // FIXME should this be here?
-            if (IAuthenticatedWebPage.class.isAssignableFrom(getApplication().getHomePage())) {
-            	findPage().setResponsePage(SignIn.class);
+            String authorizationStrategy = ((Main) getApplication()).getConfigurationParameter(Main.AUTHORIZATION_STRATEGY_PARAM, Main.AUTHORIZATION_STRATEGY_ANONYMOUS);
+            if (Main.AUTHORIZATION_STRATEGY_LOGIN.equals(authorizationStrategy)) {
+                findPage().setResponsePage(LoginPage.class);
             }
         
         }
