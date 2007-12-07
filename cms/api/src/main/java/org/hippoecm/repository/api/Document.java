@@ -26,7 +26,6 @@ public abstract class Document implements Serializable, Cloneable {
     }
     private void setJcrCloned(Document document) {
         jcrIsCloned = document;
-        //jcrIdentity = null;
     }
     public String getJcrIdentity() {
         return null;

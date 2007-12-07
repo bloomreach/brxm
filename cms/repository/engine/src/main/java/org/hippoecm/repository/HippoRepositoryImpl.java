@@ -17,26 +17,28 @@ package org.hippoecm.repository;
 
 import java.io.File;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import javax.transaction.NotSupportedException;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
 
-import org.hippoecm.repository.api.UserTransactionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.api.UserTransactionImpl;
 
-public abstract class HippoRepository {
+public abstract class HippoRepositoryImpl implements HippoRepository {
 
     protected Repository repository;
-    protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
+    protected final Logger log = LoggerFactory.getLogger(HippoRepositoryImpl.class);
     
     private String JTSLookupName = "java:comp/env/TransactionManager";
 
@@ -45,12 +47,12 @@ public abstract class HippoRepository {
 
     private String workingDirectory;
 
-    protected HippoRepository() {
+    protected HippoRepositoryImpl() {
         workingDirectory = new File(System.getProperty("user.dir")).getAbsolutePath();
         initialize();
     }
 
-    protected HippoRepository(String workingDirectory) {
+    protected HippoRepositoryImpl(String workingDirectory) {
         if (workingDirectory == null || workingDirectory.equals("")) {
             throw new NullPointerException();
         }
@@ -58,11 +60,15 @@ public abstract class HippoRepository {
         initialize();
     }
 
+    public Repository getRepository() {
+        return repository;
+    }
+
     protected String getWorkingDirectory() {
         return workingDirectory;
     }
 
-    protected String getLocation() {
+    public String getLocation() {
         return workingDirectory;
     }
 

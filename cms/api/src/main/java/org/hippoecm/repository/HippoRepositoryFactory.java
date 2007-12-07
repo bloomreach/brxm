@@ -15,19 +15,21 @@
  */
 package org.hippoecm.repository;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import javax.jcr.RepositoryException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
     private final static String SVN_ID = "$Id$";
 
-    static String defaultLocation = null; // FIXME: should become: "java:comp/env/jcr/repository";
-    static HippoRepository defaultRepository = null;
+    private static String defaultLocation = null; // FIXME: should become: "java:comp/env/jcr/repository";
+    private static HippoRepository defaultRepository = null;
 
     public static void setDefaultRepository(String location) {
         defaultLocation = location;
@@ -49,7 +51,15 @@ public class HippoRepositoryFactory {
         if (defaultLocation != null) {
             return getHippoRepository(defaultLocation);
         }
-        defaultRepository = new LocalHippoRepository();
+        try {
+            defaultRepository = (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").newInstance();
+        } catch(ClassNotFoundException ex) {
+            throw new RepositoryException(ex);
+        } catch(InstantiationException ex) {
+            throw new RepositoryException(ex);
+        } catch(IllegalAccessException ex) {
+            throw new RepositoryException(ex);
+        }
         return defaultRepository;
     }
 
@@ -64,11 +74,31 @@ public class HippoRepositoryFactory {
             return defaultRepository;
         } 
         
-        // remote?
         if (location.startsWith("rmi://")) {
             try {
                 defaultLocation = location;
-                return new RemoteHippoRepository(location);
+                try {
+                    return (HippoRepository) Class.forName("org.hippoecm.repository.RemoteHippoRepository").getConstructor(new Class[] { String.class }).newInstance(new Object[] { location });
+                } catch(ClassNotFoundException ex) {
+                    throw new RepositoryException(ex);
+                } catch(InstantiationException ex) {
+                    throw new RepositoryException(ex);
+                } catch(NoSuchMethodException ex) {
+                    throw new RepositoryException(ex);
+                } catch(IllegalAccessException ex) {
+                    throw new RepositoryException(ex);
+                } catch(InvocationTargetException ex) {
+                    if(ex.getCause() instanceof RemoteException)
+                        throw (RemoteException) ex.getCause();
+                    else if(ex.getCause() instanceof NotBoundException)
+                        throw (NotBoundException) ex.getCause();
+                    else if(ex.getCause() instanceof MalformedURLException)
+                        throw (MalformedURLException) ex.getCause();
+                    else if(ex.getCause() instanceof RepositoryException)
+                        throw (RepositoryException) ex.getCause();
+                    else
+                        throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage());
+                }
             } catch (RemoteException ex) {
                 return null;
                 // FIXME
@@ -98,7 +128,22 @@ public class HippoRepositoryFactory {
         }
         
         // embedded/local with location
-        return new LocalHippoRepository(location);
+        try {
+            return (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").getConstructor(new Class[] { String.class }).newInstance(new Object[] { location });
+        } catch(ClassNotFoundException ex) {
+            throw new RepositoryException(ex);
+        } catch(InstantiationException ex) {
+            throw new RepositoryException(ex);
+        } catch(NoSuchMethodException ex) {
+            throw new RepositoryException(ex);
+        } catch(IllegalAccessException ex) {
+            throw new RepositoryException(ex);
+        } catch(InvocationTargetException ex) {
+            if(ex.getCause() instanceof RepositoryException)
+                throw (RepositoryException) ex.getCause();
+            else
+                throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage());
+        }
     }
     
     static void unregister(HippoRepository repository) {

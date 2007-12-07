@@ -24,10 +24,10 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.hippoecm.repository.servicing.client.ClientServicesAdapterFactory;
 
-class RemoteHippoRepository extends HippoRepository {
+class RemoteHippoRepository extends HippoRepositoryImpl {
     private final static String SVN_ID = "$Id$";
 
-    RemoteHippoRepository(String location) throws MalformedURLException, NotBoundException, RemoteException,
+    public RemoteHippoRepository(String location) throws MalformedURLException, NotBoundException, RemoteException,
             RepositoryException {
         ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory();
         ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
