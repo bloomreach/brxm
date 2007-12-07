@@ -162,7 +162,7 @@ public class RepositoryServlet extends HttpServlet {
                 repository = HippoRepositoryFactory.getHippoRepository(storageLocation);
             }
             HippoRepositoryFactory.setDefaultRepository(repository);
-            Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository.repository);
+            Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository.getRepository());
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
 
             try {

@@ -66,7 +66,7 @@ import org.hippoecm.repository.servicing.ServicingDecoratorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class LocalHippoRepository extends HippoRepository {
+class LocalHippoRepository extends HippoRepositoryImpl {
     /** SVN id placeholder */
     private final static String SVN_ID = "$Id$";
 
@@ -109,7 +109,7 @@ class LocalHippoRepository extends HippoRepository {
         initialize();
     }
 
-    protected String getLocation() {
+    public String getLocation() {
         return super.getLocation();
     }
 
