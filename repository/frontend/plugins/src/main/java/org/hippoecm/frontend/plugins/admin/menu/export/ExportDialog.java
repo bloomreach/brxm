@@ -33,6 +33,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.w3c.dom.Document;
 
 public class ExportDialog extends AbstractDialog {
@@ -65,8 +66,8 @@ public class ExportDialog extends AbstractDialog {
     }
 
     @Override
-    public JcrEvent ok() {
-        return new JcrEvent(dialogWindow.getNodeModel(), false);
+    public PluginEvent ok() {
+        return new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, dialogWindow.getNodeModel());
     }
 
     @Override

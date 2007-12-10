@@ -15,10 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
@@ -44,16 +42,6 @@ public class MenuPlugin extends AbstractMenuPlugin {
         addMenuOption("property-dialog", "property-dialog-link", PropertyDialog.class.getName(), model);
         addMenuOption("save-dialog", "save-dialog-link", SaveDialog.class.getName(), model);
         addMenuOption("reset-dialog", "reset-dialog-link", ResetDialog.class.getName(), model);
-    }
-    
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        if (jcrEvent.getModel() != null) {
-            JcrNodeModel nodeModel = jcrEvent.getModel();
-            setNodeModel(nodeModel);
-        }
-        if (target != null) {
-            target.addComponent(this);
-        }
     }
 
 }

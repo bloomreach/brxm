@@ -15,9 +15,10 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -38,16 +39,15 @@ public class PluginManager implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private PluginConfig pluginConfig;
-    private Map plugins;
+    private List<Plugin> pluginRegistry;
 
     public PluginManager(PluginConfig pluginConfig) {
-        this.plugins = new HashMap();
+        this.pluginRegistry = new ArrayList<Plugin>();
         this.pluginConfig = pluginConfig;
     }
 
     public void registerPlugin(Plugin plugin) {
-        String id = plugin.getDescriptor().getPluginId();
-        plugins.put(id, plugin);
+        pluginRegistry.add(plugin);
     }
 
     public PluginConfig getPluginConfig() {
@@ -65,63 +65,67 @@ public class PluginManager implements IClusterable {
         return null;
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        Iterator it = plugins.values().iterator();
-
-        while (it.hasNext()) {
-            Plugin plugin = (Plugin) it.next();
-            updatePlugin(plugin, target, jcrEvent);
-
-            Node node = jcrEvent.getModel().getNode();
-            if (node != null) {
-                PluginDescriptor descriptor = plugin.getDescriptor();
+    public void update(final AjaxRequestTarget target, final PluginEvent event) {
+        Iterator<Plugin> plugins = new ArrayList(pluginRegistry).iterator();
+        while (plugins.hasNext()) {
+            Plugin plugin = plugins.next();
+            Set<EventChannel> incoming = plugin.getDescriptor().getIncoming();
+            incoming.retainAll(event.getChannels());
+            if (!incoming.isEmpty()) {
                 try {
-                    //TODO: add optional property 'workflowcategory' to 
-                    //frontend plugin configuration nodes and use that instead of the plugin id.
-                    WorkflowManager manager = getWorkflowManager();
-                    String workflowCategory = descriptor.getPluginId();
-                    WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
+                    updatePlugin(plugin, target, event);
 
-                    String newPluginClass;
-                    if (workflowDescriptor != null) {
-                        newPluginClass = workflowDescriptor.getRendererName();
-                    } else {
-                        String pluginId = descriptor.getPluginId();
-                        newPluginClass = pluginConfig.getPlugin(pluginId).getClassName();
-                    }
+                    Node node = event.getNodeModel(JcrEvent.NEW_MODEL).getNode();
+                    if (node != null) {
+                        PluginDescriptor descriptor = plugin.getDescriptor();
 
-                    String currentPluginClass = plugin.getClass().getName();
-                    if (!newPluginClass.equals(currentPluginClass)) {
-                        Plugin parentPlugin = plugin.getParentPlugin();
-                        if (parentPlugin != null) {
-                            parentPlugin.removeChild(descriptor);
-                            descriptor.setClassName(newPluginClass);
-                            plugin = parentPlugin.addChild(descriptor);
-                            updatePlugin(plugin, target, jcrEvent);
-                            target.addComponent(parentPlugin);
+                        //TODO: add optional property 'workflowcategory' to 
+                        //frontend plugin configuration nodes and use that instead of the plugin id.
+                        WorkflowManager manager = getWorkflowManager();
+                        String workflowCategory = descriptor.getPluginId();
+                        WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
+
+                        String newPluginClass;
+                        if (workflowDescriptor != null) {
+                            newPluginClass = workflowDescriptor.getRendererName();
+                        } else {
+                            String pluginId = descriptor.getPluginId();
+                            newPluginClass = pluginConfig.getPlugin(pluginId).getClassName();
+                        }
+
+                        String currentPluginClass = plugin.getClass().getName();
+                        if (!newPluginClass.equals(currentPluginClass)) {
+                            Plugin parentPlugin = plugin.getParentPlugin();
+                            if (parentPlugin != null) {
+                                parentPlugin.removeChild(descriptor);
+                                descriptor.setClassName(newPluginClass);
+                                Plugin newPlugin = parentPlugin.addChild(descriptor);
+                                updatePlugin(newPlugin, target, event);
+                                target.addComponent(parentPlugin);
+                            }
                         }
                     }
-
                 } catch (RepositoryException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+
             }
         }
     }
 
     // privates
 
-    private void updatePlugin(Plugin plugin, final AjaxRequestTarget target, final JcrEvent jcrEvent) {
-        plugin.update(target, jcrEvent);
+    private void updatePlugin(Plugin plugin, final AjaxRequestTarget target, final PluginEvent event) {
+        plugin.update(target, event);
 
         //Plugins can have DialogWindows as children, 
         //these need to be updated to.
         plugin.visitChildren(DialogWindow.class, new IVisitor() {
             public Object component(Component component) {
                 DialogWindow dialogWindow = (DialogWindow) component;
-                dialogWindow.update(target, jcrEvent);
-                return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                dialogWindow.update(target, event);
+                return IVisitor.CONTINUE_TRAVERSAL;
             }
         });
     }

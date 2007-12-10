@@ -23,6 +23,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 
 public class NodeEditor extends Form {
     private static final long serialVersionUID = 1L;
@@ -63,11 +64,12 @@ public class NodeEditor extends Form {
         add(types);
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        if (jcrEvent.getModel() != null) {
-            properties.setProvider(new JcrPropertiesProvider(jcrEvent.getModel()));
-            types.setProvider(new JcrNodeTypesProvider(jcrEvent.getModel()));
-            setModel(jcrEvent.getModel());
+    public void update(AjaxRequestTarget target, PluginEvent event) {
+        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
+        if (newModel != null) {
+            properties.setProvider(new JcrPropertiesProvider(newModel));
+            types.setProvider(new JcrNodeTypesProvider(newModel));
+            setModel(newModel);
         }
         if (target != null && findPage() != null) {
             target.addComponent(this);

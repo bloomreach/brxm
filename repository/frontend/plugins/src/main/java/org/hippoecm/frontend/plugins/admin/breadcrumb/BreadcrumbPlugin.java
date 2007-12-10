@@ -20,6 +20,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -38,9 +39,10 @@ public class BreadcrumbPlugin extends Plugin {
         add(new Label("path", new PropertyModel(this, "nodePath")));
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        if (jcrEvent.getModel() != null) {
-            JcrNodeModel nodeModel = jcrEvent.getModel();
+    public void update(AjaxRequestTarget target, PluginEvent event) {
+        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
+        if (newModel != null) {
+            JcrNodeModel nodeModel = newModel;
             setNodeModel(nodeModel);
             nodePath = nodeModel.getItemModel().getPath();
         }

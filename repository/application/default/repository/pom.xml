@@ -47,6 +47,16 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
     
   <build>
@@ -64,6 +74,29 @@
           </connectors>
           <contextPath>/</contextPath>
         </configuration>
+        <dependencies>
+          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>3.1.4</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>3.1.4</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>3.1.4</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>3.1.4</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>

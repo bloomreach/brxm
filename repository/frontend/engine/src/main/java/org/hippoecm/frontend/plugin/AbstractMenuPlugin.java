@@ -15,10 +15,10 @@
  */
 package org.hippoecm.frontend.plugin;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
-
 
 /**
  * Abstract plugin for a menu with any number of menu options. The menu option are
@@ -44,4 +44,10 @@ public abstract class AbstractMenuPlugin extends Plugin {
         add(dialog.dialogLink(dialogLinkId));
     }
 
+    public void update(final AjaxRequestTarget target, final PluginEvent event) {
+        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
+        if (newModel != null) {
+            setNodeModel(newModel);
+        }
+    }
 }

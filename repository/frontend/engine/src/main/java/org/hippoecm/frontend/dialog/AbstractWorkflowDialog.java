@@ -20,10 +20,11 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.MappingException;
 
 /**
  * A dialog operating in a workflow context. Each workflow action should
@@ -37,7 +38,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     }
     
     protected Workflow getWorkflow() {
-        Plugin owningPlugin = (Plugin)dialogWindow.findParent(Plugin.class);
+        Plugin owningPlugin = getOwningPlugin();
         Workflow workflow = null;
         try {
             JcrNodeModel nodeModel = owningPlugin.getNodeModel();
@@ -61,16 +62,18 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     
 
     @Override
-    protected JcrEvent ok() throws Exception {
+    protected PluginEvent ok() throws Exception {
         doOk();
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         nodeModel.getNode().getSession().save();
         nodeModel.getNode().getSession().refresh(true);
 
-        while (nodeModel.getParentModel() != null) {
-            nodeModel = nodeModel.getParentModel();
-        }
-        return new JcrEvent(nodeModel, true);
+        //TODO: don't go all the way up to the root here
+        //probably up to the nearest hippo:handle will do
+        JcrNodeModel rootModel = nodeModel.findRootModel();
+        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
+        result.chainEvent(JcrEvent.NEEDS_RELOAD, rootModel);
+        return result;
     }
     
     /**

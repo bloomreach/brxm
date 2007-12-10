@@ -17,14 +17,13 @@ package org.hippoecm.frontend.plugins.admin.menu.property;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableMultiLineLabel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
@@ -58,7 +57,7 @@ public class PropertyDialog extends AbstractDialog {
     }
 
     @Override
-    public JcrEvent ok() throws RepositoryException {
+    public PluginEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         if (isMultiple.booleanValue()) {
             if (value == null || value.equals("")) {
@@ -68,7 +67,7 @@ public class PropertyDialog extends AbstractDialog {
         } else {
             nodeModel.getNode().setProperty(name, value);
         }
-        return new JcrEvent(nodeModel, false);
+        return new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
     }
 
     @Override

@@ -18,12 +18,6 @@ package org.hippoecm.frontend.plugins.admin.login;
 import javax.jcr.Session;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.ajax.AjaxEventBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
-import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
@@ -32,6 +26,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.widgets.PasswordTextFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.HippoRepository;
@@ -58,7 +53,7 @@ public class LoginDialog extends AbstractDialog {
     }
 
     @Override
-    public JcrEvent ok() throws Exception {
+    public PluginEvent ok() throws Exception {
         String username = credentials.getString("username");
         String password = credentials.getString("password");
 
@@ -70,10 +65,10 @@ public class LoginDialog extends AbstractDialog {
         userSession.setJcrSession(jcrSession, credentials);
         
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        while (nodeModel.getParentModel() != null) {
-            nodeModel = nodeModel.getParentModel();
-        }
-        return new JcrEvent(nodeModel, true);
+        
+        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
+        result.chainEvent(JcrEvent.NEEDS_RELOAD, nodeModel.findRootModel());
+        return result;
     }
 
     @Override

@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.empty;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -26,10 +24,6 @@ public class EmptyPlugin extends Plugin {
 
     public EmptyPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-    }
-
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        // nothing much to do here
     }
 
 }

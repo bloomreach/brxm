@@ -18,13 +18,13 @@ package org.hippoecm.frontend.plugins.admin.menu.rename;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class RenameDialog extends AbstractDialog {
@@ -56,16 +56,14 @@ public class RenameDialog extends AbstractDialog {
     }
 
     @Override
-    protected JcrEvent ok() throws RepositoryException {
+    protected PluginEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
-        JcrEvent result;
-        if (nodeModel.getParentModel() == null) {
-            result = new JcrEvent(nodeModel, false);
-        } else {
+        PluginEvent result;
+        if (nodeModel.getParentModel() != null) {
             JcrNodeModel parentModel = nodeModel.getParentModel();            
             
-            //The actual move
+            //The actual JCR move
             String oldPath = nodeModel.getNode().getPath();
             String newPath = parentModel.getNode().getPath();
             if (!newPath.endsWith("/")) {
@@ -74,8 +72,12 @@ public class RenameDialog extends AbstractDialog {
             newPath += getName();
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(oldPath, newPath);
-
-            result = new JcrEvent(parentModel, true);
+            
+            JcrNodeModel newNodeModel = new JcrNodeModel(parentModel, parentModel.getNode().getNode(getName()));
+            result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, newNodeModel);
+            result.chainEvent(JcrEvent.NEEDS_RELOAD, parentModel);
+        } else {
+            result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
         }
         return result;
     }

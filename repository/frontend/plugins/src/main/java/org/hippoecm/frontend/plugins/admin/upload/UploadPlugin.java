@@ -26,6 +26,7 @@ import org.apache.wicket.util.lang.Bytes;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -73,9 +74,10 @@ public class UploadPlugin extends Plugin {
         add(form);
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent event) {
-        if (event.getModel() != null) {
-            form.setModel(event.getModel());
+    public void update(AjaxRequestTarget target, PluginEvent event) {
+        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
+        if (newModel != null) {
+            form.setModel(newModel);
         }
     }
 }

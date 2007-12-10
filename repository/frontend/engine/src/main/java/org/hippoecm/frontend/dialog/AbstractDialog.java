@@ -20,7 +20,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.Plugin;
 
 public abstract class AbstractDialog extends WebPage {
 
@@ -70,8 +71,12 @@ public abstract class AbstractDialog extends WebPage {
     public String getException() {
         return exception;
     }
+    
+    protected Plugin getOwningPlugin() {
+        return (Plugin)dialogWindow.findParent(Plugin.class);
+    }
 
-    protected abstract JcrEvent ok() throws Exception;
+    protected abstract PluginEvent ok() throws Exception;
 
     protected abstract void cancel();
 
