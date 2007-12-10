@@ -15,9 +15,7 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -31,7 +29,4 @@ public class BrowserPerspective extends Plugin {
         super(pluginDescriptor, model, parentPlugin);
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent model) {
-        // TODO Auto-generated method stub        
-    }
 }

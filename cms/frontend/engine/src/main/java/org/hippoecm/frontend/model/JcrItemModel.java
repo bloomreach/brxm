@@ -46,6 +46,19 @@ public class JcrItemModel extends LoadableDetachableModel {
     public String getPath() {
         return path;
     }
+    
+    
+    public boolean exists() {
+        boolean result = false;
+        try {
+            UserSession sessionProvider = (UserSession) Session.get();
+            result = sessionProvider.getJcrSession().itemExists(path);
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     // LoadableDetachableModel
 

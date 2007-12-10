@@ -26,6 +26,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.repository.api.HippoNode;
 
 public class MoveDialog extends AbstractDialog {
@@ -59,16 +60,13 @@ public class MoveDialog extends AbstractDialog {
     }
 
     @Override
-    public JcrEvent ok() throws RepositoryException {
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-
-        JcrEvent result;
-        if (nodeModel.getParentModel() == null) {
-            result = new JcrEvent(nodeModel, false);
-        } 
-        else {
-            String nodeName = nodeModel.getNode().getName();
-            String sourcePath = nodeModel.getNode().getPath();
+    public PluginEvent ok() throws RepositoryException {
+        PluginEvent result;
+        
+        JcrNodeModel sourceNodeModel = dialogWindow.getNodeModel();
+        if (sourceNodeModel.getParentModel() != null) {
+            String nodeName = sourceNodeModel.getNode().getName();
+            String sourcePath = sourceNodeModel.getNode().getPath();
 
             JcrTreeNode targetNodeModel = (JcrTreeNode) tree.getSelectedNode();
             String targetPath = targetNodeModel.getNodeModel().getNode().getPath();
@@ -81,12 +79,11 @@ public class MoveDialog extends AbstractDialog {
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(sourcePath, targetPath);
 
-            //TODO: use common ancestor iso root
-            JcrNodeModel rootNodeModel = targetNodeModel.getNodeModel();
-            while (rootNodeModel.getParentModel() != null) {
-                rootNodeModel = rootNodeModel.getParentModel();
-            }
-            result = new JcrEvent(rootNodeModel, true);
+            //TODO: lookup common ancestor iso root
+            result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, targetNodeModel.getNodeModel());
+            result.chainEvent(JcrEvent.NEEDS_RELOAD, targetNodeModel.getNodeModel().findRootModel());
+        } else {
+            result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, sourceNodeModel);
         }
 
         return result;

@@ -35,7 +35,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
     private PluginDescriptor pluginDescriptor;
     private Plugin parentPlugin;
     private JcrNodeModel model;
-    
+
     public Plugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor.getWicketId(), null);
         setOutputMarkupId(true);
@@ -54,7 +54,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
         }
         return pluginManager;
     }
-    
+
     public void setPluginManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
     }
@@ -62,11 +62,11 @@ public abstract class Plugin extends Panel implements EventConsumer {
     public Plugin getParentPlugin() {
         return parentPlugin;
     }
-    
+
     public JcrNodeModel getNodeModel() {
         return model;
     }
-    
+
     public void setNodeModel(JcrNodeModel model) {
         this.model = model;
     }
@@ -82,7 +82,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
             child.addChildren();
         }
     }
-    
+
     public Plugin addChild(PluginDescriptor childDescriptor) {
         PluginFactory pluginFactory = new PluginFactory(getPluginManager());
         Plugin child = pluginFactory.createPlugin(childDescriptor, model, this);
@@ -94,7 +94,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
     public void removeChild(PluginDescriptor childDescriptor) {
         remove(childDescriptor.getWicketId());
     }
-    
+
     protected Workflow getWorkflow() {
         Workflow workflow = null;
         try {
@@ -111,7 +111,10 @@ public abstract class Plugin extends Panel implements EventConsumer {
         return workflow;
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent event) {
-        setNodeModel(event.getModel());
+    public void update(AjaxRequestTarget target, PluginEvent event) {
+        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
+        if (newModel != null) {
+            setNodeModel(newModel);
+        }
     }
 }

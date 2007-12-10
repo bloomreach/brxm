@@ -24,6 +24,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.tree.JcrTree;
 
 public class BrowserPlugin extends Plugin {
@@ -44,22 +45,29 @@ public class BrowserPlugin extends Plugin {
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
                 JcrTreeNode treeNodeModel = (JcrTreeNode) clickedNode;
-                JcrEvent jcrEvent = new JcrEvent(treeNodeModel.getNodeModel(), false);
-
-                getPluginManager().update(target, jcrEvent);
+                PluginEvent event = new PluginEvent(BrowserPlugin.this, JcrEvent.NEW_MODEL, treeNodeModel.getNodeModel());
+                getPluginManager().update(target, event);
             }
         };
         add(tree);
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        if (jcrEvent.structureChanged()) {
-            JcrTreeModel treeModel = rootNodeModel.getTreeModel();
-            JcrTreeNode treeNodeModel = treeModel.lookup(jcrEvent.getModel());
+    public void update(AjaxRequestTarget target, PluginEvent event) {
+        JcrTreeModel treeModel = rootNodeModel.getTreeModel();
+        
+        JcrNodeModel nodeToBeReloaded = event.getNodeModel(JcrEvent.NEEDS_RELOAD);
+        if (nodeToBeReloaded != null) {    
+            JcrTreeNode treeNodeModel = treeModel.lookup(nodeToBeReloaded);
 
             treeNodeModel.markReload();
             tree.getTreeModel().nodeStructureChanged(treeNodeModel);
             tree.updateTree(target);
+        }
+        
+        JcrNodeModel newSelection = event.getNodeModel(JcrEvent.NEW_MODEL);
+        if(newSelection != null) {
+            JcrTreeNode node = treeModel.lookup(newSelection);
+            tree.getTreeState().selectNode(node, true);
         }
     }
 

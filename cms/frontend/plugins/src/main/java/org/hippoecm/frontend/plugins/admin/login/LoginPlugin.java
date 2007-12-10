@@ -26,7 +26,7 @@ import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -79,7 +79,7 @@ public class LoginPlugin extends Plugin {
         loginDialog.setPageCreator( loginDialogFactory );
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
+    public void update(AjaxRequestTarget target, PluginEvent event) {
         UserSession session = (UserSession) getSession();
         ValueMap credentials = session.getCredentials();
         username = credentials.getString("username");

@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.widgets;
 
 import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
 public class PasswordTextFieldWidget extends AjaxUpdatingWidget {

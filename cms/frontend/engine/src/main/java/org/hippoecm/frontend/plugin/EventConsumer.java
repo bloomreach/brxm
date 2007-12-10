@@ -19,6 +19,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 
 public interface EventConsumer {
     
-    public void update(AjaxRequestTarget target, JcrEvent event);
+    public void update(AjaxRequestTarget target, PluginEvent event);
 
 }

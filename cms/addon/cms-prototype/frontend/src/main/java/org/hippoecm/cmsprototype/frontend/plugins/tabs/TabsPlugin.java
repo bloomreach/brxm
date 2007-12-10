@@ -2,14 +2,12 @@ package org.hippoecm.cmsprototype.frontend.plugins.tabs;
 
 import java.util.ArrayList;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
@@ -50,6 +48,4 @@ public class TabsPlugin extends Plugin {
         tabs.remove(childDescriptor);
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent event) {
-    }
 }

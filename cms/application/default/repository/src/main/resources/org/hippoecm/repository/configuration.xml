@@ -40,10 +40,10 @@
         <sv:value>hippo:initializeitem</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:nodetypes" sv:type="String">
-        <sv:value>frontend.cnd</sv:value>
+        <sv:value>frontend-config.cnd</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:content" sv:type="String">
-        <sv:value>frontend.xml</sv:value>
+        <sv:value>frontend-config.xml</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:contentroot" sv:type="String">
         <sv:value>/hippo:configuration/hippo:frontend</sv:value>

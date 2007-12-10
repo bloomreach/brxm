@@ -16,8 +16,11 @@
 package org.hippoecm.frontend.plugin.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.hippoecm.frontend.plugin.EventChannel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 /**
@@ -34,13 +37,38 @@ public class PluginJavaConfig implements PluginConfig {
     private PluginDescriptor breadcrumbPlugin;
 
     public PluginJavaConfig() {
-        rootPlugin = new PluginDescriptor("rootPlugin", "org.hippoecm.frontend.plugins.admin.RootPlugin");
-        navigationPlugin = new PluginDescriptor("navigationPlugin", "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin");
-        menuPlugin = new PluginDescriptor("menuPlugin", "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin");
-        loginPlugin = new PluginDescriptor("loginPlugin", "org.hippoecm.frontend.plugins.admin.login.LoginPlugin");
-        contentPlugin = new PluginDescriptor("contentPlugin", "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin");
-        breadcrumbPlugin = new PluginDescriptor("breadcrumbPlugin", "org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin");
+        
+        EventChannel defaultChannel = new EventChannel("default");
+        Set<EventChannel> incoming = new HashSet<EventChannel>();
+        incoming.add(defaultChannel);
+        Set<EventChannel> outgoing = new HashSet<EventChannel>();
+        outgoing.add(defaultChannel);
+        
+        String id = "rootPlugin";
+        String className = "org.hippoecm.frontend.plugins.admin.RootPlugin";      
+        rootPlugin = new PluginDescriptor(id, className, incoming, outgoing);
+
+        id = "navigationPlugin";
+        className = "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin";
+        navigationPlugin = new PluginDescriptor(id , className, incoming, outgoing);
+
+        id = "menuPlugin";
+        className = "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin";
+        menuPlugin = new PluginDescriptor(id, className, incoming, outgoing);
+        
+        id = "loginPlugin";
+        className = "org.hippoecm.frontend.plugins.admin.login.LoginPlugin";
+        loginPlugin = new PluginDescriptor(id, className, incoming, outgoing);
+
+        id = "contentPlugin";
+        className = "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin";
+        contentPlugin = new PluginDescriptor(id, className, incoming, outgoing);
+
+        id = "breadcrumbPlugin";
+        className = "org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin";
+        breadcrumbPlugin = new PluginDescriptor(id, className, incoming, outgoing);
     }
+    
 
     public PluginDescriptor getRoot() {
         return rootPlugin;
@@ -58,7 +86,7 @@ public class PluginJavaConfig implements PluginConfig {
         }
         return result;
     }
-    
+
     public PluginDescriptor getPlugin(String pluginId) {
         PluginDescriptor result = null;
         if (pluginId.equals("rootPlugin")) {

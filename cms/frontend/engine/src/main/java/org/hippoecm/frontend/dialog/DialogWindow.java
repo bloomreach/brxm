@@ -19,15 +19,16 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.EventConsumer;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.EventConsumer;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginManager;
 
 public class DialogWindow extends ModalWindow implements EventConsumer {
     private static final long serialVersionUID = 1L;
 
-    protected JcrEvent dialogResult; 
+    protected PluginEvent dialogResult; 
     private JcrNodeModel nodeModel;
 
     /**
@@ -62,12 +63,15 @@ public class DialogWindow extends ModalWindow implements EventConsumer {
         };
     }
 
-    public void setDialogResult(JcrEvent event) {
+    public void setDialogResult(PluginEvent event) {
         this.dialogResult = event;
     }
     
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        this.nodeModel = jcrEvent.getModel();
+    public void update(AjaxRequestTarget target, PluginEvent event) {
+        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
+        if (newModel != null) {
+            this.nodeModel = newModel; 
+        }
     }
 
     public JcrNodeModel getNodeModel() {

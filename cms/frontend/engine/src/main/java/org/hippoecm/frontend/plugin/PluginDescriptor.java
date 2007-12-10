@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugin;
 
+import java.util.Set;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -28,11 +30,28 @@ public class PluginDescriptor implements IClusterable {
     private String wicketId;
     private String className;
 
-    public PluginDescriptor(String pluginId, String className) {
+    private Set<EventChannel> incoming;
+    private Set<EventChannel> outgoing;
+
+    public PluginDescriptor(String pluginId, String className, Set<EventChannel> incoming, Set<EventChannel> outgoing) {
         this.pluginId = pluginId;
         this.wicketId = pluginId;
         this.className = className;
+        this.incoming = incoming;
+        this.outgoing = outgoing;
     }
+
+    // setters
+
+    public void setWicketId(String wicketId) {
+        this.wicketId = wicketId;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    // getters
 
     public String getPluginId() {
         return pluginId;
@@ -42,29 +61,24 @@ public class PluginDescriptor implements IClusterable {
         return wicketId;
     }
 
-    public void setWicketId(String wicketId) {
-        this.wicketId = wicketId;
-    }
-
     public String getClassName() {
         return className;
     }
-    
-    public void setClassName(String className) {
-        this.className = className;
+
+    public Set<EventChannel> getIncoming() {
+        return incoming;
     }
-    
-    // override Object
+
+    public Set<EventChannel> getOutgoing() {
+        return outgoing;
+    }
 
     @Override
     public String toString() {
-       return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-           .append("pluginId", pluginId)
-           .append("wicketId", wicketId)
-           .append("className", className)
-           .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("pluginId", pluginId).append(
+                "wicketId", wicketId).append("className", className).toString();
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object instanceof PluginDescriptor == false) {
@@ -74,20 +88,13 @@ public class PluginDescriptor implements IClusterable {
             return true;
         }
         PluginDescriptor pluginDescriptor = (PluginDescriptor) object;
-        return new EqualsBuilder()
-            .append(pluginId, pluginDescriptor.pluginId)
-            .append(wicketId, pluginDescriptor.wicketId)
-            .append(className, pluginDescriptor.className)
-            .isEquals();
+        return new EqualsBuilder().append(pluginId, pluginDescriptor.pluginId).append(wicketId,
+                pluginDescriptor.wicketId).append(className, pluginDescriptor.className).isEquals();
     }
-    
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 313)
-            .append(pluginId)
-            .append(wicketId)
-            .append(className)
-            .toHashCode();
+        return new HashCodeBuilder(17, 313).append(pluginId).append(wicketId).append(className).toHashCode();
     }
 
 }

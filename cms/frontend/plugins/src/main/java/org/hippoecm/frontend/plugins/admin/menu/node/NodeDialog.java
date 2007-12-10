@@ -17,12 +17,12 @@ package org.hippoecm.frontend.plugins.admin.menu.node;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class NodeDialog extends AbstractDialog {
@@ -43,11 +43,15 @@ public class NodeDialog extends AbstractDialog {
     }
 
     @Override
-    public JcrEvent ok() throws RepositoryException {
+    public PluginEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        
+        //The actual JCR add node
         nodeModel.getNode().addNode(getName(), getType());
-
-        return new JcrEvent(nodeModel, true);
+        
+        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
+        result.chainEvent(JcrEvent.NEEDS_RELOAD, nodeModel);
+        return result;
     }
 
     @Override

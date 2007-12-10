@@ -22,6 +22,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 
 public class ResetDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -48,14 +49,17 @@ public class ResetDialog extends AbstractDialog {
     }
 
     @Override
-    public JcrEvent ok() throws RepositoryException {
+    public PluginEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        
+        // The actual JCR refresh
         nodeModel.getNode().getSession().refresh(false);
 
-        while (nodeModel.getParentModel() != null) {
-            nodeModel = nodeModel.getParentModel();
+        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
+        if (hasPendingChanges) {
+            result.chainEvent(JcrEvent.NEEDS_RELOAD, nodeModel.findRootModel());
         }
-        return new JcrEvent(nodeModel, hasPendingChanges);
+        return result;
     }
 
     @Override

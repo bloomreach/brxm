@@ -16,25 +16,32 @@
 package org.hippoecm.frontend.plugin.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.UserSession;
+import org.hippoecm.frontend.plugin.EventChannel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
     private static final String pluginConfigRoot = "hippo:configuration/hippo:frontend/default";
     private static final String rootPluginId = "rootPlugin";
+    
+    private final static String PLUGIN_RENDERER = "hippo:renderer";
+    private final static String INCOMING_CHANNELS = "hippo:incoming";
+    private final static String OUTGOING_CHANNELS = "hippo:outgoing";
 
     public PluginRepositoryConfig() {
     }
@@ -97,9 +104,22 @@ public class PluginRepositoryConfig implements PluginConfig {
     }
     
     private PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
-        String classname = pluginNode.getProperty(HippoNodeType.HIPPO_RENDERER).getString();
+        String classname = pluginNode.getProperty(PLUGIN_RENDERER).getString();
         String pluginId = pluginNode.getName();
-        return new PluginDescriptor(pluginId, classname);
+        Set<EventChannel> incoming = getChannels(pluginNode, INCOMING_CHANNELS);
+        Set<EventChannel> outgoing = getChannels(pluginNode, OUTGOING_CHANNELS);
+        return new PluginDescriptor(pluginId, classname, incoming, outgoing);
     }
 
+    private Set<EventChannel> getChannels(Node pluginNode, String type) throws RepositoryException {
+        Set<EventChannel> result = new HashSet<EventChannel>();
+        if (pluginNode.hasProperty(type)) {
+            Value[] channels = pluginNode.getProperty(type).getValues();
+            for (int i=0; i<channels.length; i++) {
+                EventChannel channel = new EventChannel(channels[i].getString());
+                result.add(channel);
+            }
+        }
+        return result;
+    }
 }

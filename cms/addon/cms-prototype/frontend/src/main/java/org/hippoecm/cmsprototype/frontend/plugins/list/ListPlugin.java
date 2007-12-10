@@ -24,6 +24,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColu
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -45,11 +46,12 @@ public class ListPlugin extends Plugin {
         add(dataTable);
     }
 
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        if (jcrEvent.getModel() != null) {
-            setModel(jcrEvent.getModel());
+    public void update(AjaxRequestTarget target, PluginEvent event) {
+        JcrNodeModel nodeModel = event.getNodeModel(JcrEvent.NEW_MODEL);
+        if (nodeModel != null) {
+            setModel(nodeModel);
             remove(dataTable);
-            dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableJcrDataProvider(jcrEvent.getModel()), 10);
+            dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableJcrDataProvider(nodeModel), 10);
             add(dataTable);
         }
         if (target != null) {

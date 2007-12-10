@@ -26,6 +26,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.repository.HippoRepository;
 
 public class LogoutDialog extends AbstractDialog {
@@ -42,7 +43,7 @@ public class LogoutDialog extends AbstractDialog {
     }
 
     @Override
-    protected JcrEvent ok() throws Exception {
+    protected PluginEvent ok() throws Exception {
         Main main = (Main) Application.get();
         HippoRepository repository = main.getRepository();
         Session jcrSession = repository.login();
@@ -50,10 +51,11 @@ public class LogoutDialog extends AbstractDialog {
         userSession.setJcrSession(jcrSession, new ValueMap());
         
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        while (nodeModel.getParentModel() != null) {
-            nodeModel = nodeModel.getParentModel();
-        }
-        return new JcrEvent(nodeModel, true);
+        JcrNodeModel rootModel = nodeModel.findRootModel();
+        
+        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
+        result.chainEvent(JcrEvent.NEEDS_RELOAD, rootModel);
+        return result;
     }
 
 }

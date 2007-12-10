@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.HashSet;
+
 import org.apache.wicket.markup.html.WebPage;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -30,17 +32,17 @@ public class Home extends WebPage {
     private static final long serialVersionUID = 1L;
 
     public Home() {
-        UserSession session = (UserSession)getSession();
+        UserSession session = (UserSession) getSession();
         HippoNode rootNode = session.getRootNode();
-        if (rootNode == null) {        
+        if (rootNode == null) {
             String message = "Cannot find repository root, no connection to server.";
-            PluginDescriptor errorDescriptor = new PluginDescriptor("rootPlugin", null);
+            PluginDescriptor errorDescriptor = new PluginDescriptor("rootPlugin", null, new HashSet(), new HashSet());
             add(new ErrorPlugin(errorDescriptor, null, message));
         } else {
             PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
             PluginManager pluginManager = new PluginManager(pluginConfig);
             PluginFactory pluginFactory = new PluginFactory(pluginManager);
-            
+
             PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
             JcrNodeModel rootModel = new JcrNodeModel(null, rootNode);
             Plugin rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
@@ -50,5 +52,5 @@ public class Home extends WebPage {
             rootPlugin.addChildren();
         }
     }
-    
+
 }

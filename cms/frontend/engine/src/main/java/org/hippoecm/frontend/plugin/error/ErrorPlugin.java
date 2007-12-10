@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.error;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -30,7 +28,7 @@ public class ErrorPlugin extends Plugin {
         if (exception != null) {
             errorMessage = exception.getClass().getName() + ": " + exception.getMessage();
         }
-        if (exception != null &&  message != null) {
+        if (exception != null && message != null) {
             errorMessage += "\n";
         }
         if (message != null) {
@@ -41,11 +39,7 @@ public class ErrorPlugin extends Plugin {
 
     @Override
     public void addChildren() {
-        
-    }
 
-    public void update(AjaxRequestTarget target, JcrEvent jcrEvent) {
-        // nothing much to do here
     }
 
 }

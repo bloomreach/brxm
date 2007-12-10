@@ -41,6 +41,23 @@ public class JcrNodeModel extends ItemModelWrapper {
         return parent;
     }
     
+    public JcrNodeModel findRootModel() {
+        JcrNodeModel result = this;
+        while (result.getParentModel() != null) {
+            result = result.getParentModel();
+        }
+        return result;
+    }
+    
+    public JcrNodeModel findValidParentModel() {
+        JcrNodeModel result = this;
+        while (!result.getItemModel().exists()) {
+            result = result.getParentModel();
+        }
+        return result;
+    }
+
+    
     // override Object
 
     @Override

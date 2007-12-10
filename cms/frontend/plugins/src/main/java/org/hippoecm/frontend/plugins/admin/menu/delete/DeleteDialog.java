@@ -22,6 +22,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.plugin.PluginEvent;
 
 public class DeleteDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -44,11 +45,15 @@ public class DeleteDialog extends AbstractDialog {
     }
 
     @Override
-    public JcrEvent ok() throws RepositoryException {
+    public PluginEvent ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        
+        //The actual JCR remove
         nodeModel.getNode().remove();
-          
-        return new JcrEvent(nodeModel.getParentModel(), true);
+        
+        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel.findValidParentModel());
+        result.chainEvent(JcrEvent.NEEDS_RELOAD, nodeModel.findRootModel());
+        return result;
     }
 
     @Override

@@ -25,15 +25,27 @@
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin</sv:value>
-            </sv:property>  
+            </sv:property>
+            <sv:property sv:name="hippo:incoming" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:outgoing" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>            
         </sv:node>
         <sv:node sv:name="breadcrumbPlugin">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:frontendplugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin</sv:value>
-          </sv:property>
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:frontendplugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+                <sv:value>org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:incoming" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:outgoing" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>            
         </sv:node>
         <sv:node sv:name="menuPlugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -42,14 +54,26 @@
             <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugins.admin.menu.MenuPlugin</sv:value>
             </sv:property>
+            <sv:property sv:name="hippo:incoming" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:outgoing" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>            
         </sv:node>
-         <sv:node sv:name="loginPlugin">
+        <sv:node sv:name="loginPlugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:frontendplugin</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugins.admin.login.LoginPlugin</sv:value>
-            </sv:property>  
+            </sv:property>
+            <sv:property sv:name="hippo:incoming" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:outgoing" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>            
         </sv:node> 
         <sv:node sv:name="contentPlugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -57,7 +81,13 @@
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugins.admin.editor.EditorPlugin</sv:value>
-            </sv:property>  
+            </sv:property>
+            <sv:property sv:name="hippo:incoming" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:outgoing" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>            
         </sv:node>
         <sv:node sv:name="workflowPlugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -66,6 +96,12 @@
             <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugin.empty.EmptyPlugin</sv:value>
             </sv:property>
+            <sv:property sv:name="hippo:incoming" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:outgoing" sv:type="String">
+                <sv:value>default</sv:value>
+            </sv:property>            
         </sv:node>     
     </sv:node>
 </sv:node>
