@@ -23,6 +23,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class NodeDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -34,8 +35,8 @@ public class NodeDialog extends AbstractDialog {
         super(dialogWindow);
         dialogWindow.setTitle("Add a new Node");
 
-        add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
-        add(new AjaxEditableLabel("type", new PropertyModel(this, "type")));
+        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+        add(new TextFieldWidget("type", new PropertyModel(this, "type")));
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }

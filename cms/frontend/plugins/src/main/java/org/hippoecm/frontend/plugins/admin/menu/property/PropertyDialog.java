@@ -25,6 +25,8 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.widgets.TextAreaWidget;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class PropertyDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -48,8 +50,8 @@ public class PropertyDialog extends AbstractDialog {
                 setMultiple((Boolean)newSelection);
             }
         });
-        add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
-        add(new AjaxEditableMultiLineLabel("value", new PropertyModel(this, "value")));
+        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+        add(new TextAreaWidget("value", new PropertyModel(this, "value")));
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
