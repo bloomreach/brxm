@@ -26,11 +26,16 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableMultiLineLabel;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.widgets.TextAreaWidget;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class PropertyValueEditor extends DataView {
     private static final long serialVersionUID = 1L;
@@ -61,26 +66,10 @@ public class PropertyValueEditor extends DataView {
             } else {
                 String value = valueModel.getObject().toString();
                 if (value.contains("\n") || value.length() > 80) {
-                    AjaxEditableMultiLineLabel editor = new AjaxEditableMultiLineLabel("value", valueModel) {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected void onSubmit(AjaxRequestTarget target) {
-                            super.onSubmit(target);
-                        }
-                    };
-                    editor.setCols(80);
-                    editor.setRows(25);
+                    TextAreaWidget editor = new TextAreaWidget("value", valueModel);
                     item.add(editor);
                 } else {
-                    AjaxEditableLabel editor = new AjaxEditableLabel("value", valueModel) {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected void onSubmit(AjaxRequestTarget target) {
-                            super.onSubmit(target);
-                        }
-                    };
+                    TextFieldWidget editor = new TextFieldWidget("value", valueModel);
                     item.add(editor);
                 }
             }

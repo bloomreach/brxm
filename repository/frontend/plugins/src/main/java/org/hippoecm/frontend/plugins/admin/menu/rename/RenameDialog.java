@@ -25,6 +25,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class RenameDialog extends AbstractDialog {
 
@@ -48,7 +49,7 @@ public class RenameDialog extends AbstractDialog {
             e.printStackTrace();
         }
 
-        add(new AjaxEditableLabel("name", new PropertyModel(this, "name")));
+        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
         if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
