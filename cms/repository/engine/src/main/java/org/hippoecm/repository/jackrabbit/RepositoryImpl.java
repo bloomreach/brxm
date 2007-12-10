@@ -24,7 +24,6 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
@@ -42,9 +41,13 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
 {
+    private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
+    
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
     }
@@ -53,6 +56,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
 
     public FacetedNavigationEngine getFacetedNavigationEngine() {
         if(facetedEngine == null) {
+          String msg = "Configure your facetedEngine correctly!!! \n Application will fall back to default faceted engine, " +
+                "but this is a very inefficient one. In your repository.xml (or workspace.xml if you have started the repository" +
+                "already at least once) configure the correct class for SearchIndex. See Hippo ECM documentation 'SearchIndex configuration' " +
+                "for further information.";
+          log.warn(msg);
           facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
         }
         return facetedEngine;
