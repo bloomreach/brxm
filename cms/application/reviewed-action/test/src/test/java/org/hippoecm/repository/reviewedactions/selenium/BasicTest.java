@@ -75,29 +75,18 @@ public class BasicTest extends TestCase {
             selenium.click("login_dialog_link22");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
-                try { if (selenium.isElementPresent("ok8")) break; } catch (Exception e) {}
+                try { if (selenium.isElementPresent("widget3")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
+
+            // enter username
+            selenium.type("widget3", "demo");
     
-            selenium.click("label4");
-            for (int second = 0;; second++) {
-                if (second >= 60) fail("timeout");
-                try { if (selenium.isElementPresent("editor10")) break; } catch (Exception e) {}
-                Thread.sleep(1000);
-            }
-    
-            selenium.type("editor10", "demo");
-            selenium.keyPress("editor10", "\\13");
-            selenium.click("label6");
-            for (int second = 0;; second++) {
-                if (second >= 60) fail("timeout");
-                try { if (selenium.isElementPresent("editor11")) break; } catch (Exception e) {}
-                Thread.sleep(1000);
-            }
-    
-            selenium.type("editor11", "demo");
-            selenium.keyPress("editor11", "\\13");
-            selenium.click("ok8");
+            // enter password
+            selenium.type("widget4", "demo");
+
+            // click ok
+            selenium.click("ok6");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
                 try { if (selenium.isTextPresent("Logged in as demo")) break; } catch (Exception e) {}
@@ -183,22 +172,16 @@ public class BasicTest extends TestCase {
     
             // click on "Add Node"
             selenium.click("node_dialog_link5");
+    
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
-                try { if (selenium.isElementPresent("ok8")) break; } catch (Exception e) {}
+                try { if (selenium.isElementPresent("widget3")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
-    
-            selenium.click("label4");
-            for (int second = 0;; second++) {
-                if (second >= 60) fail("timeout");
-                try { if (selenium.isElementPresent("editor10")) break; } catch (Exception e) {}
-                Thread.sleep(1000);
-            }
-    
-            selenium.type("editor10", "test");
-            selenium.keyPress("editor10", "\\13");
-            selenium.click("ok8");
+
+            // enter node name
+            selenium.type("widget3", "test");
+            selenium.click("ok6");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
                 try { if (selenium.isElementPresent("//div[9]/div/a[2]/span[2]")) break; } catch (Exception e) {}
