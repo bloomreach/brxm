@@ -38,6 +38,7 @@ public interface HippoNodeType {
     final public static String NT_FACETSUBSEARCH = "hippo:facetsubsearch";
     final public static String NT_FACETSEARCH = "hippo:facetsearch";
     final public static String NT_FACETSELECT = "hippo:facetselect";
+    final public static String NT_FRONTENDPLUGIN = "hippo:frontendplugin";
     final public static String NT_HANDLE = "hippo:handle";
     final public static String NT_MIRROR = "hippo:mirror";
     final public static String NT_INITIALIZEFOLDER = "hippo:initializefolder";
