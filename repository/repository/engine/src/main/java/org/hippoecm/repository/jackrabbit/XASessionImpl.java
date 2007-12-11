@@ -22,7 +22,6 @@ import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.HierarchyManager;
-import org.apache.jackrabbit.core.ItemManager;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.security.AccessManager;
@@ -64,8 +63,9 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     }
 
     @Override
-    protected ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
-        return  super.createItemManager(itemStateMgr, hierMgr);
+    protected org.apache.jackrabbit.core.ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
+        return new ItemManager(itemStateMgr, hierMgr, this, ntMgr.getRootNodeDefinition(), ((RepositoryImpl)rep).getRootNodeId());
+        // return super.createItemManager(itemStateMgr, hierMgr);
     }
 
     @Override

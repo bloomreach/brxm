@@ -131,8 +131,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         }
         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
-            child.hasProperty("jcr:uuid");
-            traverse(child);
+            //if (!child.getPath().equals("/jcr:system"))
+                traverse(child);
         }
     }
 
@@ -208,13 +208,9 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         if(session.getRootNode().hasNode("navigation")) {
             session.getRootNode().getNode("navigation").remove();
         }
-        session.save();
-        session.refresh(false);
         if(session.getRootNode().hasNode("documents")) {
             session.getRootNode().getNode("documents").remove();
         }
-        session.save();
-        session.refresh(false);
         if(session != null) {
             session.logout();
         }

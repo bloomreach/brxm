@@ -61,6 +61,20 @@ import org.hippoecm.repository.api.HippoNodeType;
 class HippoLocalItemStateManager extends XAItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
     
+    /** Mask pattern indicating a regular, non-virtual JCR item
+     */
+    static final int ITEM_TYPE_REGULAR  = 0x00;
+    
+    /** Mask pattern indicating an externally defined node, patterns can
+     * be OR-ed to indicate both external and virtual nodes.
+     */
+    static final int ITEM_TYPE_EXTERNAL = 0x01;
+    
+    /** Mask pattern indicating a virtual node, patterns can be OR-ed to
+     * indicate both external and virtual nodes.
+     */
+    static final int ITEM_TYPE_VIRTUAL  = 0x02;
+
     NodeTypeRegistry ntReg;
     protected HierarchyManager hierMgr;
     protected NamePathResolver resolver;
@@ -200,8 +214,9 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
         super.update();
         edit();
-        filteredChangeLog.repopulate();
+        FilteredChangeLog tempChangeLog = filteredChangeLog;
         filteredChangeLog = null;
+        tempChangeLog.repopulate();
     }
 
     @Override
@@ -245,6 +260,14 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     }
 
     @Override
+    public boolean hasItemState(ItemId id) {
+            if(id instanceof HippoNodeId)
+                return true;
+            
+            return super.hasItemState(id);
+    }
+
+    @Override
     public NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException {
         NodeState state = null;
         try {
@@ -276,71 +299,55 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     public PropertyState getPropertyState(PropertyId id) throws NoSuchItemStateException, ItemStateException {
         return super.getPropertyState(id);
     }
-
-    @Override
-    public boolean hasItemState(ItemId id) {
-        if(id instanceof HippoNodeId)
-            return true;
-        return super.hasItemState(id);
-    }
     
+        
+    int isVirtual(ItemState state) {
+        if(state.isNode()) {
+            int type = ITEM_TYPE_REGULAR;
+            if(state.getId() instanceof HippoNodeId)
+                type |= ITEM_TYPE_VIRTUAL;
+            if(virtualProviders.containsKey(((NodeState)state).getNodeTypeName()))
+                type |= ITEM_TYPE_EXTERNAL;
+            return type;
+        } else {
+            /* it is possible to do a check on type name of the property
+             * using Name name = ((PropertyState)state).getName().toString().equals(...)
+             * to check and return whether a property is virtual.
+             *
+             * FIXME: this would be better if these properties would not be
+             * named for all node types, but bound to a specific node type
+             * for which there is already a provider defined.
+             */
+            PropertyState propState = (PropertyState) state;
+            if(propState.getPropertyId() instanceof HippoPropertyId)
+                return ITEM_TYPE_VIRTUAL;
+            else if(virtualProperties.contains(propState.getName()))
+                return ITEM_TYPE_VIRTUAL;
+            else if(propState.getParentId() instanceof HippoNodeId)
+                return ITEM_TYPE_VIRTUAL;
+            else
+                return ITEM_TYPE_REGULAR;
+        }
+    }
+        
     class FilteredChangeLog extends ChangeLog {
         
-        /** Mask pattern indicating a regular, non-virtual JCR item
-         */
-        private static final int ITEM_TYPE_REGULAR  = 0x00;
-        
-        /** Mask pattern indicating an externally defined node, patterns can
-         * be OR-ed to indicate both external and virtual nodes.
-         */
-        private static final int ITEM_TYPE_EXTERNAL = 0x01;
-        
-        /** Mask pattern indicating a virtual node, patterns can be OR-ed to
-         * indicate both external and virtual nodes.
-         */
-        private static final int ITEM_TYPE_VIRTUAL  = 0x02;
-        
         private ChangeLog upstream;
+        private Set<ItemState> deletedExternals;
         
         FilteredChangeLog(ChangeLog changelog) {
             upstream = changelog;
-        }
-        
-        private int isVirtual(ItemState state) {
-            if(state.isNode()) {
-                int type = ITEM_TYPE_REGULAR;
-                if(state.getId() instanceof HippoNodeId)
-                    type |= ITEM_TYPE_VIRTUAL;
-                if(virtualProviders.containsKey(((NodeState)state).getNodeTypeName()))
-                    type |= ITEM_TYPE_EXTERNAL;
-                return type;
-            } else {
-               /* it is possible to do a check on type name of the property
-                * using Name name = ((PropertyState)state).getName().toString().equals(...)
-                * to check and return whether a property is virtual.
-                *
-                * FIXME: this would be better if these properties would not be
-                * named for all node types, but bound to a specific node type
-                * for which there is already a provider defined.
-                */
-                PropertyState propState = (PropertyState) state;
-                if(propState.getPropertyId() instanceof HippoPropertyId)
-                    return ITEM_TYPE_VIRTUAL;
-                else if(virtualProperties.contains(propState.getName()))
-                    return ITEM_TYPE_VIRTUAL;
-                else if(propState.getParentId() instanceof HippoNodeId)
-                    return ITEM_TYPE_VIRTUAL;
-                else
-                    return ITEM_TYPE_REGULAR;
-            }
+            deletedExternals = new HashSet();
         }
         
         void invalidate() {
-            Set<ItemState> deletedExternals = new HashSet();
-            for(Iterator iter = deletedStates(); iter.hasNext(); ) {
+            for(Iterator iter = upstream.deletedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
-                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0)
+                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     deletedExternals.add(state);
+                    ((NodeState)state).removeAllChildNodeEntries();
+                    stateDiscarded((NodeState)state);
+                }
             }
             for(Iterator iter = upstream.addedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
@@ -352,12 +359,12 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                             if(parentNodeState != null) {
                                 parentNodeState.removeChildNodeEntry(nodeState.getNodeId());
                                 stateDiscarded(nodeState);
-                                stateDiscarded(parentNodeState);
+                                //stateDiscarded(parentNodeState);
                             }
                         } catch(NoSuchItemStateException ex) {
                         }
                     } else {
-                        stateDiscarded(state); // stateDestroyed(state);
+                        stateDiscarded(state);
                         //state.setStatus(ItemState.STATUS_EXISTING);
                     }
                 } else if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
@@ -371,8 +378,9 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    ((NodeState)state).removeAllChildNodeEntries();
+                    //((NodeState)state).removeAllChildNodeEntries();
                     stateDiscarded((NodeState)state);
+                    virtualStates.add(state);
                 }
             }
         }
@@ -383,10 +391,13 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     try {
                         virtualProviders.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
+                        stateModified(state);
+                        store(state);
                     } catch(RepositoryException ex) {
                         System.err.println(ex.getMessage());
                         ex.printStackTrace(System.err);
                     }
+                    stateModified((NodeState)state);
                 }
             }
         }
@@ -442,6 +453,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             ItemState current;
             FilteredStateIterator(Iterator actualIterator) {
                 this.actualIterator = actualIterator;
+                current = null;
             }
             public boolean hasNext() {
                 while(current == null) {
