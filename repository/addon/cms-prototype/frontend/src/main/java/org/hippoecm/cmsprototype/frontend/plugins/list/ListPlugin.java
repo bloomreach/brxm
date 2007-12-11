@@ -39,7 +39,7 @@ public class ListPlugin extends Plugin {
         super(pluginDescriptor, model, parentPlugin);
 
         columns = new ArrayList();
-        columns.add(new PropertyColumn(new Model("Name"), "name", "name"));
+        columns.add(new NodeColumn(new Model("Name"), "name"));
         columns.add(new PropertyColumn(new Model("Path"), "path"));
 
         dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableJcrDataProvider(model), 10);
