@@ -27,11 +27,12 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.nodetype.NodeDef;
+import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.name.NameConstants;
 import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
@@ -45,6 +46,8 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 {
     final static private String SVN_ID = "$Id$";
 
+    PropDef primaryTypePropDef;
+
     FacetSubSearchProvider(HippoLocalItemStateManager stateMgr,
                            FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext,
                            FacetResultSetProvider subNodesProvider)
@@ -54,5 +57,20 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 
         this.subSearchProvider = this;
         this.subNodesProvider  = subNodesProvider;
+
+        primaryTypePropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH), countName);
+    }
+
+    public NodeState populate(NodeState state) throws RepositoryException {
+        super.populate(state);
+
+        PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
+        propState.setType(PropertyType.STRING);
+        propState.setDefinitionId(primaryTypePropDef.getId());
+        propState.setValues(new InternalValue[] { InternalValue.create(HippoNodeType.NT_FACETSUBSEARCH) });
+        propState.setMultiValued(false);
+        state.addPropertyName(NameConstants.JCR_PRIMARYTYPE);
+
+        return state;
     }
 }
