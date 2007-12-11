@@ -34,7 +34,8 @@ public class HREPTWO280IssueTest extends FacetedNavigationAbstractTest {
         commonStart();
 
         Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
-        traverse(searchNode);
+        traverse(session.getRootNode().getNode("navigation"));
+
 
         node = session.getRootNode().getNode("documents").addNode("aap");
         node.setProperty("x", "x1");
@@ -44,11 +45,14 @@ public class HREPTWO280IssueTest extends FacetedNavigationAbstractTest {
         traverse(searchNode);
 
         try {
-            session.getRootNode().getNode("documents").remove();
             session.getRootNode().getNode("navigation").remove();
+            //System.gc();  reproducability of correct result
             session.save();
             session.refresh(false);
-            fail("ISSUE HREPTWO-280 resolved (part 2, 3)");
+            session.getRootNode().getNode("documents").remove();
+            session.save();
+            session.refresh(false);
+            System.err.println("ISSUE HREPTWO-280 resolved (part 2, 3)");
         } catch(NullPointerException ex) {
             System.err.println("ISSUE HREPTWO-280 still present (part 2)");
             System.err.println(ex.getMessage());
@@ -65,12 +69,6 @@ public class HREPTWO280IssueTest extends FacetedNavigationAbstractTest {
         commonEnd();
     }
 
-    // Override the tearDown method, otherwise the exception would be thrown anyway
-    public void tearDown() throws Exception {
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        super.tearDown();
-    }
 
     @Override
     public void testPerformance() throws RepositoryException, IOException {

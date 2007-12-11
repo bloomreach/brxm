@@ -1,10 +1,4 @@
 /*
-  THIS CODE IS UNDER CONSTRUCTION, please leave as is until
-  work has proceeded to a stable level, at which time this comment
-  will be removed.  -- Berry
-*/
-
-/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -41,6 +35,13 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
     }
 
+    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, XASessionImpl session) {
+        super(rootNodeId, manager, session);
+        localStateMgr = manager;
+        if(wrappedHierMgr == null)
+            wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
+    }
+
     @Override
     public HierarchyManager getHierarchyMgr() {
         if(wrappedHierMgr == null)
@@ -51,9 +52,5 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
     @Override
     public HierarchyManager getAtticAwareHierarchyMgr() {
         return new HippoHierarchyManager(this, super.getAtticAwareHierarchyMgr());
-    }
-
-    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, XASessionImpl session) {
-        super(rootNodeId, manager, session);
     }
 }
