@@ -34,6 +34,7 @@ import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.name.NameConstants;
 import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
@@ -73,8 +74,8 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     FacetedNavigationEngine.Context facetedContext;
 
     Name countName;
-
     PropDef countPropDef;
+    PropDef primaryTypePropDef;
 
     FacetResultSetProvider(HippoLocalItemStateManager stateMgr, MirrorVirtualProvider subNodesProvider,
                            FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
@@ -87,6 +88,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
 
         countName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_COUNT);
         countPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT), countName);
+        primaryTypePropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT), countName);
     }
 
     public NodeState populate(NodeState state) {
@@ -138,7 +140,14 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         }
         count = facetedResult.length();
 
-        PropertyState propState = createNew(countName, state.getNodeId());
+        PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
+        propState.setType(PropertyType.STRING);
+        propState.setDefinitionId(primaryTypePropDef.getId());
+        propState.setValues(new InternalValue[] { InternalValue.create(HippoNodeType.NT_FACETRESULT) });
+        propState.setMultiValued(false);
+        state.addPropertyName(NameConstants.JCR_PRIMARYTYPE);
+
+        propState = createNew(countName, state.getNodeId());
         propState.setType(PropertyType.LONG);
         propState.setDefinitionId(countPropDef.getId());
         propState.setValues(new InternalValue[] { InternalValue.create(count) });
