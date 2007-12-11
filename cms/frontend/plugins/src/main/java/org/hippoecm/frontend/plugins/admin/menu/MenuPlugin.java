@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu;
 
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
@@ -28,20 +28,20 @@ import org.hippoecm.frontend.plugins.admin.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.admin.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 
-public class MenuPlugin extends AbstractMenuPlugin {
+public class MenuPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     public MenuPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-
-        addMenuOption("node-dialog", "node-dialog-link", NodeDialog.class.getName(), model);
-        addMenuOption("delete-dialog", "delete-dialog-link", DeleteDialog.class.getName(), model);
-        addMenuOption("move-dialog", "move-dialog-link", MoveDialog.class.getName(), model);
-        addMenuOption("rename-dialog", "rename-dialog-link", RenameDialog.class.getName(), model);
-        addMenuOption("export-dialog", "export-dialog-link", ExportDialog.class.getName(), model);
-        addMenuOption("property-dialog", "property-dialog-link", PropertyDialog.class.getName(), model);
-        addMenuOption("save-dialog", "save-dialog-link", SaveDialog.class.getName(), model);
-        addMenuOption("reset-dialog", "reset-dialog-link", ResetDialog.class.getName(), model);
+        
+        add(new DialogLink("node-dialog", "Add Node", NodeDialog.class, model));
+        add(new DialogLink("delete-dialog", "Delete Node", DeleteDialog.class, model));
+        add(new DialogLink("move-dialog", "Move Node", MoveDialog.class, model));
+        add(new DialogLink("rename-dialog", "Rename Node", RenameDialog.class, model));
+        add(new DialogLink("export-dialog", "Export Node", ExportDialog.class, model));
+        add(new DialogLink("property-dialog", "Add Property", PropertyDialog.class, model));
+        add(new DialogLink("save-dialog", "Save", SaveDialog.class, model));
+        add(new DialogLink("reset-dialog", "Reset", ResetDialog.class, model));
     }
 
 }

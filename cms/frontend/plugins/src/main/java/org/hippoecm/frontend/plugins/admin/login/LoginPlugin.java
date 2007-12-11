@@ -36,8 +36,8 @@ public class LoginPlugin extends Plugin {
     private static final String LOGIN_DIALOG_LABEL = "Login";
     private static final String LOGOUT_DIALOG_LABEL = "Logout";
     
-    private static final String LOGIN_DIALOG_CLASSNAME = "org.hippoecm.frontend.plugins.admin.login.LoginDialog";
-    private static final String LOGOUT_DIALOG_CLASSNAME = "org.hippoecm.frontend.plugins.admin.login.LogoutDialog";
+    private static final Class LOGIN_DIALOG_CLASS = LoginDialog.class;
+    private static final Class LOGOUT_DIALOG_CLASS = LogoutDialog.class;
     
     private DynamicDialogFactory loginDialogFactory;
     private String username;
@@ -51,31 +51,37 @@ public class LoginPlugin extends Plugin {
         username = credentials.getString("username");
         
         String label;
-        String className;
+        Class dialogClass;
         
         if (username == null || username.equals("")) {
             username = "anonymous";
             label = LOGIN_DIALOG_LABEL;
-            className = LOGIN_DIALOG_CLASSNAME;
+            dialogClass = LOGIN_DIALOG_CLASS;
         }
         else {
             label = LOGOUT_DIALOG_LABEL;
-            className = LOGOUT_DIALOG_CLASSNAME;
+            dialogClass = LOGOUT_DIALOG_CLASS;
         }
 
         add(new Label("username", new PropertyModel(this, "username")));
 
-        DialogWindow loginDialog = new DialogWindow("login-dialog", model);
+        final DialogWindow loginDialog = new DialogWindow("login-dialog", model);
         add(loginDialog);
         
         // the login/logout dialog link
-        AjaxLink dialogLink = loginDialog.dialogLink("login-dialog-link");
+        AjaxLink dialogLink = new AjaxLink("login-dialog-link") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                loginDialog.show(target);               
+            }
+        };
         loginDialogLinkLabel = new Label("login-dialog-link-label", label); 
         dialogLink.add(loginDialogLinkLabel);
         add(dialogLink);
 
         // the factory providing the login or logout dialog based on the logged in/out status
-        loginDialogFactory = new DynamicDialogFactory(loginDialog, className);
+        loginDialogFactory = new DynamicDialogFactory(loginDialog, dialogClass);
         loginDialog.setPageCreator( loginDialogFactory );
     }
 
@@ -86,7 +92,7 @@ public class LoginPlugin extends Plugin {
         
         if (username == null || username.equals("")) {
             username = "anonymous";
-            loginDialogFactory.setClassName(LOGIN_DIALOG_CLASSNAME);
+            loginDialogFactory.setDialogClass(LOGIN_DIALOG_CLASS);
             loginDialogLinkLabel.setModelObject(LOGIN_DIALOG_LABEL);
 
             String authorizationStrategy = ((Main) getApplication()).getConfigurationParameter(Main.AUTHORIZATION_STRATEGY_PARAM, Main.AUTHORIZATION_STRATEGY_ANONYMOUS);
@@ -96,7 +102,7 @@ public class LoginPlugin extends Plugin {
         
         }
         else {
-            loginDialogFactory.setClassName(LOGOUT_DIALOG_CLASSNAME);
+            loginDialogFactory.setDialogClass(LOGOUT_DIALOG_CLASS);
             loginDialogLinkLabel.setModelObject(LOGOUT_DIALOG_LABEL);
         }
         

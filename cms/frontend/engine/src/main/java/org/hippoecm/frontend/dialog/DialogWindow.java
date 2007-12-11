@@ -16,13 +16,12 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.EventConsumer;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.PluginManager;
 
 public class DialogWindow extends ModalWindow implements EventConsumer {
@@ -51,16 +50,6 @@ public class DialogWindow extends ModalWindow implements EventConsumer {
                 }
             }
         });
-    }
-
-    public AjaxLink dialogLink(String id) {
-        return new AjaxLink(id) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                show(target);
-            }
-        };
     }
 
     public void setDialogResult(PluginEvent event) {
