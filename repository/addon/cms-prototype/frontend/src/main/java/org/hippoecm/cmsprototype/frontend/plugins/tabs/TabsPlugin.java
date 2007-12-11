@@ -90,6 +90,7 @@ public class TabsPlugin extends Plugin {
                 // -> the tab this perspective belongs to should be made active
                 selectMe = tabbie;
             }
+            i++;
         }
         
         if (selectMe != null) {
