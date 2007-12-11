@@ -106,9 +106,24 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         FacetedNavigationEngine.Query initialQuery;
         initialQuery = facetedEngine.parse(docbase);
       
+	/* Current implementation, especialy within JackRabbit itself,
+	 * has serious performance problems when a large number (>1000)
+	 * of child nodes are direct decendents of a single parent.
+	 * We have chosen that there is a hard limit on the retrieval of
+	 * the result set at this time.
+	 * As nearly all user applications have serious problems with
+	 * displaying a large number of decendants, this is currently not
+	 * seen as a serious drawback to have this hard limit AT THIS TIME.
+	 * User applications which provide a display should not do paging
+	 * themselves, but use a --to be developed-- interface in the
+	 * facet search.  The user applications should also provide an
+	 * internal hard limit, in general lower than the limit set below,
+	 * in order to provide feedback to the user that the resultset
+	 * has been truncated.
+	 */
         HitsRequested hitsRequested = new HitsRequested();
         hitsRequested.setResultRequested(true);
-        hitsRequested.setLimit(1000000);
+        hitsRequested.setLimit(1000);
         hitsRequested.setOffset(0);
 
         FacetedNavigationEngine.Result facetedResult;
