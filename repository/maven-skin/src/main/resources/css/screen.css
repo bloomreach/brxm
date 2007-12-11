@@ -79,9 +79,17 @@ div#content_main p, div#content_main tr td, div#content_main ul li, div#content_
 div#content_main h2{margin-bottom: 10px;}
 div#content_main h3{padding-bottom: 3px; display: block; border-bottom: 1px dotted #666666; margin-bottom: 8px; margin-top: 20px;} 
 div#content_main img{padding-top: 10px; padding-bottom: 10px}
-div#content_main pre{background: #f1f1f1; padding: 10px;}
+div#content_main pre{background: #f1f1f1; padding: 10px; padding-bottom: 0px;}
 
 
 div#teaser{background: #00a4e0; width: auto; height: auto;}
 
 ul#nav_supplementary li{background: none; font-size: 14px;}
+
+table.bodyTable {margin-top: 15px;}
+table.bodyTable tbody tr td{padding: 5px; border-bottom: 1px #cccccc solid;}
+table.bodyTable tbody tr.a td{background: #fafafa}
+table.bodyTable tbody tr.b td{background: #f5f5f5}
+table.bodyTable tbody tr th{padding: 5px; padding-top: 8px; padding-bottom: 13px; background: #239dd9; color: white; padding-right: 15px; background: url("../images/tableheadback.gif")}
+
+div#content_main div.source{padding: 15px;}
