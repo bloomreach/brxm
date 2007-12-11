@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.delete.DeleteDialog;
@@ -28,20 +28,20 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion.Req
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdepublication.RequestDePublicationDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication.RequestPublicationDialog;
 
-public class FullReviewedActionsWorkflowPlugin extends AbstractMenuPlugin {
+public class FullReviewedActionsWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-
+    
     public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
         
-        addMenuOption("obtainEditableInstance-dialog", "obtainEditableInstance", ObtainEditableInstanceDialog.class.getName(), model);
-        addMenuOption("disposeEditableInstance-dialog", "disposeEditableInstance", DisposeEditableInstanceDialog.class.getName(), model);
-        addMenuOption("requestPublication-dialog", "requestPublication", RequestPublicationDialog.class.getName(), model);
-        addMenuOption("requestDePublication-dialog", "requestDePublication", RequestDePublicationDialog.class.getName(), model);
-        addMenuOption("requestDeletion-dialog", "requestDeletion", RequestDeletionDialog.class.getName(), model);
-        addMenuOption("publish-dialog", "publish", PublishDialog.class.getName(), model);
-        addMenuOption("dePublish-dialog", "dePublish", DePublishDialog.class.getName(), model);
-        addMenuOption("delete-dialog", "delete", DeleteDialog.class.getName(), model);
+        add(new DialogLink("obtainEditableInstance-dialog", "Obtain editable copy", ObtainEditableInstanceDialog.class, model));
+        add(new DialogLink("disposeEditableInstance-dialog", "Dispose editable copy", DisposeEditableInstanceDialog.class, model));
+        add(new DialogLink("requestPublication-dialog", "Request publication", RequestPublicationDialog.class, model));
+        add(new DialogLink("requestDePublication-dialog", "Request unpublication", RequestDePublicationDialog.class, model));
+        add(new DialogLink("requestDeletion-dialog", "Request delete", RequestDeletionDialog.class, model));
+        add(new DialogLink("publish-dialog", "Publish", PublishDialog.class, model));
+        add(new DialogLink("dePublish-dialog", "Unpublish", DePublishDialog.class, model));
+        add(new DialogLink("delete-dialog", "Unpublish and/or delete", DeleteDialog.class, model));
     }
 
 }

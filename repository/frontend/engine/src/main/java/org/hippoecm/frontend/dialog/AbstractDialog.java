@@ -79,5 +79,5 @@ public abstract class AbstractDialog extends WebPage {
     protected abstract PluginEvent ok() throws Exception;
 
     protected abstract void cancel();
-
+    
 }

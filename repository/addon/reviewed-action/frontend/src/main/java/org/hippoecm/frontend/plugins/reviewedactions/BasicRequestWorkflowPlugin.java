@@ -15,19 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.CancelRequestDialog;
 
-public class BasicRequestWorkflowPlugin extends AbstractMenuPlugin {
+public class BasicRequestWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     public BasicRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        addMenuOption("cancelRequest-dialog", "cancelRequest", CancelRequestDialog.class.getName(), model);
+        add(new DialogLink("cancelRequest-dialog", "Cancel request", CancelRequestDialog.class, model));
     }
 
 }

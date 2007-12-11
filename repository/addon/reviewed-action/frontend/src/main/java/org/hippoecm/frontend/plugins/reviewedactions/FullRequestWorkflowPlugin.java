@@ -15,23 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.AbstractMenuPlugin;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.acceptrequest.AcceptRequestDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.CancelRequestDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest.RejectRequestDialog;
 
-public class FullRequestWorkflowPlugin extends AbstractMenuPlugin {
+public class FullRequestWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        addMenuOption("acceptRequest-dialog", "acceptRequest", AcceptRequestDialog.class.getName(), model);
-        addMenuOption("rejectRequest-dialog", "rejectRequest", RejectRequestDialog.class.getName(), model);
-        addMenuOption("cancelRequest-dialog", "cancelRequest", CancelRequestDialog.class.getName(), model);
+        add(new DialogLink("acceptRequest-dialog", "Approve and execute request", AcceptRequestDialog.class, model));
+        add(new DialogLink("rejectRequest-dialog", "Reject request (with reason)", RejectRequestDialog.class, model));
+        add(new DialogLink("cancelRequest-dialog", "Cancel request", CancelRequestDialog.class, model));
     }
 
 }

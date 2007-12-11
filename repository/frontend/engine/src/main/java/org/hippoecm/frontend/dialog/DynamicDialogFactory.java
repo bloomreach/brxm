@@ -22,32 +22,28 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreat
 import org.hippoecm.frontend.dialog.error.ErrorDialog;
 
 /**
- * Class for on-the-fly page creation based on a dynamic className attribute.
+ * Class for on-the-fly dialog creation based on a dynamic dialogClass attribute.
  */
 public class DynamicDialogFactory implements PageCreator {
     private static final long serialVersionUID = 1L;
 
-    public static final String ERROR = "org.hippoecm.frontend.dialog.error.ErrorDialog";
-
     private DialogWindow window;
-    private String className;
+    private Class dialogClass;
 
-    public DynamicDialogFactory(DialogWindow window, String className) {
+    public DynamicDialogFactory(DialogWindow window, Class dialogClass) {
         this.window = window;
-        this.className = className;
+        this.dialogClass = dialogClass;
     }
-    
-    
+
     public Page createPage() {
         Page result = null;
-        if (className == null || ERROR.equals(className)) {
-            String msg = "No dialog renderer found";
+        if (dialogClass == null) {
+            String msg = "No dialog renderer specified";
             result = new ErrorDialog(window, msg);
         } else {
             try {
-                Class clazz = Class.forName(className);
                 Class[] formalArgs = new Class[] { window.getClass() };
-                Constructor constructor = clazz.getConstructor(formalArgs);
+                Constructor constructor = dialogClass.getConstructor(formalArgs);
                 Object[] actualArgs = new Object[] { window };
                 result = (AbstractDialog) constructor.newInstance(actualArgs);
             } catch (Exception e) {
@@ -57,11 +53,9 @@ public class DynamicDialogFactory implements PageCreator {
         }
         return result;
     }
-    
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setDialogClass(Class dialogClass) {
+        this.dialogClass = dialogClass;
     }
-    
 
 }

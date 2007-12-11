@@ -16,61 +16,25 @@
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
         <table>
-        <ul>
-            <li>
-                <!--                
-                    /**
-                    * Request this editable copy of the document.
-                    */
-                    public void obtainEditableInstance()
-                -->
-                <span wicket:id="obtainEditableInstance-dialog"></span>
-                <a wicket:id="obtainEditableInstance">Obtain editable copy</a>
-            </li>
-            <li>
-                <!--
-                    /**
-                    * Do away with the editable copy of the document which was previously
-                    * obtained.
-                    */
-                    public void disposeEditableInstance()
-                -->
-                <span wicket:id="disposeEditableInstance-dialog"></span>
-                <a wicket:id="disposeEditableInstance">Dispose editable copy</a>
-            </li>
-        </ul>
-        <ul>
-            <li>
-                <!--
-                    /**
-                    * Request for this instance of the document to be published.
-                    */
-                    public void requestPublication()
-                -->               
-                <span wicket:id="requestPublication-dialog"></span>
-                <a wicket:id="requestPublication">Request publication</a>
-            </li>
-            <li>
-                <!--
-                    /**
-                    * Request unpublication.
-                    */
-                    public void requestDepublication()
-                --> 
-                <span wicket:id="requestDePublication-dialog"></span>               
-                <a wicket:id="requestDePublication">Request unpublication</a>
-            </li>
-            <li>
-                <!--
-                    /**
-                    * Request unpublication and deletion of document.
-                    */
-                    public void requestDeletion()
-                --> 
-                <span wicket:id="requestDeletion-dialog"></span>                
-                <a wicket:id="requestDeletion">Request delete</a>
-            </li>
-        </ul>
-    </table>
+            <ul>
+                <li>
+                    <span wicket:id="obtainEditableInstance-dialog"></span>
+                </li>
+                <li>
+                    <span wicket:id="disposeEditableInstance-dialog"></span>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <span wicket:id="requestPublication-dialog"></span>
+                </li>
+                <li>
+                    <span wicket:id="requestDePublication-dialog"></span>               
+                </li>
+                <li>
+                    <span wicket:id="requestDeletion-dialog"></span>                
+                </li>
+            </ul>
+        </table>
     </wicket:panel>
 </html>
