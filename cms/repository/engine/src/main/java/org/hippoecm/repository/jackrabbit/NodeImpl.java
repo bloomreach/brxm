@@ -50,8 +50,8 @@ public class NodeImpl extends org.apache.jackrabbit.core.NodeImpl {
     protected void onRemove() throws RepositoryException {
         HippoLocalItemStateManager localISM;
         localISM = (HippoLocalItemStateManager)(((HippoSessionItemStateManager)stateMgr).localStateMgr);
-        if((localISM.isVirtual(state) & HippoLocalItemStateManager.ITEM_TYPE_EXTERNAL) != 0) {
-	    ((NodeState)state).removeAllChildNodeEntries();
+        if((localISM.isVirtual(state) != HippoLocalItemStateManager.ITEM_TYPE_REGULAR)) {
+            ((NodeState)state).removeAllChildNodeEntries();
         }
         super.onRemove();
     }
