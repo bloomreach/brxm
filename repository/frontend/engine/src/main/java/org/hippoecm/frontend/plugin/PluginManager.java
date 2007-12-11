@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugin;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -69,7 +70,7 @@ public class PluginManager implements IClusterable {
         Iterator<Plugin> plugins = new ArrayList(pluginRegistry).iterator();
         while (plugins.hasNext()) {
             Plugin plugin = plugins.next();
-            Set<EventChannel> incoming = plugin.getDescriptor().getIncoming();
+            Set<EventChannel> incoming = new HashSet<EventChannel>(plugin.getDescriptor().getIncoming());
             incoming.retainAll(event.getChannels());
             if (!incoming.isEmpty()) {
                 try {
