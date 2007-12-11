@@ -76,7 +76,7 @@
     #foreach( $subitem in $item.items )
       #set ( $subitemHref = $PathTool.calculateLink( $subitem.href, $relativePath ) )
       #set ( $subitemHref = $subitemHref.replaceAll( "\\", "/" ) )
-      #set ( $display = false )
+
       #if ( $alignedFileName == $subitemHref )
         #set ( $display = true )
       #end
