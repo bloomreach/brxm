@@ -28,12 +28,12 @@
           The Hippo ECM software is able to run on at least the following Operating Systems:
         </p> 
         <ul>
-          <li>Windows XP/2000, Windows Server 2003</li>
-          <li>Linux, RedHat (RHEL), SUSE (SLES), Debian, Ubuntu and other distributions</li>
+          <li><p>Windows XP/2000, Windows Server 2003</p></li>
+          <li><p>Linux, RedHat (RHEL), SUSE (SLES), Debian, Ubuntu and other distributions</p></li>
           <!--
-          <li>FreeBSD and other BSD variants</li>
-          <li>Solaris 9/10 and OpenSolaris</li>
-          <li>IBM AIX</li>
+          <li><p>FreeBSD and other BSD variants</p></li>
+          <li><p>Solaris 9/10 and OpenSolaris</p></li>
+          <li><p>IBM AIX</p></li>
           -->
         </ul>
         <p>  
@@ -46,10 +46,10 @@
           To run Hippo ECM Java 1.4, Java 5 or Java 6 is required. The following JVMs can be used: 
         </p>
         <ul>
-          <li>Sun JVM</li>
+          <li><p>Sun JVM</p></li>
           <!--
-          <li>IBM JVM</li>
-          <li>BEA JRockit</li>
+          <li><p>IBM JVM</p></li>
+          <li><p>BEA JRockit</p></li>
           -->
         </ul>
       </subsection>
@@ -59,14 +59,14 @@
           Hippo ECM requires an application container. One of the following can be used:
         </p> 
         <ul>
-          <li>Jetty 6</li>
-          <li>Tomcat 5.5 and 6</li>
+          <li><p>Jetty 6</p></li>
+          <li><p>Tomcat 5.5 and 6</p></li>
           <!--
-          <li>IBM WebSphere Application Server 6</li>
-          <li>BEA WebLogic Server 10</li>
-          <li>JBoss Application Server 4</li>
+          <li><p>IBM WebSphere Application Server 6</p></li>
+          <li><p>BEA WebLogic Server 10</p></li>
+          <li><p>JBoss Application Server 4</p></li>
           -->
-          <li>Sun ONE Application Server and Sun Glassfish V2</li>
+          <li><p>Sun ONE Application Server and Sun Glassfish V2</p></li>
         </ul>
       </subsection>
 
@@ -77,11 +77,11 @@
           other databases such as:
         </p>
         <ul>
-          <li>MySQL 4.1, 5.0 and 5.1</li>
-          <li>PosgreSQL 8</li>
-          <li>Oracle 9 and 10</li>
-          <li>MS SQLServer</li>
-          <li>Derby</li>
+          <li><p>MySQL 4.1, 5.0 and 5.1</p></li>
+          <li><p>PosgreSQL 8</p></li>
+          <li><p>Oracle 9 and 10</p></li>
+          <li><p>MS SQLServer</p></li>
+          <li><p>Derby</p></li>
         </ul>
       </subsection>
     </section>
