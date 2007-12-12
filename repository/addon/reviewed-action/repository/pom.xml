@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Reviewed action repository</name>
+  <name>Reviewed action repository addon</name>
   <description>Hippo ECM reviewed action repository addon</description>
   <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
   <groupId>org.hippoecm</groupId>

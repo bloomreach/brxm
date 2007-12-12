@@ -27,20 +27,16 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 public class Main extends WebApplication {
 
     private HippoRepository repository;
-    
+
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
-    
-    public final static String AUTHORIZATION_STRATEGY_PARAM = "authorization-strategy";
-    public final static String AUTHORIZATION_STRATEGY_ANONYMOUS = "anonymous";
-    public final static String AUTHORIZATION_STRATEGY_LOGIN = "login";
 
     @Override
     protected void init() {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(false);
-       
+
         String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
         String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, "repository");
         try {
@@ -53,11 +49,8 @@ public class Main extends WebApplication {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        String authorizationStrategy = getConfigurationParameter(AUTHORIZATION_STRATEGY_PARAM, AUTHORIZATION_STRATEGY_ANONYMOUS);
-        if (AUTHORIZATION_STRATEGY_LOGIN.equals(authorizationStrategy)) {
-            getSecuritySettings().setAuthorizationStrategy(new LoginAuthorizationStrategy());
-        }
+
+        getSecuritySettings().setAuthorizationStrategy(new LoginAuthorizationStrategy());
     }
 
     @Override

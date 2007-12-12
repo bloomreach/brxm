@@ -64,14 +64,6 @@ hippo-ecm                    Pom       hippo-ecm
 |       `-- test             Jar       hippo-ecm-addon-cms-prototype-test				
 |-- api                      Jar       hippo-ecm-api
 |-- application              Pom       hippo-ecm-application
-|   |-- default              Pom       hippo-ecm-application-default
-|   |   |-- frontend         War       hippo-ecm-application-default-frontend
-|   |   |-- repository       War       hippo-ecm-application-default-repository
-|   |   `-- test             Jar       hippo-ecm-application-default-test               				
-|   |-- reviewed-action      Pom       hippo-ecm-application-reviewed-action
-|   |   |-- frontend         War       hippo-ecm-application-reviewed-action-frontend
-|   |   |-- repository       War       hippo-ecm-application-reviewed-action-repository
-|   |   `-- test             Jar       hippo-ecm-application-reviewed-action-test				
 |   `-- cms-prototype        Pom       hippo-ecm-application-cms-prototype
 |       |-- frontend         War       hippo-ecm-application-cms-prototype-frontend
 |       |-- repository       War       hippo-ecm-application-cms-prototype-repository

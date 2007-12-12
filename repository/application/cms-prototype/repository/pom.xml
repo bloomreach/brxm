@@ -23,7 +23,7 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-application-default</artifactId>
+    <artifactId>hippo-ecm-application-cms-prototype</artifactId>
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
@@ -58,6 +58,18 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
       <version>${parent.version}</version>
+    </dependency>
+    
+    <!-- For testing -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>test</scope>
     </dependency>
     
   </dependencies>

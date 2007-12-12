@@ -23,6 +23,11 @@ public class PluginEvent implements IClusterable {
         this.events.put(type, nodeModel.findValidParentModel());
     }
     
+    public PluginEvent(Plugin plugin) {
+        this.channels = plugin.getDescriptor().getOutgoing();
+        this.events = new HashMap<String, JcrNodeModel>();
+    }
+
     public void chainEvent(String type, JcrNodeModel nodeModel) {
         events.put(type, nodeModel.findValidParentModel());
     }

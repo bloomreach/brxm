@@ -118,13 +118,13 @@
                     these dependencies have to be set manually.
                 </p>
                 <ol>
-                    <li><p>Select project hippo-ecm-application-reviewed-action-repository</p></li>
+                    <li><p>Select project hippo-ecm-application-cms-prototype-repository</p></li>
                     <li><p>In the configuration panel (Project -&gt; Properties), select 'Java Build Path'</p></li>
                     <li><p>Under tab 'Projects', add hippo-ecm-repository-application</p></li>
                 </ol>
                 <p>.</p>
                 <ol>
-                    <li><p>Select project hippo-ecm-application-reviewed-action-frontend</p></li>
+                    <li><p>Select project hippo-ecm-application-cms-prototype-frontend</p></li>
                     <li><p>In the configuration panel (Project -&gt; Properties), select 'Java Build Path'</p></li>
                     <li><p>Under tab 'Projects', add hippo-ecm-frontend-application</p></li>
                     <li><p>Under tab 'Projects', add hippo-ecm-frontend-plugins</p></li>
@@ -162,8 +162,8 @@
             <p>
                 <a href="http://jettylauncher.sourceforge.net/docs/quickstart.html">Create Jetty
                 launcher configurations</a> for the projects
-                hippo-ecm-application-reviewed-action-repository and
-                hippo-ecm-application-reviewed-action-frontend.
+                hippo-ecm-application-cms-prototype-repository and
+                hippo-ecm-application-cms-prototype-frontend.
                 As a convention port 8081 is used for the repository and 8082 for the frontend.
             </p>
             <p>
@@ -200,7 +200,7 @@
                     <li><p>Add</p>
 <source>
 -Djava.security.manager
-    -Djava.security.policy=file://${ecm_loc}/application/reviewed-action/frontend/src/main/webapp/WEB-INF/client.policy
+    -Djava.security.policy=file://${ecm_loc}/application/cms-prototype/frontend/src/main/webapp/WEB-INF/client.policy
 </source>
                       <p>to the VM Arguments (tab "Arguments")</p></li>
                 </ol>

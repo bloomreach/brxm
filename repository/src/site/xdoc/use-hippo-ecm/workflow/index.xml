@@ -142,10 +142,10 @@ actions workflow.
 
 <p>
 At this time a sample application that comes in the SVN source in the
-directory <code>application/reviewed-action</code> is pre-configured with the
+directory <code>application/cms-prototype</code> is pre-configured with the
 add-on.  Building using maven with goal package in the directories
-<code>application/reviewed-action/repository</code> and
-<code>application/reviewed-action/frontend</code> results in two WAR packages
+<code>application/cms-prototype/repository</code> and
+<code>application/cms-prototype/frontend</code> results in two WAR packages
 which can be deployed in your application or can be run using Jetty (see
 FIXME).
 In the maven repository at FIXME is a pre-built WAR of both front-end and

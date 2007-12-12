@@ -15,96 +15,75 @@
  */
 package org.hippoecm.frontend;
 
-import javax.jcr.LoginException;
-import javax.jcr.RepositoryException;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.jcr.Session;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
+import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.repository.HippoRepository;
-
 
 /**
  * Basic sign in page to let a user sign in to the repository.
- *
  */
-public final class LoginPage extends WebPage
-{
+public final class LoginPage extends WebPage {
     private static final long serialVersionUID = 1L;
 
-    public LoginPage()
-    {
-        this(null);
-    }
+    static final List<String> APPLICATIONS = Arrays.asList(new String[] { "hippo:cms", "hippo:console" });
 
-    public LoginPage(final PageParameters parameters)
-    {
-        final FeedbackPanel feedback = new FeedbackPanel("feedback");
-        add(feedback);
+    public LoginPage() {
+        add(new FeedbackPanel("feedback"));
         add(new SignInForm("signInForm"));
     }
 
-    public final class SignInForm extends Form
-    {
+    private final class SignInForm extends Form {
         private static final long serialVersionUID = 1L;
 
-        private final ValueMap properties = new ValueMap();
+        private ValueMap credentials = new ValueMap();
+        private String frontendApp = APPLICATIONS.get(0);
 
-        public SignInForm(final String id)
-        {
+        public SignInForm(final String id) {
             super(id);
-            add(new TextField("username", new PropertyModel(properties, "username")));
-            add(new PasswordTextField("password", new PropertyModel(properties, "password")));
+            add(new TextField("username", new PropertyModel(credentials, "username")));
+            add(new PasswordTextField("password", new PropertyModel(credentials, "password")));
+
+            IModel appChooserModel = new PropertyModel(this, "frontendApp");
+            RadioChoice appChooser = new RadioChoice("application", appChooserModel, APPLICATIONS);
+            appChooser.setSuffix("");
+            appChooser.setRequired(true);
+            add(appChooser);
         }
 
-        public final void onSubmit()
-        {
-            Main main = (Main) Application.get();
-            HippoRepository repository = main.getRepository();
-            Session jcrSession = null;
+        public final void onSubmit() {
+            UserSession userSession = (UserSession) getSession();
             
-            String username = properties.getString("username");
-            String password = properties.getString("password");
+            userSession.setFrontendApp(frontendApp);
+            userSession.setJcrCredentials(credentials);
             
-            String message = "Unable to sign in";
-
-            try {
-                jcrSession = repository.login(username, password.toCharArray());
-            } catch (LoginException e) {
-                message += ": " + e;
-                e.printStackTrace();
-            } catch (RepositoryException e) {
-                message += ": " + e;
-                e.printStackTrace();
+            Session jcrSession = userSession.getJcrSession();
+            if (jcrSession == null) {
+                error("Failed to log in");
             }
 
-            if (jcrSession != null) {
-            
-                UserSession userSession = (UserSession) getSession();
-                ValueMap credentials = new ValueMap();
-                credentials.add("username", username);
-                credentials.add("password", password);
-                
-                userSession.setJcrSession(jcrSession, credentials);
+            if (!continueToOriginalDestination()) {
+                setResponsePage(getApplication().getHomePage());
+            }
+        }
 
-                if (!continueToOriginalDestination())
-                {
-                    setResponsePage(getApplication().getHomePage());
-                }
-                
-            }
-            else
-            {
-                error(message);
-            }
-            
+        public void setFrontendApp(String frontendApp) {
+            this.frontendApp = frontendApp;
+        }
+
+        public String getFrontendApp() {
+            return frontendApp;
         }
     }
+
 }

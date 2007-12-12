@@ -36,7 +36,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
-    private static final String pluginConfigRoot = "hippo:configuration/hippo:frontend/default";
+    private static final String pluginConfigRoot = "hippo:configuration/hippo:frontend";
     private static final String rootPluginId = "rootPlugin";
     
     private final static String PLUGIN_RENDERER = "hippo:renderer";
@@ -90,8 +90,10 @@ public class PluginRepositoryConfig implements PluginConfig {
     // Privates
     
     private Node lookupConfigNode(String pluginId) throws RepositoryException {
-        String xpath = pluginConfigRoot + "//" + pluginId;
         UserSession session = (UserSession) Session.get();
+        
+        String xpath = pluginConfigRoot + "/" + session.getFrontendApp() + "//" + pluginId;
+        
         QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);
         QueryResult result = query.execute();

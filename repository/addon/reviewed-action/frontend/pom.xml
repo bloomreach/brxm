@@ -28,8 +28,8 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Reviewed action frontend</name>
-  <description>Hippo ECM reviewed action frontend addons</description>
+  <name>Reviewed action frontend addon</name>
+  <description>Hippo ECM reviewed action frontend addon</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
   <packaging>jar</packaging>

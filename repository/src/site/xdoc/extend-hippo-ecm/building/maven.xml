@@ -115,8 +115,8 @@ C:\> %JAVA_HOME%\bin\rmiregistry.exe
           To start a sample application from the command line, execute the following commands:
         </p>
         <source>
-~/hippo-ecm> cd application/reviewed-action/repository
-~/hippo-ecm/application/reviewed-action/repository> mvn jetty:run-war
+~/hippo-ecm> cd application/cms-prototype/repository
+~/hippo-ecm/application/cms-prototype/repository> mvn jetty:run-war
         </source>
         <p>
           This will start a repository server. 
@@ -127,8 +127,8 @@ C:\> %JAVA_HOME%\bin\rmiregistry.exe
           In another console execute the following commands:
         </p>
         <source>
-~/hippo-ecm> cd application/reviewed-action/frontend
-~/hippo-ecm/application/reviewed-action/frontend> mvn jetty:run-war
+~/hippo-ecm> cd application/cms-prototype/frontend
+~/hippo-ecm/application/cms-prototype/frontend> mvn jetty:run-war
         </source>        
         <p>
           This will start the content browser.

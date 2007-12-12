@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>CMS Prototype</name>
+  <name>CMS Prototype addon</name>
   <description>Hippo ECM CMS Prototype addon</description>
   <artifactId>hippo-ecm-addon-cms-prototype</artifactId>
   <groupId>org.hippoecm</groupId>
