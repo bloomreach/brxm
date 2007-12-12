@@ -61,13 +61,17 @@ public class BrowserPlugin extends Plugin {
 
             treeNodeModel.markReload();
             tree.getTreeModel().nodeStructureChanged(treeNodeModel);
-            tree.updateTree(target);
+            if (target != null && findPage() != null) {
+                tree.updateTree(target);
+            }
         }
         
         JcrNodeModel newSelection = event.getNodeModel(JcrEvent.NEW_MODEL);
         if(newSelection != null) {
             JcrTreeNode node = treeModel.lookup(newSelection);
-            tree.getTreeState().selectNode(node, true);
+            if (node != null) {
+                tree.getTreeState().selectNode(node, true);
+            }
         }
     }
 
