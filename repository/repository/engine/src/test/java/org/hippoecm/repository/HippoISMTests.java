@@ -40,7 +40,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
     public void testTrivialMultipleTraverseVirtualNavigation() throws RepositoryException{
         try {
             commonStart();
-            // External node indicates for the half regular half virtual nodes
+            // external node indicates for the half regular half virtual nodes
             Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz"); 
             traverse(externalNode);
             traverse(externalNode);
@@ -56,4 +56,48 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
     
+    public void testHalfVirtualRemoveAfterChangeSave() throws RepositoryException{
+        try{
+            commonStart();
+            //external node indicates for the half regular half virtual nodes
+            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            traverse(externalNode);
+            session.getRootNode().getNode("documents").addNode("aap");
+            session.save();
+            traverse(externalNode);
+            externalNode.remove();
+            session.save(); 
+        } catch(NullPointerException ex) {
+            fail(ex.getMessage());
+        } catch(RepositoryException ex) {
+            fail(ex.getMessage());
+        } finally {
+            session.logout();
+            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            commonEnd();
+        }
+    }
+    
+    public void testHalfVirtualRemoveWithTraversionsAndChangeSave() throws RepositoryException{
+        try{
+            commonStart();
+            //external node indicates for the half regular half virtual nodes
+            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            traverse(externalNode);
+            session.getRootNode().getNode("documents").addNode("aap");
+            session.save();
+            traverse(externalNode);
+            externalNode.remove();
+            session.save(); 
+        } catch(NullPointerException ex) {
+            fail(ex.getMessage());
+        } catch(RepositoryException ex) {
+            fail(ex.getMessage());
+        } finally {
+            session.logout();
+            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            commonEnd();
+        }
+    }
+
 }

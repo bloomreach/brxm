@@ -391,13 +391,10 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     try {
                         virtualProviders.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
-                        stateModified(state);
-                        store(state);
                     } catch(RepositoryException ex) {
                         System.err.println(ex.getMessage());
                         ex.printStackTrace(System.err);
                     }
-                    stateModified((NodeState)state);
                 }
             }
         }
