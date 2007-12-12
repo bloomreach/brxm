@@ -391,6 +391,10 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     try {
                         virtualProviders.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
+                        /*
+                         * The state must *only* be discarded if and only if the state changed
+                         */
+                        stateDiscarded((NodeState)state);
                     } catch(RepositoryException ex) {
                         System.err.println(ex.getMessage());
                         ex.printStackTrace(System.err);
