@@ -38,11 +38,13 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
     
     public void testTrivialMultipleTraverseVirtualNavigation() throws RepositoryException{
-        try{
-            Node ExternalNode = commonStart();
-            traverse(ExternalNode);
-            traverse(ExternalNode);
-            traverse(ExternalNode);
+        try {
+            commonStart();
+            // External node indicates for the half regular half virtual nodes
+            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz"); 
+            traverse(externalNode);
+            traverse(externalNode);
+            traverse(externalNode);
         } catch(NullPointerException ex) {
             fail(ex.getMessage());
         } catch(RepositoryException ex) {
@@ -53,7 +55,5 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             commonEnd();
         }
     }
-    
-    
     
 }
