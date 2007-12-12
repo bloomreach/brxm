@@ -52,13 +52,13 @@
             <subsection name="Deploy the wars">
                 Upload the wars to your application server in the following order:
                 <ol>
-                    <li>hippo-ecm-application-reviewed-action-repository.war</li>
-                    <li>hippo-ecm-application-reviewed-action-frontend.war</li>
+                    <li>hippo-ecm-application-cms-prototype-repository.war</li>
+                    <li>hippo-ecm-application-cms-prototype-frontend.war</li>
                 </ol>
                 Now you can browse to the following urls:
                 <ul>
-                    <li>http://[host]:[port]/hippo-ecm-application-reviewed-action-repository/</li>
-                    <li>http://[host]:[port]/hippo-ecm-application-reviewed-action-frontend/</li>
+                    <li>http://[host]:[port]/hippo-ecm-application-cms-prototype-repository/</li>
+                    <li>http://[host]:[port]/hippo-ecm-application-cms-prototype-frontend/</li>
                 </ul>
                 Replace the [host] and [port] values to match you Application Server installation.
             </subsection>

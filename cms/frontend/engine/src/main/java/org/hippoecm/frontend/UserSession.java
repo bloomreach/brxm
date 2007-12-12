@@ -30,6 +30,7 @@ public class UserSession extends WebSession {
     private static final long serialVersionUID = 1L;
 
     private JcrSessionModel jcrSessionModel;
+    private String application;
 
     public UserSession(Request request) {
         super(request);
@@ -43,11 +44,15 @@ public class UserSession extends WebSession {
         return jcrSessionModel.getSession();
     }
 
-    public void setJcrSession(Session jcrSession, ValueMap credentials) {
+    public void setJcrCredentials(ValueMap credentials) {
         jcrSessionModel.logout();
-        jcrSessionModel = new JcrSessionModel(jcrSession, credentials);
+        jcrSessionModel = new JcrSessionModel(credentials);
     }
-    
+
+    public void logout() {
+        jcrSessionModel.logout();
+    }
+
     public ValueMap getCredentials() {
         return jcrSessionModel.getCredentials();
     }
@@ -65,6 +70,14 @@ public class UserSession extends WebSession {
         return result;
     }
 
+    public void setFrontendApp(String application) {
+        this.application = application;
+    }
+
+    public String getFrontendApp() {
+        return this.application;
+    }
+
     private class JcrSessionModel extends LoadableDetachableModel {
         // The jcr session is wrapped in a LoadableDetachableModel because it can't be serialized
         // and therefore cannot be a direct field of the wicket session. Wrapping the jcr session
@@ -77,24 +90,30 @@ public class UserSession extends WebSession {
             credentials = new ValueMap();
         }
 
-        public JcrSessionModel(Session jcrSession, ValueMap credentials) {
-            super(jcrSession);
+        public JcrSessionModel(ValueMap credentials) {
             this.credentials = credentials;
         }
 
         void logout() {
-            ((Session) getObject()).logout();
-            detach();
+            Session session = (Session) getObject();
+            if (session != null) {
+                session.logout();
+                detach();
+                credentials = new ValueMap();
+            }
         }
-        
+
         ValueMap getCredentials() {
             return credentials;
         }
 
         Session getSession() {
-            // detach if anything is wrong with the jcr session
             try {
-                if (!((Session) getObject()).isLive()) {
+                Session session = (Session) getObject();
+                if (session == null) {
+                    return null;
+                }
+                if (!session.isLive()) {
                     detach();
                 }
             } catch (Exception e) {
@@ -114,9 +133,7 @@ public class UserSession extends WebSession {
                 String username = credentials.getString("username");
                 String password = credentials.getString("password");
 
-                if (username == null || password == null) {
-                    result = repository.login();
-                } else {
+                if (username != null && password != null) {
                     result = repository.login(username, password.toCharArray());
                 }
             } catch (RepositoryException e) {
@@ -126,5 +143,4 @@ public class UserSession extends WebSession {
         }
 
     }
-
 }

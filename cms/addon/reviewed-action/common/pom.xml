@@ -28,8 +28,8 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Reviewed action common</name>
-  <description>Hippo ECM reviewed action common addons</description>
+  <name>Reviewed action common addon</name>
+  <description>Hippo ECM reviewed action common addon</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
   <packaging>jar</packaging>

@@ -19,7 +19,6 @@
     <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
-
     <span wicket:id = "feedback"/>
     <p>
 	<form wicket:id = "signInForm">
@@ -37,10 +36,15 @@
 			  </td>
 			</tr>
 			<tr>
-			  <td></td>
 			  <td>
                 <input type = "submit" value = "Sign In"/>
               </td>
+			  <td>
+			    <span valign="top" wicket:id="application">
+                  <input type="radio"></input>
+                  <input type="radio"></input>
+                </span>
+			  </td>
 			</tr>
 		</table>	
 	</form>

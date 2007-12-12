@@ -49,16 +49,6 @@
 		<param-name>frontend-plugin-config</param-name>
 		<param-value>repository</param-value>
 	</context-param>
-	
-	<!--
-	  Frontend authorization strategy
-	  'anonymous'  ==> User can access application (read-only) without logging in (default)
-	  'login'      ==> User must login to access application
-	  -->
-    <context-param>
-        <param-name>authorization-strategy</param-name>
-        <param-value>login</param-value>
-    </context-param>
 		
 	<!--Frontend application-->
 	<filter>

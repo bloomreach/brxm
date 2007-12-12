@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Reviewed action repository app</name>
+  <name>Mailsponge repository app</name>
   <description>Hippo ECM mailsponge repository app</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-mailsponge-repository</artifactId>

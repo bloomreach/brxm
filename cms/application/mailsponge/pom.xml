@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Reviewed action app</name>
+  <name>Mailsponge app</name>
   <description>Hippo ECM mailsponge demo application</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-application-mailsponge</artifactId>

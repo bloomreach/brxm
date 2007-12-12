@@ -41,8 +41,6 @@
   </scm>
   
   <modules>
-    <module>default</module>
-    <module>reviewed-action</module>
     <module>cms-prototype</module>
     <module>mailsponge</module>
   </modules>

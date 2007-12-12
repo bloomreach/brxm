@@ -32,7 +32,7 @@ public class PluginJavaConfig implements PluginConfig {
     private PluginDescriptor rootPlugin;
     private PluginDescriptor navigationPlugin;
     private PluginDescriptor menuPlugin;
-    private PluginDescriptor loginPlugin;
+    private PluginDescriptor logoutPlugin;
     private PluginDescriptor contentPlugin;
     private PluginDescriptor breadcrumbPlugin;
 
@@ -56,9 +56,9 @@ public class PluginJavaConfig implements PluginConfig {
         className = "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin";
         menuPlugin = new PluginDescriptor(id, className, incoming, outgoing);
         
-        id = "loginPlugin";
-        className = "org.hippoecm.frontend.plugins.admin.login.LoginPlugin";
-        loginPlugin = new PluginDescriptor(id, className, incoming, outgoing);
+        id = "logoutPlugin";
+        className = "org.hippoecm.frontend.plugins.admin.logout.LogoutPlugin";
+        logoutPlugin = new PluginDescriptor(id, className, incoming, outgoing);
 
         id = "contentPlugin";
         className = "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin";
@@ -80,7 +80,7 @@ public class PluginJavaConfig implements PluginConfig {
         if (pluginDescriptor.getPluginId().equals("rootPlugin")) {
             result.add(navigationPlugin);
             result.add(menuPlugin);
-            result.add(loginPlugin);
+            result.add(logoutPlugin);
             result.add(contentPlugin);
             result.add(breadcrumbPlugin);
         }
@@ -95,8 +95,8 @@ public class PluginJavaConfig implements PluginConfig {
             return navigationPlugin;
         } else if (pluginId.equals("menuPlugin")) {
             return menuPlugin;
-        } else if (pluginId.equals("loginPlugin")) {
-            return loginPlugin;
+        } else if (pluginId.equals("logoutPlugin")) {
+            return logoutPlugin;
         } else if (pluginId.equals("contentPlugin")) {
             return contentPlugin;
         } else if (pluginId.equals("breadcrumbPlugin")) {
