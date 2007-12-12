@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 /**
@@ -36,9 +37,12 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
     
-    public void testTrivialTraverseVirtualNavigation() throws RepositoryException{
+    public void testTrivialMultipleTraverseVirtualNavigation() throws RepositoryException{
         try{
-            traverse(commonStart());
+            Node ExternalNode = commonStart();
+            traverse(ExternalNode);
+            traverse(ExternalNode);
+            traverse(ExternalNode);
         } catch(NullPointerException ex) {
             fail(ex.getMessage());
         } catch(RepositoryException ex) {
