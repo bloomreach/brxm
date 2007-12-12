@@ -95,7 +95,9 @@ public class TabsPlugin extends Plugin {
         
         if (selectMe != null) {
             tabbedPanel.setSelectedTab(tabs.indexOf(selectMe));
-            target.addComponent(this);
+            if (target != null && findPage() != null) {
+                target.addComponent(this);
+            }
         }
     }
     
