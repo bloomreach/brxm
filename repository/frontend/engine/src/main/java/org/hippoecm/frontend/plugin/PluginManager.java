@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -102,7 +103,9 @@ public class PluginManager implements IClusterable {
                                 descriptor.setClassName(newPluginClass);
                                 Plugin newPlugin = parentPlugin.addChild(descriptor);
                                 updatePlugin(newPlugin, target, event);
-                                target.addComponent(parentPlugin);
+                                if (parentPlugin.findParent(Page.class) != null) {
+                                    target.addComponent(parentPlugin);
+                                }
                             }
                         }
                     }
