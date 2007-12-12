@@ -54,7 +54,7 @@ public class ListPlugin extends Plugin {
             dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableJcrDataProvider(nodeModel), 10);
             add(dataTable);
         }
-        if (target != null) {
+        if (target != null && findPage() != null) {
             target.addComponent(this);
         }
         
