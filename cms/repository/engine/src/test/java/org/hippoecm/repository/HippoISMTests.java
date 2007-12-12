@@ -56,7 +56,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
     
-    public void testHalfVirtualRemoveAfterChangeSave() throws RepositoryException{
+    public void _testHalfVirtualRemoveAfterChangeSave() throws RepositoryException{
         try{
             commonStart();
             //external node indicates for the half regular half virtual nodes
@@ -78,7 +78,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
     
-    public void testHalfVirtualRemoveWithTraversionsAndChangeSave() throws RepositoryException{
+    public void _testHalfVirtualRemoveWithTraversionsAndChangeSave() throws RepositoryException{
         try{
             commonStart();
             //external node indicates for the half regular half virtual nodes
