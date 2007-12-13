@@ -48,6 +48,18 @@
       <type>war</type>
     </dependency>
 
+    <!-- Reviewed Action Workflow -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+
     <!-- For testing -->
     <dependency>
       <groupId>javax.jcr</groupId>
