@@ -20,17 +20,33 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.hippoecm.repository.servicing.client.ClientServicesAdapterFactory;
 
+import sun.security.krb5.Credentials;
+
 class RemoteHippoRepository extends HippoRepositoryImpl {
     private final static String SVN_ID = "$Id$";
 
+    private Session clSession;
+    private ClassLoader loader;
+    
     public RemoteHippoRepository(String location) throws MalformedURLException, NotBoundException, RemoteException,
             RepositoryException {
-        ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory();
+        ClientServicesAdapterFactory adapterFactory = new ClientServicesAdapterFactory(this);
         ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
         repository = repositoryFactory.getRepository(location);
+
+        // Create own classloader, it does not make any sense to use the one at
+        // the other end of the wire.
+        clSession = repository.login();
+        loader = new HippoRepositoryClassLoader(clSession);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return loader;
     }
 }

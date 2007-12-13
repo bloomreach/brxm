@@ -45,7 +45,15 @@
     <module>repository</module>
     <!--<module>test</module>-->
   </modules>
-  
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <defaultGoal>package</defaultGoal>
     <plugins>

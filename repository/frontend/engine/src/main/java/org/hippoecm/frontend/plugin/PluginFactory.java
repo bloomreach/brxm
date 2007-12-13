@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugin;
 
 import java.lang.reflect.Constructor;
 
+import org.apache.wicket.Application;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.error.ErrorPlugin;
 
@@ -36,14 +38,15 @@ public class PluginFactory {
             plugin = new ErrorPlugin(descriptor, null, message);
         } else {
             try {
-                Class clazz = Class.forName(descriptor.getClassName());
-                Class[] formalArgs = new Class[] { PluginDescriptor.class, JcrNodeModel.class, Plugin.class};
+                ClassLoader loader = ((Main) Application.get()).getRepository().getClassLoader();
+                Class clazz = Class.forName(descriptor.getClassName(), true, loader);
+                Class[] formalArgs = new Class[] { PluginDescriptor.class, JcrNodeModel.class, Plugin.class };
                 Constructor constructor = clazz.getConstructor(formalArgs);
-                Object[] actualArgs = new Object[] { descriptor, model, parentPlugin};
+                Object[] actualArgs = new Object[] { descriptor, model, parentPlugin };
                 plugin = (Plugin) constructor.newInstance(actualArgs);
             } catch (Exception e) {
-                String message = "Failed to instantiate plugin '" + descriptor.getClassName()
-                        + "' for id '" + descriptor + "'.";
+                String message = "Failed to instantiate plugin '" + descriptor.getClassName() + "' for id '"
+                        + descriptor + "'.";
                 plugin = new ErrorPlugin(descriptor, e, message);
             }
         }

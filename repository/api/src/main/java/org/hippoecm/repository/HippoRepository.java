@@ -80,4 +80,10 @@ public interface HippoRepository {
      * @return the JCR repository
      */
     public Repository getRepository();
+    
+    /**
+     * Returns the repository ClassLoader in use.
+     * @return the repository classloader
+     */
+    public ClassLoader getClassLoader();
 }

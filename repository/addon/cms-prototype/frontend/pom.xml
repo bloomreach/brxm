@@ -51,20 +51,6 @@
       <artifactId>hippo-ecm-frontend-plugins</artifactId>
       <version>${parent.version}</version>
     </dependency>    
-
-    <!-- Reviewed Action Workflow -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-      <version>${parent.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
-      <version>${parent.version}</version>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
 
   <build>

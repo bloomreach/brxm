@@ -47,26 +47,6 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
-      <version>${parent.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- Reviewed Action Workflow -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-      <version>${parent.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
-      <version>${parent.version}</version>
-      <scope>runtime</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>

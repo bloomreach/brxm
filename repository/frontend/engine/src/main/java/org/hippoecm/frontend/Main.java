@@ -20,7 +20,10 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
+import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.settings.IApplicationSettings;
+import org.apache.wicket.settings.Settings;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 
@@ -51,6 +54,17 @@ public class Main extends WebApplication {
         }
 
         getSecuritySettings().setAuthorizationStrategy(new LoginAuthorizationStrategy());
+
+        // Let Wicket use the repository class loader
+        IApplicationSettings settings = super.getApplicationSettings();
+        settings.setClassResolver(new IClassResolver() {
+            public Class resolveClass(String name) throws ClassNotFoundException {
+                HippoRepository repository = getRepository();
+                if(repository != null)
+                    return repository.getClassLoader().loadClass(name);
+                return getClass().getClassLoader().loadClass(name);
+            }
+        });
     }
 
     @Override
