@@ -40,7 +40,7 @@ public class LoginAuthorizationStrategy implements IAuthorizationStrategy {
             ValueMap credentials = session.getCredentials();
             String username = credentials.getString("username");
             
-            if (username == null || username.equals("") || username.equals("anonymous")) {
+            if (username == null || username.equals("")) {
                 // Force sign in
                 throw new RestartResponseAtInterceptPageException(LoginPage.class);
             }

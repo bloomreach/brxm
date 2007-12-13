@@ -26,18 +26,7 @@
 		<param-value>repository</param-value>
 		<description>Relative directory where to store files</description>
 	</context-param>
-	
-	<!-- 
-		Frontend application plugin configuration factory, possible values: 
-		'java'       ==> Hard coded configuration
-		'repository' ==> Reads plugin configuration from the repository
-		'properties' ==> Reads plugin configuration from properties file (not implemented yet)
-		'spring'     ==> Reads plugin configuration from Spring context (not implemented yet) 
-	-->
-	<context-param>
-		<param-name>frontend-plugin-config</param-name>
-		<param-value>java</param-value>
-	</context-param>
+
 		
 	<!--Frontend application-->
 	<filter>

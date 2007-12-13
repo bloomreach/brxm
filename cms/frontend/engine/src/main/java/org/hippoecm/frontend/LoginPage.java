@@ -15,11 +15,15 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Session;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
@@ -29,14 +33,13 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.repository.api.HippoNodeType;
 
 /**
  * Basic sign in page to let a user sign in to the repository.
  */
 public final class LoginPage extends WebPage {
     private static final long serialVersionUID = 1L;
-
-    static final List<String> APPLICATIONS = Arrays.asList(new String[] { "hippo:cms", "hippo:console" });
 
     public LoginPage() {
         add(new FeedbackPanel("feedback"));
@@ -47,15 +50,20 @@ public final class LoginPage extends WebPage {
         private static final long serialVersionUID = 1L;
 
         private ValueMap credentials = new ValueMap();
-        private String frontendApp = APPLICATIONS.get(0);
+        private String frontendApp;
 
         public SignInForm(final String id) {
             super(id);
             add(new TextField("username", new PropertyModel(credentials, "username")));
             add(new PasswordTextField("password", new PropertyModel(credentials, "password")));
 
+            List<String> hippos = getHippos();
+            if (hippos.size() == 0) {
+                hippos.add("hippo:console");
+            }
+            frontendApp = hippos.get(0);
             IModel appChooserModel = new PropertyModel(this, "frontendApp");
-            RadioChoice appChooser = new RadioChoice("application", appChooserModel, APPLICATIONS);
+            RadioChoice appChooser = new RadioChoice("applications", appChooserModel, hippos);
             appChooser.setSuffix("");
             appChooser.setRequired(true);
             add(appChooser);
@@ -63,13 +71,12 @@ public final class LoginPage extends WebPage {
 
         public final void onSubmit() {
             UserSession userSession = (UserSession) getSession();
-            
+
             userSession.setFrontendApp(frontendApp);
             userSession.setJcrCredentials(credentials);
-            
-            Session jcrSession = userSession.getJcrSession();
-            if (jcrSession == null) {
-                error("Failed to log in");
+
+            if (userSession.getJcrSession() == null) {
+                throw new RestartResponseAtInterceptPageException(LoginPage.class);
             }
 
             if (!continueToOriginalDestination()) {
@@ -84,6 +91,25 @@ public final class LoginPage extends WebPage {
         public String getFrontendApp() {
             return frontendApp;
         }
+
+        private List<String> getHippos() {
+            List result = new ArrayList<String>();
+            try {
+                Main main = (Main) Application.get();
+                Node rootNode = main.getRepository().login().getRootNode();
+                String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
+                Node configNode = rootNode.getNode(path);
+                NodeIterator iterator = configNode.getNodes();
+                while (iterator.hasNext()) {
+                    result.add(iterator.nextNode().getName());
+                }
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return result;
+        }
+
     }
 
 }

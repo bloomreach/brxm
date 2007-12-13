@@ -15,42 +15,35 @@
  */
 package org.hippoecm.frontend.plugin.config;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Application;
-import org.hippoecm.frontend.Main;
+import org.apache.wicket.Session;
+import org.hippoecm.frontend.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginConfigFactory {
 
-    private final static String pluginConfigFactoryParam = "frontend-plugin-config";
-    private final static String defaultPluginConfigFactory = "java";
-
-    private Map pluginConfigs;
+    private PluginConfig pluginConfig;
 
     public PluginConfigFactory() {
-        pluginConfigs = new HashMap();
-        pluginConfigs.put("java", PluginJavaConfig.class);
-        pluginConfigs.put("repository", PluginRepositoryConfig.class);
-        pluginConfigs.put("properties", PluginPropertiesConfig.class);
-        pluginConfigs.put("spring", PluginSpringConfig.class);
+        try {
+            UserSession session = (UserSession) Session.get();
+            Node rootNode = session.getJcrSession().getRootNode();
+            Node configNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH);
+            if (configNode.getNodes().hasNext()) {
+                pluginConfig = new PluginRepositoryConfig();
+            } else {
+                pluginConfig = new PluginJavaConfig();
+            }
+        } catch (RepositoryException e) {
+            pluginConfig = new PluginJavaConfig();
+        }
+
     }
 
     public PluginConfig getPluginConfig() {
-        Main main = (Main) Application.get();
-        String pluginConfigType = main.getConfigurationParameter(pluginConfigFactoryParam, defaultPluginConfigFactory);
-             
-        PluginConfig result;
-        try {
-            Class pluginConfigClass = (Class)pluginConfigs.get(pluginConfigType);
-            result = (PluginConfig)pluginConfigClass.newInstance();
-        } catch (Exception e) {
-            String message = e.getClass().getName() + ": " + e.getMessage();
-            message += "\nFailed to initialize plugin configuration '" + pluginConfigType + "', falling back to default hardcoded configuration.\n";
-            System.err.println(message);
-            result = new PluginJavaConfig();
-         }
-        return result;
+        return pluginConfig;
     }
 
 }
