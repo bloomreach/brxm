@@ -23,7 +23,7 @@
       <!-- <param name="config" value="${rep.home}/access.xml"/> -->
     </AccessManager>
     
-    <LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule">
+    <LoginModule class="org.apache.jackrabbit.core.security.SimpleLoginModule">
       <!-- default values:
         <param name="anonymousId" value="anonymous"/>
         <param name="debug" value="false"/>
