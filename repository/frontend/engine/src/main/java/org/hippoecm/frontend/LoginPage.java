@@ -97,10 +97,12 @@ public final class LoginPage extends WebPage {
                 Main main = (Main) Application.get();
                 Node rootNode = main.getRepository().login().getRootNode();
                 String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-                Node configNode = rootNode.getNode(path);
-                NodeIterator iterator = configNode.getNodes();
-                while (iterator.hasNext()) {
-                    result.add(iterator.nextNode().getName());
+                if (rootNode.hasNode(path)) {
+                    Node configNode = rootNode.getNode(path);
+                    NodeIterator iterator = configNode.getNodes();
+                    while (iterator.hasNext()) {
+                        result.add(iterator.nextNode().getName());
+                    }
                 }
             } catch (RepositoryException e) {
                 // TODO Auto-generated catch block
