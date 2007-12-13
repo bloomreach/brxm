@@ -32,13 +32,13 @@ import org.apache.wicket.Session;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.plugin.EventChannel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
-    private static final String pluginConfigRoot = "hippo:configuration/hippo:frontend";
     private static final String rootPluginId = "rootPlugin";
-    
+
     private final static String PLUGIN_RENDERER = "hippo:renderer";
     private final static String INCOMING_CHANNELS = "hippo:incoming";
     private final static String OUTGOING_CHANNELS = "hippo:outgoing";
@@ -74,7 +74,7 @@ public class PluginRepositoryConfig implements PluginConfig {
         }
         return result;
     }
-    
+
     public PluginDescriptor getPlugin(String pluginId) {
         PluginDescriptor result = null;
         try {
@@ -88,12 +88,13 @@ public class PluginRepositoryConfig implements PluginConfig {
     }
 
     // Privates
-    
+
     private Node lookupConfigNode(String pluginId) throws RepositoryException {
         UserSession session = (UserSession) Session.get();
-        
-        String xpath = pluginConfigRoot + "/" + session.getFrontendApp() + "//" + pluginId;
-        
+
+        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
+                + session.getFrontendApp() + "//" + pluginId;
+
         QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);
         QueryResult result = query.execute();
@@ -104,7 +105,7 @@ public class PluginRepositoryConfig implements PluginConfig {
         }
         return iter.hasNext() ? iter.nextNode() : null;
     }
-    
+
     private PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
         String classname = pluginNode.getProperty(PLUGIN_RENDERER).getString();
         String pluginId = pluginNode.getName();
@@ -117,7 +118,7 @@ public class PluginRepositoryConfig implements PluginConfig {
         Set<EventChannel> result = new HashSet<EventChannel>();
         if (pluginNode.hasProperty(type)) {
             Value[] channels = pluginNode.getProperty(type).getValues();
-            for (int i=0; i<channels.length; i++) {
+            for (int i = 0; i < channels.length; i++) {
                 EventChannel channel = new EventChannel(channels[i].getString());
                 result.add(channel);
             }

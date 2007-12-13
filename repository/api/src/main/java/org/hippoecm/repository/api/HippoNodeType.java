@@ -31,6 +31,7 @@ public interface HippoNodeType {
     final public static String INITIALIZE_PATH = "hippo:initialize";
     final public static String WORKFLOWS_PATH = "hippo:workflows";
     final public static String DOCUMENTS_PATH = "hippo:documents";
+    final public static String FRONTEND_PATH = "hippo:frontend";
 
     final public static String NT_CONFIGURATION = "hippo:configuration";
     final public static String NT_DOCUMENT = "hippo:document";
@@ -38,7 +39,6 @@ public interface HippoNodeType {
     final public static String NT_FACETSUBSEARCH = "hippo:facetsubsearch";
     final public static String NT_FACETSEARCH = "hippo:facetsearch";
     final public static String NT_FACETSELECT = "hippo:facetselect";
-    final public static String NT_FRONTENDPLUGIN = "hippo:frontendplugin";
     final public static String NT_HANDLE = "hippo:handle";
     final public static String NT_MIRROR = "hippo:mirror";
     final public static String NT_INITIALIZEFOLDER = "hippo:initializefolder";
@@ -77,4 +77,5 @@ public interface HippoNodeType {
     final public static String HIPPO_VALUES = "hippo:values";
     final public static String HIPPO_WORKFLOWS = "hippo:workflows";
 
+    final public static String HIPPO_FRONTENDPLUGIN = "hippo:frontendplugin";
 }
