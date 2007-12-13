@@ -42,7 +42,6 @@
   
   <modules>
     <module>cms-prototype</module>
-    <module>mailsponge</module>
   </modules>
   
 </project>
