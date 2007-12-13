@@ -25,9 +25,9 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Application;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -63,8 +63,7 @@ public final class LoginPage extends WebPage {
             }
             frontendApp = hippos.get(0);
             IModel appChooserModel = new PropertyModel(this, "frontendApp");
-            RadioChoice appChooser = new RadioChoice("applications", appChooserModel, hippos);
-            appChooser.setSuffix("");
+            DropDownChoice appChooser = new DropDownChoice("applications", appChooserModel, hippos);
             appChooser.setRequired(true);
             add(appChooser);
         }
