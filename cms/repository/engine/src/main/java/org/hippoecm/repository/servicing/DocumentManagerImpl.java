@@ -22,6 +22,7 @@ import java.util.Properties;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -68,6 +69,7 @@ public class DocumentManagerImpl
             InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
             properties.load(istream);
             properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
+            
             pmf = JDOHelper.getPersistenceManagerFactory(properties);
             pm = null;
             sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
@@ -85,10 +87,19 @@ public class DocumentManagerImpl
         if(types != null) {
             sm.setTypes(types);
         }
+
+        ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {
+            Repository repository = session.getRepository();
+            if(repository instanceof RepositoryDecorator) {
+                Thread.currentThread().setContextClassLoader(((RepositoryDecorator) repository).getClassLoader());
+            }
             obj = pm.getObjectById(new JCROID(uuid, classname));
+        } catch(Exception e) {
+            e.printStackTrace();
         } finally {
             sm.setTypes(null);
+            Thread.currentThread().setContextClassLoader(current);
         }    
         return obj;
     }

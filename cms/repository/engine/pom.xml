@@ -54,6 +54,10 @@
       <artifactId>jackrabbit-jcr-rmi</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-classloader</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>${parent.version}</version>
@@ -207,7 +211,7 @@
                 <rmic base="${project.build.outputDirectory}" verify="true"
                       includes="org/hippoecm/repository/servicing/WorkflowImpl.class"/>
                 <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/servicing/server/ServerServicing*.class"
+                      includes="org/hippoecm/repository/servicing/server/Server*.class"
                       classpathref="maven.compile.classpath"/>
               </tasks>
             </configuration>

@@ -32,6 +32,7 @@ public interface HippoNodeType {
     final public static String WORKFLOWS_PATH = "hippo:workflows";
     final public static String DOCUMENTS_PATH = "hippo:documents";
     final public static String FRONTEND_PATH = "hippo:frontend";
+    final public static String PLUGIN_PATH = "hippo:plugins";
 
     final public static String NT_CONFIGURATION = "hippo:configuration";
     final public static String NT_DOCUMENT = "hippo:document";
@@ -50,6 +51,8 @@ public interface HippoNodeType {
     final public static String NT_WORKFLOW = "hippo:workflow";
     final public static String NT_WORKFLOWCATEGORY = "hippo:workflowcategory";
     final public static String NT_WORKFLOWFOLDER = "hippo:workflowfolder";
+    final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
+    final public static String NT_PLUGIN = "hippo:plugin";
 
     final public static String HIPPO_CLASSNAME = "hippo:classname";
     final public static String HIPPO_CONTENT = "hippo:content";

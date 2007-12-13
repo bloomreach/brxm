@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
+import org.hippoecm.repository.HippoRepositoryClassLoader;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 
 /**
@@ -37,6 +38,9 @@ public class RepositoryDecorator implements Repository {
     private Repository repository;
 
     private FacetedNavigationEngine facetedEngine = null;
+
+    private Session clSession;
+    private ClassLoader loader;
 
     public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
         this.factory = factory;
@@ -54,6 +58,24 @@ public class RepositoryDecorator implements Repository {
         return facetedEngine;
     }
 
+    /**
+     * Returns a classloader for the repository.  A separate session is instantiated
+     * so that loaded classes are shared between all sessions.
+     */
+    public synchronized ClassLoader getClassLoader() {
+        if (loader == null) {
+            try {
+                clSession = repository.login();
+                loader = new HippoRepositoryClassLoader(clSession);
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+                clSession = null;
+                loader = null;
+            }
+        }
+        return loader;
+    }
+    
     public static Repository unwrap(Repository repository) {
         if (repository == null) {
             return null;

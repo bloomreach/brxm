@@ -20,13 +20,12 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 
-public class ClientDocumentManager extends ClientObject implements DocumentManager {
+public class ClientDocumentManager extends ClientManager implements DocumentManager {
     private Session session;
     private RemoteDocumentManager remote;
 
@@ -37,10 +36,13 @@ public class ClientDocumentManager extends ClientObject implements DocumentManag
     }
 
     public Document getDocument(String category, String identifier) throws RepositoryException {
+        ClassLoader old = setContextClassLoader();
         try {
             return remote.getDocument(category, identifier);
         } catch (RemoteException ex) {
             throw new RemoteRuntimeException(ex);
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
         }
     }
 }

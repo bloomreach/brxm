@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.admin.upload;
 
+import java.util.Calendar;
+
 import javax.jcr.Node;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,6 +31,7 @@ import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.repository.jackrabbit.JarExpander;
 
 public class UploadPlugin extends Plugin {
 
@@ -50,10 +53,22 @@ public class UploadPlugin extends Plugin {
         protected void onSubmit() {
             final FileUpload upload = fileUploadField.getFileUpload();
             if (upload != null) {
-                Node node = ((JcrNodeModel) getModel()).getNode();
-                if (node != null) {
+                Node parent = ((JcrNodeModel) getModel()).getNode();
+                if (parent != null) {
                     try {
-                        node.setProperty(upload.getClientFileName(), upload.getInputStream());
+                        Node node = null;
+                        String name = upload.getClientFileName();
+                        if (parent.hasNode(name)) {
+                            node = parent.getNode(name);
+                        } else {
+                            node = parent.addNode(name);
+                        }
+                        node.setProperty("jcr:mimeType", "application/octet-stream");
+                        node.setProperty("jcr:data", upload.getInputStream());
+                        node.setProperty("jcr:lastModified", Calendar.getInstance());
+
+                        JarExpander expander = new JarExpander(node);
+                        expander.extract();
                     } catch (Exception ex) {
                         // FIXME: report back to user
                         ex.printStackTrace();

@@ -27,6 +27,7 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteXASession;
+import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
@@ -35,6 +36,16 @@ import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
+    
+    private HippoRepository repository;
+    
+    public ClientServicesAdapterFactory(HippoRepository repository) {
+        this.repository = repository;
+    }
+    
+    public ClassLoader getClassLoader() {
+        return repository.getClassLoader();
+    }
     
     public Workspace getWorkspace(Session session, RemoteWorkspace remote) {
         if (remote instanceof RemoteServicingWorkspace)
