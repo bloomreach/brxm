@@ -25,9 +25,13 @@ import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserSession extends WebSession {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
     private JcrSessionModel jcrSessionModel;
     private String application;
@@ -137,7 +141,7 @@ public class UserSession extends WebSession {
                     result = repository.login(username, password.toCharArray());
                 }
             } catch (RepositoryException e) {
-                System.err.println("Failed to connect to repository.");
+                log.error(e.getMessage());
             }
             return result;
         }

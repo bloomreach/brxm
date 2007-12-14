@@ -26,10 +26,13 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RenameDialog extends AbstractDialog {
-
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(RenameDialog.class);
 
     /**
      * The name of the current node represented in the dialog
@@ -45,8 +48,7 @@ public class RenameDialog extends AbstractDialog {
             // get name of current node
             name = nodeModel.getNode().getName();
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));

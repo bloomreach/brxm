@@ -38,9 +38,13 @@ import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginManager implements IClusterable {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(PluginManager.class);
 
     private PluginConfig pluginConfig;
     private List<Plugin> pluginRegistry;
@@ -63,8 +67,7 @@ public class PluginManager implements IClusterable {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             return ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -116,8 +119,7 @@ public class PluginManager implements IClusterable {
                             }
                         }
                     } catch (RepositoryException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        log.error(e.getMessage());
                     }
                 }
             }

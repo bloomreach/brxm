@@ -30,10 +30,14 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.ItemModelWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(ItemModelWrapper.class);
+    
     //  Constructor
     public JcrPropertyModel(Property prop) {
         super(prop);
@@ -62,8 +66,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
                 list.add(new IndexedValue(prop.getValue().getString(), 0));
             }
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return list.iterator();
     }
@@ -81,8 +84,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
                 result = prop.getValues().length;
             }
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return result;
     }

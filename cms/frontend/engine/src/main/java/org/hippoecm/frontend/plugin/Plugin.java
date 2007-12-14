@@ -28,8 +28,12 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Plugin extends Panel implements EventConsumer {
+    
+    static final Logger log = LoggerFactory.getLogger(Plugin.class);
 
     private PluginManager pluginManager;
     private PluginDescriptor pluginDescriptor;
@@ -102,11 +106,9 @@ public abstract class Plugin extends Panel implements EventConsumer {
             WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(getId(), model.getNode());
             workflow = manager.getWorkflow(descriptor);
         } catch (MappingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return workflow;
     }

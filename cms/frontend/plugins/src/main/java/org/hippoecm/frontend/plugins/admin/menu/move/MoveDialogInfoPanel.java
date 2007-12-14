@@ -21,9 +21,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MoveDialogInfoPanel extends Panel {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(MoveDialogInfoPanel.class);
+    
     private String destinationPath;
 
     public MoveDialogInfoPanel(String id, JcrNodeModel model) {
@@ -33,8 +38,7 @@ public class MoveDialogInfoPanel extends Panel {
         try {
             add(new Label("source", model.getNode().getPath()));
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         add(new Label("destination", new PropertyModel(this, "destinationPath")));

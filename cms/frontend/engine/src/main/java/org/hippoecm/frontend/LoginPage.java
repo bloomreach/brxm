@@ -34,12 +34,16 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Basic sign in page to let a user sign in to the repository.
  */
 public final class LoginPage extends WebPage {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(LoginPage.class);
 
     public LoginPage() {
         add(new FeedbackPanel("feedback"));
@@ -105,8 +109,7 @@ public final class LoginPage extends WebPage {
                     }
                 }
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
             return result;
         }

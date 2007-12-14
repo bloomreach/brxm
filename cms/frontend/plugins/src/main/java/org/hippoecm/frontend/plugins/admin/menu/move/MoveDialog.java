@@ -28,9 +28,13 @@ import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MoveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
     private MoveTargetTreeView tree;
     private MoveDialogInfoPanel infoPanel;
@@ -99,8 +103,7 @@ public class MoveDialog extends AbstractDialog {
                 infoPanel.setDestinationPath(model.getNode().getPath());
             } 
             catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         }
         if (target != null) {
