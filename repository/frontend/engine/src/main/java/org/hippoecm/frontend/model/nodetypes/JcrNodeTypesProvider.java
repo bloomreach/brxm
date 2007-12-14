@@ -32,9 +32,13 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(JcrNodeTypesProvider.class);
     
     public JcrNodeTypesProvider(JcrNodeModel nodeModel) {
         super(nodeModel);
@@ -48,7 +52,7 @@ public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvi
                 NodeType[] nodeTypes = node.getMixinNodeTypes();
                 list = Arrays.asList(nodeTypes);               
             } catch (RepositoryException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         }
         return list.iterator();
@@ -67,7 +71,7 @@ public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvi
                 result = nodeTypes.length;
             }
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return result;
     }

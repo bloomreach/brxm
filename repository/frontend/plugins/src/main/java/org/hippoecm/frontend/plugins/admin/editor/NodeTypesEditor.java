@@ -35,9 +35,13 @@ import org.apache.wicket.markup.html.list.ListItemModel;
 import org.apache.wicket.markup.html.list.ListView;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class NodeTypesEditor extends CheckGroup {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(NodeTypesEditor.class);
 
     private ArrayList<String> current;
     
@@ -118,7 +122,7 @@ public abstract class NodeTypesEditor extends CheckGroup {
                 list.add(iterator.nextNodeType().getName());
             }
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return list;
     }
