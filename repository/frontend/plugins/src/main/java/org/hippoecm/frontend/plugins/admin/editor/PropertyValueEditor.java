@@ -31,9 +31,13 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PropertyValueEditor extends DataView {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(PropertyValueEditor.class);
 
     protected JcrPropertyModel propertyModel;
 
@@ -82,8 +86,7 @@ public class PropertyValueEditor extends DataView {
                             values = (Value[]) ArrayUtils.remove(values, valueModel.getIndex());
                             prop.setValue(values);
                         } catch (RepositoryException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            log.error(e.getMessage());
                         }
                         NodeEditor editor = (NodeEditor) findParent(NodeEditor.class);
                         target.addComponent(editor);
@@ -94,8 +97,7 @@ public class PropertyValueEditor extends DataView {
             }
 
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
     

@@ -24,9 +24,13 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcrPropertyValueModel extends Model {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(JcrPropertyValueModel.class);
 
     private JcrPropertyModel propertyModel;
     private String value;
@@ -68,8 +72,7 @@ public class JcrPropertyValueModel extends Model {
                     prop.setValue(value);
                 }
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         }
     }

@@ -28,9 +28,13 @@ import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PropertiesEditor extends DataView {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(PropertiesEditor.class);
 
     private JcrPropertiesProvider provider;
     
@@ -54,8 +58,7 @@ public class PropertiesEditor extends DataView {
                     item.add(new Label("add", ""));
                 }
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         } else {
             item.add(new Label("delete", "null"));
@@ -81,8 +84,7 @@ public class PropertiesEditor extends DataView {
                         Property prop = model.getProperty();
                         prop.remove();
                     } catch (RepositoryException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        log.error(e.getMessage());
                     }
                     NodeEditor editor = (NodeEditor) findParent(NodeEditor.class);
                     target.addComponent(editor);
@@ -107,8 +109,7 @@ public class PropertiesEditor extends DataView {
                     newValues[oldValues.length] = "...";
                     prop.setValue(newValues);
                 } catch (RepositoryException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    log.error(e.getMessage());
                 }
                 NodeEditor editor = (NodeEditor) findParent(NodeEditor.class);
                 target.addComponent(editor);

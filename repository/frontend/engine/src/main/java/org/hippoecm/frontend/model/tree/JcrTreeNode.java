@@ -33,9 +33,13 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcrTreeNode extends NodeModelWrapper implements TreeNode {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(NodeModelWrapper.class);
 
     private JcrTreeModel treeModel;
 
@@ -191,8 +195,7 @@ public class JcrTreeNode extends NodeModelWrapper implements TreeNode {
                     }
                 }
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
             reload = false;
             children = newChildren;

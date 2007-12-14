@@ -25,6 +25,8 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A dialog operating in a workflow context. Each workflow action should
@@ -32,6 +34,8 @@ import org.hippoecm.repository.api.WorkflowManager;
  *
  */
 public abstract class AbstractWorkflowDialog extends AbstractDialog {
+    
+    static final Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
 
     public AbstractWorkflowDialog(DialogWindow dialogWindow) {
         super(dialogWindow);
@@ -51,11 +55,9 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
             workflow = manager.getWorkflow(workflowDescriptor);
 
         } catch (MappingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return workflow;
     }

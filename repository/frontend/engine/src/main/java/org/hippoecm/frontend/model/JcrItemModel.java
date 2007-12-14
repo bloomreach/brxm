@@ -25,9 +25,13 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcrItemModel extends LoadableDetachableModel {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(JcrItemModel.class);
 
     protected String path;
 
@@ -38,8 +42,7 @@ public class JcrItemModel extends LoadableDetachableModel {
         try {
             this.path = item.getPath();
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 
@@ -54,8 +57,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             UserSession sessionProvider = (UserSession) Session.get();
             result = sessionProvider.getJcrSession().itemExists(path);
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return result;
     }
@@ -69,8 +71,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             UserSession sessionProvider = (UserSession) Session.get();
             result = sessionProvider.getJcrSession().getItem(path);
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return result;
     }

@@ -33,12 +33,16 @@ import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.plugin.EventChannel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(PluginRepositoryConfig.class);
 
-    private static final String rootPluginId = "rootPlugin";
-
+    // FIXME: move these to HippoNodeType
+    private final static String ROOTPLUGIN = "rootPlugin";
     private final static String PLUGIN_RENDERER = "hippo:renderer";
     private final static String INCOMING_CHANNELS = "hippo:incoming";
     private final static String OUTGOING_CHANNELS = "hippo:outgoing";
@@ -48,11 +52,10 @@ public class PluginRepositoryConfig implements PluginConfig {
 
     public PluginDescriptor getRoot() {
         try {
-            Node rootPluginConfigNode = lookupConfigNode(rootPluginId);
+            Node rootPluginConfigNode = lookupConfigNode(ROOTPLUGIN);
             return nodeToDescriptor(rootPluginConfigNode);
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -69,8 +72,7 @@ public class PluginRepositoryConfig implements PluginConfig {
                 }
             }
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return result;
     }
@@ -81,8 +83,7 @@ public class PluginRepositoryConfig implements PluginConfig {
             Node pluginNode = lookupConfigNode(pluginId);
             result = nodeToDescriptor(pluginNode);
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return result;
     }
