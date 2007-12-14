@@ -24,9 +24,13 @@ import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.PluginEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NodeEditor extends Form {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
     
     private PropertiesEditor properties;
     private NodeTypesEditor types;
@@ -47,7 +51,7 @@ public class NodeEditor extends Form {
                     Node node = editorModel.getNode();
                     node.addMixin(type);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage());
                 }
             }
             
@@ -57,7 +61,7 @@ public class NodeEditor extends Form {
                     Node node = editorModel.getNode();
                     node.removeMixin(type);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage());
                 }
             }
         };

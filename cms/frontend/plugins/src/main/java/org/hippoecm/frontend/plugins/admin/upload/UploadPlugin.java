@@ -25,20 +25,21 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.lang.Bytes;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.repository.jackrabbit.JarExpander;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UploadPlugin extends Plugin {
-
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(UploadPlugin.class);
 
     private class FileUploadForm extends Form {
-
         private static final long serialVersionUID = 1L;
 
         private FileUploadField fileUploadField;
@@ -71,7 +72,7 @@ public class UploadPlugin extends Plugin {
                         expander.extract();
                     } catch (Exception ex) {
                         // FIXME: report back to user
-                        ex.printStackTrace();
+                        log.error(ex.getMessage());
                     }
                 }
             }

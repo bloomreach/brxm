@@ -32,9 +32,13 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(JcrPropertiesProvider.class);
 
     // Constructor
 
@@ -62,7 +66,7 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
         } catch (InvalidItemStateException e) {
             // This can happen after a node has been deleted and the tree hasn't been refreshed yet
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return list.iterator();
     }
@@ -80,7 +84,7 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
                 result = new Long(it.getSize()).intValue();
             }
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return result;
     }
