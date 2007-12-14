@@ -18,8 +18,6 @@ package org.hippoecm.repository.jackrabbit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -55,8 +53,6 @@ import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
-
-import org.hippoecm.repository.api.HippoNodeType;
 
 class HippoLocalItemStateManager extends XAItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
@@ -194,8 +190,9 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
     @Override
     public synchronized void edit() throws IllegalStateException {
-        if(inEditMode())
+        if(inEditMode()) {
             return;
+        }
         super.edit();
     }
     
@@ -229,8 +226,9 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 if(state != null) {
                     nodeState = (NodeState) state;
                     nodeState = ((HippoNodeId)id).populate(nodeState);
-                } else
+                } else {
                     nodeState = ((HippoNodeId)id).populate();
+                }
                 virtualNodes.put((HippoNodeId)id, nodeState);
                 stateDiscarded(nodeState);
                 store(nodeState);
@@ -261,9 +259,9 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
     @Override
     public boolean hasItemState(ItemId id) {
-            if(id instanceof HippoNodeId)
+            if(id instanceof HippoNodeId) {
                 return true;
-            
+            }
             return super.hasItemState(id);
     }
 
@@ -304,10 +302,12 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     int isVirtual(ItemState state) {
         if(state.isNode()) {
             int type = ITEM_TYPE_REGULAR;
-            if(state.getId() instanceof HippoNodeId)
+            if(state.getId() instanceof HippoNodeId) {
                 type |= ITEM_TYPE_VIRTUAL;
-            if(virtualProviders.containsKey(((NodeState)state).getNodeTypeName()))
+            }
+            if(virtualProviders.containsKey(((NodeState)state).getNodeTypeName())) {
                 type |= ITEM_TYPE_EXTERNAL;
+            }
             return type;
         } else {
             /* it is possible to do a check on type name of the property
@@ -319,14 +319,18 @@ class HippoLocalItemStateManager extends XAItemStateManager {
              * for which there is already a provider defined.
              */
             PropertyState propState = (PropertyState) state;
-            if(propState.getPropertyId() instanceof HippoPropertyId)
+            if(propState.getPropertyId() instanceof HippoPropertyId) {
                 return ITEM_TYPE_VIRTUAL;
-            else if(virtualProperties.contains(propState.getName()))
+            }
+            else if(virtualProperties.contains(propState.getName())) {
                 return ITEM_TYPE_VIRTUAL;
-            else if(propState.getParentId() instanceof HippoNodeId)
+            }
+            else if(propState.getParentId() instanceof HippoNodeId) {
                 return ITEM_TYPE_VIRTUAL;
-            else
+            }
+            else {
                 return ITEM_TYPE_REGULAR;
+            }
         }
     }
         
@@ -461,19 +465,22 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     if(!actualIterator.hasNext())
                         return false;
                     current = (ItemState) actualIterator.next();
-                    if((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0)
+                    if((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
                         current = null;
+                    }
                 }
                 return true;
             }
             public Object next() throws NoSuchElementException {
                 Object rtValue = null;
                 while(current == null) {
-                    if(!actualIterator.hasNext())
+                    if(!actualIterator.hasNext()) {
                         return false;
+                    }
                     current = (ItemState) actualIterator.next();
-                    if((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0)
+                    if((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
                         current = null;
+                    }
                 }
                 rtValue = current;
                 current = null;
