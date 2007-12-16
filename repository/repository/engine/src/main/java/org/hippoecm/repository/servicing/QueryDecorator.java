@@ -28,9 +28,11 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
+import org.hippoecm.repository.api.HippoQuery;
+
 /**
  */
-public class QueryDecorator extends AbstractDecorator implements Query {
+public class QueryDecorator extends AbstractDecorator implements HippoQuery {
 
     protected final Query query;
 
@@ -74,5 +76,41 @@ public class QueryDecorator extends AbstractDecorator implements Query {
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
         Node node = query.storeAsNode(absPath);
         return factory.getNodeDecorator(session, node);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public String[] getArguments() {
+        int argumentCount = getArgumentCount();
+        String[] arguments = new String[argumentCount];
+        for (int i=0; i<argumentCount; i++) {
+            arguments[i] = "?";
+        }
+        return arguments;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public int getArgumentCount() {
+        String queryString = getStatement();
+        int count = -1;
+        for (int position=0; position>=0; position=queryString.indexOf("?", position)) {
+            ++count;
+        }
+        return count;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public QueryResult execute(String[] arguments) throws RepositoryException {
+        String queryString = getStatement();
+        for (int i=0; i<arguments.length; i++) {
+            queryString = queryString.replaceFirst("?", arguments[i]);
+        }
+        Query q = session.getWorkspace().getQueryManager().createQuery(queryString, getLanguage());
+        return factory.getQueryResultDecorator(session, q.execute());
     }
 }
