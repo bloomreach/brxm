@@ -67,11 +67,6 @@
       <artifactId>hippo-ecm-repository-connector</artifactId>
       <version>${parent.version}</version>
     </dependency>
-    <!-- dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>${parent.version}</version>
-    </dependency -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
