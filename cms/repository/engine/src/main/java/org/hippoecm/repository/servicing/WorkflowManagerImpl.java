@@ -33,6 +33,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.ext.WorkflowImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +111,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
     void save(Workflow workflow, String uuid, Node types) throws RepositoryException {
         HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
         DocumentManagerImpl documentManager = (DocumentManagerImpl) workspace.getDocumentManager();
-        ((org.hippoecm.repository.servicing.WorkflowImpl)workflow).post(); // FIXME: workaround for current mapping issues
         documentManager.putObject(uuid, types, workflow);
     }
 
@@ -167,7 +167,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 usedWorkflows.add(new Entry(workflow, uuid, types));
                 if(workflow instanceof WorkflowImpl) {
                     ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
-                    ((WorkflowImpl)workflow).pre();
                 }
                 return workflow;
             } catch(PathNotFoundException ex) {

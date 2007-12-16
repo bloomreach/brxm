@@ -44,7 +44,7 @@
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <artifactId>hippo-ecm-api</artifactId>
       <version>${parent.version}</version>
     </dependency>
     <dependency>

@@ -41,6 +41,7 @@
   </scm>
   
   <modules>
+    <module>connector</module>
     <module>engine</module>
     <module>application</module>
   </modules>

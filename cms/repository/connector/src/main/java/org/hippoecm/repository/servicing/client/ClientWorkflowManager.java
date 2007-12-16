@@ -30,52 +30,52 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ClientWorkflowManager extends ClientManager implements WorkflowManager {
-    private Session session;
-    private RemoteWorkflowManager remote;
+  private Session session;
+  private RemoteWorkflowManager remote;
 
-    public ClientWorkflowManager(Session session, RemoteWorkflowManager remote, LocalServicingAdapterFactory factory) {
-        super(factory);
-        this.session = session;
-        this.remote = remote;
-    }
+  public ClientWorkflowManager(Session session, RemoteWorkflowManager remote, LocalServicingAdapterFactory factory) {
+    super(factory);
+    this.session = session;
+    this.remote = remote;
+  }
 
     public void save() throws RepositoryException {
     }
 
-    public Session getSession() throws RepositoryException {
-        return session;
-    }
+  public Session getSession() throws RepositoryException {
+    return session;
+  }
 
-    public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
+  public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
         ClassLoader current = setContextClassLoader();
-        try {
-            return remote.getWorkflowDescriptor(category, item.getPath());
-        } catch (RemoteException ex) {
-            throw new RemoteRuntimeException(ex);
+    try {
+      return remote.getWorkflowDescriptor(category, item.getPath());
+    } catch(RemoteException ex) {
+      throw new RemoteRuntimeException(ex);
         } finally {
             Thread.currentThread().setContextClassLoader(current);
-        }
     }
+  }
 
-    public Workflow getWorkflow(String category, Node item) throws RepositoryException {
+  public Workflow getWorkflow(String category, Node item) throws RepositoryException {
         ClassLoader current = setContextClassLoader();
-        try {
-            return remote.getWorkflow(category, item.getPath());
-        } catch (RemoteException ex) {
-            throw new RemoteRuntimeException(ex);
+    try {
+      return remote.getWorkflow(category, item.getPath());
+    } catch(RemoteException ex) {
+      throw new RemoteRuntimeException(ex);
         } finally {
             Thread.currentThread().setContextClassLoader(current);
-        }
     }
+  }
 
-    public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
+  public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
         ClassLoader current = setContextClassLoader();
-        try {
-            return remote.getWorkflow(descriptor);
-        } catch (RemoteException ex) {
-            throw new RemoteRuntimeException(ex);
+    try {
+      return remote.getWorkflow(descriptor);
+    } catch(RemoteException ex) {
+      throw new RemoteRuntimeException(ex);
         } finally {
             Thread.currentThread().setContextClassLoader(current);
-        }
     }
+  }
 }

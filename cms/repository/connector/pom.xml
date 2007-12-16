@@ -28,16 +28,16 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Repository engine</name>
-  <description>Hippo ECM repository engine</description>
+  <name>Repository connector</name>
+  <description>Hippo ECM repository connector</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-repository-engine</artifactId>
+  <artifactId>hippo-ecm-repository-connector</artifactId>
   <packaging>jar</packaging>
   
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/engine</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/engine</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/engine</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/connector</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/connector</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/connector</url>
   </scm>
  
   <dependencies>
@@ -47,31 +47,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr-rmi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-classloader</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>${parent.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>${parent.version}</version>
-    </dependency>
-    <!-- dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>${parent.version}</version>
-    </dependency -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -182,9 +164,6 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-	  <excludes>
-	    <exclude>**/HREPTWO280IssueTest.java</exclude>
-	  </excludes>
           <systemProperties>
             <property>
               <name>history.points</name>
@@ -221,7 +200,7 @@
                 <rmic base="${project.build.outputDirectory}" verify="true"
                       includes="org/hippoecm/repository/servicing/WorkflowImpl.class"/>
                 <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/servicing/server/Server*.class"
+                      includes="org/hippoecm/repository/servicing/server/ServerServicing*.class"
                       classpathref="maven.compile.classpath"/>
               </tasks>
             </configuration>

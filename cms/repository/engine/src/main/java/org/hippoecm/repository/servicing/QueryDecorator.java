@@ -30,7 +30,7 @@ import javax.jcr.version.VersionException;
 
 /**
  */
-public class QueryDecorator extends AbstractDecorator implements Query {
+public class QueryDecorator extends AbstractDecorator {
 
     protected final Query query;
 

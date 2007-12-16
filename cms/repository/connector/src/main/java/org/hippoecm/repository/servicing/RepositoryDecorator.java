@@ -22,12 +22,6 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
-import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
-import org.hippoecm.repository.HippoRepositoryClassLoader;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-
 /**
  * Simple {@link Repository Repository} decorator.
  */
@@ -37,8 +31,8 @@ public class RepositoryDecorator implements Repository {
 
     private Repository repository;
 
-    private FacetedNavigationEngine facetedEngine = null;
-
+    /* FIXME: [BvH] I don't think we should have this in our API module, do we?
+     */
     private Session clSession;
     private ClassLoader loader;
 
@@ -47,20 +41,10 @@ public class RepositoryDecorator implements Repository {
         this.repository = repository;
     }
 
-    FacetedNavigationEngine getFacetedNavigationEngine() {
-        if(facetedEngine == null) {
-            if(repository instanceof RepositoryImpl) {
-                facetedEngine = ((RepositoryImpl)repository).getFacetedNavigationEngine();
-            } else {
-                facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
-            }
-        }
-        return facetedEngine;
-    }
-
     /**
      * Returns a classloader for the repository.  A separate session is instantiated
      * so that loaded classes are shared between all sessions.
+     * FIXME: [BvH] This should not be exposed in the API
      */
     public synchronized ClassLoader getClassLoader() {
         if (loader == null) {
@@ -75,7 +59,7 @@ public class RepositoryDecorator implements Repository {
         }
         return loader;
     }
-    
+
     public static Repository unwrap(Repository repository) {
         if (repository == null) {
             return null;
@@ -109,15 +93,7 @@ public class RepositoryDecorator implements Repository {
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
         Session session = repository.login(credentials, workspaceName);
-	/* FIXME: should get username from credentials and have some method to map these to facets
-	 * match
-	 */
-        ServicingSessionImpl servicingSession = (ServicingSessionImpl) factory.getSessionDecorator(this, session);
-	/* FIXME: then should initialize faceted engine this way, but missing input
-         * FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare(null, null, null, servicingSession);
-	 * servicingSession.setFacetedNavigationContext(context);
-	 */
-        return servicingSession;
+        return factory.getSessionDecorator(this, session);
     }
 
     /**
