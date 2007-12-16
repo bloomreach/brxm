@@ -46,7 +46,12 @@
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>${parent.version}</version>
     </dependency>
-    
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>${xerces.version}</version>
+    </dependency>
+
     <!-- test -->
     <dependency>
       <groupId>junit</groupId>

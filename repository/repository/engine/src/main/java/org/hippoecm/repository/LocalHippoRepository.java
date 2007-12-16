@@ -22,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,9 +62,11 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.servicing.ServicingDecoratorFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,6 +264,34 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
                 } catch (VersionException ex) {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                }
+                try {
+                    for(Enumeration<URL> iter = getClass().getClassLoader().getResources("configuration.xml");
+                        iter.hasMoreElements(); ) {
+                        URL configurationURL = iter.nextElement();
+                        log.info("Initializing additional configuration content from "+configurationURL);
+                        try {
+                            InputStream configurationStream = configurationURL.openStream();
+                            initializeNodecontent(rootSession, "/hippo:configuration", configurationStream);
+                            rootSession.save();
+                        } catch (AccessDeniedException ex) {
+                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                        } catch (ConstraintViolationException ex) {
+                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                        } catch (InvalidItemStateException ex) {
+                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                        } catch (ItemExistsException ex) {
+                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                        } catch (LockException ex) {
+                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                        } catch (NoSuchNodeTypeException ex) {
+                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                        } catch (VersionException ex) {
+                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                        }
+                    }
+                } catch (IOException ex) {
+                    throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
                 }
             } else {
                 log.info("Initial configuration content already present");
@@ -462,7 +494,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     private void initializeNodecontent(Session session, String absPath, InputStream istream) {
         try {
-            String relpath = absPath.substring(1);
+            String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
             if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
                 session.getRootNode().addNode(relpath);
             }

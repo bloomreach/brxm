@@ -142,7 +142,7 @@ public class HippoRepositoryFactory {
             if(ex.getCause() instanceof RepositoryException)
                 throw (RepositoryException) ex.getCause();
             else
-                throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage());
+                throw new RepositoryException("unchecked exception: "+ex.getMessage());
         }
     }
     

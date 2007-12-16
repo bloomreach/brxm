@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.servicing;
+package org.hippoecm.repository.ext;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -28,20 +28,14 @@ public abstract class WorkflowImpl extends UnicastRemoteObject implements Workfl
     protected WorkflowContext context;
     public WorkflowImpl() throws RemoteException {
     }
-    final void setWorkflowContext(WorkflowContext context) {
+
+    /**
+     * This method should never be invoked by extensions or applications
+     */
+    final public void setWorkflowContext(WorkflowContext context) {
         this.context = context;
     }
     final protected WorkflowContext getWorkflowContext() {
         return context;
-    }
-
-    /* These are used to overcome shortcomings in the mapping layer
-     * implementation at this time.
-     */
-    public void pre() throws RepositoryException {
-        // FIXME: workaround for current mapping issues
-    }
-    public void post() throws RepositoryException {
-        // FIXME: workaround for current mapping issues
     }
 }

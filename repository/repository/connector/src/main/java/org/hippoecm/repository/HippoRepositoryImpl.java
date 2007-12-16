@@ -34,14 +34,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.UserTransactionImpl;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.servicing.RepositoryDecorator;
 
 public abstract class HippoRepositoryImpl implements HippoRepository {
 
     protected Repository repository;
     protected final Logger log = LoggerFactory.getLogger(HippoRepositoryImpl.class);
-
+    
     private String JTSLookupName = "java:comp/env/TransactionManager";
 
     private void initialize() {
@@ -96,8 +94,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
         }
     }
 
-    public Session login(SimpleCredentials credentials, String workspaceName) throws LoginException,
-            RepositoryException {
+    public Session login(SimpleCredentials credentials, String workspaceName) throws LoginException, RepositoryException {
         if (repository == null) {
             throw new RepositoryException("Repository not initialized yet.");
         }
@@ -114,7 +111,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
         }
         return session;
     }
-
+    
     public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
         return login(credentials, null);
     }
@@ -122,7 +119,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
     public void close() {
         HippoRepositoryFactory.unregister(this);
     }
-
+    
     /**
      * Get a UserTransaction from the JTA transaction manager through JNDI
      * @param session
@@ -135,7 +132,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
         InitialContext ic;
         try {
             ic = new InitialContext();
-            tm = (TransactionManager) ic.lookup(JTSLookupName);
+            tm = (TransactionManager)ic.lookup(JTSLookupName);
             log.info("Got TransactionManager through JNDI from " + JTSLookupName);
         } catch (NamingException e) {
             log.error("Failed to get TransactionManager", e);

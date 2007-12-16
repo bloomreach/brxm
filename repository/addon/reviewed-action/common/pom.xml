@@ -43,16 +43,18 @@
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <artifactId>hippo-ecm-api</artifactId>
       <version>${parent.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jpox</groupId>
       <artifactId>jpox-core</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

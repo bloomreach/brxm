@@ -36,6 +36,8 @@ public class ClientDocumentManager extends ClientManager implements DocumentMana
     }
 
     public Document getDocument(String category, String identifier) throws RepositoryException {
+        /* FIXME: [BvH] Setting the classloader at this point???
+         */
         ClassLoader old = setContextClassLoader();
         try {
             return remote.getDocument(category, identifier);

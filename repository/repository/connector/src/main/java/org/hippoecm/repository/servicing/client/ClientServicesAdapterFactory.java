@@ -36,7 +36,10 @@ import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
-    
+
+    /* FIXME: [BvH] The decorating layer is probably not the place to put this, as
+     * it is not mandatory to have...
+     */
     private HippoRepository repository;
     
     public ClientServicesAdapterFactory(HippoRepository repository) {
