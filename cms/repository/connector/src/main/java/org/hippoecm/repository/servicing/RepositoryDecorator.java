@@ -22,6 +22,11 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+/* FIXME: [BvH] doubtfull whether classloader should be integrated in
+ * decorating layer
+ */
+import org.hippoecm.repository.HippoRepositoryClassLoader;
+
 /**
  * Simple {@link Repository Repository} decorator.
  */

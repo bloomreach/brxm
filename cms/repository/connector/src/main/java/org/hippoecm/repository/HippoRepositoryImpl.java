@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.UserTransactionImpl;
 
+/* FIXME: [BvH] doubtfull whether we want this dependency here */
+import org.hippoecm.repository.servicing.RepositoryDecorator;
+
 public abstract class HippoRepositoryImpl implements HippoRepository {
 
     protected Repository repository;
