@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.servicing.WorkflowImpl;
+import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements FullReviewedActionsWorkflow {
 
