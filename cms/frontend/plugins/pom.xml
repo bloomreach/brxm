@@ -46,6 +46,14 @@
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>${parent.version}</version>
     </dependency>
+
+    <!-- FIXME: Due to HREPTWO-326 created entire dependency on repository again -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
