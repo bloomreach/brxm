@@ -23,16 +23,19 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class LoginPage extends WebPage {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(LoginPage.class);
 
     public LoginPage() {
@@ -54,62 +57,75 @@ public final class LoginPage extends WebPage {
         private static final long serialVersionUID = 1L;
 
         private ValueMap credentials = new ValueMap();
-        private String frontendApp;
+        private String selectedHippo;
 
         public SignInForm(final String id) {
             super(id);
             add(new TextField("username", new PropertyModel(credentials, "username")));
             add(new PasswordTextField("password", new PropertyModel(credentials, "password")));
 
+            Button submit = new Button("submit", new Model("Sign In"));
+            add(submit);
+
+            Label messageLabel = new Label("message", "No connection to repository");
+            add(messageLabel);
+
             List<String> hippos = getHippos();
-            if (hippos.size() == 0) {
-                hippos.add("hippo:console");
+            hippos.add("hippo:console (builtin)");
+            selectedHippo = hippos.get(0);
+            IModel hippoChooserModel = new PropertyModel(this, "hippo");
+            DropDownChoice hippoChooser = new DropDownChoice("hippos", hippoChooserModel, hippos);
+            hippoChooser.setRequired(true);
+            add(hippoChooser);
+
+            Main main = (Main) Application.get();
+            if (main.getRepository() == null) {
+                submit.setEnabled(false);
+                hippoChooser.setVisible(false);
+                messageLabel.setVisible(true);
+            } else {
+                submit.setEnabled(true);
+                hippoChooser.setVisible(true);
+                messageLabel.setVisible(false);
             }
-            frontendApp = hippos.get(0);
-            IModel appChooserModel = new PropertyModel(this, "frontendApp");
-            DropDownChoice appChooser = new DropDownChoice("applications", appChooserModel, hippos);
-            appChooser.setRequired(true);
-            add(appChooser);
         }
 
         public final void onSubmit() {
             UserSession userSession = (UserSession) getSession();
-
-            userSession.setFrontendApp(frontendApp);
+            userSession.setHippo(selectedHippo);
             userSession.setJcrCredentials(credentials);
-
-            if (userSession.getJcrSession() == null) {
-                throw new RestartResponseAtInterceptPageException(LoginPage.class);
-            }
-
-            if (!continueToOriginalDestination()) {
-                setResponsePage(getApplication().getHomePage());
-            }
+            userSession.getJcrSession();
+            
+            setResponsePage(getApplication().getHomePage());
         }
 
-        public void setFrontendApp(String frontendApp) {
-            this.frontendApp = frontendApp;
+        public void setHippo(String hippo) {
+            this.selectedHippo = hippo;
         }
 
-        public String getFrontendApp() {
-            return frontendApp;
+        public String getHippo() {
+            return selectedHippo;
         }
 
         private List<String> getHippos() {
             List result = new ArrayList<String>();
-            try {
-                Main main = (Main) Application.get();
-                Node rootNode = main.getRepository().login().getRootNode();
-                String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-                if (rootNode.hasNode(path)) {
-                    Node configNode = rootNode.getNode(path);
-                    NodeIterator iterator = configNode.getNodes();
-                    while (iterator.hasNext()) {
-                        result.add(iterator.nextNode().getName());
+            Main main = (Main) Application.get();
+            HippoRepository repository = main.getRepository();
+            if (repository != null) {
+                try {
+                    Node rootNode = repository.login().getRootNode();
+                    String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
+                    if (rootNode.hasNode(path)) {
+                        Node configNode = rootNode.getNode(path);
+                        NodeIterator iterator = configNode.getNodes();
+                        while (iterator.hasNext()) {
+                            result.add(iterator.nextNode().getName());
+                        }
                     }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                    main.resetConnection();
                 }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
             }
             return result;
         }

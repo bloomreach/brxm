@@ -17,22 +17,22 @@ package org.hippoecm.frontend;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.application.IClassResolver;
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.settings.IApplicationSettings;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main extends WebApplication {
-    
-    static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    private HippoRepository repository;
+    static final Logger log = LoggerFactory.getLogger(Main.class);
 
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
@@ -43,25 +43,25 @@ public class Main extends WebApplication {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(false);
 
-        String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
-        String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, "repository");
-        try {
-            if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
-                repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
-            } else {
-                repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
+        
+        getSecuritySettings().setAuthorizationStrategy(new IAuthorizationStrategy() {
+            
+            public boolean isActionAuthorized(Component component, Action action) {
+                return true;
             }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
 
-        getSecuritySettings().setAuthorizationStrategy(new LoginAuthorizationStrategy());
+            public boolean isInstantiationAuthorized(Class componentClass) {
+                if (Home.class.isAssignableFrom(componentClass)) {
+                    UserSession session = (UserSession) Session.get();
+                    session.getJcrSession();
+                }
+                return true;
+            }
+        });
 
-        // Let Wicket use the repository class loader
-        IApplicationSettings settings = super.getApplicationSettings();
-        settings.setClassResolver(new IClassResolver() {
+        getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {
-                if(getRepository() != null) {
+                if (getRepository() != null) {
                     return getRepository().getClassLoader().loadClass(name);
                 }
                 return getClass().getClassLoader().loadClass(name);
@@ -95,8 +95,27 @@ public class Main extends WebApplication {
         return result;
     }
 
+    private HippoRepository repository;
+
     public HippoRepository getRepository() {
+        if (repository == null) {
+            String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
+            String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, "repository");
+            try {
+                if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
+                    repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
+                } else {
+                    repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        }
         return repository;
+    }
+
+    public void resetConnection() {
+        repository = null;
     }
 
 }

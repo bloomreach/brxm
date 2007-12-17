@@ -94,7 +94,7 @@ public class PluginRepositoryConfig implements PluginConfig {
         UserSession session = (UserSession) Session.get();
 
         String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
-                + session.getFrontendApp() + "//" + pluginId;
+                + session.getHippo() + "//" + pluginId;
 
         QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);

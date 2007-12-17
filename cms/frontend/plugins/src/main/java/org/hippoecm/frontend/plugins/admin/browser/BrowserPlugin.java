@@ -19,6 +19,7 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.JcrEvent;
@@ -31,12 +32,13 @@ public class BrowserPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     private JcrTree tree;
-    private JcrTreeNode rootNodeModel;
+    private AbstractTreeNode rootNodeModel;
 
     public BrowserPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel nodeModel, Plugin parentPlugin) {
         super(pluginDescriptor, nodeModel, parentPlugin);
 
-        rootNodeModel = new JcrTreeNode(nodeModel);
+		rootNodeModel = new JcrTreeNode(nodeModel);
+        //rootNodeModel = new DocumentTreeNode(nodeModel);
         JcrTreeModel treeModel = new JcrTreeModel(rootNodeModel);
 
         tree = new JcrTree("tree", treeModel) {
@@ -44,7 +46,7 @@ public class BrowserPlugin extends Plugin {
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                JcrTreeNode treeNodeModel = (JcrTreeNode) clickedNode;
+                AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
                 PluginEvent event = new PluginEvent(BrowserPlugin.this, JcrEvent.NEW_MODEL, treeNodeModel.getNodeModel());
                 getPluginManager().update(target, event);
             }
@@ -57,7 +59,7 @@ public class BrowserPlugin extends Plugin {
         
         JcrNodeModel nodeToBeReloaded = event.getNodeModel(JcrEvent.NEEDS_RELOAD);
         if (nodeToBeReloaded != null) {    
-            JcrTreeNode treeNodeModel = treeModel.lookup(nodeToBeReloaded);
+            AbstractTreeNode treeNodeModel = treeModel.lookup(nodeToBeReloaded);
 
             treeNodeModel.markReload();
             tree.getTreeModel().nodeStructureChanged(treeNodeModel);
@@ -68,7 +70,7 @@ public class BrowserPlugin extends Plugin {
         
         JcrNodeModel newSelection = event.getNodeModel(JcrEvent.NEW_MODEL);
         if(newSelection != null) {
-            JcrTreeNode node = treeModel.lookup(newSelection);
+            AbstractTreeNode node = treeModel.lookup(newSelection);
             if (node != null) {
                 tree.getTreeState().selectNode(node, true);
             }

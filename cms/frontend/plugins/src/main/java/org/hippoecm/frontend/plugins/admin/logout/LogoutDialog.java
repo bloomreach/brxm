@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.admin.logout;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -28,12 +30,18 @@ public class LogoutDialog extends AbstractDialog {
         super(dialogWindow);
         dialogWindow.setTitle("Logout");
         add(new Label("logout-message", "Do you want to logout?"));
+        
+        dialogWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+            private static final long serialVersionUID = 1L;
+            public void onClose(AjaxRequestTarget target) {
+                UserSession userSession = (UserSession) getSession();
+                userSession.logout();
+            }
+        });
     }
 
     @Override
     protected PluginEvent ok() throws Exception {
-        UserSession userSession = (UserSession) getSession();
-        userSession.logout();
         return new PluginEvent(getOwningPlugin());
     }
     

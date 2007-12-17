@@ -30,8 +30,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.LoginPage;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
@@ -43,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 public class PluginManager implements IClusterable {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(PluginManager.class);
 
     private PluginConfig pluginConfig;
@@ -73,54 +71,49 @@ public class PluginManager implements IClusterable {
     }
 
     public void update(final AjaxRequestTarget target, final PluginEvent event) {
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-        if (session == null) {
-            pluginRegistry.get(0).findParent(Home.class).setResponsePage(LoginPage.class);
-        } else {
-            Iterator<Plugin> plugins = new ArrayList(pluginRegistry).iterator();
-            while (plugins.hasNext()) {
-                Plugin plugin = plugins.next();
-                Set<EventChannel> incoming = new HashSet<EventChannel>(plugin.getDescriptor().getIncoming());
-                incoming.retainAll(event.getChannels());
-                if (!incoming.isEmpty()) {
-                    try {
-                        updatePlugin(plugin, target, event);
+        Iterator<Plugin> plugins = new ArrayList(pluginRegistry).iterator();
+        while (plugins.hasNext()) {
+            Plugin plugin = plugins.next();
+            Set<EventChannel> incoming = new HashSet<EventChannel>(plugin.getDescriptor().getIncoming());
+            incoming.retainAll(event.getChannels());
+            if (!incoming.isEmpty()) {
+                try {
+                    updatePlugin(plugin, target, event);
 
-                        Node node = event.getNodeModel(JcrEvent.NEW_MODEL).getNode();
-                        if (node != null) {
-                            PluginDescriptor descriptor = plugin.getDescriptor();
+                    Node node = event.getNodeModel(JcrEvent.NEW_MODEL).getNode();
+                    if (node != null) {
+                        PluginDescriptor descriptor = plugin.getDescriptor();
 
-                            //TODO: add optional property 'workflowcategory' to 
-                            //frontend plugin configuration nodes and use that instead of the plugin id.
-                            WorkflowManager manager = getWorkflowManager();
-                            String workflowCategory = descriptor.getPluginId();
-                            WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
+                        //TODO: add optional property 'workflowcategory' to 
+                        //frontend plugin configuration nodes and use that instead of the plugin id.
+                        WorkflowManager manager = getWorkflowManager();
+                        String workflowCategory = descriptor.getPluginId();
+                        WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
 
-                            String newPluginClass;
-                            if (workflowDescriptor != null) {
-                                newPluginClass = workflowDescriptor.getRendererName();
-                            } else {
-                                String pluginId = descriptor.getPluginId();
-                                newPluginClass = pluginConfig.getPlugin(pluginId).getClassName();
-                            }
+                        String newPluginClass;
+                        if (workflowDescriptor != null) {
+                            newPluginClass = workflowDescriptor.getRendererName();
+                        } else {
+                            String pluginId = descriptor.getPluginId();
+                            newPluginClass = pluginConfig.getPlugin(pluginId).getClassName();
+                        }
 
-                            String currentPluginClass = plugin.getClass().getName();
-                            if (!newPluginClass.equals(currentPluginClass)) {
-                                Plugin parentPlugin = plugin.getParentPlugin();
-                                if (parentPlugin != null) {
-                                    parentPlugin.removeChild(descriptor);
-                                    descriptor.setClassName(newPluginClass);
-                                    Plugin newPlugin = parentPlugin.addChild(descriptor);
-                                    updatePlugin(newPlugin, target, event);
+                        String currentPluginClass = plugin.getClass().getName();
+                        if (!newPluginClass.equals(currentPluginClass)) {
+                            Plugin parentPlugin = plugin.getParentPlugin();
+                            if (parentPlugin != null) {
+                                parentPlugin.removeChild(descriptor);
+                                descriptor.setClassName(newPluginClass);
+                                Plugin newPlugin = parentPlugin.addChild(descriptor);
+                                updatePlugin(newPlugin, target, event);
                                 if (parentPlugin.findParent(Page.class) != null) {
                                     target.addComponent(parentPlugin);
                                 }
-                                }
                             }
                         }
-                    } catch (RepositoryException e) {
-                        log.error(e.getMessage());
                     }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
                 }
             }
         }
