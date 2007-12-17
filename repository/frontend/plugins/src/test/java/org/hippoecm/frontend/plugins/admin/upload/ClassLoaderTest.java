@@ -1,4 +1,4 @@
-package org.hippoecm.repository;
+package org.hippoecm.frontend.plugins.admin.upload;
 
 import java.util.Calendar;
 import java.net.URL;
@@ -9,7 +9,9 @@ import javax.jcr.RepositoryException;
 
 import junit.framework.TestCase;
 
-import org.hippoecm.repository.jackrabbit.JarExpander;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.HippoRepositoryClassLoader;
 
 public class ClassLoaderTest extends TestCase {
 

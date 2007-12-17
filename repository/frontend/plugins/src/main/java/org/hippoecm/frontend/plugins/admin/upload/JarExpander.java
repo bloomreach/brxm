@@ -1,4 +1,4 @@
-package org.hippoecm.repository.jackrabbit;
+package org.hippoecm.frontend.plugins.admin.upload;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -9,13 +9,9 @@ import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.apache.jackrabbit.classloader.Util;
 
 /**
  * Helper class that is used to expand jar archives in the repository.
@@ -39,11 +35,9 @@ public class JarExpander {
     private Node node;
     private Property prop;
     private String path;
-    private Session session;
 
     public JarExpander(Node node) throws RepositoryException {
         this.node = node;
-        session = node.getSession();
         prop = node.getProperty("jcr:data");
         path = prop.getPath();
     }

@@ -30,7 +30,6 @@ import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginEvent;
-import org.hippoecm.repository.jackrabbit.JarExpander;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
