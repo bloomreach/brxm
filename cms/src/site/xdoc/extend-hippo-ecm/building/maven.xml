@@ -100,7 +100,7 @@
           This is a small program that is shipped with the JDK, it can be found in $JAVA_HOME/bin
         </p>
         <p>
-          For Windows: ,          
+          For Windows:
         </p>
         <source>
 C:\> %JAVA_HOME%\bin\rmiregistry.exe

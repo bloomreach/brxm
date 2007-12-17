@@ -157,9 +157,9 @@ hippo-ecm                    Pom       hippo-ecm
 			</p>
 			<source>
 |-- application              Pom       hippo-ecm-application
-|   |-- default              Pom       hippo-ecm-application-default
-|   |   |-- frontend         War       hippo-ecm-application-default-frontend
-|   |   `-- repository       War       hippo-ecm-application-default-repository
+|   |-- cms-prototype        Pom       hippo-ecm-application-cms-prototype
+|   |   |-- frontend         War       hippo-ecm-application-cms-prototype-frontend
+|   |   `-- repository       War       hippo-ecm-application-cms-prototype-repository
 			</source>
 		</section>
 		
