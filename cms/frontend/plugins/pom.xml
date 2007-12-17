@@ -47,13 +47,6 @@
       <version>${parent.version}</version>
     </dependency>
 
-    <!-- FIXME: Due to HREPTWO-326 created entire dependency on repository again -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>${parent.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
@@ -61,6 +54,12 @@
     </dependency>
 
     <!-- test -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -105,6 +104,13 @@
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>
+      </testResource>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/test/resources</directory>
+        <includes>
+          <include>**</include>
+        </includes>
       </testResource>
     </testResources>
     <plugins> 
