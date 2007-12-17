@@ -15,11 +15,13 @@
  */
 package org.hippoecm.frontend;
 
+import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Request;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
@@ -30,11 +32,11 @@ import org.slf4j.LoggerFactory;
 
 public class UserSession extends WebSession {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
     private JcrSessionModel jcrSessionModel;
-    private String application;
+    private String hippo;
 
     public UserSession(Request request) {
         super(request);
@@ -49,7 +51,6 @@ public class UserSession extends WebSession {
     }
 
     public void setJcrCredentials(ValueMap credentials) {
-        jcrSessionModel.logout();
         jcrSessionModel = new JcrSessionModel(credentials);
     }
 
@@ -69,17 +70,18 @@ public class UserSession extends WebSession {
                 result = (HippoNode) jcrSession.getRootNode();
             }
         } catch (RepositoryException e) {
-            //
+            log.error(e.getMessage());
         }
         return result;
     }
 
-    public void setFrontendApp(String application) {
-        this.application = application;
+    public void setHippo(String hippo) {
+        this.hippo = hippo;
+        dirty();
     }
 
-    public String getFrontendApp() {
-        return this.application;
+    public String getHippo() {
+        return this.hippo;
     }
 
     private class JcrSessionModel extends LoadableDetachableModel {
@@ -105,6 +107,7 @@ public class UserSession extends WebSession {
                 detach();
                 credentials = new ValueMap();
             }
+            throw new RestartResponseException(LoginPage.class);
         }
 
         ValueMap getCredentials() {
@@ -137,11 +140,19 @@ public class UserSession extends WebSession {
                 String username = credentials.getString("username");
                 String password = credentials.getString("password");
 
-                if (username != null && password != null) {
+                if (repository != null && username != null && password != null) {
                     result = repository.login(username, password.toCharArray());
                 }
+            } catch (LoginException e) {
+                log.warn(e.getMessage());
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
+            }
+
+            if (result == null) {
+                Main main = (Main) getApplication();
+                main.resetConnection();
+                throw new RestartResponseException(LoginPage.class);
             }
             return result;
         }

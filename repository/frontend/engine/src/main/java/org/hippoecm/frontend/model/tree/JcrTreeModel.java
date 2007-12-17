@@ -27,19 +27,19 @@ public class JcrTreeModel extends DefaultTreeModel {
 
     private Map registry;
 
-    public JcrTreeModel(JcrTreeNode rootModel) {
+    public JcrTreeModel(AbstractTreeNode rootModel) {
         super(rootModel);
         rootModel.setTreeModel(this);
-        
+
         registry = new HashMap();
         register(rootModel);
     }
 
-    public void register(JcrTreeNode treeNodeModel) {
+    public void register(AbstractTreeNode treeNodeModel) {
         String key = treeNodeModel.getNodeModel().getItemModel().getPath();
         registry.put(key, treeNodeModel);
     }
-    
+
     //TODO: Currently treeNodes are never unregistered.
     //
     //Although an unregister method is easy to implement it
@@ -48,10 +48,10 @@ public class JcrTreeModel extends DefaultTreeModel {
     //
     //With the current use cases never unregistering doesn't
     //seem to cause much trouble though.
-    
-    public JcrTreeNode lookup(JcrNodeModel nodeModel) {
+
+    public AbstractTreeNode lookup(JcrNodeModel nodeModel) {
         String key = nodeModel.getItemModel().getPath();
-        return (JcrTreeNode)registry.get(key);
+        return (AbstractTreeNode) registry.get(key);
     }
 
 }

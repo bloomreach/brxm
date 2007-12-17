@@ -15,8 +15,7 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.HashSet;
-
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.WebPage;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -25,7 +24,6 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.PluginManager;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
-import org.hippoecm.frontend.plugin.error.ErrorPlugin;
 import org.hippoecm.repository.api.HippoNode;
 
 public class Home extends WebPage {
@@ -35,22 +33,21 @@ public class Home extends WebPage {
         UserSession session = (UserSession) getSession();
         HippoNode rootNode = session.getRootNode();
         if (rootNode == null) {
-            String message = "Cannot find repository root, no connection to server.";
-            PluginDescriptor errorDescriptor = new PluginDescriptor("rootPlugin", null, new HashSet(), new HashSet());
-            add(new ErrorPlugin(errorDescriptor, null, message));
-        } else {
-            PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
-            PluginManager pluginManager = new PluginManager(pluginConfig);
-            PluginFactory pluginFactory = new PluginFactory(pluginManager);
-
-            PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
-            JcrNodeModel rootModel = new JcrNodeModel(null, rootNode);
-            Plugin rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
-            rootPlugin.setPluginManager(pluginManager);
-
-            add(rootPlugin);
-            rootPlugin.addChildren();
+            throw new RestartResponseException(LoginPage.class);
         }
+        
+        PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
+        PluginManager pluginManager = new PluginManager(pluginConfig);
+        PluginFactory pluginFactory = new PluginFactory(pluginManager);
+
+        PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
+        JcrNodeModel rootModel = new JcrNodeModel(null, rootNode);
+        Plugin rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
+        rootPlugin.setPluginManager(pluginManager);
+
+        add(rootPlugin);
+        rootPlugin.addChildren();
+
     }
 
 }

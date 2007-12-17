@@ -53,6 +53,7 @@ public interface HippoNodeType {
     final public static String NT_WORKFLOWFOLDER = "hippo:workflowfolder";
     final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
     final public static String NT_PLUGIN = "hippo:plugin";
+    final public static String NT_FRONTENDPLUGIN = "hippo:frontendplugin";
 
     final public static String HIPPO_CLASSNAME = "hippo:classname";
     final public static String HIPPO_CONTENT = "hippo:content";
@@ -79,6 +80,4 @@ public interface HippoNodeType {
     final public static String HIPPO_UUID = "hippo:uuid";
     final public static String HIPPO_VALUES = "hippo:values";
     final public static String HIPPO_WORKFLOWS = "hippo:workflows";
-
-    final public static String HIPPO_FRONTENDPLUGIN = "hippo:frontendplugin";
 }

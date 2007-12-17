@@ -21,8 +21,8 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeState;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -40,7 +40,7 @@ public abstract class JcrTree extends Tree {
         ITreeState treeState = getTreeState();
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
-        treeState.expandNode((JcrTreeNode)treeModel.getRoot());
+        treeState.expandNode((TreeNode)treeModel.getRoot());
     }
     
     public DefaultTreeModel getTreeModel() {
@@ -49,7 +49,7 @@ public abstract class JcrTree extends Tree {
 
     @Override
     protected String renderNode(TreeNode treeNode) {
-        JcrTreeNode treeNodeModel = (JcrTreeNode) treeNode;
+        AbstractTreeNode treeNodeModel = (AbstractTreeNode) treeNode;
         HippoNode node = treeNodeModel.getNodeModel().getNode();
         String result = "null";
         if (node != null) {
