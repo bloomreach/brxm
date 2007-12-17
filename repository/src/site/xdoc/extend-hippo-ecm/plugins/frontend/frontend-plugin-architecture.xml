@@ -99,7 +99,7 @@ public class RootPlugin extends Plugin {
 &lt;/html>
 </source>
         <p>
-          then the repository structure that will generate the correctc component hierarchy is:
+          then the repository structure that will generate the correct component hierarchy is:
         </p>
 <source>
 [repository root]
