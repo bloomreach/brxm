@@ -15,8 +15,11 @@
  */
 package org.hippoecm.repository;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.api.HippoNodeType;
 
 /**
  * These tests try all kind of variants of browsing through facetted navigation and
@@ -56,21 +59,116 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
     
-    public void _testHalfVirtualRemoveAfterChangeSave() throws RepositoryException{
+    public void testSaveRefetchExternalNode() throws RepositoryException {
+        try {
+            commonStart();
+            Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            
+            long countBefore = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+            session.refresh(false);
+            session.save();
+            
+            node = session.getRootNode().getNode("documents");
+            
+            for(int i =1 ; i < 50; i++){
+                child = node.addNode("test"+i, HippoNodeType.NT_DOCUMENT);
+                child.setProperty("x", "x1");
+                child.setProperty("y", "yy");
+                node.save();
+                // refetch searchNode
+                searchNode = session.getRootNode().getNode("navigation").getNode("xyz"); 
+                long countAfter = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+                assertEquals(countBefore + i, countAfter);
+            }
+            commonEnd();
+        } catch(NullPointerException ex) {
+            System.out.println(ex);
+            fail(ex.getMessage());
+        } catch(RepositoryException ex) {
+            System.out.println(ex);
+            fail(ex.getMessage());
+        } finally {
+            session.logout();
+            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        }
+    }
+    
+    public void testSaveNoRefetchExternalNode() throws RepositoryException {
+        try {
+            commonStart();
+            Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            traverse(searchNode);
+            traverse(searchNode);
+            long countBefore = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+            
+            node = session.getRootNode().getNode("documents");
+            child = node.addNode("test", HippoNodeType.NT_DOCUMENT);
+            child.setProperty("x", "x1");
+            child.setProperty("y", "yy");
+            node.save();
+            
+            /*
+             * Without a refetch of the searchNode after a save(), a repository exception is allowed
+             * because the node might not exist anymore. Refetch of a virtual/external node is needed after a save().
+             */
+            searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+            fail("An exception should have been thrown");
+        } catch(NullPointerException ex) {
+            fail(ex.getMessage());
+        } catch(InvalidItemStateException ex) {
+            assertNotNull("Exception allowed: item needs to be refetched", ex);
+        } catch(RepositoryException ex) {
+            assertNotNull("Exception allowed: item needs to be refetched", ex);
+        } finally {
+            session.logout();
+            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            commonEnd();
+        }
+    }
+
+    
+    public void testCorrectRemoveExternalNodeSave() throws RepositoryException{
         try{
             commonStart();
             //external node indicates for the half regular half virtual nodes
             Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
             traverse(externalNode);
-            session.getRootNode().getNode("documents").addNode("aap");
+            session.getRootNode().getNode("documents").addNode("test");
             session.save();
-            traverse(externalNode);
+            externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
             externalNode.remove();
             session.save(); 
         } catch(NullPointerException ex) {
             fail(ex.getMessage());
         } catch(RepositoryException ex) {
             fail(ex.getMessage());
+        }  finally {
+            session.logout();
+            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            commonEnd();
+        }
+        
+    }
+    
+    public void testWrongRemoveExternalNodeSave() throws RepositoryException{
+       
+        try{
+            commonStart();
+            //external node indicates for the half regular half virtual nodes
+            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            traverse(externalNode);
+            session.getRootNode().getNode("documents").addNode("test");
+            session.save();
+            // without refetch gives correctly an exception!
+            externalNode.remove();
+            session.save(); 
+            fail("An exception should have been thrown");
+        } catch(NullPointerException ex) {
+            fail(ex.getMessage());
+        } catch(InvalidItemStateException ex) {
+            assertNotNull("Exception allowed: item needs to be refetched", ex);
+        } catch(RepositoryException ex) {
+            assertNotNull("Exception allowed: item needs to be refetched", ex);
         } finally {
             session.logout();
             session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
@@ -78,26 +176,59 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
     
-    public void _testHalfVirtualRemoveWithTraversionsAndChangeSave() throws RepositoryException{
+    public void testCorrectRemoveVirtualNodeSave() throws RepositoryException{
         try{
             commonStart();
             //external node indicates for the half regular half virtual nodes
-            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
-            traverse(externalNode);
-            session.getRootNode().getNode("documents").addNode("aap");
+            Node virtualNode = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1");
+            traverse(virtualNode);
+            session.getRootNode().getNode("documents").addNode("test");
             session.save();
-            traverse(externalNode);
-            externalNode.remove();
+            virtualNode = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1");
+            virtualNode.remove();
             session.save(); 
         } catch(NullPointerException ex) {
             fail(ex.getMessage());
         } catch(RepositoryException ex) {
             fail(ex.getMessage());
+        }  finally {
+            session.logout();
+            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            commonEnd();
+        }
+        
+    }
+
+    
+    public void testWrongRemoveVirtualNodeSave() throws RepositoryException{
+        try{
+            commonStart();
+            //external node indicates for the half regular half virtual nodes
+            Node virtualNode = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1");
+            traverse(virtualNode);
+            session.getRootNode().getNode("documents").addNode("test");
+            session.save();
+            // without refetch gives correctly an exception!
+            virtualNode.remove();
+            session.save(); 
+            fail("An exception should have been thrown");
+        } catch(NullPointerException ex) {
+            fail(ex.getMessage());
+        } catch(InvalidItemStateException ex) {
+            assertNotNull("Exception allowed: item needs to be refetched", ex);
+        } catch(RepositoryException ex) {
+            assertNotNull("Exception allowed: item needs to be refetched", ex);
         } finally {
             session.logout();
             session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             commonEnd();
         }
     }
+
+    
+    public void testPerformance() throws RepositoryException {
+    
+    }
+
 
 }
