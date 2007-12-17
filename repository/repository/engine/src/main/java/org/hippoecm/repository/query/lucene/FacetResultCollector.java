@@ -93,20 +93,32 @@ public class FacetResultCollector extends HitCollector {
                           }
                      }
                  }
+             } else {
+                 /*
+                  * only without facetMap the numHits are correct directly. With a non-null
+                  * facet map, a seperate query is needed to get the correct count
+                  */ 
+                 ++numhits;
              }
-             
-            ++numhits;
         } catch(Exception ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
     }
-    public final Set<String> getHits() {
+    
+    public Set<String> getHits() {
         return hits;
     }
-    public final int getNumhits() {
+    
+    public int getNumhits() {
         return numhits;
     }
+    
+    public void setNumhits(int numhits) {
+        this.numhits = numhits;
+    }
+    
+    
 }
 
 

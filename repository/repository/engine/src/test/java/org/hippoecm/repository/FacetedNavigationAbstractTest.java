@@ -149,8 +149,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
             }
             if(verbose)
                 System.out.println(facetPath + "\t" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-            node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
-            NodeIterator iter = node.getNodes();
+            Node nodeResultSet = node.getNode(HippoNodeType.HIPPO_RESULTSET);
+            NodeIterator iter = nodeResultSet.getNodes();
             realCount = 0;
             while(iter.hasNext()) {
                 Node child = iter.nextNode();

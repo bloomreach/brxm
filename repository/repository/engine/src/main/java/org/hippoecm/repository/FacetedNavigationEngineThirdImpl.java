@@ -171,7 +171,17 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             if(resultset != null){
                 for(String facet : resultset.keySet()) {
                     /*
-                     * facetPropExists: the document must have the property as facet
+                     * Nodes not having this facet, still should be counted if they are a hit 
+                     * in the query without this facet. Therefor, first get the count query without 
+                     * FacetPropExistsQuery.
+                     */
+                    /*
+                     * TODO : test wether the two queries below must be done with somehow synchronizing
+                     * indexReader because other threads can change the indexReader (BitSet's used by this shared indexreader)
+                     */ 
+                    int numHits = searcher.search(searchQuery).length();
+                    /*
+                     * facetPropExists: the node must have the property as facet
                      */
                     FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings,
                                                             (ServicingIndexingConfiguration)getIndexingConfig());
@@ -180,6 +190,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     long start = System.currentTimeMillis();
                     collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);
                     searcher.search(searchQuery, collector);
+                    // set the numHits value
+                    collector.setNumhits(numHits);
                     log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start)
                             + " ms for " + collector.getNumhits() +" results"); 
                 } 
@@ -192,7 +204,6 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start)
                           + " ms for " + collector.getNumhits() +" results"); 
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
