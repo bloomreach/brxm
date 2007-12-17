@@ -73,12 +73,10 @@
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public RootPlugin(String id, final JcrNodeModel model) {
-        super(id, model);
+    public RootPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
     }
 
-    public void update(final AjaxRequestTarget target, JcrEvent jcrEvent) {
-    }
 }
 </source>
         <p>
