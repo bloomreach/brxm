@@ -73,6 +73,18 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>runtime</scope>
     </dependency>
+
+    <!-- following dependencies need to be reviewed as part of HREPTWO-208 -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${org.slf4j.version}</version>
+    </dependency>
   </dependencies>
   
   <build>
@@ -87,40 +99,38 @@
               <port>8082</port>
             </connector>
           </connectors>
+	  <!-- systemProperties>
+	    <systemProperty>
+	      <name>java.rmi.server.codebase</name><value>file:///home/berry/.m2/repository/org/hippoecm/hippo-ecm-repository-engine/2.01.00-dev/hippo-ecm-repository-engine-2.01.00-dev.jar</value>
+	    <systemProperty>
+	  </systemProperties -->
           <contextPath>/</contextPath>
         </configuration>
         <dependencies>
-          <!-- following dependencies need to be reviewed as part of HREPTWO-208 -->
-          <dependency>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-repository-engine</artifactId>
-            <version>${parent.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${org.slf4j.version}</version>
-          </dependency>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-api</artifactId>
             <version>3.1.4</version>
+	    <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jta</artifactId>
             <version>3.1.4</version>
+	    <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions</artifactId>
             <version>3.1.4</version>
+	    <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>atomikos-util</artifactId>
             <version>3.1.4</version>
+	    <scope>runtime</scope>
           </dependency>
         </dependencies>
       </plugin>
