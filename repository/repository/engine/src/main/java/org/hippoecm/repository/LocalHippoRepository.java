@@ -341,7 +341,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             Property p = null;
                             try {
                                 String namespace = (p = node.getProperty(HippoNodeType.HIPPO_NAMESPACE)).getString();
-                                log.info("Initializing namespace: " + namespace);
+                                log.info("Initializing namespace: " + node.getName() + " " + namespace);
                                 // Add namespace if it doesn't exist
                                 initializeNamespace(nsreg, node.getName(), namespace);
                                 p.remove();

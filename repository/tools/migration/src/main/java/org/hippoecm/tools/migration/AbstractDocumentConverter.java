@@ -39,7 +39,7 @@ public abstract class AbstractDocumentConverter implements DocumentConverter {
     /* DAV::creationate = 2006-12-18T14:24:53Z */
     protected static final SimpleDateFormat CREATIONDATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-    /* hippo::publicationDate = 20040124 */
+    /* hipposample::publicationDate = 20040124 */
     protected static final SimpleDateFormat PUBLICATIONDATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
     /* TODO: make configurable */

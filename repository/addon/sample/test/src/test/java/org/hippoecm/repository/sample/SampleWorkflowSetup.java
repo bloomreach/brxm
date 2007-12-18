@@ -42,17 +42,17 @@ abstract class SampleWorkflowSetup
     node = node.getNode("hippo:workflows");
     node = node.addNode("mycategory","hippo:workflowcategory");
     node = node.addNode("myworkflow","hippo:workflow");
-    node.setProperty("hippo:nodetype","hippo:newsArticle");
+    node.setProperty("hippo:nodetype","hipposample:newsArticle");
     node.setProperty("hippo:display","Sample Workflow");
     node.setProperty("hippo:renderer","org.hippoecm.repository.sample.SampleWorkflowRenderer");
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.SampleWorkflowImpl");
     Node types = node.getNode("hippo:types");
     node = types.addNode("org.hippoecm.repository.sample.AuthorDocument","hippo:type");
-    node.setProperty("hippo:nodetype","hippo:author");
+    node.setProperty("hippo:nodetype","hipposample:author");
     node.setProperty("hippo:display","AuthorDocument");
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.AuthorDocument");
     node = types.addNode("org.hippoecm.repository.sample.ArticleDocument","hippo:type");
-    node.setProperty("hippo:nodetype","hippo:newsArticle");
+    node.setProperty("hippo:nodetype","hipposample:newsArticle");
     node.setProperty("hippo:display","ArticleDocument");
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.ArticleDocument");
 
@@ -60,26 +60,26 @@ abstract class SampleWorkflowSetup
     node = root.getNode("hippo:configuration");
     node = node.getNode("hippo:documents");
     node = node.addNode("authors","hippo:query");
-    node.setProperty("hippo:query","files//*[@jcr:primaryType='hippo:author' and @hippo:name='?']");
+    node.setProperty("hippo:query","files//*[@jcr:primaryType='hipposample:author' and @hipposample:name='?']");
     node.setProperty("hippo:language",Query.XPATH);
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.AuthorDocument");
     node = node.getNode("hippo:types");
     node = node.addNode("org.hippoecm.repository.sample.AuthorDocument","hippo:type");
-    node.setProperty("hippo:nodetype","hippo:author");
+    node.setProperty("hippo:nodetype","hipposample:author");
     node.setProperty("hippo:display","AuthorDocument");
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.AuthorDocument");
 
     root.addNode("files");
 
     node = root.getNode("files");
-    node = node.addNode("myauthor","hippo:author");
-    node.setProperty("hippo:id",newAuthorId);
-    node.setProperty("hippo:name","Jan Smit");
+    node = node.addNode("myauthor","hipposample:author");
+    node.setProperty("hipposample:id",newAuthorId);
+    node.setProperty("hipposample:name","Jan Smit");
 
     node = root.getNode("files");
-    node = node.addNode("myarticle","hippo:newsArticle");
-    node.setProperty("hippo:id",1);
-    node.setProperty("hippo:authorId",oldAuthorId);
+    node = node.addNode("myarticle","hipposample:newsArticle");
+    node.setProperty("hipposample:id",1);
+    node.setProperty("hipposample:authorId",oldAuthorId);
 
     session.save();
     session.logout();

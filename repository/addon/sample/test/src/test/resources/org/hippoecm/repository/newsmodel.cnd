@@ -3,88 +3,87 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
+<hipposample='http://www.hippoecm.org/sample/nt/1.0'>
 
 // TODO: 
-// - (Unique) contraints on hippo:id's?
+// - (Unique) contraints on hipposample:id's?
 // - verioning rules
 
 // alttext nodetype is usde by illustration so put it _before_ illustration
-[hippo:altText]
-- hippo:locale (string)
+[hipposample:altText]
+- hipposample:locale (string)
   multiple mandatory
-- hippo:text (string)
+- hipposample:text (string)
 
 // link nodetype is used by newsArticle so put it _before_ newsArticle
-[hippo:link]
-- hippo:href (String)
-- hippo:text (string)
+[hipposample:link]
+- hipposample:href (String)
+- hipposample:text (string)
 
 // illustration nodetype is used by newsArticle so put it _before_ newsArticle
-[hippo:illustration]
-- hippo:imageSetId
-+ hippo:altText
+[hipposample:illustration]
+- hipposample:imageSetId
++ hipposample:altText
 
 // body nodetype is used by newsArticle so put it _before_ newsArticle
-[hippo:body]
-- hippo:locale (string)
+[hipposample:body]
+- hipposample:locale (string)
   multiple mandatory
-- hippo:title (string)
+- hipposample:title (string)
   primary
-- hippo:summary (string)
-- hippo:page (string)
-- hippo:review (string)
+- hipposample:summary (string)
+- hipposample:page (string)
+- hipposample:review (string)
 
-[hippo:newsArticle] > hippo:document
-- hippo:id (long) 
+[hipposample:newsArticle] > hippo:document
+- hipposample:id (long) 
 //  > [(0,)]
-- hippo:categoryId (long)
+- hipposample:categoryId (long)
   multiple
-- hippo:newsArticleId (long) 
+- hipposample:newsArticleId (long) 
   multiple
-- hippo:magzineId (long)
+- hipposample:magzineId (long)
   multiple
-- hippo:sectionId (long)
-- hippo:authorId (long)
-- hippo:published (boolean)
+- hipposample:sectionId (long)
+- hipposample:authorId (long)
+- hipposample:published (boolean)
   = false
-- hippo:publicationDate (date)
-- hippo:newsDate (date)
-+ hippo:body (hippo:body) = hippo:body
+- hipposample:publicationDate (date)
+- hipposample:newsDate (date)
++ hipposample:body (hipposample:body) = hipposample:body
   multiple
-+ hippo:link (hippo:link) = hippo:link
++ hipposample:link (hipposample:link) = hipposample:link
   multiple
-+ hippo:illustration (hippo:illustration) = hippo:illustration
++ hipposample:illustration (hipposample:illustration) = hipposample:illustration
 
-[hippo:author] > hippo:document
-- hippo:id (long)
-- hippo:name (string)
-- hippo:email (string)
+[hipposample:author] > hippo:document
+- hipposample:id (long)
+- hipposample:name (string)
+- hipposample:email (string)
 
-[hippo:section]
-- hippo:id (long)
-- hippo:name (string)
+[hipposample:section]
+- hipposample:id (long)
+- hipposample:name (string)
 
-[hippo:category]
-- hippo:id (long)
-- hippo:name (string)
+[hipposample:category]
+- hipposample:id (long)
+- hipposample:name (string)
 
-[hippo:magazine]
-- hippo:id (long)
-- hippo:name (string)
+[hipposample:magazine]
+- hipposample:id (long)
+- hipposample:name (string)
 
 // image nodetype is used by imageSet so put it _before_ imageset
-[hippo:image]
-- hippo:src (string)
-- hippo:size (string)
-- hippo:contentType (string)
+[hipposample:image]
+- hipposample:src (string)
+- hipposample:size (string)
+- hipposample:contentType (string)
 
-[hippo:imageSet]
-- hippo:id (long)
+[hipposample:imageSet]
+- hipposample:id (long)
   mandatory
-- hippo:description (string)
+- hipposample:description (string)
   primary
-+ hippo:altText
-+ * (hippo:image) = hippo:image
++ hipposample:altText
++ * (hipposample:image) = hipposample:image
   multiple
-
-
