@@ -20,29 +20,29 @@ import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.PluginEvent;
 
-public class ListPlugin extends Plugin {
+public class DocumentListingPlugin extends Plugin {
 
     private static final long serialVersionUID = 1L;
     
     AjaxFallbackDefaultDataTable dataTable;
-    List columns;
+    List<IStyledColumn> columns;
 
-    public ListPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public DocumentListingPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        columns = new ArrayList();
+        columns = new ArrayList<IStyledColumn>();
+        //columns.add(new PropertyColumn(new Model("Name"), "name"));
         columns.add(new NodeColumn(new Model("Name"), "name"));
-        columns.add(new PropertyColumn(new Model("Path"), "path"));
 
-        dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableJcrDataProvider(model), 10);
+        dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentHandlesProvider(model), 10);
         add(dataTable);
     }
 
@@ -51,7 +51,7 @@ public class ListPlugin extends Plugin {
         if (nodeModel != null) {
             setModel(nodeModel);
             remove(dataTable);
-            dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableJcrDataProvider(nodeModel), 10);
+            dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentHandlesProvider(nodeModel), 10);
             add(dataTable);
         }
         if (target != null && findPage() != null) {
