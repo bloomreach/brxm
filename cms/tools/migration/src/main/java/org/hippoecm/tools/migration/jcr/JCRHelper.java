@@ -35,7 +35,7 @@ public class JCRHelper {
     private static final String HANDLE_NODETYPE = "hippo:handle";
     private static final String SELECTOR_NODETYPE = "hippo:facetselect";
     private static final String DOCUMENT_NODETYPE = "hippo:document";
-    private static final String AUTHOR_NODETYPE = "hippo:author";
+    private static final String AUTHOR_NODETYPE = "hipposample:author";
     
     // properties
     private static final String STATE_PROPERTY = "state";

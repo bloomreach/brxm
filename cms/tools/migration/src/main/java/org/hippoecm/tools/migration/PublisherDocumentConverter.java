@@ -39,64 +39,64 @@ import org.xml.sax.SAXException;
 public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
 
     /*
-    private static final String CONTENTTYPE_PROPERTY = "hippo:contentType";
-    private static final String SIZE_PROPERTY = "hippo:size";
-    private static final String SRC_PROPERTY = "hippo:src";
-    private static final String LINK_PROPERTY = "hippo:link";
-    private static final String HREF_PROPERTY = "hippo:href";
-    private static final String TEXT_PROPERTY = "hippo:text";
-    private static final String PUBLICATIONDATE_PROPERTY = "hippo:publicationDate";
-    private static final String NEWSDATE_PROPERTY = "hippo:newsDate";
-    private static final String REVIEW_PROPERTY = "hippo:review";
-    private static final String SUMMARY_PROPERTY = "hippo:summary";
-    private static final String PAGE_PROPERTY = "hippo:page";
-    private static final String TITLE_PROPERTY = "hippo:title";
-    private static final String LOCALE_PROPERTY = "hippo:locale";
-    private static final String PUBLISHED_PROPERTY = "hippo:published";
-    private static final String HIPPO_ID_PROPERTY = "hippo:id";
+    private static final String CONTENTTYPE_PROPERTY = "hipposample:contentType";
+    private static final String SIZE_PROPERTY = "hipposample:size";
+    private static final String SRC_PROPERTY = "hipposample:src";
+    private static final String LINK_PROPERTY = "hipposample:link";
+    private static final String HREF_PROPERTY = "hipposample:href";
+    private static final String TEXT_PROPERTY = "hipposample:text";
+    private static final String PUBLICATIONDATE_PROPERTY = "hipposample:publicationDate";
+    private static final String NEWSDATE_PROPERTY = "hipposample:newsDate";
+    private static final String REVIEW_PROPERTY = "hipposample:review";
+    private static final String SUMMARY_PROPERTY = "hipposample:summary";
+    private static final String PAGE_PROPERTY = "hipposample:page";
+    private static final String TITLE_PROPERTY = "hipposample:title";
+    private static final String LOCALE_PROPERTY = "hipposample:locale";
+    private static final String PUBLISHED_PROPERTY = "hipposample:published";
+    private static final String HIPPO_ID_PROPERTY = "hipposample:id";
     
     // The main newsarticle node
-    private static final String NEWSARTICLE_NODETYPE = "hippo:newsArticle";
+    private static final String NEWSARTICLE_NODETYPE = "hipposample:newsArticle";
 
     // subnode for holding localized altText
-    private static final String ALTTEXT_NODE = "hippo:altText";
-    private static final String ALTTEXT_NODETYPE = "hippo:altText";
+    private static final String ALTTEXT_NODE = "hipposample:altText";
+    private static final String ALTTEXT_NODETYPE = "hipposample:altText";
     
     // subnode for holding the localized newsarticle body
-    private static final String BODY_NODE = "hippo:body";
-    private static final String BODY_NODETYPE = "hippo:body";
+    private static final String BODY_NODE = "hipposample:body";
+    private static final String BODY_NODETYPE = "hipposample:body";
     
     // Default locale
     private static final String DEFAULT_LOCALE = "en-gb";
     
     // subnode of the rootnode that contains the authors
     private static final String AUTHOR_NODE = "authors";
-    private static final String AUTHOR_NODETYPE = "hippo:author";
-    private static final String AUTHOR_ID_PROPERTY = "hippo:authorId";
+    private static final String AUTHOR_NODETYPE = "hipposample:author";
+    private static final String AUTHOR_ID_PROPERTY = "hipposample:authorId";
 
     // subnode of the rootnode that contains the sections
     private static final String SECTION_NODE = "sections";
-    private static final String SECTION_NODETYPE = "hippo:section";
-    private static final String SECTION_ID_PROPERTY = "hippo:sectionId";
+    private static final String SECTION_NODETYPE = "hipposample:section";
+    private static final String SECTION_ID_PROPERTY = "hipposample:sectionId";
 
     // TODO: subnode of the rootnode that contains the categories
     //private static final String CATEGORY_NODE = "catagories";
-    //private static final String CATEGORY_NODETYPE = "hippo:catagory";
-    //private static final String CATEGORY_ID_PROPERTY = "hippo:catagoryId";
+    //private static final String CATEGORY_NODETYPE = "hipposample:catagory";
+    //private static final String CATEGORY_ID_PROPERTY = "hipposample:catagoryId";
 
     // subnode of the rootnode that contains the magazines
     private static final String MAGAZINE_NODE = "magazines";
-    private static final String MAGAZINE_NODETYPE = "hippo:magazine";
-    private static final String MAGAZINE_ID_PROPERTY = "hippo:magzineId";
+    private static final String MAGAZINE_NODETYPE = "hipposample:magazine";
+    private static final String MAGAZINE_ID_PROPERTY = "hipposample:magzineId";
 
     // subnode of the rootnode that contains the imagesets
     private static final String IMAGESET_NODE = "imagesets";
-    private static final String IMAGESET_NODETYPE = "hippo:imageSet";
-    private static final String IMAGESET_ID_PROPERTY = "hippo:imageSetId";
+    private static final String IMAGESET_NODETYPE = "hipposample:imageSet";
+    private static final String IMAGESET_ID_PROPERTY = "hipposample:imageSetId";
 
-    private static final String IMAGE_NODETYPE = "hippo:image";
+    private static final String IMAGE_NODETYPE = "hipposample:image";
 
-    // hippo::documentdate = 20040124 
+    // hipposample::documentdate = 20040124 
     private static final SimpleDateFormat DOCUMENTDATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
     // The location of the imagesets in the webdav repository
@@ -214,7 +214,7 @@ public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
         if (properties.containsKey("imageset") && !"".equals((String) properties.get("imageset"))) {
 
             // Create the new JCR illustration node
-            javax.jcr.Node illustration = newsArticle.addNode("hippo:illustration", "hippo:illustration");
+            javax.jcr.Node illustration = newsArticle.addNode("hipposample:illustration", "hipposample:illustration");
 
             // Set alternative alt text 
             if (properties.containsKey("imagealt")) {

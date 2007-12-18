@@ -7,12 +7,12 @@
     </class>
     <class name="AuthorDocument" detachable="true" identity-type="datastore" table="files">
       <datastore-identity strategy="native"/>
-      <field name="authorId" column="hippo:id"/>
+      <field name="authorId" column="hipposample:id"/>
     </class>
     <class name="ArticleDocument" detachable="true" identity-type="datastore" table="files">
       <datastore-identity strategy="native"/>
-      <field name="articleId" column="hippo:id"/>
-      <field name="authorId" column="hippo:authorId"/>
+      <field name="articleId" column="hipposample:id"/>
+      <field name="authorId" column="hipposample:authorId"/>
     </class>
   </package>
 </jdo>

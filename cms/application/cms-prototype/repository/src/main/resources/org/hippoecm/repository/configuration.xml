@@ -36,9 +36,12 @@
     </sv:property>
     
     <!--Document model for documents-->
-    <sv:node sv:name="document-model">
+    <sv:node sv:name="hipposample">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:namespace" sv:type="String">
+        <sv:value>http://www.hippoecm.org/sample/nt/1.0</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:nodetypes" sv:type="String">
         <sv:value>model.cnd</sv:value>
@@ -60,12 +63,12 @@
     
     
     <!--Node type definitions for mailsponge-->
-    <sv:node sv:name="mailsponge-model">
+    <sv:node sv:name="mailsponge">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:initializeitem</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:namespace" sv:type="String">
-        <sv:value>mailsponge</sv:value>
+        <sv:value>mailsponge-model</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:nodetypes" sv:type="String">
         <sv:value>mailsponge-model.cnd</sv:value>
