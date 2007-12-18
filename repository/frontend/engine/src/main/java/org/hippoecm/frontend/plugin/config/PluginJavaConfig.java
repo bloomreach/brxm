@@ -16,92 +16,69 @@
 package org.hippoecm.frontend.plugin.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.frontend.plugin.EventChannel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 /**
- * Acts as default configuration if custom configuration fails
+ * Hardcoded plugin configuration. 
+ * It uses only core plugins and shows the Hippo ECM Admin Console.
  */
 public class PluginJavaConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
-    private PluginDescriptor rootPlugin;
-    private PluginDescriptor navigationPlugin;
-    private PluginDescriptor menuPlugin;
-    private PluginDescriptor logoutPlugin;
-    private PluginDescriptor contentPlugin;
-    private PluginDescriptor breadcrumbPlugin;
+    private PluginDescriptor root;
+    private Map<String, PluginDescriptor> childrenOfRoot;
 
     public PluginJavaConfig() {
-        
         EventChannel defaultChannel = new EventChannel("default");
         Set<EventChannel> incoming = new HashSet<EventChannel>();
         incoming.add(defaultChannel);
         Set<EventChannel> outgoing = new HashSet<EventChannel>();
         outgoing.add(defaultChannel);
-        
-        String id = "rootPlugin";
-        String className = "org.hippoecm.frontend.plugins.admin.RootPlugin";      
-        rootPlugin = new PluginDescriptor(id, className, incoming, outgoing);
 
-        id = "navigationPlugin";
+        String className = "org.hippoecm.frontend.plugins.admin.RootPlugin";
+        root = new PluginDescriptor("rootPlugin", className, incoming, outgoing);
+
+        childrenOfRoot = new HashMap<String, PluginDescriptor>();
+
         className = "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin";
-        navigationPlugin = new PluginDescriptor(id , className, incoming, outgoing);
+        childrenOfRoot.put("navigationPlugin", new PluginDescriptor("navigationPlugin", className, incoming, outgoing));
 
-        id = "menuPlugin";
         className = "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin";
-        menuPlugin = new PluginDescriptor(id, className, incoming, outgoing);
-        
-        id = "logoutPlugin";
+        childrenOfRoot.put("menuPlugin", new PluginDescriptor("menuPlugin", className, incoming, outgoing));
+
         className = "org.hippoecm.frontend.plugins.admin.logout.LogoutPlugin";
-        logoutPlugin = new PluginDescriptor(id, className, incoming, outgoing);
+        childrenOfRoot.put("logoutPlugin", new PluginDescriptor("logoutPlugin", className, incoming, outgoing));
 
-        id = "contentPlugin";
         className = "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin";
-        contentPlugin = new PluginDescriptor(id, className, incoming, outgoing);
+        childrenOfRoot.put("contentPlugin", new PluginDescriptor("contentPlugin", className, incoming, outgoing));
 
-        id = "breadcrumbPlugin";
         className = "org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin";
-        breadcrumbPlugin = new PluginDescriptor(id, className, incoming, outgoing);
+        childrenOfRoot.put("breadcrumbPlugin", new PluginDescriptor("breadcrumbPlugin", className, incoming, outgoing));
     }
-    
 
     public PluginDescriptor getRoot() {
-        return rootPlugin;
-
+        return root;
     }
 
     public List getChildren(PluginDescriptor pluginDescriptor) {
         List result = new ArrayList();
         if (pluginDescriptor.getPluginId().equals("rootPlugin")) {
-            result.add(navigationPlugin);
-            result.add(menuPlugin);
-            result.add(logoutPlugin);
-            result.add(contentPlugin);
-            result.add(breadcrumbPlugin);
+            result.addAll(childrenOfRoot.values());
         }
         return result;
     }
 
     public PluginDescriptor getPlugin(String pluginId) {
-        PluginDescriptor result = null;
         if (pluginId.equals("rootPlugin")) {
-            result = rootPlugin;
-        } else if (pluginId.equals("navigationPlugin")) {
-            return navigationPlugin;
-        } else if (pluginId.equals("menuPlugin")) {
-            return menuPlugin;
-        } else if (pluginId.equals("logoutPlugin")) {
-            return logoutPlugin;
-        } else if (pluginId.equals("contentPlugin")) {
-            return contentPlugin;
-        } else if (pluginId.equals("breadcrumbPlugin")) {
-            return breadcrumbPlugin;
+            return root;
         }
-        return result;
+        return childrenOfRoot.get(pluginId);
     }
 }
