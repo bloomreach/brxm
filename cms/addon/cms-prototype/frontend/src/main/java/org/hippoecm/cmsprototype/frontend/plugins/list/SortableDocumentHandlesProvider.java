@@ -35,16 +35,18 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
     private static final long serialVersionUID = 1L;
     
     JcrNodeModel model;
+    List<Node> documents;
     
     public SortableDocumentHandlesProvider(JcrNodeModel model) {
         this.model = model;
+        documents = documents();
         //setSort("name", true);
     }
 
     public Iterator<Node> iterator(int first, int count) {
         List<Node> list = new ArrayList<Node>();
         int i = 0;
-        for (Iterator<Node> nodes = documents().iterator(); nodes.hasNext(); i++) {
+        for (Iterator<Node> nodes = documents.iterator(); nodes.hasNext(); i++) {
             Node node = nodes.next();
             if (i >= first && i < (first + count)) {
                 list.add(node);
@@ -58,21 +60,31 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
     }
 
     public int size() {
-        return documents().size();
+        return documents.size();
     }
     
     private List<Node> documents() {
-        Node node = model.getNode();
+        HippoNode node = model.getNode();
         List<Node> childNodes = new ArrayList<Node>();
         try {
             NodeIterator jcrChildren = node.getNodes();
             while (jcrChildren.hasNext()) {
-                Node jcrChild = jcrChildren.nextNode();
+                HippoNode jcrChild = (HippoNode) jcrChildren.nextNode();
                 if (jcrChild != null ) {
                     NodeType nodeType = jcrChild.getPrimaryNodeType();
                     if ((HippoNodeType.NT_HANDLE.equals(nodeType.getName()))) {
                         childNodes.add(jcrChild);
                     }
+                    /*
+                    else if ((HippoNodeType.NT_DOCUMENT.equals(nodeType.getName()))) {
+                        Node canonicalNode = jcrChild.getCanonicalNode();
+                        Node parentNode = canonicalNode.getParent();
+                        NodeType parentNodeType = parentNode.getPrimaryNodeType();
+                        if (parentNode != null && HippoNodeType.NT_HANDLE.equals(parentNodeType.getName())) {
+                            childNodes.add(parentNode);
+                        }
+                    }
+                    */
                 }
             }
         }
