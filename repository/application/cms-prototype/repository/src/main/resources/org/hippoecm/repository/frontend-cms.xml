@@ -37,6 +37,39 @@
         <sv:value>editPerspective</sv:value>
       </sv:property>
 
+      <sv:node sv:name="dashboardPerspective">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:frontendplugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:incoming" sv:type="String">
+          <sv:value>dashboardPerspective</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:renderer" sv:type="String">
+          <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.DashboardPerspective</sv:value>
+        </sv:property>
+        <sv:node sv:name="todoPlugin">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:frontendplugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:incoming" sv:type="String">
+            <sv:value>default</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.todo.TodoPlugin</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="addNewWizardPlugin">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:frontendplugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugin.empty.EmptyPlugin</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      
+
+
       <sv:node sv:name="browsePerspective">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:frontendplugin</sv:value>
