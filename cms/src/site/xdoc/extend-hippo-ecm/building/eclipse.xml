@@ -168,7 +168,7 @@
             <subsection name="Repository application">
                 <p>Update the repository application configuration:</p>
                 <ol>
-                    <li><p>Open the debug configuration panel (e.g. Run -&gt; Open Debug Dialog...)</p></li>
+                    <li><p>Open the debug configuration panel (e.g. Run -&gt; Debug )</p></li>
                     <li><p>Set the webapp dir to src/main/webapp</p></li>
                     <li><p>Set the port to 8081</p></li>
                     <li><p>Select the 'Arguments' tab</p></li>
