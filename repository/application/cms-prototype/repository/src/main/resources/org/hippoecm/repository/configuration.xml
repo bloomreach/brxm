@@ -60,8 +60,7 @@
         <sv:value>frontend.cnd</sv:value>
       </sv:property>
     </sv:node>
-    
-    
+
     <!--Node type definitions for mailsponge-->
     <sv:node sv:name="mailsponge">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -72,6 +71,12 @@
       </sv:property>
       <sv:property sv:name="hippo:nodetypes" sv:type="String">
         <sv:value>mailsponge-model.cnd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>frontend-mailsponge.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/hippo:configuration/hippo:frontend</sv:value>
       </sv:property>
     </sv:node>
     
@@ -95,19 +100,6 @@
       </sv:property>
       <sv:property sv:name="hippo:content" sv:type="String">
         <sv:value>frontend-console.xml</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:contentroot" sv:type="String">
-        <sv:value>/hippo:configuration/hippo:frontend</sv:value>
-      </sv:property>
-    </sv:node>
-    
-    <!--Mailsponge frontend configuration-->
-    <sv:node sv:name="mailsponge">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:initializeitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:content" sv:type="String">
-        <sv:value>frontend-mailsponge.xml</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:contentroot" sv:type="String">
         <sv:value>/hippo:configuration/hippo:frontend</sv:value>
