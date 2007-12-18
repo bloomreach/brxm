@@ -101,7 +101,7 @@
             <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin</sv:value>
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.foldertree.FolderTreePlugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:incoming" sv:type="String">
             <sv:value>default</sv:value>
@@ -116,7 +116,7 @@
               <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.list.ListPlugin</sv:value>
+              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.list.DocumentListingPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:incoming" sv:type="String">
             <sv:value>default</sv:value>
