@@ -15,6 +15,11 @@
  */
 package org.hippoecm.repository.servicing;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -82,12 +87,27 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
      * @inheritDoc
      */
     public String[] getArguments() {
-        int argumentCount = getArgumentCount();
-        String[] arguments = new String[argumentCount];
-        for (int i=0; i<argumentCount; i++) {
-            arguments[i] = "?";
-        }
-        return arguments;
+        String queryString = getStatement();
+	if(queryString.contains("?")) {
+            int argumentCount = getArgumentCount();
+            String[] arguments = new String[argumentCount];
+            for (int i=0; i<argumentCount; i++) {
+                arguments[i] = "?";
+            }
+            return arguments;
+	} else {
+	    Set<String> arguments = new HashSet<String>();
+	    for (int position=0; position>=0; position=queryString.indexOf("$", position)) {
+		int endPosition = position + 1;
+                if(Character.isJavaIdentifierStart(queryString.charAt(endPosition))) {
+                    do {
+                        ++endPosition;
+                    } while(Character.isJavaIdentifierPart(queryString.charAt(endPosition)));
+                }
+                arguments.add(queryString.substring(position,endPosition));
+	    }
+            return arguments.toArray(new String[arguments.size()]);
+	}
     }
 
     /**
@@ -96,10 +116,36 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
     public int getArgumentCount() {
         String queryString = getStatement();
         int count = -1;
-        for (int position=0; position>=0; position=queryString.indexOf("?", position)) {
-            ++count;
-        }
+	if(queryString.contains("?")) {
+            for (int position=0; position>=0; position=queryString.indexOf("?", position)) {
+                ++count;
+            }
+	} else {
+	    Set<String> arguments = new HashSet<String>();
+            for (int position=0; position>=0; position=queryString.indexOf("$", position)) {
+                ++count;
+            }
+	}
         return count;
+    }
+
+    public QueryResult execute(String argument) throws RepositoryException {
+        String queryString = getStatement();
+	if(queryString.contains("?")) {
+	    int count = getArgumentCount();
+	    String[] arguments = new String[count];
+	    for(int i=0; i<count; i++) {
+	        arguments[i] = argument;
+	    }
+	    return execute(arguments);
+	} else {
+	    String[] argumentNames = getArguments();
+	    Map<String,String> arguments = new TreeMap<String,String>();
+	    for(int i=0; i<argumentNames.length; i++) {
+	        arguments.put(argumentNames[i], argument);
+	    }
+	    return execute(arguments);
+	}
     }
 
     /**
@@ -109,6 +155,19 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
         String queryString = getStatement();
         for (int i=0; i<arguments.length; i++) {
             queryString = queryString.replaceFirst("?", arguments[i]);
+        }
+        Query q = session.getWorkspace().getQueryManager().createQuery(queryString, getLanguage());
+        return factory.getQueryResultDecorator(session, q.execute());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public QueryResult execute(Map<String,String> arguments) throws RepositoryException {
+        String queryString = getStatement();
+	String[] argumentNames = getArguments();
+        for (int i=0; i<argumentNames.length; i++) {
+            queryString = queryString.replace("$"+argumentNames[i], arguments.get(argumentNames[i]));
         }
         Query q = session.getWorkspace().getQueryManager().createQuery(queryString, getLanguage());
         return factory.getQueryResultDecorator(session, q.execute());
