@@ -15,66 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.admin.browser;
 
-import javax.swing.tree.TreeNode;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
-import org.hippoecm.frontend.tree.JcrTree;
+import org.hippoecm.frontend.tree.AbstractTreePlugin;
 
-public class BrowserPlugin extends Plugin {
+public class BrowserPlugin extends AbstractTreePlugin {
+
     private static final long serialVersionUID = 1L;
 
-    private JcrTree tree;
-    private AbstractTreeNode rootNodeModel;
-
     public BrowserPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel nodeModel, Plugin parentPlugin) {
-        super(pluginDescriptor, nodeModel, parentPlugin);
-
-		rootNodeModel = new JcrTreeNode(nodeModel);
-        //rootNodeModel = new DocumentTreeNode(nodeModel);
-        JcrTreeModel treeModel = new JcrTreeModel(rootNodeModel);
-
-        tree = new JcrTree("tree", treeModel) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
-                PluginEvent event = new PluginEvent(BrowserPlugin.this, JcrEvent.NEW_MODEL, treeNodeModel.getNodeModel());
-                getPluginManager().update(target, event);
-            }
-        };
-        add(tree);
-    }
-
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrTreeModel treeModel = rootNodeModel.getTreeModel();
-        
-        JcrNodeModel nodeToBeReloaded = event.getNodeModel(JcrEvent.NEEDS_RELOAD);
-        if (nodeToBeReloaded != null) {    
-            AbstractTreeNode treeNodeModel = treeModel.lookup(nodeToBeReloaded);
-
-            treeNodeModel.markReload();
-            tree.getTreeModel().nodeStructureChanged(treeNodeModel);
-            if (target != null && findPage() != null) {
-                tree.updateTree(target);
-            }
-        }
-        
-        JcrNodeModel newSelection = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if(newSelection != null) {
-            AbstractTreeNode node = treeModel.lookup(newSelection);
-            if (node != null) {
-                tree.getTreeState().selectNode(node, true);
-            }
-        }
+        super(pluginDescriptor, new JcrTreeNode(nodeModel), parentPlugin);
     }
 
 }
