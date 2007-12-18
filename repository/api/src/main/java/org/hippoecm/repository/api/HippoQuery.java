@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.api;
 
+import java.util.Map;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
@@ -26,5 +28,9 @@ public interface HippoQuery extends Query {
 
     public int getArgumentCount();
 
+    public QueryResult execute(String argument) throws RepositoryException;
+
     public QueryResult execute(String[] arguments) throws RepositoryException;
+
+    public QueryResult execute(Map<String,String> arguments) throws RepositoryException;
 }
