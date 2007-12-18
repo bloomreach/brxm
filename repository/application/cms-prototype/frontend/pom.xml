@@ -90,6 +90,17 @@
           <contextPath>/</contextPath>
         </configuration>
         <dependencies>
+          <!-- following dependencies need to be reviewed as part of HREPTWO-208 -->
+          <dependency>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-repository-engine</artifactId>
+            <version>${parent.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
           <dependency>
             <groupId>com.atomikos</groupId>
