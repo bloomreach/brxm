@@ -25,9 +25,9 @@
                 <sv:value>f47e367e-2702-4758-af93-ecd134851ff1</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String">
-                <sv:value>workflow-demo</sv:value>
-                <sv:value>workflow-demo/myarticle</sv:value>
-                <sv:value>workflow-demo/myarticle/myarticle</sv:value>
+                <sv:value>/workflow-demo</sv:value>
+                <sv:value>/workflow-demo/myarticle</sv:value>
+                <sv:value>/workflow-demo/myarticle/myarticle</sv:value>
             </sv:property>
             <sv:property sv:name="content" sv:type="String">
                 <sv:value>Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
