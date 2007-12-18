@@ -178,9 +178,9 @@
                         (e.g. /home/user/hippo-ecm)</p></li>
                     <li><p>Add</p>
 <source>
--Djava.rmi.server.codebase="file://${m2_loc}/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4-r593117/jackrabbit-jcr-rmi-1.4-r593117.jar
-     file://${m2_loc}/javax/jcr/jcr/1.0/jcr-1.0.jar
-     file://${ecm_loc}/addon/reviewed-action/repository/target/classes/"
+-Djava.rmi.server.codebase="file:///${m2_loc}/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4-r593117/jackrabbit-jcr-rmi-1.4-r593117.jar
+     file:///${m2_loc}/javax/jcr/jcr/1.0/jcr-1.0.jar
+     file:///${ecm_loc}/addon/reviewed-action/repository/target/classes/"
 </source>
                         <p>to the VM Arguments (tab "Arguments")</p></li>
                 </ol>
