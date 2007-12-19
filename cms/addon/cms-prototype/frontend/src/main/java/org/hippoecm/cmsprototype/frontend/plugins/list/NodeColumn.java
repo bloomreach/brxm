@@ -23,10 +23,13 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 public class NodeColumn extends PropertyColumn {
     private static final long serialVersionUID = 1L;
 
-    public NodeColumn(IModel displayModel, String sortProperty) {
-        super(displayModel, sortProperty);
+    public NodeColumn(IModel displayModel, String propertyExpression) {
+        super(displayModel, propertyExpression);
     }
 
+    public NodeColumn(IModel displayModel, String sortProperty, String propertyExpression) {
+        super(displayModel, sortProperty, propertyExpression);
+    }
 
     @Override
     public void populateItem(Item item, String componentId, IModel model)

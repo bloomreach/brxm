@@ -40,7 +40,7 @@ public class DocumentListingPlugin extends Plugin {
 
         columns = new ArrayList<IStyledColumn>();
         //columns.add(new PropertyColumn(new Model("Name"), "name"));
-        columns.add(new NodeColumn(new Model("Name"), "name"));
+        columns.add(new NodeColumn(new Model("Name"), "name", "name"));
 
         dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentHandlesProvider(model), 10);
         add(dataTable);
