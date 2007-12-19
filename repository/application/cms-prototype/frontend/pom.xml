@@ -43,7 +43,7 @@
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-wysiwyg-package</artifactId>
+      <artifactId>hippo-ecm-addon-xinha-package</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
