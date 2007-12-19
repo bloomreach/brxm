@@ -41,12 +41,12 @@
   </scm>
   
   <dependencies>
-    <!-- dependency>
+    <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-xinha-package</artifactId>
+      <artifactId>hippo-ecm-addon-xinha</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
-    </dependency -->
+    </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-application</artifactId>
@@ -100,6 +100,7 @@
   </dependencies>
   
   <build>
+    <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
