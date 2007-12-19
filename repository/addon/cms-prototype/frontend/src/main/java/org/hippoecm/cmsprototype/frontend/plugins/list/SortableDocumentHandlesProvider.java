@@ -100,7 +100,6 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
                                 Node canonicalNode = fsChild.getCanonicalNode();
                                 Node parentNode = canonicalNode.getParent();
                                 if (parentNode != null && parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                    System.out.println("adding " + parentNode.getPath());
                                     childNodes.add(parentNode);
                                 }
                             }
