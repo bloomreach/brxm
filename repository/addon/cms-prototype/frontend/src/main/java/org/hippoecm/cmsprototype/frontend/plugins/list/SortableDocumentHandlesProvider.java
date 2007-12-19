@@ -16,6 +16,8 @@
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -46,12 +48,13 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
     public SortableDocumentHandlesProvider(JcrNodeModel model) {
         this.model = model;
         documents = documents();
-        //setSort("name", true);
+        setSort("name", true);
     }
 
     public Iterator<Node> iterator(int first, int count) {
         // TODO replace with a more efficient implementation
         ensureDocumentsAreLoaded();
+        sortDocuments();
         List<Node> list = new ArrayList<Node>();
         int i = 0;
         for (Iterator<Node> nodes = documents.iterator(); nodes.hasNext(); i++) {
@@ -121,7 +124,24 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
         return childNodes;
     }
     
-    
+    private void sortDocuments() {
+        Collections.sort(documents, new Comparator<Node>() {
+
+            public int compare(Node o1, Node o2) {
+                try {
+                    return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
+                } catch (RepositoryException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return 0;
+                }
+            }
+        });
+        
+        if (getSort().isAscending() == false) {
+            Collections.reverse(documents);
+        }
+    }
 
     
 }
