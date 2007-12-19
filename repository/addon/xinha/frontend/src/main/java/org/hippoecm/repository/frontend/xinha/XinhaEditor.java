@@ -1,3 +1,18 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.repository.frontend.wysiwyg.xinha;
 
 import java.util.Hashtable;
@@ -18,139 +33,84 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
+
 import org.hippoecm.repository.frontend.wysiwyg.HtmlEditor;
 
-public class XinhaEditor extends HtmlEditor
-{
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.PropertyModel;
+
+public class XinhaEditor extends Panel {
     private static final long serialVersionUID = 1L;
-    
+
+    private String content;
+
     /*private static final ResourceReference JS = new ResourceReference(
             XinhaEditor.class, "impl/xinha/XinhaCore.js");*/
-    
+
     private TextArea editor;
-    private XinhaEditorConf editorConf; 
-    
+    private XinhaEditorConf editorConf;
+
     private final AbstractDefaultAjaxBehavior postBehaviour;
     private XinhaEditorConfigurationBehaviour bh;
-    
-    public XinhaEditor(final String id, XinhaEditorConfigurationBehaviour bh)
-    {
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public XinhaEditor(final String id, XinhaEditorConfigurationBehaviour bh) {
         super(id);
-        
+        setModel(new PropertyModel(this, "content"));
+
         this.bh = bh;
-        
+
         editor = new TextArea("editor", getModel());
         editor.setOutputMarkupId(true);
         editor.setVisible(true);
-        
+
         postBehaviour = new AbstractDefaultAjaxBehavior() {
-            
+
             private static final long serialVersionUID = 1L;
 
-            protected void respond(AjaxRequestTarget target)
-            {
+            protected void respond(AjaxRequestTarget target) {
                 RequestCycle requestCycle = RequestCycle.get();
-                boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save"))
-                        .booleanValue();
+                boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
 
-                if (save)
-                {
+                if (save) {
                     editor.processInput();
-                       
-                    System.out.println("editor value: "+editor.getValue());
-                    System.out.println("editor contents: "+XinhaEditor.this.getContent());
-                    
-                    if (editor.isValid())
-                    {
+
+                    System.out.println("editor value: " + editor.getValue());
+                    System.out.println("editor contents: " + XinhaEditor.this.getContent());
+
+                    if (editor.isValid()) {
                         System.out.println("ALLES GOED");
                     }
                 }
             }
         };
-        
-        editor.add(postBehaviour);
-        
-        editorConf = new XinhaEditorConf();
-        //conf.setName(editor.getMarkupId());
-        editorConf.setName("editor2");
-        editorConf.setPlugins(new String[]{"WicketSave",
-                                         "CharacterMap",
-                                         "ContextMenu",
-                                         "ListType",
-                                         "SpellChecker",
-                                         "Stylist",
-                                         "SuperClean",
-                                         "TableOperations"});
 
-//        IModel variablesModel = new AbstractReadOnlyModel() {
-//            private static final long serialVersionUID = 1L;
-//            /** cached variables; we only need to fill this once. */
-//            private Map variables;
-//
-//            public Object getObject() {
-//              if (variables == null) {
-//                this.variables = new MiniMap(2);
-//                variables.put("editors", "'"+editor.getMarkupId()+"'");
-//                variables.put("postUrl", postBehaviour.getCallbackUrl());
-//              }
-//              return variables;
-//            }
-//        };
-//        
-//        HeaderContributor jsConfig = new HeaderContributor(new IHeaderContributor() {
-//          private static final long serialVersionUID = 1L;
-//          public void renderHead(IHeaderResponse response) {
-//              StringBuffer buff = new StringBuffer();
-//              buff.append("_editor_url  = '" +
-//                          XinhaEditor.this.urlFor(new ResourceReference(XinhaEditor.class, "impl/xinha/")) + 
-//                          "';");
-//              buff.append("_editor_lang = 'en';");
-//              response.renderJavascript(buff, null);
-//              response.renderOnLoadJavascript("xinha_init()");
-//          }
-//        });
-//        
-//        if(editorCount == 1) {
-//            add(jsConfig);
-//            add(HeaderContributor.forJavaScript(JS));
-//        }
-//        
-//        add(TextTemplateHeaderContributor.forJavaScript(
-//                XinhaEditor.class, "config.js", variablesModel));
-//        
-        
+        editor.add(postBehaviour);
+
+        editorConf = new XinhaEditorConf();
+        editorConf.setName("editor2"); // FIXME ??? conf.setName(editor.getMarkupId());
+        editorConf.setPlugins(new String[] { "WicketSave", "CharacterMap", "ContextMenu", "ListType", "SpellChecker",
+                "Stylist", "SuperClean", "TableOperations" });
+
         add(editor);
     }
-    
-    public XinhaEditorConf getConfiguration()
-    {
+
+    XinhaEditorConf getConfiguration() {
         return editorConf;
     }
-    
-    public void init()
-    {
+
+    public void init() {
         Map conf = new Hashtable();
         conf.put("postUrl", postBehaviour.getCallbackUrl());
         editorConf.setConfiguration(conf);
-        
+
         bh.addConfiguration(editorConf);
-    }
-    
-    private Vector getIFrames()
-    {
-        final Vector iframes = new Vector();
-        getWebPage().visitChildren(new IVisitor(){
-            public Object component(Component component) {
-                System.out.println(component.getClass().getName());
-                   System.out.println(component);
-                if(component instanceof ModalWindow) {
-                    System.out.println("We hebben een dialog te pakken");
-                    iframes.add(component.getMarkupId());
-                }
-                return IVisitor.CONTINUE_TRAVERSAL;
-            }
-        });
-        
-        return iframes;
     }
 }
