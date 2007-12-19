@@ -28,21 +28,61 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Xinha addon</name>
+  <name>Xinha addon frontend plugin</name>
   <description>Hippo ECM Xinha addon</description>
-  <artifactId>hippo-ecm-addon-xinha</artifactId>
   <groupId>org.hippoecm</groupId>
-  <packaging>pom</packaging>
+  <artifactId>hippo-ecm-addon-xinha</artifactId>
+  <packaging>war</packaging>
 
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/xinha</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/xinha</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/xinha</url>
-  </scm>
+  </scm> 
 
-  <modules>
-    <module>frontend</module>
-    <module>package</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>${parent.version}</version>
+    </dependency>    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-plugins</artifactId>
+      <version>${parent.version}</version>
+    </dependency>    
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins> 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>always</forkMode>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+        </configuration>
+      </plugin>     
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+   </plugins>
+  </build>
   
 </project>
