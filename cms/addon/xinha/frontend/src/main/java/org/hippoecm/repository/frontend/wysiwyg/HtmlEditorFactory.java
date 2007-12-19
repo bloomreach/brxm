@@ -15,6 +15,7 @@ public class HtmlEditorFactory {
     }
 
     public static HtmlEditor createHtmlEditor(final String id, Page page, String type) {
+        /*
         if (type.equals("xinha")) {
 
             if (configurationBehaviour == null) {
@@ -27,7 +28,7 @@ public class HtmlEditorFactory {
         } else if (type.equals("texteditor")) {
             return new TextEditor(id);
         }
-
+        */
         return null;
     }
 
