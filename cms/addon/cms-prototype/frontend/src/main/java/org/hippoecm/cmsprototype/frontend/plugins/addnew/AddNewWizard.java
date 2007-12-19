@@ -15,6 +15,9 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.addnew;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -22,9 +25,12 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class AddNewWizard extends Plugin {
     private static final long serialVersionUID = 1L;
@@ -51,8 +57,29 @@ public class AddNewWizard extends Plugin {
 
         @Override
         protected void onSubmit() {
-            error("Not implemented...");
+            UserSession session = (UserSession) getSession();
+            HippoNode rootNode = session.getRootNode();
+            try {
+                Node handle = rootNode.addNode((String)properties.get("name"), HippoNodeType.NT_HANDLE);
+                handle.addNode((String)properties.get("name"), HippoNodeType.NT_DOCUMENT);
+
+                properties.clear();
+                
+                error("Document created");
+                
+                // TODO pluginManager.update
+                //PluginManager pluginManager = getPluginManager();      
+                //pluginManager.update(target, dialogResult);
+            
+            }
+            catch (RepositoryException e) {
+                e.printStackTrace();
+                error(e);
+            }
+            
         }
+        
+        
         
     }
 
