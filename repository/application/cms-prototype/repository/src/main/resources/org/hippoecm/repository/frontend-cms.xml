@@ -144,10 +144,25 @@
         
         <sv:node sv:name="workflowPlugin">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:frontendplugin</sv:value>
+            <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-              <sv:value>org.hippoecm.frontend.plugin.empty.EmptyPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugin.empty.EmptyPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:incoming" sv:type="String">
+            <sv:value>default</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:outgoing" sv:type="String">
+            <sv:value>default</sv:value>
+          </sv:property>
+        </sv:node>  
+        
+        <sv:node sv:name="variantsPlugin">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:frontendplugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.variants.VariantsPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:incoming" sv:type="String">
             <sv:value>default</sv:value>
@@ -156,7 +171,6 @@
             <sv:value>default</sv:value>
           </sv:property>
         </sv:node>     
-
       </sv:node>
 
       <sv:node sv:name="editPerspective">
