@@ -92,12 +92,11 @@ public class FolderTreeNode extends AbstractTreeNode {
         while (jcrChildren.hasNext()) {
             Node jcrChild = jcrChildren.nextNode();
             if (jcrChild != null ) {
-                
-                NodeType nodeType = jcrChild.getPrimaryNodeType();
-                if (!(HippoNodeType.NT_HANDLE.equals(nodeType.getName()))) {
+                if (!(jcrChild.isNodeType(HippoNodeType.NT_HANDLE) 
+                        || jcrChild.isNodeType(HippoNodeType.NT_DOCUMENT)
+                        || jcrChild.isNodeType(HippoNodeType.NT_FACETRESULT))) {
                     childNodes.add(jcrChild);
                 }
-                
             }
         }
         return childNodes;
