@@ -16,13 +16,14 @@
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
@@ -30,12 +31,17 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
+/**
+ * For a given JCR node, provides the document handles among its children.
+ *
+ * TODO: it's not sortable yet
+ */
 public class SortableDocumentHandlesProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
     
     JcrNodeModel model;
-    List<Node> documents;
+    transient List<Node> documents;
     
     public SortableDocumentHandlesProvider(JcrNodeModel model) {
         this.model = model;
@@ -44,6 +50,8 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
     }
 
     public Iterator<Node> iterator(int first, int count) {
+        // TODO replace with a more efficient implementation
+        ensureDocumentsAreLoaded();
         List<Node> list = new ArrayList<Node>();
         int i = 0;
         for (Iterator<Node> nodes = documents.iterator(); nodes.hasNext(); i++) {
@@ -60,7 +68,14 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
     }
 
     public int size() {
+        ensureDocumentsAreLoaded();
         return documents.size();
+    }
+    
+    private void ensureDocumentsAreLoaded() {
+        if (documents == null) {
+            documents = documents();
+        }
     }
     
     private List<Node> documents() {
@@ -71,28 +86,42 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
             while (jcrChildren.hasNext()) {
                 HippoNode jcrChild = (HippoNode) jcrChildren.nextNode();
                 if (jcrChild != null ) {
-                    NodeType nodeType = jcrChild.getPrimaryNodeType();
-                    if ((HippoNodeType.NT_HANDLE.equals(nodeType.getName()))) {
+                    if (jcrChild.isNodeType(HippoNodeType.NT_HANDLE)) {
                         childNodes.add(jcrChild);
+                        System.out.println("adding " + jcrChild.getPath());
                     }
-                    /*
-                    else if ((HippoNodeType.NT_DOCUMENT.equals(nodeType.getName()))) {
-                        Node canonicalNode = jcrChild.getCanonicalNode();
-                        Node parentNode = canonicalNode.getParent();
-                        NodeType parentNodeType = parentNode.getPrimaryNodeType();
-                        if (parentNode != null && HippoNodeType.NT_HANDLE.equals(parentNodeType.getName())) {
-                            childNodes.add(parentNode);
+                    
+                    // handle facet result nodes
+                    else if (jcrChild.isNodeType(HippoNodeType.NT_FACETRESULT)) {
+                        NodeIterator fsChildren = jcrChild.getNodes();
+                        while (fsChildren.hasNext()) {
+                            HippoNode fsChild = (HippoNode) fsChildren.next();
+                            if (fsChild != null && fsChild.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                Node canonicalNode = fsChild.getCanonicalNode();
+                                Node parentNode = canonicalNode.getParent();
+                                if (parentNode != null && parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                    System.out.println("adding " + parentNode.getPath());
+                                    childNodes.add(parentNode);
+                                }
+                            }
                         }
                     }
-                    */
                 }
             }
         }
         catch (RepositoryException e) {
             e.printStackTrace();
         }
+
+        // remove duplicates (if any) :-\
+        Set<Node> set = new HashSet<Node>();
+        set.addAll(childNodes);
+        childNodes.clear();
+        childNodes.addAll(set);
+        
         return childNodes;
     }
+    
     
 
     
