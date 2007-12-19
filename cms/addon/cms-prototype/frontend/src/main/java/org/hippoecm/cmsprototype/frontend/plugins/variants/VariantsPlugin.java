@@ -98,14 +98,12 @@ public class VariantsPlugin extends Plugin {
             variantsList.clear();
             if (node != null) {
                 try {
-                    HippoNode handle = null;
-                    if (node.getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE)) {
-                        handle = node;
-                    } else if (node.getPrimaryNodeType().getName().equals(HippoNodeType.NT_DOCUMENT)) {
-                        handle = (HippoNode) node.getParent();
+                    nodeName = node.getDisplayName();
+                    if (node.getPrimaryNodeType().getName().equals(HippoNodeType.NT_DOCUMENT)) {
+                        node = (HippoNode) node.getParent();
                     }
-                    if (handle != null) {
-                        updateVariants(handle);
+                    if (node != null && node.getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE)) {
+                        updateVariants(node);
                     }
                 } catch (RepositoryException e) {
                     nodeName = NODE_ERROR;
@@ -122,7 +120,6 @@ public class VariantsPlugin extends Plugin {
      * @throws RepositoryException
      */
     protected void updateVariants(HippoNode node) throws RepositoryException {
-        nodeName = node.getDisplayName();
         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
             StringBuffer variant = new StringBuffer();
             HippoNode docNode = (HippoNode) iter.next();
