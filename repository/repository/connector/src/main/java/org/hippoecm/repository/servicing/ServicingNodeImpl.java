@@ -78,8 +78,8 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     }
 
     public Node getCanonicalNode() throws RepositoryException {
-        if (hasProperty("jcr:uuid")) {
-            return getSession().getNodeByUUID(getProperty("jcr:uuid").getString());
+        if (hasProperty("hippo:uuid")) {
+            return getSession().getNodeByUUID(getProperty("hippo:uuid").getString());
         } else {
             return this;
         }
