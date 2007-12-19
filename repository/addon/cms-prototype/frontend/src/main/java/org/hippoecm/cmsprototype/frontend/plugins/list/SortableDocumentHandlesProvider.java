@@ -91,7 +91,6 @@ public class SortableDocumentHandlesProvider extends SortableDataProvider {
                 if (jcrChild != null ) {
                     if (jcrChild.isNodeType(HippoNodeType.NT_HANDLE)) {
                         childNodes.add(jcrChild);
-                        System.out.println("adding " + jcrChild.getPath());
                     }
                     
                     // handle facet result nodes
