@@ -76,8 +76,8 @@ public class PropertyValueEditor extends DataView {
                         try {
                             // HtmlEditorFactory.createHtmlEditor(, item.getPage()
                             // XinhaEditor editor = new XinhaEditor("value", valueModel);
-                            Class clazz = Class.forName("org.hippoecm.repository.frontend.wysiwyg.xinha.XinhaEditor");
-                            java.lang.reflect.Constructor constructor = clazz.getConstructor(new Class[] { String.class, Class.forName("org.hippoecm.repository.frontend.wysiwyg.xinha.XinhaEditorConfigurationBehaviour") });
+                            Class clazz = Class.forName("org.hippoecm.repository.frontend.xinha.XinhaEditor");
+                            java.lang.reflect.Constructor constructor = clazz.getConstructor(new Class[] { String.class, JcrPropertyValueModel.class });
                             Panel editor = (Panel) constructor.newInstance(new Object[] { "value", valueModel });
                             item.add(editor);
                         } catch(ClassNotFoundException ex) {

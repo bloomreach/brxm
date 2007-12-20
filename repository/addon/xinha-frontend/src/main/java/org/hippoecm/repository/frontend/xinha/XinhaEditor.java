@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.frontend.wysiwyg.xinha;
+package org.hippoecm.repository.frontend.xinha;
 
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -33,15 +33,17 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+// FIXME org.hippoecm.frontend.widgets.AjaxUpdatingWidget
 
-public class XinhaEditor extends Panel {
+public class XinhaEditor extends /*AjaxUpdatingWidget*/ Panel {
     private static final long serialVersionUID = 1L;
 
     private String content;
@@ -63,24 +65,29 @@ public class XinhaEditor extends Panel {
         this.content = content;
     }
 
-    public XinhaEditor(final String id, IModel model) {
+    public XinhaEditor(final String id, JcrPropertyValueModel model) {
         super(id, model);
+        System.err.println("BERRY#XINHA \""+id+"\"");
         List bhs = getPage().getBehaviors();
         for(Iterator iter = bhs.iterator(); iter.hasNext(); ) {
             IBehavior behavior = (IBehavior) iter.next();
             if(behavior instanceof XinhaEditorConfigurationBehaviour) {
+                System.err.println("BERRY#CONF ALREADY THERE");
                 bh = (XinhaEditorConfigurationBehaviour) behavior;
                 break;
             }
         }
         if(bh == null) {
+            System.err.println("BERRY#CONF NOT THERE");
             Page page = getPage();
             bh = XinhaEditorConfigurationBehaviour.getInstance(
                                  (String) page.urlFor(new ResourceReference(XinhaEditor.class, "impl/")));
             page.add(bh);
         }
 
-        editor = new TextArea("value", getModel());
+        // editor = new TextArea("value", getModel());
+        editor = new TextArea("widget", getModel());
+
         editor.setOutputMarkupId(true);
         editor.setVisible(true);
 
@@ -95,6 +102,13 @@ public class XinhaEditor extends Panel {
                   System.out.println(saveCall);
                   tag.put("onblur", saveCall);
                   }
+
+        component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {}
+        });
                 */
 
                 protected void respond(AjaxRequestTarget target) {
@@ -121,6 +135,7 @@ public class XinhaEditor extends Panel {
                 "Stylist", "SuperClean", "TableOperations" });
 
         add(editor);
+        System.err.println("BERRY#XINHA MADE IT");
     }
 
     XinhaEditorConf getConfiguration() {
