@@ -21,6 +21,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -67,14 +68,17 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     protected PluginEvent ok() throws Exception {
         doOk();
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+
+        // before saving (which possibly means deleting), find the handle 
+        JcrNodeModel handle = nodeModel;
+        while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+            handle = handle.getParentModel();
+        }
+        
         nodeModel.getNode().getSession().save();
         nodeModel.getNode().getSession().refresh(true);
 
-        //TODO: don't go all the way up to the root here
-        //probably up to the nearest hippo:handle will do
-        JcrNodeModel rootModel = nodeModel.findRootModel();
-        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
-        result.chainEvent(JcrEvent.NEEDS_RELOAD, rootModel);
+        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, handle);
         return result;
     }
     
