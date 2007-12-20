@@ -36,6 +36,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.extractor.TextExtractor;
+import org.apache.jackrabbit.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -63,6 +64,16 @@ public class ServicingNodeIndexer extends NodeIndexer {
         this.servicingIndexingConfig = config;
     }
     
+
+    @Override
+    protected boolean isIncludedInNodeIndex(Name propertyName) {
+        Name excludeName = NameFactoryImpl.getInstance().create("http://www.hippoecm.org/nt/1.0","paths");
+        if(excludeName.equals(propertyName)){
+            return false;
+        }
+        return super.isIncludedInNodeIndex(propertyName);
+    }
+
 
     @Override
     protected Document createDoc() throws RepositoryException {
