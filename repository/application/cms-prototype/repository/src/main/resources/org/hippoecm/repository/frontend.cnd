@@ -12,3 +12,14 @@
 
 [hippo:page] > nt:base
 + *
+
+[hippo:field] > nt:base
+- hippo:path (string) mandatory
+- hippo:template (string)
+- hippo:renderer (string)
+
+[hippo:template] > nt:base
++ * (hippo:field)
+
+[hippo:templatefolder] > nt:base
++ * (hippo:template) = hippo:template
