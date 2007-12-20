@@ -16,25 +16,15 @@
 package org.hippoecm.cmsprototype.frontend.model.tree;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.UserSession;
+import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.repository.api.HippoNodeType;
 
 /**
  * A folder tree. It shows all nodes in the JCR tree except for those
@@ -44,37 +34,50 @@ import org.hippoecm.repository.api.HippoNodeType;
  */
 public class FolderTreeNode extends AbstractTreeNode {
     private static final long serialVersionUID = 1L;
+    
+    private Folder folder;
 
     public FolderTreeNode(JcrNodeModel nodeModel) {
         super(nodeModel);
-        // TODO Auto-generated constructor stub
+        folder = new Folder(nodeModel);
     }
 
     public FolderTreeNode(JcrNodeModel nodeModel, JcrTreeModel treeModel) {
         super(nodeModel);
+        folder = new Folder(nodeModel);
         setTreeModel(treeModel);
         treeModel.register(this);
     }
     
     @Override
     protected int loadChildcount() throws RepositoryException {
-        return subFolders().size();
+        return folder.getSubFolders().size();
     }
 
     @Override
     protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
         List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+        /*
         Iterator<Node> subDocuments = subFolders().iterator();
         while (subDocuments.hasNext()) {
             JcrNodeModel subDocument = new JcrNodeModel(nodeModel, subDocuments.next());
             result.add(new FolderTreeNode(subDocument, getTreeModel()));
         }
+        */
+        
+        List<Folder> subFolders = folder.getSubFolders();
+        for (Folder subFolder : subFolders) {
+            result.add(new FolderTreeNode(subFolder.getNodeModel(), getTreeModel()));
+        }
+        
         return result;
     }
 
     public TreeNode getParent() {
         JcrNodeModel parentModel = nodeModel.getParentModel();
         if (parentModel != null) {
+            System.out.println(getTreeModel());
+            System.out.println(parentModel);
             return getTreeModel().lookup(parentModel);
         }
         return null;
@@ -85,6 +88,7 @@ public class FolderTreeNode extends AbstractTreeNode {
         return false;
     }
 
+    /*
     private List<Node> subFolders() throws RepositoryException {
         Node node = nodeModel.getNode();
         List<Node> childNodes = new ArrayList<Node>();
@@ -101,5 +105,6 @@ public class FolderTreeNode extends AbstractTreeNode {
         }
         return childNodes;
     }
+    */
     
 }
