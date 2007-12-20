@@ -90,6 +90,7 @@
           </sv:property>
           <sv:property sv:name="hippo:incoming" sv:type="String">
             <sv:value>default</sv:value>
+            <sv:value>detail</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:outgoing" sv:type="String">
             <sv:value>default</sv:value>
