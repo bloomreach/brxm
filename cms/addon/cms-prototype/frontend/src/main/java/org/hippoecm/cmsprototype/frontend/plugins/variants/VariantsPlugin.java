@@ -37,6 +37,9 @@ import org.hippoecm.frontend.plugin.PluginManager;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
+/**
+ * Plugin for showing the available variants of a document
+ */
 public class VariantsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +47,7 @@ public class VariantsPlugin extends Plugin {
     private static final String NODE_NAME_LABEL = "nodename";
     private static final String VARIANTS_LIST = "variants";
     private static final String VARIANT_LABEL = "variant";
+    private static final String VARIANT_LINK = "variantlink";
 
     // Default labels
     // TODO: needs i18m
@@ -59,12 +63,6 @@ public class VariantsPlugin extends Plugin {
      */
     protected List<DocumentVariant> variantsList = new ArrayList<DocumentVariant>();
 
-    /**
-     * Plugin for showing the available variants of a document
-     * @param descriptor PluginDescriptor
-     * @param model JcrNodeModel
-     * @param parentPlugin Plugin
-     */
     public VariantsPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(descriptor, model, parentPlugin);
 
@@ -88,7 +86,7 @@ public class VariantsPlugin extends Plugin {
                 final DocumentVariant variant = (DocumentVariant) item.getModelObject();
                 //item.add(new Label(VARIANT_LABEL, variant));
                 
-                AjaxLink link = new AjaxLink("variantlink", variant) {
+                AjaxLink link = new AjaxLink(VARIANT_LINK, variant) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -101,7 +99,7 @@ public class VariantsPlugin extends Plugin {
                 
                 };
                 item.add(link);
-                link.add(new Label("variant", variant.getLanguage() + " - " + variant.getState()));                
+                link.add(new Label(VARIANT_LABEL, variant.getLanguage() + " - " + variant.getState()));                
                 
                 
             }
@@ -110,11 +108,6 @@ public class VariantsPlugin extends Plugin {
         add(listView);
     }
 
-    /**
-     * Updater for the node name and the variants list
-     * @param target AjaxRequestTarget
-     *  @param event PluginEvent
-     */
     public void update(AjaxRequestTarget target, PluginEvent event) {
         JcrNodeModel nodeModel = event.getNodeModel(JcrEvent.NEW_MODEL);
         if (nodeModel != null) {
