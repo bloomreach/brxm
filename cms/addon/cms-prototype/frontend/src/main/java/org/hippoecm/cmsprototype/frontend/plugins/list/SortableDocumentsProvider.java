@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
@@ -65,26 +64,4 @@ public class SortableDocumentsProvider extends SortableDataProvider {
         return folder.getDocuments().size();
     }
 
-    /*
-    private void sortDocuments() {
-        Collections.sort(documents, new Comparator<Node>() {
-
-            public int compare(Node o1, Node o2) {
-                try {
-                    return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
-                } catch (RepositoryException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    return 0;
-                }
-            }
-        });
-        
-        if (getSort().isAscending() == false) {
-            Collections.reverse(documents);
-        }
-    }
-    */
-
-    
 }
