@@ -170,6 +170,32 @@
         <sv:value>/</sv:value>
       </sv:property>      
     </sv:node>
-    
+
+    <!--Templates for template engine-->
+    <sv:node sv:name="templates">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>template-config.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype</sv:value>
+      </sv:property>      
+    </sv:node>
+
+    <!--Demo data for template engine-->
+    <sv:node sv:name="template-demo">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>template-demodata.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/</sv:value>
+      </sv:property>      
+    </sv:node>
+
   </sv:node>
 </sv:node>

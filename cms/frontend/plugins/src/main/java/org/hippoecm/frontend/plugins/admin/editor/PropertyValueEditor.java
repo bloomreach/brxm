@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class PropertyValueEditor extends DataView {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(PropertyValueEditor.class);
 
     protected JcrPropertyModel propertyModel;
@@ -89,7 +89,9 @@ public class PropertyValueEditor extends DataView {
                             log.error(e.getMessage());
                         }
                         NodeEditor editor = (NodeEditor) findParent(NodeEditor.class);
-                        target.addComponent(editor);
+                        if (editor != null) {
+                            target.addComponent(editor);
+                        }
                     }
                 });
             } else {
@@ -100,8 +102,7 @@ public class PropertyValueEditor extends DataView {
             log.error(e.getMessage());
         }
     }
-    
-    
+
     private boolean isBinary(Property property) throws RepositoryException {
         boolean isBinary;
         if (property.getDefinition().isMultiple()) {
@@ -110,7 +111,7 @@ public class PropertyValueEditor extends DataView {
                 isBinary = values[0].getType() == PropertyType.BINARY;
             } else {
                 isBinary = false;
-            }                
+            }
         } else {
             isBinary = (propertyModel.getProperty().getValue().getType() == PropertyType.BINARY);
         }
