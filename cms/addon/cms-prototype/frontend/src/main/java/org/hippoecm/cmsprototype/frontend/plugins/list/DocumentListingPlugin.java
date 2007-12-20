@@ -42,7 +42,7 @@ public class DocumentListingPlugin extends Plugin {
         //columns.add(new PropertyColumn(new Model("Name"), "name"));
         columns.add(new NodeColumn(new Model("Name"), "name", "name"));
 
-        dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentHandlesProvider(model), 10);
+        dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(model), 10);
         add(dataTable);
     }
 
@@ -51,7 +51,7 @@ public class DocumentListingPlugin extends Plugin {
         if (nodeModel != null) {
             setModel(nodeModel);
             remove(dataTable);
-            dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentHandlesProvider(nodeModel), 10);
+            dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(nodeModel), 10);
             add(dataTable);
         }
         if (target != null && findPage() != null) {
