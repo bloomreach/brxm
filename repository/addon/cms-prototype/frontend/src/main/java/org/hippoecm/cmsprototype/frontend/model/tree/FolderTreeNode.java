@@ -57,19 +57,10 @@ public class FolderTreeNode extends AbstractTreeNode {
     @Override
     protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
         List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
-        /*
-        Iterator<Node> subDocuments = subFolders().iterator();
-        while (subDocuments.hasNext()) {
-            JcrNodeModel subDocument = new JcrNodeModel(nodeModel, subDocuments.next());
-            result.add(new FolderTreeNode(subDocument, getTreeModel()));
-        }
-        */
-        
         List<Folder> subFolders = folder.getSubFolders();
         for (Folder subFolder : subFolders) {
             result.add(new FolderTreeNode(subFolder.getNodeModel(), getTreeModel()));
         }
-        
         return result;
     }
 
@@ -88,23 +79,4 @@ public class FolderTreeNode extends AbstractTreeNode {
         return false;
     }
 
-    /*
-    private List<Node> subFolders() throws RepositoryException {
-        Node node = nodeModel.getNode();
-        List<Node> childNodes = new ArrayList<Node>();
-        NodeIterator jcrChildren = node.getNodes();
-        while (jcrChildren.hasNext()) {
-            Node jcrChild = jcrChildren.nextNode();
-            if (jcrChild != null ) {
-                if (!(jcrChild.isNodeType(HippoNodeType.NT_HANDLE) 
-                        || jcrChild.isNodeType(HippoNodeType.NT_DOCUMENT)
-                        || jcrChild.isNodeType(HippoNodeType.NT_FACETRESULT))) {
-                    childNodes.add(jcrChild);
-                }
-            }
-        }
-        return childNodes;
-    }
-    */
-    
 }
