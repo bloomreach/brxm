@@ -121,7 +121,6 @@ public class SearchPlugin extends Plugin{
         javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession());
         hits.clear();
         try {
-            System.out.println(xpath);
             Query q = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
             QueryResult result = q.execute();
             
@@ -134,15 +133,12 @@ public class SearchPlugin extends Plugin{
                         "//element(*, hippo:document)[rep:spellcheck('" + value + "')]/(rep:spellcheck())",
                         Query.XPATH).execute().getRows().nextRow().getValue("rep:spellcheck()");
                 if (v != null) {
-                    System.out.println("!!! " + v.getString());
                     didyoumean.setModelObject("Did you mean : " + v.getString() );
                     field.setModelObject(v.getString());
                 } else {
-                    System.out.println(" v is null ");
                     didyoumean.setModelObject("No results, no suggestions");
                 }
             } else {
-                System.out.println(" reset did you mean");
                 didyoumean.setModelObject("");
             }
       
