@@ -67,8 +67,6 @@ public class FolderTreeNode extends AbstractTreeNode {
     public TreeNode getParent() {
         JcrNodeModel parentModel = nodeModel.getParentModel();
         if (parentModel != null) {
-            System.out.println(getTreeModel());
-            System.out.println(parentModel);
             return getTreeModel().lookup(parentModel);
         }
         return null;
