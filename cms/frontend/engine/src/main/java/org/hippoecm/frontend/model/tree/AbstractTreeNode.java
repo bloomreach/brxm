@@ -96,7 +96,8 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
     protected abstract int loadChildcount() throws RepositoryException;
 
     protected abstract List<AbstractTreeNode> loadChildren() throws RepositoryException;
-
+    
+    public abstract String renderNode();
 
     private void ensureChildcountLoaded() {
         if (nodeModel.getNode() == null) {

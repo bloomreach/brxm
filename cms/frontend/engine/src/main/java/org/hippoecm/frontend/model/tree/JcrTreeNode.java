@@ -28,6 +28,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class JcrTreeNode extends AbstractTreeNode {
@@ -77,6 +78,23 @@ public class JcrTreeNode extends AbstractTreeNode {
             }
         }
         return newChildren;
+    }
+    
+    @Override
+    public String renderNode() {
+        HippoNode node = getNodeModel().getNode();
+        String result = "null";
+        if (node != null) {
+            try {
+                result = node.getDisplayName();
+                if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                    result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
+                }
+            } catch (RepositoryException e) {
+                result = e.getMessage();
+            }
+        }
+        return result;
     }
 
 

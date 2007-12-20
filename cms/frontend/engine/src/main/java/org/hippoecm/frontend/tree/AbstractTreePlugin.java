@@ -58,7 +58,7 @@ public abstract class AbstractTreePlugin extends Plugin {
             AbstractTreeNode treeNodeModel = treeModel.lookup(nodeToBeReloaded);
 
             treeNodeModel.markReload();
-            tree.getTreeModel().nodeStructureChanged(treeNodeModel);
+            treeNodeModel.getTreeModel().nodeStructureChanged(treeNodeModel);
             if (target != null && findPage() != null) {
                 tree.updateTree(target);
             }
