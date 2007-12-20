@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Xinha addon frontend plugin</name>
+  <name>Xinha addon</name>
   <description>Hippo ECM Xinha addon</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-xinha</artifactId>
@@ -39,19 +39,6 @@
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/xinha</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/xinha</url>
   </scm> 
-
-  <dependencies>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>${parent.version}</version>
-    </dependency>    
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-frontend-plugins</artifactId>
-      <version>${parent.version}</version>
-    </dependency>    
-  </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>

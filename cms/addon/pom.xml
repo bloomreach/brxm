@@ -44,6 +44,7 @@
     <module>reviewed-action</module>
     <module>sample</module>
     <module>xinha</module>
+    <module>xinha-frontend</module>
     <module>mailsponge</module>
     <module>cms-prototype</module>
   </modules>
