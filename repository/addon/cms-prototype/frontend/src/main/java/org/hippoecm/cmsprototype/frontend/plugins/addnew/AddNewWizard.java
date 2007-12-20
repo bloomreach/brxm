@@ -61,7 +61,8 @@ public class AddNewWizard extends Plugin {
             HippoNode rootNode = session.getRootNode();
             try {
                 Node handle = rootNode.addNode((String)properties.get("name"), HippoNodeType.NT_HANDLE);
-                handle.addNode((String)properties.get("name"), HippoNodeType.NT_DOCUMENT);
+                Node doc = handle.addNode((String)properties.get("name"), HippoNodeType.NT_DOCUMENT);
+                doc.setProperty("state", "unpublished");
 
                 properties.clear();
                 
