@@ -41,7 +41,6 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-// FIXME org.hippoecm.frontend.widgets.AjaxUpdatingWidget
 
 public class XinhaEditor extends /*AjaxUpdatingWidget*/ Panel {
     private static final long serialVersionUID = 1L;
@@ -67,18 +66,15 @@ public class XinhaEditor extends /*AjaxUpdatingWidget*/ Panel {
 
     public XinhaEditor(final String id, JcrPropertyValueModel model) {
         super(id, model);
-        System.err.println("BERRY#XINHA \""+id+"\"");
         List bhs = getPage().getBehaviors();
         for(Iterator iter = bhs.iterator(); iter.hasNext(); ) {
             IBehavior behavior = (IBehavior) iter.next();
             if(behavior instanceof XinhaEditorConfigurationBehaviour) {
-                System.err.println("BERRY#CONF ALREADY THERE");
                 bh = (XinhaEditorConfigurationBehaviour) behavior;
                 break;
             }
         }
         if(bh == null) {
-            System.err.println("BERRY#CONF NOT THERE");
             Page page = getPage();
             bh = XinhaEditorConfigurationBehaviour.getInstance(
                                  (String) page.urlFor(new ResourceReference(XinhaEditor.class, "impl/")));
@@ -135,7 +131,6 @@ public class XinhaEditor extends /*AjaxUpdatingWidget*/ Panel {
                 "Stylist", "SuperClean", "TableOperations" });
 
         add(editor);
-        System.err.println("BERRY#XINHA MADE IT");
     }
 
     XinhaEditorConf getConfiguration() {
