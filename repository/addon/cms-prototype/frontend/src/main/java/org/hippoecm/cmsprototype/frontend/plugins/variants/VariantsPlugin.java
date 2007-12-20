@@ -99,10 +99,10 @@ public class VariantsPlugin extends Plugin {
             if (node != null) {
                 try {
                     nodeName = node.getDisplayName();
-                    if (node.getPrimaryNodeType().getName().equals(HippoNodeType.NT_DOCUMENT)) {
+                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         node = (HippoNode) node.getParent();
                     }
-                    if (node != null && node.getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE)) {
+                    if (node != null && node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         updateVariants(node);
                     }
                 } catch (RepositoryException e) {
