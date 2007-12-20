@@ -15,54 +15,31 @@
  */
 package org.hippoecm.frontend.tree;
 
-import javax.jcr.RepositoryException;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
 
-    private JcrTreeModel treeModel;
-    
     public JcrTree(String id, JcrTreeModel treeModel) {
         super(id, treeModel);
-        this.treeModel = treeModel;
-        
+
         setLinkType(LinkType.AJAX);
 
         ITreeState treeState = getTreeState();
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
-        treeState.expandNode((TreeNode)treeModel.getRoot());
-    }
-    
-    public DefaultTreeModel getTreeModel() {
-        return treeModel;
+        treeState.expandNode((TreeNode) treeModel.getRoot());
     }
 
     @Override
     protected String renderNode(TreeNode treeNode) {
         AbstractTreeNode treeNodeModel = (AbstractTreeNode) treeNode;
-        HippoNode node = treeNodeModel.getNodeModel().getNode();
-        String result = "null";
-        if (node != null) {
-            try {
-                result = node.getDisplayName();
-                if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
-                    result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
-                }
-            } catch (RepositoryException e) {
-                result = e.getMessage();
-            }
-        }
-        return result;
+        return treeNodeModel.renderNode();
     }
 
 }

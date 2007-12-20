@@ -25,6 +25,8 @@ import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 /**
  * A folder tree. It shows all nodes in the JCR tree except for those
@@ -63,6 +65,24 @@ public class FolderTreeNode extends AbstractTreeNode {
         }
         return result;
     }
+
+    @Override
+    public String renderNode() {
+        HippoNode node = getNodeModel().getNode();
+        String result = "null";
+        if (node != null) {
+            try {
+                result = node.getDisplayName();
+                if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
+                    result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
+                }
+            } catch (RepositoryException e) {
+                result = e.getMessage();
+            }
+        }
+        return result;
+    }
+
 
     public TreeNode getParent() {
         JcrNodeModel parentModel = nodeModel.getParentModel();
