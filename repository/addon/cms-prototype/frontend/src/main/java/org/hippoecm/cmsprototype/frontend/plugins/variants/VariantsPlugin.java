@@ -111,6 +111,10 @@ public class VariantsPlugin extends Plugin {
             } else {
                 nodeName = NODE_NONE;
             }
+            
+            if (target != null && findPage() != null) {
+                target.addComponent(this);
+            }
         }
     }
 
