@@ -15,10 +15,16 @@
  */
 package org.hippoecm.cmsprototype.frontend.model.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class Document extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
@@ -34,5 +40,22 @@ public class Document extends NodeModelWrapper {
             e.printStackTrace();
             return e.getMessage();
         }
+    }
+    
+    
+    public List<DocumentVariant> getVariants() {
+        List<DocumentVariant> list = new ArrayList<DocumentVariant>();
+        try {
+            for (NodeIterator iter = nodeModel.getNode().getNodes(); iter.hasNext();) {
+                HippoNode docNode = (HippoNode) iter.next();
+                if (docNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    list.add(new DocumentVariant(new JcrNodeModel(nodeModel, docNode)));
+                }
+            }
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return list;
     }
 }

@@ -15,10 +15,18 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.admin.menu.MenuPlugin;
+import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.PluginManager;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 /**
  * This component extends the MenuPlugin but essentially only overrides
@@ -26,11 +34,57 @@ import org.hippoecm.frontend.plugins.admin.menu.MenuPlugin;
  * TODO: find a way to use alternative markup without having to extend the class
  *
  */
-public class ActionsPlugin extends MenuPlugin {
+public class ActionsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
+    
+    AjaxLink link;
 
     public ActionsPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
+        
+        link = new AjaxLink("editlink", model) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                Plugin owningPlugin = (Plugin)findParent(Plugin.class);
+                PluginManager pluginManager = owningPlugin.getPluginManager();      
+                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, owningPlugin.getNodeModel());
+                pluginManager.update(target, event); 
+            }
+        
+        };
+        add(link);
+        
+        HippoNode node = model.getNode();
+        try {
+            link.setVisible( node.isNodeType(HippoNodeType.NT_DOCUMENT) 
+                                && node.hasProperty("state") 
+                                && node.getProperty("state").getString().equals("draft") );
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
+
+    @Override
+    public void update(AjaxRequestTarget target, PluginEvent event) {
+        super.update(target, event);
+        HippoNode node = getNodeModel().getNode();
+        try {
+            link.setVisible( node.isNodeType(HippoNodeType.NT_DOCUMENT) 
+                    && node.hasProperty("state") 
+                    && node.getProperty("state").getString().equals("draft") );
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        if (target != null && findPage() != null) {
+            target.addComponent(this);
+        }
+    }
+    
+    
 
 }
