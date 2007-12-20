@@ -16,6 +16,7 @@
 package org.hippoecm.repository.frontend.wysiwyg.xinha;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.wicket.ResourceReference;
@@ -96,19 +97,11 @@ public class XinhaEditorConfigurationBehaviour extends AbstractHeaderContributor
 
             for (Iterator it = configurations.iterator(); it.hasNext(); ) {
                 XinhaEditorConf conf = (XinhaEditorConf) it.next();
-
-
-                Iterator key = conf.getConfiguration().keySet().iterator();
-                Iterator value = conf.getConfiguration().values().iterator();
-
-
-		/* BERRY
-                for(Iterator iter = conf.getConfiguration().entrySet(); iter.hasNext(); ) {
-                    Map.Entry entry = iter.next();
+                for(Iterator iter = conf.getConfiguration().entrySet().iterator(); iter.hasNext(); ) {
+                    Map.Entry entry = (Map.Entry) iter.next();
                     buff.append("xinha_editors." + conf.getName() + ".config." + entry.getKey() + "='" +
                                 entry.getValue() + "';");
                 }
-		*/
             }
 
             buff.append("Xinha.startEditors(xinha_editors);");

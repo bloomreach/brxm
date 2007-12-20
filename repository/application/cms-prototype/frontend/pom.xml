@@ -49,6 +49,12 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-application</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
