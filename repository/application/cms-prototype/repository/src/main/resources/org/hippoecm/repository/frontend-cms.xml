@@ -215,7 +215,32 @@
         </sv:node>
 
       </sv:node>
-
+      
+      <sv:node sv:name="searchPerspective">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:frontendplugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:incoming" sv:type="String">
+          <sv:value>searchPerspective</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:renderer" sv:type="String">
+          <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.SearchPerspective</sv:value>
+        </sv:property>
+        <sv:node sv:name="searchPlugin">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:frontendplugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:incoming" sv:type="String">
+            <sv:value>default</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:outgoing" sv:type="String">
+            <sv:value>default</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.search.SearchPlugin</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
     </sv:node>
 
 
