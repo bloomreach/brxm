@@ -40,15 +40,17 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.apache.wicket.markup.ComponentTag;
 
-public class XinhaEditor extends /*AjaxUpdatingWidget*/ Panel {
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
+
+public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
+    implements IHeaderContributor
+{
     private static final long serialVersionUID = 1L;
 
     private String content;
-
-    /*private static final ResourceReference JS = new ResourceReference(
-            XinhaEditor.class, "impl/xinha/XinhaCore.js");*/
 
     private TextArea editor;
     private XinhaEditorConf editorConf;
@@ -66,82 +68,74 @@ public class XinhaEditor extends /*AjaxUpdatingWidget*/ Panel {
 
     public XinhaEditor(final String id, JcrPropertyValueModel model) {
         super(id, model);
-        List bhs = getPage().getBehaviors();
-        for(Iterator iter = bhs.iterator(); iter.hasNext(); ) {
-            IBehavior behavior = (IBehavior) iter.next();
-            if(behavior instanceof XinhaEditorConfigurationBehaviour) {
-                bh = (XinhaEditorConfigurationBehaviour) behavior;
-                break;
-            }
-        }
-        if(bh == null) {
-            Page page = getPage();
-            bh = XinhaEditorConfigurationBehaviour.getInstance(
-                                 (String) page.urlFor(new ResourceReference(XinhaEditor.class, "impl/")));
-            page.add(bh);
-        }
 
-        // editor = new TextArea("value", getModel());
-        editor = new TextArea("widget", getModel());
+        editor = new TextArea("value", getModel());
 
         editor.setOutputMarkupId(true);
         editor.setVisible(true);
+        // setRenderBodyOnly(true);
 
         postBehaviour = new AbstractDefaultAjaxBehavior() {
                 private static final long serialVersionUID = 1L;
-                /*
-                  protected void onComponentTag(ComponentTag tag) {
-                  super.onComponentTag(tag);
-                  final String saveCall = "{wicketAjaxGet('" + getCallbackUrl()
-                  + "&save=true&'+this.name+'='+wicketEncode(this.value)); return false;}";
-                  
-                  System.out.println(saveCall);
-                  tag.put("onblur", saveCall);
-                  }
 
-        component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {}
-        });
-                */
+                protected void onComponentTag(ComponentTag tag) {
+                    super.onComponentTag(tag);
+                    final String saveCall = "{wicketAjaxGet('" + getCallbackUrl()
+                        + "&save=true&'+this.name+'='+wicketEncode(this.value)); return false;}";
+                    tag.put("onblur", saveCall);
+                }
 
                 protected void respond(AjaxRequestTarget target) {
                     RequestCycle requestCycle = RequestCycle.get();
                     boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
                     if (save) {
                         editor.processInput();
-
-                        // System.out.println("editor value: " + editor.getValue());
-                        // System.out.println("editor contents: " + XinhaEditor.this.getContent());
-
-                        if (editor.isValid()) {
-                            ;
-                        }
                     }
                 }
             };
 
         editor.add(postBehaviour);
 
-        editorConf = new XinhaEditorConf();
-        editorConf.setName("editor2"); // FIXME conf.setName(editor.getMarkupId());
-        editorConf.setPlugins(new String[] { "WicketSave", "CharacterMap", "ContextMenu", "ListType", "SpellChecker",
-                "Stylist", "SuperClean", "TableOperations" });
-
         add(editor);
+
+        editorConf = new XinhaEditorConf();
     }
 
-    XinhaEditorConf getConfiguration() {
-        return editorConf;
-    }
+    public void onBeforeRender() {
+        if (bh == null) {
+            Page page = findPage();
+            List bhs = page.getBehaviors();
+            for(Iterator iter = bhs.iterator(); iter.hasNext(); ) {
+                IBehavior behavior = (IBehavior) iter.next();
+                if(behavior instanceof XinhaEditorConfigurationBehaviour) {
+                    bh = (XinhaEditorConfigurationBehaviour) behavior;
+                    break;
+            }
+            }
+            if(bh == null) {
+                bh = new XinhaEditorConfigurationBehaviour();
+                // page.add(bh);
+            }
+        }
 
-    public void init() {
+        editorConf.setName(editor.getMarkupId());
+        editorConf.setPlugins(new String[] { "CharacterMap", "ContextMenu", "ListType", "SpellChecker",
+                                             "Stylist", "SuperClean", "TableOperations" }); // "WicketSave", 
         Map conf = new Hashtable();
         conf.put("postUrl", postBehaviour.getCallbackUrl());
         editorConf.setConfiguration(conf);
-
         bh.addConfiguration(editorConf);
+
+        super.onBeforeRender();
+    }
+
+    public void init() {
+    }
+
+    public void renderHead(IHeaderResponse response)
+    {
+        IHeaderContributor[] contribs = bh.getHeaderContributors();
+        for(int i=0; i<contribs.length; i++)
+            contribs[i].renderHead(response);
     }
 }
