@@ -106,6 +106,9 @@
                     Start eclipse, the workspace directory can be any directory EXCEPT the directory
                     under which you have checked out the source (~/hippo-ecm in the example)
                 </p></li>
+                <li><p>Define eclipse classpath variable: Window -&gt; Preferences -&gt; Java -&gt; Build Path -&gt; Classpath variables</p></li>
+                <li><p>Press 'New'</p></li>
+                <li><p>Name=M2_REPO, value=&lt;path-to-maven-repository&gt; (eg. /home/&lt;yourname&gt;/.m2/repository on UNIX)</p></li>
                 <li><p>Run the import project wizard: File -&gt; Import -&gt; General -&gt; Existing Projects into Workspace</p></li>
                 <li><p>Press 'Browse'</p></li>
                 <li><p>Select the 'hippo-ecm' directory, press OK</p></li>
