@@ -24,7 +24,6 @@ public class SearchPerspective extends Plugin {
 
     public SearchPerspective(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        System.out.println(pluginDescriptor);
     }
 
 }
