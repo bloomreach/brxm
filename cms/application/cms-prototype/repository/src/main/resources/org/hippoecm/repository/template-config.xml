@@ -53,6 +53,9 @@
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:body</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.cmsprototype.frontend.plugins.template.editor.TextEditor</sv:value>
+      </sv:property>
     </sv:node>
 
     <!-- subject -->
@@ -85,5 +88,95 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <!-- end "Document" template -->
+
+
+  <!-- "Field" template -->
+  <sv:node sv:name="hippo:field">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+
+    <!-- path -->
+    <sv:node sv:name="state">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:path</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <!-- template -->
+    <sv:node sv:name="template">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <!-- renderer -->
+    <sv:node sv:name="renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:renderer</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <!-- end "field" template -->
+
+
+  <!-- "Template" template -->
+  <sv:node sv:name="hippo:template">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+
+    <!-- field -->
+    <sv:node sv:name="field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>*</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <!-- end "Template" template -->
+
+  <!-- "workflow demo" template -->  
+  <sv:node sv:name="hippo:document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+
+    <!-- state -->
+    <sv:node sv:name="state">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>state</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <!-- body -->
+    <sv:node sv:name="content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>content</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.cmsprototype.frontend.plugins.template.editor.TextEditor</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <!-- end template -->
 
 </sv:node>

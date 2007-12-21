@@ -15,7 +15,10 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.template;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 
@@ -24,18 +27,25 @@ public class TemplateDescriptor implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private String name;
-    private List<FieldDescriptor> fields;
+    private Map<String,FieldDescriptor> fields;
 
     public TemplateDescriptor(String name, List<FieldDescriptor> fields) {
         this.name = name;
-        this.fields = fields;
+        this.fields = new HashMap<String,FieldDescriptor>(fields.size());
+        for(FieldDescriptor desc : fields) {
+            this.fields.put(desc.getName(), desc);
+        }
     }
 
     public String getName() {
         return name;
     }
     
-    public List<FieldDescriptor> getFields() {
-        return fields;
+    public Iterator<FieldDescriptor> getFieldIterator() {
+        return fields.values().iterator();
+    }
+    
+    public boolean hasField(String name) {
+        return fields.containsKey(name);
     }
 }

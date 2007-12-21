@@ -21,6 +21,10 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeDefinition;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.UserSession;
@@ -37,8 +41,9 @@ public class RepositoryTemplateConfig implements TemplateConfig {
         try {
             Node node = lookupConfigNode(name);
             if (node == null) {
-                return null;
+                return new TemplateDescriptor(name, getNodeTypeDefined(name));
             }
+
             List<FieldDescriptor> children = new ArrayList<FieldDescriptor>();
             NodeIterator iter = node.getNodes();
             while (iter.hasNext()) {
@@ -70,11 +75,35 @@ public class RepositoryTemplateConfig implements TemplateConfig {
     private Node lookupConfigNode(String template) throws RepositoryException {
         UserSession session = (UserSession) Session.get();
 
-        String path = HippoNodeType.CONFIGURATION_PATH + "/hippo:frontend/hippo:cms-prototype/hippo:templates/" + template;
+        String path = HippoNodeType.CONFIGURATION_PATH + "/hippo:frontend/hippo:cms-prototype/hippo:templates/"
+                + template;
         if (session.getRootNode().hasNode(path)) {
             return session.getRootNode().getNode(path);
         }
         return null;
     }
 
+    private List<FieldDescriptor> getNodeTypeDefined(String name) {
+        List<FieldDescriptor> children = new ArrayList<FieldDescriptor>();
+
+        try {
+            // create a descriptor based on the node type
+            UserSession session = (UserSession) Session.get();
+            NodeTypeManager ntMgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
+            NodeType nt = ntMgr.getNodeType(name);
+            if (nt != null) {
+                for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
+                    children.add(new FieldDescriptor(nd));
+                }
+                for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
+                    children.add(new FieldDescriptor(pd));
+                }
+            }
+            return children;
+        } catch (RepositoryException ex) {
+            // FIXME: handle error
+            ex.printStackTrace();
+        }
+        return null;
+    }
 }

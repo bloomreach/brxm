@@ -20,6 +20,9 @@ import java.util.Iterator;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -101,17 +104,45 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
     public int hashCode() {
         return new HashCodeBuilder(17, 31).append(engine).append(descriptor).toHashCode();
     }
-    
+
     private void reset() {
         Node node = getNode();
         fields = new ArrayList<FieldModel>();
         if (descriptor != null) {
-            Iterator<FieldDescriptor> iter = descriptor.getFields().iterator();
+            Iterator<FieldDescriptor> iter = descriptor.getFieldIterator();
             while (iter.hasNext()) {
                 FieldDescriptor field = iter.next();
                 try {
                     Item item = null;
-                    if (node.hasProperty(field.getPath())) {
+                    if (field.getPath().equals("*")) {
+                        if (field.isNode()) {
+                            // FIXME: a separate template should be loaded, i.e.
+                            // the FieldModel should be able to describe "multiple"
+                            NodeIterator iterator = node.getNodes();
+                            while (iterator.hasNext()) {
+                                Node next = iterator.nextNode();
+                                if (!descriptor.hasField(next.getName())) {
+                                    String template = null;
+                                    if (next.getPrimaryNodeType() != null) {
+                                        template = next.getPrimaryNodeType().getName();
+                                    }
+                                    FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName(),
+                                            template, null);
+                                    fields.add(new FieldModel(next, desc));
+                                }
+                            }
+                        } else {
+                            PropertyIterator iterator = node.getProperties();
+                            while (iterator.hasNext()) {
+                                Property next = iterator.nextProperty();
+                                if (!descriptor.hasField(next.getName())) {
+                                    FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName(), null,
+                                            null);
+                                    fields.add(new FieldModel(next, desc));
+                                }
+                            }
+                        }
+                    } else if (node.hasProperty(field.getPath())) {
                         item = node.getProperty(field.getPath());
                     } else if (node.hasNode(field.getPath())) {
                         item = node.getNode(field.getPath());
