@@ -125,7 +125,6 @@ public class SearchPlugin extends Plugin{
             QueryResult result = q.execute();
             
             RowIterator rows = result.getRows();
-            System.out.println(rows.getSize());
             
             if(rows.getSize() == 0 && value != null) {
                 
