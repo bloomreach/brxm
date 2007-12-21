@@ -13,24 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.cmsprototype.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template;
 
-import javax.jcr.Item;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 
-import org.hippoecm.frontend.model.ItemModelWrapper;
-
-public class FieldModel extends ItemModelWrapper {
+public class FieldView extends DataView {
     private static final long serialVersionUID = 1L;
 
-    private FieldDescriptor descriptor;
+    private TemplateDescriptor descriptor;
+    private TemplateEngine engine;
 
-    //  Constructor
-    public FieldModel(Item item, FieldDescriptor descriptor) {
-        super(item);
+    public FieldView(String wicketId, TemplateDescriptor descriptor, TemplateProvider provider, TemplateEngine engine) {
+        super(wicketId, provider);
+
         this.descriptor = descriptor;
+        this.engine = engine;
     }
 
-    public FieldDescriptor getDescriptor() {
+    public TemplateDescriptor getTemplateDescriptor() {
         return descriptor;
+    }
+
+    @Override
+    protected void populateItem(Item item) {
+        FieldModel fieldModel = (FieldModel) item.getModel();
+        item.add(engine.createTemplate("sub", fieldModel));
     }
 }

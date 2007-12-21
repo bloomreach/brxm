@@ -136,4 +136,10 @@ public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
             contribs[i].renderHead(response);
         }
     }
+
+    @Override
+    public Component setModel(IModel model) {
+        editor.setModel(model);
+        return super.setModel(model);
+    }
 }
