@@ -54,7 +54,7 @@
         <sv:value>hipposample:body</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.cmsprototype.frontend.plugins.template.editor.TextEditor</sv:value>
+        <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
       </sv:property>
     </sv:node>
 
@@ -173,7 +173,7 @@
         <sv:value>content</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.cmsprototype.frontend.plugins.template.editor.TextEditor</sv:value>
+        <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

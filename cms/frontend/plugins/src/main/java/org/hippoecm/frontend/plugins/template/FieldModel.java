@@ -13,12 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.cmsprototype.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template;
 
-import org.apache.wicket.IClusterable;
+import javax.jcr.Item;
 
-public interface TemplateConfig extends IClusterable {
+import org.hippoecm.frontend.model.ItemModelWrapper;
 
-    public TemplateDescriptor getTemplate(String name);
+public class FieldModel extends ItemModelWrapper {
+    private static final long serialVersionUID = 1L;
 
+    private FieldDescriptor descriptor;
+
+    //  Constructor
+    public FieldModel(Item item, FieldDescriptor descriptor) {
+        super(item);
+        this.descriptor = descriptor;
+    }
+
+    public FieldDescriptor getDescriptor() {
+        return descriptor;
+    }
 }
