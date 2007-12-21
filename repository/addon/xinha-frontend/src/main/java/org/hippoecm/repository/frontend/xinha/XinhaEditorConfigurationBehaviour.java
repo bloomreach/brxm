@@ -49,14 +49,13 @@ public class XinhaEditorConfigurationBehaviour extends AbstractHeaderContributor
                 private static final long serialVersionUID = 1L;
                 public void renderHead(IHeaderResponse response) {
                     StringBuffer sb = new StringBuffer();
-                    sb.append("_editor_url = 'http://localhost:8082/xinha/';\n");
+                    sb.append("_editor_url = '/xinha/';\n");
                     sb.append("_editor_lang = 'en';\n");
                     response.renderJavascript(sb, null);
                 }
             },
 
-            //HeaderContributor.forJavaScript("/xinha/XinhaCore.js"),
-            HeaderContributor.forJavaScript("http://localhost:8082/xinha/XinhaCore.js"),
+            HeaderContributor.forJavaScript("/xinha/XinhaCore.js"),
 
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
@@ -66,7 +65,7 @@ public class XinhaEditorConfigurationBehaviour extends AbstractHeaderContributor
                     for(Iterator iter = configurations.iterator(); iter.hasNext(); ) {
                         XinhaEditorConf conf = (XinhaEditorConf) iter.next();
                         String[] plugin = conf.getPlugins();
-                        for(int i=0; i<plugin.length-1; i++)
+                        for(int i=0; i<plugin.length; i++)
                             plugins.add(plugin[i]);
                     }
 
