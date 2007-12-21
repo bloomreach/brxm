@@ -30,14 +30,14 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, SessionImpl session) {
         super(rootNodeId, manager, session);
-        localStateMgr = manager;
+        this.localStateMgr = manager;
         if(wrappedHierMgr == null)
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
     }
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, XASessionImpl session) {
         super(rootNodeId, manager, session);
-        localStateMgr = manager;
+        this.localStateMgr = manager;
         if(wrappedHierMgr == null)
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
     }

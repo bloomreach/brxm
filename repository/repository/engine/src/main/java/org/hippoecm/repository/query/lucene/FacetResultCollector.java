@@ -116,9 +116,7 @@ public class FacetResultCollector extends HitCollector {
     
     public void setNumhits(int numhits) {
         this.numhits = numhits;
-    }
-    
-    
 }
 
 
+}

@@ -24,14 +24,16 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AuthorizationQuery {
-    
+
     /**
      * The logger instance for this class
      */
@@ -41,16 +43,18 @@ public class AuthorizationQuery {
      * The lucene query
      */
     private BooleanQuery query;
-    
+
     /**
      * 
      * @param authorizationQuery The facets + value[] combination the logged in user is allowed to see
      * @param nsMappings nameSpace mappings to find the lucene field names
      * @param indexingConfig the index configuration
      */
-    public AuthorizationQuery(Map<String, String[]> authorizationQuery, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig) {
+    public AuthorizationQuery(Map<String, String[]> authorizationQuery, NamespaceMappings nsMappings,
+            ServicingIndexingConfiguration indexingConfig) {
         this(authorizationQuery, null, nsMappings, indexingConfig, true);
     }
+
     /**
      * This is the authorization query constructor. For efficient queries, the requested facetsQueryMap is added, to
      * be able to remove redundant searches. 
@@ -61,53 +65,56 @@ public class AuthorizationQuery {
      * @param indexingConfig the index configuration
      * @param facetsORed Wether different facet fields are OR-ed or AND-ed. Most efficient is OR-ed
      */
-    public AuthorizationQuery(Map<String, String[]> authorizationQuery, 
-                              Map<String, String> facetsQueryMap, 
-                              NamespaceMappings nsMappings, 
-                              ServicingIndexingConfiguration indexingConfig,
-                              boolean facetsORed) {
+    public AuthorizationQuery(Map<String, String[]> authorizationQuery, Map<String, String> facetsQueryMap,
+            NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig, boolean facetsORed) {
         this.query = new BooleanQuery(true);
-        
-        if(authorizationQuery!=null){
-        	
-        	for(Map.Entry<String,String[]> entry : authorizationQuery.entrySet()) {
+
+        if (authorizationQuery != null && authorizationQuery.size() != 0) {
+
+            for (Map.Entry<String, String[]> entry : authorizationQuery.entrySet()) {
                 Name nodeName;
                 String internalName = "";
                 try {
-                	nodeName = NameFactoryImpl.getInstance().create("", entry.getKey());
-                    if(indexingConfig.isFacet(nodeName)){
-                        internalName = ServicingNameFormat.getInternalFacetName(nodeName,nsMappings);
+                    nodeName = NameFactoryImpl.getInstance().create("", entry.getKey());
+                    if (indexingConfig.isFacet(nodeName)) {
+                        internalName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
                         String[] facetValues = entry.getValue();
                         BooleanQuery orQuery = new BooleanQuery(true);
                         Set tmpContainsSet = new HashSet();
-                        for(int i = 0; i < facetValues.length ; i++ ) {
-                            if(facetsQueryMap.containsKey(entry.getKey()) && facetsQueryMap.get(entry.getKey()).equals(facetValues[i])){
-                                // the facetsQueryMap already accounts for the part in the authorization for this facet. Disregard this part
-                                // for performance
-                                orQuery = null;
-                            }
+                        for (int i = 0; i < facetValues.length; i++) {
+//                            if (facetsQueryMap.containsKey(entry.getKey())
+//                                    && facetsQueryMap.get(entry.getKey()).equals(facetValues[i])) {
+//                                // the facetsQueryMap already accounts for the part in the authorization for this facet. Disregard this part
+//                                // for performance
+//                                orQuery = null;
+//                            }
                             // add to tmp set to check wether already added. Multiplicity slows queries down
-                            if(orQuery!=null && tmpContainsSet.add(facetValues[i])) {
-                                Query q = new FixedScoreTermQuery(new Term(internalName, facetValues[i] ));
+                            if (orQuery != null && tmpContainsSet.add(facetValues[i])) {
+                                Query q = new FixedScoreTermQuery(new Term(internalName, facetValues[i]));
                                 orQuery.add(q, Occur.SHOULD);
                             }
                         }
-                        if(orQuery!=null && facetsORed) {
+                        if (orQuery != null && facetsORed) {
                             this.query.add(orQuery, Occur.SHOULD);
-                        } else if (orQuery!=null) {
-                            this.query.add(orQuery, Occur.MUST);  
+                        } else if (orQuery != null) {
+                            this.query.add(orQuery, Occur.MUST);
                         }
-                        
+
                     } else {
-                        log.warn("Property " + nodeName.getNamespaceURI()+":"+nodeName.getLocalName()+" not allowed for facetted search. " +
-                                "Add the property to the indexing configuration to be defined as FACET");
+                        log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName()
+                                + " not allowed for facetted search. "
+                                + "Add the property to the indexing configuration to be defined as FACET");
                     }
-                    
-                } 
-                 catch (NameException e) {
-                	log.error(e.toString());
-                } 
-              }
+
+                } catch (NameException e) {
+                    log.error(e.toString());
+                }
+            }
+        } else {
+            // TODO: Fix this hack. It uses "null" for the authorizationQuery to allow everything for admin users
+            if (authorizationQuery != null) {
+                this.query.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST_NOT);
+            }
         }
     }
 

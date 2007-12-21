@@ -192,8 +192,11 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     searcher.search(searchQuery, collector);
                     // set the numHits value
                     collector.setNumhits(numHits);
-                    log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start)
-                            + " ms for " + collector.getNumhits() +" results"); 
+                    if (log.isDebugEnabled()) {
+                        log.debug("lucene query: " + searchQuery.toString() + " took "
+                                + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits()
+                                + " results");
+                    }
                 } 
             } else {
                 // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
@@ -201,9 +204,13 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 long start = System.currentTimeMillis();
                 collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);        
                 searcher.search(searchQuery, collector);
-                log.debug("lucene query: " + searchQuery.toString() + " took " +(System.currentTimeMillis() - start)
-                          + " ms for " + collector.getNumhits() +" results"); 
+                if (log.isDebugEnabled()) {
+                    log.debug("lucene query: " + searchQuery.toString() + " took "
+                            + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() + " results");
+                }
+              
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:rep="internal"
+    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+    xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions" 
+    sv:name="hippo:roles">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:rolefolder</sv:value>
+    </sv:property>
+    <sv:node sv:name="author">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:role</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:facetauths">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetauthfolder</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="editor">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:role</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:facetauths">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetauthfolder</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="admin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:role</sv:value>
+        </sv:property>
+    </sv:node>
+</sv:node>

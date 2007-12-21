@@ -192,13 +192,21 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     public void setUp() throws Exception {
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+
         // first clean possible old entries
-        for (NodeIterator iter = session.getRootNode().getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            if (!child.getPath().equals("/jcr:system")) {
-                child.remove();
-            }
+        if(session.getRootNode().hasNode("navigation")) {
+            session.getRootNode().getNode("navigation").remove();
         }
+        if(session.getRootNode().hasNode("documents")) {
+            session.getRootNode().getNode("documents").remove();
+        }
+//        
+//        for (NodeIterator iter = session.getRootNode().getNodes(); iter.hasNext();) {
+//            Node child = iter.nextNode();
+//            if (!child.getPath().equals("/jcr:system")) {
+//                child.remove();
+//            }
+//        }
         session.save();
         session.getRootNode().addNode("navigation");
     }

@@ -98,11 +98,35 @@
 
 [hippo:application] > nt:unstructured
 
+[hippo:facetauth] > nt:base
+- hippo:facet (string) mandatory
+- hippo:values (string) mandatory multiple
+- hippo:permissions (long) mandatory
+
+[hippo:facetauthfolder] > nt:base
++ * (hippo:facetauth) = hippo:facetauth
+
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
+- hippo:roles (string) multiple
++ hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
+
+[hippo:group] > nt:base
+- hippo:members (string) multiple
+- hippo:roles (string) multiple
++ hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
+
+[hippo:role] > nt:base
++ hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
 
 [hippo:userfolder] > nt:base
 + * (hippo:user) = hippo:user
+
+[hippo:groupfolder] > nt:base
++ * (hippo:group) = hippo:group
+
+[hippo:rolefolder] > nt:base
++ * (hippo:role) = hippo:role
 
 [hippo:plugin] > nt:unstructured
 
@@ -114,4 +138,6 @@
 + hippo:documents (hippo:queryfolder) = hippo:queryfolder mandatory
 + hippo:initialize (hippo:initializefolder) = hippo:initializefolder
 + hippo:users (hippo:userfolder) = hippo:userfolder
++ hippo:roles (hippo:rolefolder) = hippo:rolefolder
++ hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:frontend (hippo:application) = hippo:application
