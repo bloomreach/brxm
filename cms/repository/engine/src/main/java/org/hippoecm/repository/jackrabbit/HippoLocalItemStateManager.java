@@ -330,8 +330,8 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             }
             else {
                 return ITEM_TYPE_REGULAR;
-            }
         }
+    }
     }
         
     class FilteredChangeLog extends ChangeLog {
@@ -464,7 +464,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     current = (ItemState) actualIterator.next();
                     if((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
                         current = null;
-                    }
+                }
                 }
                 return true;
             }
@@ -477,7 +477,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     current = (ItemState) actualIterator.next();
                     if((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
                         current = null;
-                    }
+                }
                 }
                 rtValue = current;
                 current = null;

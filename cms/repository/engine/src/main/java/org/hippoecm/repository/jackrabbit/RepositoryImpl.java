@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import javax.security.auth.Subject;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
@@ -24,6 +27,7 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
@@ -34,20 +38,21 @@ import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.security.AuthContext;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
+import org.hippoecm.repository.security.principals.AdminPrincipal;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
-{
+public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
-    
+
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
     }
@@ -55,13 +60,13 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
     private FacetedNavigationEngine facetedEngine;
 
     public FacetedNavigationEngine getFacetedNavigationEngine() {
-        if(facetedEngine == null) {
-          String msg = "Configure your facetedEngine correctly!!! \n Application will fall back to default faceted engine, " +
-                "but this is a very inefficient one. In your repository.xml (or workspace.xml if you have started the repository" +
-                "already at least once) configure the correct class for SearchIndex. See Hippo ECM documentation 'SearchIndex configuration' " +
-                "for further information.";
-          log.warn(msg);
-          facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
+        if (facetedEngine == null) {
+            String msg = "Please configure your facetedEngine correctly. Application will fall back to default faceted engine, "
+                    + "but this is a very inefficient one. In your repository.xml (or workspace.xml if you have started the repository"
+                    + "already at least once) configure the correct class for SearchIndex. See Hippo ECM documentation 'SearchIndex configuration' "
+                    + "for further information.";
+            log.warn(msg);
+            facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
         }
         return facetedEngine;
     }
@@ -71,49 +76,47 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
     }
 
     void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,
-                                         org.apache.jackrabbit.core.SessionImpl session, Subject subject)
-    {
+            org.apache.jackrabbit.core.SessionImpl session, Subject subject) {
         FacetedNavigationEngine facetedEngine = getFacetedNavigationEngine();
-        /*
-         * TODO/FIXME: Below facet authorizationQuery must be fetched. The authorizationQuery looks like below.
-         * These authorizations needs to be fetched from the repository.
-         * Map<String,String[]> authorizationQuery = new HashMap<String,String[]>();
-         * authorizationQuery.put("x", new String[]{"x1","x2"});
-         * authorizationQuery.put("y", new String[]{"y1","y2"});
-         * authorizationQuery.put("z", new String[]{"z1","z2"});
-         * String username = ((Principal)subject.getPrincipals().iterator().next()).getName(); // FIXME
-         * FacetedNavigationEngine.Context context = getFacetedNavigationEngine().prepare("abc", authorizationQuery, null, servicingSession);
-         */
-        FacetedNavigationEngine.Context facetedContext = facetedEngine.prepare(null, null, null, session);
-        stateMgr.initialize(session.getNamePathResolver(), session.getHierarchyManager(),
-                            facetedEngine, facetedContext);
+        Set principals = subject.getPrincipals(FacetAuthPrincipal.class);
+        Map<String, String[]> authorizationQuery = new HashMap<String, String[]>();
+        for (Iterator i = principals.iterator(); i.hasNext();) {
+            FacetAuthPrincipal p = (FacetAuthPrincipal) i.next();
+            log.info("FacetAuthPrincipal for authorizationQuery: " + p.getName());
+            authorizationQuery.put(p.getFacet(), p.getValues());
+        }
+        FacetedNavigationEngine.Context facetedContext;
+
+        // TODO: This is a TEMPORARY hack: it uses "null" for the authorizationQuery to allow everything for admin users
+        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()
+                || !subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
+            facetedContext = facetedEngine.prepare(session.getUserID(), null, null, session);
+        } else {
+            facetedContext = facetedEngine.prepare(session.getUserID(), authorizationQuery, null, session);
+        }
+        stateMgr.initialize(session.getNamePathResolver(), session.getHierarchyManager(), facetedEngine, facetedContext);
     }
 
-    public static RepositoryImpl create(RepositoryConfig config)
-        throws RepositoryException {
+    public static RepositoryImpl create(RepositoryConfig config) throws RepositoryException {
         return new RepositoryImpl(config);
     }
 
     @Override
-    protected SharedItemStateManager createItemStateManager(PersistenceManager persistMgr,
-                                                            NodeId rootNodeId,
-                                                            NodeTypeRegistry ntReg,
-                                                            boolean usesReferences,
-                                                            ItemStateCacheFactory cacheFactory)
+    protected SharedItemStateManager createItemStateManager(PersistenceManager persistMgr, NodeId rootNodeId,
+            NodeTypeRegistry ntReg, boolean usesReferences, ItemStateCacheFactory cacheFactory)
             throws ItemStateException {
         return new HippoSharedItemStateManager(this, persistMgr, rootNodeId, ntReg, true, cacheFactory);
     }
 
     @Override
     protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(AuthContext loginContext,
-                                                                           WorkspaceConfig wspConfig)
-        throws AccessDeniedException, RepositoryException {
+            WorkspaceConfig wspConfig) throws AccessDeniedException, RepositoryException {
         return new XASessionImpl(this, loginContext, wspConfig);
     }
-  
+
     @Override
     protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(Subject subject, WorkspaceConfig wspConfig)
-        throws AccessDeniedException, RepositoryException {
+            throws AccessDeniedException, RepositoryException {
         return new XASessionImpl(this, subject, wspConfig);
     }
 
@@ -138,7 +141,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
     }
 
     public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
-        return ((WorkspaceInfo)getWorkspaceInfo(workspaceName)).getSearchManager();
+        return ((WorkspaceInfo) getWorkspaceInfo(workspaceName)).getSearchManager();
     }
 
     /**
@@ -151,9 +154,9 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         if (workspaceName == null) {
             workspaceName = super.repConfig.getDefaultWorkspaceName();
         }
-        return ((WorkspaceInfo)getWorkspaceInfo(workspaceName)).getRootSession();
+        return ((WorkspaceInfo) getWorkspaceInfo(workspaceName)).getRootSession();
     }
-    
+
     protected WorkspaceInfo createWorkspaceInfo(WorkspaceConfig wspConfig) {
         return new WorkspaceInfo(wspConfig);
     }
@@ -167,7 +170,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         protected SearchManager getSearchManager() throws RepositoryException {
             return super.getSearchManager();
         }
-        
+
         /**
          * Returns the system session for this workspace.
          *
@@ -179,22 +182,22 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl
         }
     }
 
-    
     /**
      * Wrapper for login, adds rootSession to credentials if credentials are of SimpleCredentials.
      * @return session the authenticated session
      */
-    public Session login(Credentials credentials, String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+    public Session login(Credentials credentials, String workspaceName) throws LoginException,
+            NoSuchWorkspaceException, RepositoryException {
         if (credentials != null) {
             if (credentials instanceof SimpleCredentials) {
                 SimpleCredentials sc = (SimpleCredentials) credentials;
-                
+
                 Session rootSession = getRootSession(workspaceName);
                 if (rootSession == null) {
                     throw new RepositoryException("Unable to get the roorSession for workspace: " + workspaceName);
                 }
                 sc.setAttribute("rootSession", rootSession);
-                return super.login(sc, workspaceName);   
+                return super.login(sc, workspaceName);
             }
         }
         return super.login(credentials, workspaceName);

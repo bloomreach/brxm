@@ -16,6 +16,7 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
+import java.security.Principal;
 
 import javax.security.auth.Subject;
 
@@ -28,22 +29,30 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
+import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.AuthContext;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
+import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.namespace.NamespaceResolver;
+import org.hippoecm.repository.security.principals.AdminPrincipal;
 
-import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.security.AMContext;
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
+    
+    /**
+     * the user ID that was used to acquire this session
+     */
+    private String userId;
 
     protected SessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
+        SetUserId();
         HippoLocalItemStateManager localISM = (HippoLocalItemStateManager) ((WorkspaceImpl)wsp).getItemStateManager();
         ((RepositoryImpl)rep).initializeLocalItemStateManager(localISM, this, loginContext.getSubject());
     }
@@ -51,6 +60,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     protected SessionImpl(RepositoryImpl rep, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
             RepositoryException {
         super(rep, subject, wspConfig);
+        SetUserId();
         HippoLocalItemStateManager localISM = (HippoLocalItemStateManager) ((WorkspaceImpl)wsp).getItemStateManager();
         ((RepositoryImpl)rep).initializeLocalItemStateManager(localISM, this, subject);
     }
@@ -76,7 +86,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
         AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
         try {
-            AMContext ctx = new AMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()), ((RepositoryImpl)rep).getFileSystem(), subject, hierMgr, (NamespaceResolver) ((RepositoryImpl)rep).getNamespaceRegistry(), wsp.getName());
+            AMContext ctx = new AMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()), ((RepositoryImpl)rep).getFileSystem(), subject, getItemStateManager().getAtticAwareHierarchyMgr(), ((RepositoryImpl)rep).getNamespaceRegistry(), wsp.getName());
             AccessManager accessMgr = (AccessManager) amConfig.newInstance();
             accessMgr.init(ctx);
             return accessMgr;
@@ -87,5 +97,34 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
             log.error(msg, ex);
             throw new RepositoryException(msg, ex);
         }
+    }
+
+    /**
+     * Override jackrabbits default userid, because it just uses
+     * the first principal it can find, which can lead to strange "usernames"
+     */
+    protected void SetUserId() {
+        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
+            Principal principal = (Principal)  subject.getPrincipals(SystemPrincipal.class).iterator().next();
+            userId = principal.getName();
+        } else if (!subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
+            Principal principal = (Principal) subject.getPrincipals(AdminPrincipal.class).iterator().next();
+            userId = principal.getName();
+        } else if (!subject.getPrincipals(UserPrincipal.class).isEmpty()) {
+            Principal principal = (Principal) subject.getPrincipals(UserPrincipal.class).iterator().next();
+            userId = principal.getName();
+        } else if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
+            Principal principal = (Principal) subject.getPrincipals(AnonymousPrincipal.class).iterator().next();
+            userId = principal.getName();
+        } else {
+            userId = "Unknown";
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getUserID() {
+        return userId;
     }
 }

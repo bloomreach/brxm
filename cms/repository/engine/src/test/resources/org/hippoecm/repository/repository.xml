@@ -14,23 +14,8 @@
         security configuration
       -->
       <Security appName="Jackrabbit">
-        <!--
-          access manager:
-          class: FQN of class implementing the AccessManager interface
-        -->
-        <AccessManager
-          class="org.hippoecm.repository.security.SimpleAccessManager">
-          <!-- <param name="config" value="${rep.home}/access.xml"/> -->
-        </AccessManager>
-        
-        
-        <LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule">
-          <!-- default values:
-            <param name="anonymousId" value="anonymous"/>
-            <param name="debug" value="false"/>
-            <param name="maxCacheTimeMilliSec" value="10000"/>
-          -->
-        </LoginModule>
+        <AccessManager class="org.hippoecm.repository.security.HippoAccessManager"/>
+        <LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"/>
       </Security>
       
       

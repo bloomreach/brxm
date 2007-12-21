@@ -24,9 +24,12 @@ import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -35,10 +38,16 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import org.apache.jackrabbit.core.NodeIdIterator;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.CredentialsCallback;
 import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.PasswordHelper;
+import org.hippoecm.repository.security.principals.AdminPrincipal;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.hippoecm.repository.security.user.RepositoryUser;
+import org.hippoecm.repository.security.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,29 +66,18 @@ public class RepositoryLoginModule implements LoginModule {
     private boolean useFirstPass = false;
     private boolean storePass = false;
     private boolean clearPass = false;
-
-    // configurable Repository auth options
-    private String anonymousId;
-    private String usersNode;
-    private long maxCacheTime;
-
+    
     // local authentication state:
     // the principals, i.e. the authenticated identities
     private final Set principals = new HashSet();
 
-    private static Map<String, char[]> userCache = new HashMap<String, char[]>();
-    private static long lastCachePurge = 0L;
+    // the special roles
+    private static final String ADMIN_ROLE_NAME = "admin";
+    
+    // keep the auth state of the user trying to login
+    private boolean authenticated = false;
 
-    // options
-    private static final String OPT_ANONYMOUS_ID = "anonymousId";
-    private static final String OPT_USERS_NODE = "usersPath";
-    private static final String OPT_MAX_CACHE_TIME = "maxCacheTimeMilliSec";
-
-    // defaults
-    private static final String DEFAULT_ANONYMOUS_ID = "anonymous";
-    private static final String DEFAULT_USERS_NODE = "hippo:configuration/hippo:users";
-    private static final long DEFAULT_MAX_CACHE_TIME = 10000L;
-
+    
     /**
      * Get Logger 
      */
@@ -91,89 +89,7 @@ public class RepositoryLoginModule implements LoginModule {
     public RepositoryLoginModule() {
     }
     
-    /**
-     * Authenticate the user against the cache or the repository
-     * @param session A privileged session which can read usernames and passwords
-     * @param username
-     * @param password
-     * @return true when authenticated
-     */
-    private boolean authenticate(Session session, String username, char[] password) {
-        if (username == null || password == null || "".equals(username) || password.length == 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("Empty username or password not allowed.");
-            }
-            return false;
-        }
-        
-        // try to use authentication cache
-        try {
-            synchronized (userCache) {
-                long now = System.currentTimeMillis();
-                if ((maxCacheTime == 0) || ((now - lastCachePurge) > maxCacheTime)) {
-                    userCache.clear();
-                    lastCachePurge = now;
-                }
-
-                if (log.isDebugEnabled()) {
-                    log.debug("userCache.size() = " + userCache.size());
-                    log.debug("Looking for user in cache: " + username);
-                }
-
-                if (userCache.containsKey(username)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("User found in cache: " + username);
-                    }
-
-                    boolean authenticated = false;
-                    authenticated = PasswordHelper.checkHash(new String(password), new String(userCache.get(username)));
-                    if (authenticated) {
-                        return true;
-                    }
-                }
-            }
-
-            Node root = session.getRootNode();
-
-            if (log.isDebugEnabled()) {
-                log.debug("Searching for user: " + username);
-            }
-
-            Node node;
-            if (root.hasNode(usersNode + "/" + username)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Found user node: " + usersNode + "/" + username);
-                }
-                node = root.getNode(usersNode + "/" + username);
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("User not found: " + username);
-                }
-                return false;
-            }
-
-            if (node.hasProperty("hippo:password")) {
-                boolean authenticated = false;
-                authenticated = PasswordHelper.checkHash(new String(password), node.getProperty("hippo:password").getValue().getString()); 
-                if (authenticated) {
-                    synchronized (userCache) {
-                        userCache.put(username, password);
-                    }
-                    return true;
-                }
-            }
-
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+    
 
     //----------------------------------------------------------< LoginModule >
     /**
@@ -187,11 +103,7 @@ public class RepositoryLoginModule implements LoginModule {
         this.callbackHandler = callbackHandler;
         this.sharedState = sharedState;
         this.options = options;
-
-        // set defaults
-        this.anonymousId = DEFAULT_ANONYMOUS_ID;
-        this.usersNode = DEFAULT_USERS_NODE;
-        this.maxCacheTime = DEFAULT_MAX_CACHE_TIME;
+        
 
         // fetch default JAAS parameters
         debug = "true".equalsIgnoreCase((String) options.get("debug"));
@@ -200,35 +112,12 @@ public class RepositoryLoginModule implements LoginModule {
         storePass = "true".equalsIgnoreCase((String) options.get("storePass"));
         clearPass = "true".equalsIgnoreCase((String) options.get("clearPass"));
 
-        // fetch repository auth paramaters
-        String anonymous = (String) options.get(OPT_ANONYMOUS_ID);
-        String node = (String) options.get(OPT_USERS_NODE);
-        String cacheTime = (String) options.get(OPT_MAX_CACHE_TIME);
-
-        if (anonymous != null) {
-            this.anonymousId = anonymous;
-        }
-        if (node != null) {
-            this.usersNode = node;
-        }
-        if (cacheTime != null) {
-            try {
-                this.maxCacheTime = Long.parseLong(cacheTime);
-            } catch (NumberFormatException ex) {
-                log.warn("Could not convert setting " + OPT_MAX_CACHE_TIME + " '" + cacheTime
-                        + "' to a long, using default: " + DEFAULT_MAX_CACHE_TIME);
-            }
-        }
-
         if (log.isDebugEnabled()) {
-            log.debug("RepositoryLoginModule config:");
-            log.debug("* anonymousId    : " + anonymousId);
-            log.debug("* usersNode      : " + usersNode);
-            //log.debug("* tryFirstPass   : " + tryFirstPass);
-            //log.debug("* useFirstPass   : " + useFirstPass);
-            //log.debug("* storePass      : " + storePass);
-            //log.debug("* clearPass      : " + clearPass);
-            log.debug("* maxCacheTime   : " + maxCacheTime);
+            log.debug("RepositoryLoginModule JAAS config:");
+            log.debug("* tryFirstPass   : " + tryFirstPass);
+            log.debug("* useFirstPass   : " + useFirstPass);
+            log.debug("* storePass      : " + storePass);
+            log.debug("* clearPass      : " + clearPass);
         }
     }
 
@@ -240,52 +129,50 @@ public class RepositoryLoginModule implements LoginModule {
             throw new LoginException("no CallbackHandler available");
         }
 
-        boolean authenticated = false;
-        String username = null;
-
         try {
             // Get credentials using a JAAS callback
             CredentialsCallback ccb = new CredentialsCallback();
             callbackHandler.handle(new Callback[] { ccb });
-            Credentials creds = ccb.getCredentials();
-            // Use the credentials to set up principals
-            if (creds != null) {
-                if (creds instanceof SimpleCredentials) {
-                    SimpleCredentials sc = (SimpleCredentials) creds;
-                    Session rootSession = (Session) sc.getAttribute("rootSession");
-                    if (rootSession == null) {
-                        throw new LoginException("RootSession not set.");
-                    }
-                    username = sc.getUserID();
-                    if (username != null) {
-                        if (debug) {
-                            log.debug("Trying to authenticate as: " + sc.getUserID());
-                        }
-                        if (authenticate(rootSession, username, sc.getPassword())) {
-                            authenticated = true;
-                            principals.add(new UserPrincipal(username));
-                            if (log.isDebugEnabled()) {
-                                log.debug("Authenticated as " + username);
-                            }
-                        }
-                    }
-                }
-            }
+            SimpleCredentials creds = (SimpleCredentials) ccb.getCredentials();
 
             // check for anonymous login
-            if (creds == null || username == null) {
-                authenticated = true;
+            if (creds == null || creds.getUserID() == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Authenticated as anonymous.");
                 }
+                // authenticate as anonymous
                 principals.add(new AnonymousPrincipal());
+                return true;
             }
-        } catch (java.io.IOException ioe) {
-            throw new LoginException(ioe.toString());
-        } catch (UnsupportedCallbackException uce) {
-            throw new LoginException(uce.getCallback().toString() + " not available");
+            
+            Session rootSession = (Session) creds.getAttribute("rootSession");
+            if (rootSession == null) {
+                throw new LoginException("RootSession not set.");
+            }
+            if (debug) {
+                log.debug("Trying to authenticate as: " + creds.getUserID());
+            }
+            
+            if (authenticate(rootSession, creds.getUserID(), creds.getPassword())) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Authenticated as " + creds.getUserID());
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("NOT Authenticated as " + creds.getUserID() + " auth: " + authenticated);
+                }
+            }
+            
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            throw new LoginException(e.getMessage());
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            throw new LoginException(e.getMessage());
+        } catch (UnsupportedCallbackException e) {
+            e.printStackTrace();
+            throw new LoginException(e.getCallback().toString() + " not available");
         }
-
         if (authenticated) {
             return !principals.isEmpty();
         } else {
@@ -324,8 +211,54 @@ public class RepositoryLoginModule implements LoginModule {
      * {@inheritDoc}
      */
     public boolean logout() throws LoginException {
+        authenticated = false;
         subject.getPrincipals().removeAll(principals);
         principals.clear();
         return true;
+    }
+    
+    /**
+     * Authenticate the user against the cache or the repository
+     * @param session A privileged session which can read usernames and passwords
+     * @param userId
+     * @param password
+     * @return true when authenticated
+     */
+    private boolean authenticate(Session rootSession, String userId, char[] password) {
+        authenticated = false;
+        if (userId == null || password == null || "".equals(userId) || password.length == 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("Empty username or password not allowed.");
+            }
+            return false;
+        }
+        
+
+        String usersPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH;
+        String groupsPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.GROUPS_PATH;
+        String rolesPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.ROLES_PATH;
+            
+        RepositoryAAContext context = new RepositoryAAContext(rootSession, usersPath, groupsPath, rolesPath);
+
+        RepositoryUser user = new RepositoryUser(); 
+        try {
+            user.init(context, userId);
+            authenticated =  PasswordHelper.checkHash(new String(password), user.getPasswordHash());
+            if (authenticated) {
+                principals.addAll(user.getPrincipals());
+            }
+            return authenticated;
+        } catch (UserNotFoundException e) {                
+            if (log.isDebugEnabled()) {
+                log.debug("User not found: " + userId, e);
+            }
+            return false;
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Unable to check password.", e);
+            return false;
+        } catch (UnsupportedEncodingException e) {
+            log.error("Unable to check password.", e);
+            return false;
+        }
     }
 }

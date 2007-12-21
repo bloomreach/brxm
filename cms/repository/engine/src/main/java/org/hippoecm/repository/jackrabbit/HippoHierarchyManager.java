@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class HippoHierarchyManager implements HierarchyManager {
     private static Logger log = LoggerFactory.getLogger(HippoHierarchyManager.class);
-
+    
     protected HierarchyManager hierMgr;
     protected HippoSessionItemStateManager itemStateMgr;
 

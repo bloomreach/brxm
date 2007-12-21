@@ -142,7 +142,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                                                                      facetsQueryMap , 
                                                                      nsMappings, 
                                                                      (ServicingIndexingConfiguration)getIndexingConfig(),
-                                                                     true); 
+                                                                     false); 
 
       FacetResultCollector collector = null;
       CachingFacetResultCollector cachingCollector = null; 

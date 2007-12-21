@@ -69,7 +69,7 @@ A BNF description of the composed query is:
 <pre nowrap>
 start ::= <b>(</b> initial-query <b>)</b> authorization-query facets-query open-query ;
 initial-query        ::= <i>any valid lucene query</i> ;
-authorization-query  ::= <b>AND</b> <b>(</b> authorization-cont <b>)</b>
+authorization-query  ::= <b>OR</b> <b>(</b> authorization-cont <b>)</b>
                       |  <i>empty</i> ;
 authorization-cont   ::= facet-key <b>=</b> facet-value
                       |  facet-key <b>=</b> facet-value <b>OR</b> authorization-cont ;
