@@ -106,6 +106,19 @@
       </sv:property>
     </sv:node>
     
+    <!--Roles configuration-->
+    <sv:node sv:name="roles">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>roles-config.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/hippo:configuration</sv:value>
+      </sv:property>
+    </sv:node>
+    
     <!--User configuration-->
     <sv:node sv:name="users">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -113,6 +126,19 @@
       </sv:property>
       <sv:property sv:name="hippo:content" sv:type="String">
         <sv:value>users-config.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:contentroot" sv:type="String">
+        <sv:value>/hippo:configuration</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!--Group configuration-->
+    <sv:node sv:name="groups">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:initializeitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:content" sv:type="String">
+        <sv:value>groups-config.xml</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:contentroot" sv:type="String">
         <sv:value>/hippo:configuration</sv:value>
@@ -170,7 +196,7 @@
         <sv:value>/</sv:value>
       </sv:property>      
     </sv:node>
-
+    
     <!--Templates for template engine-->
     <sv:node sv:name="templates">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -182,7 +208,7 @@
       <sv:property sv:name="hippo:contentroot" sv:type="String">
         <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype</sv:value>
       </sv:property>      
-    </sv:node>
+  </sv:node>
 
     <!--Demo data for template engine-->
     <sv:node sv:name="template-demo">
