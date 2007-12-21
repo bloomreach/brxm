@@ -25,7 +25,7 @@
                 <sv:value>demo titel</sv:value>
             </sv:property>
             <sv:property sv:name="hipposample:body" sv:type="String">
-                <sv:value>&lt;html&gt;&lt;body&gt;o what a night&lt;/body&gt;&lt;/html&gt;</sv:value>
+                <sv:value>o what a night</sv:value>
             </sv:property>
             <sv:property sv:name="hipposample:subject" sv:type="String">
                 <sv:value>onderwerp</sv:value>
