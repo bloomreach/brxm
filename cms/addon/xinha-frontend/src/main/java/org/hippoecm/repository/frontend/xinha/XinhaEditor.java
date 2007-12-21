@@ -71,10 +71,6 @@ public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
 
         editor = new TextArea("value", getModel());
 
-        editor.setOutputMarkupId(true);
-        editor.setVisible(true);
-        // setRenderBodyOnly(true);
-
         postBehaviour = new AbstractDefaultAjaxBehavior() {
                 private static final long serialVersionUID = 1L;
 
@@ -94,8 +90,9 @@ public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
                 }
             };
 
+        editor.setOutputMarkupId(true);
+        editor.setVisible(true);
         editor.add(postBehaviour);
-
         add(editor);
 
         editorConf = new XinhaEditorConf();
@@ -120,7 +117,7 @@ public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
 
         editorConf.setName(editor.getMarkupId());
         editorConf.setPlugins(new String[] { "CharacterMap", "ContextMenu", "ListType", "SpellChecker",
-                                             "Stylist", "SuperClean", "TableOperations" }); // "WicketSave", 
+                                             "Stylist", "SuperClean", "TableOperations", "SaveSubmit" });
         Map conf = new Hashtable();
         conf.put("postUrl", postBehaviour.getCallbackUrl());
         editorConf.setConfiguration(conf);
@@ -135,7 +132,9 @@ public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
     public void renderHead(IHeaderResponse response)
     {
         IHeaderContributor[] contribs = bh.getHeaderContributors();
-        for(int i=0; i<contribs.length; i++)
+        for(int i=0; i<contribs.length; i++) {
             contribs[i].renderHead(response);
+        }
     }
 }
+
