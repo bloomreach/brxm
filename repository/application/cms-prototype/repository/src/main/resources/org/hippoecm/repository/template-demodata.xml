@@ -22,10 +22,10 @@
                 <sv:value>hipposample:simpledocument</sv:value>
             </sv:property>
             <sv:property sv:name="hipposample:title" sv:type="String">
-                <sv:value>demo titel</sv:value>
+                <sv:value>&lt;html&gt;&lt;body&gt;demo titel&lt;/body&gt;&lt;/html&gt;</sv:value>
             </sv:property>
             <sv:property sv:name="hipposample:body" sv:type="String">
-                <sv:value>o what a night</sv:value>
+                <sv:value>&lt;html&gt;&lt;body&gt;o what a night&lt;/body&gt;&lt;/html&gt;</sv:value>
             </sv:property>
             <sv:property sv:name="hipposample:subject" sv:type="String">
                 <sv:value>onderwerp</sv:value>
