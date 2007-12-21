@@ -15,10 +15,14 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.addnew;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -37,8 +41,27 @@ public class AddNewWizard extends Plugin {
     
     public AddNewWizard(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        add(new AddNewForm("addNewForm"));
+        AddNewForm form = new AddNewForm("addNewForm"); 
         add(new FeedbackPanel("feedback"));
+
+        /*
+        form.add(new AjaxEventBehavior("onsubmit") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                System.out.println("form submit ajax update");
+//                Plugin owningPlugin = (Plugin)findParent(Plugin.class);
+//                PluginManager pluginManager = owningPlugin.getPluginManager();      
+//                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, (JcrNodeModel) getModel());
+//                pluginManager.update(target, event);
+            }
+            
+        });
+        */
+    
+        add(form);
+    
     }
     
     private final class AddNewForm extends Form {
@@ -52,7 +75,14 @@ public class AddNewWizard extends Plugin {
             TextField name = new TextField("name", new PropertyModel(properties, "name"));
             name.setRequired(true);
             add(name);
+            
+            List<String> types = Arrays.asList(new String[] { "foo", "bar", "berenboot" });
+            DropDownChoice template = new DropDownChoice("template", new PropertyModel(properties, "template"), types);
+            template.setRequired(true);
+            add(template);
+            
             add(new Button("submit", new Model("Add")));
+            
         }
 
         @Override
@@ -60,7 +90,8 @@ public class AddNewWizard extends Plugin {
             UserSession session = (UserSession) getSession();
             HippoNode rootNode = session.getRootNode();
             try {
-                Node handle = rootNode.addNode((String)properties.get("name"), HippoNodeType.NT_HANDLE);
+                Node typeNode = rootNode.addNode((String)properties.get("template"), "nt:unstructured");
+                Node handle = typeNode.addNode((String)properties.get("name"), HippoNodeType.NT_HANDLE);
                 Node doc = handle.addNode((String)properties.get("name"), HippoNodeType.NT_DOCUMENT);
                 doc.setProperty("state", "unpublished");
 
