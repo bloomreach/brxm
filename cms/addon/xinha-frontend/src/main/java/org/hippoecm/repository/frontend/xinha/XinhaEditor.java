@@ -137,4 +137,3 @@ public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
         }
     }
 }
-
