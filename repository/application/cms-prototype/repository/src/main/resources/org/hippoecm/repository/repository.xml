@@ -19,7 +19,7 @@
         class: FQN of class implementing the AccessManager interface
     -->
     <AccessManager
-        class="org.hippoecm.repository.security.SimpleAccessManager">
+        class="org.hippoecm.repository.security.HippoAccessManager">
       <!-- <param name="config" value="${rep.home}/access.xml"/> -->
     </AccessManager>
     
