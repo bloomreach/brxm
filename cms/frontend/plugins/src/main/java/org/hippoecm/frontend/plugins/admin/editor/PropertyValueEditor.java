@@ -80,6 +80,8 @@ public class PropertyValueEditor extends DataView {
                             java.lang.reflect.Constructor constructor = clazz.getConstructor(new Class[] { String.class, JcrPropertyValueModel.class });
                             Panel editor = (Panel) constructor.newInstance(new Object[] { "value", valueModel });
                             item.add(editor);
+                            java.lang.reflect.Method method = clazz.getMethod("init", new Class[] { });
+                            method.invoke(editor, new Object[] { });
                         } catch(ClassNotFoundException ex) {
                             System.err.println(ex.getMessage());
                             ex.printStackTrace(System.err);

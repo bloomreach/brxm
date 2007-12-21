@@ -15,8 +15,9 @@
  */
 package org.hippoecm.repository.frontend.xinha;
 
-import java.io.Serializable;
 import java.util.Map;
+
+import java.io.Serializable;
 
 public class XinhaEditorConf implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -56,5 +57,21 @@ public class XinhaEditorConf implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public boolean equals(Object o) {
+        if (o instanceof XinhaEditorConf) {
+            if (name != null) {
+                return name.equals(((XinhaEditorConf) o).getName());
+            } else {
+                return ((XinhaEditorConf) o).getName() == null;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public int hashCode() {
+        return name.hashCode();
     }
 }
