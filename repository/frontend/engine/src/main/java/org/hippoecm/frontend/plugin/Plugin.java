@@ -38,14 +38,12 @@ public abstract class Plugin extends Panel implements EventConsumer {
     private PluginManager pluginManager;
     private PluginDescriptor pluginDescriptor;
     private Plugin parentPlugin;
-    private JcrNodeModel model;
 
     public Plugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor.getWicketId(), null);
+        super(pluginDescriptor.getWicketId(), model);
         setOutputMarkupId(true);
         this.parentPlugin = parentPlugin;
         this.pluginDescriptor = pluginDescriptor;
-        this.model = model;
     }
 
     public PluginDescriptor getDescriptor() {
@@ -68,11 +66,11 @@ public abstract class Plugin extends Panel implements EventConsumer {
     }
 
     public JcrNodeModel getNodeModel() {
-        return model;
+        return (JcrNodeModel) getModel();
     }
 
     public void setNodeModel(JcrNodeModel model) {
-        this.model = model;
+        setModel(model);
     }
 
     public void addChildren() {
@@ -89,7 +87,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
 
     public Plugin addChild(PluginDescriptor childDescriptor) {
         PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-        Plugin child = pluginFactory.createPlugin(childDescriptor, model, this);
+        Plugin child = pluginFactory.createPlugin(childDescriptor, getNodeModel(), this);
 
         add(child);
         return child;
@@ -103,7 +101,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
         Workflow workflow = null;
         try {
             WorkflowManager manager = getPluginManager().getWorkflowManager();
-            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(getId(), model.getNode());
+            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(getId(), getNodeModel().getNode());
             workflow = manager.getWorkflow(descriptor);
         } catch (MappingException e) {
             log.error(e.getMessage());

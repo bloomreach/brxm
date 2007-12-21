@@ -25,7 +25,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.plugins.admin.editor.PropertyValueEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,18 +34,22 @@ public class ValueTemplate extends Panel {
     static final Logger log = LoggerFactory.getLogger(ValueTemplate.class);
 
     private TemplateEngine engine;
-    
+
     public ValueTemplate(String wicketId, JcrPropertyModel model, FieldDescriptor descriptor, TemplateEngine engine) {
         super(wicketId, model);
 
         this.engine = engine;
-        
+
         if (model.getProperty() != null) {
             try {
-                add(deleteLink("delete", model));
+                if (!descriptor.isProtected()) {
+                    add(deleteLink("delete", model));
+                } else {
+                    add(new Label("delete", "(protected)"));
+                }
                 add(new Label("name", descriptor.getName()));
-                add(new PropertyValueEditor("values", model));
-                if (model.getProperty().getDefinition().isMultiple()) {
+                add(new ValueEditor("values", model, descriptor, engine));
+                if (descriptor.isMultiple()) {
                     add(addLink("add", model));
                 } else {
                     add(new Label("add", ""));
@@ -62,49 +65,56 @@ public class ValueTemplate extends Panel {
         }
     }
 
+    // Called when a new value is added to a multi-valued property
+
+    protected void onAddValue(AjaxRequestTarget target) {
+        JcrPropertyModel model = (JcrPropertyModel) getModel();
+        try {
+            Property prop = model.getProperty();
+            Value[] oldValues = prop.getValues();
+            String[] newValues = new String[oldValues.length + 1];
+            for (int i = 0; i < oldValues.length; i++) {
+                newValues[i] = oldValues[i].getString();
+            }
+            newValues[oldValues.length] = "...";
+            prop.setValue(newValues);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        engine.onChange(target);
+    }
+
+    protected void onDeleteValue(AjaxRequestTarget target) {
+        JcrPropertyModel model = (JcrPropertyModel) getModel();
+        try {
+            Property prop = model.getProperty();
+            prop.remove();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        engine.onChange(target);
+    }
+    
     // privates
 
     private Component deleteLink(String id, final JcrPropertyModel model) throws RepositoryException {
-        Component result = null;
-        if (model.getProperty().getDefinition().isProtected()) {
-            result = new Label(id, "(protected)");
+        return new AjaxLink(id, model) {
+            private static final long serialVersionUID = 1L;
 
-        } else {
-            result = new AjaxLink(id, model) {
-                private static final long serialVersionUID = 1L;
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    try {
-                        Property prop = model.getProperty();
-                        prop.remove();
-                    } catch (RepositoryException e) {
-                        log.error(e.getMessage());
-                    }
-                    engine.onChange(target);
-                }
-            };
-        }
-        return result;
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                ValueTemplate.this.onDeleteValue(target);
+            }
+        };
     }
-    
+
     private AjaxLink addLink(String id, final JcrPropertyModel model) {
         return new AjaxLink(id, model) {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
-                try {
-                    Property prop = model.getProperty();
-                    Value[] oldValues = prop.getValues();
-                    String[] newValues = new String[oldValues.length+1];
-                    for (int i = 0; i < oldValues.length; i++) {
-                        newValues[i] = oldValues[i].getString();
-                    }
-                    newValues[oldValues.length] = "...";
-                    prop.setValue(newValues);
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                }
-                engine.onChange(target);
+                ValueTemplate.this.onAddValue(target);
             }
         };
     }

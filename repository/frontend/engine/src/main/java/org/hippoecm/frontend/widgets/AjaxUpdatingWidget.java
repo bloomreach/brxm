@@ -36,9 +36,14 @@ public abstract class AjaxUpdatingWidget extends Panel {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onUpdate(AjaxRequestTarget target) {}
+            protected void onUpdate(AjaxRequestTarget target) {
+                AjaxUpdatingWidget.this.onUpdate(target);
+            }
         });
         
     }
     
+    // callback for subclasses
+    protected void onUpdate(AjaxRequestTarget target) {
+    }
 }
