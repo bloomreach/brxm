@@ -107,7 +107,7 @@
             <sv:value>/facetreference-demo/documents</sv:value>
             <sv:value>/facetreference-demo/documents/articles</sv:value>
             <sv:value>/facetreference-demo/documents/articles/war-of-the-worlds</sv:value>
-            <sv:value>/facetreference-demo/documents/articles/war-of-the-worlds/war-of-the-worlds</sv:value>
+            <sv:value>/facetreference-demo/documents/articles/war-of-the-worlds/war-of-the-worlds[2]</sv:value>
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>dutch</sv:value>
@@ -151,7 +151,7 @@
             <sv:value>/facetreference-demo/documents</sv:value>
             <sv:value>/facetreference-demo/documents/articles</sv:value>
             <sv:value>/facetreference-demo/documents/articles/nineteeneightyfour</sv:value>
-            <sv:value>/facetreference-demo/documents/articles/nineteeneightyfour/nineteeneightyfour</sv:value>
+            <sv:value>/facetreference-demo/documents/articles/nineteeneightyfour/nineteeneightyfour[2]</sv:value>
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
