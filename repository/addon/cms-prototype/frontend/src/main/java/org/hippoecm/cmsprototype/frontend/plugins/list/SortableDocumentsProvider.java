@@ -16,16 +16,19 @@
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 
 /**
  * For a given JCR node, provides the document handles among its children.
@@ -37,31 +40,52 @@ public class SortableDocumentsProvider extends SortableDataProvider {
     private static final long serialVersionUID = 1L;
     
     Folder folder;
+    List<NodeModelWrapper> resources;
     
     public SortableDocumentsProvider(JcrNodeModel model) {
         this.folder = new Folder(model);
-        //setSort("name", true);
+        setSort("name", true);
     }
 
-    public Iterator<Node> iterator(int first, int count) {
+    public Iterator<NodeModelWrapper> iterator(int first, int count) {
         // TODO replace with a more efficient implementation
-        List<Node> list = new ArrayList<Node>();
+        List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
+        resources = new ArrayList<NodeModelWrapper>();
+        resources.addAll(folder.getSubFoldersAndDocuments());
+        sortResources();
         int i = 0;
-        for (Iterator<Document> documents = folder.getDocuments().iterator(); documents.hasNext(); i++) {
-            Document doc = documents.next();
+        for (Iterator<NodeModelWrapper> iterator = resources.iterator(); iterator.hasNext(); i++) {
+            NodeModelWrapper doc = iterator.next();
             if (i >= first && i < (first + count)) {
-                list.add(doc.getNodeModel().getNode());
+                list.add(doc);
             }
         }
         return list.iterator();
     }
 
     public IModel model(Object object) {
-        return new JcrNodeModel(folder.getNodeModel(), (Node) object);
+        return (NodeModelWrapper) object;
     }
 
     public int size() {
-        return folder.getDocuments().size();
+        return folder.getSubFoldersAndDocuments().size();
+    }
+    
+    private void sortResources() {
+        Collections.sort(resources, new Comparator<NodeModelWrapper>() {
+
+            public int compare(NodeModelWrapper o1, NodeModelWrapper o2) {
+                    try {
+                        return String.CASE_INSENSITIVE_ORDER.compare(o1.getNodeModel().getNode().getName(), o2.getNodeModel().getNode().getName());
+                    } catch (RepositoryException e) {
+                        return 0;
+                    }
+            }
+        });
+        
+        if (getSort().isAscending() == false) {
+            Collections.reverse(resources);
+        }
     }
 
 }

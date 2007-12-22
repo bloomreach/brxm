@@ -20,7 +20,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginEvent;
@@ -29,7 +29,7 @@ import org.hippoecm.frontend.plugin.PluginManager;
 public class NodeCell extends Panel {
     private static final long serialVersionUID = 1L;
 
-    public NodeCell(String id, JcrNodeModel model) {
+    public NodeCell(String id, NodeModelWrapper model) {
         super(id, model);
         AjaxLink link = new AjaxLink("link", model) {
             private static final long serialVersionUID = 1L;
@@ -38,8 +38,8 @@ public class NodeCell extends Panel {
             public void onClick(AjaxRequestTarget target) {
                 Plugin owningPlugin = (Plugin)findParent(Plugin.class);
                 PluginManager pluginManager = owningPlugin.getPluginManager();      
-                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, (JcrNodeModel) this.getModel());
-                pluginManager.update(target, event); 
+                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, ((NodeModelWrapper)this.getModel()).getNodeModel());
+                pluginManager.update(target, event);
             }
         
         };
