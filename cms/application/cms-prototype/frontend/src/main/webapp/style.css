@@ -44,6 +44,19 @@ table {
   background:#ffffff;
 }
 
+th {
+  text-align:left;
+  background-color:lightgrey;
+}
+
+tr.even {
+  background-color:#ffffff;
+}
+
+tr.odd {
+  background-color:#eeeeff;
+}
+
 /* TAB PANEL STYLES */
 
 div.tabpanel div.tab-row{
