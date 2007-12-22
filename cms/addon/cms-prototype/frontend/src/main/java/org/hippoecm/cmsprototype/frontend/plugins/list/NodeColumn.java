@@ -19,6 +19,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColu
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 
 public class NodeColumn extends PropertyColumn {
     private static final long serialVersionUID = 1L;
@@ -34,7 +35,7 @@ public class NodeColumn extends PropertyColumn {
     @Override
     public void populateItem(Item item, String componentId, IModel model)
     {
-        item.add(new NodeCell(componentId, (JcrNodeModel) model));
+        item.add(new NodeCell(componentId, (NodeModelWrapper) model));
     }
 
     

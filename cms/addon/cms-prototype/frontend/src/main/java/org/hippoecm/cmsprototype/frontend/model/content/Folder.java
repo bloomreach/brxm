@@ -51,6 +51,15 @@ public class Folder extends NodeModelWrapper {
         return documents;
     }
     
+    public List<NodeModelWrapper> getSubFoldersAndDocuments() {
+        ensureSubFoldersAreLoaded();
+        ensureDocumentsAreLoaded();
+        List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
+        list.addAll(subFolders);
+        list.addAll(documents);
+        return list;
+    }
+    
     
     private void ensureDocumentsAreLoaded() {
         if (documents == null) {

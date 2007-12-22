@@ -21,8 +21,10 @@ import java.util.List;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -39,8 +41,10 @@ public class DocumentListingPlugin extends Plugin {
         super(pluginDescriptor, model, parentPlugin);
 
         columns = new ArrayList<IStyledColumn>();
-        //columns.add(new PropertyColumn(new Model("Name"), "name"));
         columns.add(new NodeColumn(new Model("Name"), "name", "name"));
+        columns.add(new PropertyColumn(new Model("Type"), "name"));
+        columns.add(new PropertyColumn(new Model("Date"), "name"));
+        columns.add(new PropertyColumn(new Model("State"), "name"));
 
         dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(model), 10);
         add(dataTable);
