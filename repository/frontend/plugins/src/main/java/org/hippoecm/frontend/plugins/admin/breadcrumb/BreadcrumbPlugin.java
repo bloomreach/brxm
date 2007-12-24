@@ -30,21 +30,15 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 public class BreadcrumbPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private String nodePath;
-
     public BreadcrumbPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        nodePath = model.getItemModel().getPath();
-        add(new Label("path", new PropertyModel(this, "nodePath")));
+        add(new Label("path", new PropertyModel(this, "model.node.path")));
     }
 
     public void update(AjaxRequestTarget target, PluginEvent event) {
         JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
         if (newModel != null) {
-            JcrNodeModel nodeModel = newModel;
-            setNodeModel(nodeModel);
-            nodePath = nodeModel.getItemModel().getPath();
+            setNodeModel(newModel);
         }
         if (target != null && findPage() != null) {
             target.addComponent(this);
