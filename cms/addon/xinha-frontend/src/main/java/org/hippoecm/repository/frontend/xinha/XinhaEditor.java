@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.frontend.xinha;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -24,39 +25,28 @@ import java.util.Vector;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.collections.MiniMap;
-import org.apache.wicket.util.template.TextTemplateHeaderContributor;
-
-import org.apache.wicket.markup.ComponentTag;
 
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 
-public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
-    implements IHeaderContributor
+public class XinhaEditor extends Panel
 {
     private static final long serialVersionUID = 1L;
 
     private String content;
-
     private TextArea editor;
-    private XinhaEditorConf editorConf;
-
-    private final AbstractDefaultAjaxBehavior postBehaviour;
-    private XinhaEditorConfigurationBehaviour bh;
+    private Configuration configuration;
+    private XinhaEditorBehavior sharedBehavior;
+    private AbstractDefaultAjaxBehavior postBehavior;
 
     public String getContent() {
         return content;
@@ -66,12 +56,18 @@ public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
         this.content = content;
     }
 
+    @Override
+    public Component setModel(IModel model) {
+        editor.setModel(model);
+        return super.setModel(model);
+    }
+
     public XinhaEditor(final String id, JcrPropertyValueModel model) {
         super(id, model);
 
         editor = new TextArea("value", getModel());
 
-        postBehaviour = new AbstractDefaultAjaxBehavior() {
+        postBehavior = new AbstractDefaultAjaxBehavior() {
                 private static final long serialVersionUID = 1L;
 
                 protected void onComponentTag(ComponentTag tag) {
@@ -92,54 +88,103 @@ public class XinhaEditor extends AjaxUpdatingWidget /*Panel*/
 
         editor.setOutputMarkupId(true);
         editor.setVisible(true);
-        editor.add(postBehaviour);
+        editor.add(postBehavior);
+        add(this . new XinhaHeaderContributor());
         add(editor);
 
-        editorConf = new XinhaEditorConf();
+        configuration = this . new Configuration();
+        configuration.setPlugins(new String[] { "CharacterMap", "ContextMenu", "ListType", "SpellChecker",
+                                                "SuperClean", "Stylist","TableOperations", "SaveSubmit" });
     }
 
     public void onBeforeRender() {
-        if (bh == null) {
+        if (sharedBehavior == null) {
             Page page = findPage();
-            List bhs = page.getBehaviors();
-            for(Iterator iter = bhs.iterator(); iter.hasNext(); ) {
+            for(Iterator iter = page.getBehaviors().iterator(); iter.hasNext(); ) {
                 IBehavior behavior = (IBehavior) iter.next();
-                if(behavior instanceof XinhaEditorConfigurationBehaviour) {
-                    bh = (XinhaEditorConfigurationBehaviour) behavior;
+                if(behavior instanceof XinhaEditorBehavior) {
+                    sharedBehavior = (XinhaEditorBehavior) behavior;
                     break;
+                }
             }
-            }
-            if(bh == null) {
-                bh = new XinhaEditorConfigurationBehaviour();
-                // page.add(bh);
+            if(sharedBehavior == null) {
+                sharedBehavior = new XinhaEditorBehavior(page);
             }
         }
 
-        editorConf.setName(editor.getMarkupId());
-        editorConf.setPlugins(new String[] { "CharacterMap", "ContextMenu", "ListType", "SpellChecker",
-                                             "Stylist", "SuperClean", "TableOperations", "SaveSubmit" });
-        Map conf = new Hashtable();
-        conf.put("postUrl", postBehaviour.getCallbackUrl());
-        editorConf.setConfiguration(conf);
-        bh.addConfiguration(editorConf);
+        configuration.setName(editor.getMarkupId());
+        Map m = new Hashtable();
+        m.put("postUrl", postBehavior.getCallbackUrl());
+        configuration.setConfiguration(m);
+
+        sharedBehavior.register(configuration);
 
         super.onBeforeRender();
     }
 
-    public void init() {
+    protected void onDetach() {
+        super.onDetach();
+        sharedBehavior.unregister(configuration);
     }
 
-    public void renderHead(IHeaderResponse response)
-    {
-        IHeaderContributor[] contribs = bh.getHeaderContributors();
-        for(int i=0; i<contribs.length; i++) {
-            contribs[i].renderHead(response);
+    class XinhaHeaderContributor extends AbstractHeaderContributor {
+        public final IHeaderContributor[] getHeaderContributors() {
+            return sharedBehavior.getHeaderContributorsPartly();
+        }
+        public void onComponentTag(Component component, ComponentTag tag) {
+            super.onComponentTag(component, tag);
+            sharedBehavior.resetPartly();
         }
     }
 
-    @Override
-    public Component setModel(IModel model) {
-        editor.setModel(model);
-        return super.setModel(model);
+    class Configuration implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private String name = null;
+        private String[] plugins = null;
+        private Map configuration = null;
+
+        public Configuration() {
+        }
+
+        public void setPlugins(String[] plugins) {
+            this.plugins = plugins;
+        }
+
+        public String[] getPlugins() {
+            return plugins;
+        }
+
+        public void setConfiguration(Map configuration) {
+            this.configuration = configuration;
+        }
+
+        public Map getConfiguration() {
+            return configuration;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof Configuration) {
+                if (name != null) {
+                    return name.equals(((Configuration) o).getName());
+                } else {
+                    return ((Configuration) o).getName() == null;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        public int hashCode() {
+            return name.hashCode();
+        }
     }
 }
