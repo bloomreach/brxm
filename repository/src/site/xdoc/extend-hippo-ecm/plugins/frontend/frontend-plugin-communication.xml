@@ -109,21 +109,10 @@ getPluginManager().update(target, event);]]>
           Example:
         </p>
         <source>
-<![CDATA[<sv:node sv:name="browserPlugin">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:frontendplugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:renderer" sv:type="String">
-    <sv:value>org.hippoecm.cmsprototype.frontend.plugins.foldertree.FolderTreePlugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:incoming" sv:type="String">
-    <sv:value>browsing</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:outgoing" sv:type="String">
-    <sv:value>browsing</sv:value>
-    <sv:value>details</sv:value>
-  </sv:property>
-</sv:node>]]>
+browserPlugin: [hippo:frontendplugin]
+  hippo:renderer: org.hippoecm.cmsprototype.frontend.plugins.foldertree.FolderTreePlugin
+  hippo:incoming: {browsing}
+  hippo:outcoming: {browsing, details}
         </source>
         <p>
           The example above shows the configuration for a "browser plugin". In addition to the
