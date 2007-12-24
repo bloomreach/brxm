@@ -33,41 +33,93 @@
         Customizing Hippo CMS comes down to extending the standards plugins, and/or writing your own,
         and configuring them to form your own custom application.
       </p>
-
-      <p>
-        Plugins are aware of the JCR context for the page and are notified when it changes.  This occurs
-        for example when the page contains a BrowserPlugin.  When a node is selected on the (JCR) tree,
-        all plugins will be notified.  This mechanism is e.g. used to show the workflow plugin for nodes that
-        have a workflow.
-      </p>
-
-      <p>
-        Frontend plugins extend the Wicket component model.  Wicket HTML fragments 
-        can contain references to plugins that are not added explicitly in the Java code.  Instead,
-        these references are resolved by the configuration in the Hippo repository.
-      </p>
-
-      <p>
-        The configuration is stored in nodes of (primary) type hippo:frontendplugin.
-        The property hippo:renderer determines what Java class is instantiated.
-      </p>
-
-      <subsection name="Pages">
+      
+      <subsection name="Customization by configuration">
+      
         <p>
-          Web applications that are completely configured from the repository consist of one page,
-          "Home".  The configuration can be found under the repository node
-          <!-- FIXME Frank: link to repo viewer in demo war -->
+          Frontend plugins extend the Wicket component model.  Wicket HTML fragments 
+          can contain references to plugins that are not added explicitly in the Java code. Instead,
+          these references are resolved by the configuration in the repository.
+        </p>
+        
+        <p>
+          Example: suppose we have an ordinary Wicket panel called RootPanel, which contains three child
+          panels: a ListPanel, a TreePanel and a SimplePanel. The child panels would need to be added
+          explicitly in code, for example in the constructor or RootPanel:
         </p>
 <source>
-/hippo:configuration/hippo:frontend/default
+class RootPanel extends Panel {          
+
+  public RootPanel {
+    add("list", new ListPanel());
+    add("tree", new TreePanel());
+    add("custom", new SimplePanel());
+  }        
+
+}
+</source>
+        <p>
+          This means that replacing SimplePanel with e.g. AdvancedPanel implies recompilation
+          of the code. Frontend plugins however need not be added explicitly in code, so if we make
+          our RootPanel a RootPlugin, its constructor can remain empty:
+        </p>
+<source>
+class RootPlugin extends Plugin {
+
+  public RootPlugin() {
+  
+  }        
+
+}
+</source>
+        <p>
+          The child plugins are added instead through configuration:
+        </p>
+<source>
+root:
+  class = org.example.RootPlugin
+  children = {list, tree, custom}
+list:
+  class = org.example.ListPlugin
+  children = {}
+tree:
+  class = org.example.TreePlugin
+  children = {}
+custom:
+  class = org.example.SimplePlugin
+  children = {}
+</source>
+        <p>
+          Changing the SimplePlugin to an AdvancedPlugin now only involves changing the configuration.
+          No recompilation is needed.
+        </p>
+        <p>
+          This configuration is stored in the repository in nodes of (primary) type <b>hippo:frontendplugin</b>.
+          The property <b>hippo:renderer</b> determines what Java class is instantiated.
+        </p>
+      </subsection>
+
+      <subsection name="Applications">
+        <p>
+          Web applications that are completely configured from the repository consist of one page,
+          "Home". Each application's plugin configuration is stored in the repository under
+          <b>/hippo:configuration/hippo:frontend</b>. The example below shows two
+          application configurations ("foo" and "bar").
+        </p>
+<source>
+[repository root]
+`-- hippo:configuration
+    `-- hippo:frontend
+        |-- foo [hippo:page]
+        `-- bar [hippo:page]
 </source>
       </subsection>
 
-      <subsection name="Root plugin">
+      <subsection name="Plugins">
         <p>
-          The Home page in the application has a root plugin that is loaded when Wicket tries
-          to render it.  This plugin must be a subclass of org.hippoecm.frontend.plugin.Plugin,
-          itself a Wicket Panel <!-- FIXME Frank: link to API docs -->.  An example:
+          The Home page in each application always has a root plugin that is loaded when Wicket tries
+          to render it. This plugin must be a subclass of org.hippoecm.frontend.plugin.Plugin,
+          itself a Wicket Panel. An example:
         </p>
 <source>
 public class RootPlugin extends Plugin {
@@ -105,13 +157,24 @@ public class RootPlugin extends Plugin {
 [repository root]
 `-- configuration
     `-- frontend
-        `-- default [hippo:page]
+        `-- application [hippo:page]
             `-- RootPlugin [hippo:frontendplugin]
                 `-- subPlugin [hippo:frontendplugin]
 </source>
+        <p>
+          Both hippo:frontendplugin nodes, RootPlugin and subPlugin, need to have a property
+          <b>hippo:renderer</b>, which contains the full class name of the plugin.
+        </p>
       </subsection>
       
       <subsection name="JcrNodeModel">
+        <p>
+          Plugins are aware of the JCR context for the page and are 
+          <a href="frontend-plugin-communication.html">notified when it changes</a>. This occurs
+          for example when the page contains a BrowserPlugin. When a node is selected on the (JCR) tree,
+          other plugins are notified. This mechanism is e.g. used to show the workflow plugin for nodes that
+          have a workflow.
+        </p>
         <p>
           A plugin's model is a JcrNodeModel, which is an IModel representing a node in the
           JCR repository. Internally a plugin can have its own model wrapping the JcrNodeModel
