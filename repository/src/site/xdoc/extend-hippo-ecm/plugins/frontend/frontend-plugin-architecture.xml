@@ -110,6 +110,15 @@ public class RootPlugin extends Plugin {
                 `-- subPlugin [hippo:frontendplugin]
 </source>
       </subsection>
+      
+      <subsection name="JcrNodeModel">
+        <p>
+          A plugin's model is a JcrNodeModel, which is an IModel representing a node in the
+          JCR repository. Internally a plugin can have its own model wrapping the JcrNodeModel
+          (the class NodeModelWrapper can be extended for this purpose). 
+        </p>
+      </subsection>
+      
     </section>
   </body>
 </document>

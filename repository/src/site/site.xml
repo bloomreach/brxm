@@ -81,7 +81,8 @@
         <item name="Plugins" href="/extend-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extend-hippo-ecm/plugins/repository/index.html"></item>
           <item name="Frontend Plugins" href="/extend-hippo-ecm/plugins/frontend/index.html" collapse="true">
-            <item name="Frontend Plugin Architecture" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
+            <item name="Architecture" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
+            <item name="Communication" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-communication.html"/>
           </item>
         </item>
         <item name="Hello World" href="/extend-hippo-ecm/hello-world.html"/>
