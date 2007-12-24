@@ -24,6 +24,10 @@
     <body>
       <section name="Frontend Plugins">
         
+        <p>
+          Hippo ECM offers a fully customizable GUI by means of a frontend plugin architecture.
+        </p>
+        
         <ul>
           <li>
             <a href="frontend-plugin-architecture.html">Frontend Plugin Architecture</a>
