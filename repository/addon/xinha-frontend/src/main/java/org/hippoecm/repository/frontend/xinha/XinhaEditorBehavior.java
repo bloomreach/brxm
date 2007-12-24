@@ -20,29 +20,59 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Page;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-
-public class XinhaEditorConfigurationBehaviour extends AbstractHeaderContributor
+class XinhaEditorBehavior extends AbstractHeaderContributor
 {
     private static final long serialVersionUID = 1L;
 
+    private Page page;
     private Set configurations;
+    private int partlyCount = 0;
 
-    public XinhaEditorConfigurationBehaviour() {
+    XinhaEditorBehavior(Page page) {
         configurations = new HashSet();
+        this.page = page;
+        page.add(this);
     }
 
-    public void addConfiguration(XinhaEditorConf o) {
-        configurations.add(o);
+    void register(XinhaEditor.Configuration conf) {
+        configurations.add(conf);
+    }
+
+    void unregister(XinhaEditor.Configuration conf) {
+        if(configurations.contains(conf)) {
+            configurations.remove(conf);
+            if (configurations.size() == 0) {
+                for(Iterator iter = page.getBehaviors().iterator(); iter.hasNext(); ) {
+                    IBehavior behavior = (IBehavior) iter.next();
+                    if(behavior == this) {
+                        page.remove(this);
+                    }
+                }
+            }
+        }
     }
 
     public final IHeaderContributor[] getHeaderContributors() {
+        return null;
+    }
+
+    void resetPartly() {
+        partlyCount = 0;
+    }
+
+    IHeaderContributor[] getHeaderContributorsPartly() {
+
+        if (++partlyCount != configurations.size()) {
+            return null;
+        }
+
         return new IHeaderContributor[] {
 
             new IHeaderContributor() {
@@ -62,10 +92,10 @@ public class XinhaEditorConfigurationBehaviour extends AbstractHeaderContributor
                 public void renderHead(IHeaderResponse response) {
                     StringBuffer sb = new StringBuffer();
                     Set plugins = new HashSet();
-                    for(Iterator iter = configurations.iterator(); iter.hasNext(); ) {
-                        XinhaEditorConf conf = (XinhaEditorConf) iter.next();
+                    for (Iterator iter = configurations.iterator(); iter.hasNext(); ) {
+                        XinhaEditor.Configuration conf = (XinhaEditor.Configuration) iter.next();
                         String[] plugin = conf.getPlugins();
-                        for(int i=0; i<plugin.length; i++)
+                        for (int i=0; i<plugin.length; i++)
                             plugins.add(plugin[i]);
                     }
 
@@ -77,22 +107,22 @@ public class XinhaEditorConfigurationBehaviour extends AbstractHeaderContributor
                     sb.append("{\n");
                     sb.append("  xinha_editors = xinha_editors ? xinha_editors :\n");
                     sb.append("  [\n");
-                    for(Iterator iter = configurations.iterator(); iter.hasNext(); ) {
+                    for (Iterator iter = configurations.iterator(); iter.hasNext(); ) {
                         sb.append("    '");
-                        sb.append(((XinhaEditorConf)iter.next()).getName());
+                        sb.append(((XinhaEditor.Configuration)iter.next()).getName());
                         sb.append("'");
-                        if(iter.hasNext())
+                        if (iter.hasNext())
                             sb.append(",");
                         sb.append("\n");
                     }
                     sb.append("  ];\n");
                     sb.append("  xinha_plugins = xinha_plugins ? xinha_plugins :\n");
                     sb.append("  [\n");
-                    for(Iterator iter = plugins.iterator(); iter.hasNext(); ) {
+                    for (Iterator iter = plugins.iterator(); iter.hasNext(); ) {
                         sb.append("    '");
                         sb.append((String)iter.next());
                         sb.append("'");
-                        if(iter.hasNext())
+                        if (iter.hasNext())
                             sb.append(",");
                         sb.append("\n");
                     }

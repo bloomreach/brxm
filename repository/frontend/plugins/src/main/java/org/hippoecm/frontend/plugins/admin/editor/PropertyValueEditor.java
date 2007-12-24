@@ -68,40 +68,8 @@ public class PropertyValueEditor extends DataView {
             } else {
                 String value = valueModel.getObject().toString();
                 if (value.contains("\n") || value.length() > 80 || value.contains("<html>")) {
-		    /* HREPTWO-334: Ugly, but effective way to get a Xinha add-on in place at this
-		     * time.  This should be merged with the template engine, as the template
-		     * engine is the one which determins which Widget to use.
-		     */
-                    if (value.contains("<html>")) {
-                        try {
-                            // HtmlEditorFactory.createHtmlEditor(, item.getPage()
-                            // XinhaEditor editor = new XinhaEditor("value", valueModel);
-                            Class clazz = Class.forName("org.hippoecm.repository.frontend.xinha.XinhaEditor");
-                            java.lang.reflect.Constructor constructor = clazz.getConstructor(new Class[] { String.class, JcrPropertyValueModel.class });
-                            Panel editor = (Panel) constructor.newInstance(new Object[] { "value", valueModel });
-                            item.add(editor);
-                            java.lang.reflect.Method method = clazz.getMethod("init", new Class[] { });
-                            method.invoke(editor, new Object[] { });
-                        } catch(ClassNotFoundException ex) {
-                            System.err.println(ex.getMessage());
-                            ex.printStackTrace(System.err);
-                        } catch(InstantiationException ex) {
-                            System.err.println(ex.getMessage());
-                            ex.printStackTrace(System.err);
-                        } catch(NoSuchMethodException ex) {
-                            System.err.println(ex.getMessage());
-                            ex.printStackTrace(System.err);
-                        } catch(IllegalAccessException ex) {
-                            System.err.println(ex.getMessage());
-                            ex.printStackTrace(System.err);
-                        } catch(java.lang.reflect.InvocationTargetException ex) {
-                            System.err.println(ex.getMessage());
-                            ex.printStackTrace(System.err);
-                        }
-                    } else {
-                        TextAreaWidget editor = new TextAreaWidget("value", valueModel);
-                        item.add(editor);
-                    }
+                    TextAreaWidget editor = new TextAreaWidget("value", valueModel);
+                    item.add(editor);
                 } else {
                     TextFieldWidget editor = new TextFieldWidget("value", valueModel);
                     item.add(editor);
