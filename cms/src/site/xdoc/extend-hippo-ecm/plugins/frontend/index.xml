@@ -28,6 +28,9 @@
           <li>
             <a href="frontend-plugin-architecture.html">Frontend Plugin Architecture</a>
           </li>
+          <li>
+            <a href="frontend-plugin-architecture.html">Frontend Plugin Communication</a>
+          </li>
         </ul>
         
       </section>
