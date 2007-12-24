@@ -68,7 +68,6 @@ hippo-ecm                    Pom       hippo-ecm
 |       |-- frontend         War       hippo-ecm-application-cms-prototype-frontend
 |       |-- repository       War       hippo-ecm-application-cms-prototype-repository
 |       `-- test             Jar       hippo-ecm-application-cms-prototype-test               				
-|-- documentation            Jar       hippo-ecm-documentation
 |-- frontend                 Pom       hippo-ecm-frontend
 |   |-- engine               Jar       hippo-ecm-frontend-engine
 |   |-- application          War       hippo-ecm-frontend-application
