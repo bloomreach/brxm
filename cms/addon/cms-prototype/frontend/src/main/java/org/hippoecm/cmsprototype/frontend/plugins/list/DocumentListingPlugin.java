@@ -32,6 +32,8 @@ import org.hippoecm.frontend.plugin.PluginEvent;
 
 public class DocumentListingPlugin extends Plugin {
 
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
     private static final long serialVersionUID = 1L;
     
     AjaxFallbackDefaultDataTable dataTable;
@@ -46,7 +48,7 @@ public class DocumentListingPlugin extends Plugin {
         columns.add(new PropertyColumn(new Model("Date"), "name"));
         columns.add(new PropertyColumn(new Model("State"), "name"));
 
-        dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(model), 10);
+        dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(model), DEFAULT_PAGE_SIZE);
         add(dataTable);
     }
 
@@ -55,7 +57,7 @@ public class DocumentListingPlugin extends Plugin {
         if (nodeModel != null) {
             setModel(nodeModel);
             remove(dataTable);
-            dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(nodeModel), 10);
+            dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(nodeModel), DEFAULT_PAGE_SIZE);
             add(dataTable);
         }
         if (target != null && findPage() != null) {
