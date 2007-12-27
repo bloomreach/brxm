@@ -35,8 +35,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.PluginManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,21 +56,17 @@ public class AddNewWizard extends Plugin {
 
     public AddNewWizard(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        AddNewForm form = new AddNewForm("addNewForm"); 
+        final AddNewForm form = new AddNewForm("addNewForm"); 
         add(new FeedbackPanel("feedback"));
 
         form.add(new AjaxEventBehavior("onsubmit") {
             private static final long serialVersionUID = 1L;
-
+            
             @Override
             protected void onEvent(AjaxRequestTarget target) {
-                System.out.println("form onsubmit ajax update");
-//                Plugin owningPlugin = (Plugin)findParent(Plugin.class);
-//                PluginManager pluginManager = owningPlugin.getPluginManager();      
-//                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, (JcrNodeModel) getModel());
-//                pluginManager.update(target, event);
+                // FIXME save ajax request target so it can be used in onSubmit()
+                form.setTarget(target);
             }
-
             
         });
     
@@ -79,7 +78,8 @@ public class AddNewWizard extends Plugin {
         private static final long serialVersionUID = 1L;
         
         private ValueMap properties;
-        
+        transient private AjaxRequestTarget target;
+
         public AddNewForm(String id) {
             super(id);
             properties = new ValueMap();
@@ -96,13 +96,30 @@ public class AddNewWizard extends Plugin {
             
         }
         
+        public void setTarget(AjaxRequestTarget target) {
+            this.target = target;
+        }
+        
         @Override
         protected void onSubmit() {
-            System.out.println("form onsubmit");
-            createDocument();
-            error("Document created");
+            Node doc = createDocument();
             
-            // TODO: send GUI event so browser perspective can update
+            if (doc != null && target != null) {
+                
+                // FIXME target is now available so an update event can be sent but how to get the correct JcrNodeModel?
+                
+                JcrNodeModel model = new JcrNodeModel(null, doc); // who is my parent??
+                
+                Plugin owningPlugin = (Plugin)findParent(Plugin.class);
+                PluginManager pluginManager = owningPlugin.getPluginManager();      
+                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, model);
+                event.chainEvent(JcrEvent.NEEDS_RELOAD, owningPlugin.getNodeModel().findRootModel() );
+                pluginManager.update(target, event);
+                
+            }
+            
+            properties.clear();
+            
         }
         
         private List<String> getTemplates() {
@@ -128,14 +145,21 @@ public class AddNewWizard extends Plugin {
             return templates;
         }
 
-        private void createDocument() {
+        private Node createDocument() {
             UserSession session = (UserSession) Session.get();
+            Node result = null;
 
             try {
                 Node rootNode = session.getRootNode();
-
-                Node typeNode = rootNode.addNode((String)properties.get("template"), "nt:unstructured");
+                Node typeNode;
+                if (rootNode.hasNode((String)properties.get("template"))) {
+                    typeNode = rootNode.getNode((String)properties.get("template"));
+                }
+                else {
+                    typeNode = rootNode.addNode((String)properties.get("template"), "nt:unstructured");
+                }
                 Node handle = typeNode.addNode((String)properties.get("name"), HippoNodeType.NT_HANDLE);
+                result = handle;
                 Node doc = handle.addNode((String)properties.get("name"), (String)properties.get("template"));
                 doc.setProperty("state", "unpublished");
                 
@@ -162,6 +186,7 @@ public class AddNewWizard extends Plugin {
                 log.error(e.getMessage());
             }
             
+            return result;
         }
         
         
