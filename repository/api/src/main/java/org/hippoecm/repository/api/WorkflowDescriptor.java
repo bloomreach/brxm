@@ -17,17 +17,25 @@ package org.hippoecm.repository.api;
 
 import java.io.Serializable;
 
-public abstract class WorkflowDescriptor implements Serializable {
+import javax.jcr.RepositoryException;
 
-    protected String displayName;
-    protected String rendererName;
-    protected String serviceName;
+public interface WorkflowDescriptor {
 
-    public String getDisplayName() {
-        return displayName;
-    }
+    /**
+     * Conveniance method to obtain the human-interpretable display name of
+     * this workflow.
+     *
+     * @returns a description of the workflow
+     */
+    public String getDisplayName() throws RepositoryException;
 
-    public String getRendererName() {
-        return rendererName;
-    }
+    /**
+     * Conveniance method to access class name to be used by a front-end
+     * application to access the workflow.  This front-end class is not part
+     * of the repository interface.
+     *
+     * @returns classname of the class to be instantiated for the workflow
+     * rendering in a front-end.
+     */
+    public String getRendererName() throws RepositoryException;
 }

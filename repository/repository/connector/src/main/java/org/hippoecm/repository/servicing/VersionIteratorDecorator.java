@@ -21,7 +21,7 @@ import javax.jcr.version.VersionIterator;
 
 /**
  */
-public class DecoratingVersionIterator extends DecoratingRangeIterator implements VersionIterator {
+public class VersionIteratorDecorator extends RangeIteratorDecorator implements VersionIterator {
 
     /**
      * Creates a decorating version iterator.
@@ -30,7 +30,7 @@ public class DecoratingVersionIterator extends DecoratingRangeIterator implement
      * @param session decorated session
      * @param iterator underlying version iterator
      */
-    public DecoratingVersionIterator(DecoratorFactory factory, Session session, VersionIterator iterator) {
+    public VersionIteratorDecorator(DecoratorFactory factory, Session session, VersionIterator iterator) {
         super(factory, session, iterator);
     }
 

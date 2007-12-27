@@ -51,6 +51,6 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
      */
     public NodeIterator getNodes() throws RepositoryException {
         NodeIterator nodes = result.getNodes();
-        return new DecoratingNodeIterator(factory, session, nodes);
+        return new NodeIteratorDecorator(factory, session, nodes);
     }
 }

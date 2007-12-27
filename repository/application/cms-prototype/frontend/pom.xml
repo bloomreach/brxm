@@ -91,7 +91,6 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>runtime</scope>
     </dependency>
-
     <!-- following dependencies need to be reviewed as part of HREPTWO-208 -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -118,11 +117,6 @@
               <port>8082</port>
             </connector>
           </connectors>
-	  <!-- systemProperties>
-	    <systemProperty>
-	      <name>java.rmi.server.codebase</name><value>file:///home/berry/.m2/repository/org/hippoecm/hippo-ecm-repository-engine/2.01.00-dev/hippo-ecm-repository-engine-2.01.00-dev.jar</value>
-	    <systemProperty>
-	  </systemProperties -->
           <contextPath>/</contextPath>
         </configuration>
         <dependencies>

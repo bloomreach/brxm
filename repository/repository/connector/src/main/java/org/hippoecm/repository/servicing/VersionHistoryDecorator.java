@@ -55,7 +55,7 @@ public class VersionHistoryDecorator extends ServicingNodeImpl implements Versio
      * @inheritDoc
      */
     public VersionIterator getAllVersions() throws RepositoryException {
-        return new DecoratingVersionIterator(factory, session, versionHistory.getAllVersions());
+        return new VersionIteratorDecorator(factory, session, versionHistory.getAllVersions());
     }
 
     /**

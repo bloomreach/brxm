@@ -25,10 +25,13 @@ import javax.jcr.ValueFormatException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
-public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serializable {
+final class WorkflowDescriptorImpl implements WorkflowDescriptor {
 
     String nodeAbsPath;
     String category;
+    protected String displayName;
+    protected String rendererName;
+    protected String serviceName;
 
     WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Node item) throws RepositoryException {
         this.category = category;
@@ -44,6 +47,14 @@ public class WorkflowDescriptorImpl extends WorkflowDescriptor implements Serial
             manager.log.error("Workflow specification corrupt on node " + nodeAbsPath);
             throw new RepositoryException("workflow specification corrupt", ex);
         }
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getRendererName() {
+        return rendererName;
     }
 
     public String toString() {

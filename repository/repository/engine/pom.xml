@@ -51,10 +51,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-jcr-rmi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-classloader</artifactId>
     </dependency>
     <dependency>
@@ -200,36 +196,6 @@
           <source>1.5</source>
           <target>1.5</target>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>process-classes-rmic</id>
-            <phase>process-classes</phase>
-            <configuration>
-              <tasks>
-                <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/servicing/WorkflowImpl.class"/>
-                <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/servicing/server/Server*.class"
-                      classpathref="maven.compile.classpath"/>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>jpox</groupId>
