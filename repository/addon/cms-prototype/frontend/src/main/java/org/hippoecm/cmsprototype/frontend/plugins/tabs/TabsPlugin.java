@@ -100,7 +100,4 @@ public class TabsPlugin extends Plugin {
             }
         }
     }
-    
-    
-
-}
+ }
