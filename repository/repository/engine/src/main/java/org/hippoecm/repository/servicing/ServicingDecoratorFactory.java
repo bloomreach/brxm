@@ -43,13 +43,13 @@ public class ServicingDecoratorFactory
     private final Logger log = LoggerFactory.getLogger(ServicingDecoratorFactory.class);
 
     protected WeakHashMap<Repository,RepositoryDecorator> repositoryDecorators;
-    protected WeakHashMap<Session,ServicingSessionImpl> sessionDecorators;
-    protected WeakHashMap<Workspace,ServicingWorkspaceImpl> workspaceDecorators;
+    protected WeakHashMap<Session,SessionDecorator> sessionDecorators;
+    protected WeakHashMap<Workspace,WorkspaceDecorator> workspaceDecorators;
 
     public ServicingDecoratorFactory() {
         repositoryDecorators = new WeakHashMap<Repository,RepositoryDecorator>();
-        sessionDecorators = new WeakHashMap<Session,ServicingSessionImpl>();
-        workspaceDecorators = new WeakHashMap<Workspace,ServicingWorkspaceImpl>();
+        sessionDecorators = new WeakHashMap<Session,SessionDecorator>();
+        workspaceDecorators = new WeakHashMap<Workspace,WorkspaceDecorator>();
     }
 
     public Repository getRepositoryDecorator(Repository repository) {
@@ -63,10 +63,10 @@ public class ServicingDecoratorFactory
 
     public Session getSessionDecorator(Repository repository, Session session) {
         if(!sessionDecorators.containsKey(session)) {
-            ServicingSessionImpl wrapper;
+            SessionDecorator wrapper;
             if(session instanceof XASession) {
                 try {
-                    wrapper = new ServicingSessionImpl(this, repository, (XASession)session);
+                    wrapper = new SessionDecorator(this, repository, (XASession)session);
                     sessionDecorators.put(session, wrapper);
                     return wrapper;
                 } catch(RepositoryException ex) {
@@ -74,7 +74,7 @@ public class ServicingDecoratorFactory
                     // fall through
                 }
             }
-            wrapper = new ServicingSessionImpl(this, repository, session);
+            wrapper = new SessionDecorator(this, repository, session);
             sessionDecorators.put(session, wrapper);
             return wrapper;
         } else
@@ -83,7 +83,7 @@ public class ServicingDecoratorFactory
     
     public Workspace getWorkspaceDecorator(Session session, Workspace workspace) {
         if(!workspaceDecorators.containsKey(workspace)) {
-            ServicingWorkspaceImpl wrapper = new ServicingWorkspaceImpl(this, session, workspace);
+            WorkspaceDecorator wrapper = new WorkspaceDecorator(this, session, workspace);
             workspaceDecorators.put(workspace, wrapper);
             return wrapper;
         } else

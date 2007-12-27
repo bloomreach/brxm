@@ -24,7 +24,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.api.HippoSession;
 
 /**
  * JCR Helper methods for creating content in a JCR Repository
@@ -206,7 +206,7 @@ public class JCRHelper {
      * @throws RepositoryException
      */
     public static Node createPublishDocument(Session session, Node doc, Calendar publicationDate) throws RepositoryException {
-        Node published = Utilities.copy(doc, doc.getPath());
+        Node published = ((HippoSession)session).copy(doc, doc.getPath());
         // states [published, unpublished, stale, draft]
         published.setProperty(STATE_PROPERTY, "published");
         return published;

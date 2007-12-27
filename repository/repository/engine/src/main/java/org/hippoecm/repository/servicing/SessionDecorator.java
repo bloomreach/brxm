@@ -31,16 +31,22 @@ import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -48,12 +54,16 @@ import javax.transaction.xa.Xid;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Path;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+
 /**
  */
-public class ServicingSessionImpl implements XASession {
+public class SessionDecorator implements XASession, HippoSession {
     private final static String SVN_ID = "$Id$";
 
     protected final DecoratorFactory factory;
@@ -62,13 +72,13 @@ public class ServicingSessionImpl implements XASession {
 
     protected final Session session;
 
-    ServicingSessionImpl(DecoratorFactory factory, Repository repository, Session session) {
+    SessionDecorator(DecoratorFactory factory, Repository repository, Session session) {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
     }
 
-    ServicingSessionImpl(DecoratorFactory factory, Repository repository, XASession session) throws RepositoryException {
+    SessionDecorator(DecoratorFactory factory, Repository repository, XASession session) throws RepositoryException {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
@@ -209,7 +219,7 @@ public class ServicingSessionImpl implements XASession {
      */
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
-        ServicingWorkspaceImpl wsp = (ServicingWorkspaceImpl) getWorkspace();
+        WorkspaceDecorator wsp = (WorkspaceDecorator) getWorkspace();
         ((WorkflowManagerImpl) wsp.getWorkflowManager()).save();
         session.save();
     }
@@ -347,5 +357,71 @@ public class ServicingSessionImpl implements XASession {
 
     public boolean isLive() {
         return session.isLive();
+    }
+
+    /**
+     * Convenience function to copy a node to a destination path in the same workspace
+     *
+     * @param srcNode the source path node to copy
+     * @param destAbsNodePath the absolute path of the to be created target
+     * node which will be a copy of srcNode
+     * @returns the resulting copy
+     */
+    public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
+      LockException, VersionException, RepositoryException {
+        while (destAbsNodePath.startsWith("/")) {
+            destAbsNodePath = destAbsNodePath.substring(1);
+        }
+        Node destNode = getRootNode();
+        int p = destAbsNodePath.lastIndexOf("/");
+        if(p > 0) {
+            destNode = destNode.getNode(destAbsNodePath.substring(0,p));
+            destAbsNodePath = destAbsNodePath.substring(p+1);
+        }
+        try {
+            destNode = destNode.addNode(destAbsNodePath, srcNode.getPrimaryNodeType().getName());
+            copy(srcNode, destNode);
+            return destNode;
+        } catch(ConstraintViolationException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch(NoSuchNodeTypeException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        }
+    }
+
+    private static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
+        try {
+            srcNode = ServicingNodeImpl.unwrap(srcNode);
+            
+            for(PropertyIterator iter = srcNode.getProperties(); iter.hasNext(); ) {
+                Property property = iter.nextProperty();
+                if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:uuid")) {
+                    if(property.getDefinition().isMultiple())
+                        destNode.setProperty(property.getName(), property.getValues());
+                    else
+                        destNode.setProperty(property.getName(), property.getValue());
+                }
+            }
+            
+            // don't copy childeren of virtual nodes
+            if (srcNode.isNodeType(HippoNodeType.NT_FACETSELECT) || srcNode.isNodeType(HippoNodeType.NT_FACETSEARCH))
+                return;
+            
+            for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
+                Node node = iter.nextNode();
+                Node child = destNode.addNode(node.getName(), srcNode.getPrimaryNodeType().getName());
+                copy(node, child);
+            }
+        } catch(PathNotFoundException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch(VersionException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch(ValueFormatException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch(ConstraintViolationException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch(NoSuchNodeTypeException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        }
     }
 }
