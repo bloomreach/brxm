@@ -15,12 +15,16 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.addnew;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -33,32 +37,39 @@ import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Form to create new documents.
+ * It gets the available document templates from the configuration in the repository.
+ *
+ */
 public class AddNewWizard extends Plugin {
     private static final long serialVersionUID = 1L;
-    
+
+    static final Logger log = LoggerFactory.getLogger(AddNewWizard.class);
+
     public AddNewWizard(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
         AddNewForm form = new AddNewForm("addNewForm"); 
         add(new FeedbackPanel("feedback"));
 
-        /*
         form.add(new AjaxEventBehavior("onsubmit") {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onEvent(AjaxRequestTarget target) {
-                System.out.println("form submit ajax update");
+                System.out.println("form onsubmit ajax update");
 //                Plugin owningPlugin = (Plugin)findParent(Plugin.class);
 //                PluginManager pluginManager = owningPlugin.getPluginManager();      
 //                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, (JcrNodeModel) getModel());
 //                pluginManager.update(target, event);
             }
+
             
         });
-        */
     
         add(form);
     
@@ -76,41 +87,82 @@ public class AddNewWizard extends Plugin {
             name.setRequired(true);
             add(name);
             
-            List<String> types = Arrays.asList(new String[] { "foo", "bar", "berenboot" });
-            DropDownChoice template = new DropDownChoice("template", new PropertyModel(properties, "template"), types);
+            List<String> templates = getTemplates();
+            DropDownChoice template = new DropDownChoice("template", new PropertyModel(properties, "template"), templates);
             template.setRequired(true);
             add(template);
             
             add(new Button("submit", new Model("Add")));
             
         }
-
+        
         @Override
         protected void onSubmit() {
-            UserSession session = (UserSession) getSession();
-            HippoNode rootNode = session.getRootNode();
+            System.out.println("form onsubmit");
+            createDocument();
+            error("Document created");
+            
+            // TODO: send GUI event so browser perspective can update
+        }
+        
+        private List<String> getTemplates() {
+            List<String> templates = new ArrayList<String>();
+            UserSession session = (UserSession) Session.get();
+
             try {
+                Node rootNode = session.getRootNode();
+                String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH 
+                                + "/hippo:cms-prototype/hippo:templates";
+                if (rootNode.hasNode(path)) {
+                    Node configNode = rootNode.getNode(path);
+                    NodeIterator iterator = configNode.getNodes();
+                    while (iterator.hasNext()) {
+                        templates.add(iterator.nextNode().getName());
+                    }
+                }
+            } 
+            catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+            
+            return templates;
+        }
+
+        private void createDocument() {
+            UserSession session = (UserSession) Session.get();
+
+            try {
+                Node rootNode = session.getRootNode();
+
                 Node typeNode = rootNode.addNode((String)properties.get("template"), "nt:unstructured");
                 Node handle = typeNode.addNode((String)properties.get("name"), HippoNodeType.NT_HANDLE);
-                Node doc = handle.addNode((String)properties.get("name"), HippoNodeType.NT_DOCUMENT);
+                Node doc = handle.addNode((String)properties.get("name"), (String)properties.get("template"));
                 doc.setProperty("state", "unpublished");
-
-                properties.clear();
                 
-                error("Document created");
                 
-                // TODO pluginManager.update
-                //PluginManager pluginManager = getPluginManager();      
-                //pluginManager.update(target, dialogResult);
-            
-            }
+                String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH 
+                                + "/hippo:cms-prototype/hippo:templates/" + (String)properties.get("template") ;
+                if (rootNode.hasNode(path)) {
+                    Node configNode = rootNode.getNode(path);
+                    NodeIterator iterator = configNode.getNodes();
+                    while (iterator.hasNext()) {
+                        Node fieldNode = iterator.nextNode();
+                        
+                        // TODO should be able to get a default value for field from config
+                        if (fieldNode.getName().equals("state")) {
+                            doc.setProperty(fieldNode.getProperty("hippo:path").getString(), "unpublished");
+                        }
+                        else {
+                            doc.setProperty(fieldNode.getProperty("hippo:path").getString(), "");
+                        }
+                    }
+                }
+            } 
             catch (RepositoryException e) {
-                e.printStackTrace();
-                error(e);
+                log.error(e.getMessage());
             }
             
         }
-        
         
         
     }
