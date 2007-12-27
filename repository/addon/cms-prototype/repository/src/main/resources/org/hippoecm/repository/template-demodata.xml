@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="template-demo"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+    xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
+    xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    <sv:node sv:name="myarticle">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>efea9983-4801-861b-a297-db7d4ca20985</sv:value>
+        </sv:property>
+        <sv:node sv:name="myarticle">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hipposample:simpledocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="hipposample:title" sv:type="String">
+                <sv:value>&lt;html&gt;&lt;body&gt;demo titel&lt;/body&gt;&lt;/html&gt;</sv:value>
+            </sv:property>
+            <sv:property sv:name="hipposample:body" sv:type="String">
+                <sv:value>&lt;html&gt;&lt;body&gt;o what a night&lt;/body&gt;&lt;/html&gt;</sv:value>
+            </sv:property>
+            <sv:property sv:name="hipposample:subject" sv:type="String">
+                <sv:value>onderwerp</sv:value>
+            </sv:property>
+            <sv:property sv:name="state" sv:type="String">
+                <sv:value>unpublished</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+</sv:node>
