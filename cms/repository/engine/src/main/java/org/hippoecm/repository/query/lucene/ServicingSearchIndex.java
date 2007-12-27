@@ -141,20 +141,4 @@ public class ServicingSearchIndex extends SearchIndex {
         mergeAggregatedNodeIndexes(node, doc);
         return doc;
     }
-
-    // below used for parsing original xpath to get lucene query back
-    //  public Query getLuceneQuery(ServicingSessionImpl session,
-    //  String statement,
-    //  String language)throws RepositoryException {
-    //
-    //  QueryRootNode root = QueryParser.parse(statement, language,
-    //  session.getNamespaceResolver(), getQueryNodeFactory());
-    //
-    //  Query q = LuceneQueryBuilder.createQuery(root, session.getSessionImpl(),
-    //  this.getContext().getItemStateManager(), this.getNamespaceMappings(),
-    //  this.getTextAnalyzer(), this.getContext().getPropertyTypeRegistry(), this.getSynonymProvider());
-    //
-    //  return q;
-    //}
-
 }
