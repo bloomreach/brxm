@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
@@ -333,7 +332,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
      * @inheritDoc
      */
     public NodeIterator getNodes() throws RepositoryException {
-        NodeIterator iter = new DecoratingNodeIterator(factory, session, node.getNodes(), this);
+        NodeIterator iter = new NodeIteratorDecorator(factory, session, node.getNodes(), this);
         return iter;
     }
 
@@ -341,7 +340,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
      * @inheritDoc
      */
     public NodeIterator getNodes(String namePattern) throws RepositoryException {
-        NodeIterator iter = new DecoratingNodeIterator(factory, session, node.getNodes(namePattern), this);
+        NodeIterator iter = new NodeIteratorDecorator(factory, session, node.getNodes(namePattern), this);
         return iter;
     }
 
@@ -357,14 +356,14 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
      * @inheritDoc
      */
     public PropertyIterator getProperties() throws RepositoryException {
-        return new DecoratingPropertyIterator(factory, session, node.getProperties());
+        return new PropertyIteratorDecorator(factory, session, node.getProperties());
     }
 
     /**
      * @inheritDoc
      */
     public PropertyIterator getProperties(String namePattern) throws RepositoryException {
-        return new DecoratingPropertyIterator(factory, session, node.getProperties(namePattern));
+        return new PropertyIteratorDecorator(factory, session, node.getProperties(namePattern));
     }
 
     /**
@@ -392,7 +391,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
      * @inheritDoc
      */
     public PropertyIterator getReferences() throws RepositoryException {
-        return new DecoratingPropertyIterator(factory, session, node.getReferences());
+        return new PropertyIteratorDecorator(factory, session, node.getReferences());
     }
 
     /**
@@ -520,7 +519,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     public NodeIterator merge(String srcWorkspace, boolean bestEffort) throws NoSuchWorkspaceException,
             AccessDeniedException, MergeException, LockException, InvalidItemStateException, RepositoryException {
         NodeIterator nodes = node.merge(srcWorkspace, bestEffort);
-        return new DecoratingNodeIterator(factory, session, nodes);
+        return new NodeIteratorDecorator(factory, session, nodes);
     }
 
     /**

@@ -17,5 +17,5 @@ package org.hippoecm.repository.servicing;
 
 import javax.jcr.Session;
 
-public interface ServicingSession extends Session {
+public interface SessionDecorator extends Session {
 }

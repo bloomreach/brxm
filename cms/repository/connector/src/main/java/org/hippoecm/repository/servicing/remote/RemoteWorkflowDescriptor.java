@@ -15,22 +15,20 @@
  */
 package org.hippoecm.repository.servicing.remote;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.RemoteObject;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
-public interface RemoteWorkflowManager extends Remote {
+public interface RemoteWorkflowDescriptor extends Remote {
+    public String getDisplayName() throws RepositoryException, RemoteException;
 
-    public RemoteWorkflowDescriptor getWorkflowDescriptor(String category, String absPath)
-        throws RepositoryException, RemoteException;
+    public String getRendererName() throws RepositoryException, RemoteException;
 
-    public Workflow getWorkflow(String category, String absPath)
-        throws RepositoryException, RemoteException;
-
-    public Workflow getWorkflow(RemoteWorkflowDescriptor descriptor)
-        throws RepositoryException, RemoteException;
+    public Workflow getWorkflow() throws RepositoryException, RemoteException;
 }

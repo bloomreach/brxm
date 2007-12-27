@@ -26,7 +26,7 @@ import javax.jcr.Session;
  * all method calls to the underlying node iterator and uses the given
  * decorator factory to decorate all the returned node instances.
  */
-public class DecoratingNodeIterator extends DecoratingRangeIterator implements NodeIterator {
+public class NodeIteratorDecorator extends RangeIteratorDecorator implements NodeIterator {
 
     /**
      * Creates a decorating node iterator.
@@ -35,11 +35,11 @@ public class DecoratingNodeIterator extends DecoratingRangeIterator implements N
      * @param session decorated session
      * @param iterator underlying node iterator
      */
-    public DecoratingNodeIterator(DecoratorFactory factory, Session session, NodeIterator iterator) {
+    public NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator) {
         super(factory, session, iterator);
     }
 
-    public DecoratingNodeIterator(DecoratorFactory factory, Session session, NodeIterator iterator,
+    public NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator,
             ServicingNodeImpl parent) {
         super(factory, session, iterator, parent);
     }

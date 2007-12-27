@@ -21,17 +21,17 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.servicing.ServicingWorkspaceImpl;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
 import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ServerServicingWorkspace extends ServerWorkspace implements RemoteServicingWorkspace {
-    private ServicingWorkspaceImpl workspace;
+    private HippoWorkspace workspace;
 
-    public ServerServicingWorkspace(ServicingWorkspaceImpl workspace, RemoteServicingAdapterFactory factory)
+    public ServerServicingWorkspace(HippoWorkspace workspace, RemoteServicingAdapterFactory factory)
             throws RemoteException {
         super(workspace, factory);
         this.workspace = workspace;
