@@ -62,9 +62,12 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.hippoecm.repository.servicing.RepositoryDecorator;
 import org.hippoecm.repository.servicing.ServicingDecoratorFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -569,4 +572,23 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
         super.close();
     }
+
+    public ClassLoader getClassLoader() {
+        if (repository != null && repository instanceof RepositoryDecorator) {
+            return ((RepositoryDecorator) repository).getClassLoader();
+        }
+        return null;
+    }
 }
+/*
+        if (loader == null) {
+            try {
+                clSession = repository.login();
+                loader = new HippoRepositoryClassLoader(clSession);
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+                clSession = null;
+                loader = null;
+            }
+        }
+*/

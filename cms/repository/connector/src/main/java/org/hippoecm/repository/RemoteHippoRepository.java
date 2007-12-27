@@ -43,7 +43,6 @@ class RemoteHippoRepository extends HippoRepositoryImpl {
         loader = new HippoRepositoryClassLoader(clSession);
     }
 
-    @Override
     public ClassLoader getClassLoader() {
         return loader;
     }

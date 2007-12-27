@@ -24,9 +24,9 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.servicing.ServicingNodeImpl;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
@@ -43,8 +43,8 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
     }
 
     public RemoteNode getRemoteNode(Node node) throws RemoteException {
-        if (node instanceof ServicingNodeImpl)
-            return new ServerServicingNode((ServicingNodeImpl) node, this);
+        if (node instanceof HippoNode)
+            return new ServerServicingNode((HippoNode) node, this);
         else
             return super.getRemoteNode(node);
     }

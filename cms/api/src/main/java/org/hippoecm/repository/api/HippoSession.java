@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.servicing;
+package org.hippoecm.repository.api;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-public interface SessionDecorator extends Session {
+public interface HippoSession extends Session {
+
+    public Node copy(Node original, String absPath) throws RepositoryException;
+
 }

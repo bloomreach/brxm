@@ -45,7 +45,7 @@ import org.xml.sax.ContentHandler;
 /**
  * Simple workspace decorator.
  */
-public class ServicingWorkspaceImpl extends AbstractDecorator implements HippoWorkspace {
+public class WorkspaceDecorator extends AbstractDecorator implements HippoWorkspace {
     final static String SVN_ID = "$Id$";
 
     /** The underlying workspace instance. */
@@ -60,7 +60,7 @@ public class ServicingWorkspaceImpl extends AbstractDecorator implements HippoWo
      * @param session
      * @param workspace
      */
-    public ServicingWorkspaceImpl(DecoratorFactory factory, Session session, Workspace workspace) {
+    public WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
         super(factory, session);
         this.workspace = workspace;
         documentManager = null;

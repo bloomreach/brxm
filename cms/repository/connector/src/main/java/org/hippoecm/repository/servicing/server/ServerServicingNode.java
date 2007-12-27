@@ -21,14 +21,15 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.server.ServerNode;
-import org.hippoecm.repository.servicing.ServicingNodeImpl;
+
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.servicing.remote.RemoteServicingAdapterFactory;
 import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
 
 public class ServerServicingNode extends ServerNode implements RemoteServicingNode {
-    private ServicingNodeImpl node;
+    private HippoNode node;
 
-    public ServerServicingNode(ServicingNodeImpl node, RemoteServicingAdapterFactory factory) throws RemoteException {
+    public ServerServicingNode(HippoNode node, RemoteServicingAdapterFactory factory) throws RemoteException {
         super(node, factory);
         this.node = node;
     }

@@ -35,9 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.UserTransactionImpl;
 
-/* FIXME: [BvH] doubtfull whether we want this dependency here */
-import org.hippoecm.repository.servicing.RepositoryDecorator;
-
 public abstract class HippoRepositoryImpl implements HippoRepository {
 
     protected Repository repository;
@@ -154,12 +151,5 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
     public UserTransaction getUserTransaction(TransactionManager tm, Session session) throws NotSupportedException {
         UserTransaction ut = new UserTransactionImpl(tm, session);
         return ut;
-    }
-
-    public ClassLoader getClassLoader() {
-        if (repository != null && repository instanceof RepositoryDecorator) {
-            return ((RepositoryDecorator) repository).getClassLoader();
-        }
-        return null;
     }
 }
