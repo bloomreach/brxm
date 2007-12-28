@@ -47,7 +47,8 @@ public class DocumentListingPlugin extends Plugin {
         columns.add(new PropertyColumn(new Model("Type"), "name"));
         columns.add(new PropertyColumn(new Model("Date"), "name"));
         columns.add(new PropertyColumn(new Model("State"), "name"));
-
+        
+        // TODO replace with CustomizableDocumentListingDataTable  
         dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(model), DEFAULT_PAGE_SIZE);
         add(dataTable);
     }
@@ -57,6 +58,7 @@ public class DocumentListingPlugin extends Plugin {
         if (nodeModel != null) {
             setModel(nodeModel);
             remove(dataTable);
+            // TODO replace with CustomizableDocumentListingDataTable 
             dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(nodeModel), DEFAULT_PAGE_SIZE);
             add(dataTable);
         }
