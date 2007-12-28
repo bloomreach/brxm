@@ -32,22 +32,18 @@ import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
 
 public class SearchPlugin extends Plugin{
     private static final long serialVersionUID = 1L;
@@ -57,8 +53,10 @@ public class SearchPlugin extends Plugin{
     private TextField field; 
     private List<SearchHit> hits = new ArrayList<SearchHit>(); 
     
-    public SearchPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public SearchPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
+        
+        //AjaxSubmitLink
         
         Form form = new Form("searchform");
         field = new TextField("searchtext",new Model(""));
@@ -68,17 +66,15 @@ public class SearchPlugin extends Plugin{
         form.add(new Button("button") {
             @Override
             public void onSubmit() {
-                
                 String value = (String)field.getModelObject();
                 field.setModelObject(value);
                 newSearch(hits,"//element(*,hippo:document)[jcr:contains(.,'"+value+"')]/rep:excerpt(.)",value);
                 searchedFor.setModelObject("You searched for : "  + value);
+                
             }
 
         });
         
-        
-         
         PageableListView pageableListView = new PageableListView("hits",hits, 30) {
             private static final long serialVersionUID = 1L;
 
@@ -100,8 +96,6 @@ public class SearchPlugin extends Plugin{
             }
         };
         
-        add(new Label("msg","Search"));
-        
         add(form);
         add(searchedFor);
         add(didyoumean);
@@ -116,12 +110,13 @@ public class SearchPlugin extends Plugin{
     private void newSearch(List<SearchHit> hits, String xpath) { 
         newSearch(hits, xpath, null);
     }
-
+    
     private void newSearch(List<SearchHit> hits, String xpath, String value) {
         javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession());
         hits.clear();
         try {
             Query q = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
+            
             QueryResult result = q.execute();
             
             RowIterator rows = result.getRows();

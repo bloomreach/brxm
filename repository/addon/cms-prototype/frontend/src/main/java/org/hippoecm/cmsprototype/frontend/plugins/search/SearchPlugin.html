@@ -15,32 +15,37 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <h1 wicket:id="msg">search</h1>
-        <form wicket:id="searchform">
-            <input wicket:id="searchtext" type="text"/>
-            <input wicket:id="button" type="submit" value="search"/>
-        </form>
-        <p wicket:id="searchedfor" > searchedfor </p>
-        <p wicket:id="didyoumean">
-            didyoumean
-        </p>
-        <p>
-            <div wicket:id="hits" style="margin:10px;">
-                <span wicket:id="path">path</span>
-                <b wicket:id="nodename">node</b>
-                <div wicket:id="excerpt" style="background-color:white;padding:10px;">
-                    
-                </div>
-                <div> 
-                    <a  href="#" wicket:id="similar">Similar pages</a>
-                </div>
-            </div>
+        <div style="clear:both;"/>
+        <table width="100%" border="0" cellspacing="2" cellpadding="0" class="grey">
             
-        </p>
-        <!--p>
-            <b wicket:id="pager">paging
-                <span wicket:id="page">page</span>
-            </b>
-        </p-->
+            <tr>
+                <td valign="top" width="20%">
+                    <div class="Tree">
+                        <form wicket:id="searchform">
+                            <input wicket:id="searchtext" type="text"/>
+                            <input wicket:id="button" type="submit" value="search"/>
+                        </form>
+                        <p wicket:id="searchedfor" > searchedfor </p>
+                        <p wicket:id="didyoumean">
+                            didyoumean
+                        </p>
+                    </div>
+                </td>
+                <td valign="top">
+                    <div wicket:id="hits" class="Documents">
+                        <span wicket:id="path">path</span>
+                        <b wicket:id="nodename">node</b>
+                        <div wicket:id="excerpt" style="background-color:white;padding:10px;">
+                            
+                        </div>
+                        <div> 
+                            <a  href="#" wicket:id="similar">Similar pages</a>
+                        </div>
+                    </div>
+                    &nbsp;
+                </td>
+            </tr>
+        </table>
+        
     </wicket:panel>
 </html>
