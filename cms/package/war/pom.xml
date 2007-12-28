@@ -41,6 +41,21 @@
   </scm>
 
   <dependencies>
+    <!-- xhina add-on (must be included before actual front-end application) -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-xinha</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <!-- end-applications -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-application</artifactId>

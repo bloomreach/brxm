@@ -8,31 +8,22 @@
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:hippo="http://www.hippoecm.org/nt/1.0"
          xmlns:fn="http://www.w3.org/2005/xpath-functions" 
-         sv:name="hippo:configuration">
+         sv:name="hippo:initialize">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:configuration</sv:value>
+    <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="hippo:documents">
+  <!--Workflows configuration-->
+  <sv:node sv:name="workflows">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:queryfolder</sv:value>
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:content" sv:type="String">
+      <sv:value>workflow-config.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="hippo:workflows">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflowfolder</sv:value>
-    </sv:property>
-  </sv:node>
-    
-  <sv:node sv:name="hippo:frontend">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:application</sv:value>
-    </sv:property>
-  </sv:node>
-  
-  <sv:node sv:name="hippo:initialize">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializefolder</sv:value>
-    </sv:property>
-  </sv:node>
+
 </sv:node>
