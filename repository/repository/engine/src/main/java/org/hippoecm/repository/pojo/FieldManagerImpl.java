@@ -823,9 +823,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if (log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
-                    + "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         return value;
     }
 }
