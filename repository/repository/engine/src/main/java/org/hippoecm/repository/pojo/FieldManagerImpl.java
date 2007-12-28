@@ -823,11 +823,9 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-	/* FIXME: Bamboo failing
         if (log.isDebugEnabled())
             log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
                     + "\" = \"" + value + "\"");
-	*/
         return value;
     }
 }
