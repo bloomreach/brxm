@@ -267,13 +267,23 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
                 }
                 try {
-                    for(Enumeration<URL> iter = getClass().getClassLoader().getResources("configuration.xml");
+                    for(Enumeration iter = getClass().getClassLoader().getResources("org/hippoecm/repository/extension.xml");
                         iter.hasMoreElements(); ) {
-                        URL configurationURL = iter.nextElement();
+                        URL configurationURL = (URL) iter.nextElement();
                         log.info("Initializing additional configuration content from "+configurationURL);
                         try {
                             InputStream configurationStream = configurationURL.openStream();
-                            initializeNodecontent(rootSession, "/hippo:configuration", configurationStream);
+                            initializeNodecontent(rootSession, "/hippo:configuration/hippo:temporary", configurationStream);
+                            Node mergeInitializationNode = rootSession.getRootNode().
+                                getNode("hippo:configuration/hippo:temporary/hippo:initialize");
+                            for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
+                                Node n = mergeIter.nextNode();
+                                if(!rootSession.getRootNode().hasNode("hippo:configuration/hippo:initialize/" +
+                                                                      n.getName())) {
+                                    rootSession.move(n.getPath(), "/hippo:configuration/hippo:initialize/" + n.getName());
+                                }
+                            }
+                            mergeInitializationNode.remove();
                             rootSession.save();
                         } catch (AccessDeniedException ex) {
                             throw new RepositoryException("Could not initialize repository with configuration content", ex);
@@ -298,9 +308,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 log.info("Initial configuration content already present");
             }
 
-            // register a listener for the initialize node
-            // Whenever a node or property is added, refresh the tree.  Processed properties are deleted,
-            // so they will not be processed more than once.
+            /* Register a listener for the initialize node.  Whenever a node
+             * or property is added, refresh the tree.  Processed properties
+             * are deleted, so they will not be processed more than once.
+             */
             ObservationManager obMgr = workspace.getObservationManager();
             listener = new EventListener() {
                 public void onEvent(EventIterator events) {
@@ -580,15 +591,3 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         return null;
     }
 }
-/*
-        if (loader == null) {
-            try {
-                clSession = repository.login();
-                loader = new HippoRepositoryClassLoader(clSession);
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-                clSession = null;
-                loader = null;
-            }
-        }
-*/
