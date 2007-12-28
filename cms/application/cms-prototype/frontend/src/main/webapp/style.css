@@ -8,6 +8,10 @@ table {
   font-size:1em;
 }
 
+table.grey {
+  background:#eeeeee;
+}
+
 .Breadcrumb {
   border:1px solid lightgrey;
   margin:2px;
