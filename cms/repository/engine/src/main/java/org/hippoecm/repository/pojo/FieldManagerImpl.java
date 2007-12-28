@@ -261,9 +261,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if (log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
-                    + "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         return value;
     }
 
@@ -323,9 +325,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if (log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
-                    + "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         return value;
     }
 
@@ -385,9 +389,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if (log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
-                    + "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         return value;
     }
 
@@ -447,9 +453,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if (log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
-                    + "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         return value;
     }
 
@@ -509,9 +517,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if (log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
-                    + "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         return value;
     }
 
@@ -571,9 +581,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if (log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
-                    + "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         return value;
     }
 
@@ -633,9 +645,11 @@ class FieldManagerImpl extends AbstractFieldManager {
                 throw new JPOXDataStoreException("RepositoryException", ex);
             }
         }
-        if (log.isDebugEnabled())
-            log.debug("fetch \"" + sm.getClassMetaData().getField(fieldNumber).getFullFieldName() + "\" = \"" + field
-                    + "\" = \"" + value + "\"");
+        if (log.isDebugEnabled()) {
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
+        }
         return value;
     }
 
@@ -679,7 +693,9 @@ class FieldManagerImpl extends AbstractFieldManager {
         String field = cmd.getField(fieldNumber).getColumn();
         String value = "";
         if (log.isDebugEnabled()) {
-            log.debug("fetching \"" + cmd.getField(fieldNumber).getFullFieldName() + "\" = \"" + field + "\"");
+            log.debug("fetching \"" + (cmd.getField(fieldNumber) != null ?
+                                    cmd.getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
@@ -703,8 +719,9 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug("fetched \"" + cmd.getField(fieldNumber).getFullFieldName() + "\" = \"" + field + "\" = \""
-                    + value + "\"");
+            log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
+                                    sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
+				 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
