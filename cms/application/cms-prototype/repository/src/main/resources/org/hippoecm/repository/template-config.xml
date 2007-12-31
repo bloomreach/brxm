@@ -23,6 +23,9 @@
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:title</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
+      </sv:property>
     </sv:node>
 
     <!-- creation date -->

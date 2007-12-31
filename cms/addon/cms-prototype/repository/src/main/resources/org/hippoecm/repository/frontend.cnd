@@ -6,8 +6,6 @@
 
 [hippo:frontendplugin] > nt:base
 - hippo:renderer (string) mandatory
-- hippo:incoming (string) multiple
-- hippo:outgoing (string) multiple
 + * (hippo:frontendplugin) = hippo:frontendplugin
 
 [hippo:page] > nt:base
