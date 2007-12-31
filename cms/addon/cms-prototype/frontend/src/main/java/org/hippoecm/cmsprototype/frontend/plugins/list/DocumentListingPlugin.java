@@ -66,7 +66,7 @@ public class DocumentListingPlugin extends Plugin {
 	                setModel(nodeModel);
 	                remove(dataTable);
 	                dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableDocumentsProvider(
-	                        nodeModel), 10);
+	                        nodeModel), DEFAULT_PAGE_SIZE);
 	                add(dataTable);
 	                notification.getContext().addRefresh(this);
 	            }
