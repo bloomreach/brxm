@@ -19,6 +19,8 @@ import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.admin.menu.export.ExportDialog;
 import org.hippoecm.frontend.plugins.admin.menu.move.MoveDialog;
@@ -34,14 +36,16 @@ public class MenuPlugin extends Plugin {
     public MenuPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
         
-        add(new DialogLink("node-dialog", "Add Node", NodeDialog.class, model));
-        add(new DialogLink("delete-dialog", "Delete Node", DeleteDialog.class, model));
-        add(new DialogLink("move-dialog", "Move Node", MoveDialog.class, model));
-        add(new DialogLink("rename-dialog", "Rename Node", RenameDialog.class, model));
-        add(new DialogLink("export-dialog", "Export Node", ExportDialog.class, model));
-        add(new DialogLink("property-dialog", "Add Property", PropertyDialog.class, model));
-        add(new DialogLink("save-dialog", "Save", SaveDialog.class, model));
-        add(new DialogLink("reset-dialog", "Reset", ResetDialog.class, model));
+        Channel incoming = pluginDescriptor.getIncoming();
+        ChannelFactory factory = getPluginManager().getChannelFactory();
+        add(new DialogLink("node-dialog", "Add Node", NodeDialog.class, model, incoming, factory));
+        add(new DialogLink("delete-dialog", "Delete Node", DeleteDialog.class, model, incoming, factory));
+        add(new DialogLink("move-dialog", "Move Node", MoveDialog.class, model, incoming, factory));
+        add(new DialogLink("rename-dialog", "Rename Node", RenameDialog.class, model, incoming, factory));
+        add(new DialogLink("export-dialog", "Export Node", ExportDialog.class, model, incoming, factory));
+        add(new DialogLink("property-dialog", "Add Property", PropertyDialog.class, model, incoming, factory));
+        add(new DialogLink("save-dialog", "Save", SaveDialog.class, model, incoming, factory));
+        add(new DialogLink("reset-dialog", "Reset", ResetDialog.class, model, incoming, factory));
     }
 
 }

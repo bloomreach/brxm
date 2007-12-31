@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.admin.editor;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -29,12 +27,7 @@ public class EditorPlugin extends Plugin {
     public EditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        editor = new NodeEditor("editor", model);
+        editor = new NodeEditor("editor", model, pluginDescriptor.getIncoming());
         add(editor);
     }
-
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        editor.update(target, event);
-    }
-
 }

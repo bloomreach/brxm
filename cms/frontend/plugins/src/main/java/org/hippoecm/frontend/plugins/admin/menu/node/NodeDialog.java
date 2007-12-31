@@ -15,14 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu.node;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class NodeDialog extends AbstractDialog {
@@ -31,8 +32,8 @@ public class NodeDialog extends AbstractDialog {
     private String name;
     private String type = "nt:unstructured";
 
-    public NodeDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public NodeDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Add a new Node");
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
@@ -43,15 +44,21 @@ public class NodeDialog extends AbstractDialog {
     }
 
     @Override
-    public PluginEvent ok() throws RepositoryException {
+    public void ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         
         //The actual JCR add node
-        nodeModel.getNode().addNode(getName(), getType());
+        Node node = nodeModel.getNode().addNode(getName(), getType());
+        JcrNodeModel newModel = new JcrNodeModel(node);
         
-        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
-        result.chainEvent(JcrEvent.NEEDS_RELOAD, nodeModel);
-        return result;
+        Channel channel = getIncoming();
+        if(channel != null) {
+            Request request = channel.createRequest("flush", nodeModel.getMapRepresentation());
+            channel.send(request);
+
+            request = channel.createRequest("select", newModel.getMapRepresentation());
+            channel.send(request);
+        }
     }
 
     @Override

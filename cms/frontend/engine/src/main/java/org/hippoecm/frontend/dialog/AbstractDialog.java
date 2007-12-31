@@ -20,19 +20,21 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.channel.Channel;
 
 public abstract class AbstractDialog extends WebPage {
 
     protected AjaxLink ok;
     protected AjaxLink cancel;
     protected DialogWindow dialogWindow;
+    protected Channel channel;
 
     private String exception = "";
 
-    public AbstractDialog(final DialogWindow dialogWindow) {
+    public AbstractDialog(final DialogWindow dialogWindow, Channel channel) {
         this.dialogWindow = dialogWindow;
+        this.channel = channel;
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
@@ -43,7 +45,7 @@ public abstract class AbstractDialog extends WebPage {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 try {
-                    dialogWindow.setDialogResult(ok());
+                    ok();
                     dialogWindow.close(target);
                 } catch (Exception e) {
                     setException(e.getClass().getName() + ": " + e.getMessage());
@@ -76,7 +78,11 @@ public abstract class AbstractDialog extends WebPage {
         return (Plugin)dialogWindow.findParent(Plugin.class);
     }
 
-    protected abstract PluginEvent ok() throws Exception;
+    protected Channel getIncoming() {
+        return channel;
+    }
+    
+    protected abstract void ok() throws Exception;
 
     protected abstract void cancel();
     

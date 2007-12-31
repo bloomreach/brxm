@@ -19,6 +19,8 @@ import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.acceptrequest.AcceptRequestDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.CancelRequestDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest.RejectRequestDialog;
@@ -29,9 +31,14 @@ public class FullRequestWorkflowPlugin extends Plugin {
     public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        add(new DialogLink("acceptRequest-dialog", "Approve and execute request", AcceptRequestDialog.class, model));
-        add(new DialogLink("rejectRequest-dialog", "Reject request (with reason)", RejectRequestDialog.class, model));
-        add(new DialogLink("cancelRequest-dialog", "Cancel request", CancelRequestDialog.class, model));
+        Channel incoming = pluginDescriptor.getIncoming();
+        ChannelFactory factory = getPluginManager().getChannelFactory();
+        add(new DialogLink("acceptRequest-dialog", "Approve and execute request",
+                AcceptRequestDialog.class, model, incoming, factory));
+        add(new DialogLink("rejectRequest-dialog", "Reject request (with reason)",
+                RejectRequestDialog.class, model, incoming, factory));
+        add(new DialogLink("cancelRequest-dialog", "Cancel request",
+                CancelRequestDialog.class, model, incoming, factory));
     }
 
 }

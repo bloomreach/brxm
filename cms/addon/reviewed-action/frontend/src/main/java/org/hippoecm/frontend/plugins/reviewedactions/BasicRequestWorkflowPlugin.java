@@ -27,7 +27,8 @@ public class BasicRequestWorkflowPlugin extends Plugin {
     public BasicRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        add(new DialogLink("cancelRequest-dialog", "Cancel request", CancelRequestDialog.class, model));
+        add(new DialogLink("cancelRequest-dialog", "Cancel request", CancelRequestDialog.class, model,
+        		pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
     }
 
 }

@@ -20,19 +20,24 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
 
-    public DialogLink(String id, String linktext, Class clazz, JcrNodeModel model) {
+    public DialogLink(String id, String linktext, Class clazz, JcrNodeModel model, Channel channel, ChannelFactory factory) {
         super(id, model);
 
-        final DialogWindow dialogWindow = new DialogWindow("dialog", model);
-        dialogWindow.setPageCreator(new DynamicDialogFactory(dialogWindow, clazz));
+        Channel proxy = factory.createChannel();
+        final DialogWindow dialogWindow = new DialogWindow("dialog", model, channel, proxy);
+        dialogWindow.setPageCreator(new DynamicDialogFactory(dialogWindow, clazz, proxy));
         add(dialogWindow);
 
         AjaxLink link = new AjaxLink("dialog-link") {
             private static final long serialVersionUID = 1L;
+
+            @Override
             public void onClick(AjaxRequestTarget target) {
                 dialogWindow.show(target);
             } 

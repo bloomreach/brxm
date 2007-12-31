@@ -20,9 +20,13 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.INotificationListener;
+import org.hippoecm.frontend.plugin.channel.IRequestHandler;
+import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -31,8 +35,8 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Plugin extends Panel implements EventConsumer {
-    
+public abstract class Plugin extends Panel implements INotificationListener, IRequestHandler {
+
     static final Logger log = LoggerFactory.getLogger(Plugin.class);
 
     private PluginManager pluginManager;
@@ -44,8 +48,26 @@ public abstract class Plugin extends Panel implements EventConsumer {
         setOutputMarkupId(true);
         this.parentPlugin = parentPlugin;
         this.pluginDescriptor = pluginDescriptor;
+
+        // connect outgoing and incoming channels
+        if (pluginDescriptor.getIncoming() != null) {
+            pluginDescriptor.getIncoming().subscribe(this);
+        }
+        if (pluginDescriptor.getOutgoing() != null) {
+            pluginDescriptor.getOutgoing().register(this);
+        }
     }
 
+    public void destroy() {
+        // disconnect outgoing and incoming channels
+        if (pluginDescriptor.getIncoming() != null) {
+            pluginDescriptor.getIncoming().unsubscribe(this);
+        }
+        if (pluginDescriptor.getOutgoing() != null) {
+            pluginDescriptor.getOutgoing().unregister(this);
+        }
+    }
+    
     public PluginDescriptor getDescriptor() {
         return pluginDescriptor;
     }
@@ -94,6 +116,7 @@ public abstract class Plugin extends Panel implements EventConsumer {
     }
 
     public void removeChild(PluginDescriptor childDescriptor) {
+        childDescriptor.disconnect();
         remove(childDescriptor.getWicketId());
     }
 
@@ -111,10 +134,28 @@ public abstract class Plugin extends Panel implements EventConsumer {
         return workflow;
     }
 
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if (newModel != null) {
-            setNodeModel(newModel);
+    // implement INotificationListener
+
+    public void receive(Notification notification) {
+        // update node model
+        if ("select".equals(notification.getOperation())) {
+            setNodeModel(new JcrNodeModel(notification.getData()));
+        }
+
+        // forward the notification to children
+        Channel outgoing = getDescriptor().getOutgoing();
+        if (outgoing != null) {
+            outgoing.publish(notification);
+        }
+    }
+
+    // implement IRequestHandler
+
+    public void handle(Request request) {
+        // forward the request
+        Channel incoming = getDescriptor().getIncoming();
+        if (incoming != null) {
+            incoming.send(request);
         }
     }
 }

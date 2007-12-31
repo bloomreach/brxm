@@ -49,7 +49,7 @@ public class Document extends NodeModelWrapper {
             for (NodeIterator iter = nodeModel.getNode().getNodes(); iter.hasNext();) {
                 HippoNode docNode = (HippoNode) iter.next();
                 if (docNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    list.add(new DocumentVariant(new JcrNodeModel(nodeModel, docNode)));
+                    list.add(new DocumentVariant(new JcrNodeModel(docNode)));
                 }
             }
         } catch (RepositoryException e) {

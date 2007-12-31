@@ -32,15 +32,15 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.w3c.dom.Document;
 
 public class ExportDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public ExportDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public ExportDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
 
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         String path;
@@ -61,13 +61,17 @@ public class ExportDialog extends AbstractDialog {
             export = e.getMessage();
         }
         add(new MultiLineLabel("export", export));
-        
+
         cancel.setVisible(false);
     }
 
     @Override
-    public PluginEvent ok() {
-        return new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, dialogWindow.getNodeModel());
+    public void ok() {
+        Channel channel = getIncoming();
+        if (channel != null) {
+            Request request = channel.createRequest("select", dialogWindow.getNodeModel().getMapRepresentation());
+            channel.send(request);
+        }
     }
 
     @Override

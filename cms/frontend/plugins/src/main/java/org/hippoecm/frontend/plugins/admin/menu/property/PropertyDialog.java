@@ -22,8 +22,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
@@ -34,8 +34,8 @@ public class PropertyDialog extends AbstractDialog {
     private String value;
     private Boolean isMultiple = Boolean.FALSE;
 
-    public PropertyDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public PropertyDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Add a new Property");
         
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
@@ -57,7 +57,7 @@ public class PropertyDialog extends AbstractDialog {
     }
 
     @Override
-    public PluginEvent ok() throws RepositoryException {
+    public void ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         if (isMultiple.booleanValue()) {
             if (value == null || value.equals("")) {
@@ -67,7 +67,12 @@ public class PropertyDialog extends AbstractDialog {
         } else {
             nodeModel.getNode().setProperty(name, value);
         }
-        return new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
+        
+        Channel channel = getIncoming();
+        if(channel != null) {
+            Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
+            channel.send(request);
+        }
     }
 
     @Override

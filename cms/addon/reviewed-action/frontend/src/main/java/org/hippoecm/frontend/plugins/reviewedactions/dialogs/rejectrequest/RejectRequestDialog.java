@@ -19,6 +19,7 @@ import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
 public class RejectRequestDialog extends AbstractWorkflowDialog {
@@ -26,8 +27,8 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
 
     private String reason;
 
-    public RejectRequestDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public RejectRequestDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Reject request");       
 
         add(new AjaxEditableLabel("reason", new PropertyModel(this, "reason")));

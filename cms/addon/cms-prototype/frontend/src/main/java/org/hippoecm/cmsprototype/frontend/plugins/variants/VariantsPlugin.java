@@ -29,11 +29,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
-import org.hippoecm.frontend.plugin.PluginManager;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -77,7 +77,7 @@ public class VariantsPlugin extends Plugin {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         ListView listView = new ListView(VARIANTS_LIST, variantsList) {
             private static final long serialVersionUID = 1L;
 
@@ -85,51 +85,53 @@ public class VariantsPlugin extends Plugin {
             protected void populateItem(ListItem item) {
                 final DocumentVariant variant = (DocumentVariant) item.getModelObject();
                 //item.add(new Label(VARIANT_LABEL, variant));
-                
+
                 AjaxLink link = new AjaxLink(VARIANT_LINK, variant) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        Plugin owningPlugin = (Plugin)findParent(Plugin.class);
-                        PluginManager pluginManager = owningPlugin.getPluginManager();      
-                        PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, variant.getNodeModel());
-                        pluginManager.update(target, event); 
+                    	Channel channel = getDescriptor().getIncoming();
+                    	if(channel != null) {
+                    		Request request = channel.createRequest("select", variant.getNodeModel().getMapRepresentation());
+                    		channel.send(request);
+                    		request.getContext().apply(target);
+                    	}
                     }
-                
+
                 };
                 item.add(link);
-                link.add(new Label(VARIANT_LABEL, variant.getLanguage() + " - " + variant.getState()));                
-                
-                
+                link.add(new Label(VARIANT_LABEL, variant.getLanguage() + " - " + variant.getState()));
+
             }
         };
         add(new Label(NODE_NAME_LABEL, new PropertyModel(this, "nodeName")));
         add(listView);
     }
 
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrNodeModel nodeModel = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if (nodeModel != null) {
-            setNodeModel(nodeModel);
-            HippoNode node = nodeModel.getNode();
-            variantsList.clear();
-            
+    @Override
+    public void receive(Notification notification) {
+        if ("select".equals(notification.getOperation())) {
+            JcrNodeModel nodeModel = new JcrNodeModel(notification.getData());
+            // ignore documents; we select those ourselves
             try {
-                nodeName = node.getDisplayName();
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    Document document = new Document(nodeModel);
-                    variantsList.addAll(document.getVariants());
-                }
+                HippoNode node = nodeModel.getNode();
+                if (!node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    setNodeModel(nodeModel);
+                    variantsList.clear();
+
+                    nodeName = node.getDisplayName();
+                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        Document document = new Document(nodeModel);
+                        variantsList.addAll(document.getVariants());
+                    }
+	                notification.getContext().addRefresh(this);
+	            }
             } catch (RepositoryException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            
-            if (target != null && findPage() != null) {
-                target.addComponent(this);
-            }
         }
+        super.receive(notification);
     }
-
 }

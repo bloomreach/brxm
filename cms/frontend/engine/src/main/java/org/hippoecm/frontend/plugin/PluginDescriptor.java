@@ -15,13 +15,15 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class PluginDescriptor implements IClusterable {
     private static final long serialVersionUID = 1L;
@@ -29,19 +31,24 @@ public class PluginDescriptor implements IClusterable {
     private String pluginId;
     private String wicketId;
     private String className;
+    private Map<String, PluginDescriptor> children;
 
-    private Set<EventChannel> incoming;
-    private Set<EventChannel> outgoing;
+    private Channel incoming;
+    private Channel outgoing;
 
-    public PluginDescriptor(String pluginId, String className, Set<EventChannel> incoming, Set<EventChannel> outgoing) {
+    public PluginDescriptor(String pluginId, String className, Channel outgoing) {
         this.pluginId = pluginId;
         this.wicketId = pluginId;
         this.className = className;
-        this.incoming = incoming;
         this.outgoing = outgoing;
+        children = new HashMap<String, PluginDescriptor>();
     }
 
     // setters
+
+    public void setPluginId(String pluginId) {
+        this.pluginId = pluginId;
+    }
 
     public void setWicketId(String wicketId) {
         this.wicketId = wicketId;
@@ -51,6 +58,14 @@ public class PluginDescriptor implements IClusterable {
         this.className = className;
     }
 
+    public void connect(Channel incoming) {
+        this.incoming = incoming;
+    }
+
+    public void disconnect() {
+        incoming = null;
+    }
+    
     // getters
 
     public String getPluginId() {
@@ -65,11 +80,11 @@ public class PluginDescriptor implements IClusterable {
         return className;
     }
 
-    public Set<EventChannel> getIncoming() {
+    public Channel getIncoming() {
         return incoming;
     }
 
-    public Set<EventChannel> getOutgoing() {
+    public Channel getOutgoing() {
         return outgoing;
     }
 

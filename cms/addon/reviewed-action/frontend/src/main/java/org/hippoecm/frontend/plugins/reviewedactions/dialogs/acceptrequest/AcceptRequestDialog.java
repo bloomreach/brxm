@@ -17,13 +17,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.acceptrequest;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
 public class AcceptRequestDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    public AcceptRequestDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public AcceptRequestDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Accept request");       
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

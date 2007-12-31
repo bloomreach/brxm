@@ -15,7 +15,12 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -27,21 +32,48 @@ import org.hippoecm.repository.api.HippoNode;
 public class JcrNodeModel extends ItemModelWrapper {
     private static final long serialVersionUID = 1L;
 
-    private JcrNodeModel parent;
+    private transient boolean parentCached;
+    private transient JcrNodeModel parent;
 
-    public JcrNodeModel(JcrNodeModel parent, Node node) {
+    public JcrNodeModel(Node node) {
         super(node);
-        this.parent = parent;
+        parentCached = false;
     }
 
+    public JcrNodeModel(Map map) {
+        super((String) map.get("node"));
+        parentCached = false;
+    }
+
+    public Map getMapRepresentation() {
+    	Map map = new HashMap();
+    	map.put("node", itemModel.getPath());
+    	return map;
+    }
+    
     public HippoNode getNode() {
         return (HippoNode) itemModel.getObject();
     }
 
     public JcrNodeModel getParentModel() {
+        if (!parentCached) {
+            Node node = getNode();
+            if (node != null) {
+                try {
+                    Node parentNode = node.getParent();
+                    parent = new JcrNodeModel(parentNode);
+                } catch (ItemNotFoundException ex) {
+                    parent = null;
+                } catch (RepositoryException ex) {
+                    ex.printStackTrace();
+                    return null;
+                }
+            }
+            parentCached = true;
+        }
         return parent;
     }
-    
+
     public JcrNodeModel findRootModel() {
         JcrNodeModel result = this;
         while (result.getParentModel() != null) {
@@ -49,23 +81,13 @@ public class JcrNodeModel extends ItemModelWrapper {
         }
         return result;
     }
-    
-    public JcrNodeModel findValidParentModel() {
-        JcrNodeModel result = this;
-        while (!result.getItemModel().exists()) {
-            result = result.getParentModel();
-        }
-        return result;
-    }
 
-    
     // override Object
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("itemModel", itemModel.toString())
-            .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("itemModel", itemModel.toString())
+                .toString();
     }
 
     @Override
@@ -77,16 +99,12 @@ public class JcrNodeModel extends ItemModelWrapper {
             return true;
         }
         JcrNodeModel nodeModel = (JcrNodeModel) object;
-        return new EqualsBuilder()
-            .append(itemModel, nodeModel.itemModel)
-            .isEquals();
+        return new EqualsBuilder().append(itemModel, nodeModel.itemModel).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(57, 433)
-            .append(itemModel)
-            .toHashCode();
+        return new HashCodeBuilder(57, 433).append(itemModel).toHashCode();
     }
-    
+
 }

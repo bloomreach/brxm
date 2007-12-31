@@ -17,13 +17,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class RequestPublicationDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    public RequestPublicationDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public RequestPublicationDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Request publication");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

@@ -35,11 +35,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
-import org.hippoecm.frontend.plugin.PluginManager;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.MessageContext;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,17 +105,24 @@ public class AddNewWizard extends Plugin {
             Node doc = createDocument();
             
             if (doc != null && target != null) {
-                
-                // FIXME target is now available so an update event can be sent but how to get the correct JcrNodeModel?
-                
-                JcrNodeModel model = new JcrNodeModel(null, doc); // who is my parent??
-                
-                Plugin owningPlugin = (Plugin)findParent(Plugin.class);
-                PluginManager pluginManager = owningPlugin.getPluginManager();      
-                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, model);
-                event.chainEvent(JcrEvent.NEEDS_RELOAD, owningPlugin.getNodeModel().findRootModel() );
-                pluginManager.update(target, event);
-                
+            	Channel channel = getDescriptor().getIncoming();
+            	if(channel != null) {
+	                // FIXME target is now available so an update event can be sent but how to get the correct JcrNodeModel?
+	                
+	                JcrNodeModel model = new JcrNodeModel(doc); // who is my parent??
+	                Request request = channel.createRequest("select", model.getMapRepresentation());
+	                channel.send(request);
+	                MessageContext context = request.getContext();
+
+	                request = channel.createRequest("flush", getNodeModel().findRootModel().getMapRepresentation());
+	                request.setContext(context);
+	                channel.send(request);
+
+                    request = channel.createRequest("edit", model.getMapRepresentation());
+                    request.setContext(context);
+                    channel.send(request);
+	                context.apply(target);
+            	}                
             }
             
             properties.clear();
@@ -159,10 +166,9 @@ public class AddNewWizard extends Plugin {
                     typeNode = rootNode.addNode((String)properties.get("template"), "nt:unstructured");
                 }
                 Node handle = typeNode.addNode((String)properties.get("name"), HippoNodeType.NT_HANDLE);
-                result = handle;
                 Node doc = handle.addNode((String)properties.get("name"), (String)properties.get("template"));
                 doc.setProperty("state", "unpublished");
-                
+                result = doc;
                 
                 String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH 
                                 + "/hippo:cms-prototype/hippo:templates/" + (String)properties.get("template") ;

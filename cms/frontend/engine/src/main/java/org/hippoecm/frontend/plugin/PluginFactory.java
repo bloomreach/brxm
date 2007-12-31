@@ -31,6 +31,9 @@ public class PluginFactory {
     }
 
     public Plugin createPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
+        if(parentPlugin != null) {
+            descriptor.connect(parentPlugin.getDescriptor().getOutgoing());
+        }
         Plugin plugin;
         if (descriptor.getClassName() == null) {
             String message = "Implementation class name for plugin '" + descriptor

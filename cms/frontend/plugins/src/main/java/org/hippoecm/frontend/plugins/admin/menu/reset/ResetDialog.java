@@ -21,16 +21,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 
 public class ResetDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private boolean hasPendingChanges;
 
-    public ResetDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public ResetDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Refresh Session (undo changes)");
 
         Label label;
@@ -49,17 +49,22 @@ public class ResetDialog extends AbstractDialog {
     }
 
     @Override
-    public PluginEvent ok() throws RepositoryException {
+    public void ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         
         // The actual JCR refresh
         nodeModel.getNode().getSession().refresh(false);
 
-        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
-        if (hasPendingChanges) {
-            result.chainEvent(JcrEvent.NEEDS_RELOAD, nodeModel.findRootModel());
+        Channel channel = getIncoming();
+        if (channel != null) {
+            Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
+            channel.send(request);
+            
+            if (hasPendingChanges) {
+                request = channel.createRequest("flush", nodeModel.findRootModel().getMapRepresentation());
+                channel.send(request);
+            }
         }
-        return result;
     }
 
     @Override

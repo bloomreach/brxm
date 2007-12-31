@@ -17,13 +17,12 @@ package org.hippoecm.frontend.plugin.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.hippoecm.frontend.plugin.EventChannel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 
 /**
  * Hardcoded plugin configuration. 
@@ -34,41 +33,44 @@ public class PluginJavaConfig implements PluginConfig {
 
     private PluginDescriptor root;
     private Map<String, PluginDescriptor> childrenOfRoot;
-
+    private ChannelFactory factory;
+    
     public PluginJavaConfig() {
-        EventChannel defaultChannel = new EventChannel("default");
-        Set<EventChannel> incoming = new HashSet<EventChannel>();
-        incoming.add(defaultChannel);
-        Set<EventChannel> outgoing = new HashSet<EventChannel>();
-        outgoing.add(defaultChannel);
+        Channel outgoing = factory.createChannel();
 
         String className = "org.hippoecm.frontend.plugins.admin.RootPlugin";
-        root = new PluginDescriptor("rootPlugin", className, incoming, outgoing);
+        PluginDescriptor descriptor = new PluginDescriptor("rootPlugin", className, outgoing); 
+        root = descriptor;
 
         childrenOfRoot = new HashMap<String, PluginDescriptor>();
 
         className = "org.hippoecm.frontend.plugins.admin.browser.BrowserPlugin";
-        childrenOfRoot.put("navigationPlugin", new PluginDescriptor("navigationPlugin", className, incoming, outgoing));
+        descriptor = new PluginDescriptor("navigationPlugin", className, factory.createChannel());
+        childrenOfRoot.put("navigationPlugin", descriptor);
 
         className = "org.hippoecm.frontend.plugins.admin.menu.MenuPlugin";
-        childrenOfRoot.put("menuPlugin", new PluginDescriptor("menuPlugin", className, incoming, outgoing));
+        descriptor = new PluginDescriptor("menuPlugin", className, factory.createChannel());
+        childrenOfRoot.put("menuPlugin", descriptor);
 
         className = "org.hippoecm.frontend.plugins.admin.logout.LogoutPlugin";
-        childrenOfRoot.put("logoutPlugin", new PluginDescriptor("logoutPlugin", className, incoming, outgoing));
+        descriptor = new PluginDescriptor("logoutPlugin", className, factory.createChannel());
+        childrenOfRoot.put("logoutPlugin", descriptor);
 
         className = "org.hippoecm.frontend.plugins.admin.editor.EditorPlugin";
-        childrenOfRoot.put("contentPlugin", new PluginDescriptor("contentPlugin", className, incoming, outgoing));
+        descriptor = new PluginDescriptor("contentPlugin", className, factory.createChannel());
+        childrenOfRoot.put("contentPlugin", descriptor);
 
         className = "org.hippoecm.frontend.plugins.admin.breadcrumb.BreadcrumbPlugin";
-        childrenOfRoot.put("breadcrumbPlugin", new PluginDescriptor("breadcrumbPlugin", className, incoming, outgoing));
+        descriptor = new PluginDescriptor("breadcrumbPlugin", className, factory.createChannel());
+        childrenOfRoot.put("breadcrumbPlugin", descriptor);
     }
 
     public PluginDescriptor getRoot() {
         return root;
     }
 
-    public List getChildren(PluginDescriptor pluginDescriptor) {
-        List result = new ArrayList();
+    public List<PluginDescriptor> getChildren(PluginDescriptor pluginDescriptor) {
+        List<PluginDescriptor> result = new ArrayList<PluginDescriptor>();
         if (pluginDescriptor.getPluginId().equals("rootPlugin")) {
             result.addAll(childrenOfRoot.values());
         }
@@ -80,5 +82,9 @@ public class PluginJavaConfig implements PluginConfig {
             return root;
         }
         return childrenOfRoot.get(pluginId);
+    }
+    
+    public ChannelFactory getChannelFactory() {
+        return factory;
     }
 }

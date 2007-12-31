@@ -17,13 +17,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
 public class CancelRequestDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    public CancelRequestDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public CancelRequestDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Cancel request");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

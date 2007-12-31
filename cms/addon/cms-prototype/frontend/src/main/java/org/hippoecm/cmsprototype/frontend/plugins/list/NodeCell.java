@@ -20,32 +20,30 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginEvent;
-import org.hippoecm.frontend.plugin.PluginManager;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 
 public class NodeCell extends Panel {
     private static final long serialVersionUID = 1L;
 
-    public NodeCell(String id, NodeModelWrapper model) {
+    public NodeCell(String id, NodeModelWrapper model, final Channel channel) {
         super(id, model);
         AjaxLink link = new AjaxLink("link", model) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                Plugin owningPlugin = (Plugin)findParent(Plugin.class);
-                PluginManager pluginManager = owningPlugin.getPluginManager();      
-                PluginEvent event = new PluginEvent(owningPlugin, JcrEvent.NEW_MODEL, ((NodeModelWrapper)this.getModel()).getNodeModel());
-                pluginManager.update(target, event);
+                // create a "select" request with the node path as a parameter
+            	JcrNodeModel nodeModel = ((NodeModelWrapper)this.getModel()).getNodeModel(); 
+                Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
+                channel.send(request);
+                request.getContext().apply(target);
             }
         
         };
         add(link);
         link.add(new Label("label", new PropertyModel(model, "name")));
     }
-
-
 }

@@ -17,13 +17,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.delete;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
 public class DeleteDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    public DeleteDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public DeleteDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Unpublish and/or delete");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

@@ -15,14 +15,12 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.todo;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Notification;
 
 /**
  * This component extends the MenuPlugin but essentially only overrides
@@ -35,24 +33,23 @@ public class TodoPlugin extends Plugin {
 
     @SuppressWarnings("unused")
     private String nodePath;
-    
+
     public TodoPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
         nodePath = model.getItemModel().getPath();
         add(new Label("path", new PropertyModel(this, "nodePath")));
     }
 
-
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if (newModel != null) {
-            JcrNodeModel nodeModel = newModel;
-            setNodeModel(nodeModel);
-            nodePath = nodeModel.getItemModel().getPath();
-        }
-        if (target != null && findPage() != null) {
-            target.addComponent(this);
+    @Override
+    public void receive(Notification notification) {
+        super.receive(notification);
+        if ("select".equals(notification.getOperation())) {
+            JcrNodeModel newModel = new JcrNodeModel(notification.getData());
+            if (!newModel.equals(getNodeModel())) {
+                setNodeModel(newModel);
+                nodePath = newModel.getItemModel().getPath();
+                notification.getContext().addRefresh(this);
+            }
         }
     }
-
 }

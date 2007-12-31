@@ -19,6 +19,8 @@ import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableinstance.DisposeEditableInstanceDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinstance.ObtainEditableInstanceDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion.RequestDeletionDialog;
@@ -31,11 +33,18 @@ public class BasicReviewedActionsWorkflowPlugin extends Plugin {
     public BasicReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        add(new DialogLink("obtainEditableInstance-dialog", "Obtain editable copy", ObtainEditableInstanceDialog.class, model));
-        add(new DialogLink("disposeEditableInstance-dialog", "Dispose editable copy", DisposeEditableInstanceDialog.class, model));
-        add(new DialogLink("requestPublication-dialog", "Request publication", RequestPublicationDialog.class, model));
-        add(new DialogLink("requestDePublication-dialog", "Request unpublication", RequestDePublicationDialog.class, model));
-        add(new DialogLink("requestDeletion-dialog", "Request delete", RequestDeletionDialog.class, model));
+        Channel incoming = pluginDescriptor.getIncoming();
+        ChannelFactory factory = getPluginManager().getChannelFactory();
+        add(new DialogLink("obtainEditableInstance-dialog", "Obtain editable copy",
+                ObtainEditableInstanceDialog.class, model, incoming, factory));
+        add(new DialogLink("disposeEditableInstance-dialog", "Dispose editable copy",
+                DisposeEditableInstanceDialog.class, model, incoming, factory));
+        add(new DialogLink("requestPublication-dialog", "Request publication",
+                RequestPublicationDialog.class, model, incoming, factory));
+        add(new DialogLink("requestDePublication-dialog", "Request unpublication",
+                RequestDePublicationDialog.class, model, incoming, factory));
+        add(new DialogLink("requestDeletion-dialog", "Request delete",
+                RequestDeletionDialog.class, model, incoming, factory));
     }
 
 }

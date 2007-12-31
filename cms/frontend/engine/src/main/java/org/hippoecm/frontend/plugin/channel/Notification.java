@@ -13,19 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.mailsponge.frontend.plugins;
+package org.hippoecm.frontend.plugin.channel;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import java.util.Map;
 
-import org.hippoecm.frontend.plugins.admin.editor.EditorPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class MailEditorPlugin extends EditorPlugin {
+public class Notification extends Message {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(Notification.class);
 
-    public MailEditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    private Request request;
+    
+    public Notification(String operation, Map map) {
+    	super(operation, map);
+        this.request = null;
+    }
+    
+    public Notification(Request request) {
+    	super(request.getOperation(), request.getData());
+    	this.setContext(request.getContext());
+    	this.request = request;
     }
 
+    public Request getRequest() {
+        return request;
+    }
 }

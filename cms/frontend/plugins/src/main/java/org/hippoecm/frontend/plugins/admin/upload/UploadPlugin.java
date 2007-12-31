@@ -19,17 +19,15 @@ import java.util.Calendar;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.form.upload.UploadProgressBar;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +48,7 @@ public class UploadPlugin extends Plugin {
             add(fileUploadField = new FileUploadField("fileInput"));
         }
 
+        @Override
         protected void onSubmit() {
             final FileUpload upload = fileUploadField.getFileUpload();
             if (upload != null) {
@@ -89,10 +88,12 @@ public class UploadPlugin extends Plugin {
         add(form);
     }
 
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if (newModel != null) {
+    @Override
+    public void receive(Notification notification) {
+        if("select".equals(notification.getOperation())) {
+            JcrNodeModel newModel = new JcrNodeModel(notification.getData());
             form.setModel(newModel);
         }
+        super.receive(notification);
     }
 }

@@ -15,13 +15,14 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
+import javax.jcr.Node;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 
-/**
- * Panel representing the content panel for the first tab.
- */
 public class BrowserPerspective extends Plugin {
     private static final long serialVersionUID = 1L;
 
@@ -29,4 +30,19 @@ public class BrowserPerspective extends Plugin {
         super(pluginDescriptor, model, parentPlugin);
     }
 
+    @Override
+    public void handle(Request request) {
+        if ("select".equals(request.getOperation())) {
+            JcrNodeModel model = new JcrNodeModel(request.getData());
+            Node node = model.getNode();
+            if (node != null) {
+                Channel outgoing = getDescriptor().getOutgoing();
+                if (outgoing != null) {
+                    outgoing.publish(outgoing.createNotification(request));
+                }
+            }
+            return;
+        }
+        super.handle(request);
+    }
 }

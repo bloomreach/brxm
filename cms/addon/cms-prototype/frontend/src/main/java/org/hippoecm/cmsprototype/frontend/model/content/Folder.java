@@ -76,7 +76,7 @@ public class Folder extends NodeModelWrapper {
                 HippoNode jcrChild = (HippoNode) jcrChildren.nextNode();
                 if (jcrChild != null ) {
                     if (jcrChild.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        docs.add(new Document(new JcrNodeModel(nodeModel, jcrChild)));
+                        docs.add(new Document(new JcrNodeModel(jcrChild)));
                     }
                     
                     // handle facet result nodes
@@ -88,7 +88,7 @@ public class Folder extends NodeModelWrapper {
                                 Node canonicalNode = fsChild.getCanonicalNode();
                                 Node parentNode = canonicalNode.getParent();
                                 if (parentNode != null && parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                    docs.add(new Document(new JcrNodeModel(nodeModel, parentNode)));
+                                    docs.add(new Document(new JcrNodeModel(parentNode)));
                                 }
                             }
                         }
@@ -128,7 +128,7 @@ public class Folder extends NodeModelWrapper {
                     if (!(jcrChild.isNodeType(HippoNodeType.NT_HANDLE) 
                             || jcrChild.isNodeType(HippoNodeType.NT_DOCUMENT)
                             || jcrChild.isNodeType(HippoNodeType.NT_FACETRESULT))) {
-                        JcrNodeModel newNodeModel = new JcrNodeModel(nodeModel, jcrChild);
+                        JcrNodeModel newNodeModel = new JcrNodeModel(jcrChild);
                         Folder subFolder = new Folder(newNodeModel);
                         folders.add(subFolder);
                     }
