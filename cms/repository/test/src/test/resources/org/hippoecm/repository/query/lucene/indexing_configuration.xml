@@ -6,7 +6,10 @@
         <property>x</property>
         <property>y</property>
         <property>z</property>
-        
+        <!--property>name</property>
+            <property>magazine</property>
+            <property>country</property>
+            <property>year</property-->
     </facets>
     
 </configuration>
