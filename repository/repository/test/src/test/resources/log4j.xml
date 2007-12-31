@@ -29,9 +29,15 @@
     </layout>
   </appender>
 
+  <appender name="debugging" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.err"/>
+    <layout class="org.apache.log4j.SimpleLayout">
+    </layout>
+  </appender>
+
   <!-- log4j.log -->
   <appender name="root" class="org.apache.log4j.FileAppender">
-    <param name="File" value="target/log4j.log"/>
+    <param name="File" value="log4j.log"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </layout>
@@ -40,17 +46,23 @@
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
-
-  <category additivity="false" name="org.hippoecm.repository">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>  
-  
   <category additivity="false" name="org.apache.jackrabbit.core">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-
+    <category additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
+      <level value="error"/>
+      <appender-ref ref="root"/>
+    </category>
+    <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap">
+      <level value="error"/>
+      <appender-ref ref="root"/>
+    </category>
+    <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
+      <level value="error"/>
+      <appender-ref ref="root"/>
+    </category>
+  
   <category additivity="false" name="org.jpox.util">
     <level value="warn"/>
     <appender-ref ref="root"/>
@@ -58,6 +70,15 @@
   
   <category additivity="false" name="org.jpox">
     <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetSearchProvider">
+    <level value="debug"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetResultSetProvider">
+    <level value="debug"/>
     <appender-ref ref="root"/>
   </category>
 
