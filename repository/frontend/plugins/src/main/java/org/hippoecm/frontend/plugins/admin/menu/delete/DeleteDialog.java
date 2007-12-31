@@ -21,14 +21,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 
 public class DeleteDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public DeleteDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public DeleteDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
 
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         String message;
@@ -45,15 +45,22 @@ public class DeleteDialog extends AbstractDialog {
     }
 
     @Override
-    public PluginEvent ok() throws RepositoryException {
+    public void ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        
+        JcrNodeModel parentModel = nodeModel.getParentModel();
+
         //The actual JCR remove
         nodeModel.getNode().remove();
-        
-        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel.findValidParentModel());
-        result.chainEvent(JcrEvent.NEEDS_RELOAD, nodeModel.findRootModel());
-        return result;
+
+        Channel channel = getIncoming();
+        if(channel != null) {
+            Request request = channel.createRequest("flush",
+            		parentModel.findRootModel().getMapRepresentation());
+            channel.send(request);
+
+            request = channel.createRequest("select", parentModel.getMapRepresentation());
+            channel.send(request);
+        }
     }
 
     @Override

@@ -15,10 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import java.util.HashSet;
-
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
@@ -30,17 +27,17 @@ import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.plugin.EventChannel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.PluginFactory;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.INotificationListener;
+import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class TemplateEngine extends Form {
+public class TemplateEngine extends Form implements INotificationListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,6 +51,11 @@ public class TemplateEngine extends Form {
         this.config = config;
         this.plugin = plugin;
 
+        Channel incoming = plugin.getDescriptor().getIncoming();
+        if (incoming != null) {
+            incoming.subscribe(this);
+        }
+
         add(template = new Template("template", model, descriptor, this));
     }
 
@@ -65,35 +67,27 @@ public class TemplateEngine extends Form {
         return config;
     }
 
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrNodeModel model = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if (model != null) {
+    public void receive(Notification notification) {
+        if ("select".equals(notification.getOperation())) {
             try {
-                // FIXME: currently, the first document under the hippo:handle is
-                // used.  This should be under the control of the workflow.
+                JcrNodeModel model = new JcrNodeModel(notification.getData());
                 Node node = model.getNode().getCanonicalNode();
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    NodeIterator children = node.getNodes();
-                    while (children.hasNext()) {
-                        Node child = children.nextNode();
-                        if (setTemplate(child)) {
-                            break;
-                        }
-                    }
-                } else {
+                if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     setTemplate(node);
+                    setModel(model);
+                    notification.getContext().addRefresh(this);
                 }
             } catch (RepositoryException ex) {
+                // TODO: log error
                 ex.printStackTrace();
             }
-            setModel(model);
-        }
-        if (target != null && findPage() != null) {
-            target.addComponent(this);
         }
     }
 
     public void onChange(AjaxRequestTarget target) {
+
+        // FIXME: send a request up to notify other components
+
         if (target != null && findPage() != null) {
             target.addComponent(this);
         }
@@ -106,15 +100,18 @@ public class TemplateEngine extends Form {
             JcrNodeModel model = null;
             try {
                 Property property = (Property) fieldModel.getObject();
-                model = new JcrNodeModel(null, (Node) property.getParent());
+                model = new JcrNodeModel((Node) property.getParent());
             } catch (RepositoryException ex) {
                 ex.printStackTrace();
             }
 
+            // create a new channel
+            // FIXME: should the outgoing channel be shared between plugins?
+            Channel outgoing = getPlugin().getPluginManager().getChannelFactory().createChannel();
+
             // instantiate the plugin that should handle the field
             String className = field.getRenderer();
-            PluginDescriptor pluginDescriptor = new PluginDescriptor(wicketId, className, new HashSet<EventChannel>(),
-                    new HashSet<EventChannel>());
+            PluginDescriptor pluginDescriptor = new PluginDescriptor(wicketId, className, outgoing);
             PluginFactory pluginFactory = new PluginFactory(getPlugin().getPluginManager());
             Plugin child = pluginFactory.createPlugin(pluginDescriptor, model, getPlugin());
 
@@ -129,16 +126,16 @@ public class TemplateEngine extends Form {
             // the field specifies a template
             TemplateDescriptor descriptor = getConfig().getTemplate(field.getTemplate());
             if (fieldModel.getObject() instanceof Node) {
-                return new Template(wicketId, new JcrNodeModel(null, (Node) fieldModel.getObject()), descriptor, this);
+                return new Template(wicketId, new JcrNodeModel((Node) fieldModel.getObject()), descriptor, this);
             } else {
                 // should not happen
                 return new Label(wicketId, "xxx");
             }
         } else {
-            if(fieldModel.getObject() instanceof Property) {
+            if (fieldModel.getObject() instanceof Property) {
                 Property prop = (Property) fieldModel.getObject();
                 JcrPropertyModel model = new JcrPropertyModel(prop);
-    
+
                 return new ValueTemplate(wicketId, model, field, this);
             } else {
                 // should not happen
@@ -164,7 +161,7 @@ public class TemplateEngine extends Form {
         NodeType type = node.getPrimaryNodeType();
         TemplateDescriptor descriptor = config.getTemplate(type.getName());
         if (descriptor != null) {
-            template = new Template("template", new JcrNodeModel(null, node), descriptor, this);
+            template = new Template("template", new JcrNodeModel(node), descriptor, this);
             replace(template);
             return true;
         }

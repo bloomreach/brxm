@@ -17,13 +17,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.depublish;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
 public class DePublishDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    public DePublishDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public DePublishDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Unpublish");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

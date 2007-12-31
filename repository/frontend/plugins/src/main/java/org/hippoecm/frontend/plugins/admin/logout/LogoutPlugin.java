@@ -33,7 +33,8 @@ public class LogoutPlugin extends Plugin {
         ValueMap credentials = session.getCredentials();
         String username = credentials.getString("username");
         
-        add(new DialogLink("logout-dialog", "Logout", LogoutDialog.class, model));        
+        add(new DialogLink("logout-dialog", "Logout", LogoutDialog.class, model,
+        		pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));        
         add(new Label("username", username));
     }
 

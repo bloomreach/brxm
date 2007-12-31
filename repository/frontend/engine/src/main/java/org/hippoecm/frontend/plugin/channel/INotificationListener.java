@@ -13,19 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.mailsponge.frontend.plugins;
+package org.hippoecm.frontend.plugin.channel;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-
-import org.hippoecm.frontend.plugins.admin.editor.EditorPlugin;
-
-public class MailEditorPlugin extends EditorPlugin {
-    private static final long serialVersionUID = 1L;
-
-    public MailEditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
-    }
-
+public interface INotificationListener {
+    public void receive(Notification notification);
 }

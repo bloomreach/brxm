@@ -72,7 +72,7 @@ public class JcrTreeNode extends AbstractTreeNode {
         while (jcrChildren.hasNext()) {
             Node jcrChild = jcrChildren.nextNode();
             if (jcrChild != null) {
-                JcrNodeModel childModel = new JcrNodeModel(nodeModel, jcrChild);
+                JcrNodeModel childModel = new JcrNodeModel(jcrChild);
                 JcrTreeNode treeNodeModel = new JcrTreeNode(childModel, getTreeModel());
                 newChildren.add(treeNodeModel);
             }

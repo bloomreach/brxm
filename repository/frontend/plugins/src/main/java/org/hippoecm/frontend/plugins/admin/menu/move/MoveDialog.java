@@ -25,8 +25,8 @@ import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +39,15 @@ public class MoveDialog extends AbstractDialog {
     private MoveTargetTreeView tree;
     private MoveDialogInfoPanel infoPanel;
 
-    public MoveDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public MoveDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
+        
         dialogWindow.setTitle("Move selected node");
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
         UserSession session = (UserSession) getSession();
         HippoNode rootNode = session.getRootNode();
-        JcrNodeModel rootModel = new JcrNodeModel(null, rootNode);
+        JcrNodeModel rootModel = new JcrNodeModel(rootNode);
 
         JcrTreeNode rootNodeModel = new JcrTreeNode(rootModel);
         JcrTreeModel treeModel = new JcrTreeModel(rootNodeModel);
@@ -64,9 +65,7 @@ public class MoveDialog extends AbstractDialog {
     }
 
     @Override
-    public PluginEvent ok() throws RepositoryException {
-        PluginEvent result;
-        
+    public void ok() throws RepositoryException {
         JcrNodeModel sourceNodeModel = dialogWindow.getNodeModel();
         if (sourceNodeModel.getParentModel() != null) {
             String nodeName = sourceNodeModel.getNode().getName();
@@ -83,14 +82,18 @@ public class MoveDialog extends AbstractDialog {
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(sourcePath, targetPath);
 
-            //TODO: lookup common ancestor iso root
-            result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, targetNodeModel.getNodeModel());
-            result.chainEvent(JcrEvent.NEEDS_RELOAD, targetNodeModel.getNodeModel().findRootModel());
-        } else {
-            result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, sourceNodeModel);
-        }
+            Channel channel = getIncoming();
+            if(channel != null) {
+                Request request = channel.createRequest("select",
+                		targetNodeModel.getNodeModel().getMapRepresentation());
+                channel.send(request);
 
-        return result;
+                //TODO: lookup common ancestor iso root
+                request = channel.createRequest("flush",
+                		targetNodeModel.getNodeModel().findRootModel().getMapRepresentation());
+                channel.send(request);
+            }
+        }
     }
 
     @Override

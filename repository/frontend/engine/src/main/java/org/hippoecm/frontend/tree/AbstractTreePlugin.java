@@ -21,10 +21,11 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.channel.Request;
 
 public abstract class AbstractTreePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
@@ -43,34 +44,45 @@ public abstract class AbstractTreePlugin extends Plugin {
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
                 AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
-                PluginEvent event = new PluginEvent(AbstractTreePlugin.this, JcrEvent.NEW_MODEL, treeNodeModel.getNodeModel());
-                getPluginManager().update(target, event);
+                AbstractTreePlugin.this.onSelect(treeNodeModel, target);
             }
         };
         add(tree);
     }
 
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrTreeModel treeModel = rootNode.getTreeModel();
-        
-        JcrNodeModel nodeToBeReloaded = event.getNodeModel(JcrEvent.NEEDS_RELOAD);
-        if (nodeToBeReloaded != null) {    
-            AbstractTreeNode treeNodeModel = treeModel.lookup(nodeToBeReloaded);
-
-            treeNodeModel.markReload();
-            treeNodeModel.getTreeModel().nodeStructureChanged(treeNodeModel);
-            if (target != null && findPage() != null) {
-                tree.updateTree(target);
-            }
-        }
-        
-        JcrNodeModel newSelection = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if(newSelection != null) {
-            AbstractTreeNode node = treeModel.lookup(newSelection);
-            if (node != null) {
-                tree.getTreeState().selectNode(node, true);
-            }
-        }
+    protected void onSelect(AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
+    	Channel channel = getDescriptor().getIncoming();
+    	if(channel != null) {
+	        // create a "select" request with the node path as a parameter
+	        Request request = channel.createRequest("select",
+	        		treeNodeModel.getNodeModel().getMapRepresentation());
+	        
+	        // send the request to the incoming channel
+	        channel.send(request);
+	
+	        // add all components that have changed (and are visible!)
+	        request.getContext().apply(target);
+    	}
     }
 
+    @Override
+    public void receive(Notification notification) {
+        Request request = notification.getRequest();
+        if (request != null) {
+            if ("select".equals(notification.getOperation())) {
+                AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(request.getData()));
+                if (node != null) {
+                    tree.getTreeState().selectNode(node, true);
+                }
+            } else if ("flush".equals(notification.getOperation())) {
+                AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(request.getData()));
+                if (node != null) {
+                    node.markReload();
+                    node.getTreeModel().nodeStructureChanged(node);
+                    request.getContext().addRefresh(tree, "updateTree");
+                }
+            }
+        }
+        super.receive(notification);
+    }
 }

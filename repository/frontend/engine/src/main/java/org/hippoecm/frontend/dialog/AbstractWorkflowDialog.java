@@ -18,9 +18,9 @@ package org.hippoecm.frontend.dialog;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
 import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -38,8 +38,8 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     
     static final Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
 
-    public AbstractWorkflowDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public AbstractWorkflowDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
     }
     
     protected Workflow getWorkflow() {
@@ -62,10 +62,9 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         }
         return workflow;
     }
-    
 
     @Override
-    protected PluginEvent ok() throws Exception {
+    protected void ok() throws Exception {
         doOk();
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
@@ -78,8 +77,12 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         nodeModel.getNode().getSession().save();
         nodeModel.getNode().getSession().refresh(true);
 
-        PluginEvent result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, handle);
-        return result;
+        // enqueue a request to select the handle
+        Channel channel = getIncoming();
+        if(channel != null) {
+            Request request = channel.createRequest("select", handle.getMapRepresentation());
+            channel.send(request);
+        }
     }
     
     /**

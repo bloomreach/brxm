@@ -17,34 +17,39 @@ package org.hippoecm.frontend.plugins.admin.editor;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.INotificationListener;
+import org.hippoecm.frontend.plugin.channel.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeEditor extends Form {
+public class NodeEditor extends Form implements INotificationListener {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
-    
+
     private PropertiesEditor properties;
     private NodeTypesEditor types;
 
-    public NodeEditor(String id, JcrNodeModel model) {
+    public NodeEditor(String id, JcrNodeModel model, Channel incoming) {
         super(id, model);
         setOutputMarkupId(true);
-        
+
+        if (incoming != null) {
+            incoming.subscribe(this);
+        }
+
         properties = new PropertiesEditor("properties", new JcrPropertiesProvider(model));
         add(properties);
 
         types = new NodeTypesEditor("types", new JcrNodeTypesProvider(model)) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void onAddNodeType(String type) {
                 try {
                     JcrNodeModel editorModel = (JcrNodeModel) NodeEditor.this.getModel();
@@ -54,7 +59,8 @@ public class NodeEditor extends Form {
                     log.error(e.getMessage());
                 }
             }
-            
+
+            @Override
             protected void onRemoveNodeType(String type) {
                 try {
                     JcrNodeModel editorModel = (JcrNodeModel) NodeEditor.this.getModel();
@@ -68,16 +74,13 @@ public class NodeEditor extends Form {
         add(types);
     }
 
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if (newModel != null) {
+    public void receive(Notification notification) {
+        if ("select".equals(notification.getOperation())) {
+            JcrNodeModel newModel = new JcrNodeModel(notification.getData());
             properties.setProvider(new JcrPropertiesProvider(newModel));
             types.setProvider(new JcrNodeTypesProvider(newModel));
             setModel(newModel);
-        }
-        if (target != null && findPage() != null) {
-            target.addComponent(this);
+            notification.getContext().addRefresh(this);
         }
     }
-
 }

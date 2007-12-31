@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 
 public interface PluginConfig extends IClusterable {
 
@@ -28,4 +29,5 @@ public interface PluginConfig extends IClusterable {
 
     public PluginDescriptor getPlugin(String pluginId);
 
+    public ChannelFactory getChannelFactory();
 }

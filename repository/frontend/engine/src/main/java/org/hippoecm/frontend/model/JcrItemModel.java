@@ -46,6 +46,11 @@ public class JcrItemModel extends LoadableDetachableModel {
         }
     }
 
+    public JcrItemModel(String path) {
+        super();
+        this.path = path;
+    }
+    
     public String getPath() {
         return path;
     }

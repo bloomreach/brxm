@@ -17,13 +17,14 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.publish;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
 public class PublishDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    public PublishDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public PublishDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Publish");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

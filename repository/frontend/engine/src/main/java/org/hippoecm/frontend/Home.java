@@ -41,7 +41,7 @@ public class Home extends WebPage {
         PluginFactory pluginFactory = new PluginFactory(pluginManager);
 
         PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
-        JcrNodeModel rootModel = new JcrNodeModel(null, rootNode);
+        JcrNodeModel rootModel = new JcrNodeModel(rootNode);
         Plugin rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
         rootPlugin.setPluginManager(pluginManager);
 

@@ -15,14 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.admin.breadcrumb;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Notification;
 
 /**
  * A simple plugin displaying the complete JCR path of the current JcrNodeModel.
@@ -35,14 +33,12 @@ public class BreadcrumbPlugin extends Plugin {
         add(new Label("path", new PropertyModel(this, "model.node.path")));
     }
 
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
-        if (newModel != null) {
-            setNodeModel(newModel);
+    @Override
+    public void receive(Notification notification) {
+        if ("select".equals(notification.getOperation())) {
+            setNodeModel(new JcrNodeModel(notification.getData()));
+            notification.getContext().addRefresh(this);
         }
-        if (target != null && findPage() != null) {
-            target.addComponent(this);
-        }
+        super.receive(notification);
     }
-
 }

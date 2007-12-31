@@ -47,7 +47,7 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
     // Constructor
 
     public TemplateProvider(TemplateDescriptor descriptor, Node node, TemplateEngine engine) {
-        super(null, node);
+        super(node);
         this.descriptor = descriptor;
         this.engine = engine;
 

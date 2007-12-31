@@ -18,6 +18,9 @@ package org.hippoecm.frontend.plugins.admin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.channel.Request;
 
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
@@ -26,4 +29,16 @@ public class RootPlugin extends Plugin {
         super(pluginDescriptor, model, parentPlugin);
     }
 
+    @Override
+    public void handle(Request request) {
+        // update node model
+        if ("select".equals(request.getOperation()) || "flush".equals(request.getOperation())) {
+            Channel outgoing = getDescriptor().getOutgoing();
+            if(outgoing != null) {
+                Notification notification = outgoing.createNotification(request);
+                outgoing.publish(notification);
+            }
+        }
+        super.handle(request);
+    }
 }

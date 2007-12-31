@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
 
 public class EditorPlugin extends Plugin {
 
@@ -37,10 +35,4 @@ public class EditorPlugin extends Plugin {
     @Override
     public void addChildren() {
     }
-
-    @Override
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        engine.update(target, event);
-    }
-
 }

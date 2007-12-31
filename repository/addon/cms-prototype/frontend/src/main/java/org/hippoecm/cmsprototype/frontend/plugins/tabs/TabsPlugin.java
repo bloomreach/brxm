@@ -16,88 +16,105 @@
 package org.hippoecm.cmsprototype.frontend.plugins.tabs;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.EventChannel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginEvent;
 import org.hippoecm.frontend.plugin.PluginFactory;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.channel.Request;
 
+/**
+ * The TabsPlugin is an editor-aware container of plugins.  The tabs correspond
+ * to child plugins (perspectives).  Tab switching is implemented by handling the
+ * "edit" and "focus" requests.  The edit operation is sent as a notification
+ * to the perspectives.  If one of those wishes to obtain focus, it can request it
+ * by sending a "focus" request.
+ *
+ */
 public class TabsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    private ArrayList<AbstractTab> tabs;
+    private ArrayList<Tab> tabs;
     private AjaxTabbedPanel tabbedPanel;
 
     public TabsPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        tabs = new ArrayList<AbstractTab>();
-        tabbedPanel = new AjaxTabbedPanel("tabs", tabs); 
+        tabs = new ArrayList<Tab>();
+        tabbedPanel = new AjaxTabbedPanel("tabs", tabs);
         add(tabbedPanel);
     }
 
     @Override
-    public Plugin addChild(PluginDescriptor childDescriptor) {
+    public Plugin addChild(final PluginDescriptor childDescriptor) {
         childDescriptor.setWicketId(TabbedPanel.TAB_PANEL_ID);
         PluginFactory pluginFactory = new PluginFactory(getPluginManager());
         final Plugin child = pluginFactory.createPlugin(childDescriptor, getNodeModel(), this);
 
-        AbstractTab tab = new AbstractTab(new Model(childDescriptor.getPluginId())) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public Panel getPanel(String panelId) {
-                return child;
-            }
-        };
-        
-        tabs.add(tab);
+        tabs.add(new Tab(child));
         return child;
     }
-    
+
     @Override
     //FIXME: list 'tabs' contains AbstractTab instances, not PluginDescriptors
     public void removeChild(PluginDescriptor childDescriptor) {
         tabs.remove(childDescriptor);
     }
+  
+      @Override
+    public void handle(Request request) {
+        if ("edit".equals(request.getOperation())) {
+            Channel channel = getDescriptor().getOutgoing();
+            if (channel != null) {
+                Notification notification = channel.createNotification(request);
+                channel.publish(notification);
+            }
+            return;
+        } else if ("focus".equals(request.getOperation())) {
+            String pluginId = (String) request.getData().get("plugin");
+            for (int i = 0; i < tabs.size(); i++) {
+                AbstractTab tabbie = tabs.get(i);
+                Plugin perspective = (Plugin) tabbie.getPanel(TabbedPanel.TAB_PANEL_ID);
+                if (pluginId.equals(perspective.getDescriptor().getPluginId())) {
+                    tabbedPanel.setSelectedTab(tabs.indexOf(tabbie));
+                    request.getContext().addRefresh(this);
 
-    @Override
-    public void update(AjaxRequestTarget target, PluginEvent event) {
-        
-        // check all perspectives to see if their incoming channel matches that
-        // on which the event was broadcasted
-        // on the first match, the corresponding perspective/tab is made active
-        
-        Set<EventChannel> eventChannels = event.getChannels();
-        AbstractTab selectMe = null;
-        int i = 0;
-        while (i < tabs.size() && selectMe == null) {
-            AbstractTab tabbie = tabs.get(i); 
-            Plugin perspective = (Plugin) tabbie.getPanel(TabbedPanel.TAB_PANEL_ID);
-            Set<EventChannel> perspectiveChannels = new HashSet<EventChannel>(perspective.getDescriptor().getIncoming());
-            perspectiveChannels.retainAll(eventChannels);
-            
-            if (!perspectiveChannels.isEmpty()) {
-                // an event has been broadcasted on this perspective's incoming channel
-                // -> the tab this perspective belongs to should be made active
-                selectMe = tabbie;
+                    // notify children of focus event
+                    Channel channel = getDescriptor().getOutgoing();
+                    if (channel != null) {
+                        Notification notification = channel.createNotification(request);
+                        channel.publish(notification);
+                    }
+                    return;
+                }
             }
-            i++;
         }
-        
-        if (selectMe != null) {
-            tabbedPanel.setSelectedTab(tabs.indexOf(selectMe));
-            if (target != null && findPage() != null) {
-                target.addComponent(this);
-            }
+        super.handle(request);
+    }
+  
+    private static class Tab extends AbstractTab {
+        private static final long serialVersionUID = 1L;
+
+        private Plugin plugin;
+
+        Tab(Plugin plugin) {
+            super(new Model(plugin.getDescriptor().getPluginId()));
+            this.plugin = plugin;
+        }
+
+        @Override
+        public Panel getPanel(String panelId) {
+            return plugin;
+        }
+
+        public Plugin getPlugin() {
+            return plugin;
         }
     }
- }
+}

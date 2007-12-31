@@ -21,13 +21,13 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class LogoutDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public LogoutDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public LogoutDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Logout");
         add(new Label("logout-message", "Do you want to logout?"));
         
@@ -41,8 +41,7 @@ public class LogoutDialog extends AbstractDialog {
     }
 
     @Override
-    protected PluginEvent ok() throws Exception {
-        return new PluginEvent(getOwningPlugin());
+    protected void ok() throws Exception {
     }
     
     @Override

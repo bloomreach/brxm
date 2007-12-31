@@ -15,7 +15,6 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.search;
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +63,8 @@ public class SearchPlugin extends Plugin{
         didyoumean = new Label("didyoumean", new Model(""));
         form.add(field);
         form.add(new Button("button") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onSubmit() {
                 String value = (String)field.getModelObject();

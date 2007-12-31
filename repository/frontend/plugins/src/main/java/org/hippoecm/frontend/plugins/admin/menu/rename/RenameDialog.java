@@ -23,8 +23,8 @@ import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.JcrEvent;
-import org.hippoecm.frontend.plugin.PluginEvent;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +39,8 @@ public class RenameDialog extends AbstractDialog {
      */
     private String name;
 
-    public RenameDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+    public RenameDialog(DialogWindow dialogWindow, Channel channel) {
+        super(dialogWindow, channel);
         dialogWindow.setTitle("Rename Node");
 
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
@@ -58,10 +58,9 @@ public class RenameDialog extends AbstractDialog {
     }
 
     @Override
-    protected PluginEvent ok() throws RepositoryException {
+    protected void ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
-        PluginEvent result;
         if (nodeModel.getParentModel() != null) {
             JcrNodeModel parentModel = nodeModel.getParentModel();            
             
@@ -74,14 +73,17 @@ public class RenameDialog extends AbstractDialog {
             newPath += getName();
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(oldPath, newPath);
-            
-            JcrNodeModel newNodeModel = new JcrNodeModel(parentModel, parentModel.getNode().getNode(getName()));
-            result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, newNodeModel);
-            result.chainEvent(JcrEvent.NEEDS_RELOAD, parentModel);
-        } else {
-            result = new PluginEvent(getOwningPlugin(), JcrEvent.NEW_MODEL, nodeModel);
+
+            Channel channel = getIncoming();
+            if(channel != null) {
+                JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
+                Request request = channel.createRequest("flush", parentModel.getMapRepresentation());
+                channel.send(request);
+
+                request = channel.createRequest("select", newNodeModel.getMapRepresentation());
+                channel.send(request);
+            }
         }
-        return result;
     }
 
     @Override
