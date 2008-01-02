@@ -57,7 +57,6 @@ public class TodoPlugin extends Plugin {
     @SuppressWarnings("unused")
     private String nodePath;
     AjaxFallbackDefaultDataTable dataTable;
-    List<IStyledColumn> columns;
     PluginDescriptor pluginDescriptor;
     
     public TodoPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
@@ -76,6 +75,8 @@ public class TodoPlugin extends Plugin {
     }
 
     private void UpdateTodoList() {
+
+    	List<IStyledColumn> columns;
         
     	UserSession session = (UserSession) Session.get();
 
@@ -85,18 +86,18 @@ public class TodoPlugin extends Plugin {
     
 		columns = new ArrayList<IStyledColumn>();
 		columns.add(new NodeColumn(new Model("Name"), "name", "name",  pluginDescriptor.getIncoming()));
-	    //columns.add(new PropertyColumn(new Model("Type"), "type", "type"));
-	    //columns.add(new PropertyColumn(new Model("Username"), "username", "username"));
-	    //columns.add(new PropertyColumn(new Model("Reason"), "reason", "reason"));
+		columns.add(new NodeColumn(new Model("Action"), "action", "action",  pluginDescriptor.getIncoming()));
+		columns.add(new NodeColumn(new Model("Requester"), "requester", "requester",  pluginDescriptor.getIncoming()));
+		columns.add(new NodeColumn(new Model("Document"), "document", "document",  pluginDescriptor.getIncoming()));
+		columns.add(new NodeColumn(new Model("Reason"), "reason", "reason",  pluginDescriptor.getIncoming()));
     	
     	try {
 			
 			Node nodePath = (Node) session.getJcrSession().getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID() + USER_PATH_POSTFIX);
 			path = nodePath.getProperty("hippo:path").getString();
-			System.out.println("TDATA: " + path);
 			Node todolistNode = (Node) session.getJcrSession().getItem(path);
-			
-		    dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableTaskProvider(new JcrNodeModel(todolistNode)), 10);
+						
+		    dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableTaskProvider(new JcrNodeModel(todolistNode)), 2);
 
 		} catch (PathNotFoundException e) {
 
@@ -138,8 +139,6 @@ public class TodoPlugin extends Plugin {
         @Override
         protected void onSubmit() {
 
-        	System.out.println((String)properties.getString("path"));
-    	
         	UserSession session = (UserSession) Session.get();
     	
         	javax.jcr.Session jcrSession = session.getJcrSession();

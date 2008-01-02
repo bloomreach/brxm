@@ -19,67 +19,77 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class SortableTaskProvider extends SortableDataProvider{
 
     private static final long serialVersionUID = 1L;
     
-    Folder folder;
-    List<NodeModelWrapper> resources;
+    JcrNodeModel model = null;
     
     public SortableTaskProvider(JcrNodeModel model) {
         
     	if (model != null){
-        	this.folder = new Folder(model);
+        	this.model = model;
         }
         
     }
 
     public Iterator<NodeModelWrapper> iterator(int first, int count) {
 
-    	
-    	if (this.folder != null) {
+        NodeIterator children = null;
+        
+    	if (this.model != null) {
 	        List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
-	        resources = new ArrayList<NodeModelWrapper>();
-	        resources.addAll(folder.getSubFoldersAndDocuments());
-	        //sortResources();
+	        
 	        int i = 0;
-	        for (Iterator<NodeModelWrapper> iterator = resources.iterator(); iterator.hasNext(); i++) {
-	            NodeModelWrapper doc = iterator.next();
-	            if (i >= first && i < (first + count)) {
-	                list.add(doc);
-	            }
+			
+	        try {
+				children = model.getNode().getNodes();
+			} catch (RepositoryException e) {
+				return null;
+			}
+	        			
+			while(children.hasNext()) {
+
+				HippoNode jcrChild = (HippoNode) children.nextNode();
+	        	
+				try {
+					if (jcrChild.isNodeType(HippoNodeType.NT_REQUEST)) {
+
+						i++;
+
+						if (i >= first && i < (first + count)) {
+							list.add(new JcrTreeNode(new JcrNodeModel(jcrChild)));
+					    }
+					}
+				} catch (RepositoryException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	        }
 	        return list.iterator();
     	}
-/*    	if (this.folder != null)
-    	{
-	    	List<Node> list = new ArrayList<Node>();
-	        int i = 0;
-	        for (Iterator<Document> documents = folder.getDocuments().iterator(); documents.hasNext(); i++) {
-	            Document doc = documents.next();
-	            if (i >= first && i < (first + count)) {
-	                list.add(doc.getNodeModel().getNode());
-	            }
-	        }
-	        return list.iterator();
-    	}*/
     	else
     	{
     		return null;
     	}
+    	
     }
-
+    
     public IModel model(Object object) {
-        if (folder != null)
+        if (model != null)
         {
         	return (NodeModelWrapper) object;
-//        	//return new JcrNodeModel((Node) folder);
         }
         else
         {
@@ -88,19 +98,22 @@ public class SortableTaskProvider extends SortableDataProvider{
     }
 
     public int size() {
-    	if (folder != null)
-    	{
-            return folder.getSubFoldersAndDocuments().size();
-    	}
-    	else
-    	{
-    		return 0;
-    	}
+    	try {
+			if (model.getNode().getNodes() != null)
+			{
+			    
+				//TODO: filter out non-request items
+				return (int) model.getNode().getNodes().getSize();
+				
+			}
+			else
+			{
+				return 0;
+			}
+		} catch (RepositoryException e) {
+			return 0;
+		}
     }
 
-	public void detach() {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
