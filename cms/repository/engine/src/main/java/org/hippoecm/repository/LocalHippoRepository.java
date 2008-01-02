@@ -267,60 +267,60 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 } catch (VersionException ex) {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
                 }
-                try {
-                    List extensions = new LinkedList();
-                    for(Enumeration iter = getClass().getClassLoader().getResources("org/hippoecm/repository/extension.xml");
-                        iter.hasMoreElements(); ) {
-                        URL configurationURL = (URL) iter.nextElement();
-                        extensions.add(configurationURL);
-                    }
-                    /* FIXME: does not seem to be necessary, as long as in the
-                     * EAR the extensions are all placed in the default place,
-                     * not in for instance APP-INF/lib
-                     *     for(Enumeration iter = getClass().getClassLoader().getParent().
-                     *         getResources("org/hippoecm/repository/extension.xml"); iter.hasMoreElements(); ) {
-                     *         URL configurationURL = (URL) iter.nextElement();
-                     *         extensions.addpend(configurationURL);
-                     *     }
-                     */
-                    for(Iterator iter = extensions.iterator(); iter.hasNext(); ) {
-                        URL configurationURL = (URL) iter.next();
-                        log.info("Initializing additional configuration content from "+configurationURL);
-                        try {
-                            InputStream configurationStream = configurationURL.openStream();
-                            initializeNodecontent(rootSession, "/hippo:configuration/hippo:temporary", configurationStream);
-                            Node mergeInitializationNode = rootSession.getRootNode().
-                                getNode("hippo:configuration/hippo:temporary/hippo:initialize");
-                            for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
-                                Node n = mergeIter.nextNode();
-                                if(!rootSession.getRootNode().hasNode("hippo:configuration/hippo:initialize/" +
-                                                                      n.getName())) {
-                                    rootSession.move(n.getPath(), "/hippo:configuration/hippo:initialize/" + n.getName());
-                                }
-                            }
-                            mergeInitializationNode.remove();
-                            rootSession.save();
-                        } catch (AccessDeniedException ex) {
-                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                        } catch (ConstraintViolationException ex) {
-                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                        } catch (InvalidItemStateException ex) {
-                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                        } catch (ItemExistsException ex) {
-                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                        } catch (LockException ex) {
-                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                        } catch (NoSuchNodeTypeException ex) {
-                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                        } catch (VersionException ex) {
-                            throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                        }
-                    }
-                } catch (IOException ex) {
-                    throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
-                }
             } else {
                 log.info("Initial configuration content already present");
+            }
+            try {
+                List extensions = new LinkedList();
+                for(Enumeration iter = getClass().getClassLoader().getResources("org/hippoecm/repository/extension.xml");
+                    iter.hasMoreElements(); ) {
+                    URL configurationURL = (URL) iter.nextElement();
+                    extensions.add(configurationURL);
+                }
+                /* FIXME: does not seem to be necessary, as long as in the
+                 * EAR the extensions are all placed in the default place,
+                 * not in for instance APP-INF/lib
+                 *     for(Enumeration iter = getClass().getClassLoader().getParent().
+                 *         getResources("org/hippoecm/repository/extension.xml"); iter.hasMoreElements(); ) {
+                 *         URL configurationURL = (URL) iter.nextElement();
+                 *         extensions.addpend(configurationURL);
+                 *     }
+                 */
+                for(Iterator iter = extensions.iterator(); iter.hasNext(); ) {
+                    URL configurationURL = (URL) iter.next();
+                    log.info("Initializing additional configuration content from "+configurationURL);
+                    try {
+                        InputStream configurationStream = configurationURL.openStream();
+                        initializeNodecontent(rootSession, "/hippo:configuration/hippo:temporary", configurationStream);
+                        Node mergeInitializationNode = rootSession.getRootNode().
+                            getNode("hippo:configuration/hippo:temporary/hippo:initialize");
+                        for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
+                            Node n = mergeIter.nextNode();
+                            if(!rootSession.getRootNode().hasNode("hippo:configuration/hippo:initialize/" +
+                                                                  n.getName())) {
+                                rootSession.move(n.getPath(), "/hippo:configuration/hippo:initialize/" + n.getName());
+                            }
+                        }
+                        mergeInitializationNode.remove();
+                        rootSession.save();
+                    } catch (AccessDeniedException ex) {
+                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                    } catch (ConstraintViolationException ex) {
+                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                    } catch (InvalidItemStateException ex) {
+                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                    } catch (ItemExistsException ex) {
+                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                    } catch (LockException ex) {
+                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                    } catch (NoSuchNodeTypeException ex) {
+                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                    } catch (VersionException ex) {
+                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                    }
+                }
+            } catch (IOException ex) {
+                throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }
 
             /* Register a listener for the initialize node.  Whenever a node
