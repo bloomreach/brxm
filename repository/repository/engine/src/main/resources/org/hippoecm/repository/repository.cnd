@@ -108,16 +108,14 @@
 [hippo:facetauthfolder] > nt:base
 + * (hippo:facetauth) = hippo:facetauth
 
-[hippo:usersettings] > nt:base
-- hippo:path (string)
-- hippo:name (string)
-- hippo:value (string)
+[hippo:usersettings] > nt:unstructured
+
 
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
 - hippo:roles (string) multiple
 + hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
-+ hippo:dashboardview (hippo:usersettings) = hippo:usersettings
++ * (hippo:usersettings) = hippo:usersettings
 
 [hippo:group] > nt:base
 - hippo:members (string) multiple
