@@ -39,12 +39,12 @@
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
 + * (hippo:facetsubsearch) = hippo:facetsubsearch multiple
 
-[hippo:request] > nt:unstructured, mix:referenceable
-
 [hippo:restricted] mixin
 
 [hippo:document] > nt:unstructured, mix:referenceable
 - hippo:paths (string) multiple
+
+[hippo:request] > hippo:document, mix:referenceable
 
 [hippo:facetselect] > nt:unstructured
 - hippo:docbase (string) mandatory
@@ -108,10 +108,16 @@
 [hippo:facetauthfolder] > nt:base
 + * (hippo:facetauth) = hippo:facetauth
 
+[hippo:usersettings] > nt:base
+- hippo:path (string)
+- hippo:name (string)
+- hippo:value (string)
+
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
 - hippo:roles (string) multiple
 + hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
++ hippo:dashboardview (hippo:usersettings) = hippo:usersettings
 
 [hippo:group] > nt:base
 - hippo:members (string) multiple
