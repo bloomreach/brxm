@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.Naming;
+import java.net.MalformedURLException;
 import java.util.StringTokenizer;
 
 import javax.jcr.Node;
@@ -46,6 +48,9 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class RepositoryServlet extends HttpServlet {
 
@@ -164,6 +169,22 @@ public class RepositoryServlet extends HttpServlet {
             HippoRepositoryFactory.setDefaultRepository(repository);
             Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository.getRepository());
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
+
+            /* Start rmiregistry if not already started */
+            if(bindingAddress.startsWith("rmi://")) {
+                int port = Registry.REGISTRY_PORT;
+                try {
+                    if(bindingAddress.startsWith("rmi://localhost:")) {
+                        String portString = bindingAddress.substring("rmi://localhost:".length());
+                        portString = portString.substring(0, portString.indexOf("/"));
+                        port = Integer.parseInt(portString);
+                    }
+                    Registry registry = LocateRegistry.createRegistry(port);
+                    log.info("Started an RMI registry on port "+port);
+                } catch(RemoteException ex) {
+                    log.info("RMI registry has already been started on port " + port);
+                }
+            }
 
             try {
                 Context ctx = new InitialContext();

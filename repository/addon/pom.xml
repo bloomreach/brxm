@@ -43,6 +43,7 @@
   <modules>
     <module>reviewed-action</module>
     <module>sample</module>
+    <module>skin</module>
     <module>xinha</module>
     <module>xinha-frontend</module>
     <module>mailsponge</module>

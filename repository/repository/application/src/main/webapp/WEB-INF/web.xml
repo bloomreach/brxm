@@ -28,8 +28,8 @@
   '-->  
   <context-param>
     <param-name>repository-address</param-name>
-    <!--<param-value>jackrabbit.repository</param-value>-->
     <param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
+    <!-- param-value>jackrabbit.repository</param-value -->
     <description>The address of the repository</description>
   </context-param>
   

@@ -1,3 +1,0 @@
-Be careful to reflect any change in this tree also in the
-equivalent files at the individual add-ons (extension.xml and
-individual files).
