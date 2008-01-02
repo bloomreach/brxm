@@ -37,8 +37,6 @@ public class Folder extends NodeModelWrapper {
     
     public Folder(JcrNodeModel nodeModel) {
         super(nodeModel);
-        subFolders = null;
-        documents = null;
     }
     
     public List<Folder> getSubFolders() {
