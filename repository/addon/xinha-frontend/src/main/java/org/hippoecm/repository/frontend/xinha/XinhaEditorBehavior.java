@@ -41,11 +41,11 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
         page.add(this);
     }
 
-    void register(XinhaEditor.Configuration conf) {
+    void register(XinhaPlugin.Configuration conf) {
         configurations.add(conf);
     }
 
-    void unregister(XinhaEditor.Configuration conf) {
+    void unregister(XinhaPlugin.Configuration conf) {
         if(configurations.contains(conf)) {
             configurations.remove(conf);
             if (configurations.size() == 0) {
@@ -69,7 +69,8 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
 
     IHeaderContributor[] getHeaderContributorsPartly() {
 
-        if (++partlyCount != configurations.size()) {
+        // BERRY if (++partlyCount != configurations.size()) {
+        if (partlyCount++ != 0) {
             return null;
         }
 
@@ -79,13 +80,13 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
                 private static final long serialVersionUID = 1L;
                 public void renderHead(IHeaderResponse response) {
                     StringBuffer sb = new StringBuffer();
-                    sb.append("_editor_url = '/xinha/';\n");
+                    sb.append("_editor_url = '/xinha/xinha/';\n");
                     sb.append("_editor_lang = 'en';\n");
                     response.renderJavascript(sb, null);
                 }
             },
 
-            HeaderContributor.forJavaScript("/xinha/XinhaCore.js"),
+            HeaderContributor.forJavaScript("/xinha/xinha/XinhaCore.js"),
 
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
@@ -93,7 +94,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
                     StringBuffer sb = new StringBuffer();
                     Set plugins = new HashSet();
                     for (Iterator iter = configurations.iterator(); iter.hasNext(); ) {
-                        XinhaEditor.Configuration conf = (XinhaEditor.Configuration) iter.next();
+                        XinhaPlugin.Configuration conf = (XinhaPlugin.Configuration) iter.next();
                         String[] plugin = conf.getPlugins();
                         for (int i=0; i<plugin.length; i++)
                             plugins.add(plugin[i]);
@@ -109,7 +110,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
                     sb.append("  [\n");
                     for (Iterator iter = configurations.iterator(); iter.hasNext(); ) {
                         sb.append("    '");
-                        sb.append(((XinhaEditor.Configuration)iter.next()).getName());
+                        sb.append(((XinhaPlugin.Configuration)iter.next()).getName());
                         sb.append("'");
                         if (iter.hasNext())
                             sb.append(",");
