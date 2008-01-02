@@ -33,10 +33,11 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.servicing.ServicingNodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
 public class Utilities {
     private final static Logger log = LoggerFactory.getLogger(Utilities.class);
