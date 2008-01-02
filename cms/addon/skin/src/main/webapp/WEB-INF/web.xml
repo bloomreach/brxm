@@ -15,10 +15,10 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<web-app id="hippo-ecm-addon-xinha">
+<web-app id="hippo-ecm-addon-skin">
   
   <!-- General configuration -->
-  <display-name>Hippo ECM Xinha add-on</display-name>
-  <description>Static content to be deployed along or merged with front-end for Xinha support.</description>
+  <display-name>Hippo ECM Skin add-on</display-name>
+  <description>Static content to be deployed along or merged with front-end as skin customization.</description>
   
 </web-app>

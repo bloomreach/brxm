@@ -41,7 +41,7 @@
   </scm>
 
   <dependencies>
-    <!-- xhina add-on (must be included before actual front-end application) -->
+    <!-- xhina add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha</artifactId>
@@ -53,6 +53,14 @@
       <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
+    </dependency>
+
+    <!-- skin add-on -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-skin</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
     </dependency>
 
     <!-- end-applications -->
@@ -114,8 +122,17 @@
         <configuration>
           <encoding>UTF-8</encoding>
           <version>5</version>
-          <defaultJavaBundleDir>APP-INF/lib</defaultJavaBundleDir>
           <modules>
+            <webModule>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-addon-skin</artifactId>
+              <contextRoot>/skin</contextRoot>
+            </webModule>
+            <webModule>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-addon-xinha</artifactId>
+              <contextRoot>/xinha</contextRoot>
+            </webModule>
             <webModule>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-repository-application</artifactId>
@@ -124,7 +141,7 @@
             <webModule>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-frontend-application</artifactId>
-              <contextRoot>/console</contextRoot>
+              <contextRoot>/</contextRoot>
             </webModule>
 
             <!-- jarModule>
@@ -136,20 +153,17 @@
             <jarModule>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-<includeInApplicationXml>true</includeInApplicationXml>
-<bundleDir>APP-INF/lib</bundleDir>
+              <includeInApplicationXml>false</includeInApplicationXml>
             </jarModule>
             jarModule>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
-<includeInApplicationXml>true</includeInApplicationXml>
-<bundleDir>APP-INF/lib</bundleDir>
+              <includeInApplicationXml>false</includeInApplicationXml>
             </jarModule>
             <jarModule>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
-<includeInApplicationXml>true</includeInApplicationXml>
-<bundleDir>APP-INF/lib</bundleDir>
+              <includeInApplicationXml>false</includeInApplicationXml>
             </jarModule -->
 
           </modules>

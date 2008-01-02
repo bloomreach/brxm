@@ -44,7 +44,6 @@
     <module>frontend</module>
     <module>repository</module>
     <module>addon</module>
-    <module>application</module>
     <module>package</module>
     <module>tools</module>
     <module>maven-skin</module>

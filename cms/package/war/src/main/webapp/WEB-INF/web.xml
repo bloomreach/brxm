@@ -15,10 +15,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-		 version="2.4" id="hippo-ecm">
+<web-app id="hippo-ecm">
 
   <!-- General configuration -->
   <display-name>Hippo ECM</display-name>
@@ -26,7 +23,6 @@
 
   <context-param>
     <param-name>repository-address</param-name>
-    <!--<param-value>jackrabbit.repository</param-value>-->
     <param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
     <description>The address of the repository</description>
   </context-param>
@@ -40,6 +36,11 @@
       <param-value>org.hippoecm.frontend.Main</param-value>
     </init-param>
   </filter>
+
+  <filter-mapping>
+    <filter-name>Frontend</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
@@ -57,13 +58,6 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-
-  <filter-mapping>
-    <filter-name>Frontend</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>INCLUDE</dispatcher>
-  </filter-mapping>
 
   <servlet-mapping>
     <servlet-name>RepositoryServlet</servlet-name>

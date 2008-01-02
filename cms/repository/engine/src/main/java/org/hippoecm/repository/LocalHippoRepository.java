@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.AccessDeniedException;
@@ -267,9 +268,23 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
                 }
                 try {
+                    List extensions = new LinkedList();
                     for(Enumeration iter = getClass().getClassLoader().getResources("org/hippoecm/repository/extension.xml");
                         iter.hasMoreElements(); ) {
                         URL configurationURL = (URL) iter.nextElement();
+                        extensions.add(configurationURL);
+                    }
+                    /* FIXME: does not seem to be necessary, as long as in the
+                     * EAR the extensions are all placed in the default place,
+                     * not in for instance APP-INF/lib
+                     *     for(Enumeration iter = getClass().getClassLoader().getParent().
+                     *         getResources("org/hippoecm/repository/extension.xml"); iter.hasMoreElements(); ) {
+                     *         URL configurationURL = (URL) iter.nextElement();
+                     *         extensions.addpend(configurationURL);
+                     *     }
+                     */
+                    for(Iterator iter = extensions.iterator(); iter.hasNext(); ) {
+                        URL configurationURL = (URL) iter.next();
                         log.info("Initializing additional configuration content from "+configurationURL);
                         try {
                             InputStream configurationStream = configurationURL.openStream();
