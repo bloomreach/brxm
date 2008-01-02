@@ -15,28 +15,12 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
-import org.hippoecm.repository.api.Document;
+import java.util.Date;
+import java.rmi.RemoteException;
 
-public class PublishableDocument extends Document {
-    final public static String PUBLISHED = "published";
-    final public static String UNPUBLISHED = "unpublished";
-    final public static String DRAFT = "draft";
-    final public static String STALE = "stale";
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    String jcrIdentity = null;
-    String state;
-
-    public PublishableDocument() {
-        this.state = UNPUBLISHED;
-    }
-
-    @Override
-    public final String getJcrIdentity() {
-        return jcrIdentity;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+public class ReviewedActionsWorkflowImpl {
+    final static Logger log = LoggerFactory.getLogger(ReviewedActionsWorkflowImpl.class);
 }

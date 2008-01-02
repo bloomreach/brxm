@@ -19,6 +19,9 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
 
@@ -30,7 +33,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
     }
 
     public void acceptRequest() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        System.err.println("accepting request for document ");
+        ReviewedActionsWorkflowImpl.log.info("accepting request for document ");
         if(PublicationRequest.DELETE.equals(request.type)) {
             workflow.delete();
         } else if(PublicationRequest.PUBLISH.equals(request.type)) {
@@ -44,7 +47,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
     }
 
     public void rejectRequest(String reason) throws WorkflowException, MappingException, RepositoryException {
-        System.err.println("rejecting request for document ");
+        ReviewedActionsWorkflowImpl.log.info("rejecting request for document ");
         request.type = PublicationRequest.REJECTED;
         request.reason = reason;
         workflow.draft.state = PublishableDocument.STALE;

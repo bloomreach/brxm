@@ -35,7 +35,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     }
 
     public void obtainEditableInstance() throws WorkflowException {
-        System.err.println("obtain editable instance on document "+unpublished.getJcrIdentity());
+        ReviewedActionsWorkflowImpl.log.info("obtain editable instance on document ");
         if(draft == null) {
             try {
                 draft = (PublishableDocument) unpublished.clone();
@@ -50,19 +50,19 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     }
 
     public void disposeEditableInstance() throws WorkflowException {
-        System.err.println("dispose editable instance on document ");
+        ReviewedActionsWorkflowImpl.log.info("dispose editable instance on document ");
         draft = null;
     }
 
     public void delete() throws WorkflowException {
-        System.err.println("deletion on document ");
+        ReviewedActionsWorkflowImpl.log.info("deletion on document ");
         if(current != null)
             throw new WorkflowException("cannot delete document with pending publication request");
         unpublished = draft = null;
     }
 
     public void requestDeletion() throws WorkflowException {
-        System.err.println("deletion request on document ");
+        ReviewedActionsWorkflowImpl.log.info("deletion request on document ");
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUsername());
         } else {
@@ -71,7 +71,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     }
 
     public void publish() throws WorkflowException, MappingException {
-        System.err.println("publication on document ");
+        ReviewedActionsWorkflowImpl.log.info("publication on document ");
         try {
             if(draft != null) {
                 published = (PublishableDocument) draft.clone();
@@ -85,17 +85,17 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     }
 
     public void publish(Date publicationDate) throws WorkflowException {
-        System.err.println("publication on document ");
+        ReviewedActionsWorkflowImpl.log.info("publication on document ");
         throw new WorkflowException("unsupported");
     }
 
     public void publish(Date publicationDate, Date depublicationDate) throws WorkflowException {
-        System.err.println("publication on document ");
+        ReviewedActionsWorkflowImpl.log.info("publication on document ");
         throw new WorkflowException("unsupported");
     }
 
     public void requestPublication() throws WorkflowException {
-        System.err.println("publication request on document ");
+        ReviewedActionsWorkflowImpl.log.info("publication request on document ");
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.PUBLISH, draft, getWorkflowContext().getUsername());
         } else {
@@ -104,7 +104,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     }
 
     public void requestPublication(Date publicationDate) throws WorkflowException {
-        System.err.println("publication request on document ");
+        ReviewedActionsWorkflowImpl.log.info("publication request on document ");
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.PUBLISH, draft, getWorkflowContext().getUsername());
         } else {
@@ -113,17 +113,17 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     }
 
     public void requestPublication(Date publicationDate, Date depublicationDate) throws WorkflowException {
-        System.err.println("publication request on document ");
+        ReviewedActionsWorkflowImpl.log.info("publication request on document ");
         throw new WorkflowException("unsupported");
     }
 
     public void depublish() throws WorkflowException {
-        System.err.println("depublication on document ");
+        ReviewedActionsWorkflowImpl.log.info("depublication on document ");
         published = null;
     }
 
     public void requestDepublication() throws WorkflowException {
-        System.err.println("depublication request on document ");
+        ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUsername());
         } else {
