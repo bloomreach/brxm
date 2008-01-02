@@ -49,8 +49,7 @@ public class SortableDocumentsProvider extends SortableDataProvider {
     public Iterator<NodeModelWrapper> iterator(int first, int count) {
         // TODO replace with a more efficient implementation
         List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
-        resources = new ArrayList<NodeModelWrapper>();
-        resources.addAll(folder.getSubFoldersAndDocuments());
+        resources = folder.getSubFoldersAndDocuments();
         sortResources();
         int i = 0;
         for (Iterator<NodeModelWrapper> iterator = resources.iterator(); iterator.hasNext(); i++) {
