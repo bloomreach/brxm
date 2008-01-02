@@ -1,20 +1,51 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.cmsprototype.frontend.plugins.list.datatable.paging;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
-import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxNavigationToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigatorLabel;
 import org.apache.wicket.markup.html.WebComponent;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
+import org.apache.wicket.model.Model;
 
-public class CustomizableNavigationToolBar extends AjaxNavigationToolbar{
+public class CustomizableNavigationToolBar extends AbstractToolbar{
 
     private static final long serialVersionUID = 1L;
     
-    public CustomizableNavigationToolBar(DataTable table) {
+    //private DataTable table;
+    
+    public CustomizableNavigationToolBar(DataTable table, int viewSize) {
         super(table);
-    }
+        //this.table = table;
+
+        WebMarkupContainer span = new WebMarkupContainer("span");
+        add(span);
+        span.add(new AttributeModifier("colspan", true, new Model(String
+                .valueOf(table.getColumns().length))));
+        
+        PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, 3);
+        pagingNavigator.getPagingNavigation().setViewSize(viewSize);
+        span.add(pagingNavigator);
+        span.add(newNavigatorLabel("navigatorLabel", table));
+     }
     
     public CustomizableNavigationToolBar(DataTable table, String prefix, String postfix) {
         super(table);
@@ -46,11 +77,10 @@ public class CustomizableNavigationToolBar extends AjaxNavigationToolbar{
      *            dataview used by datatable
      * @return paging navigator that will be used to navigate the data table
      */
-    protected PagingNavigator newPagingNavigator(String navigatorId, final DataTable table)
+    protected PagingNavigator newPagingNavigator(String navigatorId, final DataTable table, int viewSize)
     {
-        
-        return new CustomizablePagingNavigator(navigatorId, table, 
-                        new CustomizablePagingLabelProvider("page",null))
+        return new AjaxPagingNavigator(navigatorId, table, 
+                        new CustomizablePagingLabelProvider(null,null))
             {
             private static final long serialVersionUID = 1L;
 

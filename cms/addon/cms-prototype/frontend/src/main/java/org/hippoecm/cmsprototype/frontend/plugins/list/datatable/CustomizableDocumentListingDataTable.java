@@ -18,19 +18,16 @@ package org.hippoecm.cmsprototype.frontend.plugins.list.datatable;
 import java.util.List;
 
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
-import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxNavigationToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.paging.CustomizableNavigationToolBar;
 
-public class CustomizableDocumentListingDataTable extends DataTable {
+public class CustomizableDocumentListingDataTable extends DataTable implements ICustomizableDocumentListingDataTable {
 
     private static final long serialVersionUID = 1L;
     
@@ -38,6 +35,8 @@ public class CustomizableDocumentListingDataTable extends DataTable {
     private AbstractToolbar ajaxBottomNavigationToolbar;
     private AbstractToolbar ajaxFallbackTopHeadersToolbar;
     private AbstractToolbar ajaxFallbackBottomHeadersToolbar;
+    
+    private final static int DEFAULT_VIEWSIZE = Integer.MAX_VALUE;
     
     private ISortableDataProvider dataProvider;
     
@@ -73,24 +72,27 @@ public class CustomizableDocumentListingDataTable extends DataTable {
         return new OddEvenItem(id, index, model);
     }
     
-    /**
-     * Adds default top paging above document listing. Calling this method multiple times
-     * will not duplicate the paging, so only calling it ones makes sense.
-     *
+    
+    /* (non-Javadoc)
+     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging()
      */
     public void addTopPaging(){
+        addTopPaging(DEFAULT_VIEWSIZE);
+    }
+    /* (non-Javadoc)
+     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging(int viewSize)
+     */
+    public void addTopPaging(int viewSize) {
         if(ajaxTopNavigationToolbar == null ) {
-            ajaxTopNavigationToolbar = new AjaxNavigationToolbar(this);
+            ajaxTopNavigationToolbar = new CustomizableNavigationToolBar(this,viewSize);
         } 
         if(!this.contains(ajaxTopNavigationToolbar, true)) { 
             super.addTopToolbar(ajaxTopNavigationToolbar);
         } 
     }
     
-    /**
-     * Adds default ajax top headers above document listing. Calling this method multiple times
-     * will not duplicate the paging, so only calling it ones makes sense.
-     *
+    /* (non-Javadoc)
+     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addTopColumnHeaders()
      */
     public void addTopColumnHeaders() {
         if(ajaxFallbackTopHeadersToolbar == null ) {
@@ -101,24 +103,27 @@ public class CustomizableDocumentListingDataTable extends DataTable {
         } 
     }
 
-    /**
-     * Add default ajax bottom paging above document listing. Calling this method multiple times
-     * will not duplicate the paging, so only calling it ones makes sense.
-     *
+    /* (non-Javadoc)
+     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addBottomPaging()
      */
     public void addBottomPaging() {
+        addBottomPaging(DEFAULT_VIEWSIZE);
+    }
+    /* (non-Javadoc)
+     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addBottomPaging(int viewSize)
+     */
+    public void addBottomPaging(int viewSize) {
         if(ajaxBottomNavigationToolbar == null ) {
-            ajaxBottomNavigationToolbar = new CustomizableNavigationToolBar(this);
+            ajaxBottomNavigationToolbar = new CustomizableNavigationToolBar(this,viewSize);
         } 
         if(!this.contains(ajaxBottomNavigationToolbar, true)) { 
             super.addBottomToolbar(ajaxBottomNavigationToolbar);
         } 
     }
-
-    /**
-     * Adds default ajax bottom headers above document listing. Calling this method multiple times
-     * will not duplicate the paging, so only calling it ones makes sense.
-     *
+    
+    
+    /* (non-Javadoc)
+     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addBottomColumnHeaders()
      */
     public void addBottomColumnHeaders() {
         if(ajaxFallbackBottomHeadersToolbar == null ) {
@@ -128,5 +133,6 @@ public class CustomizableDocumentListingDataTable extends DataTable {
             super.addBottomToolbar(ajaxFallbackBottomHeadersToolbar);
         } 
     }
+
 
 }
