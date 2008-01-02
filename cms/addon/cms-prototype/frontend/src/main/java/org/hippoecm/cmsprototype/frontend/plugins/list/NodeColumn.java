@@ -15,29 +15,27 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
+import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
 
-public class NodeColumn extends PropertyColumn {
+public class NodeColumn extends AbstractColumn {
     private static final long serialVersionUID = 1L;
 
     private Channel channel;
+    private String columnNameString;
     
-    public NodeColumn(IModel displayModel, String propertyExpression, Channel channel) {
-        super(displayModel, propertyExpression);
+ 
+    public NodeColumn(IModel displayModel, String columnName ,Channel channel) {
+        super(displayModel, columnName);
         this.channel = channel;
+        this.columnNameString = columnName;
     }
 
-    public NodeColumn(IModel displayModel, String sortProperty, String propertyExpression, Channel channel) {
-        super(displayModel, sortProperty, propertyExpression);
-        this.channel = channel;
-    }
-
-    @Override
-    public void populateItem(Item item, String componentId, IModel model) {
-        item.add(new NodeCell(componentId, (NodeModelWrapper) model, channel));
+    public void populateItem(Item item, String componentId, IModel model) { 
+        item.add(new NodeCell(componentId, (NodeModelWrapper) model, channel, columnNameString));
     }
 }
