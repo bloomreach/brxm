@@ -35,10 +35,8 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     public void addTable(JcrNodeModel nodeModel, int pageSize) {
         dataTable = new CustomizableDocumentListingDataTable("table", columns, new SortableDocumentsProvider(
                 nodeModel), pageSize, false);
-        dataTable.addBottomPaging(3);
-        dataTable.addTopPaging();
+        dataTable.addBottomPaging(10);
         dataTable.addTopColumnHeaders();
-        dataTable.addBottomColumnHeaders();
         add((Component)dataTable);
     }
 
