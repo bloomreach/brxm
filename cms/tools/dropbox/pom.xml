@@ -83,7 +83,7 @@
           <mainClass>org.hippoecm.tools.dropbox.DropboxExt</mainClass>
           <cleanupDeamonThreads>false</cleanupDeamonThreads>
           <arguments>
-            <argument>rmi://localhost:1099/jackrabbit.repository</argument>
+            <argument>rmi://localhost:1099/hipporepository</argument>
             <argument>C:\temp\ldaptest</argument>
             <argument>admin</argument>
             <argument>admin</argument>

@@ -23,13 +23,13 @@
 
   <!--
   Rmi registration
-  For running in jetty start rmiregistry and set to 'rmi://localhost:1099/jackrabbit.repository'
-  For deployment in a true application server (glassfish, jboss, weblogic etc.) set to 'jackrabbit.repository'
+  For running in jetty start rmiregistry and set to 'rmi://localhost:1099/hipporepository'
+    For deployment in a true application server (glassfish, jboss, weblogic etc.) set to 'hipporepository'
   '-->  
   <context-param>
     <param-name>repository-address</param-name>
-    <!--<param-value>jackrabbit.repository</param-value>-->
-    <param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
+    <!--<param-value>hipporepository</param-value>-->
+    <param-value>rmi://localhost:1099/hipporepository</param-value>
     <description>The address of the repository</description>
   </context-param>
   

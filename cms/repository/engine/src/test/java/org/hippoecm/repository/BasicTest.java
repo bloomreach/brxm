@@ -33,7 +33,7 @@ public class BasicTest extends TestCase {
             assertNotNull(repositoryServer);
             repositoryServer.run(true);
             Thread.sleep(3000);
-            repositoryClient = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
+            repositoryClient = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
             assertNotNull(repositoryClient);
             Session session = repositoryClient.login();
             assertNotNull(session);

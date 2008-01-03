@@ -2,7 +2,7 @@ BUILDING AND RUNNING
 --------------------
 mvn clean compile exec:java
 
-This will start the RMI Server on: rmi://localhost:1099/jackrabbit.repository
+This will start the RMI Server on: rmi://localhost:1099/hipporepository
 
 To stop the server simply press Ctrl-C in the console.
 

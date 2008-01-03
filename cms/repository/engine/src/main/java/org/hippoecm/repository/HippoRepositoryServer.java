@@ -30,7 +30,7 @@ import org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory;
 public class HippoRepositoryServer extends LocalHippoRepository {
     public final static int RMI_PORT = 1099;
     public final static String RMI_HOST = "localhost";
-    public final static String RMI_NAME = "jackrabbit.repository";
+    public final static String RMI_NAME = "hipporepository";
 
     static Registry registry = null;
     private Remote rmiRepository;

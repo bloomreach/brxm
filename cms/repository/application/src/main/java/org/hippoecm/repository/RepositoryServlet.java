@@ -66,7 +66,7 @@ public class RepositoryServlet extends HttpServlet {
     public final static String REPOSITORY_CONFIG_PARAM = "repository-config";
 
     /** Default binding address for server */
-    public final static String DEFAULT_BINDING_ADDRESS = "rmi://localhost:1099/jackrabbit.repository";
+    public final static String DEFAULT_BINDING_ADDRESS = "rmi://localhost:1099/hipporepository";
 
     /** System property for overriding the repostiory config file */
     public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";

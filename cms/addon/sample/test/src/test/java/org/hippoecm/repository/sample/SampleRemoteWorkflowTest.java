@@ -46,7 +46,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
         backgroundServer = new HippoRepositoryServer();
         backgroundServer.run(true);
         Thread.sleep(3000);
-        server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
+        server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
     }
 
     @Override

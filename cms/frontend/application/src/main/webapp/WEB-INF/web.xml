@@ -25,7 +25,7 @@
 
 	<context-param>
 		<param-name>repository-directory</param-name>
-		<param-value>rmi://localhost:1099/jackrabbit.repository</param-value>
+		<param-value>rmi://localhost:1099/hipporepository</param-value>
 	</context-param>
 	
 	<!--

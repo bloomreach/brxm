@@ -51,7 +51,7 @@ public class Dropbox {
     }
 
     public Dropbox() throws RepositoryException {
-        this("rmi://localhost:1099/jackrabbit.repository", "");
+        this("rmi://localhost:1099/hipporepository", "");
     }
 
     /*
