@@ -118,7 +118,7 @@ public class AddNewWizard extends Plugin {
 	                request.setContext(context);
 	                channel.send(request);
 
-                    request = channel.createRequest("edit", model.getMapRepresentation());
+                    request = channel.createRequest("browse", model.getMapRepresentation());
                     request.setContext(context);
                     channel.send(request);
 	                context.apply(target);

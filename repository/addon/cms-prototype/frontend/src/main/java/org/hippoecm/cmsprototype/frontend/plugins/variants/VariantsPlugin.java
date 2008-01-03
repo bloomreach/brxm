@@ -91,12 +91,13 @@ public class VariantsPlugin extends Plugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                    	Channel channel = getDescriptor().getIncoming();
-                    	if(channel != null) {
-                    		Request request = channel.createRequest("select", variant.getNodeModel().getMapRepresentation());
-                    		channel.send(request);
-                    		request.getContext().apply(target);
-                    	}
+                        Channel channel = getDescriptor().getIncoming();
+                        if (channel != null) {
+                            Request request = channel.createRequest("select", variant.getNodeModel()
+                                    .getMapRepresentation());
+                            channel.send(request);
+                            request.getContext().apply(target);
+                        }
                     }
 
                 };
@@ -115,18 +116,23 @@ public class VariantsPlugin extends Plugin {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getData());
             // ignore documents; we select those ourselves
             try {
-                HippoNode node = nodeModel.getNode();
-                if (!node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    setNodeModel(nodeModel);
-                    variantsList.clear();
+                while (nodeModel != null) {
+                    HippoNode node = nodeModel.getNode();
+                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        nodeModel = nodeModel.getParentModel();
+                    } else {
+                        setNodeModel(nodeModel);
+                        variantsList.clear();
 
-                    nodeName = node.getDisplayName();
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        Document document = new Document(nodeModel);
-                        variantsList.addAll(document.getVariants());
+                        nodeName = node.getDisplayName();
+                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            Document document = new Document(nodeModel);
+                            variantsList.addAll(document.getVariants());
+                        }
+                        notification.getContext().addRefresh(this);
+                        break;
                     }
-	                notification.getContext().addRefresh(this);
-	            }
+                }
             } catch (RepositoryException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
