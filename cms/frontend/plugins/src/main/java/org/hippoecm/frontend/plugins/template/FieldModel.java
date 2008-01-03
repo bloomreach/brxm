@@ -25,11 +25,16 @@ public class FieldModel extends ItemModelWrapper {
     private FieldDescriptor descriptor;
 
     //  Constructor
-    public FieldModel(Item item, FieldDescriptor descriptor) {
+    public FieldModel(FieldDescriptor descriptor, Item item) {
         super(item);
         this.descriptor = descriptor;
     }
 
+    public FieldModel(FieldDescriptor descriptor, String path) {
+        super(path);
+        this.descriptor = descriptor;
+    }
+    
     public FieldDescriptor getDescriptor() {
         return descriptor;
     }

@@ -17,7 +17,6 @@ package org.hippoecm.repository.frontend.xinha;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.Page;
@@ -27,13 +26,12 @@ import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 
-class XinhaEditorBehavior extends AbstractHeaderContributor
-{
+class XinhaEditorBehavior extends AbstractHeaderContributor {
     private static final long serialVersionUID = 1L;
 
     private Page page;
     private Set configurations;
-    private int partlyCount = 0;
+    private boolean rendered = false;
 
     XinhaEditorBehavior(Page page) {
         configurations = new HashSet();
@@ -49,9 +47,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
         if(configurations.contains(conf)) {
             configurations.remove(conf);
             if (configurations.size() == 0) {
-                for(Iterator iter = page.getBehaviors().iterator(); iter.hasNext(); ) {
+                for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
                     IBehavior behavior = (IBehavior) iter.next();
-                    if(behavior == this) {
+                    if (behavior == this) {
                         page.remove(this);
                     }
                 }
@@ -63,20 +61,19 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
         return null;
     }
 
-    void resetPartly() {
-        partlyCount = 0;
-    }
-
     IHeaderContributor[] getHeaderContributorsPartly() {
 
-        if (++partlyCount != configurations.size()) {
+        if (rendered) {
             return null;
         }
 
-        return new IHeaderContributor[] {
+        rendered = true;
 
+        return new IHeaderContributor[] {
+    
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
+    
                 public void renderHead(IHeaderResponse response) {
                     StringBuffer sb = new StringBuffer();
                     sb.append("_editor_url = '/xinha/xinha/';\n");
@@ -84,21 +81,22 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
                     response.renderJavascript(sb, null);
                 }
             },
-
+    
             HeaderContributor.forJavaScript("/xinha/xinha/XinhaCore.js"),
-
+    
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
+    
                 public void renderHead(IHeaderResponse response) {
                     StringBuffer sb = new StringBuffer();
                     Set plugins = new HashSet();
-                    for (Iterator iter = configurations.iterator(); iter.hasNext(); ) {
+                    for (Iterator iter = configurations.iterator(); iter.hasNext();) {
                         XinhaPlugin.Configuration conf = (XinhaPlugin.Configuration) iter.next();
                         String[] plugin = conf.getPlugins();
-                        for (int i=0; i<plugin.length; i++)
+                        for (int i = 0; i < plugin.length; i++)
                             plugins.add(plugin[i]);
                     }
-
+    
                     sb.append("xinha_editors = null;\n");
                     sb.append("xinha_init    = null;\n");
                     sb.append("xinha_config  = null;\n");
@@ -107,9 +105,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
                     sb.append("{\n");
                     sb.append("  xinha_editors = xinha_editors ? xinha_editors :\n");
                     sb.append("  [\n");
-                    for (Iterator iter = configurations.iterator(); iter.hasNext(); ) {
+                    for (Iterator iter = configurations.iterator(); iter.hasNext();) {
                         sb.append("    '");
-                        sb.append(((XinhaPlugin.Configuration)iter.next()).getName());
+                        sb.append(((XinhaPlugin.Configuration) iter.next()).getName());
                         sb.append("'");
                         if (iter.hasNext())
                             sb.append(",");
@@ -118,9 +116,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
                     sb.append("  ];\n");
                     sb.append("  xinha_plugins = xinha_plugins ? xinha_plugins :\n");
                     sb.append("  [\n");
-                    for (Iterator iter = plugins.iterator(); iter.hasNext(); ) {
+                    for (Iterator iter = plugins.iterator(); iter.hasNext();) {
                         sb.append("    '");
-                        sb.append((String)iter.next());
+                        sb.append((String) iter.next());
                         sb.append("'");
                         if (iter.hasNext())
                             sb.append(",");
@@ -134,13 +132,14 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
                     sb.append("  Xinha.startEditors(xinha_editors);\n");
                     sb.append("}\n");
                     sb.append("Xinha._addEvent(window,'load', xinha_init);\n");
-
+    
                     response.renderJavascript(sb, null);
                 }
             },
-
+    
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
+    
                 public void renderHead(IHeaderResponse response) {
                     response.renderOnLoadJavascript("xinha_init();");
                 }

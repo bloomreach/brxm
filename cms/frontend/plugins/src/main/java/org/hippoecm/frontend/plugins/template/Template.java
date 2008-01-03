@@ -17,19 +17,27 @@ package org.hippoecm.frontend.plugins.template;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class Template extends Panel {
     private static final long serialVersionUID = 1L;
 
-    private FieldView fields;
+    private TemplateProvider provider;
 
     public Template(String wicketId, IModel model, TemplateDescriptor descriptor, TemplateEngine engine) {
         super(wicketId, model);
+        
+        provider = new TemplateProvider(descriptor, (Node) getModelObject(), engine);
+        add(new FieldView("field", descriptor, provider, engine));
+    }
 
-        TemplateProvider provider = new TemplateProvider(descriptor, (Node) getModelObject(), engine);
-        fields = new FieldView("field", descriptor, provider, engine);
-        add(fields);
+    @Override
+    public Component setModel(IModel model) {
+        JcrNodeModel nodeModel = (JcrNodeModel) model;
+        provider.setChainedModel(nodeModel.getChainedModel());
+        return super.setModel(model);
     }
 }

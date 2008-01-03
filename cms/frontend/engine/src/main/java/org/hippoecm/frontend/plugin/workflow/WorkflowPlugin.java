@@ -67,7 +67,6 @@ public class WorkflowPlugin extends Plugin {
 
                     String currentPluginClass = plugin.getClass().getName();
                     if (!newPluginClass.equals(currentPluginClass)) {
-                        plugin.destroy();
                         removeChild(descriptor);
                         descriptor.setClassName(newPluginClass);
                         plugin = addChild(descriptor);

@@ -50,23 +50,23 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
         super(node);
         this.descriptor = descriptor;
         this.engine = engine;
-
-        reset();
     }
 
-    public TemplateConfig getTemplateConfig() {
-        return engine.getConfig();
+    public void setDescriptor(TemplateDescriptor descriptor) {
+        this.descriptor = descriptor;
+        fields = null;
     }
 
-    public void clone(TemplateProvider provider) {
-        setChainedModel(provider.getChainedModel());
-        this.descriptor = provider.descriptor;
-        reset();
+    @Override
+    public void setChainedModel(IModel model) {
+        fields = null;
+        super.setChainedModel(model);
     }
 
     // IDataProvider implementation, provides the fields of the chained itemModel
 
     public Iterator<FieldModel> iterator(int first, int count) {
+        load();
         return fields.subList(first, first + count).iterator();
     }
 
@@ -76,6 +76,7 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
     }
 
     public int size() {
+        load();
         return fields.size();
     }
 
@@ -105,7 +106,83 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
         return new HashCodeBuilder(17, 31).append(engine).append(descriptor).toHashCode();
     }
 
-    private void reset() {
+    // handle wildcard expansion 
+
+    protected void expandNodeWildcard(Node node) throws RepositoryException {
+        // FIXME: a separate template should be loaded, i.e.
+        // the FieldModel should be able to describe "multiple"
+        NodeIterator iterator = node.getNodes();
+        while (iterator.hasNext()) {
+            Node next = iterator.nextNode();
+            if (!descriptor.hasField(next.getName())) {
+                String template = null;
+                if (next.getPrimaryNodeType() != null) {
+                    template = next.getPrimaryNodeType().getName();
+                }
+                FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName(), template, null);
+                addField(desc, next);
+            }
+        }
+    }
+
+    protected void expandPropertyWildcard(Node node) throws RepositoryException {
+        PropertyIterator iterator = node.getProperties();
+        while (iterator.hasNext()) {
+            Property next = iterator.nextProperty();
+            if (!descriptor.hasField(next.getName())) {
+                FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName(), null, null);
+                addField(desc, next);
+            }
+        }
+    }
+
+    protected void loadMandatory(FieldDescriptor field, Node node) throws RepositoryException {
+        Item item = null;
+        if (field.isNode()) {
+            if (!node.hasNode(field.getPath())) {
+                item = node.addNode(field.getPath(), field.getType());
+            } else {
+                item = node.getNode(field.getPath());
+            }
+        } else {
+            if (!node.hasProperty(field.getPath())) {
+                addField(field, node.getPath() + "/" + field.getPath());
+            } else {
+                item = node.getProperty(field.getPath());
+            }
+        }
+        if (item != null) {
+            addField(field, item);
+        }
+    }
+
+    protected void loadAvailable(FieldDescriptor field, Node node) throws RepositoryException {
+        Item item = null;
+        if (node.hasProperty(field.getPath())) {
+            item = node.getProperty(field.getPath());
+        } else if (node.hasNode(field.getPath())) {
+            item = node.getNode(field.getPath());
+        }
+        if (item != null) {
+            addField(field, item);
+        }
+    }
+
+    private void addField(FieldDescriptor field, Item item) {
+        fields.add(new FieldModel(field, item));
+    }
+
+    private void addField(FieldDescriptor field, String path) {
+        fields.add(new FieldModel(field, path));
+    }
+    
+    // internal (lazy) loading of fields
+
+    private void load() {
+        if (fields != null) {
+            return;
+        }
+
         Node node = getNode();
         fields = new ArrayList<FieldModel>();
         if (descriptor != null) {
@@ -113,42 +190,16 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
             while (iter.hasNext()) {
                 FieldDescriptor field = iter.next();
                 try {
-                    Item item = null;
                     if (field.getPath().equals("*")) {
                         if (field.isNode()) {
-                            // FIXME: a separate template should be loaded, i.e.
-                            // the FieldModel should be able to describe "multiple"
-                            NodeIterator iterator = node.getNodes();
-                            while (iterator.hasNext()) {
-                                Node next = iterator.nextNode();
-                                if (!descriptor.hasField(next.getName())) {
-                                    String template = null;
-                                    if (next.getPrimaryNodeType() != null) {
-                                        template = next.getPrimaryNodeType().getName();
-                                    }
-                                    FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName(),
-                                            template, null);
-                                    fields.add(new FieldModel(next, desc));
-                                }
-                            }
+                            expandNodeWildcard(node);
                         } else {
-                            PropertyIterator iterator = node.getProperties();
-                            while (iterator.hasNext()) {
-                                Property next = iterator.nextProperty();
-                                if (!descriptor.hasField(next.getName())) {
-                                    FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName(), null,
-                                            null);
-                                    fields.add(new FieldModel(next, desc));
-                                }
-                            }
+                            expandPropertyWildcard(node);
                         }
-                    } else if (node.hasProperty(field.getPath())) {
-                        item = node.getProperty(field.getPath());
-                    } else if (node.hasNode(field.getPath())) {
-                        item = node.getNode(field.getPath());
-                    }
-                    if (item != null) {
-                        fields.add(new FieldModel(item, field));
+                    } else if (field.isMandatory()) {
+                        loadMandatory(field, node);
+                    } else {
+                        loadAvailable(field, node);
                     }
                 } catch (RepositoryException ex) {
                     ex.printStackTrace();

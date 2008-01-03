@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
@@ -116,10 +117,17 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     }
 
     public void removeChild(PluginDescriptor childDescriptor) {
-        childDescriptor.disconnect();
         remove(childDescriptor.getWicketId());
     }
 
+    @Override
+    public void remove(Component component) {
+        if(component instanceof Plugin) {
+            ((Plugin) component).getDescriptor().disconnect();
+        }
+        super.remove(component);
+    }
+    
     protected Workflow getWorkflow() {
         Workflow workflow = null;
         try {
