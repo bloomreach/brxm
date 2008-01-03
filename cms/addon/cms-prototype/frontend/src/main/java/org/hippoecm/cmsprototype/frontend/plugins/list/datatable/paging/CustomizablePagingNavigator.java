@@ -25,7 +25,14 @@ public class CustomizablePagingNavigator extends AjaxPagingNavigator{
     private static final long serialVersionUID = 1;
  
     public CustomizablePagingNavigator(String id, IPageable pageable, IPagingLabelProvider labelProvider) {
-        super(id, pageable, labelProvider);
+        /*
+         * TODO : org.apache.wicket.markup.html.navigation.paging.PagingNavigation in
+         * wicket-1.3.0-rc2.jar contains a bug regarding paging when a non-null labelProvider
+         * is provided. This is already fixed in trunk. When this commit makes it to a release
+         * use the following constructor to enable a custom label provider:
+         * super(id, pageable, labelProvider);
+         */  
+        super(id, pageable, null);
     }
     public CustomizablePagingNavigator(String id, IPageable pageable) {
         super(id, pageable);
