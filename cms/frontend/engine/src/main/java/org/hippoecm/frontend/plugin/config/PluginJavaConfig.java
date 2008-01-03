@@ -36,6 +36,7 @@ public class PluginJavaConfig implements PluginConfig {
     private ChannelFactory factory;
     
     public PluginJavaConfig() {
+        factory = new ChannelFactory();
         Channel outgoing = factory.createChannel();
 
         String className = "org.hippoecm.frontend.plugins.admin.RootPlugin";
