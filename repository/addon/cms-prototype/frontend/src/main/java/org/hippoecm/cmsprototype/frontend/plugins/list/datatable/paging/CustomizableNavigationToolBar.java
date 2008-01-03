@@ -79,7 +79,7 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
      */
     protected PagingNavigator newPagingNavigator(String navigatorId, final DataTable table, String prefix, String postfix)
     {
-        return new AjaxPagingNavigator(navigatorId, table, 
+        return new CustomizablePagingNavigator(navigatorId, table, 
                         new CustomizablePagingLabelProvider(prefix,postfix))
             {
             private static final long serialVersionUID = 1L;

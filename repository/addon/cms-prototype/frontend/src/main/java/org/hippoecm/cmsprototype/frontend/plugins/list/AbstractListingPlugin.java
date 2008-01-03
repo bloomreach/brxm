@@ -119,7 +119,11 @@ public abstract class AbstractListingPlugin extends Plugin {
                     columns.add(new NodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
                     columns.add(new NodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
                 }
-                jcrSession.save();
+                /*
+                 * We do not save the added node. If a user calls session.save his preferences are
+                 * saved. So, as long as a user does not save, these default preference nodes are 
+                 * recreated.
+                 */ 
             } catch (PathNotFoundException e1) {
                 logError(e1.getMessage());
                 defaultColumns(columns,pluginDescriptor);
