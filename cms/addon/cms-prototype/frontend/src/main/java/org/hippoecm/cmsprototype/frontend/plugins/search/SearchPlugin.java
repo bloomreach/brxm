@@ -30,6 +30,7 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -39,14 +40,19 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.model.Model;
+import org.hippoecm.cmsprototype.frontend.plugins.list.AbstractListingPlugin;
+import org.hippoecm.cmsprototype.frontend.plugins.list.SortableDocumentsProvider;
+import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.CustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
-public class SearchPlugin extends Plugin{
+public class SearchPlugin extends AbstractListingPlugin{
     private static final long serialVersionUID = 1L;
  
+    public static final String USER_PREF_NODENAME = "hippo:searchperspective-listingview";
+    
     private Label searchedFor;
     private Label didyoumean;
     private TextField field; 
@@ -84,6 +90,7 @@ public class SearchPlugin extends Plugin{
                 final SearchHit hit = (SearchHit)item.getModelObject() ;
                 item.add(new Label("nodename", hit.getName()));
                 item.add(new Label("path", hit.getPath()));
+                System.out.println(hit.getExcerpt());
                 item.add(new IncludeHtml("excerpt" , hit.getExcerpt()));
                 item.add(new Link("similar") {
                     private static final long serialVersionUID = 1L;
@@ -108,6 +115,24 @@ public class SearchPlugin extends Plugin{
         
     }
 
+
+    @Override
+    protected void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
+        // over here we have to do the search. Create our own SortableDocumentsProvider, and show the 
+        // search results 
+        dataTable = new CustomizableDocumentListingDataTable("table", columns, new SortableDocumentsProvider(
+                nodeModel), pageSize, false);
+        dataTable.addBottomPaging(viewSize);
+        dataTable.addTopColumnHeaders();
+        add((Component)dataTable);
+    }
+
+    @Override
+    protected String getPluginUserPrefNodeName() {
+        return USER_PREF_NODENAME;
+    }
+    
+    
     private void newSearch(List<SearchHit> hits, String xpath) { 
         newSearch(hits, xpath, null);
     }
@@ -191,6 +216,8 @@ public class SearchPlugin extends Plugin{
         }
         
     }
+
+
     
 }
 
