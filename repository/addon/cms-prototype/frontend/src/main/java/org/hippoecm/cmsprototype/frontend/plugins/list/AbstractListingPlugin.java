@@ -93,8 +93,21 @@ public abstract class AbstractListingPlugin extends Plugin {
         String userPrefNodeLocation = USER_PATH_PREFIX + session.getJcrSession().getUserID() + "/" + getPluginUserPrefNodeName();
         try {
             Node userPrefNode = (Node) session.getJcrSession().getItem(userPrefNodeLocation);
+            System.out.println(userPrefNode.getProperty("pagesize").getValue().getType() == PropertyType.STRING);
             if(userPrefNode.hasProperty("pagesize") && userPrefNode.getProperty("pagesize").getValue().getType() == PropertyType.LONG && userPrefNode.getProperty("pagesize").getLong() > 0){
                 pageSize = (int)userPrefNode.getProperty("pagesize").getLong();
+            }
+            // TODO : make sure it cannot be a string value. Currently, saving through the console makes the number
+            // a string. Also fix this in the repository.cnd
+            else if(userPrefNode.hasProperty("pagesize") && userPrefNode.getProperty("pagesize").getValue().getType() == PropertyType.STRING && userPrefNode.getProperty("pagesize").getLong() > 0){
+                String pageSizeString = userPrefNode.getProperty("pagesize").getString();
+                try {
+                    pageSize = Integer.parseInt(pageSizeString);
+                } catch (NumberFormatException e) {
+                    pageSize = DEFAULT_PAGE_SIZE;
+                    // do nothing. Keep pageSize default
+                }
+                
             }
             NodeIterator nodeIt = userPrefNode.getNodes();
             if(nodeIt.getSize() == 0) {
@@ -117,7 +130,7 @@ public abstract class AbstractListingPlugin extends Plugin {
                     // User doesn't have a user folder yet
                     Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
                     Node prefNode = userNode.addNode(getPluginUserPrefNodeName(), "hippo:usersettings");
-                    prefNode.setProperty("pagesize", DEFAULT_PAGE_SIZE);
+                    prefNode.setProperty("pagesize", 2);
                     Node pref = prefNode.addNode("name","hippo:usersettings");
                     pref.setProperty("columnname", "Name");
                     pref.setProperty("propertyname", "name");
