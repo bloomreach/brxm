@@ -69,8 +69,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor
 
     IHeaderContributor[] getHeaderContributorsPartly() {
 
-        // BERRY if (++partlyCount != configurations.size()) {
-        if (partlyCount++ != 0) {
+        if (++partlyCount != configurations.size()) {
             return null;
         }
 
