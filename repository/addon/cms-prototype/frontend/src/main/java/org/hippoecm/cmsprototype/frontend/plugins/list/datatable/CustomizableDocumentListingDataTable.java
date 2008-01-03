@@ -40,7 +40,7 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
     
     private ISortableDataProvider dataProvider;
     
-    public CustomizableDocumentListingDataTable(String id, List columns, ISortableDataProvider dataProvider, int rowsPerPage, boolean defaultsOn) {
+    public CustomizableDocumentListingDataTable(String id, List/* <IColumn> */columns, ISortableDataProvider dataProvider, int rowsPerPage, boolean defaultsOn) {
         this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage, defaultsOn);
     }
 

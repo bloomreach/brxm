@@ -33,6 +33,10 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
     private DataTable table;
     
     public CustomizableNavigationToolBar(DataTable table, int viewSize) {
+        this(table, null, null, viewSize);
+     }
+    
+    public CustomizableNavigationToolBar(DataTable table, String prefix, String postfix, int viewSize) {
         super(table);
         this.table = table;
 
@@ -41,14 +45,10 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
         span.add(new AttributeModifier("colspan", true, new Model(String
                 .valueOf(table.getColumns().length))));
         
-        PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, 3);
+        PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, prefix, postfix);
         pagingNavigator.getPagingNavigation().setViewSize(viewSize);
         span.add(pagingNavigator);
         span.add(newNavigatorLabel("navigatorLabel", table));
-     }
-    
-    public CustomizableNavigationToolBar(DataTable table, String prefix, String postfix) {
-        super(table);
     }
     
     /**
@@ -77,10 +77,10 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
      *            dataview used by datatable
      * @return paging navigator that will be used to navigate the data table
      */
-    protected PagingNavigator newPagingNavigator(String navigatorId, final DataTable table, int viewSize)
+    protected PagingNavigator newPagingNavigator(String navigatorId, final DataTable table, String prefix, String postfix)
     {
         return new AjaxPagingNavigator(navigatorId, table, 
-                        new CustomizablePagingLabelProvider(null,null))
+                        new CustomizablePagingLabelProvider(prefix,postfix))
             {
             private static final long serialVersionUID = 1L;
 
