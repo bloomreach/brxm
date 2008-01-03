@@ -30,11 +30,11 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
 
     private static final long serialVersionUID = 1L;
     
-    //private DataTable table;
+    private DataTable table;
     
     public CustomizableNavigationToolBar(DataTable table, int viewSize) {
         super(table);
-        //this.table = table;
+        this.table = table;
 
         WebMarkupContainer span = new WebMarkupContainer("span");
         add(span);
@@ -95,5 +95,15 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
                 target.addComponent(table);
             }
         };
+    }
+    
+    /**
+     * Hides this toolbar when there is only one page in the table
+     * 
+     * @see org.apache.wicket.Component#isVisible()
+     */
+    public boolean isVisible()
+    {
+        return table.getPageCount() > 1;
     }
 }
