@@ -39,7 +39,7 @@ public class NodeCell extends Panel {
     static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
     
     
-    public NodeCell(String id, NodeModelWrapper model, final Channel channel, String columnName) {
+    public NodeCell(String id, NodeModelWrapper model, final Channel channel, String nodePropertyName) {
         super(id, model);
         AjaxLink link = new AjaxLink("link", model) {
             private static final long serialVersionUID = 1L;
@@ -58,18 +58,18 @@ public class NodeCell extends Panel {
             try {
                 HippoNode n = (HippoNode) model.getObject();
                 
-                if (columnName.equals("name")) {
+                if (nodePropertyName.equals("name")) {
                     addLabel(link, n.getName());
-                } else if (columnName.equals("displayname")) {
+                } else if (nodePropertyName.equals("displayname")) {
                     addLabel(link, n.getDisplayName());
-                } else if (columnName.equals("islocked")) {
+                } else if (nodePropertyName.equals("islocked")) {
                     addLabel(link, String.valueOf(n.isLocked()));
-                } else if (columnName.equals("path")) {
+                } else if (nodePropertyName.equals("path")) {
                     addLabel(link, n.getPath());
                 }
                 else {
 
-                    Property p = n.getProperty(columnName);
+                    Property p = n.getProperty(nodePropertyName);
                     switch (p.getType()) {
                     case PropertyType.BINARY:
                         // never show binary value
@@ -103,13 +103,13 @@ public class NodeCell extends Panel {
                     }
                 } 
             } catch (ValueFormatException e) {
-                log.debug("Unable to find property for culumn " + columnName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for culumn " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
                 emptyLabel(link);
             } catch (PathNotFoundException e) {
-                log.debug("Unable to find property for culumn " + columnName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for culumn " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
                 emptyLabel(link);
             } catch (RepositoryException e) {
-                log.debug("Unable to find property for culumn " + columnName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for culumn " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
                 emptyLabel(link);
             }
         } else {
