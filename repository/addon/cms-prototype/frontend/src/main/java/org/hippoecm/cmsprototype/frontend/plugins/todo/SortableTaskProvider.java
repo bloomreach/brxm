@@ -98,6 +98,7 @@ public class SortableTaskProvider extends SortableDataProvider{
     }
 
     public int size() {
+        if(model == null ) { return 0; }
     	try {
 			if (model.getNode().getNodes() != null)
 			{
