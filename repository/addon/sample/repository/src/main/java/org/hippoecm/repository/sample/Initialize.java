@@ -59,7 +59,7 @@ public class Initialize
   public static void main(String[] args) {
     Initialize bootstrap = null;
     try {
-      String location = args.length>0 ? args[0] : "rmi://localhost:1099/jackrabbit.repository";
+      String location = args.length>0 ? args[0] : "rmi://localhost:1099/hipporepository";
       if(location != null)
         bootstrap = new Initialize(location);
       else

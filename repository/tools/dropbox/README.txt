@@ -10,7 +10,7 @@ The short list:
 - add rmi to project
 - right click on java file -> run as rmi..
 - arguments tab
---- Program arguments: rmi://localhost:1099/jackrabbit.repository <local mp3s> <username> <password>
+--- Program arguments: rmi://localhost:1099/hipporepository <local mp3s> <username> <password>
 --- VM Arguments: -Djava.security.manager
 - rmi settings tab
 --- add first two, set java.security.police -> select client.policy file from project

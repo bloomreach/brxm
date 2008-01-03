@@ -33,7 +33,7 @@ public class FacetedNavigationRemoteTest extends FacetedNavigationAbstractTest {
         backgroundServer = new HippoRepositoryServer();
         backgroundServer.run(true);
         Thread.sleep(3000);
-        server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/jackrabbit.repository");
+        server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         // first clean possible old entries
         for (NodeIterator iter = session.getRootNode().getNodes(); iter.hasNext();) {
