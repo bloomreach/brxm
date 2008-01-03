@@ -1,24 +1,70 @@
 body {
   font-family:arial,sans-serif,helvetica;
   font-size:0.8em;
-  background:#eeeeee;
+  background: url('images/back.gif') repeat-x;
 }
+body.intro {
+  background: url('images/introback.gif') repeat-x; padding-top: 50px
+  text-align: center;
+}
+
+a { color: #18a4e2 }
+
+h1#logo {
+  position: absolute;
+  top: 5px; 
+  left:5px;
+  padding: 0px;
+  margin: 0px;
+}
+h1#logointro {
+  position: absolute;
+  top: 5px; 
+  right:5px;
+  padding: 0px;
+  margin: 0px;
+}
+body.intro form {
+  text-align: left;
+  position: relative;
+  margin: 0px auto;
+  padding-top: 40px;
+  background: url('images/logincms.gif') no-repeat;
+  width:300px;
+  height: 182px;
+  padding-left: 46px;
+}
+body.intro form label { float: left; font-weight: bold; width: 30px; margin-right: 10px; }
+body.intro form br { clear: both; }
+body.intro form input.text { display: block; margin-bottom: 12px; width: 120px; margin-left: 80px; }
+body.intro form input.submit { }
+body.intro form select { margin-top: 20px; }
 
 table {
   font-size:1em;
 }
 
+table.grey {
+  background:#eeeeee;
+}
+
 .Breadcrumb {
-  border:1px solid lightgrey;
+  position: absolute;
+  top: 86px; 
+  left: 5px;
+  font-weight: bold;
+  color: #353535;
   margin:2px;
-  background:#ffffff;
+  font-size: 11px;
 }
 
 .Tree {
-  border:1px solid lightgrey;
-  margin:2px;
-  background:#ffffff;
+   margin:0px;
+   margin-top: -8px;
 }
+.tree .wicket-tree .row a { color: #18a4e2 }
+.tree .wicket-tree .row-selected a { color: white; }
+.tree .wicket-tree .row-selected { background: #4b82c6; }
 
 .Documents {
   border:1px solid lightgrey;
@@ -27,11 +73,15 @@ table {
 }
 
 .Menu {
-  border:1px solid lightgrey;
+  border:1px solid #334455;
   margin:2px;
-  background:#ffffff;
+  background: url('images/folderactionsback.gif') no-repeat top right;
+  padding: 15px;
+  padding-top: 3px;
+  margin-bottom: 10px;
 }
 
+.menu div { margin-top: 5px; }
 .Workflow {
   border:1px solid lightgrey;
   margin:2px;
@@ -46,57 +96,65 @@ table {
 
 th {
   text-align:left;
-  background-color:lightgrey;
+  background: url('images/tablehead.gif') repeat-x;
+  padding: 4px;
+  padding-top: 2px;
 }
 
-tr.even {
-  background-color:#ffffff;
-}
+tr.even { background-color:#eef3fa; }
+tr.even td, tr.odd td { padding: 5px; }
+tr.odd { background-color:#ffffff; }
+.tabpanel table tr td { border: none }
+.tabpanel table tr th { border: none }
 
-tr.odd {
-  background-color:#eeeeff;
-}
+.dataview thead tr.navigation td { padding: 5px; }
+.navigatorLabel { font-size: 18px; color: #4a81c3 }
+.navigator, .navigator a { color: green; font-size: 18px; margin-left: 10px; }
+.navigator { color: grey }
+.navigator a { color: #18a4e2 }
+
+p.logout { margin-bottom: 0px; text-align: right; text-transform: capitalize; color: white; }
+p.logout a { color: white }
 
 /* TAB PANEL STYLES */
 
-div.tabpanel div.tab-row{
-   float:left;
-   width:100%;
-   background:#eeeeee;
-   line-height:normal;
-   border-bottom:1px solid #225379;
-   }
+div.tabpanel div.tab-row {
+  padding-top: 0px;
+  float:left;
+  width:100%;
+  line-height:normal;
+  margin-bottom: 40px;
+}
 
 div.tabpanel div.tab-row ul {
-   margin:0;
-   padding:10px 10px 0;
-   list-style:none;
-   }
+  margin:0;
+  padding:10px 10px 0;
+  list-style:none;
+}
 
 div.tabpanel div.tab-row li {
-   float:left;
-   background:lightblue;
-   margin:0;
-   padding:0 0 0 9px;
-   border-top:1px solid #eeeeee;
-   border-left:1px solid #eeeeee;
-   border-right:1px solid #eeeeee;
-   }
+  float:left;
+  background:url('images/tabback.gif') repeat-x bottom right;
+  margin-right: 2px;
+  padding:0px 10px 0px 10px;
+}
 
 div.tabpanel div.tab-row a {
-   display:block;
-   padding:5px 15px 4px 6px;
-   text-decoration:none;
-   font-weight:bold;
-   white-space:nowrap;
-   color:#fff;
-   }
+  display:block;
+  text-decoration:none;
+  font-weight:bold;
+  white-space:nowrap;
+  color: black;
+  padding-left: 30px;
+  padding-bottom: 10px;
+  padding-top: 11px;
+}
 
-div.tabpanel div.tab-row li.selected {
-   background:#225379;
-   }
+div.tabpanel div.tab-row li.tab0 a { background: url('images/home.gif') no-repeat 0px 10px; }
+div.tabpanel div.tab-row li.tab1 a { background: url('images/browse.gif') no-repeat 0px 10px; }
+div.tabpanel div.tab-row li.tab2 a { background: url('images/edit.gif') no-repeat 0px 10px; }
+div.tabpanel div.tab-row li.tab3 a { background: url('images/search.gif') no-repeat 0px 10px; }
 
-div.tabpanel div.tab-row li.selected a {
-   color:#fff;
-   padding-bottom:5px;
-   }
+div.tabpanel div.tab-row li.selected { background:url('images/tabbackactive.gif') repeat-x bottom right; }
+
+div.tabpanel div.tab-row li.selected a { }
