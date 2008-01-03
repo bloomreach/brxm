@@ -24,19 +24,27 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 public class DocumentListingPlugin extends AbstractListingPlugin {
 
     private static final long serialVersionUID = 1L;
-    
+
+    public static final String USER_PREF_NODENAME = "hippo:browseperspective-listingview";
 
     public DocumentListingPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 
     @Override
-    public void addTable(JcrNodeModel nodeModel) {
+    public void addTable(JcrNodeModel nodeModel, int pageSize) {
         dataTable = new CustomizableDocumentListingDataTable("table", columns, new SortableDocumentsProvider(
-                nodeModel), DEFAULT_PAGE_SIZE, false);
+                nodeModel), pageSize, false);
         dataTable.addBottomPaging(3);
+        dataTable.addTopPaging();
         dataTable.addTopColumnHeaders();
+        dataTable.addBottomColumnHeaders();
         add((Component)dataTable);
+    }
+
+    @Override
+    String getPluginUserPrefNodeName() {
+        return USER_PREF_NODENAME;
     }
 
     

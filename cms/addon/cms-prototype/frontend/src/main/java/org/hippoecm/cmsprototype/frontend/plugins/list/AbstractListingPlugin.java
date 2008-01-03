@@ -22,6 +22,7 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
@@ -51,9 +52,10 @@ public abstract class AbstractListingPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
     
     public static final int DEFAULT_PAGE_SIZE = 10;
+    
+    public int pageSize = DEFAULT_PAGE_SIZE;
 
     public static final String USER_PATH_PREFIX = "/hippo:configuration/hippo:users/"; 
-    public static final String USER_PREF_NODENAME = "hippo:doclistingpreferences";
    
     protected ICustomizableDocumentListingDataTable dataTable;
     protected List<IStyledColumn> columns;
@@ -75,7 +77,7 @@ public abstract class AbstractListingPlugin extends Plugin {
                         && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     setModel(nodeModel);
                     remove((Component)dataTable);
-                    addTable(nodeModel);
+                    addTable(nodeModel, pageSize);
                     notification.getContext().addRefresh(this);
                 }
             } catch(RepositoryException ex) {
@@ -86,28 +88,36 @@ public abstract class AbstractListingPlugin extends Plugin {
     }
     
     public void createTableColumns(PluginDescriptor pluginDescriptor, JcrNodeModel model) {
-        
         UserSession session = (UserSession) Session.get();
         columns = new ArrayList<IStyledColumn>();
+        String userPrefNodeLocation = USER_PATH_PREFIX + session.getJcrSession().getUserID() + "/" + getPluginUserPrefNodeName();
         try {
-            Node userPrefNode = (Node) session.getJcrSession().getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID() + "/" + USER_PREF_NODENAME);
+            Node userPrefNode = (Node) session.getJcrSession().getItem(userPrefNodeLocation);
+            if(userPrefNode.hasProperty("pagesize") && userPrefNode.getProperty("pagesize").getValue().getType() == PropertyType.LONG && userPrefNode.getProperty("pagesize").getLong() > 0){
+                pageSize = (int)userPrefNode.getProperty("pagesize").getLong();
+            }
             NodeIterator nodeIt = userPrefNode.getNodes();
+            if(nodeIt.getSize() == 0) {
+                defaultColumns(columns,pluginDescriptor);
+            }
             while(nodeIt.hasNext()) {
                 Node n = nodeIt.nextNode();
-                String columnName = n.getProperty("columnname").getString();
-                String propertyName = n.getProperty("propertyname").getString();
-                columns.add(new NodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
+                if(n.hasProperty("columnname") && n.hasProperty("propertyname")) {
+                    String columnName = n.getProperty("columnname").getString();
+                    String propertyName = n.getProperty("propertyname").getString();
+                    columns.add(new NodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
+                }
             }
         } catch (PathNotFoundException e) {
-            // node does not exist: create node now with default settings:
+            // Th user preference node for the current plugin does not exist: create node now with default settings:
             log.debug("No user doclisting preference node found. Creating default doclisting preference node."); 
             javax.jcr.Session jcrSession = session.getJcrSession();
             try {
-                if(!jcrSession.itemExists(USER_PATH_PREFIX + session.getJcrSession().getUserID() + "/" + USER_PREF_NODENAME)) {
+                if(!jcrSession.itemExists(userPrefNodeLocation)) {
                     // User doesn't have a user folder yet
                     Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
-                    Node prefNode = userNode.addNode(USER_PREF_NODENAME, "hippo:usersettings");
-                  
+                    Node prefNode = userNode.addNode(getPluginUserPrefNodeName(), "hippo:usersettings");
+                    prefNode.setProperty("pagesize", DEFAULT_PAGE_SIZE);
                     Node pref = prefNode.addNode("name","hippo:usersettings");
                     pref.setProperty("columnname", "Name");
                     pref.setProperty("propertyname", "name");
@@ -152,7 +162,7 @@ public abstract class AbstractListingPlugin extends Plugin {
             defaultColumns(columns,pluginDescriptor);
         }
         
-        addTable(model);
+        addTable(model, pageSize);
     }
     
     private void defaultColumns(List<IStyledColumn> columns2,PluginDescriptor pluginDescriptor) {
@@ -165,7 +175,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     }
 
 
-    abstract void addTable(JcrNodeModel nodeModel);
+    abstract void addTable(JcrNodeModel nodeModel, int pageSize);
     
-    
+    abstract String getPluginUserPrefNodeName();
 }
