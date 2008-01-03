@@ -103,7 +103,6 @@ public abstract class AbstractListingPlugin extends Plugin {
         try {
             Node userPrefNode = (Node) session.getJcrSession().getItem(userPrefNodeLocation);
             
-
             pageSize = getPropertyIntValue(userPrefNode, PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
             viewSize = getPropertyIntValue(userPrefNode, VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);
             
@@ -128,7 +127,6 @@ public abstract class AbstractListingPlugin extends Plugin {
                     // User doesn't have a user folder yet
                     Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
                     createDefaultPrefNodeSetting(userNode);
-                    
                     columns.add(new NodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
                     columns.add(new NodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
                 }
@@ -213,7 +211,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     }
 
 
-    abstract void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize);
+    protected abstract void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize);
     
-    abstract String getPluginUserPrefNodeName();
+    protected abstract String getPluginUserPrefNodeName();
 }

@@ -32,7 +32,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    public void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
+    protected void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
         dataTable = new CustomizableDocumentListingDataTable("table", columns, new SortableDocumentsProvider(
                 nodeModel), pageSize, false);
         dataTable.addBottomPaging(viewSize);
@@ -41,7 +41,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    String getPluginUserPrefNodeName() {
+    protected String getPluginUserPrefNodeName() {
         return USER_PREF_NODENAME;
     }
 
