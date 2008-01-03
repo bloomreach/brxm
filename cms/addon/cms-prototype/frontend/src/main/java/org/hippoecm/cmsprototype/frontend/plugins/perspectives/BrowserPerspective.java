@@ -15,12 +15,16 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Node;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 
 public class BrowserPerspective extends Plugin {
@@ -30,6 +34,29 @@ public class BrowserPerspective extends Plugin {
         super(pluginDescriptor, model, parentPlugin);
     }
 
+    @Override
+    public void receive(Notification notification) {
+        if ("browse".equals(notification.getOperation())) {
+            Channel incoming = getDescriptor().getIncoming();
+            if (incoming != null) {
+                Map data = new HashMap();
+                data.put("plugin", getDescriptor().getPluginId());
+                Request request = incoming.createRequest("focus", data);
+                request.setContext(notification.getContext());
+                incoming.send(request);
+            }
+
+            Channel outgoing = getDescriptor().getOutgoing();
+            if (outgoing != null) {
+                Notification selectNotice = outgoing.createNotification("select", notification.getData());
+                selectNotice.setContext(notification.getContext());
+                outgoing.publish(selectNotice);
+            }
+            return;
+        }
+        super.receive(notification);
+    }
+    
     @Override
     public void handle(Request request) {
         if ("select".equals(request.getOperation())) {

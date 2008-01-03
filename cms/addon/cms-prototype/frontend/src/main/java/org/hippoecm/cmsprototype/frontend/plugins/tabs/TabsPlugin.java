@@ -66,10 +66,10 @@ public class TabsPlugin extends Plugin {
     public void removeChild(PluginDescriptor childDescriptor) {
         tabs.remove(childDescriptor);
     }
-  
-      @Override
+
+    @Override
     public void handle(Request request) {
-        if ("edit".equals(request.getOperation())) {
+        if ("edit".equals(request.getOperation()) || "browse".equals(request.getOperation())) {
             Channel channel = getDescriptor().getOutgoing();
             if (channel != null) {
                 Notification notification = channel.createNotification(request);
@@ -97,7 +97,7 @@ public class TabsPlugin extends Plugin {
         }
         super.handle(request);
     }
-  
+
     private static class Tab extends AbstractTab {
         private static final long serialVersionUID = 1L;
 

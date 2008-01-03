@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
@@ -36,15 +33,9 @@ public class PluginManager implements IClusterable {
     static final Logger log = LoggerFactory.getLogger(PluginManager.class);
 
     private PluginConfig pluginConfig;
-    private List<Plugin> pluginRegistry;
 
     public PluginManager(PluginConfig pluginConfig) {
-        this.pluginRegistry = new ArrayList<Plugin>();
         this.pluginConfig = pluginConfig;
-    }
-
-    public void registerPlugin(Plugin plugin) {
-        pluginRegistry.add(plugin);
     }
 
     public PluginConfig getPluginConfig() {

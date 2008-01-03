@@ -24,14 +24,11 @@ import org.hippoecm.frontend.plugin.error.ErrorPlugin;
 
 public class PluginFactory {
 
-    private PluginManager pluginManager;
-
     public PluginFactory(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
     }
 
     public Plugin createPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
-        if(parentPlugin != null) {
+        if (parentPlugin != null) {
             descriptor.connect(parentPlugin.getDescriptor().getOutgoing());
         }
         Plugin plugin;
@@ -53,7 +50,6 @@ public class PluginFactory {
                 plugin = new ErrorPlugin(descriptor, e, message);
             }
         }
-        pluginManager.registerPlugin(plugin);
         return plugin;
     }
 
