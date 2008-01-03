@@ -38,6 +38,10 @@ public class RepositoryTemplateConfig implements TemplateConfig {
     }
 
     public TemplateDescriptor getTemplate(String name) {
+        if (name == null) {
+            return null;
+        }
+
         try {
             Node node = lookupConfigNode(name);
             if (node == null) {
@@ -83,27 +87,21 @@ public class RepositoryTemplateConfig implements TemplateConfig {
         return null;
     }
 
-    private List<FieldDescriptor> getNodeTypeDefined(String name) {
+    private List<FieldDescriptor> getNodeTypeDefined(String name) throws RepositoryException {
         List<FieldDescriptor> children = new ArrayList<FieldDescriptor>();
 
-        try {
-            // create a descriptor based on the node type
-            UserSession session = (UserSession) Session.get();
-            NodeTypeManager ntMgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
-            NodeType nt = ntMgr.getNodeType(name);
-            if (nt != null) {
-                for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
-                    children.add(new FieldDescriptor(nd));
-                }
-                for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
-                    children.add(new FieldDescriptor(pd));
-                }
-            }
-            return children;
-        } catch (RepositoryException ex) {
-            // FIXME: handle error
-            ex.printStackTrace();
+        // create a descriptor based on the node type
+        UserSession session = (UserSession) Session.get();
+        NodeTypeManager ntMgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
+
+        // throws NoSuchNodeTypeException if type doesn't exist
+        NodeType nt = ntMgr.getNodeType(name);
+        for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
+            children.add(new FieldDescriptor(nd));
         }
-        return null;
+        for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
+            children.add(new FieldDescriptor(pd));
+        }
+        return children;
     }
 }

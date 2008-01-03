@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.plugins.template;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
@@ -24,6 +26,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -33,7 +36,6 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.INotificationListener;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -41,7 +43,6 @@ public class TemplateEngine extends Form implements INotificationListener {
 
     private static final long serialVersionUID = 1L;
 
-    private Template template;
     private TemplateConfig config;
     private Plugin plugin;
 
@@ -51,12 +52,14 @@ public class TemplateEngine extends Form implements INotificationListener {
         this.config = config;
         this.plugin = plugin;
 
+        setOutputMarkupId(true);
+        
         Channel incoming = plugin.getDescriptor().getIncoming();
         if (incoming != null) {
             incoming.subscribe(this);
         }
 
-        add(template = new Template("template", model, descriptor, this));
+        add(new Template("template", model, descriptor, this));
     }
 
     public Plugin getPlugin() {
@@ -67,20 +70,36 @@ public class TemplateEngine extends Form implements INotificationListener {
         return config;
     }
 
+    @Override
+    public Component setModel(IModel model) {
+        JcrNodeModel nodeModel = (JcrNodeModel) model;
+        try {
+            // FIXME: currently, the first document under the hippo:handle is
+            // used.  This should be under the control of the workflow.
+            Node node = nodeModel.getNode().getCanonicalNode();
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                NodeIterator children = node.getNodes();
+                while (children.hasNext()) {
+                    Node child = children.nextNode();
+                    if (setTemplate(child)) {
+                        break;
+                    }
+                }
+            } else {
+                setTemplate(node);
+            }
+        } catch (RepositoryException ex) {
+            ex.printStackTrace();
+        }
+        super.setModel(model);
+        return this;
+    }
+
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            try {
-                JcrNodeModel model = new JcrNodeModel(notification.getData());
-                Node node = model.getNode().getCanonicalNode();
-                if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    setTemplate(node);
-                    setModel(model);
-                    notification.getContext().addRefresh(this);
-                }
-            } catch (RepositoryException ex) {
-                // TODO: log error
-                ex.printStackTrace();
-            }
+            JcrNodeModel model = new JcrNodeModel(notification.getData());
+            setModel(model);
+            notification.getContext().addRefresh(this);
         }
     }
 
@@ -117,29 +136,20 @@ public class TemplateEngine extends Form implements INotificationListener {
 
             if (child instanceof ITemplatePlugin) {
                 ((ITemplatePlugin) child).initTemplatePlugin(field, this);
-            } else {
-                // complain
-                System.err.println("child is not a ITemplatePlugin");
             }
             return child;
-        } else if (field.getTemplate() != null) {
-            // the field specifies a template
-            TemplateDescriptor descriptor = getConfig().getTemplate(field.getTemplate());
-            if (fieldModel.getObject() instanceof Node) {
-                return new Template(wicketId, new JcrNodeModel((Node) fieldModel.getObject()), descriptor, this);
-            } else {
-                // should not happen
-                return new Label(wicketId, "xxx");
-            }
         } else {
-            if (fieldModel.getObject() instanceof Property) {
+            // if no renderer is specified, fall back to default behaviour;
+            // for nodes, a template must be defined for the node type.
+            TemplateDescriptor descriptor = getConfig().getTemplate(field.getType());
+            if (descriptor != null) {
+                // the field specifies a template
+                JcrNodeModel nodeModel = new JcrNodeModel((Node) fieldModel.getObject());
+                return new Template(wicketId, nodeModel, descriptor, this);
+            } else {
                 Property prop = (Property) fieldModel.getObject();
                 JcrPropertyModel model = new JcrPropertyModel(prop);
-
                 return new ValueTemplate(wicketId, model, field, this);
-            } else {
-                // should not happen
-                return new Label(wicketId, "yyy");
             }
         }
     }
@@ -150,8 +160,6 @@ public class TemplateEngine extends Form implements INotificationListener {
             return new Label("value", "(binary)");
         } else if (descriptor.isProtected()) {
             return new Label("value", model);
-        } else if (descriptor.isLarge()) {
-            return new TextAreaWidget("value", model);
         } else {
             return new TextFieldWidget("value", model);
         }
@@ -161,9 +169,7 @@ public class TemplateEngine extends Form implements INotificationListener {
         NodeType type = node.getPrimaryNodeType();
         TemplateDescriptor descriptor = config.getTemplate(type.getName());
         if (descriptor != null) {
-            template = new Template("template", new JcrNodeModel(node), descriptor, this);
-            replace(template);
-            return true;
+            replace(new Template("template", new JcrNodeModel(node), descriptor, this));
         }
         return false;
     }

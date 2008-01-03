@@ -19,9 +19,7 @@ import java.io.Serializable;
 
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -37,7 +35,6 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -48,7 +45,6 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.template.FieldDescriptor;
 import org.hippoecm.frontend.plugins.template.ITemplatePlugin;
 import org.hippoecm.frontend.plugins.template.TemplateEngine;
-import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 
 public class XinhaPlugin extends Plugin implements ITemplatePlugin {
     private static final long serialVersionUID = 1L;
@@ -116,7 +112,12 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
     public Component setModel(IModel model) {
         JcrNodeModel jcrModel = (JcrNodeModel) model;
         try {
-            Property property = jcrModel.getNode().getProperty(descriptor.getPath());
+            Property property = null;
+            if(jcrModel.getNode().hasProperty(descriptor.getPath())) {
+                property = jcrModel.getNode().getProperty(descriptor.getPath());
+            } else {
+                property = jcrModel.getNode().setProperty(descriptor.getPath(), "");
+            }
             if (property.getDefinition().isMultiple()) {
                 editor.setModel(null);
                 return super.setModel(model);
@@ -164,16 +165,19 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
 
     protected void onDetach() {
         super.onDetach();
-        sharedBehavior.unregister(configuration);
+        if(sharedBehavior != null) {
+	        sharedBehavior.unregister(configuration);
+	        sharedBehavior = null;
+	    }
     }
 
     class XinhaHeaderContributor extends AbstractHeaderContributor {
         public final IHeaderContributor[] getHeaderContributors() {
-            return sharedBehavior.getHeaderContributorsPartly();
-        }
-        public void onComponentTag(Component component, ComponentTag tag) {
-            super.onComponentTag(component, tag);
-            sharedBehavior.resetPartly();
+            if(sharedBehavior != null) {
+                return sharedBehavior.getHeaderContributorsPartly();
+            } else {
+                return null;
+            }
         }
     }
 

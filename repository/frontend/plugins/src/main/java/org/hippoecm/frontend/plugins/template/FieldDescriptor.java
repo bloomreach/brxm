@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.template;
 
 import javax.jcr.PropertyType;
+import javax.jcr.Value;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.PropertyDefinition;
 
@@ -26,8 +27,11 @@ public class FieldDescriptor implements IClusterable {
 
     private String name;
     private String path;
-    private String template;
+    private String type;
     private String renderer;
+
+    private Value[] defaults;
+    private String[] constraints;
 
     private boolean multiple;
     private boolean binary;
@@ -38,8 +42,11 @@ public class FieldDescriptor implements IClusterable {
     public FieldDescriptor(PropertyDefinition pd) {
         name = pd.getName();
         path = pd.getName();
-        template = null;
+        type = null;
         renderer = null;
+
+        defaults = pd.getDefaultValues();
+        constraints = pd.getValueConstraints();
 
         multiple = pd.isMultiple();
         prot = pd.isProtected();
@@ -51,11 +58,16 @@ public class FieldDescriptor implements IClusterable {
     public FieldDescriptor(NodeDefinition nd) {
         name = nd.getName();
         path = nd.getName();
-        if(nd.getDefaultPrimaryType() != null)
-            template = nd.getDefaultPrimaryType().getName();
-        else
-            template = "";
+        if (nd.getDefaultPrimaryType() != null) {
+            type = nd.getDefaultPrimaryType().getName();
+        } else {
+            // FIXME: throw an exception?
+            type = "nt:unstructured";
+        }
         renderer = null;
+
+        defaults = null;
+        constraints = new String[] {};
         
         multiple = nd.allowsSameNameSiblings();
         prot = nd.isProtected();
@@ -63,53 +75,53 @@ public class FieldDescriptor implements IClusterable {
         mandatory = nd.isMandatory();
         node = true;
     }
-    
-    public FieldDescriptor(String name, String path, String template, String renderer) {
+
+    public FieldDescriptor(String name, String path, String type, String renderer) {
         this.name = name;
         this.path = path;
-        this.template = template;
+        this.type = type;
         this.renderer = renderer;
-        
+
         multiple = prot = binary = mandatory = false;
     }
-
+    
     public String getName() {
         return name;
     }
-    
+
     public String getPath() {
         return path;
     }
-    
-    public String getTemplate() {
-        return template;
+
+    public String getType() {
+        return type;
     }
-    
+
     public String getRenderer() {
         return renderer;
     }
-    
+
     public boolean isMultiple() {
         return multiple;
     }
-    
+
     public boolean isBinary() {
         return binary;
     }
-    
+
     public boolean isProtected() {
         return prot;
     }
-    
+
     public boolean isMandatory() {
         return mandatory;
     }
-    
+
     public boolean isNode() {
         return node;
     }
 
-    public boolean isLarge() {
-        return false;
+    public String[] getConstraints() {
+        return constraints;
     }
 }

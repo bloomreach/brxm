@@ -16,7 +16,7 @@
 - hippo:template (string)
 - hippo:renderer (string)
 
-[hippo:template] > nt:base
+[hippo:template] > nt:base orderable
 + * (hippo:field)
 
 [hippo:templatefolder] > nt:base
