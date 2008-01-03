@@ -52,14 +52,17 @@ public abstract class AbstractListingPlugin extends Plugin {
     private static final String COLUMNNAME_PROPERTY = "columnname";
 
     private static final String PAGESIZE_PROPERTY = "pagesize";
+    private static final String VIEWSIZE_PROPERTY = "viewsize";
 
     static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
     
     private static final long serialVersionUID = 1L;
-    
+
     public static final int DEFAULT_PAGE_SIZE = 10;
-    
+    public static final int DEFAULT_VIEW_SIZE = 5;
+
     public int pageSize = DEFAULT_PAGE_SIZE;
+    public int viewSize = DEFAULT_VIEW_SIZE;
 
     public static final String USER_PATH_PREFIX = "/hippo:configuration/hippo:users/"; 
    
@@ -83,7 +86,7 @@ public abstract class AbstractListingPlugin extends Plugin {
                         && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     setModel(nodeModel);
                     remove((Component)dataTable);
-                    addTable(nodeModel, pageSize);
+                    addTable(nodeModel, pageSize, viewSize);
                     notification.getContext().addRefresh(this);
                 }
             } catch(RepositoryException ex) {
@@ -100,8 +103,9 @@ public abstract class AbstractListingPlugin extends Plugin {
         try {
             Node userPrefNode = (Node) session.getJcrSession().getItem(userPrefNodeLocation);
             
-            
+
             pageSize = getPropertyIntValue(userPrefNode, PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
+            viewSize = getPropertyIntValue(userPrefNode, VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);
             
             NodeIterator nodeIt = userPrefNode.getNodes();
             if(nodeIt.getSize() == 0) {
@@ -161,22 +165,23 @@ public abstract class AbstractListingPlugin extends Plugin {
             defaultColumns(columns,pluginDescriptor);
         }
         
-        addTable(model, pageSize);
+        addTable(model, pageSize, viewSize);
     }
 
 
     private int getPropertyIntValue(Node userPrefNode,String property, int defaultValue) throws RepositoryException, ValueFormatException, PathNotFoundException {
+        int value = 0;
         if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.LONG ){
-            pageSize = (int)userPrefNode.getProperty(property).getLong();
-            return pageSize == 0 ? defaultValue : pageSize; 
+            value = (int)userPrefNode.getProperty(property).getLong();
+            return value == 0 ? defaultValue : value; 
         }
         // TODO : make sure it cannot be a string value. Currently, saving through the console makes the number
         // a string. Also fix this in the repository.cnd
         else if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.STRING ){
             String pageSizeString = userPrefNode.getProperty(property).getString();
             try {
-                pageSize = Integer.parseInt(pageSizeString);
-                return pageSize == 0 ? defaultValue : pageSize; 
+                value = Integer.parseInt(pageSizeString);
+                return value == 0 ? defaultValue : value; 
             } catch (NumberFormatException e) {
                 // do nothing. Keep pageSize default
             }
@@ -188,6 +193,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     private void createDefaultPrefNodeSetting(Node userNode) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
         Node prefNode = userNode.addNode(getPluginUserPrefNodeName(), "hippo:usersettings");
         prefNode.setProperty(PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
+        prefNode.setProperty(VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);
         Node pref = prefNode.addNode("name","hippo:usersettings");
         pref.setProperty(COLUMNNAME_PROPERTY, "Name");
         pref.setProperty(PROPERTYNAME_PROPERTY, "name");
@@ -207,7 +213,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     }
 
 
-    abstract void addTable(JcrNodeModel nodeModel, int pageSize);
+    abstract void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize);
     
     abstract String getPluginUserPrefNodeName();
 }
