@@ -27,13 +27,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
-import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.CustomizableDocumentListingDataTable;
 import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -46,6 +46,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractListingPlugin extends Plugin {
+
+    private static final String PROPERTYNAME_PROPERTY = "propertyname";
+
+    private static final String COLUMNNAME_PROPERTY = "columnname";
+
+    private static final String PAGESIZE_PROPERTY = "pagesize";
 
     static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
     
@@ -93,31 +99,19 @@ public abstract class AbstractListingPlugin extends Plugin {
         String userPrefNodeLocation = USER_PATH_PREFIX + session.getJcrSession().getUserID() + "/" + getPluginUserPrefNodeName();
         try {
             Node userPrefNode = (Node) session.getJcrSession().getItem(userPrefNodeLocation);
-            System.out.println(userPrefNode.getProperty("pagesize").getValue().getType() == PropertyType.STRING);
-            if(userPrefNode.hasProperty("pagesize") && userPrefNode.getProperty("pagesize").getValue().getType() == PropertyType.LONG && userPrefNode.getProperty("pagesize").getLong() > 0){
-                pageSize = (int)userPrefNode.getProperty("pagesize").getLong();
-            }
-            // TODO : make sure it cannot be a string value. Currently, saving through the console makes the number
-            // a string. Also fix this in the repository.cnd
-            else if(userPrefNode.hasProperty("pagesize") && userPrefNode.getProperty("pagesize").getValue().getType() == PropertyType.STRING && userPrefNode.getProperty("pagesize").getLong() > 0){
-                String pageSizeString = userPrefNode.getProperty("pagesize").getString();
-                try {
-                    pageSize = Integer.parseInt(pageSizeString);
-                } catch (NumberFormatException e) {
-                    pageSize = DEFAULT_PAGE_SIZE;
-                    // do nothing. Keep pageSize default
-                }
-                
-            }
+            
+            
+            pageSize = getPropertyIntValue(userPrefNode, PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
+            
             NodeIterator nodeIt = userPrefNode.getNodes();
             if(nodeIt.getSize() == 0) {
                 defaultColumns(columns,pluginDescriptor);
             }
             while(nodeIt.hasNext()) {
                 Node n = nodeIt.nextNode();
-                if(n.hasProperty("columnname") && n.hasProperty("propertyname")) {
-                    String columnName = n.getProperty("columnname").getString();
-                    String propertyName = n.getProperty("propertyname").getString();
+                if(n.hasProperty(COLUMNNAME_PROPERTY) && n.hasProperty(PROPERTYNAME_PROPERTY)) {
+                    String columnName = n.getProperty(COLUMNNAME_PROPERTY).getString();
+                    String propertyName = n.getProperty(PROPERTYNAME_PROPERTY).getString();
                     columns.add(new NodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
                 }
             }
@@ -129,15 +123,7 @@ public abstract class AbstractListingPlugin extends Plugin {
                 if(!jcrSession.itemExists(userPrefNodeLocation)) {
                     // User doesn't have a user folder yet
                     Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
-                    Node prefNode = userNode.addNode(getPluginUserPrefNodeName(), "hippo:usersettings");
-                    prefNode.setProperty("pagesize", 2);
-                    Node pref = prefNode.addNode("name","hippo:usersettings");
-                    pref.setProperty("columnname", "Name");
-                    pref.setProperty("propertyname", "name");
-                    
-                    pref = prefNode.addNode("type","hippo:usersettings");
-                    pref.setProperty("columnname", "Type");
-                    pref.setProperty("propertyname", "jcr:primaryType");
+                    createDefaultPrefNodeSetting(userNode);
                     
                     columns.add(new NodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
                     columns.add(new NodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
@@ -176,6 +162,39 @@ public abstract class AbstractListingPlugin extends Plugin {
         }
         
         addTable(model, pageSize);
+    }
+
+
+    private int getPropertyIntValue(Node userPrefNode,String property, int defaultValue) throws RepositoryException, ValueFormatException, PathNotFoundException {
+        if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.LONG ){
+            pageSize = (int)userPrefNode.getProperty(property).getLong();
+            return pageSize == 0 ? defaultValue : pageSize; 
+        }
+        // TODO : make sure it cannot be a string value. Currently, saving through the console makes the number
+        // a string. Also fix this in the repository.cnd
+        else if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.STRING ){
+            String pageSizeString = userPrefNode.getProperty(property).getString();
+            try {
+                pageSize = Integer.parseInt(pageSizeString);
+                return pageSize == 0 ? defaultValue : pageSize; 
+            } catch (NumberFormatException e) {
+                // do nothing. Keep pageSize default
+            }
+        }
+        return defaultValue;
+    }
+
+
+    private void createDefaultPrefNodeSetting(Node userNode) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+        Node prefNode = userNode.addNode(getPluginUserPrefNodeName(), "hippo:usersettings");
+        prefNode.setProperty(PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
+        Node pref = prefNode.addNode("name","hippo:usersettings");
+        pref.setProperty(COLUMNNAME_PROPERTY, "Name");
+        pref.setProperty(PROPERTYNAME_PROPERTY, "name");
+        
+        pref = prefNode.addNode("type","hippo:usersettings");
+        pref.setProperty(COLUMNNAME_PROPERTY, "Type");
+        pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
     }
     
     private void defaultColumns(List<IStyledColumn> columns2,PluginDescriptor pluginDescriptor) {

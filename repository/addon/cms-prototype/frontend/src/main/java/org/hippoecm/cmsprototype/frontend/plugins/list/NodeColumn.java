@@ -16,7 +16,6 @@
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
@@ -26,16 +25,16 @@ public class NodeColumn extends AbstractColumn {
     private static final long serialVersionUID = 1L;
 
     private Channel channel;
-    private String columnNameString;
+    private String nodePropertyName;
     
  
-    public NodeColumn(IModel displayModel, String columnName ,Channel channel) {
-        super(displayModel, columnName);
+    public NodeColumn(IModel displayModel, String nodePropertyName ,Channel channel) {
+        super(displayModel, nodePropertyName);
         this.channel = channel;
-        this.columnNameString = columnName;
+        this.nodePropertyName = nodePropertyName;
     }
 
     public void populateItem(Item item, String componentId, IModel model) { 
-        item.add(new NodeCell(componentId, (NodeModelWrapper) model, channel, columnNameString));
+        item.add(new NodeCell(componentId, (NodeModelWrapper) model, channel, nodePropertyName));
     }
 }
