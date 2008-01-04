@@ -39,6 +39,7 @@ import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -115,7 +116,8 @@ public abstract class AbstractListingPlugin extends Plugin {
                 if(n.hasProperty(COLUMNNAME_PROPERTY) && n.hasProperty(PROPERTYNAME_PROPERTY)) {
                     String columnName = n.getProperty(COLUMNNAME_PROPERTY).getString();
                     String propertyName = n.getProperty(PROPERTYNAME_PROPERTY).getString();
-                    columns.add(new NodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
+                    columns.add(getNodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
+                    columns.add(getNodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
                 }
             }
         } catch (PathNotFoundException e) {
@@ -127,8 +129,8 @@ public abstract class AbstractListingPlugin extends Plugin {
                     // User doesn't have a user folder yet
                     Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
                     createDefaultPrefNodeSetting(userNode);
-                    columns.add(new NodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
-                    columns.add(new NodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
+                    columns.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
+                    columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
                 }
                 /*
                  * We do not save the added node. If a user calls session.save his preferences are
@@ -166,7 +168,6 @@ public abstract class AbstractListingPlugin extends Plugin {
         addTable(model, pageSize, viewSize);
     }
 
-
     private int getPropertyIntValue(Node userPrefNode,String property, int defaultValue) throws RepositoryException, ValueFormatException, PathNotFoundException {
         int value = 0;
         if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.LONG ){
@@ -202,12 +203,24 @@ public abstract class AbstractListingPlugin extends Plugin {
     }
     
     private void defaultColumns(List<IStyledColumn> columns2,PluginDescriptor pluginDescriptor) {
-        columns2.add(new NodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
-        columns2.add(new NodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
+        columns2.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
+        columns2.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
     }
     private void logError(String message) {
         log.error("error creating user doclisting preference " + message );
         log.error("default doclisting will be shown");
+    }
+
+
+    /**
+     * Override this method if you want custom table column / nodecells
+     * @param model Model
+     * @param propertyName String
+     * @param incoming Channel
+     * @return IStyledColumn 
+     */
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel incoming) {
+        return new NodeColumn(model, propertyName, incoming);
     }
 
 
