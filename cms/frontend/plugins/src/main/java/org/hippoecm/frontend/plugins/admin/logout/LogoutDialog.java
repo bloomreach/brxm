@@ -25,6 +25,8 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class LogoutDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
+    
+    private boolean logout = false;
 
     public LogoutDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
@@ -34,14 +36,17 @@ public class LogoutDialog extends AbstractDialog {
         dialogWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
-                UserSession userSession = (UserSession) getSession();
-                userSession.logout();
+                if (logout) {
+                    UserSession userSession = (UserSession) getSession();
+                    userSession.logout();
+                }
             }
         });
     }
 
     @Override
     protected void ok() throws Exception {
+        logout = true;
     }
     
     @Override
