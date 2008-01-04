@@ -105,24 +105,24 @@ public class AddNewWizard extends Plugin {
             Node doc = createDocument();
             
             if (doc != null && target != null) {
-            	Channel channel = getDescriptor().getIncoming();
-            	if(channel != null) {
-	                // FIXME target is now available so an update event can be sent but how to get the correct JcrNodeModel?
-	                
-	                JcrNodeModel model = new JcrNodeModel(doc); // who is my parent??
-	                Request request = channel.createRequest("select", model.getMapRepresentation());
-	                channel.send(request);
-	                MessageContext context = request.getContext();
+                Channel channel = getDescriptor().getIncoming();
+                if(channel != null) {
+                        // FIXME target is now available so an update event can be sent but how to get the correct JcrNodeModel?
+                        
+                        JcrNodeModel model = new JcrNodeModel(doc); // who is my parent??
+                        Request request = channel.createRequest("select", model.getMapRepresentation());
+                        channel.send(request);
+                        MessageContext context = request.getContext();
 
-	                request = channel.createRequest("flush", getNodeModel().findRootModel().getMapRepresentation());
-	                request.setContext(context);
-	                channel.send(request);
+                        request = channel.createRequest("flush", getNodeModel().findRootModel().getMapRepresentation());
+                        request.setContext(context);
+                        channel.send(request);
 
                     request = channel.createRequest("browse", model.getMapRepresentation());
                     request.setContext(context);
                     channel.send(request);
-	                context.apply(target);
-            	}                
+                        context.apply(target);
+                }                
             }
             
             properties.clear();

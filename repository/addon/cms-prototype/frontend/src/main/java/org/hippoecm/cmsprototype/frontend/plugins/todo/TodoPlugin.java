@@ -71,45 +71,45 @@ public class TodoPlugin extends Plugin {
         
         add(feedbackPanel);
         add(form);
-		
+                
     }
 
     private void UpdateTodoList() {
 
-    	List<IStyledColumn> columns;
+        List<IStyledColumn> columns;
         
-    	UserSession session = (UserSession) Session.get();
+        UserSession session = (UserSession) Session.get();
 
-    	if (dataTable != null) {
-    		if(contains(dataTable, false)) remove(dataTable);
-    	}
+        if (dataTable != null) {
+                if(contains(dataTable, false)) remove(dataTable);
+        }
     
-		columns = new ArrayList<IStyledColumn>();
-		columns.add(new NodeColumn(new Model("Name"), "name", "name",  pluginDescriptor.getIncoming()));
-		columns.add(new NodeColumn(new Model("Action"), "action", "action",  pluginDescriptor.getIncoming()));
-		columns.add(new NodeColumn(new Model("Requester"), "requester", "requester",  pluginDescriptor.getIncoming()));
-		columns.add(new NodeColumn(new Model("Document"), "document", "document",  pluginDescriptor.getIncoming()));
-		columns.add(new NodeColumn(new Model("Reason"), "reason", "reason",  pluginDescriptor.getIncoming()));
-    	
-    	try {
-			
-			Node nodePath = (Node) session.getJcrSession().getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID() + USER_PATH_POSTFIX);
-			path = nodePath.getProperty("hippo:path").getString();
-			Node todolistNode = (Node) session.getJcrSession().getItem(path);
-						
-		    dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableTaskProvider(new JcrNodeModel(todolistNode)), 2);
+                columns = new ArrayList<IStyledColumn>();
+                columns.add(new NodeColumn(new Model("Name"), "name", "name",  pluginDescriptor.getIncoming()));
+                columns.add(new NodeColumn(new Model("Action"), "action", "action",  pluginDescriptor.getIncoming()));
+                columns.add(new NodeColumn(new Model("Requester"), "requester", "requester",  pluginDescriptor.getIncoming()));
+                columns.add(new NodeColumn(new Model("Document"), "document", "document",  pluginDescriptor.getIncoming()));
+                columns.add(new NodeColumn(new Model("Reason"), "reason", "reason",  pluginDescriptor.getIncoming()));
+        
+        try {
+                        
+                        Node nodePath = (Node) session.getJcrSession().getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID() + USER_PATH_POSTFIX);
+                        path = nodePath.getProperty("hippo:path").getString();
+                        Node todolistNode = (Node) session.getJcrSession().getItem(path);
+                                                
+                    dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableTaskProvider(new JcrNodeModel(todolistNode)), 2);
 
-		} catch (PathNotFoundException e) {
+                } catch (PathNotFoundException e) {
 
-		    dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableTaskProvider(null), 10);
+                    dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableTaskProvider(null), 10);
 
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		    dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableTaskProvider(null), 10);
-		}
-		
-	    add(dataTable);
+                } catch (RepositoryException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    dataTable = new AjaxFallbackDefaultDataTable("table", columns, new SortableTaskProvider(null), 10);
+                }
+                
+            add(dataTable);
 
     }
     
@@ -139,36 +139,36 @@ public class TodoPlugin extends Plugin {
         @Override
         protected void onSubmit() {
 
-        	UserSession session = (UserSession) Session.get();
-    	
-        	javax.jcr.Session jcrSession = session.getJcrSession();
-    	
-        	try {
-				if(jcrSession.itemExists(properties.getString("path"))) {
+                UserSession session = (UserSession) Session.get();
+        
+                javax.jcr.Session jcrSession = session.getJcrSession();
+        
+                try {
+                                if(jcrSession.itemExists(properties.getString("path"))) {
 
-					if(!jcrSession.itemExists(USER_PATH_PREFIX + session.getJcrSession().getUserID() + USER_PATH_POSTFIX)) {
-						// User doesn't have a user folder yet
-						
-						Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
-						userNode.addNode(USER_PATH_FOLDERNAME, "hippo:usersettings");
-					}
-					
-					Node nodePath = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID() + USER_PATH_POSTFIX);
-		        	nodePath.setProperty("hippo:path", properties.getString("path"));
-		        	jcrSession.save();
-		        	this.warn("Path is stored in your personal settings");
-		        	UpdateTodoList();
-				}
-		        	else
-		        {
-		        	// folder doens't exist
-		        		this.warn("Sorry, this path doesn't exist!");
-				}
-			} catch (RepositoryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-       	        	
+                                        if(!jcrSession.itemExists(USER_PATH_PREFIX + session.getJcrSession().getUserID() + USER_PATH_POSTFIX)) {
+                                                // User doesn't have a user folder yet
+                                                
+                                                Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
+                                                userNode.addNode(USER_PATH_FOLDERNAME, "hippo:usersettings");
+                                        }
+                                        
+                                        Node nodePath = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID() + USER_PATH_POSTFIX);
+                                nodePath.setProperty("hippo:path", properties.getString("path"));
+                                jcrSession.save();
+                                this.warn("Path is stored in your personal settings");
+                                UpdateTodoList();
+                                }
+                                else
+                        {
+                                // folder doens't exist
+                                        this.warn("Sorry, this path doesn't exist!");
+                                }
+                        } catch (RepositoryException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                        }
+                        
             //properties.clear();
         }
             

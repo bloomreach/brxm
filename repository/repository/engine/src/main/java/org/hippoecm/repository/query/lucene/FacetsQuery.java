@@ -44,12 +44,12 @@ public class FacetsQuery {
         this.query = new BooleanQuery(true);
         
         if(facetsQuery != null){
-        	for(Map.Entry<String,String> entry : facetsQuery.entrySet()) {
+                for(Map.Entry<String,String> entry : facetsQuery.entrySet()) {
                 
                 Name nodeName;
                 String internalName = "";
                 try {
-                	nodeName = NameFactoryImpl.getInstance().create("", entry.getKey());
+                        nodeName = NameFactoryImpl.getInstance().create("", entry.getKey());
                     if(indexingConfig.isFacet(nodeName)){
                         internalName = ServicingNameFormat.getInternalFacetName(nodeName,nsMappings);
                         Query q = new FixedScoreTermQuery(new Term(internalName,entry.getValue()));
@@ -62,7 +62,7 @@ public class FacetsQuery {
                 } 
                 catch (IllegalNameException e) {
                      log.error(e.toString());
-				}
+                                }
                 
               }
         }

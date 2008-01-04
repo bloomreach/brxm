@@ -28,14 +28,14 @@ public class Notification extends Message {
     private Request request;
     
     public Notification(String operation, Map map) {
-    	super(operation, map);
+        super(operation, map);
         this.request = null;
     }
     
     public Notification(Request request) {
-    	super(request.getOperation(), request.getData());
-    	this.setContext(request.getContext());
-    	this.request = request;
+        super(request.getOperation(), request.getData());
+        this.setContext(request.getContext());
+        this.request = request;
     }
 
     public Request getRequest() {

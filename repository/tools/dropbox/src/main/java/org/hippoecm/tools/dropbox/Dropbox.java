@@ -107,7 +107,7 @@ public class Dropbox {
      * JCR tree, while doing so it saves the changes to the repository.
      * 
      * Note: - file names should not contain the following characters: ":"
-     * 		 - node names encoded in ISO9075
+     *           - node names encoded in ISO9075
      */
     private void dropFiles(File f, Session session, Node folder) throws RepositoryException, IOException {
         File[] files = f.listFiles();

@@ -106,7 +106,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     // below: When the QName is configured to be a facet, also index like one
     private void addValue(Document doc, InternalValue value, Name name) {
-    	String fieldName = name.getLocalName();
+        String fieldName = name.getLocalName();
         try {
             fieldName = resolver.getJCRName(name);
         } catch (NamespaceException e) {

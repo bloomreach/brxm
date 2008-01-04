@@ -51,18 +51,18 @@ public abstract class AbstractTreePlugin extends Plugin {
     }
 
     protected void onSelect(AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
-    	Channel channel = getDescriptor().getIncoming();
-    	if(channel != null) {
-	        // create a "select" request with the node path as a parameter
-	        Request request = channel.createRequest("select",
-	        		treeNodeModel.getNodeModel().getMapRepresentation());
-	        
-	        // send the request to the incoming channel
-	        channel.send(request);
-	
-	        // add all components that have changed (and are visible!)
-	        request.getContext().apply(target);
-    	}
+        Channel channel = getDescriptor().getIncoming();
+        if(channel != null) {
+                // create a "select" request with the node path as a parameter
+                Request request = channel.createRequest("select",
+                                treeNodeModel.getNodeModel().getMapRepresentation());
+                
+                // send the request to the incoming channel
+                channel.send(request);
+        
+                // add all components that have changed (and are visible!)
+                request.getContext().apply(target);
+        }
     }
 
     @Override

@@ -73,7 +73,7 @@
 
         <subsection name="Start RMI Registry">
 <source>
-~/hippo-ecm> $JAVA_HOME/bin/rmiregistry &amp;				
+~/hippo-ecm> $JAVA_HOME/bin/rmiregistry &amp;                           
 </source>          
         </subsection>          
 

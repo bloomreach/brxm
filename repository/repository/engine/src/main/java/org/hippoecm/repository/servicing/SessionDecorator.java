@@ -99,13 +99,13 @@ public class SessionDecorator implements XASession, HippoSession {
                                                                                            : absPath).getElements();
         String[] rtelements = new String[elements.length];
         for(int i=0; i<elements.length; i++) {
-        	if(nsreg.getPrefix(elements[i].getName().getNamespaceURI()).equals("")){
-        		rtelements[i] = elements[i].getName().getLocalName();
-        	}
-        	else {
-        		rtelements[i] = nsreg.getPrefix(elements[i].getName().getNamespaceURI()) + ":"
+                if(nsreg.getPrefix(elements[i].getName().getNamespaceURI()).equals("")){
+                        rtelements[i] = elements[i].getName().getLocalName();
+                }
+                else {
+                        rtelements[i] = nsreg.getPrefix(elements[i].getName().getNamespaceURI()) + ":"
                           + elements[i].getName().getLocalName();
-        	}
+                }
         }
         return rtelements;
     }

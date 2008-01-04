@@ -119,24 +119,24 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-	<version>2.1-alpha-1</version>
+        <version>2.1-alpha-1</version>
         <configuration>
           <overlays>
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-skin</artifactId>
-	      <targetPath>skin</targetPath>
-	      <excludes>
-	        <exclude>WEB-INF/web.xml</exclude>
-	      </excludes>
+              <targetPath>skin</targetPath>
+              <excludes>
+                <exclude>WEB-INF/web.xml</exclude>
+              </excludes>
             </overlay>
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-xinha</artifactId>
-	      <targetPath>xinha</targetPath>
-	      <excludes>
-	        <exclude>WEB-INF/web.xml</exclude>
-	      </excludes>
+              <targetPath>xinha</targetPath>
+              <excludes>
+                <exclude>WEB-INF/web.xml</exclude>
+              </excludes>
             </overlay>
           </overlays>
         </configuration>
@@ -160,25 +160,25 @@
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-api</artifactId>
             <version>3.1.4</version>
-	    <scope>runtime</scope>
+            <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jta</artifactId>
             <version>3.1.4</version>
-	    <scope>runtime</scope>
+            <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions</artifactId>
             <version>3.1.4</version>
-	    <scope>runtime</scope>
+            <scope>runtime</scope>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>atomikos-util</artifactId>
             <version>3.1.4</version>
-	    <scope>runtime</scope>
+            <scope>runtime</scope>
           </dependency>
         </dependencies>
       </plugin>

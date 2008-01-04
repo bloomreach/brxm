@@ -139,8 +139,8 @@ mvn exec:java
                   
             </subsection>
             <subsection name="Applying Hippo Facets">
-            	Prerequisite: <a href="../use-hippo-ecm/facets/index.html">knowlegde of facets</a>
-            	<br/>
+                Prerequisite: <a href="../use-hippo-ecm/facets/index.html">knowlegde of facets</a>
+                <br/>
               <ul>
                 <li>
                   Using the user interfave, select the root node.
@@ -153,15 +153,15 @@ mvn exec:java
                   (multi-value) DocType.
                 </li>
                 <li>
-            	    Then again select the previously constructed node and the result should look like something as depicted below. <br/>
-            	    <img src="../images/jcr-tree-facets.jpg" alt=""/> 
+                    Then again select the previously constructed node and the result should look like something as depicted below. <br/>
+                    <img src="../images/jcr-tree-facets.jpg" alt=""/> 
                 </li>
               </ul>
               
               <p>
-              	Congratulations! You just ran a custom application interfacing with the Hippo ECM Repository and
-              	applyed a facet search on the stored data!
-            	</p>
+                Congratulations! You just ran a custom application interfacing with the Hippo ECM Repository and
+                applyed a facet search on the stored data!
+                </p>
             </subsection>
         </section>
     </body>

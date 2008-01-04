@@ -46,9 +46,9 @@ public class JcrNodeModel extends ItemModelWrapper {
     }
 
     public Map getMapRepresentation() {
-    	Map map = new HashMap();
-    	map.put("node", itemModel.getPath());
-    	return map;
+        Map map = new HashMap();
+        map.put("node", itemModel.getPath());
+        return map;
     }
     
     public HippoNode getNode() {

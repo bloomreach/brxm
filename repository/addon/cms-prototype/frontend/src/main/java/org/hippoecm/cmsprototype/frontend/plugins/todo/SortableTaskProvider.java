@@ -38,8 +38,8 @@ public class SortableTaskProvider extends SortableDataProvider{
     
     public SortableTaskProvider(JcrNodeModel model) {
         
-    	if (model != null){
-        	this.model = model;
+        if (model != null){
+                this.model = model;
         }
         
     }
@@ -48,72 +48,72 @@ public class SortableTaskProvider extends SortableDataProvider{
 
         NodeIterator children = null;
         
-    	if (this.model != null) {
-	        List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
-	        
-	        int i = 0;
-			
-	        try {
-				children = model.getNode().getNodes();
-			} catch (RepositoryException e) {
-				return null;
-			}
-	        			
-			while(children.hasNext()) {
+        if (this.model != null) {
+                List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
+                
+                int i = 0;
+                        
+                try {
+                                children = model.getNode().getNodes();
+                        } catch (RepositoryException e) {
+                                return null;
+                        }
+                                        
+                        while(children.hasNext()) {
 
-				HippoNode jcrChild = (HippoNode) children.nextNode();
-	        	
-				try {
-					if (jcrChild.isNodeType(HippoNodeType.NT_REQUEST)) {
+                                HippoNode jcrChild = (HippoNode) children.nextNode();
+                        
+                                try {
+                                        if (jcrChild.isNodeType(HippoNodeType.NT_REQUEST)) {
 
-						i++;
+                                                i++;
 
-						if (i >= first && i < (first + count)) {
-							list.add(new JcrTreeNode(new JcrNodeModel(jcrChild)));
-					    }
-					}
-				} catch (RepositoryException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	        }
-	        return list.iterator();
-    	}
-    	else
-    	{
-    		return null;
-    	}
-    	
+                                                if (i >= first && i < (first + count)) {
+                                                        list.add(new JcrTreeNode(new JcrNodeModel(jcrChild)));
+                                            }
+                                        }
+                                } catch (RepositoryException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                }
+                }
+                return list.iterator();
+        }
+        else
+        {
+                return null;
+        }
+        
     }
     
     public IModel model(Object object) {
         if (model != null)
         {
-        	return (NodeModelWrapper) object;
+                return (NodeModelWrapper) object;
         }
         else
         {
-        	return null;
+                return null;
         }
     }
 
     public int size() {
         if(model == null ) { return 0; }
-    	try {
-			if (model.getNode().getNodes() != null)
-			{
-			    
-				//TODO: filter out non-request items
-				return (int) model.getNode().getNodes().getSize();
-				
-			}
-			else
-			{
-				return 0;
-			}
-		} catch (RepositoryException e) {
-			return 0;
-		}
+        try {
+                        if (model.getNode().getNodes() != null)
+                        {
+                            
+                                //TODO: filter out non-request items
+                                return (int) model.getNode().getNodes().getSize();
+                                
+                        }
+                        else
+                        {
+                                return 0;
+                        }
+                } catch (RepositoryException e) {
+                        return 0;
+                }
     }
 
 
