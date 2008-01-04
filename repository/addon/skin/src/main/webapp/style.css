@@ -12,14 +12,14 @@ a { color: #18a4e2 }
 
 h1#logo {
   position: absolute;
-  top: 5px; 
+  top: 5px;
   left:5px;
   padding: 0px;
   margin: 0px;
 }
 h1#logointro {
   position: absolute;
-  top: 5px; 
+  top: 5px;
   right:5px;
   padding: 0px;
   margin: 0px;
@@ -50,7 +50,7 @@ table.grey {
 
 .Breadcrumb {
   position: absolute;
-  top: 86px; 
+  top: 86px;
   left: 5px;
   font-weight: bold;
   color: #353535;

@@ -104,7 +104,7 @@ public class FixedScoreTermQuery extends Query {
             next();
             score(hc, Integer.MAX_VALUE);
         }
-        
+
         @Override
         public int doc() {
             return doc;

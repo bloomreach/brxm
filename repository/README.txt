@@ -57,7 +57,7 @@ hippo-ecm-repository-application
 |   `-- plugins              hippo-ecm-frontend-plugins
 
 hippo-ecm-frontend
-=> Pom project, bundles all frontend modules 
+=> Pom project, bundles all frontend modules
 
 hippo-ecm-frontend-engine
 => Jar project, core implementation of the frontend
@@ -68,7 +68,7 @@ hippo-ecm-frontend-plugins
 hippo-ecm-frontend-application
 => War project, a minimal frontend application
    => starts embedded repository
-   => uses hardcoded frontend plugin configuration 
+   => uses hardcoded frontend plugin configuration
    => portal configuration
    => wicket configuration
 
@@ -84,10 +84,10 @@ hippo-ecm-application
 => Pom project, bundles all application projects
 
 hippo-ecm-application-default
-=> Pom project, bundles the 'default' application projects 
+=> Pom project, bundles the 'default' application projects
 
 hippo-ecm-application-default-frontend
-=> War overlay project, overlays hippo-ecm-frontend-application 
+=> War overlay project, overlays hippo-ecm-frontend-application
    => adds repository location configuration
    => adds frontend configuration
    => adds site-specific configuration (web.xml, log4j.xml etc.)
@@ -97,7 +97,7 @@ hippo-ecm-application-default-repository
    => adds frontend plugin configuration (bootstrap import of repository export file under /configuration/frontend/)
    => adds default user configuration (bootstrap import of repository export file under /configuration/users/)
    => adds any other site-specific configuration (web.xml, log4j.xml etc.)
-   
+
 
 ===============ADDONS===================
 
@@ -152,7 +152,7 @@ hippo-ecm-api
 => To be determined
 
 hippo-ecm-documentation
-=> Project documentation 
+=> Project documentation
 
 hippo-ecm-tools
 => Pom project, bundles all tools

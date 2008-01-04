@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class ChannelFactory implements IClusterable {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(ChannelFactory.class);
 
     public Channel createChannel() {

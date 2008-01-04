@@ -24,7 +24,7 @@ import org.hippoecm.frontend.tree.JcrTree;
 
 public class MoveTargetTreeView extends JcrTree {
     private static final long serialVersionUID = 1L;
-    
+
     private TreeNode selectedNode;
     private MoveDialog dialog;
 

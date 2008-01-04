@@ -27,7 +27,7 @@ public class CustomizablePagingNavigation extends AjaxPagingNavigation{
 
     /**
      * Constructor.
-     * 
+     *
      * @param id
      *            See Component
      * @param pageable
@@ -42,7 +42,7 @@ public class CustomizablePagingNavigation extends AjaxPagingNavigation{
 
     /**
      * Factory method for creating ajaxian page number links.
-     * 
+     *
      * @param id
      *            link id
      * @param pageable

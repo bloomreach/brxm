@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -30,28 +30,28 @@
           </p>
           <ul>
             <li>
-              The <b>green</b> layer is the 
-              API layer. All applications that are connected to the Hippo Repository use these APIs to 
-              communicate with the Hippo Repository. 
+              The <b>green</b> layer is the
+              API layer. All applications that are connected to the Hippo Repository use these APIs to
+              communicate with the Hippo Repository.
             </li>
             <li>
-              The <b>blue</b> layer represents 
+              The <b>blue</b> layer represents
               the main engine. The blue layer is where all the logic is done.
             </li>
             <li>
-              The <b>yellow</b> layer represents the persistence layer, consisting of a database and a 
-              lucene index. This is where all the actual data is stored.                      
+              The <b>yellow</b> layer represents the persistence layer, consisting of a database and a
+              lucene index. This is where all the actual data is stored.
             </li>
-          </ul> 
+          </ul>
         </subsection>
-        
+
         <subsection name="JCR 1.0 API">
           <p>
-            The JCR 1.0 API is a fully compliant with 
+            The JCR 1.0 API is a fully compliant with
             <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
-          </p>    
+          </p>
         </subsection>
-        
+
         <subsection name="The Decorator">
           <p>
             The decorator bundles the individual APIs such as the OCM, document and workflow APIs, into the JCR API.
@@ -59,7 +59,7 @@
             access to the same data in multiple paths of the JCR node tree.
           </p>
         </subsection>
-        
+
         <subsection name="Document API">
           <p>
             Although all information is accessible through the JCR interface, a convienience API is accessible which
@@ -67,7 +67,7 @@
             the document API provides facilities to this end, which use the OCM layer amongst others.
           </p>
         </subsection>
-        
+
         <subsection name="Workflow API">
           <p>
             The workflow API provides access to obtain applicable workflow on selected information in the repository.
@@ -75,45 +75,45 @@
             in the repository itself.
           </p>
         </subsection>
-        
+
         <subsection name="OCM Engine">
           <p>
             The OCM Engine allows modules to access information available not just as a set of properties on nodes, but
             also mapped to and from regular Java objects, which can be user defined.
           </p>
         </subsection>
-        
+
         <subsection name="Virtual Node Engine">
           <p>
             Exposes faceted search and faceted reference as regular hierarchical nodes and handles mirrored persitency
             of the nodes that are exposed in multiple parts of the JCR tree.
           </p>
         </subsection>
-        
+
         <subsection name="Hippo Facet Engine">
           <p>
-            Hippo Facet Engine works out of the box, and does not need any configuration to start with. 
+            Hippo Facet Engine works out of the box, and does not need any configuration to start with.
             Browsing through authorized faceted navigation gives you multiple ordered views with the number of occurences on your (unstructured)
             physical data, instead of the classical single, pre-determined, hierarchical or taxonomic order.
             The facet engine works through intelligent indexing in <a href="#Lucene">Apache Lucene</a>, and is extremely
-            fast, as if you are browsing through a (fast cached) File System. 
+            fast, as if you are browsing through a (fast cached) File System.
           </p>
           <p>
             The Facet Engine can be configured if fast faceted browsing on some indirect value, like the week number of
             a date, is needed. See <a href="../run-hippo-ecm/configuration/searchindex.html">Search Index</a> at the bottom.
           </p>
         </subsection>
-        
+
         <subsection name="Databases">
-          The database is used to store the actual content. A wide range of databases is supported, 
-          such as: MySQL, Oracle, MS SQL, Derby and PostgreSQL. 
+          The database is used to store the actual content. A wide range of databases is supported,
+          such as: MySQL, Oracle, MS SQL, Derby and PostgreSQL.
         </subsection>
-        
+
         <subsection name="Lucene">
           <p>
             Content and meta data is indexed through implementation of <a href="http://lucene.apache.org/java/docs/">Apache Lucene 2.2.0</a> search engine library.
             It is a scalable, high-performance indexing, accurate and efficient search algorithm cross-platform Open Source application, with a strong
-            prospering community. 
+            prospering community.
           </p>
           <p>
             Some of the possible searches through Lucene that are enabled are listed below
@@ -129,9 +129,9 @@
             <li>synonym searches</li>
             <li>similarity searches</li>
             <li>spellchecker / did you mean</li>
-          </ol> 
+          </ol>
         </subsection>
       </section>
-        
+
     </body>
 </document>

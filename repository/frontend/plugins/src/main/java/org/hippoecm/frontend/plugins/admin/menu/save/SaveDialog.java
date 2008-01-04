@@ -26,13 +26,13 @@ import org.hippoecm.frontend.plugin.channel.Request;
 
 public class SaveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
-    
+
     private boolean hasPendingChanges;
 
     public SaveDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
         dialogWindow.setTitle("Save Session");
-               
+
         Label label;
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         try {
@@ -61,7 +61,7 @@ public class SaveDialog extends AbstractDialog {
             if (hasPendingChanges) {
                 request = channel.createRequest("flush", nodeModel.findRootModel().getMapRepresentation());
                 channel.send(request);
-            }                
+            }
         }
     }
 

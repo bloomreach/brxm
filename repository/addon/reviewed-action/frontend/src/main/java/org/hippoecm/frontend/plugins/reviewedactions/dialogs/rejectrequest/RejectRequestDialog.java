@@ -29,7 +29,7 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
 
     public RejectRequestDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
-        dialogWindow.setTitle("Reject request");       
+        dialogWindow.setTitle("Reject request");
 
         add(new AjaxEditableLabel("reason", new PropertyModel(this, "reason")));
         if (dialogWindow.getNodeModel().getNode() == null) {

@@ -65,7 +65,7 @@ public class PluginDescriptor implements IClusterable {
     public void disconnect() {
         incoming = null;
     }
-    
+
     // getters
 
     public String getPluginId() {

@@ -45,39 +45,39 @@ public class NodeCell extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 // create a "select" request with the node path as a parameter
-                JcrNodeModel nodeModel = ((NodeModelWrapper)this.getModel()).getNodeModel(); 
+                JcrNodeModel nodeModel = ((NodeModelWrapper)this.getModel()).getNodeModel();
                 Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
                 channel.send(request);
                 request.getContext().apply(target);
             }
-        
+
         };
         add(link);
-        
+
         String type = "";
         String username ="";
         String doc = "";
         String reason = "";
         String path ="";
-        
+
         try {
-                
+
                 type = model.getNodeModel().getNode().getProperty("type").getString();
                         username = model.getNodeModel().getNode().getProperty("username").getString();
 
                         UserSession session = (UserSession) Session.get();
                 Node node = session.getJcrSession().getNodeByUUID(model.getNodeModel().getNode().getProperty("document").getString());
-                        
+
                 if(node != null) {
                         doc = node.getName();
                         path = node.getPath();
                 }else {
                         doc ="unknown";
                 }
-                
-                
+
+
                         reason = model.getNodeModel().getNode().getProperty("reason").getString();
-                        
+
                 } catch (ValueFormatException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -93,9 +93,9 @@ public class NodeCell extends Panel {
         add(new Label("username", username));
         add(new Label("path", path));
         add(new Label("reason", reason));
-        
+
         link.add(new Label("label", doc));
-        
+
     }
 
 

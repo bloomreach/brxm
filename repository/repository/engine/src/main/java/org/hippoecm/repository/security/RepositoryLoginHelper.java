@@ -28,7 +28,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 public class RepositoryLoginHelper {
-    
+
 
     public static Set<FacetAuthPrincipal> getFacetAuths(Node facetAuthPath) throws RepositoryException {
         NodeIterator nodeIter = facetAuthPath.getNodes();
@@ -45,7 +45,7 @@ public class RepositoryLoginHelper {
             principals.add(new FacetAuthPrincipal(facet, values, permissions));
         }
         return Collections.unmodifiableSet(principals);
-    
+
     }
 
 }

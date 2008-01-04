@@ -36,15 +36,15 @@ import org.slf4j.LoggerFactory;
 
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(PluginRepositoryConfig.class);
 
     // FIXME: move these to HippoNodeType
     private final static String ROOTPLUGIN = "rootPlugin";
     private final static String PLUGIN_RENDERER = "hippo:renderer";
 
-    private ChannelFactory channelFactory; 
-    
+    private ChannelFactory channelFactory;
+
     public PluginRepositoryConfig() {
         channelFactory = new ChannelFactory();
     }
@@ -90,7 +90,7 @@ public class PluginRepositoryConfig implements PluginConfig {
     public ChannelFactory getChannelFactory() {
         return channelFactory;
     }
-    
+
     // Privates
 
     private Node lookupConfigNode(String pluginId) throws RepositoryException {

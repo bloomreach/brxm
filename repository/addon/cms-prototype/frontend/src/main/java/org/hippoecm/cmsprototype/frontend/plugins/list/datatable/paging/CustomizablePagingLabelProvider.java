@@ -20,7 +20,7 @@ import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 public class CustomizablePagingLabelProvider implements IPagingLabelProvider {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String prefix = "";
     private String postfix = "";
 
@@ -30,7 +30,7 @@ public class CustomizablePagingLabelProvider implements IPagingLabelProvider {
         this.prefix = prefix != null ?  prefix :  "" ;
         this.postfix = postfix != null ? postfix : "";
     }
-    
+
     public String getPageLabel(int page) {
         return prefix + page + postfix;
     }

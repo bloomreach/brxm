@@ -54,7 +54,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUsername());
         } else {
             throw new WorkflowException("publication request already pending");
-        }            
+        }
     }
 
     @Override

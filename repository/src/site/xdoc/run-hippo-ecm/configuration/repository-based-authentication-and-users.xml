@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -23,11 +23,11 @@
     </properties>
     <body>
         <section name="Repository based authentication">
-            The repository can be configured to store the users as nodes inside the repository itself. 
+            The repository can be configured to store the users as nodes inside the repository itself.
             To achieve this the RepositoryLoginModule is configured in
             <a href="repository.html"><code>repository.xml</code></a> in the Security section.
-            The authentication module is based on 
-            <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" title="Sun JAAS">JAAS</a>. 
+            The authentication module is based on
+            <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" title="Sun JAAS">JAAS</a>.
             By default this moduled is enabled.
 <source>
 &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
@@ -38,7 +38,7 @@
     --&gt;
 &lt;/LoginModule&gt;
 </source>
-            The defaults as shown in the comments can be simply overwritten by setting the 
+            The defaults as shown in the comments can be simply overwritten by setting the
             parameters. The parameters are:
             <table>
                 <tr><td>anonymousId</td><td>The id given to a user in a non authenticated session.</td></tr>
@@ -46,10 +46,10 @@
                 <tr><td>maxCacheTimeMilliSec</td><td>Time in miliseconds between user credential cache purges.</td></tr>
             </table>
         </section>
-        
+
         <section name="Configure users for the RepositoryLoginModule">
             <p>
-                The users are stored in the repository as childeren of the node 
+                The users are stored in the repository as childeren of the node
                 <code>/hippo:configuration/hippo:users</code>.
                 A user node has the following configuration:
             </p>
@@ -58,7 +58,7 @@
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
         &lt;sv:value&gt;hippo:user&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:password" sv:type="String"&gt;    
+    &lt;sv:property sv:name="hippo:password" sv:type="String"&gt;
         &lt;sv:value&gt;demo&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
@@ -72,7 +72,7 @@
           </p>
           <pre><code>$SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=</code></pre>
           <p>
-              The hashing alogrithm can be any alogrith supported by MessageDigest like MD5, SHA-1 and SHA-256. The 
+              The hashing alogrithm can be any alogrith supported by MessageDigest like MD5, SHA-1 and SHA-256. The
               password utility class "PasswordHelper" can be used to generate hashes with the static method
               PasswordHelper.getHash(String password).
           </p>

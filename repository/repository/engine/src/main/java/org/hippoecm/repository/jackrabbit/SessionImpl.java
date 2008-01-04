@@ -43,7 +43,7 @@ import org.hippoecm.repository.security.principals.AdminPrincipal;
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
-    
+
     /**
      * the user ID that was used to acquire this session
      */
@@ -120,7 +120,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
             userId = "Unknown";
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

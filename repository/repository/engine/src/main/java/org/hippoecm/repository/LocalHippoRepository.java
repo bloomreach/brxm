@@ -103,7 +103,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** Listener for changes under /hippo:configuration/hippo:initialize node */
     private EventListener listener;
-    
+
     public LocalHippoRepository() throws RepositoryException {
         super();
         initialize();
@@ -152,7 +152,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
      * If the "file://" protocol is used, the path MUST be absolute.
      * In all other cases the config file is used as a class resource.
      * @return InputStream to the repository config
-     * @throws RepositoryException 
+     * @throws RepositoryException
      */
     private InputStream getRepositoryConfigAsStream() throws RepositoryException {
         // get config from system prop
@@ -383,7 +383,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                 String cndName = (p = node.getProperty(HippoNodeType.HIPPO_NODETYPES)).getString();
                                 InputStream cndStream = getClass().getResourceAsStream(cndName);
                                 if (cndStream == null) {
-                                    log.warn("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");                                        
+                                    log.warn("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
                                 } else {
                                     log.info("Initializing nodetypes from: " + cndName);
                                     initializeNodetypes(workspace, cndStream, cndName);
@@ -399,7 +399,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             Property contentProperty = null;
                             Property rootProperty = null;
                             try {
-                                String contentName = (contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT)).getString();                                    
+                                String contentName = (contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT)).getString();
                                 InputStream contentStream = getClass().getResourceAsStream(contentName);
                                 if (contentStream == null) {
                                     log.warn("Cannot locate content configuration '" + contentName + "', initialization skipped");

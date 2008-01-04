@@ -391,7 +391,7 @@ public class SessionDecorator implements XASession, HippoSession {
     private static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
             srcNode = ServicingNodeImpl.unwrap(srcNode);
-            
+
             for(PropertyIterator iter = srcNode.getProperties(); iter.hasNext(); ) {
                 Property property = iter.nextProperty();
                 if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:uuid")) {
@@ -401,11 +401,11 @@ public class SessionDecorator implements XASession, HippoSession {
                         destNode.setProperty(property.getName(), property.getValue());
                 }
             }
-            
+
             // don't copy childeren of virtual nodes
             if (srcNode.isNodeType(HippoNodeType.NT_FACETSELECT) || srcNode.isNodeType(HippoNodeType.NT_FACETSEARCH))
                 return;
-            
+
             for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
                 Node node = iter.nextNode();
                 Node child = destNode.addNode(node.getName(), srcNode.getPrimaryNodeType().getName());

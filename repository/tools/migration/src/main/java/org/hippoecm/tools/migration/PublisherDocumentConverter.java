@@ -69,21 +69,21 @@ public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
     private static final String LOCALE_PROPERTY = "hipposample:locale";
     private static final String PUBLISHED_PROPERTY = "hipposample:published";
     private static final String HIPPO_ID_PROPERTY = "hipposample:id";
-    
+
     // The main newsarticle node
     private static final String NEWSARTICLE_NODETYPE = "hipposample:newsArticle";
 
     // subnode for holding localized altText
     private static final String ALTTEXT_NODE = "hipposample:altText";
     private static final String ALTTEXT_NODETYPE = "hipposample:altText";
-    
+
     // subnode for holding the localized newsarticle body
     private static final String BODY_NODE = "hipposample:body";
     private static final String BODY_NODETYPE = "hipposample:body";
-    
+
     // Default locale
     private static final String DEFAULT_LOCALE = "en-gb";
-    
+
     // subnode of the rootnode that contains the authors
     private static final String AUTHOR_NODE = "authors";
     private static final String AUTHOR_NODETYPE = "hipposample:author";
@@ -111,7 +111,7 @@ public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
 
     private static final String IMAGE_NODETYPE = "hipposample:image";
 
-    // hipposample::documentdate = 20040124 
+    // hipposample::documentdate = 20040124
     private static final SimpleDateFormat DOCUMENTDATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
     // The location of the imagesets in the webdav repository
@@ -195,7 +195,7 @@ public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
             }
         }
 
-        // Author 
+        // Author
         prop = webDAVNode.getProperty(HIPPO_NAMESPACE, "author");
         id = getIdOrCreate(prop.getPropertyAsString(), AUTHOR_NODETYPE, AUTHOR_NODE);
         newsArticle.setProperty(AUTHOR_ID_PROPERTY, id);
@@ -231,7 +231,7 @@ public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
             // Create the new JCR illustration node
             javax.jcr.Node illustration = newsArticle.addNode("hipposample:illustration", "hipposample:illustration");
 
-            // Set alternative alt text 
+            // Set alternative alt text
             if (properties.containsKey("imagealt")) {
                 if (!"".equals((String) properties.get("imagealt"))) {
                     javax.jcr.Node altText = illustration.addNode(ALTTEXT_NODE, ALTTEXT_NODETYPE);
@@ -278,7 +278,7 @@ public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
         String imageSetPath = imageSet.substring(0, imageSet.lastIndexOf('/'));
 
         long id = getId(imageSetName, IMAGESET_NODETYPE);
-        // id has contraint >=0 
+        // id has contraint >=0
         if (id >= 0) {
             return id;
         }
@@ -473,7 +473,7 @@ public class PublisherDocumentConverter /*extends AbstractDocumentConverter*/ {
         }
     }
      */
-    
+
     /**
      * Class to hold the an image belonging to an imageSet
      */

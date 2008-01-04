@@ -75,14 +75,14 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
     }
 
     // implement IRequestHandler
-    
+
     public void handle(Request request) {
         // put requests from children in a queue.  These requests are sent while the
         // modal window is present and the page that contains this dialogwindow cannot
         // be updated.
         queue.add(request);
     }
-    
+
     // implement INotificationListener
 
     public void receive(Notification notification) {

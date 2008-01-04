@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServicingNodeIndexer extends NodeIndexer {
-   
+
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
 
@@ -52,18 +52,18 @@ public class ServicingNodeIndexer extends NodeIndexer {
      * The indexing configuration or <code>null</code> if none is available.
      */
     protected ServicingIndexingConfiguration servicingIndexingConfig;
-    
-    
+
+
     public ServicingNodeIndexer(NodeState node, ItemStateManager stateProvider, NamespaceMappings mappings, TextExtractor extractor) {
         super(node, stateProvider, mappings, extractor);
     }
-    
-    
+
+
     public void setServicingIndexingConfiguration(ServicingIndexingConfiguration config) {
         super.setIndexingConfiguration(config);
         this.servicingIndexingConfig = config;
     }
-    
+
 
     @Override
     protected boolean isIncludedInNodeIndex(Name propertyName) {
@@ -79,7 +79,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     protected Document createDoc() throws RepositoryException {
         // index the jackrabbit way
         Document doc = super.createDoc();
-        // plus index our facet specifics 
+        // plus index our facet specifics
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
             Name propName = (Name) it.next();
@@ -89,7 +89,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 InternalValue[] values = propState.getValues();
                 if(isHippoPath(propName)){
                     indexPath(doc,values,propState.getName());
-                } 
+                }
                 if(isFacet(propName)){
                     for (int i = 0; i < values.length; i++) {
                         addValue(doc, values[i], propState.getName());
@@ -130,7 +130,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 indexFacet(doc,fieldName,DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
                 break;
             case PropertyType.LONG:
-               indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));    
+               indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));
                 break;
             case PropertyType.REFERENCE:
                 // never facet;
@@ -148,10 +148,10 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 throw new IllegalArgumentException("illegal internal value type");
         }
     }
-    
+
     private void indexFacet(Document doc, String fieldName, String value) {
         doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET,fieldName,Field.Store.NO,Field.Index.NO_NORMS));
-        
+
         int idx = fieldName.indexOf(':');
         fieldName = fieldName.substring(0, idx + 1)
                 + ServicingFieldNames.HIPPO_FACET + fieldName.substring(idx + 1);
@@ -161,7 +161,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 Field.Index.NO_NORMS,
                 Field.TermVector.YES));
     }
-    
+
     private void indexPath(Document doc, InternalValue[] values, Name name) {
         String deepestPath = "";
         // index each level of the path for searching
@@ -184,7 +184,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 Field.Store.YES,
                 Field.Index.NO_NORMS,
                 Field.TermVector.NO));
-        
+
         // make lexical sorting on depth possible. Max depth = 999;
         String depth = String.valueOf(values.length);
         depth="000".substring(depth.length()).concat(depth);
@@ -207,7 +207,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
             return servicingIndexingConfig.isFacet(propertyName);
         }
     }
-    
+
     /**
      * Returns <code>true</code> if the property with the given name should be
      * indexed as hippo path.
@@ -223,7 +223,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
             return servicingIndexingConfig.isHippoPath(propertyName);
         }
     }
-    
+
     /**
      * Wraps the exception <code>e</code> into a <code>RepositoryException</code>
      * and throws the created exception.

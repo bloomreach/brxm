@@ -71,7 +71,7 @@ public class ValueEditor extends DataView {
             item.add(new Label("remove", ""));
         }
     }
-    
+
     protected void onRemove(AjaxRequestTarget target, JcrPropertyValueModel model) {
         try {
             Property prop = ((JcrPropertyModel) ValueEditor.this.getModel()).getProperty();

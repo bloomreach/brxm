@@ -44,7 +44,7 @@ public abstract class AbstractDocumentConverter implements DocumentConverter {
 
     /* TODO: make configurable */
     protected static final String AUTHOR_BASEPATH = "authors";
-    
+
     /* the initialized jcrSession */
     protected Session jcrSession;
 
@@ -91,7 +91,7 @@ public abstract class AbstractDocumentConverter implements DocumentConverter {
     }
 
     /**
-     * Set the initialized httpClient, called from the setup 
+     * Set the initialized httpClient, called from the setup
      * @param httpClient
      */
     public final void setHttpClient(HttpClient httpClient) {
@@ -107,7 +107,7 @@ public abstract class AbstractDocumentConverter implements DocumentConverter {
     }
 
     /**
-     * Set the plugin configuration 
+     * Set the plugin configuration
      * @param pluginConfiguration
      */
     public final void setPluginConfiguration(PluginConfiguration pluginConfiguration) {

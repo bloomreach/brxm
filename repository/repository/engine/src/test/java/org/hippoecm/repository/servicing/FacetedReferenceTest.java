@@ -40,10 +40,10 @@ public class FacetedReferenceTest extends TestCase {
 
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-   
+
     protected HippoRepository repository;
     protected Session session;
-    
+
     private static String[] contents = new String[] {
         "/documents",                                                   "nt:unstructured",
         "/documents/pages",                                             "nt:unstructured",

@@ -38,35 +38,35 @@ public class CachingFacetResultCollector extends HitCollector {
     private int numhits;
     private Set<String> hits;
     private Map<String,Count> facetMap;
-    private FieldSelector fieldSelector; 
+    private FieldSelector fieldSelector;
     private int offset;
     private int limit;
-    
+
     private Map<String,Map<Integer, String[]>> collectorTFVMap;
     private Map<Integer, String[]> internalNameTermsMap;
     private boolean checkCache = true;
-    
-    public CachingFacetResultCollector(IndexReader reader, 
-                                       Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache, 
-                                       String facet, Map<String, 
-                                       Map<String, Count>> resultset, 
-                                       HitsRequested hitsRequested, 
+
+    public CachingFacetResultCollector(IndexReader reader,
+                                       Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache,
+                                       String facet, Map<String,
+                                       Map<String, Count>> resultset,
+                                       HitsRequested hitsRequested,
                                        NamespaceMappings nsMappings) {
         this.reader = reader;
-        
+
         try {
          this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
          } catch(Exception ex) {
               System.err.println(ex.getMessage());
               ex.printStackTrace(System.err);
          }
-        
+
          this.collectorTFVMap = tfvCache.get(reader);
          if(collectorTFVMap == null ) {
              collectorTFVMap = new HashMap<String,Map<Integer, String[]>>();
              tfvCache.put(reader, collectorTFVMap);
          }
-        
+
          this.internalNameTermsMap = collectorTFVMap.get(internalName);
          if(internalNameTermsMap == null){
              checkCache = false;
@@ -74,11 +74,11 @@ public class CachingFacetResultCollector extends HitCollector {
              collectorTFVMap.put(internalName, internalNameTermsMap);
          }
         this.numhits = 0;
-       
+
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add(ServicingFieldNames.HIPPO_PATH);
         this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet());
-        
+
         if(hitsRequested.isResultRequested()) {
             this.hits = new HashSet<String>();
             this.offset = hitsRequested.getOffset();
@@ -86,17 +86,17 @@ public class CachingFacetResultCollector extends HitCollector {
         } else {
             this.hits = null;
         }
-        
+
         if(facet != null && resultset.get(facet)!= null) {
              facetMap = resultset.get(facet);
         }
     }
-    
+
     public final void collect(final int docid, final float score) {
         try {
             if(hits != null) {
                 if(offset == 0 && hits.size() < limit ) {
-                    
+
                     Document d = reader.document(docid,fieldSelector);
                     Field f = d.getField(ServicingFieldNames.HIPPO_PATH);
                     if(f!=null){
@@ -107,7 +107,7 @@ public class CachingFacetResultCollector extends HitCollector {
                     offset--;
                 }
             }
-             
+
              String[] terms = null;
              // if checkCache is true, first check the cache. This is faster
              if(checkCache) {
@@ -118,7 +118,7 @@ public class CachingFacetResultCollector extends HitCollector {
              } else {
                  terms = getFacetTerms(reader, docid, internalName, internalNameTermsMap);
              }
-             
+
              if(terms != null) {
                  for(int i=0; i<terms.length; i++) {
                      Count count = facetMap.get(terms[i]);
@@ -129,14 +129,14 @@ public class CachingFacetResultCollector extends HitCollector {
                      }
                  }
              }
-             
+
             ++numhits;
         } catch(Exception ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
         }
     }
-    
+
     private String[] getFacetTerms(IndexReader reader, int docid, String internalName, Map<Integer, String[]> internalNameTermsMap) throws IOException {
         // TODO improve memory useage! Storing int/bytes instead of terms (references to String pool)
         // and hold a list of {int,term} mappings to translate later

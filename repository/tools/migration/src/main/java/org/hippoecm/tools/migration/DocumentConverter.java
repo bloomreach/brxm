@@ -31,18 +31,18 @@ import org.apache.commons.httpclient.HttpClient;
  */
 public interface DocumentConverter {
 
-    /** 
-     * Setup and configure the converter 
+    /**
+     * Setup and configure the converter
      */
     void setup(PluginConfiguration config, Session session, HttpClient httpClient) throws RepositoryException;
 
     /**
-     * The postSetupHook is called after setup and can be used to initialize the 
+     * The postSetupHook is called after setup and can be used to initialize the
      * converter implementation
      */
     void postSetupHook() throws RepositoryException;
 
-    /** 
+    /**
      * Convert each webdav node to a jcr node
      */
     void convertNodeToJCR(nl.hippo.webdav.batchprocessor.Node webdavNode, String nodeName, javax.jcr.Node parent)
@@ -67,7 +67,7 @@ public interface DocumentConverter {
     HttpClient getHttpClient();
 
     /**
-     * Set the initialized httpClient, called from the setup 
+     * Set the initialized httpClient, called from the setup
      * @param httpClient
      */
     void setHttpClient(HttpClient httpClient);

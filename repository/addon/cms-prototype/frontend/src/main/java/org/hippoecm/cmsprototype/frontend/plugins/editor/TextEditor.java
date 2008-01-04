@@ -67,7 +67,7 @@ public class TextEditor extends Plugin implements ITemplatePlugin {
             return descriptor.getName();
         return "[ property name ]";
     }
-    
+
     // implement ITemplatePlugin
 
     public void initTemplatePlugin(FieldDescriptor descriptor, TemplateEngine engine) {

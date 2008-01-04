@@ -31,12 +31,12 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
         final String encodeMe = "2..,!@#$%^&*()_-[]{}|\\:;'\".,/?testnode";
         Node node;
 
-        // first create a document node 
+        // first create a document node
         {
             if (!session.getRootNode().hasNode("documents"))
                 session.getRootNode().addNode("documents");
             node = session.getRootNode().getNode("documents");
-            //String encodeMe = "yadida"; 
+            //String encodeMe = "yadida";
             Node docNode = node.addNode(simple, HippoNodeType.NT_DOCUMENT);
             docNode.setProperty("x", "success");
             docNode.setProperty("y", encodeMe);
@@ -51,7 +51,7 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
             node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y" });
             session.save();
         }
-        
+
         String path = "navigation/navxy/success";
         Node facetNode = session.getRootNode().getNode(path);
         assertNotNull(facetNode);

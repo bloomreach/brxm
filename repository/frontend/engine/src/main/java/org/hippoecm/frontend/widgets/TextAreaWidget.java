@@ -25,5 +25,5 @@ public class TextAreaWidget extends AjaxUpdatingWidget {
         super(id, model);
         addFormField(new TextArea("widget", this.getModel()));
     }
-    
+
 }

@@ -26,7 +26,7 @@ public class IncludeHtml extends WebComponent
     private static final long serialVersionUID = 1L;
 
     private String htmlExcerpt;
-   
+
     public IncludeHtml(final String id)
     {
         super(id);
@@ -58,6 +58,6 @@ public class IncludeHtml extends WebComponent
         replaceComponentTagBody(markupStream, openTag, content);
     }
 
-   
-  
+
+
 }

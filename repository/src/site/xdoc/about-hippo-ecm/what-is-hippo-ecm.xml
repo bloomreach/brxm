@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -23,11 +23,11 @@
   </properties>
   <body>
     <section name="What is Hippo ECM?">
-      <p> 
+      <p>
         Hippo ECM bundles a set of applications for managing information in large-scale
         organizational environments.
       </p>
-      <p> 
+      <p>
         Managing all information in an organization is a daunting task. Knowledge is stored in
         numerous files, emails, webpages, forms, Excel sheets, and so on, and is handled differently
         for every organization. To work with all this information, every organization employs a
@@ -37,7 +37,7 @@
       </p>
       <p>
         Hippo ECM structures information, offers integration possibilities on both content and
-        presentation level, in a simple and for users understandable way. 
+        presentation level, in a simple and for users understandable way.
       </p>
     </section>
 
@@ -57,7 +57,7 @@
         allowed external developers to setup and use the Hippo CMS platform for a diverse set of
         applications.
       </p>
-      <p> 
+      <p>
         All of these developments combined have led to the current stable 6.05 release, rich in
         functionalities and possibilities. They have also inspired developers and customers to raise
         ideas and whishes that go far beyond what's possible today. But the architectural concept
@@ -65,7 +65,7 @@
         track. We are facing new horizons and need to take that leap to jump to the next level of
         extendibility, user experience and scalability. Together with the HippoCMS.org community,
         Hippo will be driving the development of the future version of the Hippo Content Platform,
-        consisting of Hippo CMS 7, Hippo Repository 2 and Hippo Portal 1. 
+        consisting of Hippo CMS 7, Hippo Repository 2 and Hippo Portal 1.
       </p>
     </section>
 

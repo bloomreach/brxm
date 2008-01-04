@@ -25,7 +25,7 @@ public class NodeColumn extends PropertyColumn {
     private static final long serialVersionUID = 1L;
 
     private Channel channel;
-    
+
     public NodeColumn(IModel displayModel, String propertyExpression, Channel channel) {
         super(displayModel, propertyExpression);
         this.channel = channel;

@@ -113,7 +113,7 @@ import java.util.Vector;
  */
 public class myXML implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private final boolean debug = false;
     private final String XMLheader = "<?xml version=\"1.0\" standalone=\"yes\"?>";
     private final String XMLcomment = "<!-- Written by WiSH XML writer -->";
@@ -1024,7 +1024,7 @@ public class myXML implements Serializable {
      */
     static public class myXMLException extends Exception implements Serializable {
         private static final long serialVersionUID = 1L;
-        
+
         public myXMLException() {
             super();
         }
@@ -1039,7 +1039,7 @@ public class myXML implements Serializable {
      */
     static public class myXMLIOException extends Exception implements Serializable {
         private static final long serialVersionUID = 1L;
-        
+
         public myXMLIOException() {
             super();
         }

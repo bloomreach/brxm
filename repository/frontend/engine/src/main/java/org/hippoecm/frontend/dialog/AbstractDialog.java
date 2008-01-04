@@ -73,7 +73,7 @@ public abstract class AbstractDialog extends WebPage {
     public String getException() {
         return exception;
     }
-    
+
     protected Plugin getOwningPlugin() {
         return (Plugin)dialogWindow.findParent(Plugin.class);
     }
@@ -81,9 +81,9 @@ public abstract class AbstractDialog extends WebPage {
     protected Channel getIncoming() {
         return channel;
     }
-    
+
     protected abstract void ok() throws Exception;
 
     protected abstract void cancel();
-    
+
 }

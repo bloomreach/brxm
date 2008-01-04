@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class JcrPropertyValueModel extends Model {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(JcrPropertyValueModel.class);
 
     private JcrPropertyModel propertyModel;
@@ -41,7 +41,7 @@ public class JcrPropertyValueModel extends Model {
         this.index = index;
         this.value = value;
     }
-    
+
     public int getIndex() {
         return index;
     }
@@ -76,9 +76,9 @@ public class JcrPropertyValueModel extends Model {
             }
         }
     }
-    
+
     // override Object
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -86,7 +86,7 @@ public class JcrPropertyValueModel extends Model {
             .append("value", value)
             .toString();
      }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object instanceof JcrPropertyValueModel == false) {
@@ -101,7 +101,7 @@ public class JcrPropertyValueModel extends Model {
             .append(index, valueModel.index)
             .isEquals();
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder(33, 113)

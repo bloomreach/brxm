@@ -37,9 +37,9 @@ import org.slf4j.LoggerFactory;
 
 public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(JcrNodeTypesProvider.class);
-    
+
     public JcrNodeTypesProvider(JcrNodeModel nodeModel) {
         super(nodeModel);
     }
@@ -50,7 +50,7 @@ public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvi
         if (node != null) {
             try {
                 NodeType[] nodeTypes = node.getMixinNodeTypes();
-                list = Arrays.asList(nodeTypes);               
+                list = Arrays.asList(nodeTypes);
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
@@ -75,7 +75,7 @@ public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvi
         }
         return result;
     }
-    
+
     // override Object
 
     @Override

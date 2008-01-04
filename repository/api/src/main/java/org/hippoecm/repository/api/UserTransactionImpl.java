@@ -29,7 +29,7 @@ import org.apache.jackrabbit.api.XASession;
 
 /**
  * A wrapper class around the TransactionManager that implements
- * UserTransaction. The main purpose is to automatically enlist and 
+ * UserTransaction. The main purpose is to automatically enlist and
  * delist the XASession resource.
  */
 public class UserTransactionImpl implements UserTransaction {

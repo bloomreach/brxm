@@ -37,7 +37,7 @@ public class PropertyDialog extends AbstractDialog {
     public PropertyDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
         dialogWindow.setTitle("Add a new Property");
-        
+
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
             private static final long serialVersionUID = 1L;
             @Override
@@ -67,7 +67,7 @@ public class PropertyDialog extends AbstractDialog {
         } else {
             nodeModel.getNode().setProperty(name, value);
         }
-        
+
         Channel channel = getIncoming();
         if(channel != null) {
             Request request = channel.createRequest("select", nodeModel.getMapRepresentation());

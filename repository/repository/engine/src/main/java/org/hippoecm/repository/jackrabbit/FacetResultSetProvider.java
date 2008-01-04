@@ -107,7 +107,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         }
         FacetedNavigationEngine.Query initialQuery;
         initialQuery = facetedEngine.parse(docbase);
-      
+
         /* Current implementation, especialy within JackRabbit itself,
          * has serious performance problems when a large number (>1000)
          * of child nodes are direct decendents of a single parent.

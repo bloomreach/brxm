@@ -32,7 +32,7 @@ public class Document extends NodeModelWrapper {
     public Document(JcrNodeModel nodeModel) {
         super(nodeModel);
     }
-    
+
     public String getName() {
         try {
             return nodeModel.getNode().getDisplayName();
@@ -41,8 +41,8 @@ public class Document extends NodeModelWrapper {
             return e.getMessage();
         }
     }
-    
-    
+
+
     public List<DocumentVariant> getVariants() {
         List<DocumentVariant> list = new ArrayList<DocumentVariant>();
         try {

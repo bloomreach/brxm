@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
@@ -38,7 +38,7 @@
       <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.admin.logout.LogoutPlugin</sv:value>
       </sv:property>
-    </sv:node> 
+    </sv:node>
 
     <sv:node sv:name="tabsPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -72,7 +72,7 @@
           </sv:property>
         </sv:node>
       </sv:node>
-      
+
 
 
       <sv:node sv:name="browsePerspective">
@@ -82,7 +82,7 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.BrowserPerspective</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="browserBreadcrumbPlugin">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:frontendplugin</sv:value>
@@ -118,7 +118,7 @@
               <sv:value>org.hippoecm.cmsprototype.frontend.plugins.actions.ActionsPlugin</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <sv:node sv:name="workflowPlugin">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:frontendplugin</sv:value>
@@ -126,8 +126,8 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugin.workflow.WorkflowPlugin</sv:value>
           </sv:property>
-        </sv:node>  
-        
+        </sv:node>
+
         <sv:node sv:name="variantsPlugin">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:frontendplugin</sv:value>
@@ -135,7 +135,7 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.cmsprototype.frontend.plugins.variants.VariantsPlugin</sv:value>
           </sv:property>
-        </sv:node>     
+        </sv:node>
       </sv:node>
 
       <sv:node sv:name="editPerspective">
@@ -165,7 +165,7 @@
         </sv:node>
 
       </sv:node>
-      
+
       <sv:node sv:name="searchPerspective">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:frontendplugin</sv:value>

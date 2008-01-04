@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 
 public class MoveDialogInfoPanel extends Panel {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(MoveDialogInfoPanel.class);
-    
+
     private String destinationPath;
 
     public MoveDialogInfoPanel(String id, JcrNodeModel model) {

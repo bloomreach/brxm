@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class WorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
 
     private Plugin plugin;
@@ -54,7 +54,7 @@ public class WorkflowPlugin extends Plugin {
                 if (node != null) {
                     PluginDescriptor descriptor = plugin.getDescriptor();
 
-                    //TODO: add optional property 'workflowcategory' to 
+                    //TODO: add optional property 'workflowcategory' to
                     //frontend plugin configuration nodes and use that instead of the plugin id.
                     WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                     String workflowCategory = descriptor.getPluginId();

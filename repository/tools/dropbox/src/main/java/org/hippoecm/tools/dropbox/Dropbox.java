@@ -70,7 +70,7 @@ public class Dropbox {
     }
 
     /*
-     * Get all the files from the dropbox location and save them to the 
+     * Get all the files from the dropbox location and save them to the
      * repository
      */
     public void drop(String relPath) throws RepositoryException {
@@ -105,7 +105,7 @@ public class Dropbox {
     /*
      * Recusively append all files (except hidden files) located in the dropbox folder to the
      * JCR tree, while doing so it saves the changes to the repository.
-     * 
+     *
      * Note: - file names should not contain the following characters: ":"
      *           - node names encoded in ISO9075
      */
@@ -115,13 +115,13 @@ public class Dropbox {
             if (files[i].getName().equals(".") || files[i].getName().equals("..") || files[i].isHidden()) {
                 continue;
             }
-            if (files[i].isDirectory()) { 
-                
+            if (files[i].isDirectory()) {
+
                 //String nodeName = org.apache.jackrabbit.util.ISO9075.encode(files[i].getName());
                 //nodeName = files[i].getName().replace(":", "_x003A_");
-                
+
                 String nodeName = ISO9075Helper.encodeLocalName(files[i].getName());
-                
+
                 if (folder.hasNode(nodeName)) {
                     dropFiles(files[i], session, folder.getNode(nodeName));
                 } else {
@@ -151,7 +151,7 @@ public class Dropbox {
         //String nodeName = org.apache.jackrabbit.util.ISO9075.encode(f.getName());
 
         String nodeName = ISO9075Helper.encodeLocalName(f.getName() + ":testing...");
-        
+
         if (folder.hasNode(nodeName)) {
             if (recreate) {
                 folder.getNode(nodeName).remove();

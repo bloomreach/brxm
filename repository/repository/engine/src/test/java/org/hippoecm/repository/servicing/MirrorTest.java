@@ -40,7 +40,7 @@ public class MirrorTest extends TestCase {
 
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-   
+
     private static String[] contents = new String[] {
         "/documents", "nt:unstructured",
         "niet", "hier",

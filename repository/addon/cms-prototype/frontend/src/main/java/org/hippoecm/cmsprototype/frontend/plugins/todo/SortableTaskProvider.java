@@ -33,36 +33,36 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class SortableTaskProvider extends SortableDataProvider{
 
     private static final long serialVersionUID = 1L;
-    
+
     JcrNodeModel model = null;
-    
+
     public SortableTaskProvider(JcrNodeModel model) {
-        
+
         if (model != null){
                 this.model = model;
         }
-        
+
     }
 
     public Iterator<NodeModelWrapper> iterator(int first, int count) {
 
         NodeIterator children = null;
-        
+
         if (this.model != null) {
                 List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
-                
+
                 int i = 0;
-                        
+
                 try {
                                 children = model.getNode().getNodes();
                         } catch (RepositoryException e) {
                                 return null;
                         }
-                                        
+
                         while(children.hasNext()) {
 
                                 HippoNode jcrChild = (HippoNode) children.nextNode();
-                        
+
                                 try {
                                         if (jcrChild.isNodeType(HippoNodeType.NT_REQUEST)) {
 
@@ -83,9 +83,9 @@ public class SortableTaskProvider extends SortableDataProvider{
         {
                 return null;
         }
-        
+
     }
-    
+
     public IModel model(Object object) {
         if (model != null)
         {
@@ -102,10 +102,10 @@ public class SortableTaskProvider extends SortableDataProvider{
         try {
                         if (model.getNode().getNodes() != null)
                         {
-                            
+
                                 //TODO: filter out non-request items
                                 return (int) model.getNode().getNodes().getSize();
-                                
+
                         }
                         else
                         {

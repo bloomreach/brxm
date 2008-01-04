@@ -41,7 +41,7 @@ public class PathsTest extends TestCase {
     protected Session session;
     protected Exception firstException = null;
     protected boolean needCleanUp = true;
-    
+
     public void testPaths() throws Exception {
         Exception firstException = null;
         repository = null;
@@ -50,16 +50,16 @@ public class PathsTest extends TestCase {
             assertNotNull(repository);
             session = repository.login();
             // the login without credentials cannot save, so no cleanup needed
-            needCleanUp = false; 
+            needCleanUp = false;
             Node root = session.getRootNode();
-            
+
             Node sub1 = root.addNode("sub");
             Node sub2 = sub1.addNode("subsub");
-            
+
             assertTrue(root instanceof ServicingNodeImpl);
             assertTrue(sub1 instanceof ServicingNodeImpl);
             assertTrue(sub2 instanceof ServicingNodeImpl);
-           
+
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
             firstException = ex;
@@ -78,7 +78,7 @@ public class PathsTest extends TestCase {
             Node sub3 = sub2.addNode("node", HippoNodeType.NT_DOCUMENT);
             session.save();
             Node node = session.getRootNode().getNode("test/sub/node");
-           
+
             Property prop = node.getProperty(HippoNodeType.HIPPO_PATHS);
             Value[] values = prop.getValues();
             Set valuesSet = new HashSet();
@@ -92,11 +92,11 @@ public class PathsTest extends TestCase {
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
             firstException = ex;
-        } 
+        }
     }
-    
+
 public void tearDown() throws Exception {
-        
+
         if(needCleanUp){
             Node node = session.getRootNode();
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
@@ -110,7 +110,7 @@ public void tearDown() throws Exception {
                 session.logout();
             }
         }
-        
+
         boolean exceptionOccurred = false;
         try {
             if (repository != null) {
@@ -123,11 +123,11 @@ public void tearDown() throws Exception {
                 exceptionOccurred = true;
             }
         }
-        
+
         if (exceptionOccurred || firstException != null){
             throw firstException;
         }
-      
+
     }
-    
+
 }

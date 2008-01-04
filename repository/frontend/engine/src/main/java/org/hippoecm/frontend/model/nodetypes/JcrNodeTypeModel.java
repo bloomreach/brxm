@@ -25,9 +25,9 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 
 public class JcrNodeTypeModel extends AbstractReadOnlyModel {
     private static final long serialVersionUID = 1L;
-    
+
     private String name;
-    
+
     public JcrNodeTypeModel(NodeType nodeType) {
         name = nodeType.getName();
     }
@@ -36,17 +36,17 @@ public class JcrNodeTypeModel extends AbstractReadOnlyModel {
     public Object getObject() {
         return name;
     }
-    
-    
+
+
     // override Object
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("name", name)
             .toString();
      }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object instanceof JcrNodeTypeModel == false) {
@@ -60,7 +60,7 @@ public class JcrNodeTypeModel extends AbstractReadOnlyModel {
             .append(name, valueModel.name)
             .isEquals();
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder(73, 217)

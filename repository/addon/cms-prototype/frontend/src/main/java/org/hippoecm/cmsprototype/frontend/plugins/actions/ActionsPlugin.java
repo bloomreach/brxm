@@ -73,8 +73,8 @@ public class ActionsPlugin extends Plugin {
         if ("select".equals(notification.getOperation())) {
             try {
                 HippoNode node = new JcrNodeModel(notification.getData()).getNode();
-                link.setVisible( node.isNodeType(HippoNodeType.NT_DOCUMENT) 
-                        && node.hasProperty("state") 
+                link.setVisible( node.isNodeType(HippoNodeType.NT_DOCUMENT)
+                        && node.hasProperty("state")
                         && node.getProperty("state").getString().equals("draft") );
                 notification.getContext().addRefresh(this);
             } catch (RepositoryException ex) {

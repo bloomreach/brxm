@@ -31,24 +31,24 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class Folder extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
-    
+
     protected List<Folder> subFolders;
     protected List<Document> documents;
-    
+
     public Folder(JcrNodeModel nodeModel) {
         super(nodeModel);
     }
-    
+
     public List<Folder> getSubFolders() {
         ensureSubFoldersAreLoaded();
         return subFolders;
     }
-    
+
     public List<Document> getDocuments() {
         ensureDocumentsAreLoaded();
         return documents;
     }
-    
+
     public List<NodeModelWrapper> getSubFoldersAndDocuments() {
         ensureSubFoldersAreLoaded();
         ensureDocumentsAreLoaded();
@@ -57,14 +57,14 @@ public class Folder extends NodeModelWrapper {
         list.addAll(documents);
         return list;
     }
-    
-    
+
+
     private void ensureDocumentsAreLoaded() {
         if (documents == null) {
             documents = loadDocuments();
         }
     }
-    
+
     private List<Document> loadDocuments() {
         List<Document> docs = new ArrayList<Document>();
         Node node = nodeModel.getNode();
@@ -76,7 +76,7 @@ public class Folder extends NodeModelWrapper {
                     if (jcrChild.isNodeType(HippoNodeType.NT_HANDLE) && jcrChild.hasNodes()) {
                         docs.add(new Document(new JcrNodeModel(jcrChild)));
                     }
-                    
+
                     // handle facet result nodes
                     else if (jcrChild.isNodeType(HippoNodeType.NT_FACETRESULT)) {
                         NodeIterator fsChildren = jcrChild.getNodes();
@@ -97,24 +97,24 @@ public class Folder extends NodeModelWrapper {
         catch (RepositoryException e) {
             e.printStackTrace();
         }
-        
+
         // remove duplicates (if any) :-\
         Set<Document> set = new HashSet<Document>();
         set.addAll(docs);
         docs.clear();
         docs.addAll(set);
-        
+
         return docs;
     }
-    
-    
-    
+
+
+
     private void ensureSubFoldersAreLoaded() {
         if (subFolders == null) {
             subFolders = loadSubFolders();
         }
     }
-    
+
     private List<Folder> loadSubFolders() {
         List<Folder> folders = new ArrayList<Folder>();
         Node node = nodeModel.getNode();
@@ -123,7 +123,7 @@ public class Folder extends NodeModelWrapper {
             while (jcrChildren.hasNext()) {
                 Node jcrChild = jcrChildren.nextNode();
                 if (jcrChild != null ) {
-                    if (!(jcrChild.isNodeType(HippoNodeType.NT_HANDLE) 
+                    if (!(jcrChild.isNodeType(HippoNodeType.NT_HANDLE)
                             || jcrChild.isNodeType(HippoNodeType.NT_DOCUMENT)
                             || jcrChild.isNodeType(HippoNodeType.NT_FACETRESULT))) {
                         JcrNodeModel newNodeModel = new JcrNodeModel(jcrChild);
@@ -134,9 +134,9 @@ public class Folder extends NodeModelWrapper {
             }
         }
         catch (RepositoryException e) {
-            
+
         }
-        
+
         return folders;
     }
 

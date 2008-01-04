@@ -21,7 +21,7 @@ import javax.jcr.Session;
 
 public interface WorkflowManager {
     public Session getSession() throws RepositoryException;
-    
+
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException;
 
     public Workflow getWorkflow(String category, Node item) throws MappingException, RepositoryException;

@@ -49,7 +49,7 @@ public class RepositoryDecorator implements Repository {
         }
         return repository;
     }
-    
+
     /**
      * Forwards the method call to the underlying repository.
      */

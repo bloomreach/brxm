@@ -32,10 +32,10 @@ public class PluginConfigFactory {
             Node rootNode = session.getJcrSession().getRootNode();
             String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
             Node configNode = rootNode.getNode(path);
-            
+
             boolean hipposAvailable = configNode.getNodes().hasNext();
             boolean builtIn = session.getHippo().contains("(builtin)");
-            
+
             if (!builtIn && hipposAvailable) {
                 pluginConfig = new PluginRepositoryConfig();
             } else {

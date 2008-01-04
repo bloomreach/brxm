@@ -37,7 +37,7 @@ public class RepositoryLoginTest extends TestCase {
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     private static final String USERS_PATH = "hippo:configuration/hippo:users";
-    
+
     private static final String TESTUSER_PASS = "testpass";
     private static final String TESTUSER_ID_PLAIN = "testuser-plain";
     private static final String TESTUSER_ID_MD5 = "testuser-md5";
@@ -46,13 +46,13 @@ public class RepositoryLoginTest extends TestCase {
     private static final String TESTUSER_HASH_MD5 = "$MD5$LDiazWf2qBc=$JIW7oSBflwFdxzKDnFHKPw==";
     private static final String TESTUSER_HASH_SHA1 = "$SHA-1$LDiazWf2qBc=$VjcsDMKtiRKYushsjTNDuk5a//4=";
     private static final String TESTUSER_HASH_SHA256 = "$SHA-256$LDiazWf2qBc=$/bzV6rjHX+fgx4dVz6oaPcW3kX1ynSJ+vGv1mbbm+v4=";
-    
-    
+
+
 
     public void setUp() throws RepositoryException, IOException {
         server = HippoRepositoryFactory.getHippoRepository();
         serverSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        
+
         // create user config path
         Node node = serverSession.getRootNode();
         StringTokenizer tokenizer = new StringTokenizer(USERS_PATH, "/");
@@ -60,7 +60,7 @@ public class RepositoryLoginTest extends TestCase {
             String token = tokenizer.nextToken();
             node = node.addNode(token);
         }
-        
+
         // create test users
         Node testuser;
         users = serverSession.getRootNode().getNode(USERS_PATH);
@@ -97,7 +97,7 @@ public class RepositoryLoginTest extends TestCase {
             fail("Plain login failed with valid credentials");
         }
     }
-    
+
     public void testLoginMD5Success() throws Exception {
         try {
             Session session = server.login(TESTUSER_ID_MD5, TESTUSER_PASS.toCharArray());
@@ -127,7 +127,7 @@ public class RepositoryLoginTest extends TestCase {
             fail("SHA-256 login failed with valid credentials");
         }
     }
-    
+
 
     public void testLoginPlainFail() throws Exception {
         Session session = null;
@@ -139,7 +139,7 @@ public class RepositoryLoginTest extends TestCase {
             assertEquals(null, session);
         }
     }
-    
+
     public void testLoginHashFail() throws Exception {
         Session session = null;
         try {
@@ -161,7 +161,7 @@ public class RepositoryLoginTest extends TestCase {
             assertEquals(null, session);
         }
     }
-    
+
     public void testLoginNoNullPassword() throws Exception {
         Session session = null;
         try {

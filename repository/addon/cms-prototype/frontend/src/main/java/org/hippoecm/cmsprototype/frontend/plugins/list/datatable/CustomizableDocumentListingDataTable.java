@@ -30,23 +30,23 @@ import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.paging.Customiz
 public class CustomizableDocumentListingDataTable extends DataTable implements ICustomizableDocumentListingDataTable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private AbstractToolbar ajaxTopNavigationToolbar;
     private AbstractToolbar ajaxBottomNavigationToolbar;
     private AbstractToolbar ajaxFallbackTopHeadersToolbar;
     private AbstractToolbar ajaxFallbackBottomHeadersToolbar;
-    
+
     private final static int DEFAULT_VIEWSIZE = Integer.MAX_VALUE;
-    
+
     private ISortableDataProvider dataProvider;
-    
+
     public CustomizableDocumentListingDataTable(String id, List/* <IColumn> */columns, ISortableDataProvider dataProvider, int rowsPerPage, boolean defaultsOn) {
         this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage, defaultsOn);
     }
 
     /**
      * Constructor
-     * 
+     *
      * @param id
      *            component id
      * @param columns
@@ -66,13 +66,13 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
             addBottomPaging();
         }
     }
-    
+
     protected Item newRowItem(String id, int index, IModel model)
     {
         return new OddEvenItem(id, index, model);
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging()
      */
@@ -85,12 +85,12 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
     public void addTopPaging(int viewSize) {
         if(ajaxTopNavigationToolbar == null ) {
             ajaxTopNavigationToolbar = new CustomizableNavigationToolBar(this,viewSize);
-        } 
-        if(!this.contains(ajaxTopNavigationToolbar, true)) { 
+        }
+        if(!this.contains(ajaxTopNavigationToolbar, true)) {
             super.addTopToolbar(ajaxTopNavigationToolbar);
-        } 
+        }
     }
-    
+
     /* (non-Javadoc)
      * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addTopColumnHeaders()
      */
@@ -98,9 +98,9 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
         if(ajaxFallbackTopHeadersToolbar == null ) {
             ajaxFallbackTopHeadersToolbar = new AjaxFallbackHeadersToolbar(this, dataProvider);
         }
-        if(!this.contains(ajaxFallbackTopHeadersToolbar, true)) { 
+        if(!this.contains(ajaxFallbackTopHeadersToolbar, true)) {
             super.addTopToolbar(ajaxFallbackTopHeadersToolbar);
-        } 
+        }
     }
 
     /* (non-Javadoc)
@@ -115,13 +115,13 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
     public void addBottomPaging(int viewSize) {
         if(ajaxBottomNavigationToolbar == null ) {
             ajaxBottomNavigationToolbar = new CustomizableNavigationToolBar(this,viewSize);
-        } 
-        if(!this.contains(ajaxBottomNavigationToolbar, true)) { 
+        }
+        if(!this.contains(ajaxBottomNavigationToolbar, true)) {
             super.addBottomToolbar(ajaxBottomNavigationToolbar);
-        } 
+        }
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addBottomColumnHeaders()
      */
@@ -129,9 +129,9 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
         if(ajaxFallbackBottomHeadersToolbar == null ) {
             ajaxFallbackBottomHeadersToolbar = new AjaxFallbackHeadersToolbar(this, dataProvider);
         }
-        if(!this.contains(ajaxFallbackBottomHeadersToolbar, true)) { 
+        if(!this.contains(ajaxFallbackBottomHeadersToolbar, true)) {
             super.addBottomToolbar(ajaxFallbackBottomHeadersToolbar);
-        } 
+        }
     }
 
 

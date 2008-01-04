@@ -37,7 +37,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ItemModelWrapper.class);
-    
+
     //  Constructor
     public JcrPropertyModel(Property prop) {
         super(prop);
@@ -48,7 +48,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
     public Property getProperty() {
         return (Property) itemModel.getObject();
     }
-        
+
 
     // IDataProvider implementation for use in DataViews
     // (lists and tables)

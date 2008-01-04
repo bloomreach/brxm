@@ -69,27 +69,27 @@ public class ISO9075Helper {
     //private static final char[] realChars = {'/', ':', '[', ']', '*', '\'', '"', '|'};
     //private static final String[] realChars = {"/", ":", "[", "]", "*", "'", "\"", "|"};
     //private static final String[] encodedChars = {"_x002F_", "_x003A_", '[', ']', "_x002A_", "_x0027_", "_x0022_", "_x007C_"};
-    
+
     private static final String colon = ":";
     private static final String colonISO9075 = "_x003A_";
-    
-    /** 
+
+    /**
      * Constructor
      */
     private ISO9075Helper() {};
-    
+
     static public String encodeLocalName(String name) {
         return encodeColon(ISO9075.encode(name));
     }
     public static String decodeLocalName(String name) {
         return ISO9075.decode(name);
     }
-    
+
     static public String encodeColon(String name) {
         return name.replaceAll(colon,colonISO9075);
     }
     static public String decodeColon(String name) {
         return name.replaceAll(colonISO9075,colon);
     }
-    
+
 }

@@ -27,13 +27,13 @@ public interface Group {
 
     //------------------------< Interface Impl >--------------------------//
     public void init(AAContext context, String GroupId) throws GroupNotFoundException;
-    
+
     public String getGroupId() throws GroupNotFoundException;
 
     public Set<User> getMembers() throws GroupNotFoundException;
 
     public Set<Role> getRoles() throws GroupNotFoundException;
-    
+
     public Set<Principal> getPrincipals() throws GroupNotFoundException;
 
 }

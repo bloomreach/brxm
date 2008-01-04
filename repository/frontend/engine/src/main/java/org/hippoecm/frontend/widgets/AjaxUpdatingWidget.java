@@ -22,11 +22,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.markup.html.form.FormComponent;
 
 public abstract class AjaxUpdatingWidget extends Panel {
-    
+
     public AjaxUpdatingWidget(String id, IModel model) {
         super(id, model);
     }
-    
+
     /**
      * Adds an ajax updating form component
      */
@@ -40,9 +40,9 @@ public abstract class AjaxUpdatingWidget extends Panel {
                 AjaxUpdatingWidget.this.onUpdate(target);
             }
         });
-        
+
     }
-    
+
     // callback for subclasses
     protected void onUpdate(AjaxRequestTarget target) {
     }

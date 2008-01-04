@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
+         xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
          xmlns:jcr="http://www.jcp.org/jcr/1.0"
          xmlns:rep="internal"
          xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
          xmlns:xs="http://www.w3.org/2001/XMLSchema"
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:hippo="http://www.hippoecm.org/nt/1.0"
-         xmlns:fn="http://www.w3.org/2005/xpath-functions" 
+         xmlns:fn="http://www.w3.org/2005/xpath-functions"
          sv:name="hippo:initialize">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
@@ -41,7 +41,7 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
-    </sv:property>      
+    </sv:property>
   </sv:node>
 
   <!--Node type definitions for frontend-->
@@ -98,7 +98,7 @@
       <sv:value>/hippo:configuration/hippo:frontend</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!--Roles configuration-->
   <sv:node sv:name="roles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -111,7 +111,7 @@
       <sv:value>/hippo:configuration</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!--User configuration-->
   <sv:node sv:name="users">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -124,7 +124,7 @@
       <sv:value>/hippo:configuration</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!--Group configuration-->
   <sv:node sv:name="groups">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -150,7 +150,7 @@
       <sv:value>/</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!--Facet search demo-->
   <sv:node sv:name="facetsearch">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -161,9 +161,9 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
-    </sv:property>      
+    </sv:property>
   </sv:node>
-  
+
   <!--Workflow demo-->
   <sv:node sv:name="workflowdata">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -174,9 +174,9 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
-    </sv:property>      
+    </sv:property>
   </sv:node>
-  
+
   <!--Templates for template engine-->
   <sv:node sv:name="templates">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -187,7 +187,7 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype</sv:value>
-    </sv:property>      
+    </sv:property>
   </sv:node>
 
   <!--Demo data for template engine-->
@@ -200,7 +200,7 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
-    </sv:property>      
+    </sv:property>
   </sv:node>
 
 </sv:node>

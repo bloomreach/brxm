@@ -35,29 +35,29 @@ import org.hippoecm.tools.migration.webdav.WebdavHelper;
 
 /**
  * The SimpleDocumentConverter converts the all the webdav nodes to a similar
- * structor in the JCR repository. It also creates the extractors and the 
+ * structor in the JCR repository. It also creates the extractors and the
  * published version of the documents.
  */
 public class SimpleDocumentConverter extends AbstractDocumentConverter implements DocumentConverter {
-    
+
     /**
      * Author hashmap to speedup import
      */
-    protected HashMap authorMap = new HashMap(); 
-    
+    protected HashMap authorMap = new HashMap();
+
     /**
      * Author basenode
      */
     protected Node authorBase;
-    
+
     /**
      * Post setup hook (before processing loop)
-     * @throws RepositoryException 
+     * @throws RepositoryException
      */
     public void postSetupHook() throws RepositoryException {
         authorBase = JCRHelper.checkAndCreatePath(getJcrSession(), AUTHOR_BASEPATH);
     }
-    
+
     /**
      * The main converter loop
      */
@@ -82,17 +82,17 @@ public class SimpleDocumentConverter extends AbstractDocumentConverter implement
         // publication holders
         boolean isPublished = false;
         Calendar publicationDate = null;
-        
+
         // author holders
         boolean hasAuthor = false;
         String author = null;
-                
+
         // Add metadata properties
         Iterator webdavPropertyNames = webdavNode.propertyNamesIterator();
         while (webdavPropertyNames.hasNext()) {
             PropertyName webdavPropertyName = (PropertyName) webdavPropertyNames.next();
             String webdavPropertyNamespace = webdavPropertyName.getNamespaceURI();
-            
+
             // only copy properties in the hippo namespace
             if (webdavPropertyNamespace.equals(HIPPO_NAMESPACE)) {
                 String name = webdavPropertyName.getLocalName();
@@ -113,7 +113,7 @@ public class SimpleDocumentConverter extends AbstractDocumentConverter implement
                 }
             }
         }
-        
+
         if (hasAuthor && author != null) {
             if (!authorMap.containsKey(author)) {
                 JCRHelper.createDefaultAuthor(getJcrSession(), authorBase, author);

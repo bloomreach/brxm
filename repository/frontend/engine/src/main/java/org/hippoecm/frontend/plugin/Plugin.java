@@ -70,7 +70,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
             pluginDescriptor.getOutgoing().unregister(this);
         }
     }
-    
+
     public PluginDescriptor getDescriptor() {
         return pluginDescriptor;
     }

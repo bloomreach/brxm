@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class Channel implements IClusterable {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(Channel.class);
 
     private List<INotificationListener> listeners;
@@ -46,7 +46,7 @@ public class Channel implements IClusterable {
     public void unsubscribe(INotificationListener listener) {
         listeners.remove(listener);
     }
-    
+
     public void register(IRequestHandler handler) {
         handlers.add(handler);
     }
@@ -54,11 +54,11 @@ public class Channel implements IClusterable {
     public void unregister(IRequestHandler handler) {
         handlers.remove(handler);
     }
-    
+
     public ChannelFactory getMessageFactory() {
         return factory;
     }
-    
+
     public void publish(Notification notification) {
         Iterator<INotificationListener> iter = listeners.iterator();
         while (iter.hasNext()) {
@@ -74,7 +74,7 @@ public class Channel implements IClusterable {
             handler.handle(request);
         }
     }
-    
+
     public Request createRequest(String operation, Map data) {
         return new Request(operation, data);
     }

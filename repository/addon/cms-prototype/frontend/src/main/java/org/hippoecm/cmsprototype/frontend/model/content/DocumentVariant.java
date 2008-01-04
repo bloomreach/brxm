@@ -35,7 +35,7 @@ public class DocumentVariant extends NodeModelWrapper {
     public DocumentVariant(JcrNodeModel nodeModel) {
         super(nodeModel);
     }
-    
+
     public String getName() {
         try {
             return nodeModel.getNode().getDisplayName();

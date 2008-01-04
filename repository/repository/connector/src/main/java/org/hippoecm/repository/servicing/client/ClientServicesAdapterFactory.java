@@ -30,10 +30,10 @@ import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
-    
+
     public ClientServicesAdapterFactory() {
     }
-    
+
     public Workspace getWorkspace(Session session, RemoteWorkspace remote) {
         if (remote instanceof RemoteServicingWorkspace)
             return new ClientServicingWorkspace(session, (RemoteServicingWorkspace) remote, this);

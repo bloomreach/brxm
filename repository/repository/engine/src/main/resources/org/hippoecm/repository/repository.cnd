@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 <rep='internal'>
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
 
-// define the jarFile nodetype; it is required for the 
+// define the jarFile nodetype; it is required for the
 // repository class loader.  JR usually loads it lazily
 // but since we always need it, it's easier done here.
 [rep:jarFile] mixin
@@ -56,7 +56,7 @@
 + * (hippo:facetsubsearch) = hippo:facetsubsearch multiple
 
 [hippo:request] > nt:unstructured, mix:referenceable
- 
+
 [hippo:restricted] mixin
 
 [hippo:document] > nt:unstructured, mix:referenceable

@@ -51,7 +51,7 @@ public class JcrTreeNode extends AbstractTreeNode {
         }
         return null;
     }
-    
+
     @Override
     protected int loadChildcount() throws RepositoryException {
         int result;
@@ -63,7 +63,7 @@ public class JcrTreeNode extends AbstractTreeNode {
         }
         return result;
     }
-    
+
     @Override
     protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
         Node node = nodeModel.getNode();
@@ -79,7 +79,7 @@ public class JcrTreeNode extends AbstractTreeNode {
         }
         return newChildren;
     }
-    
+
     @Override
     public String renderNode() {
         HippoNode node = getNodeModel().getNode();

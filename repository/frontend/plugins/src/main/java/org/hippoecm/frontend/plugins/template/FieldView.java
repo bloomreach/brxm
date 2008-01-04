@@ -44,7 +44,7 @@ public class FieldView extends DataView {
             public Iterator getItems(final IItemFactory factory, final Iterator newModels, final Iterator existingItems) {
                 // Wicket doesn't detach the items that are thrown away, so do
                 // it ourselves.  Furthermore, plugins must be disconnected so that
-                // they do not 
+                // they do not
                 while (existingItems.hasNext()) {
                     Item item = (Item) existingItems.next();
                     item.detach();

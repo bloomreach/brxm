@@ -32,10 +32,10 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication.
 
 public class FullReviewedActionsWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-    
+
     public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        
+
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         add(new DialogLink("obtainEditableInstance-dialog", "Obtain editable copy",

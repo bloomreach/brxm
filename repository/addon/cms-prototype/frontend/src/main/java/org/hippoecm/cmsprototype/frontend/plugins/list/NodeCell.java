@@ -37,8 +37,8 @@ public class NodeCell extends Panel {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
-    
-    
+
+
     public NodeCell(String id, NodeModelWrapper model, final Channel channel, String nodePropertyName) {
         super(id, model);
         AjaxLink link = new AjaxLink("link", model) {
@@ -57,7 +57,7 @@ public class NodeCell extends Panel {
         if (model.getObject() instanceof HippoNode) {
             try {
                 HippoNode n = (HippoNode) model.getObject();
-                
+
                 if (nodePropertyName.equals("name")) {
                     addLabel(link, n.getName());
                 } else if (nodePropertyName.equals("displayname")) {
@@ -101,7 +101,7 @@ public class NodeCell extends Panel {
                     default:
                         throw new IllegalArgumentException("illegal internal value type");
                     }
-                } 
+                }
             } catch (ValueFormatException e) {
                 log.debug("Unable to find property for culumn " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
                 emptyLabel(link);

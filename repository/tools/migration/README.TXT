@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-The migration tool provides a framework for migrating content from a 
+The migration tool provides a framework for migrating content from a
 Hippo Repository 1.2.x (WebDAV) to a Hippo Repository 2 (JCR)
 
 
@@ -34,6 +34,6 @@ $ mvn package appassembler:assemble
 
 Step 3. Run
 windows:
-$ target\appassembler\bin\migrate.bat <full path to config> 
+$ target\appassembler\bin\migrate.bat <full path to config>
 unix:
 ./target/appassembler/bin/migrate <full path to config>

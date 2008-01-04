@@ -21,7 +21,7 @@ import java.security.Principal;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 
 /**
- * The admin principal gives read, write and remove privileges 
+ * The admin principal gives read, write and remove privileges
  * to the whole repository except from the jcr namespace nodes
  * and attributes, which require SystemPrincipal.
  */

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class UploadPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(UploadPlugin.class);
 
     private class FileUploadForm extends Form {

@@ -56,7 +56,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     private static final String VIEWSIZE_PROPERTY = "viewsize";
 
     static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
-    
+
     private static final long serialVersionUID = 1L;
 
     public static final int DEFAULT_PAGE_SIZE = 10;
@@ -65,16 +65,16 @@ public abstract class AbstractListingPlugin extends Plugin {
     public int pageSize = DEFAULT_PAGE_SIZE;
     public int viewSize = DEFAULT_VIEW_SIZE;
 
-    public static final String USER_PATH_PREFIX = "/hippo:configuration/hippo:users/"; 
-   
+    public static final String USER_PATH_PREFIX = "/hippo:configuration/hippo:users/";
+
     protected ICustomizableDocumentListingDataTable dataTable;
     protected List<IStyledColumn> columns;
-    
+
     public AbstractListingPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
         this.createTableColumns(pluginDescriptor, model);
     }
-    
+
 
     @Override
     public void receive(Notification notification) {
@@ -96,17 +96,17 @@ public abstract class AbstractListingPlugin extends Plugin {
         }
         // don't propagate the notification to children
     }
-    
+
     public void createTableColumns(PluginDescriptor pluginDescriptor, JcrNodeModel model) {
         UserSession session = (UserSession) Session.get();
         columns = new ArrayList<IStyledColumn>();
         String userPrefNodeLocation = USER_PATH_PREFIX + session.getJcrSession().getUserID() + "/" + getPluginUserPrefNodeName();
         try {
             Node userPrefNode = (Node) session.getJcrSession().getItem(userPrefNodeLocation);
-            
+
             pageSize = getPropertyIntValue(userPrefNode, PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
             viewSize = getPropertyIntValue(userPrefNode, VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);
-            
+
             NodeIterator nodeIt = userPrefNode.getNodes();
             if(nodeIt.getSize() == 0) {
                 defaultColumns(columns,pluginDescriptor);
@@ -122,7 +122,7 @@ public abstract class AbstractListingPlugin extends Plugin {
             }
         } catch (PathNotFoundException e) {
             // Th user preference node for the current plugin does not exist: create node now with default settings:
-            log.debug("No user doclisting preference node found. Creating default doclisting preference node."); 
+            log.debug("No user doclisting preference node found. Creating default doclisting preference node.");
             javax.jcr.Session jcrSession = session.getJcrSession();
             try {
                 if(!jcrSession.itemExists(userPrefNodeLocation)) {
@@ -134,9 +134,9 @@ public abstract class AbstractListingPlugin extends Plugin {
                 }
                 /*
                  * We do not save the added node. If a user calls session.save his preferences are
-                 * saved. So, as long as a user does not save, these default preference nodes are 
+                 * saved. So, as long as a user does not save, these default preference nodes are
                  * recreated.
-                 */ 
+                 */
             } catch (PathNotFoundException e1) {
                 logError(e1.getMessage());
                 defaultColumns(columns,pluginDescriptor);
@@ -159,12 +159,12 @@ public abstract class AbstractListingPlugin extends Plugin {
                 logError(e1.getMessage());
                 defaultColumns(columns,pluginDescriptor);
             }
-            
+
         } catch (RepositoryException e) {
             logError(e.getMessage());
             defaultColumns(columns,pluginDescriptor);
         }
-        
+
         addTable(model, pageSize, viewSize);
     }
 
@@ -172,7 +172,7 @@ public abstract class AbstractListingPlugin extends Plugin {
         int value = 0;
         if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.LONG ){
             value = (int)userPrefNode.getProperty(property).getLong();
-            return value == 0 ? defaultValue : value; 
+            return value == 0 ? defaultValue : value;
         }
         // TODO : make sure it cannot be a string value. Currently, saving through the console makes the number
         // a string. Also fix this in the repository.cnd
@@ -180,7 +180,7 @@ public abstract class AbstractListingPlugin extends Plugin {
             String pageSizeString = userPrefNode.getProperty(property).getString();
             try {
                 value = Integer.parseInt(pageSizeString);
-                return value == 0 ? defaultValue : value; 
+                return value == 0 ? defaultValue : value;
             } catch (NumberFormatException e) {
                 // do nothing. Keep pageSize default
             }
@@ -196,12 +196,12 @@ public abstract class AbstractListingPlugin extends Plugin {
         Node pref = prefNode.addNode("name","hippo:usersettings");
         pref.setProperty(COLUMNNAME_PROPERTY, "Name");
         pref.setProperty(PROPERTYNAME_PROPERTY, "name");
-        
+
         pref = prefNode.addNode("type","hippo:usersettings");
         pref.setProperty(COLUMNNAME_PROPERTY, "Type");
         pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
     }
-    
+
     private void defaultColumns(List<IStyledColumn> columns2,PluginDescriptor pluginDescriptor) {
         columns2.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
         columns2.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
@@ -217,7 +217,7 @@ public abstract class AbstractListingPlugin extends Plugin {
      * @param model Model
      * @param propertyName String
      * @param incoming Channel
-     * @return IStyledColumn 
+     * @return IStyledColumn
      */
     protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel incoming) {
         return new NodeColumn(model, propertyName, incoming);
@@ -225,6 +225,6 @@ public abstract class AbstractListingPlugin extends Plugin {
 
 
     protected abstract void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize);
-    
+
     protected abstract String getPluginUserPrefNodeName();
 }

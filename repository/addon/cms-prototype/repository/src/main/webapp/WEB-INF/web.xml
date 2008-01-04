@@ -16,7 +16,7 @@
   * limitations under the License.
 -->
 <web-app id="hippo-ecm-application-default-repository">
-  
+
   <!-- General configuration -->
   <display-name>Hippo ECM default repository</display-name>
   <description> A repository containing the default configuration that binds to the RMI registry.</description>
@@ -25,14 +25,14 @@
   Rmi registration
   For running in jetty start rmiregistry and set to 'rmi://localhost:1099/hipporepository'
     For deployment in a true application server (glassfish, jboss, weblogic etc.) set to 'hipporepository'
-  '-->  
+  '-->
   <context-param>
     <param-name>repository-address</param-name>
     <!--<param-value>hipporepository</param-value>-->
     <param-value>rmi://localhost:1099/hipporepository</param-value>
     <description>The address of the repository</description>
   </context-param>
-  
+
   <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
     <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
@@ -49,20 +49,20 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  
+
   <servlet-mapping>
     <servlet-name>RepositoryServlet</servlet-name>
     <url-pattern>/repository/*</url-pattern>
   </servlet-mapping>
-  
+
   <!-- Timeout in minutes -->
   <session-config>
     <session-timeout>5</session-timeout>
   </session-config>
-  
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-  
+
 </web-app>

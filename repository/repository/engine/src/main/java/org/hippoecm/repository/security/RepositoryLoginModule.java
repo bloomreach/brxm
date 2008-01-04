@@ -60,26 +60,26 @@ public class RepositoryLoginModule implements LoginModule {
     private Map<String, ?> sharedState;
     private Map<String, ?> options;
 
-    // configurable JAAS options    
+    // configurable JAAS options
     private boolean debug = false;
     private boolean tryFirstPass = false;
     private boolean useFirstPass = false;
     private boolean storePass = false;
     private boolean clearPass = false;
-    
+
     // local authentication state:
     // the principals, i.e. the authenticated identities
     private final Set principals = new HashSet();
 
     // the special roles
     private static final String ADMIN_ROLE_NAME = "admin";
-    
+
     // keep the auth state of the user trying to login
     private boolean authenticated = false;
 
-    
+
     /**
-     * Get Logger 
+     * Get Logger
      */
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -88,8 +88,8 @@ public class RepositoryLoginModule implements LoginModule {
      */
     public RepositoryLoginModule() {
     }
-    
-    
+
+
 
     //----------------------------------------------------------< LoginModule >
     /**
@@ -103,7 +103,7 @@ public class RepositoryLoginModule implements LoginModule {
         this.callbackHandler = callbackHandler;
         this.sharedState = sharedState;
         this.options = options;
-        
+
 
         // fetch default JAAS parameters
         debug = "true".equalsIgnoreCase((String) options.get("debug"));
@@ -144,7 +144,7 @@ public class RepositoryLoginModule implements LoginModule {
                 principals.add(new AnonymousPrincipal());
                 return true;
             }
-            
+
             Session rootSession = (Session) creds.getAttribute("rootSession");
             if (rootSession == null) {
                 throw new LoginException("RootSession not set.");
@@ -152,7 +152,7 @@ public class RepositoryLoginModule implements LoginModule {
             if (debug) {
                 log.debug("Trying to authenticate as: " + creds.getUserID());
             }
-            
+
             if (authenticate(rootSession, creds.getUserID(), creds.getPassword())) {
                 if (log.isDebugEnabled()) {
                     log.debug("Authenticated as " + creds.getUserID());
@@ -162,7 +162,7 @@ public class RepositoryLoginModule implements LoginModule {
                     log.debug("NOT Authenticated as " + creds.getUserID() + " auth: " + authenticated);
                 }
             }
-            
+
         } catch (ClassCastException e) {
             e.printStackTrace();
             throw new LoginException(e.getMessage());
@@ -216,7 +216,7 @@ public class RepositoryLoginModule implements LoginModule {
         principals.clear();
         return true;
     }
-    
+
     /**
      * Authenticate the user against the cache or the repository
      * @param session A privileged session which can read usernames and passwords
@@ -232,15 +232,15 @@ public class RepositoryLoginModule implements LoginModule {
             }
             return false;
         }
-        
+
 
         String usersPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH;
         String groupsPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.GROUPS_PATH;
         String rolesPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.ROLES_PATH;
-            
+
         RepositoryAAContext context = new RepositoryAAContext(rootSession, usersPath, groupsPath, rolesPath);
 
-        RepositoryUser user = new RepositoryUser(); 
+        RepositoryUser user = new RepositoryUser();
         try {
             user.init(context, userId);
             authenticated =  PasswordHelper.checkHash(new String(password), user.getPasswordHash());
@@ -248,7 +248,7 @@ public class RepositoryLoginModule implements LoginModule {
                 principals.addAll(user.getPrincipals());
             }
             return authenticated;
-        } catch (UserNotFoundException e) {                
+        } catch (UserNotFoundException e) {
             if (log.isDebugEnabled()) {
                 log.debug("User not found: " + userId, e);
             }

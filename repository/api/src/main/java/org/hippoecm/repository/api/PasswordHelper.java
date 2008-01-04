@@ -30,15 +30,15 @@ import sun.misc.BASE64Encoder;
  * Password helper utility class for generating and checking password hashes.
  * </p>
  * <p>
- * For the client side the method {@link #getHash(String)} can be used to 
- * generate a valid password hash for storing in the password field of a 
+ * For the client side the method {@link #getHash(String)} can be used to
+ * generate a valid password hash for storing in the password field of a
  * user in the repository.
  * </p>
  * <p>
- * For the server side the method {@link #checkHash(String,String)} can be 
- * used to verify the (user supplied) password against the hash stored in 
+ * For the server side the method {@link #checkHash(String,String)} can be
+ * used to verify the (user supplied) password against the hash stored in
  * the repository.
- * </p> 
+ * </p>
  * <p>
  * The following option can be adjusted:
  * <ul>
@@ -71,7 +71,7 @@ public class PasswordHelper {
     private static final String FIXED_ENCODING = "UTF-8";
 
     /**
-     * This (default) size of the salt 
+     * This (default) size of the salt
      */
     private static int saltSize = 8;
 
@@ -87,10 +87,10 @@ public class PasswordHelper {
     }
 
     /**
-     * From a base 64 representation, returns the corresponding byte[] 
+     * From a base 64 representation, returns the corresponding byte[]
      * @param data String The base64 representation
      * @return byte[]
-     * @throws IOException 
+     * @throws IOException
      * @throws IOException
      */
     public static byte[] base64ToByte(String data) throws IOException {

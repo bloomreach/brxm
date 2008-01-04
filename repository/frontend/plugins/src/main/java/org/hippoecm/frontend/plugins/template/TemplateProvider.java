@@ -106,7 +106,7 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
         return new HashCodeBuilder(17, 31).append(engine).append(descriptor).toHashCode();
     }
 
-    // handle wildcard expansion 
+    // handle wildcard expansion
 
     protected void expandNodeWildcard(Node node) throws RepositoryException {
         // FIXME: a separate template should be loaded, i.e.
@@ -175,7 +175,7 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
     private void addField(FieldDescriptor field, String path) {
         fields.add(new FieldModel(field, path));
     }
-    
+
     // internal (lazy) loading of fields
 
     private void load() {

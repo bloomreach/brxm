@@ -36,7 +36,7 @@ import org.hippoecm.repository.api.HippoNodeType;
  */
 public class FolderTreeNode extends AbstractTreeNode {
     private static final long serialVersionUID = 1L;
-    
+
     private Folder folder;
 
     public FolderTreeNode(JcrNodeModel nodeModel) {
@@ -50,7 +50,7 @@ public class FolderTreeNode extends AbstractTreeNode {
         setTreeModel(treeModel);
         treeModel.register(this);
     }
-    
+
     @Override
     protected int loadChildcount() throws RepositoryException {
         return folder.getSubFolders().size();

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
   -->
 
@@ -27,7 +27,7 @@
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
-  
+
   <name>Xinha addon frontend plugin</name>
   <description>Hippo ECM Xinha addon frontend plugin</description>
   <groupId>org.hippoecm</groupId>
@@ -38,7 +38,7 @@
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/xinha-frontend</url>
-  </scm> 
+  </scm>
 
   <dependencies>
     <dependency>
@@ -46,13 +46,13 @@
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>${parent.version}</version>
       <scope>compile</scope>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-plugins</artifactId>
       <version>${parent.version}</version>
       <scope>compile</scope>
-    </dependency>    
+    </dependency>
   </dependencies>
 
   <build>
@@ -67,7 +67,7 @@
         </includes>
       </resource>
     </resources>
-    <plugins> 
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -75,7 +75,7 @@
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
-      </plugin>     
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -86,5 +86,5 @@
       </plugin>
    </plugins>
   </build>
-  
+
 </project>

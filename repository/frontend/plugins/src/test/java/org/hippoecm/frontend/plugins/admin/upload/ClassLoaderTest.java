@@ -48,7 +48,7 @@ public class ClassLoaderTest extends TestCase {
         loader = new PluginClassLoader(session);
 
     }
-   
+
     public void tearDown() throws Exception {
         if (loader != null) {
             loader.destroy();

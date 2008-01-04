@@ -44,18 +44,18 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * The logger instance for this class
      */
     private static final Logger log = LoggerFactory.getLogger(IndexingConfigurationImpl.class);
-    
-    
+
+
     /**
      * Set of properties that are configured to be facets
      */
     private Set facetProperties = new HashSet();
-    
+
     /**
      * QName Hippo Path qualified name
      */
     private Name hippoPath;
-    
+
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
         super.init(config, context, nsMappings);
@@ -82,7 +82,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
 
     public boolean isFacet(Name propertyName) {
         if(facetProperties.contains(propertyName)){
-          return true;  
+          return true;
         }
         // TODO for now, all fields that are possible to index as a facet are index
         // as a facet by the '|| true' part. When the indexing_configuration is maintainable
@@ -90,14 +90,14 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         return true;
         //return false;
     }
-    
+
     public boolean isHippoPath(Name propertyName) {
         if(this.hippoPath.equals(propertyName)){
             return true;
         }
         return false;
     }
-    
+
     /**
      * Returns the namespaces declared on the <code>node</code>.
      *
@@ -116,7 +116,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         }
         return namespaces;
     }
-    
+
     /**
      * @param node a node.
      * @return the text content of the <code>node</code>.

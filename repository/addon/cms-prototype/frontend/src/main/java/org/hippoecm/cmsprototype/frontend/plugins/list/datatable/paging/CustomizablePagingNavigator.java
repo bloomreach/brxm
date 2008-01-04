@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.navigation.paging.PagingNavigation;
 public class CustomizablePagingNavigator extends AjaxPagingNavigator{
 
     private static final long serialVersionUID = 1;
- 
+
     public CustomizablePagingNavigator(String id, IPageable pageable, IPagingLabelProvider labelProvider) {
         /*
          * TODO : org.apache.wicket.markup.html.navigation.paging.PagingNavigation in
@@ -31,16 +31,16 @@ public class CustomizablePagingNavigator extends AjaxPagingNavigator{
          * is provided. This is already fixed in trunk. When this commit makes it to a release
          * use the following constructor to enable a custom label provider:
          * super(id, pageable, labelProvider);
-         */  
+         */
         super(id, pageable, null);
     }
     public CustomizablePagingNavigator(String id, IPageable pageable) {
         super(id, pageable);
     }
-    
+
     /**
      * Create a new PagingNavigation. May be subclassed to make us of specialized PagingNavigation.
-     * 
+     *
      * @param pageable
      *            the pageable component
      * @param labelProvider
@@ -53,5 +53,5 @@ public class CustomizablePagingNavigator extends AjaxPagingNavigator{
         PagingNavigation pagingNavigation = new CustomizablePagingNavigation("navigation", pageable, labelProvider);
         return pagingNavigation;
     }
-    
+
 }

@@ -28,7 +28,7 @@ public class ExtractorInstruction {
 
     /**
      * Create a new instruction for the XmlExtractor
-     * @param name the name of the property 
+     * @param name the name of the property
      * @param XPath
      */
     public ExtractorInstruction(String name, String XPath) {

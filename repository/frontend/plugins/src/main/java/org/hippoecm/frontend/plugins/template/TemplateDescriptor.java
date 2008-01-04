@@ -40,11 +40,11 @@ public class TemplateDescriptor implements IClusterable {
     public String getName() {
         return name;
     }
-    
+
     public Iterator<FieldDescriptor> getFieldIterator() {
         return fields.values().iterator();
     }
-    
+
     public boolean hasField(String name) {
         return fields.containsKey(name);
     }

@@ -47,7 +47,7 @@ public class HippoRepositoryFactory {
     public static HippoRepository getHippoRepository() throws RepositoryException {
         if (defaultRepository != null) {
             return defaultRepository;
-        } 
+        }
         if (defaultLocation != null) {
             return getHippoRepository(defaultLocation);
         }
@@ -68,12 +68,12 @@ public class HippoRepositoryFactory {
         if (location.startsWith("file:")) {
             location = location.substring(5);
         }
-        
+
         // already configured?
         if (defaultRepository != null && location.equals(defaultRepository.getLocation())) {
             return defaultRepository;
-        } 
-        
+        }
+
         if (location.startsWith("rmi://")) {
             try {
                 defaultLocation = location;
@@ -121,12 +121,12 @@ public class HippoRepositoryFactory {
             // FIXME
           }
         }
-        
+
         // embedded/local default
         if (defaultRepository == null && location.equals(defaultLocation)) {
             return getHippoRepository();
         }
-        
+
         // embedded/local with location
         try {
             return (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").getConstructor(new Class[] { String.class }).newInstance(new Object[] { location });
@@ -145,7 +145,7 @@ public class HippoRepositoryFactory {
                 throw new RepositoryException("unchecked exception: "+ex.getMessage());
         }
     }
-    
+
     static void unregister(HippoRepository repository) {
         if (repository == defaultRepository) {
             defaultRepository = null;

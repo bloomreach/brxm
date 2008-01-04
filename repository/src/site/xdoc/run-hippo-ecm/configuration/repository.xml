@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -24,18 +24,18 @@
     <body>
         <section name="Repository configuration">
             <p>
-                The repository configuration file is an XML file that specifies the components 
-                and configuration of the content repository. Hippo Repository by default ships 
+                The repository configuration file is an XML file that specifies the components
+                and configuration of the content repository. Hippo Repository by default ships
                 with a repository.xml configuration file.
-                You only need to know about this configuration file if you need a non-default 
+                You only need to know about this configuration file if you need a non-default
                 PersistenceManager, AccessManager, LoginModule or SearchIndex.
-                 
+
             </p>
             <p>
                 The standard repository configuration for Jackrabbit
-                can be found at 
+                can be found at
                 <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a>.
-                This page refers to that page for parts that are the same, and elaborates on those parts 
+                This page refers to that page for parts that are the same, and elaborates on those parts
                 that are specific for Hippo Repository.
             </p>
 
@@ -58,37 +58,37 @@
     &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
     &lt;Security&gt;
     &lt;AccessManager class=&quot;...&quot;&gt;...&lt;/AccessManager&gt;
-    
+
     [ &lt;LoginModule class=&quot;...&quot;&gt;...&lt;/LoginModule&gt; ]
     &lt;/Security&gt;
     &lt;Workspaces rootPath=&quot;...&quot; defaultWorkspace=&quot;...&quot;/&gt;
-    
+
     &lt;Workspace name=&quot;...&quot;&gt;
     &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
     &lt;PersistenceManager class=&quot;...&quot;&gt;...&lt;/PersistenceManager&gt;
     [ &lt;SearchIndex class=&quot;...&quot;&gt;
-    
+
     ...
     [ &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt; ]
     &lt;/SearcIndex&gt; ]
     &lt;/Workspace&gt;
     &lt;Versioning rootPath=&quot;...&quot;&gt;
-    
+
     &lt;FileSystem class=&quot;...&quot;&gt;...&lt;/FileSystem&gt;
     &lt;PersistenceManager class=&quot;...&quot;&gt;...&lt;/PersistenceManager&gt;
     &lt;/Versioning&gt;
 &lt;/Repository&gt;
 </source>
             <p>
-                The XML attribute values in the configuration file are interpreted as plain strings 
+                The XML attribute values in the configuration file are interpreted as plain strings
                 except for a few special variables, namely ${rep.home}, ${wsp.name} and ${wsp.home}.
                 See <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a>
-            </p> 
+            </p>
             <subsection name="FileSystem element">
               <p>
                 a FileSystem element (the virtual file system
                 used by the repository to persist global state such as
-                registered namespaces, custom node types, etc..) 
+                registered namespaces, custom node types, etc..)
               </p>
               <p>
                 See <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a> at Virtual file systems
@@ -97,7 +97,7 @@
             <subsection name="Security element">
               <p>
                 A Security element that specifies the name of the app-entry
-                in the JAAS config and the access manager. 
+                in the JAAS config and the access manager.
                 Hippo Repository by default uses the following configuration:
               </p>
 <source>
@@ -112,13 +112,13 @@
 </source>
               <p>
                 The SimpleAccessManager is the Hippo Repository default access manager implementation, and RepositoryLoginModule
-                the default login implementation. See <a href="repository-based-authentication-and-users.html">repository-based-authentication-and-users.html</a> 
-                for explanation about the RepositoryLoginModule. 
+                the default login implementation. See <a href="repository-based-authentication-and-users.html">repository-based-authentication-and-users.html</a>
+                for explanation about the RepositoryLoginModule.
               </p>
             </subsection>
             <subsection name="Workspaces root directory element">
               <p>
-                Location of workspaces root directory and name of default workspace. 
+                Location of workspaces root directory and name of default workspace.
               </p>
 <source>
 &lt;Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/&gt;
@@ -126,11 +126,11 @@
             </subsection>
             <subsection name="Workspace element">
               <p>
-                The Workspace element is used as a template for separate workspace configuration files created for each new workspace. 
-                Because of this the Workspace element is not interpreted directly from the repository 
-                configuration file. Instead the workspace configuration template is first copied into the 
-                workspace configuration file which is then interpreted to set up the configured workspace 
-                components. Thus modifying the workspace configuration template in the repository configuration 
+                The Workspace element is used as a template for separate workspace configuration files created for each new workspace.
+                Because of this the Workspace element is not interpreted directly from the repository
+                configuration file. Instead the workspace configuration template is first copied into the
+                workspace configuration file which is then interpreted to set up the configured workspace
+                components. Thus modifying the workspace configuration template in the repository configuration
                 file will not affect existing workspace configurations.
               </p>
               <p>
@@ -158,6 +158,6 @@
               </p>
             </subsection>
         </section>
-        
+
     </body>
 </document>

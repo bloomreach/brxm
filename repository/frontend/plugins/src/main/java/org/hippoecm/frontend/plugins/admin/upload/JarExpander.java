@@ -32,7 +32,7 @@ import javax.jcr.RepositoryException;
  * Helper class that is used to expand jar archives in the repository.
  * It only exists to work around a bug in JackRabbit where the zipped
  * stream is closed during decompression.  This occurs when JackRabbit
- * is approached over RMI. 
+ * is approached over RMI.
  */
 public class JarExpander {
 

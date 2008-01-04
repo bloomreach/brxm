@@ -23,13 +23,13 @@ import org.hippoecm.frontend.dialog.DialogWindow;
 
 public class ErrorDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
-        
+
     public ErrorDialog(DialogWindow dialogWindow, String message) {
         super(dialogWindow, null);
         add(new Label("message", message));
         dialogWindow.setTitle("Error");
     }
- 
+
 
     @Override
     public void ok() throws RepositoryException {

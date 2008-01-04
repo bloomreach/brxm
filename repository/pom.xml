@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
   -->
 
@@ -24,21 +24,21 @@
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm</artifactId>
   <version>2.01.00-dev</version>
-  
+
   <name>Hippo ECM</name>
   <description>Hippo ECM suite</description>
-  <packaging>pom</packaging>  
-  
+  <packaging>pom</packaging>
+
   <url>http://wiki.hippo.nl/display/HIPPOECM</url>
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
-  
+
   <organization>
     <name>Hippo</name>
     <url>http://www.hippo.nl/</url>
   </organization>
-    
+
   <modules>
     <module>api</module>
     <module>frontend</module>
@@ -48,12 +48,12 @@
     <module>tools</module>
     <module>maven-skin</module>
   </modules>
-  
+
   <properties>
     <!-- Unstable dependencies -->
     <jackrabbit.version>1.4-r593117</jackrabbit.version>
     <wicket.version>1.3.0-rc2</wicket.version>
-    
+
     <!-- Test dependencies  -->
     <jmock.version>1.2.0</jmock.version>
     <easymock.version>1.1</easymock.version>
@@ -89,31 +89,31 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</url>
  </scm>
- 
+
   <distributionManagement>
     <site>
       <id>repodocs.hippocms.org</id>
       <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
     </site>
   </distributionManagement>
-  
+
   <ciManagement>
     <system>Bamboo</system>
     <url>http://bamboo-intern.hippocms.org//</url>
  </ciManagement>
- 
+
   <issueManagement>
     <system>Jira</system>
     <url>http://issues.hippo.nl/browse/HREPTWO</url>
   </issueManagement>
   <inceptionYear>2007</inceptionYear>
-        
+
   <developers>
     <developer>
       <name>Arje Cahn</name>
@@ -253,7 +253,7 @@
       <url>http://maven.openqa.org</url>
     </repository>
   </repositories>
-  
+
   <pluginRepositories>
     <pluginRepository>
       <id>jpox.plugin</id>
@@ -491,7 +491,7 @@
         <groupId>cglib</groupId>
         <artifactId>cglib</artifactId>
         <version>${cglib.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -518,7 +518,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-      
+
       <!-- Testing needs a JTA implementation -->
       <dependency>
         <groupId>com.atomikos</groupId>
@@ -583,7 +583,7 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-      </plugin>     
+      </plugin>
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>

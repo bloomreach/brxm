@@ -32,25 +32,25 @@ import org.hippoecm.repository.api.ISO9075Helper;
 import junit.framework.TestCase;
 
 public class TrivialServerTest extends TestCase {
-    
+
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     private HippoRepository server;
     private Session session;
     private Node root;
-    
+
     public void setUp() throws RepositoryException {
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         root = session.getRootNode();
     }
-    
+
     public void tearDown() throws Exception {
         session.logout();
         server.close();
     }
-    
+
     public void testTrivialNodeOperations()  {
         try {
             root.addNode("x");
@@ -72,7 +72,7 @@ public class TrivialServerTest extends TestCase {
             fail("Failed to save node: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         // after persist
         try {
             assertNotNull(root.getNode("x"));
@@ -80,7 +80,7 @@ public class TrivialServerTest extends TestCase {
             fail("Failed to find node: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         try {
             root.getNode("x").remove();
         } catch (RepositoryException e) {
@@ -93,7 +93,7 @@ public class TrivialServerTest extends TestCase {
             fail("Failed to save node deletion: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         try {
             root.getNode("x");
             fail("Deleted node found.");
@@ -103,9 +103,9 @@ public class TrivialServerTest extends TestCase {
             fail("Failed to not find node: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
     }
-    
+
     public void testEncodedNode() throws RepositoryException {
         String name = "2..,!@#$%^&*()_-[]{}|\\:;'\".,/?testnode";
         Node root = session.getRootNode();

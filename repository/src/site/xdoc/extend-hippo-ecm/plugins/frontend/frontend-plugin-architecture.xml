@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -25,7 +25,7 @@
   </head>
   <body>
     <section name="Frontend Plugin Architecture">
-    
+
       <p>
         Hippo ECM provides an <a href="http://wicket.apache.org">Apache Wicket</a> based
         plugin architecture to facilitate a customizable GUI. All standard GUI components are written
@@ -33,28 +33,28 @@
         Customizing Hippo CMS comes down to extending the standards plugins, and/or writing your own,
         and configuring them to form your own custom application.
       </p>
-      
+
       <subsection name="Customization by configuration">
-      
+
         <p>
-          Frontend plugins extend the Wicket component model.  Wicket HTML fragments 
+          Frontend plugins extend the Wicket component model.  Wicket HTML fragments
           can contain references to plugins that are not added explicitly in the Java code. Instead,
           these references are resolved by the configuration in the repository.
         </p>
-        
+
         <p>
           Example: suppose we have an ordinary Wicket panel called RootPanel, which contains three child
           panels: a ListPanel, a TreePanel and a SimplePanel. The child panels would need to be added
           explicitly in code, for example in the constructor or RootPanel:
         </p>
 <source>
-class RootPanel extends Panel {          
+class RootPanel extends Panel {
 
   public RootPanel {
     add("list", new ListPanel());
     add("tree", new TreePanel());
     add("custom", new SimplePanel());
-  }        
+  }
 
 }
 </source>
@@ -67,8 +67,8 @@ class RootPanel extends Panel {
 class RootPlugin extends Plugin {
 
   public RootPlugin() {
-  
-  }        
+
+  }
 
 }
 </source>
@@ -166,10 +166,10 @@ public class RootPlugin extends Plugin {
           <b>hippo:renderer</b>, which contains the full class name of the plugin.
         </p>
       </subsection>
-      
+
       <subsection name="JcrNodeModel">
         <p>
-          Plugins are aware of the JCR context for the page and are 
+          Plugins are aware of the JCR context for the page and are
           <a href="frontend-plugin-communication.html">notified when it changes</a>. This occurs
           for example when the page contains a BrowserPlugin. When a node is selected on the (JCR) tree,
           other plugins are notified. This mechanism is e.g. used to show the workflow plugin for nodes that
@@ -178,10 +178,10 @@ public class RootPlugin extends Plugin {
         <p>
           A plugin's model is a JcrNodeModel, which is an IModel representing a node in the
           JCR repository. Internally a plugin can have its own model wrapping the JcrNodeModel
-          (the class NodeModelWrapper can be extended for this purpose). 
+          (the class NodeModelWrapper can be extended for this purpose).
         </p>
       </subsection>
-      
+
     </section>
   </body>
 </document>

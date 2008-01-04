@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class RenameDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(RenameDialog.class);
 
     /**
@@ -62,8 +62,8 @@ public class RenameDialog extends AbstractDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
         if (nodeModel.getParentModel() != null) {
-            JcrNodeModel parentModel = nodeModel.getParentModel();            
-            
+            JcrNodeModel parentModel = nodeModel.getParentModel();
+
             //The actual JCR move
             String oldPath = nodeModel.getNode().getPath();
             String newPath = parentModel.getNode().getPath();

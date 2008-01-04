@@ -23,8 +23,8 @@ import org.hippoecm.repository.security.AAContext;
 public interface Role {
 
     public void init(AAContext context, String roleId) throws RoleNotFoundException;
-    
+
     public Set<Principal> getPrincipals() throws RoleNotFoundException;
-    
+
     public String getRoleId() throws RoleNotFoundException;
 }

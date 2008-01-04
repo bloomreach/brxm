@@ -34,7 +34,7 @@ public class FieldModel extends ItemModelWrapper {
         super(path);
         this.descriptor = descriptor;
     }
-    
+
     public FieldDescriptor getDescriptor() {
         return descriptor;
     }

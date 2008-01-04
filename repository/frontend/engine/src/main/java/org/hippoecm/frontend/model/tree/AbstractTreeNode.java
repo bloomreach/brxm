@@ -92,11 +92,11 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
     public boolean getAllowsChildren() {
         return true;
     }
-    
+
     protected abstract int loadChildcount() throws RepositoryException;
 
     protected abstract List<AbstractTreeNode> loadChildren() throws RepositoryException;
-    
+
     public abstract String renderNode();
 
     private void ensureChildcountLoaded() {
@@ -127,7 +127,7 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
-            reloadChildren = false;        
+            reloadChildren = false;
             reloadChildcount = false;
         }
     }

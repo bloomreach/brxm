@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -23,24 +23,24 @@
     </properties>
     <body>
       <section name="Hippo ECM Plugins">
-        
+
         <p>
           Customizability of Hippo ECM is achieved by means of a configurable plugin framework.
           All functionality outside the core is implemented as plugins, which can be extended and customized.
-          New plugins can be written to add functionality. New functionality will typically be 
+          New plugins can be written to add functionality. New functionality will typically be
           implemented as an add-on, consisting of a number of plugins.
         </p>
 
         <subsection name="Repository plugins vs. frontend plugins">
-          
+
           <p>
             Plugins come in various shapes and sizes.  One class of plugins, even though
             configured and stored in the repository only affects the front-end
             application.  It can define additional GUI elements, different look and feel,
             new functionality, etcetera.  However these components are not supposted to
-            perform serious data transformations or computations.  
+            perform serious data transformations or computations.
           </p>
-          
+
           <p>
             Another class of plugins perform processing and implements business logic.
             These plugins define logic to be executed in the repository upon events,
@@ -49,7 +49,7 @@
             or perform data mapping which is also available outside of the repository,
             there is a third class of plugin.
           </p>
-          
+
           <p>
             This third class of plugin should not contain any executable code, but defines
             interfaces and data-mappings.  This such that a repository based plugin can
@@ -71,9 +71,9 @@
               <a href="frontend/index.html">Frontend plugins</a>
             </li>
           </ul>
-          
+
         </subsection>
-        
+
       </section>
     </body>
 </document>
