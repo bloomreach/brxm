@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.ext;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -23,7 +24,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 
-public abstract class WorkflowImpl extends UnicastRemoteObject implements Workflow
+public abstract class WorkflowImpl implements Remote, Workflow
 {
     protected WorkflowContext context;
     public WorkflowImpl() throws RemoteException {

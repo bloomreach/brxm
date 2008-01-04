@@ -125,34 +125,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>process-classes-rmic</id>
-            <phase>process-classes</phase>
-            <configuration>
-              <tasks>
-                <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/sample/SampleWorkflowImpl.class"
-                      classpathref="maven.compile.classpath"/>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>jpox</groupId>
         <artifactId>jpox-maven-plugin</artifactId>
         <version>1.2.0-beta-2</version>
