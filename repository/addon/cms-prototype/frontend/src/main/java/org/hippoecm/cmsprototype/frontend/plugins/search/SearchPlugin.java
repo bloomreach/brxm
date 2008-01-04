@@ -32,6 +32,9 @@ import javax.jcr.query.RowIterator;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -39,49 +42,38 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.plugins.list.AbstractListingPlugin;
 import org.hippoecm.cmsprototype.frontend.plugins.list.SortableDocumentsProvider;
 import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.CustomizableDocumentListingDataTable;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 
 public class SearchPlugin extends AbstractListingPlugin{
     private static final long serialVersionUID = 1L;
-
+ 
     public static final String USER_PREF_NODENAME = "hippo:searchperspective-listingview";
-
+    
+    private String query;
     private Label searchedFor;
     private Label didyoumean;
-    private TextField field;
-    private List<SearchHit> hits = new ArrayList<SearchHit>();
-
+    private TextField field; 
+    private List<SearchHit> hits = new ArrayList<SearchHit>(); 
+    private JcrNodeModel model;
+    
     public SearchPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-
-        //AjaxSubmitLink
-
-        Form form = new Form("searchform");
-        field = new TextField("searchtext",new Model(""));
+        this.model = model; 
+        final SearchForm form = new SearchForm("searchform");
+        
         searchedFor = new Label("searchedfor", new Model(""));
         didyoumean = new Label("didyoumean", new Model(""));
-        form.add(field);
-        form.add(new Button("button") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onSubmit() {
-                String value = (String)field.getModelObject();
-                field.setModelObject(value);
-                newSearch(hits,"//element(*,hippo:document)[jcr:contains(.,'"+value+"')]/rep:excerpt(.)",value);
-                searchedFor.setModelObject("You searched for : "  + value);
-
-            }
-
-        });
-
+       
         PageableListView pageableListView = new PageableListView("hits",hits, 30) {
             private static final long serialVersionUID = 1L;
 
@@ -99,56 +91,116 @@ public class SearchPlugin extends AbstractListingPlugin{
                         searchedFor.setModelObject("You searched for similar : "  + hit.getName());
                         newSearch(hits,"//element(*, hippo:document)[rep:similar(., '" + hit.getPath() + "')]/rep:excerpt(.)");
                     }
-
+                    
                 });
             }
         };
-
+        
         add(form);
         add(searchedFor);
         add(didyoumean);
         add(pageableListView);
-
-
-
-        //request.getContextPath() %>/search.jsp?q=related:<%= URLEncoder.encode(file.getPath(), "UTF-8") %>">Similar pages</a>
-
-    }
-
-
-    @Override
-    protected void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
-        // over here we have to do the search. Create our own SortableDocumentsProvider, and show the
-        // search results
-        dataTable = new CustomizableDocumentListingDataTable("table", columns, new SortableDocumentsProvider(
-                nodeModel), pageSize, false);
-        dataTable.addBottomPaging(viewSize);
-        dataTable.addTopColumnHeaders();
-        add((Component)dataTable);
+        
     }
 
     @Override
     protected String getPluginUserPrefNodeName() {
         return USER_PREF_NODENAME;
     }
+    
+    private final class SearchForm extends Form {
 
-
-    private void newSearch(List<SearchHit> hits, String xpath) {
-        newSearch(hits, xpath, null);
+        private static final long serialVersionUID = 1L;
+        
+        public SearchForm(String id) {
+            super(id);
+            field = new TextField("searchtext",new Model(""));
+            add(field);
+            add(new Button("submit", new Model("search!!")));
+        }
+        public SearchForm(String id, IModel model) {
+            super(id, model);
+            field = new TextField("searchtext",new Model(""));
+            add(field);
+            add(new Button("submit", new Model("search!!")));
+        }
+        public void onSubmit() {
+            query = (String)field.getModelObject();
+            field.setModelObject(query);
+            searchedFor.setModelObject("You searched for similar : "  + query);
+            this.getParent().remove((Component)dataTable);
+            ((SearchPlugin)this.getParent()).addTable(model, pageSize, viewSize);
+        }
+        
+        
     }
 
+    @Override
+    protected void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
+        javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession()); 
+        
+       dataTable = new CustomizableDocumentListingDataTable("table", columns, 
+                new SortableQueryResultProvider(getQueryResult(session), session), pageSize, false);
+        dataTable.addBottomPaging(viewSize);
+        dataTable.addTopColumnHeaders();
+        add((Component)dataTable); 
+    
+        
+    }
+
+    private QueryResult getQueryResult(javax.jcr.Session session){
+        if(query == null) {
+            return null;
+        }
+        String xpath = "//element(*,hippo:document)[jcr:contains(.,'"+query+"')]/rep:excerpt(.)";
+        QueryResult result = null;
+        try {
+            Query q = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
+            result = q.execute();
+            
+            RowIterator rows = result.getRows();
+            
+            if(rows.getSize() == 0 ) {
+                
+                Value v = session.getWorkspace().getQueryManager().createQuery(
+                        "//element(*, hippo:document)[rep:spellcheck('" + query + "')]/(rep:spellcheck())",
+                        Query.XPATH).execute().getRows().nextRow().getValue("rep:spellcheck()");
+                if (v != null) {
+                    didyoumean.setModelObject("Did you mean : " + v.getString() );
+                    field.setModelObject(v.getString());
+                } else {
+                    didyoumean.setModelObject("No results, no suggestions");
+                }
+            } else {
+                didyoumean.setModelObject("");
+            }
+        } catch (InvalidQueryException e) {
+            e.printStackTrace();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
+    
+    
+    
+    private void newSearch(List<SearchHit> hits, String xpath) { 
+        newSearch(hits, xpath, null);
+    }
+    
     private void newSearch(List<SearchHit> hits, String xpath, String value) {
         javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession());
         hits.clear();
         try {
             Query q = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
-
+            
             QueryResult result = q.execute();
-
+            
             RowIterator rows = result.getRows();
-
+            
             if(rows.getSize() == 0 && value != null) {
-
+                
                 Value v = session.getWorkspace().getQueryManager().createQuery(
                         "//element(*, hippo:document)[rep:spellcheck('" + value + "')]/(rep:spellcheck())",
                         Query.XPATH).execute().getRows().nextRow().getValue("rep:spellcheck()");
@@ -161,29 +213,29 @@ public class SearchPlugin extends AbstractListingPlugin{
             } else {
                 didyoumean.setModelObject("");
             }
-
+      
             while(rows.hasNext()){
                 hits.add(new SearchHit(rows.nextRow() , session ));
             }
-
+           
         } catch (InvalidQueryException e) {
             e.printStackTrace();
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
-
+        
     }
-
-
-
+    
+    
+    
     class SearchHit implements Serializable {
         private static final long serialVersionUID = 1L;
-
+        
         private String name;
         private String path;
         private String excerpt;
         private String similar;
-
+        
         public SearchHit(Node node) throws RepositoryException{
            this.name = node.getName();
            this.path = node.getPath();
@@ -196,7 +248,7 @@ public class SearchPlugin extends AbstractListingPlugin{
             }
             Node n = (Node) session.getItem(path);
             this.name = n.getName();
-
+            
         }
 
         public String getExcerpt() {
@@ -214,10 +266,10 @@ public class SearchPlugin extends AbstractListingPlugin{
         public String getSimilar() {
             return similar;
         }
-
+        
     }
 
 
-
+    
 }
 
