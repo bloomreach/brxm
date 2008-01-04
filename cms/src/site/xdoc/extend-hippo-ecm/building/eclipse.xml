@@ -81,7 +81,7 @@
                 <li><p>Window -&gt; Preferences</p></li>
                 <li><p>Select JPOX Eclipse Plugin -&gt; General</p></li>
                 <li><p>Uncheck 'Use project classpath when running tools'</p></li>
-		        <li><p>Add the jars for jpox-core, jpox-enhancer and bcel to the classpath.  Currently
+                        <li><p>Add the jars for jpox-core, jpox-enhancer and bcel to the classpath.  Currently
                     the version 1.2.0-beta-2 is used for JPOX and 5.1 for BCEL; to maintain
                     consistency with the maven build, check these values in the jpox-maven-plugin
                     pom file.</p></li>

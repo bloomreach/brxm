@@ -140,7 +140,7 @@ public class Webdav2JCRMigrator implements Plugin {
         HippoRepository repository;
         try {
             // get the repository
-	    repository = HippoRepositoryFactory.getHippoRepository(getRmiUrl());
+            repository = HippoRepositoryFactory.getHippoRepository(getRmiUrl());
 
             // login and get session
             session = repository.login(new SimpleCredentials(jcrUser, jcrPass.toCharArray()));

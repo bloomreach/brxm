@@ -88,26 +88,26 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
      */
     public String[] getArguments() {
         String queryString = getStatement();
-	if(queryString.contains("?")) {
+        if(queryString.contains("?")) {
             int argumentCount = getArgumentCount();
             String[] arguments = new String[argumentCount];
             for (int i=0; i<argumentCount; i++) {
                 arguments[i] = "?";
             }
             return arguments;
-	} else {
-	    Set<String> arguments = new HashSet<String>();
-	    for (int position=0; position>=0; position=queryString.indexOf("$", position)) {
-		int endPosition = position + 1;
+        } else {
+            Set<String> arguments = new HashSet<String>();
+            for (int position=0; position>=0; position=queryString.indexOf("$", position)) {
+                int endPosition = position + 1;
                 if(Character.isJavaIdentifierStart(queryString.charAt(endPosition))) {
                     do {
                         ++endPosition;
                     } while(Character.isJavaIdentifierPart(queryString.charAt(endPosition)));
                 }
                 arguments.add(queryString.substring(position,endPosition));
-	    }
+            }
             return arguments.toArray(new String[arguments.size()]);
-	}
+        }
     }
 
     /**
@@ -116,36 +116,36 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
     public int getArgumentCount() {
         String queryString = getStatement();
         int count = -1;
-	if(queryString.contains("?")) {
+        if(queryString.contains("?")) {
             for (int position=0; position>=0; position=queryString.indexOf("?", position)) {
                 ++count;
             }
-	} else {
-	    Set<String> arguments = new HashSet<String>();
+        } else {
+            Set<String> arguments = new HashSet<String>();
             for (int position=0; position>=0; position=queryString.indexOf("$", position)) {
                 ++count;
             }
-	}
+        }
         return count;
     }
 
     public QueryResult execute(String argument) throws RepositoryException {
         String queryString = getStatement();
-	if(queryString.contains("?")) {
-	    int count = getArgumentCount();
-	    String[] arguments = new String[count];
-	    for(int i=0; i<count; i++) {
-	        arguments[i] = argument;
-	    }
-	    return execute(arguments);
-	} else {
-	    String[] argumentNames = getArguments();
-	    Map<String,String> arguments = new TreeMap<String,String>();
-	    for(int i=0; i<argumentNames.length; i++) {
-	        arguments.put(argumentNames[i], argument);
-	    }
-	    return execute(arguments);
-	}
+        if(queryString.contains("?")) {
+            int count = getArgumentCount();
+            String[] arguments = new String[count];
+            for(int i=0; i<count; i++) {
+                arguments[i] = argument;
+            }
+            return execute(arguments);
+        } else {
+            String[] argumentNames = getArguments();
+            Map<String,String> arguments = new TreeMap<String,String>();
+            for(int i=0; i<argumentNames.length; i++) {
+                arguments.put(argumentNames[i], argument);
+            }
+            return execute(arguments);
+        }
     }
 
     /**
@@ -165,7 +165,7 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
      */
     public QueryResult execute(Map<String,String> arguments) throws RepositoryException {
         String queryString = getStatement();
-	String[] argumentNames = getArguments();
+        String[] argumentNames = getArguments();
         for (int i=0; i<argumentNames.length; i++) {
             queryString = queryString.replace("$"+argumentNames[i], arguments.get(argumentNames[i]));
         }

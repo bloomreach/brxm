@@ -85,12 +85,12 @@ public class MoveDialog extends AbstractDialog {
             Channel channel = getIncoming();
             if(channel != null) {
                 Request request = channel.createRequest("select",
-                		targetNodeModel.getNodeModel().getMapRepresentation());
+                                targetNodeModel.getNodeModel().getMapRepresentation());
                 channel.send(request);
 
                 //TODO: lookup common ancestor iso root
                 request = channel.createRequest("flush",
-                		targetNodeModel.getNodeModel().findRootModel().getMapRepresentation());
+                                targetNodeModel.getNodeModel().findRootModel().getMapRepresentation());
                 channel.send(request);
             }
         }

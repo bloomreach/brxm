@@ -55,7 +55,7 @@ public class DeleteDialog extends AbstractDialog {
         Channel channel = getIncoming();
         if(channel != null) {
             Request request = channel.createRequest("flush",
-            		parentModel.findRootModel().getMapRepresentation());
+                        parentModel.findRootModel().getMapRepresentation());
             channel.send(request);
 
             request = channel.createRequest("select", parentModel.getMapRepresentation());

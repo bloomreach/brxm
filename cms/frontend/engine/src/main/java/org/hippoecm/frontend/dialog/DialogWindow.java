@@ -43,29 +43,29 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
             channel.subscribe(this);
         }
         if (proxy != null) {
-        	proxy.register(this);
+                proxy.register(this);
         }
 
         setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
 
             public void onClose(AjaxRequestTarget target) {
-            	// forward the requests that have been sent by children (i.e. the dialog)
-            	if (channel != null) {
-            		LinkedList<MessageContext> contexts = new LinkedList<MessageContext>();
-	                while (queue.size() > 0) {
-	                	Request request = queue.removeLast();
-	                	channel.send(request);
-	                	contexts.add(request.getContext());
-	                }
-	                while (contexts.size() > 0) {
-	                	contexts.remove().apply(target);
-	                }
-            	} else {
-            		if (queue.size() > 0) {
-            			queue = new LinkedList<Request>();
-            		}
-            	}
+                // forward the requests that have been sent by children (i.e. the dialog)
+                if (channel != null) {
+                        LinkedList<MessageContext> contexts = new LinkedList<MessageContext>();
+                        while (queue.size() > 0) {
+                                Request request = queue.removeLast();
+                                channel.send(request);
+                                contexts.add(request.getContext());
+                        }
+                        while (contexts.size() > 0) {
+                                contexts.remove().apply(target);
+                        }
+                } else {
+                        if (queue.size() > 0) {
+                                queue = new LinkedList<Request>();
+                        }
+                }
             }
         });
     }
@@ -77,10 +77,10 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
     // implement IRequestHandler
     
     public void handle(Request request) {
-    	// put requests from children in a queue.  These requests are sent while the
-    	// modal window is present and the page that contains this dialogwindow cannot
-    	// be updated.
-    	queue.add(request);
+        // put requests from children in a queue.  These requests are sent while the
+        // modal window is present and the page that contains this dialogwindow cannot
+        // be updated.
+        queue.add(request);
     }
     
     // implement INotificationListener

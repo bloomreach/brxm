@@ -49,7 +49,7 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
             WorkflowDescriptor descriptor = workflowManager.getWorkflowDescriptor(category, node);
             if (descriptor != null) {
                 return new ServerWorkflowDescriptor(descriptor, workflowManager);
-	    } else {
+            } else {
                 return null;
             }
         } catch (RepositoryException ex) {

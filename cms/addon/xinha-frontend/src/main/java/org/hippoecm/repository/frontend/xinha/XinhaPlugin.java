@@ -166,9 +166,9 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
     protected void onDetach() {
         super.onDetach();
         if(sharedBehavior != null) {
-	        sharedBehavior.unregister(configuration);
-	        sharedBehavior = null;
-	    }
+                sharedBehavior.unregister(configuration);
+                sharedBehavior = null;
+            }
     }
 
     class XinhaHeaderContributor extends AbstractHeaderContributor {

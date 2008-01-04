@@ -264,7 +264,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
@@ -328,7 +328,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
@@ -392,7 +392,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
@@ -456,7 +456,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
@@ -520,7 +520,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
@@ -584,7 +584,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
@@ -648,7 +648,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
@@ -695,7 +695,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetching \"" + (cmd.getField(fieldNumber) != null ?
                                     cmd.getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         if (field != null) {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
@@ -721,7 +721,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }
@@ -843,7 +843,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (log.isDebugEnabled()) {
             log.debug("fetch \"" + (sm.getClassMetaData().getField(fieldNumber) != null ?
                                     sm.getClassMetaData().getField(fieldNumber).getFullFieldName() : "unknown")
-				 + "\" = \"" + field + "\" = \"" + value + "\"");
+                                 + "\" = \"" + field + "\" = \"" + value + "\"");
         }
         return value;
     }

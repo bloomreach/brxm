@@ -147,7 +147,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
                 String[] pathElements = path.split("/");
                 pathElements[0] = "/"+pathElements[0];
                 for(int i=1; i<pathElements.length; i++) {
-                	pathElements[i] = pathElements[i-1] + "/" + pathElements[i];
+                        pathElements[i] = pathElements[i-1] + "/" + pathElements[i];
                 }
                 node.setProperty(HippoNodeType.HIPPO_PATHS, pathElements);
             } catch(ValueFormatException ex) {

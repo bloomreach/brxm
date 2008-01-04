@@ -31,9 +31,9 @@ import junit.framework.TestCase;
 
 public class FacetedNavigationHippoCountTest extends TestCase
 {
-	private Session session;
-	
-	private static final String SYSTEMUSER_ID = "admin";
+        private Session session;
+        
+        private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
    
     private static String[] contents = new String[] {
@@ -154,24 +154,24 @@ public class FacetedNavigationHippoCountTest extends TestCase
         return node;
     }
 
-	
-	public void setUp() throws RepositoryException {
+        
+        public void setUp() throws RepositoryException {
         HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
         session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
     }
-	
-	public void testHippoCount() {
-		try {
-			build(session, contents);
-			session.getRootNode().getNode("docsearch/byType").setProperty("hippo:facets", new String[]{"type"});
-			session.save();
-			assertTrue(traverse(session, "/docsearch/byType/hippo:resultset").hasProperty("hippo:count"));
-		} catch(RepositoryException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void tearDown() {
-		session.logout();
-	}
+        
+        public void testHippoCount() {
+                try {
+                        build(session, contents);
+                        session.getRootNode().getNode("docsearch/byType").setProperty("hippo:facets", new String[]{"type"});
+                        session.save();
+                        assertTrue(traverse(session, "/docsearch/byType/hippo:resultset").hasProperty("hippo:count"));
+                } catch(RepositoryException e) {
+                        e.printStackTrace();
+                }
+        }
+        
+        public void tearDown() {
+                session.logout();
+        }
 }

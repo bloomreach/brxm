@@ -45,10 +45,10 @@ public class FacetPropExistsQuery {
         Name nodeName;
         String internalName = "";
         try {
-        	// TODO Assume empty namespace for facet. Is this always true?
+                // TODO Assume empty namespace for facet. Is this always true?
             nodeName = NameFactoryImpl.getInstance().create("", facet);
             if(indexingConfig.isFacet(nodeName)){
-            	internalName = nsMappings.translatePropertyName(nodeName);
+                internalName = nsMappings.translatePropertyName(nodeName);
                 Query q = new FixedScoreTermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,internalName));
                 this.query.add(q, Occur.MUST);
             } else {
@@ -57,8 +57,8 @@ public class FacetPropExistsQuery {
             }
             
         } catch (IllegalNameException e) {
-        	log.error(e.toString());
-		}
+                log.error(e.toString());
+                }
     }
 
     public BooleanQuery getQuery() {

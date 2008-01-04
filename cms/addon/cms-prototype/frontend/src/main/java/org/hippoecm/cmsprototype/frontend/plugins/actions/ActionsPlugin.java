@@ -47,12 +47,12 @@ public class ActionsPlugin extends Plugin {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-            	Channel channel = getDescriptor().getIncoming();
-            	if(channel != null) {
-	                Request request = channel.createRequest("edit", getNodeModel().getMapRepresentation());
-	                channel.send(request);
-	                request.getContext().apply(target);
-            	}
+                Channel channel = getDescriptor().getIncoming();
+                if(channel != null) {
+                        Request request = channel.createRequest("edit", getNodeModel().getMapRepresentation());
+                        channel.send(request);
+                        request.getContext().apply(target);
+                }
             }
 
         };
