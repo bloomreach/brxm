@@ -415,14 +415,17 @@ public class HippoAccessManager implements AccessManager {
     
     /**
      * TODO: implement
-     * This method is never used anyware in the code (either jr or hippo)
+     * This method is used by the JR classloader
      */
     public void checkPermission(ItemId id, int permissions) throws AccessDeniedException, ItemNotFoundException,
             RepositoryException {   
         if (!initialized) {
             throw new IllegalStateException("not initialized");
         }
-        throw new AccessDeniedException();
+        // TODO: for now allow read access only to everybody
+        if (((permissions & REMOVE) == REMOVE) || ((permissions & WRITE) == WRITE)) {
+            throw new AccessDeniedException();
+        }
     }
 
     /**
