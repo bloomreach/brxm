@@ -16,18 +16,12 @@
 package org.hippoecm.repository.servicing.client;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.rmi.client.ClientAdapterFactory;
-import org.apache.jackrabbit.rmi.client.ClientSession;
-import org.apache.jackrabbit.rmi.client.ClientXASession;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
-import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
-import org.apache.jackrabbit.rmi.remote.RemoteXASession;
-import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
@@ -36,18 +30,8 @@ import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
-
-    /* FIXME: [BvH] The decorating layer is probably not the place to put this, as
-     * it is not mandatory to have...
-     */
-    private HippoRepository repository;
     
-    public ClientServicesAdapterFactory(HippoRepository repository) {
-        this.repository = repository;
-    }
-    
-    public ClassLoader getClassLoader() {
-        return repository.getClassLoader();
+    public ClientServicesAdapterFactory() {
     }
     
     public Workspace getWorkspace(Session session, RemoteWorkspace remote) {

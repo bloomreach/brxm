@@ -22,7 +22,6 @@ import java.util.Properties;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -55,9 +54,11 @@ public class DocumentManagerImpl
     PersistenceManagerFactory pmf;
     StoreManagerImpl sm;
     PersistenceManager pm;
+    private ClassLoader loader;
 
     public DocumentManagerImpl(Session session) {
         this.session = session;
+        loader = new PluginClassLoader(session);
         try {
             configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
                                                           HippoNodeType.DOCUMENTS_PATH).getUUID();
@@ -88,18 +89,15 @@ public class DocumentManagerImpl
             sm.setTypes(types);
         }
 
-        ClassLoader current = Thread.currentThread().getContextClassLoader();
+        ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Repository repository = session.getRepository();
-            if(repository instanceof RepositoryDecorator) {
-                Thread.currentThread().setContextClassLoader(((RepositoryDecorator) repository).getClassLoader());
-            }
+            Thread.currentThread().setContextClassLoader(loader);
             obj = pm.getObjectById(new JCROID(uuid, classname));
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
             sm.setTypes(null);
-            Thread.currentThread().setContextClassLoader(current);
+            Thread.currentThread().setContextClassLoader(oldLoader);
         }    
         return obj;
     }

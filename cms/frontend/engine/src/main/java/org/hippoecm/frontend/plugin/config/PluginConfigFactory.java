@@ -19,7 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.UserSession;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginConfigFactory {

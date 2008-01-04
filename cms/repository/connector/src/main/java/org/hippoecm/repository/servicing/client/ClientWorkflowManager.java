@@ -23,14 +23,13 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
-import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowDescriptor;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
-public class ClientWorkflowManager extends ClientManager implements WorkflowManager {
+public class ClientWorkflowManager extends ClientObject implements WorkflowManager {
     private Session session;
     private RemoteWorkflowManager remote;
 
@@ -45,41 +44,32 @@ public class ClientWorkflowManager extends ClientManager implements WorkflowMana
     }
 
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
-        ClassLoader current = setContextClassLoader();
         try {
             RemoteWorkflowDescriptor remoteDescriptor = remote.getWorkflowDescriptor(category, item.getPath());
             if (remoteDescriptor != null) {
                 return new ClientWorkflowDescriptor(remoteDescriptor);
             } else {
                 return null;
-	    }
+            }
         } catch(RemoteException ex) {
             throw new RemoteRuntimeException(ex);
-        } finally {
-            Thread.currentThread().setContextClassLoader(current);
         }
     }
 
     public Workflow getWorkflow(String category, Node item) throws RepositoryException {
-        ClassLoader current = setContextClassLoader();
         try {
             return remote.getWorkflow(category, item.getPath());
         } catch(RemoteException ex) {
             throw new RemoteRuntimeException(ex);
-        } finally {
-            Thread.currentThread().setContextClassLoader(current);
         }
     }
 
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
-        ClassLoader current = setContextClassLoader();
         try {
             ClientWorkflowDescriptor remoteDescriptor = (ClientWorkflowDescriptor) descriptor;
             return remoteDescriptor.remote.getWorkflow();
         } catch(RemoteException ex) {
             throw new RemoteRuntimeException(ex);
-        } finally {
-            Thread.currentThread().setContextClassLoader(current);
         }
     }
 }

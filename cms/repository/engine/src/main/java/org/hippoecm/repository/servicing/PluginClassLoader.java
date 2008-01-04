@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository;
+package org.hippoecm.repository.servicing;
 
 import java.net.URL;
 
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.classloader.DynamicRepositoryClassLoader;
+import org.apache.jackrabbit.classloader.RepositoryClassLoader;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class HippoRepositoryClassLoader extends DynamicRepositoryClassLoader {
+public class PluginClassLoader extends RepositoryClassLoader {
 
     /**
      * Dynamic loading class path
@@ -32,12 +32,8 @@ public class HippoRepositoryClassLoader extends DynamicRepositoryClassLoader {
     private static final String JARS = HippoNodeType.PLUGIN_PATH + "/*/*/jcr:data";
     private static final String[] handles = { JARS };
 
-    public HippoRepositoryClassLoader(Session session) {
-        /* FIXME:
-	 * This is the preferred method of instantiation, with automatic (on-demand)
-         * unpacking of newly inserted jars.  However, this fails because of JR bug #???.
-	 */
-        super(session, handles, HippoRepositoryClassLoader.class.getClassLoader());
+    public PluginClassLoader(Session session) {
+        super(session, handles, PluginClassLoader.class.getClassLoader());
     }
 
     /**

@@ -33,8 +33,8 @@ import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListItemModel;
 import org.apache.wicket.markup.html.list.ListView;
-import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

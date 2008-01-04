@@ -17,10 +17,12 @@ package org.hippoecm.frontend.dialog;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -47,7 +49,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         Workflow workflow = null;
         try {
             JcrNodeModel nodeModel = owningPlugin.getNodeModel();
-            WorkflowManager manager = owningPlugin.getPluginManager().getWorkflowManager();
+            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
 
             //TODO: add optional property 'workflowcategory' to 
             //frontend plugin configuration nodes and use that instead of the plugin id.

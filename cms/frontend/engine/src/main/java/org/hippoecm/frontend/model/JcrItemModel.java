@@ -24,7 +24,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.UserSession;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

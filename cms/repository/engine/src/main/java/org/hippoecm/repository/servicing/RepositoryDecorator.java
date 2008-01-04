@@ -25,7 +25,6 @@ import javax.jcr.Session;
 /* FIXME: [BvH] doubtfull whether classloader should be integrated in
  * decorating layer
  */
-import org.hippoecm.repository.HippoRepositoryClassLoader;
 
 /**
  * Simple {@link Repository Repository} decorator.
@@ -36,33 +35,9 @@ public class RepositoryDecorator implements Repository {
 
     private Repository repository;
 
-    /* FIXME: [BvH] I don't think we should have this in our API module, do we?
-     */
-    private Session clSession;
-    private ClassLoader loader;
-
     public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
         this.factory = factory;
         this.repository = repository;
-    }
-
-    /**
-     * Returns a classloader for the repository.  A separate session is instantiated
-     * so that loaded classes are shared between all sessions.
-     * FIXME: [BvH] This should not be exposed in the API
-     */
-    public synchronized ClassLoader getClassLoader() {
-        if (loader == null) {
-            try {
-                clSession = repository.login();
-                loader = new HippoRepositoryClassLoader(clSession);
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-                clSession = null;
-                loader = null;
-            }
-        }
-        return loader;
     }
 
     public static Repository unwrap(Repository repository) {

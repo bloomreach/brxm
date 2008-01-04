@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
@@ -29,6 +30,7 @@ import org.hippoecm.frontend.plugin.channel.IRequestHandler;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -126,20 +128,6 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
             ((Plugin) component).getDescriptor().disconnect();
         }
         super.remove(component);
-    }
-    
-    protected Workflow getWorkflow() {
-        Workflow workflow = null;
-        try {
-            WorkflowManager manager = getPluginManager().getWorkflowManager();
-            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(getId(), getNodeModel().getNode());
-            workflow = manager.getWorkflow(descriptor);
-        } catch (MappingException e) {
-            log.error(e.getMessage());
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-        return workflow;
     }
 
     // implement INotificationListener

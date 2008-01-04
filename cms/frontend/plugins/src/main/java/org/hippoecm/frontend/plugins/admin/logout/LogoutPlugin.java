@@ -17,11 +17,11 @@ package org.hippoecm.frontend.plugins.admin.logout;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
