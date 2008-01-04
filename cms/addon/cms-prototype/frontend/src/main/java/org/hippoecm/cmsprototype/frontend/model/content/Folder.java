@@ -73,7 +73,7 @@ public class Folder extends NodeModelWrapper {
             while (jcrChildren.hasNext()) {
                 HippoNode jcrChild = (HippoNode) jcrChildren.nextNode();
                 if (jcrChild != null ) {
-                    if (jcrChild.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (jcrChild.isNodeType(HippoNodeType.NT_HANDLE) && jcrChild.hasNodes()) {
                         docs.add(new Document(new JcrNodeModel(jcrChild)));
                     }
                     
