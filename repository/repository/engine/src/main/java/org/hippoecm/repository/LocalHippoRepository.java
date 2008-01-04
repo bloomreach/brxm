@@ -66,7 +66,6 @@ import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.servicing.RepositoryDecorator;
 import org.hippoecm.repository.servicing.ServicingDecoratorFactory;
 
 import org.slf4j.Logger;
@@ -597,12 +596,5 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         repository = null;
 
         super.close();
-    }
-
-    public ClassLoader getClassLoader() {
-        if (repository != null && repository instanceof RepositoryDecorator) {
-            return ((RepositoryDecorator) repository).getClassLoader();
-        }
-        return null;
     }
 }

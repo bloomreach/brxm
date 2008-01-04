@@ -30,7 +30,7 @@ import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.MockControl;
-import org.hippoecm.frontend.UserSession;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 
 public class Application extends WicketTester.DummyWebApplication {

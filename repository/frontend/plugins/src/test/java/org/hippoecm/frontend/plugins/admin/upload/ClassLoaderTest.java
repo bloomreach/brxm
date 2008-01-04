@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.HippoRepositoryClassLoader;
+import org.hippoecm.repository.servicing.PluginClassLoader;
 
 public class ClassLoaderTest extends TestCase {
 
@@ -37,7 +37,7 @@ public class ClassLoaderTest extends TestCase {
 
     private HippoRepository server;
     private Session session;
-    private HippoRepositoryClassLoader loader;
+    private PluginClassLoader loader;
 
     public void setUp() throws Exception {
         server = HippoRepositoryFactory.getHippoRepository();
@@ -45,7 +45,7 @@ public class ClassLoaderTest extends TestCase {
 
         loadRepository();
 
-        loader = new HippoRepositoryClassLoader(session);
+        loader = new PluginClassLoader(session);
 
     }
    

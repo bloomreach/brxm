@@ -25,6 +25,7 @@ import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
@@ -43,9 +44,8 @@ public class Main extends WebApplication {
         super.init();
         getDebugSettings().setAjaxDebugModeEnabled(false);
 
-        
         getSecuritySettings().setAuthorizationStrategy(new IAuthorizationStrategy() {
-            
+
             public boolean isActionAuthorized(Component component, Action action) {
                 return true;
             }
@@ -61,10 +61,14 @@ public class Main extends WebApplication {
 
         getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {
-                if (getRepository() != null) {
-                    return getRepository().getClassLoader().loadClass(name);
+                if (Session.exists()) {
+                    UserSession session = (UserSession) Session.get();
+                    ClassLoader loader = session.getClassLoader();
+                    if (loader != null) {
+                        return session.getClassLoader().loadClass(name);
+                    }
                 }
-                return getClass().getClassLoader().loadClass(name);
+                return Thread.currentThread().getContextClassLoader().loadClass(name);
             }
         });
     }

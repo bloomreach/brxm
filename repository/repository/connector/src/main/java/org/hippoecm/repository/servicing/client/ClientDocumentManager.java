@@ -20,31 +20,25 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 
-public class ClientDocumentManager extends ClientManager implements DocumentManager {
-    private Session session;
+public class ClientDocumentManager extends ClientObject implements DocumentManager {
     private RemoteDocumentManager remote;
 
     public ClientDocumentManager(Session session, RemoteDocumentManager remote, LocalServicingAdapterFactory factory) {
         super(factory);
-        this.session = session;
         this.remote = remote;
     }
 
     public Document getDocument(String category, String identifier) throws RepositoryException {
-        /* FIXME: [BvH] Setting the classloader at this point???
-         */
-        ClassLoader old = setContextClassLoader();
         try {
             return remote.getDocument(category, identifier);
         } catch (RemoteException ex) {
             throw new RemoteRuntimeException(ex);
-        } finally {
-            Thread.currentThread().setContextClassLoader(old);
         }
     }
 }

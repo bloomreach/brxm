@@ -18,12 +18,8 @@ package org.hippoecm.frontend.plugin;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,16 +36,6 @@ public class PluginManager implements IClusterable {
 
     public PluginConfig getPluginConfig() {
         return pluginConfig;
-    }
-
-    public WorkflowManager getWorkflowManager() {
-        try {
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-            return ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-        return null;
     }
 
     public ChannelFactory getChannelFactory() {

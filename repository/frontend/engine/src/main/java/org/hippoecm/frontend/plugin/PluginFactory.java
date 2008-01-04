@@ -17,10 +17,10 @@ package org.hippoecm.frontend.plugin;
 
 import java.lang.reflect.Constructor;
 
-import org.apache.wicket.Application;
-import org.hippoecm.frontend.Main;
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.error.ErrorPlugin;
+import org.hippoecm.frontend.session.UserSession;
 
 public class PluginFactory {
 
@@ -38,7 +38,7 @@ public class PluginFactory {
             plugin = new ErrorPlugin(descriptor, null, message);
         } else {
             try {
-                ClassLoader loader = ((Main) Application.get()).getRepository().getClassLoader();
+                ClassLoader loader = ((UserSession) Session.get()).getClassLoader();
                 Class clazz = Class.forName(descriptor.getClassName(), true, loader);
                 Class[] formalArgs = new Class[] { PluginDescriptor.class, JcrNodeModel.class, Plugin.class };
                 Constructor constructor = clazz.getConstructor(formalArgs);

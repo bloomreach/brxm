@@ -24,6 +24,7 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.PluginManager;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 
 public class Home extends WebPage {

@@ -24,7 +24,6 @@ import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public interface LocalServicingAdapterFactory extends LocalAdapterFactory {
-    public ClassLoader getClassLoader();
     public DocumentManager getDocumentManager(Session session, RemoteDocumentManager remote);
     public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote);
 }

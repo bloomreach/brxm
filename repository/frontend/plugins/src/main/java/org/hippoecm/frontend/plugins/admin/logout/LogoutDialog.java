@@ -18,10 +18,10 @@ package org.hippoecm.frontend.plugins.admin.logout;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.UserSession;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;

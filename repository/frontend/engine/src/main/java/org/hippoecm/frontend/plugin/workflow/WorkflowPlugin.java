@@ -18,11 +18,13 @@ package org.hippoecm.frontend.plugin.workflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
@@ -54,7 +56,7 @@ public class WorkflowPlugin extends Plugin {
 
                     //TODO: add optional property 'workflowcategory' to 
                     //frontend plugin configuration nodes and use that instead of the plugin id.
-                    WorkflowManager manager = getPluginManager().getWorkflowManager();
+                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                     String workflowCategory = descriptor.getPluginId();
                     WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
 

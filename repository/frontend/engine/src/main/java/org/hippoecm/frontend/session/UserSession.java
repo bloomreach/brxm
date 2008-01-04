@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend;
+package org.hippoecm.frontend.session;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
@@ -25,8 +25,12 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.LoginPage;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +66,14 @@ public class UserSession extends WebSession {
         return jcrSessionModel.getCredentials();
     }
 
+    public ClassLoader getClassLoader() {
+        return jcrSessionModel.getClassLoader();
+    }
+
+    public WorkflowManager getWorkflowManager() {
+        return jcrSessionModel.getWorkflowManager();
+    }
+
     public HippoNode getRootNode() {
         HippoNode result = null;
         try {
@@ -91,6 +103,8 @@ public class UserSession extends WebSession {
         private static final long serialVersionUID = 1L;
 
         private ValueMap credentials;
+        private transient ClassLoader classLoader = null;
+        private transient WorkflowManager workflowManager = null;
 
         JcrSessionModel() {
             credentials = new ValueMap();
@@ -128,6 +142,29 @@ public class UserSession extends WebSession {
             }
             // this will call load() only if detached 
             return (Session) getObject();
+        }
+
+        public ClassLoader getClassLoader() {
+            if (classLoader == null) {
+                Session session = getSession();
+                if (session != null) {
+                    classLoader = new SessionClassLoader(session);
+                }
+            }
+            return classLoader;
+        }
+
+        public WorkflowManager getWorkflowManager() {
+            if (workflowManager == null) {
+                try {
+                    HippoWorkspace workspace = (HippoWorkspace) getSession().getWorkspace();
+                    workflowManager = new WorkflowManagerDecorator(workspace.getWorkflowManager(), getClassLoader());
+                } catch (RepositoryException ex) {
+                    ex.printStackTrace();
+                    workflowManager = null;
+                }
+            }
+            return workflowManager;
         }
 
         @Override
