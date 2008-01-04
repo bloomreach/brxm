@@ -220,7 +220,6 @@ public class SessionDecorator implements XASession, HippoSession {
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
         WorkspaceDecorator wsp = (WorkspaceDecorator) getWorkspace();
-        ((WorkflowManagerImpl) wsp.getWorkflowManager()).save();
         session.save();
     }
 
