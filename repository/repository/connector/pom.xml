@@ -50,10 +50,6 @@
       <artifactId>jackrabbit-jcr-rmi</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-classloader</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>${parent.version}</version>
