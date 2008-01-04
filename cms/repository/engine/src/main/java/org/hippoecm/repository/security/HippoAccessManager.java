@@ -327,6 +327,12 @@ public class HippoAccessManager implements AccessManager {
         if (localName.equals(getLocalName(HippoNodeType.NT_FRONTENDPLUGIN))) {
             return true;
         }
+        if (localName.equals(getLocalName(HippoNodeType.NT_PLUGIN))) {
+            return true;
+        }
+        if (localName.equals(getLocalName(HippoNodeType.NT_PLUGINFOLDER))) {
+            return true;
+        }
         if (localName.equals(getLocalName(HippoNodeType.NT_APPLICATION))) {
             return true;
         }
@@ -414,16 +420,12 @@ public class HippoAccessManager implements AccessManager {
     }
     
     /**
-     * TODO: implement
-     * This method is used by the JR classloader
+     * This method is currently only used by the JCR classloader
      */
     public void checkPermission(ItemId id, int permissions) throws AccessDeniedException, ItemNotFoundException,
-            RepositoryException {   
-        if (!initialized) {
-            throw new IllegalStateException("not initialized");
-        }
-        // TODO: for now allow read access only to everybody
-        if (((permissions & REMOVE) == REMOVE) || ((permissions & WRITE) == WRITE)) {
+            RepositoryException {
+        // just use the isGranted method
+        if (!isGranted(id, permissions)) {
             throw new AccessDeniedException();
         }
     }
