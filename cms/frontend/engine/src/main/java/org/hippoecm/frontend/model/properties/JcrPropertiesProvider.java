@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(JcrPropertiesProvider.class);
 
     // Constructor

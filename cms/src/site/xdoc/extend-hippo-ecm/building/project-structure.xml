@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -22,10 +22,10 @@
                 <title>Project structure</title>
         </properties>
         <body>
-                
+
                 <section name="Project Structure">
                         <p>
-                                Hippo ECM is a Maven 2 project consisting of 
+                                Hippo ECM is a Maven 2 project consisting of
                                 <a href="http://maven.apache.org/guides/getting-started/index.html#How_do_I_build_more_than_one_project_at_once">
                                 multiple modules</a> which are hierarchically organized as shown below, each module produces exactly one
                                 artifact (file). Modules come in three flavors, depending on the type of artifact they create.
@@ -36,18 +36,18 @@
                                 </li>
                                 <li>
                                         <b>WAR</b> projects create an application (a war file) that can be deployed
-                                        in an application server (tomcat, glassfish, weblogic etc.). 
+                                        in an application server (tomcat, glassfish, weblogic etc.).
                                 </li>
                                 <li>
                                         <b>POM</b> projects act as 'glue' for binding together other projects,
-                                        they don't create anything themselves 
-                                </li>                           
+                                        they don't create anything themselves
+                                </li>
                         </ol>
                         <p>
-                                The figure below shows the project layout. Every node in the directory tree 
-                                constitutes a maven project of one of these three types. 
+                                The figure below shows the project layout. Every node in the directory tree
+                                constitutes a maven project of one of these three types.
                                 The <a href="http://maven.apache.org/pom.html#Maven_Coordinates">artifactId</a>
-                                matches the project directory layout.     
+                                matches the project directory layout.
                         </p>
                         <source>
 Module                       Type      ArtifactId
@@ -61,13 +61,13 @@ hippo-ecm                    Pom       hippo-ecm
 |   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test
 |   `-- cms-prototype        Pom       hippo-ecm-addon-cms-prototype
 |       |-- frontend         Jar       hippo-ecm-addon-cms-prototype-frontend
-|       `-- test             Jar       hippo-ecm-addon-cms-prototype-test                               
+|       `-- test             Jar       hippo-ecm-addon-cms-prototype-test
 |-- api                      Jar       hippo-ecm-api
 |-- application              Pom       hippo-ecm-application
 |   `-- cms-prototype        Pom       hippo-ecm-application-cms-prototype
 |       |-- frontend         War       hippo-ecm-application-cms-prototype-frontend
 |       |-- repository       War       hippo-ecm-application-cms-prototype-repository
-|       `-- test             Jar       hippo-ecm-application-cms-prototype-test                                         
+|       `-- test             Jar       hippo-ecm-application-cms-prototype-test
 |-- frontend                 Pom       hippo-ecm-frontend
 |   |-- engine               Jar       hippo-ecm-frontend-engine
 |   |-- application          War       hippo-ecm-frontend-application
@@ -80,29 +80,29 @@ hippo-ecm                    Pom       hippo-ecm
     `-- testutils            Jar       hippo-ecm-tools-testutils
                         </source>
                 </section>
-                
+
 
                 <section name="API">
                         <p>
                                 To be determined
                         </p>
                         <source>
-|-- api                      Jar       
-                        </source>                           
+|-- api                      Jar
+                        </source>
                 </section>
-                                                
+
                 <section name="Repository">
                         <p>
                                 The repository is implemented by the projects bound by the repository project.
-                        </p>    
+                        </p>
                         <source>
-|-- repository               Pom       
+|-- repository               Pom
 |   |-- engine               Jar       Repository core
 |   `-- application          War       Minimal repository application, all other repository application projects are
                                        <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">'WAR overlays'</a> of this project.
                         </source>
                 </section>
-                
+
                 <section name="Frontend">
                         <p>
                                 The <a href="../plugins/frontend/frontend-plugin-architecture.html">
@@ -110,26 +110,26 @@ hippo-ecm                    Pom       hippo-ecm
                                 projects bound by the frontend project.
                         </p>
                         <source>
-|-- frontend                 Pom       
+|-- frontend                 Pom
 |   |-- engine               Jar       Frontend core
 |   |-- plugins              Jar       core plugins for a minimal GUI
-    `-- application          War       Minimal frontend application, all other frontend application projects are 
+    `-- application          War       Minimal frontend application, all other frontend application projects are
                                        <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">'WAR overlays'</a> of this project.
                                        It is configured to start an embedded repository.
                         </source>
                 </section>
-                
+
                 <section name="Addons">
                         <p>
                                 All customization is done through the use of <a href="../plugins/index.html">addons</a>.
-                                Core addons are implemented by the projects under the addon project.   
+                                Core addons are implemented by the projects under the addon project.
                         </p>
                         <p>
                                 A default available add-on is the reviewed-actions workflow which
                                 is a bundling of a repository plugin implementing the workflow logic
                                 with a frontend plugin implementing a GUI for user interaction
                                 and a common plugin for the interface between the two.
-                                Part of the addon is also a test project that acts as a placeholder 
+                                Part of the addon is also a test project that acts as a placeholder
                                 for integration tests on the addon (plugged in a running repository
                                 and/or frontend server)
                         </p>
@@ -139,10 +139,10 @@ hippo-ecm                    Pom       hippo-ecm
 |   |   |-- common           Jar       hippo-ecm-addon-reviewed-action-common
 |   |   |-- frontend         Jar       hippo-ecm-addon-reviewed-action-frontend
 |   |   |-- repository       Jar       hippo-ecm-addon-reviewed-action-repository
-|   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test                             
+|   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test
                         </source>
                 </section>
-                
+
                 <section name="Applications">
                         <p>
                                 Currently assembing an application requires creating dedicated maven project.
@@ -150,9 +150,9 @@ hippo-ecm                    Pom       hippo-ecm
                                 these are pre-configured applications adding a selection
                                 of addons from the <b>addon</b> directory.
                         </p>
-                        <p>     
+                        <p>
                                 By M3, you can use a generic downloadable WAR, and upload addons
-                                in the repository. The repository will then auto-configure the addons. 
+                                in the repository. The repository will then auto-configure the addons.
                         </p>
                         <source>
 |-- application              Pom       hippo-ecm-application
@@ -161,8 +161,8 @@ hippo-ecm                    Pom       hippo-ecm
 |   |   `-- repository       War       hippo-ecm-application-cms-prototype-repository
                         </source>
                 </section>
-                
-                
+
+
                 <section name="Tools">
                         <p>
                                 The <b>tools</b> directory contains a collection of tools surrounding
@@ -174,8 +174,8 @@ hippo-ecm                    Pom       hippo-ecm
 |   `-- migration            Jar        hippo-ecm-tools-migration
                         </source>
                 </section>
-                
-                                                
+
+
         </body>
 </document>
 

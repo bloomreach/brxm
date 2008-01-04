@@ -1,12 +1,12 @@
 /*
  * Copyright 2007 Hippo.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -211,14 +211,14 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
 
         /**
          * How many results should be returned.  Defaults to 10, large values imply slow responses.
-         */    
+         */
         private int limit = 10;
 
         /**
          * The offset in the resultset to start from.
          */
         private int offset = 0;
-    
+
         public int getLimit() {
             return limit;
         }
@@ -287,7 +287,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @see #unprepare(C)
      */
     public C prepare(String principal, Map<String,String[]> authorizationQuery, List<Q> initialQueries, Session session);
-    
+
     /**
      * This method is called when a user logouts from the system.
      *
@@ -296,7 +296,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @see #prepare(String,Map,List)
      */
     public void unprepare(C context);
-    
+
     /**
      * In order to inform the engine that the facet definition has changed, the
      * reload() method is invoked.  Changes involve both adding facets as well
@@ -315,7 +315,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @see #requiresReload()
      */
     public void reload(Map<String,String[]> facetValues);
-    
+
     /**
      * If the implementation of this interface requires to be informed of facet
      * definition changes, it must return a value of true from this method.
@@ -324,19 +324,19 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @return whether the module requires the use of reload()
      */
     public boolean requiresReload();
-    
+
     /**
      * If the implementation of this interface requires to be informed of
      * changes to the facet set of a document, it must return a value of true
      * from this method.
-    
+
      * Otherwise the manager of the module may choose to forgo calling the
      * notify methods in order to optimize for any administration
      *
      * @return whether the module requires the use of reload()
      */
     public boolean requiresNotify();
-    
+
     /**
      * With the notify method, the engine responsible for faceted navigation is
      * informed that the item identified with the docId under faceted navigation
@@ -349,14 +349,14 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @param newFacets the new set of facet values, not just the changed values
      */
     public void notify(String docId, Map<String,String[]> oldFacets, Map<String,String[]> newFacets);
-    
+
     /**
      * The purge method is used to inform the engine that it should clear out
      * all its state.  This method is used in case of crash recovery for
      * instance.
      */
     public void purge();
-     
+
     /**
      * While the other methods in this interface are meant for informing the
      * engine on changes, the view method is used to query the faceted navigation

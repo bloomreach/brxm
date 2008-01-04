@@ -62,9 +62,9 @@ public class HippoAccessManager implements AccessManager {
      * hierarchy manager used for ACL-based access control model
      */
     protected HippoHierarchyManager hierMgr;
-    
-    /** 
-     * Hippo Namespace, TODO: move to better place  
+
+    /**
+     * Hippo Namespace, TODO: move to better place
      */
     public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.0";
 
@@ -72,12 +72,12 @@ public class HippoAccessManager implements AccessManager {
      *  Hippo Namespace prefix, TODO: move to better place
      */
     public final static String NAMESPACE_PREFIX = "hippo";
-    
+
     /**
      * Root NodeId of current session
      */
     protected NodeId rootNodeId;
-    
+
     /**
      * State of the accessManager
      */
@@ -88,27 +88,27 @@ public class HippoAccessManager implements AccessManager {
      * TODO: handle multiple users, multiple session (perhaps move to ISM?)
      */
     PermissionLRUCache readAccessCache = new PermissionLRUCache(250);
-    
+
     /**
      * Flag wheter current user is anonymous
      */
     protected boolean isAnonymous;
-    
+
     /**
      * Flag wheter current user is a regular user
      */
     protected boolean isUser;
-    
+
     /**
      * Flag wheter the current user is an admni
      */
     protected boolean isAdmin;
-    
+
     /**
      * Flag wheter the current user is a system user
      */
     protected boolean isSystem;
-    
+
     /**
      * Empty constructor
      */
@@ -119,7 +119,7 @@ public class HippoAccessManager implements AccessManager {
         isAdmin = false;
         isSystem = false;
     }
-    
+
     private static final Logger log = LoggerFactory.getLogger(HippoAccessManager.class);
 
     /**
@@ -131,7 +131,7 @@ public class HippoAccessManager implements AccessManager {
         }
         subject = context.getSubject();
         hierMgr = (HippoHierarchyManager) context.getHierarchyManager();
-        
+
         // Shortcuts for checks
         isAnonymous = !subject.getPrincipals(AnonymousPrincipal.class).isEmpty();
         isUser = !subject.getPrincipals(UserPrincipal.class).isEmpty();
@@ -140,11 +140,11 @@ public class HippoAccessManager implements AccessManager {
 
         // cache root NodeId
         rootNodeId = (NodeId) hierMgr.resolvePath(PathFactoryImpl.getInstance().getRootPath());
-        
+
         // we're done
         initialized = true;
     }
-    
+
     /**
      * Get the local part of the node type
      * @param ntName
@@ -168,22 +168,22 @@ public class HippoAccessManager implements AccessManager {
         readAccessCache.clear();
         initialized = false;
     }
-    
+
     /**
      * Check wheter a user can access the NodeState with the requested permissions
      * @param nodeState
      * @param permissions
      * @return
      * @throws RepositoryException
-     * @throws ItemStateException 
-     * @throws NoSuchItemStateException 
+     * @throws ItemStateException
+     * @throws NoSuchItemStateException
      */
     protected boolean canAccessItem(NodeState nodeState, int permissions) throws RepositoryException, NoSuchItemStateException, ItemStateException {
         // system and admin have all permissions
         if (isSystem || isAdmin) {
             return true;
         }
-        
+
         if (canAccessJCRNode(nodeState, permissions)) {
             return true;
         }
@@ -191,7 +191,7 @@ public class HippoAccessManager implements AccessManager {
             return true;
         }
 
-        // no facetAuth -> no allowed... 
+        // no facetAuth -> no allowed...
         if (subject.getPrincipals(FacetAuthPrincipal.class).isEmpty()) {
             return false;
         }
@@ -208,7 +208,7 @@ public class HippoAccessManager implements AccessManager {
         //        break;
         //    }
         //}
-        
+
         /*
          * 2. OR -> (x=a or x=b) OR (y=c)
          * -- first non match return false;
@@ -234,13 +234,13 @@ public class HippoAccessManager implements AccessManager {
         //      break;
         //  }
         // }
-        
-        // TODO: node could be part of a bigger Hippo Document (part of the Bonsai tree)  
+
+        // TODO: node could be part of a bigger Hippo Document (part of the Bonsai tree)
         // in which case a user may also have access to the node.
 
         return allowed;
     }
-    
+
     /**
      * Allow access to some JCR nodes based on the node type
      * TODO: checks shouldn't use manual NodeType parsing
@@ -263,7 +263,7 @@ public class HippoAccessManager implements AccessManager {
             }
             return true;
         }
-        // Allow root read        
+        // Allow root read
         if ((permissions & WRITE) != WRITE && (permissions & REMOVE) != REMOVE) {
             if (nodeState.getParentId() == null) {
                 if (log.isDebugEnabled()) {
@@ -274,7 +274,7 @@ public class HippoAccessManager implements AccessManager {
         }
         return false;
     }
-    
+
     /**
      * Allow access to some HippoNodes based on the node type
      * TODO: checks shouldn't use manual NodeType parsing
@@ -282,13 +282,13 @@ public class HippoAccessManager implements AccessManager {
      * @param permissions
      * @return
      * @throws RepositoryException
-     * @throws ItemStateException 
-     * @throws NoSuchItemStateException 
+     * @throws ItemStateException
+     * @throws NoSuchItemStateException
      */
     protected boolean canAccessHippoNode(NodeState nodeState, int permissions) throws RepositoryException, NoSuchItemStateException, ItemStateException {
         String namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
         String localName = nodeState.getNodeTypeName().getLocalName();
-        
+
         // not a hippo node
         if (!namespaceURI.equals(NAMESPACE_URI)) {
             return false;
@@ -301,7 +301,7 @@ public class HippoAccessManager implements AccessManager {
         if (localName.equals(getLocalName(HippoNodeType.NT_FACETSELECT))) {
             return true;
         }
-        
+
         // narrow down permissions
         if ((permissions & REMOVE) == REMOVE) {
             return false;
@@ -311,7 +311,7 @@ public class HippoAccessManager implements AccessManager {
         if (localName.equals(getLocalName(HippoNodeType.NT_HANDLE))) {
             return true;
         }
-        
+
         // narrow down permissions
         if ((permissions & WRITE) == WRITE) {
             return false;
@@ -344,7 +344,7 @@ public class HippoAccessManager implements AccessManager {
         NodeState parentState = (NodeState) hierMgr.getItemState(nodeState.getParentId());
         namespaceURI = parentState.getNodeTypeName().getNamespaceURI();
         localName = parentState.getNodeTypeName().getLocalName();
-      
+
         //not a hippo node
 //        if (!namespaceURI.equals(NAMESPACE_URI)) {
 //            return false;
@@ -361,12 +361,12 @@ public class HippoAccessManager implements AccessManager {
         // else deny..
         return false;
     }
-    
+
     /**
      * Check permissions for FacetAuth
      * TODO: check for non-String types
-     * @throws RepositoryException 
-     * @throws  
+     * @throws RepositoryException
+     * @throws
      */
     protected boolean checkFacetAuth(NodeState nodeState, FacetAuthPrincipal principal, int permissions) throws RepositoryException {
         // check if a permission is requested that you don't have
@@ -380,9 +380,9 @@ public class HippoAccessManager implements AccessManager {
             if (log.isDebugEnabled()) {
                 log.debug("Found [" + pString(permissions) + "] property: " + name);
             }
-            
+
             HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(),name);
-            
+
             try {
                 // check if the property has a required value
                 PropertyState state = (PropertyState) hierMgr.getItemState(propertyId);
@@ -418,7 +418,7 @@ public class HippoAccessManager implements AccessManager {
             return false;
         }
     }
-    
+
     /**
      * This method is currently only used by the JCR classloader
      */
@@ -440,7 +440,7 @@ public class HippoAccessManager implements AccessManager {
         if (log.isTraceEnabled()) {
             log.trace("Checking [" + pString(permissions) + "] for: " + id);
         }
-        
+
         // handle property
         if (!id.denotesNode()) {
             try {
@@ -458,7 +458,7 @@ public class HippoAccessManager implements AccessManager {
                 return true;
             }
         }
-        
+
         try {
             ItemState itemState = hierMgr.getItemState(id);
             boolean isGranted = false;
@@ -508,13 +508,13 @@ public class HippoAccessManager implements AccessManager {
             if (log.isDebugEnabled()) {
                 log.debug("Found [" + pString(permissions) + "] for: " + id + " granted: " + isGranted);
             }
-            
+
             return isGranted;
         } catch (NoSuchItemStateException e) {
             if ((permissions & REMOVE) == REMOVE) {
                 // The parent is checked for write access and after
                 // write access is granted the node is removed. When
-                // trying to check the remove permission on the node 
+                // trying to check the remove permission on the node
                 // itself it doesn't exists anymore in the hierMrg. So
                 // just remove it when it's removed...
                 readAccessCache.remove(id);
@@ -534,7 +534,7 @@ public class HippoAccessManager implements AccessManager {
             throw new RepositoryException("ItemStateException: " + e.getMessage());
         }
     }
-    
+
     /**
      * Helper method for pretty printing the requested permission
      * @param permissions
@@ -549,14 +549,14 @@ public class HippoAccessManager implements AccessManager {
         } else {
             buf.append('-');
         }
-        
+
         // narrow down permissions
         if ((permissions & REMOVE) == REMOVE) {
             buf.append('d');
         } else {
             buf.append('-');
         }
-        
+
         // narrow down permissions
         if ((permissions & WRITE) == WRITE) {
             buf.append('w');
@@ -574,32 +574,32 @@ public class HippoAccessManager implements AccessManager {
         return true;
     }
 
-    
+
     /**
      * Super Simple LRU Cache for <ItemId,Boolean> key-value pairs
      */
     private class PermissionLRUCache {
-        
+
         /**
          * The cache map
          */
         private LRUMap map = null;
-        
+
         /**
          * Local counter for cache hits
          */
         private long hit;
-        
+
         /**
          * Local counter for cache misses
          */
         private long miss;
-        
+
         /**
          * Local counter for total number of cache access
          */
         private long total;
-        
+
         /**
          * Create a new LRU cache
          * @param size max number of cache objects
@@ -613,7 +613,7 @@ public class HippoAccessManager implements AccessManager {
             total = 0;
             map = new LRUMap(size);
         }
-    
+
         /**
          * Fetch cache value
          * @param id ItemId
@@ -629,7 +629,7 @@ public class HippoAccessManager implements AccessManager {
             }
             return obj;
         }
-        
+
         /**
          * Store key-value in cache
          * @param id ItemId the key
@@ -638,7 +638,7 @@ public class HippoAccessManager implements AccessManager {
         synchronized public void put(ItemId id, boolean isGranted) {
             map.put(id.hashCode(), isGranted);
         }
-        
+
         /**
          * Remove key-value from cache
          * @param id ItemId the key
@@ -648,14 +648,14 @@ public class HippoAccessManager implements AccessManager {
                 map.remove(id.hashCode());
             }
         }
-        
+
         /**
          * Clear the cache
          */
         synchronized public void clear() {
             map.clear();
         }
-        
+
         /**
          * Total numer of times this cache is accessed
          * @return long
@@ -663,7 +663,7 @@ public class HippoAccessManager implements AccessManager {
         public long getTotalAccess() {
             return total;
         }
-        
+
         /**
          * Total numer of cache hits
          * @return long
@@ -671,7 +671,7 @@ public class HippoAccessManager implements AccessManager {
         public long getHits() {
             return hit;
         }
-        
+
         /**
          * Total number of cache misses
          * @return long
@@ -679,7 +679,7 @@ public class HippoAccessManager implements AccessManager {
         public long getMisses() {
             return miss;
         }
-        
+
         /**
          * The current size of the cache
          * @return int
@@ -687,7 +687,7 @@ public class HippoAccessManager implements AccessManager {
         public int getSize() {
             return map.size();
         }
-        
+
         /**
          * The max size of the cache
          * @return int

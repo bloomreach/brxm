@@ -55,7 +55,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
         backgroundServer.close();
         Thread.sleep(3000);
     }
-    
+
     /**
      * Create UserTransActionManger instance
      * @return
@@ -63,7 +63,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
     public TransactionManager getTransactionManager() {
         return new UserTransactionManager();
     }
-    
+
     public void testWorkflow() throws RepositoryException, WorkflowException, IOException, Exception {
         SampleWorkflowSetup.commonStart(backgroundServer);
         try {

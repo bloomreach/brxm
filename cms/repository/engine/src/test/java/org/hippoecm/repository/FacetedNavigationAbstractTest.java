@@ -35,7 +35,7 @@ import junit.framework.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public abstract class FacetedNavigationAbstractTest extends TestCase {
-    
+
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
@@ -200,7 +200,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         if(session.getRootNode().hasNode("documents")) {
             session.getRootNode().getNode("documents").remove();
         }
-//        
+//
 //        for (NodeIterator iter = session.getRootNode().getNodes(); iter.hasNext();) {
 //            Node child = iter.nextNode();
 //            if (!child.getPath().equals("/jcr:system")) {
@@ -251,7 +251,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         tAfter = System.currentTimeMillis();
         commonEnd();
     }
-    
+
     public boolean getVerbose() {
         return verbose;
     }

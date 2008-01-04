@@ -28,7 +28,7 @@ public class WorkflowManagerDecorator implements WorkflowManager {
 
     private WorkflowManager delegate;
     private ClassLoader loader;
-    
+
     public WorkflowManagerDecorator(WorkflowManager delegate, ClassLoader loader) {
         this.delegate = delegate;
         this.loader = loader;

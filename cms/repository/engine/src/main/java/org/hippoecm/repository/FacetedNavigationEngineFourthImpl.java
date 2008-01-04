@@ -1,12 +1,12 @@
 /*
  * Copyright 2007 Hippo.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
       return xpath;
     }
   }
-  
+
   class ResultImpl extends FacetedNavigationEngine.Result {
       int length;
       Iterator<String> iter = null;
@@ -76,7 +76,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
           return getClass().getName()+"[length="+length+"]";
       }
   }
-  
+
   class ContextImpl extends FacetedNavigationEngine.Context {
     Session session;
     String principal;
@@ -87,13 +87,13 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
       this.authorizationQuery = authorizationQuery;
     }
   }
- 
+
  private Map<IndexReader, Map<String,Map<Integer, String[]>>> tfvCache ;
-  
+
   public FacetedNavigationEngineFourthImpl() {
       this.tfvCache = new WeakHashMap<IndexReader, Map<String,Map<Integer, String[]>>>();
   }
-  
+
   public ContextImpl prepare(String principal, Map<String,String[]> authorizationQuery, List<QueryImpl> initialQueries, Session session) {
     return new ContextImpl(session, principal, authorizationQuery);
   }
@@ -127,51 +127,51 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
       RepositoryImpl repository = (RepositoryImpl) RepositoryDecorator.unwrap(session.getRepository());
       SearchManager searchManager = repository.getSearchManager(session.getWorkspace().getName()) ;
       NamespaceMappings nsMappings = getNamespaceMappings();
-    
+
       /*
        * facetsQuery: get the query for the facets that are asked for
        */
       FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
-      
+
       /*
        * authorizationQuery: get the query for the facets the person is allowed to see (which
        * is again a facetsQuery)
        */
-      
-      AuthorizationQuery authorizationQuery = new AuthorizationQuery(authorization.authorizationQuery, 
-                                                                     facetsQueryMap , 
-                                                                     nsMappings, 
+
+      AuthorizationQuery authorizationQuery = new AuthorizationQuery(authorization.authorizationQuery,
+                                                                     facetsQueryMap ,
+                                                                     nsMappings,
                                                                      (ServicingIndexingConfiguration)getIndexingConfig(),
-                                                                     false); 
+                                                                     false);
 
       FacetResultCollector collector = null;
-      CachingFacetResultCollector cachingCollector = null; 
+      CachingFacetResultCollector cachingCollector = null;
       IndexReader indexReader = null;
       IndexSearcher searcher = null;
       try {
           indexReader = getIndex().getIndexReader();
           searcher = new IndexSearcher(indexReader);
-          
-          
+
+
           MultiIndexReader multiIndexReader = (MultiIndexReader)indexReader;
-          
-          // Optimize search in multithreaded searches 
+
+          // Optimize search in multithreaded searches
           Searchable[] indexSearchers = new IndexSearcher[multiIndexReader.getIndexReaders().length];
           for(int i = 0; i < multiIndexReader.getIndexReaders().length; i++){
               indexSearchers[i] = new IndexSearcher(multiIndexReader.getIndexReaders()[i]);
           }
           ParallelMultiSearcher parallelMultiSearcher = new ParallelMultiSearcher(indexSearchers);
-          
-          // In principle, below, there is always one facet 
+
+          // In principle, below, there is always one facet
           for(String facet : resultset.keySet()) {
               /*
                * facetPropExists: the document must have the property as facet
                */
               FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
-              
+
               BooleanQuery searchQuery = new BooleanQuery();
               searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
-              
+
               if(facetsQuery.getQuery().clauses().size() > 0){
                   searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
               }
@@ -179,7 +179,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
               if(authorizationQuery.getQuery().clauses().size() > 0){
                   searchQuery.add(authorizationQuery.getQuery(), Occur.MUST);
               }
-              
+
               long start = System.currentTimeMillis();
               cachingCollector = new CachingFacetResultCollector(indexReader, tfvCache, facet, resultset, hitsRequested, nsMappings);
 
@@ -187,7 +187,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
               parallelMultiSearcher.search(searchQuery, cachingCollector);
 
           }
-          
+
       } catch (IOException e) {
           e.printStackTrace();
       } finally {
@@ -227,9 +227,9 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
       Session session = authorization.session;
       LinkedList list = new LinkedList<String>();
       int size = 0;
-  
+
       return this . new  ResultImpl(0,null) ;
-   
+
   }
 
   public QueryImpl parse(String query)

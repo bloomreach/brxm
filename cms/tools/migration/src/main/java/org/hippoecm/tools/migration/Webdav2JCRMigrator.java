@@ -39,7 +39,7 @@ import org.hippoecm.tools.migration.webdav.WebdavHelper;
 
 
 /**
- * The plugin to the wdbp. 
+ * The plugin to the wdbp.
  * Parses the configuration for the plugin and initilizes the converter plugin.
  * Contains the main process loop which loops over all WebDAV nodes.
  */
@@ -60,13 +60,13 @@ public class Webdav2JCRMigrator implements Plugin {
 
     private static final String BATCH_SIZE_CONFIG = "batchsize";
     private static final int DEFAULT_BATCH_SIZE = 20;
-    
+
 
 
     // ---------------------------------------------------- Instance variables
     private int batchCount = 0;
     private int batchSize = DEFAULT_BATCH_SIZE;
-    
+
     //----------------------- rmi
     private String rmiHost;
     private String rmiPort;
@@ -80,9 +80,9 @@ public class Webdav2JCRMigrator implements Plugin {
 
     private Session session;
     private String webdavRootUri;
-    
+
     private DocumentConverter documentConverter;
-    
+
 
     //----------------------- webdav
     private HttpState httpState;
@@ -92,7 +92,7 @@ public class Webdav2JCRMigrator implements Plugin {
 
         // Fetch properties
         webdavRootUri = config.getRootUri();
-        
+
         // Batch size
         String size = pluginConfig.getValue(BATCH_SIZE_CONFIG);
         try {
@@ -115,8 +115,8 @@ public class Webdav2JCRMigrator implements Plugin {
         if (converter == null || "".equals(converter)) {
             converter = DEFAULT_DOCUMENT_CONVERTER;
         }
-        
-        
+
+
         try {
             documentConverter = (DocumentConverter) Class.forName(converter).newInstance();
         } catch (ClassNotFoundException e) {
@@ -126,7 +126,7 @@ public class Webdav2JCRMigrator implements Plugin {
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("DocumentConverter class access exception: " + e.getMessage());
             }
-        
+
         // remove trainling slash
         if (jcrPath.endsWith("/")) {
             jcrPath = jcrPath.substring(0, jcrPath.length() - 1);
@@ -134,9 +134,9 @@ public class Webdav2JCRMigrator implements Plugin {
 
         // show config
         printConfig(config);
-        
 
-        // test and setup connection and login       
+
+        // test and setup connection and login
         HippoRepository repository;
         try {
             // get the repository
@@ -168,7 +168,7 @@ public class Webdav2JCRMigrator implements Plugin {
     }
 
     public void process(nl.hippo.webdav.batchprocessor.Node webdavNode) throws WebdavBatchProcessorException {
-        
+
         String jcrParentPath = jcrPath + WebdavHelper.parentPath(webdavNode.getUri().substring(webdavRootUri.length()));
         String nodeName = WebdavHelper.nodeName(webdavNode.getUri());
 
@@ -195,7 +195,7 @@ public class Webdav2JCRMigrator implements Plugin {
                     parent.addNode(nodeName);
                 }
             }
-            
+
             batchCount++;
             if ((batchCount % batchSize) == 0 ) {
                 session.save();
@@ -253,10 +253,10 @@ public class Webdav2JCRMigrator implements Plugin {
         httpClient.setState(httpState);
         HostConfiguration hostConfiguration = new HostConfiguration();
         hostConfiguration.setHost(config.getLocationHost(), config.getLocationPort());
-        httpClient.setHostConfiguration(hostConfiguration);   
+        httpClient.setHostConfiguration(hostConfiguration);
     }
-    
-   
+
+
     /**
      * Print the configuration to the screnen
      * @param config

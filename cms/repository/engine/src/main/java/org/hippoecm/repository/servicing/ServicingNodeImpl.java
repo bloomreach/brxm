@@ -93,30 +93,30 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
             if (getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
                 return HippoNodeType.HIPPO_RESULTSET;
             }
-            
+
             // the last search is the current one
             Value[] searches = getProperty(HippoNodeType.HIPPO_SEARCH).getValues();
             if (searches.length == 0) {
                 return getName();
             }
             String search = searches[searches.length-1].getString();
-                
+
             // check for search seperator
             if (search.indexOf("#") == -1) {
                 return getName();
             }
-            
+
             // check for sql parameter '?'
             String xpath = search.substring(search.indexOf("#")+1);
             if (xpath.indexOf('?') == -1) {
                 return getName();
             }
-                
+
             // construct query
             xpath = xpath.substring(0,xpath.indexOf('?')) + getName() + xpath.substring(xpath.indexOf('?')+1);
-            
+
             Query query = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
-            
+
             // execute
             QueryResult result = query.execute();
             RowIterator iter = result.getRows();

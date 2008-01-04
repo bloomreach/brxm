@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <!DOCTYPE Repository PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 1.2//EN"
@@ -24,7 +24,7 @@
       <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
         <param name="path" value="${rep.home}/repository"/>
       </FileSystem>
-      
+
       <!--
         security configuration
       -->
@@ -32,35 +32,35 @@
         <AccessManager class="org.hippoecm.repository.security.HippoAccessManager"/>
         <LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"/>
       </Security>
-      
-      
+
+
       <!--
         location of workspaces root directory and name of default workspace
       -->
       <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/>
-      
+
       <!--
         workspace configuration template:
         used to create the initial workspace if there's no workspace yet
       -->
       <Workspace name="${wsp.name}">
-        
+
         <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
           <param name="path" value="${wsp.home}"/>
         </FileSystem>
-        
+
         <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemPersistenceManager">
           <param name="persistent" value="false"/>
         </PersistenceManager>
-        
+
         <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl">
           <!--
             Search index and the file system it uses.
             class: FQN of class implementing the QueryHandler interface
-            
+
             If required by the QueryHandler implementation, one may configure
             a FileSystem that the handler may use.
-            
+
             Supported parameters for lucene search index:
             - path: location of the index. This parameter is mandatory!
             - useCompoundFile: advises lucene to use compound files for the index files
@@ -106,7 +106,7 @@
             - synonymProviderClass: the name of a class that implements
             org.apache.jackrabbit.core.query.lucene.SynonymProvider. The
             default value is null (-> not set).
-            
+
             Note: all parameters (except path) in this SearchIndex config are default
             values and can be omitted.
           -->
@@ -133,7 +133,7 @@
           <param name="extractorBackLogSize" value="100"/>
         </SearchIndex>
       </Workspace>
-      
+
       <Versioning rootPath="${rep.home}/version">
         <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
           <param name="path" value="${rep.home}/version"/>
@@ -142,15 +142,15 @@
           <param name="persistent" value="false"/>
         </PersistenceManager>
       </Versioning>
-      
-      
+
+
       <!--
         Search index for content that is shared repository wide
         (/jcr:system tree, contains mainly versions)
-        
+
         The same parameters are supported as in the search index configuration
         inside the workspace definition element.
-        
+
         This element is optional. If omitted, the /jcr:system tree will not be
         indexed and no results will be returned for that tree!
       -->

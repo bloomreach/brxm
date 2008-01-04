@@ -16,9 +16,9 @@
   * limitations under the License.
 -->
 <web-app id="hippo-ecm-addon-xinha">
-  
+
   <!-- General configuration -->
   <display-name>Hippo ECM Xinha add-on</display-name>
   <description>Static content to be deployed along or merged with front-end for Xinha support.</description>
-  
+
 </web-app>

@@ -33,7 +33,7 @@ public class BasicTest extends TestCase {
 //        HippoEcmSetup setup = new HippoEcmSetup(suite);
 //        return setup;
 //    }
-    
+
     @Override
     public void setUp() throws Exception {
         selenium = createSeleniumClient("http://localhost:8082/");
@@ -48,8 +48,8 @@ public class BasicTest extends TestCase {
     protected DefaultSelenium createSeleniumClient(String url) throws Exception {
         return new DefaultSelenium("localhost", 4444, "*firefox", url);
     }
-    
-    
+
+
     /**
      * Checks if the "Add Node" menu action is present on the page.
      */
@@ -57,14 +57,14 @@ public class BasicTest extends TestCase {
         try {
             selenium.open("/");
             assert(selenium.isTextPresent("Add Node"));
-        } 
+        }
         catch (SeleniumException ex) {
             fail(ex.getMessage());
             throw ex;
         }
     }
 
-    
+
     /**
      * Opens the frontend in a browser and logs in as user "demo".
      */
@@ -81,7 +81,7 @@ public class BasicTest extends TestCase {
 
             // enter username
             selenium.type("widget3", "demo");
-    
+
             // enter password
             selenium.type("widget4", "demo");
 
@@ -92,14 +92,14 @@ public class BasicTest extends TestCase {
                 try { if (selenium.isTextPresent("Logged in as demo")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
-        } 
+        }
         catch (SeleniumException ex) {
             fail(ex.getMessage());
             throw ex;
         }
     }
 
-    
+
     /**
      * Browses through the tree to a document 'my article' and checks if it has the
      * workflow action "obtain editable instance".
@@ -107,7 +107,7 @@ public class BasicTest extends TestCase {
     public void testMyArticleHasWorkflow() throws Exception {
         testLogin();
         try {
-            
+
             selenium.open("/");
 
             selenium.click("//div[6]/div/a[1]/span/span");
@@ -133,46 +133,46 @@ public class BasicTest extends TestCase {
 
             assert(selenium.isTextPresent("Obtain editable copy"));
         assert(selenium.isTextPresent("Obtain editable copy"));
-        } 
+        }
         catch (SeleniumException ex) {
             fail(ex.getMessage());
             throw ex;
         }
     }
-    
-    
-    
+
+
+
     /**
      * Browses through the tree and adds a node.
      */
     public void testAddNode() throws Exception {
         try {
             selenium.open("/");
-    
+
             selenium.click("//div[6]/div/a[1]/span/span");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
                 try { if (selenium.isElementPresent("//div[7]/div/a[1]/span/span")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
-    
+
             selenium.click("//div[7]/div/a[1]/span/span");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
                 try { if (selenium.isElementPresent("//div[7]/div/a[2]/span[2]")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
-    
+
             selenium.click("//div[7]/div/a[2]/span[2]");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
                 try { if (selenium.isTextPresent("/workflow-demo/myarticle")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
-    
+
             // click on "Add Node"
             selenium.click("node_dialog_link5");
-    
+
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
                 try { if (selenium.isElementPresent("widget3")) break; } catch (Exception e) {}
@@ -187,21 +187,21 @@ public class BasicTest extends TestCase {
                 try { if (selenium.isElementPresent("//div[9]/div/a[2]/span[2]")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
-    
+
             selenium.click("//div[9]/div/a[2]/span[2]");
             for (int second = 0;; second++) {
                 if (second >= 60) fail("timeout");
                 try { if (selenium.isTextPresent("/workflow-demo/myarticle/test")) break; } catch (Exception e) {}
                 Thread.sleep(1000);
             }
-    
+
             assert(selenium.isTextPresent("/workflow-demo/myarticle/test"));
-        } 
+        }
         catch (SeleniumException ex) {
             fail(ex.getMessage());
             throw ex;
         }
-            
+
     }
-    
+
 }

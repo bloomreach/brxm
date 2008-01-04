@@ -70,7 +70,7 @@ public class DocumentManagerImpl
             InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
             properties.load(istream);
             properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
-            
+
             pmf = JDOHelper.getPersistenceManagerFactory(properties);
             pm = null;
             sm = (StoreManagerImpl) ((PersistenceManagerFactoryImpl)pmf).getOMFContext().getStoreManager();
@@ -98,7 +98,7 @@ public class DocumentManagerImpl
         } finally {
             sm.setTypes(null);
             Thread.currentThread().setContextClassLoader(oldLoader);
-        }    
+        }
         return obj;
     }
 

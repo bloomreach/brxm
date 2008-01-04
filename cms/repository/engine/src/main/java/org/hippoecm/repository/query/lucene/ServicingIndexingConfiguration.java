@@ -19,7 +19,7 @@ import org.apache.jackrabbit.core.query.lucene.IndexingConfiguration;
 import org.apache.jackrabbit.spi.Name;
 
 public interface ServicingIndexingConfiguration extends IndexingConfiguration{
-   
+
     /**
      * Returns <code>true</code> if the property with the given name is a facet
      * according to this configuration.
@@ -29,7 +29,7 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration{
      *         otherwise.
      */
     boolean isFacet(Name propertyName);
-    
+
     /**
      * Returns <code>true</code> if the property with the given name is a hippo path
      *

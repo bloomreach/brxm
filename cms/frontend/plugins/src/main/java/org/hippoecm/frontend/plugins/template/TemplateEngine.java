@@ -53,7 +53,7 @@ public class TemplateEngine extends Form implements INotificationListener {
         this.plugin = plugin;
 
         setOutputMarkupId(true);
-        
+
         Channel incoming = plugin.getDescriptor().getIncoming();
         if (incoming != null) {
             incoming.subscribe(this);

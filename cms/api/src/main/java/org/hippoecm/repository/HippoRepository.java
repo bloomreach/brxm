@@ -49,7 +49,7 @@ public interface HippoRepository {
      * this also involves shutting down the repository.
      */
     public void close();
-    
+
     /**
      * Get a UserTransaction from the JTA transaction manager through JNDI
      * @param session

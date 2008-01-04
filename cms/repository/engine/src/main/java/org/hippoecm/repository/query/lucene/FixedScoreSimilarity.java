@@ -20,7 +20,7 @@ import org.apache.lucene.search.Similarity;
 public class FixedScoreSimilarity extends Similarity {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 

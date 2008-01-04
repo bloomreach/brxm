@@ -23,23 +23,23 @@ import org.slf4j.LoggerFactory;
 
 public class Message implements IClusterable {
         private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(Message.class);
 
     private MessageContext context;
     private String operation;
     private Map data;
-    
+
     public Message(String operation, Map data) {
         this.operation = operation;
         this.data = data;
         this.context = new MessageContext();
     }
-    
+
     public String getOperation() {
         return operation;
     }
-    
+
     public Map getData() {
         return data;
     }

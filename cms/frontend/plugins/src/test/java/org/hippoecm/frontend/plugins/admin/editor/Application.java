@@ -52,19 +52,19 @@ public class Application extends WicketTester.DummyWebApplication {
 
     public MockControl valueControl;
     public Value value;
-    
+
     public MockControl workspaceControl;
     public Workspace workspace;
-    
+
     public MockControl ntmgrControl;
     public NodeTypeManager ntmgr;
-    
+
     public MockControl ntiterControl;
     public NodeTypeIterator ntiter;
 
     public MockControl nodeTypeControl;
     public NodeType nodeType;
-    
+
     // custom Session; since UserSession is not an interface, we have to provide
     // an explicit implementation.
     private class Session extends UserSession {
@@ -73,13 +73,13 @@ public class Application extends WicketTester.DummyWebApplication {
         public Session(Request request) {
             super(request);
         }
-        
+
         @Override
         public javax.jcr.Session getJcrSession() {
             return session;
         }
     }
-    
+
     public Application() {
         super();
 
@@ -100,16 +100,16 @@ public class Application extends WicketTester.DummyWebApplication {
 
         propertyDefinitionControl = MockControl.createControl(PropertyDefinition.class);
         propertyDefinition = (PropertyDefinition) propertyDefinitionControl.getMock();
-        
+
         workspaceControl = MockControl.createControl(Workspace.class);
         workspace = (Workspace) workspaceControl.getMock();
-        
+
         ntmgrControl = MockControl.createControl(NodeTypeManager.class);
         ntmgr = (NodeTypeManager) ntmgrControl.getMock();
-        
+
         ntiterControl = MockControl.createControl(NodeTypeIterator.class);
         ntiter = (NodeTypeIterator) ntiterControl.getMock();
-        
+
         nodeTypeControl = MockControl.createControl(NodeType.class);
         nodeType = (NodeType) nodeTypeControl.getMock();
     }
@@ -121,10 +121,10 @@ public class Application extends WicketTester.DummyWebApplication {
 
             node.getProperties();
             nodeControl.setReturnValue(propertyIterator, MockControl.ONE_OR_MORE);
-            
+
             node.getSession();
             nodeControl.setReturnValue(session, MockControl.ONE_OR_MORE);
-            
+
             session.isLive();
             sessionControl.setReturnValue(true, MockControl.ONE_OR_MORE);
 
@@ -163,7 +163,7 @@ public class Application extends WicketTester.DummyWebApplication {
             // set up the node types editor
             node.getMixinNodeTypes();
             nodeControl.setReturnValue(new NodeType[0], MockControl.ONE_OR_MORE);
-            
+
             session.getWorkspace();
             sessionControl.setReturnValue(workspace, MockControl.ONE);
 
@@ -172,7 +172,7 @@ public class Application extends WicketTester.DummyWebApplication {
 
             ntmgr.getMixinNodeTypes();
             ntmgrControl.setReturnValue(ntiter, MockControl.ONE);
-            
+
             ntiter.hasNext();
             ntiterControl.setReturnValue(true, MockControl.ONE);
 

@@ -45,7 +45,7 @@ public class AuthorizationQuery {
     private BooleanQuery query;
 
     /**
-     * 
+     *
      * @param authorizationQuery The facets + value[] combination the logged in user is allowed to see
      * @param nsMappings nameSpace mappings to find the lucene field names
      * @param indexingConfig the index configuration
@@ -57,8 +57,8 @@ public class AuthorizationQuery {
 
     /**
      * This is the authorization query constructor. For efficient queries, the requested facetsQueryMap is added, to
-     * be able to remove redundant searches. 
-     * 
+     * be able to remove redundant searches.
+     *
      * @param authorizationQuery The facets + value[] combination the logged in user is allowed to see
      * @param facetsQueryMap The currently requested facetQueryMap. This map is used to optimize the lucene query
      * @param nsMappings nameSpace mappings to find the lucene field names

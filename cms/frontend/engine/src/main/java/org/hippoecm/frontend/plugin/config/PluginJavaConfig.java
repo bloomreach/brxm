@@ -25,7 +25,7 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 
 /**
- * Hardcoded plugin configuration. 
+ * Hardcoded plugin configuration.
  * It uses only core plugins and shows the Hippo ECM Admin Console.
  */
 public class PluginJavaConfig implements PluginConfig {
@@ -34,13 +34,13 @@ public class PluginJavaConfig implements PluginConfig {
     private PluginDescriptor root;
     private Map<String, PluginDescriptor> childrenOfRoot;
     private ChannelFactory factory;
-    
+
     public PluginJavaConfig() {
         factory = new ChannelFactory();
         Channel outgoing = factory.createChannel();
 
         String className = "org.hippoecm.frontend.plugins.admin.RootPlugin";
-        PluginDescriptor descriptor = new PluginDescriptor("rootPlugin", className, outgoing); 
+        PluginDescriptor descriptor = new PluginDescriptor("rootPlugin", className, outgoing);
         root = descriptor;
 
         childrenOfRoot = new HashMap<String, PluginDescriptor>();
@@ -84,7 +84,7 @@ public class PluginJavaConfig implements PluginConfig {
         }
         return childrenOfRoot.get(pluginId);
     }
-    
+
     public ChannelFactory getChannelFactory() {
         return factory;
     }

@@ -17,7 +17,7 @@ package org.hippoecm.repository.security;
 
 
 /**
- * Authentication and Authorization context 
+ * Authentication and Authorization context
  *
  */
 public interface AAContext {

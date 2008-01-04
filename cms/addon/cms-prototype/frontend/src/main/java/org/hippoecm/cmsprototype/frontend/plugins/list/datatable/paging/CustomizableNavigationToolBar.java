@@ -29,13 +29,13 @@ import org.apache.wicket.model.Model;
 public class CustomizableNavigationToolBar extends AbstractToolbar{
 
     private static final long serialVersionUID = 1L;
-    
+
     private DataTable table;
-    
+
     public CustomizableNavigationToolBar(DataTable table, int viewSize) {
         this(table, null, null, viewSize);
      }
-    
+
     public CustomizableNavigationToolBar(DataTable table, String prefix, String postfix, int viewSize) {
         super(table);
         this.table = table;
@@ -44,33 +44,33 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
         add(span);
         span.add(new AttributeModifier("colspan", true, new Model(String
                 .valueOf(table.getColumns().length))));
-        
+
         PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, prefix, postfix);
         pagingNavigator.getPagingNavigation().setViewSize(viewSize);
         span.add(pagingNavigator);
         span.add(newNavigatorLabel("navigatorLabel", table));
     }
-    
+
     /**
      * Factory method used to create the navigator label that will be used by the datatable
-     * 
+     *
      * @param navigatorId
      *            component id navigator label should be created with
      * @param table
      *            dataview used by datatable
      * @return navigator label that will be used to navigate the data table
-     * 
+     *
      */
     protected WebComponent newNavigatorLabel(String navigatorId, final DataTable table)
     {
         WebComponent w = new NavigatorLabel(navigatorId, table);
         return  w;
     }
-    
-    
+
+
     /**
      * Factory method used to create the paging navigator that will be used by the datatable.
-     * 
+     *
      * @param navigatorId
      *            component id the navigator should be created with
      * @param table
@@ -79,7 +79,7 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
      */
     protected PagingNavigator newPagingNavigator(String navigatorId, final DataTable table, String prefix, String postfix)
     {
-        return new CustomizablePagingNavigator(navigatorId, table, 
+        return new CustomizablePagingNavigator(navigatorId, table,
                         new CustomizablePagingLabelProvider(prefix,postfix))
             {
             private static final long serialVersionUID = 1L;
@@ -87,7 +87,7 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
             /**
              * Implement our own ajax event handling in order to update the datatable itself, as the
              * default implementation doesn't support DataViews.
-             * 
+             *
              * @see AjaxPagingNavigator#onAjaxEvent(AjaxRequestTarget)
              */
             protected void onAjaxEvent(AjaxRequestTarget target)
@@ -96,10 +96,10 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
             }
         };
     }
-    
+
     /**
      * Hides this toolbar when there is only one page in the table
-     * 
+     *
      * @see org.apache.wicket.Component#isVisible()
      */
     public boolean isVisible()

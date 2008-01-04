@@ -52,7 +52,7 @@ public class SampleWorkflowTest extends TestCase {
     public void tearDown() throws Exception {
         server.close();
     }
-    
+
     /**
      * Create UserTransActionManger instance
      * @return
@@ -65,7 +65,7 @@ public class SampleWorkflowTest extends TestCase {
         SampleWorkflowSetup.commonStart(server);
         try {
             Session session = server.login("admin","admin".toCharArray());
-            
+
             UserTransaction ut = server.getUserTransaction(getTransactionManager(), session);
             ut.begin();
 

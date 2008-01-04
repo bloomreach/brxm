@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class Request extends Message {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(Request.class);
 
     public Request(String operation, Map data) {

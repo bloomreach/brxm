@@ -25,7 +25,7 @@ import org.apache.lucene.search.Weight;
 public class ParallelMultiSearcher extends org.apache.lucene.search.ParallelMultiSearcher{
     private Searchable[] searchables;
     private int[] starts;
-    
+
     public ParallelMultiSearcher(Searchable[] searchables) throws IOException {
         super(searchables);
         this.searchables=searchables;
@@ -33,7 +33,7 @@ public class ParallelMultiSearcher extends org.apache.lucene.search.ParallelMult
     }
 
     /**
-     * 
+     *
      * @TODO parallelize and cache
      */
    public void search(Weight weight, Filter filter, final HitCollector results)

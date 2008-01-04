@@ -45,7 +45,7 @@ public class WebdavHelper {
         c.setTime(d);
         return c;
     }
-    
+
 
     /**
      * Find the nodeName from a specific uri
@@ -55,7 +55,7 @@ public class WebdavHelper {
     public static String nodeName(String uri) {
         return uri.substring(uri.lastIndexOf("/") + 1);
     }
-    
+
     /**
      * Get the parent path of a uri
      * @param uri

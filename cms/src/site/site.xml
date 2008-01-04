@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <project name="Hippo ECM">
-  
+
   <skin>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-maven-skin</artifactId>
     <version>2.01.00-dev</version>
-  </skin>  
-  
+  </skin>
+
   <bannerLeft>
     <name>Hippo ECM</name>
     <src>/images/style/hippo-logo.gif</src>
     <href>/</href>
   </bannerLeft>
-  
+
   <body>
     <links>
       <item name="Hippo" href="http://www.hippo.nl/"/>
       <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
       <item name="Hippo Portal" href="http://www.hippoportal.org/"/>
     </links>
-    
+
     <menu name="Main">
       <item name="Welcome" href="/index.html"/>
     </menu>
-        
+
     <menu name="About Hippo ECM">
       <item name="What is Hippo ECM?" href="/about-hippo-ecm/what-is-hippo-ecm.html"/>
       <item name="Usages for Hippo ECM" href="/about-hippo-ecm/usages-for-hippo-ecm.html"/>
@@ -47,9 +47,9 @@
       <item name="Components" href="/about-hippo-ecm/components.html"/>
       <item name="Future" href="/about-hippo-ecm/future.html"/>
     </menu>
-    
+
     <menu name="Documentation">
-      
+
       <item name="Running Hippo ECM" href="/run-hippo-ecm/index.html" collapse="false" inherit="top">
         <item name="Requirements" href="/run-hippo-ecm/requirements.html"/>
         <item name="Deploying the WARs" href="/run-hippo-ecm/deploying-the-wars.html"/>
@@ -63,14 +63,14 @@
           <item name="Workflow" href="/run-hippo-ecm/configuration/workflow-configuration.html"/>
         </item>
       </item>
-      
+
       <item name="Using Hippo ECM" href="/use-hippo-ecm/index.html" collapse="true">
         <item name="Facets" href="/use-hippo-ecm/facets/index.html" collapse="true">
         </item>
         <item name="Workflow" href="/use-hippo-ecm/workflow/index.html" collapse="true">
         </item>
       </item>
-      
+
       <item name="Extending Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
         <item name="Building Hippo ECM" href="/extend-hippo-ecm/building/index.html" collapse="true">
           <item name="Project Structure" href="/extend-hippo-ecm/building/project-structure.html"/>
@@ -87,11 +87,11 @@
         </item>
         <item name="Hello World" href="/extend-hippo-ecm/hello-world.html"/>
       </item>
-      
+
       <item name="Integrating Hippo ECM" href="/integrate-hippo-ecm/index.html" collapse="true">
         <item name="Example" href="/integrate-hippo-ecm/example.html"/>
       </item>
-      
+
     </menu>
 
     <menu name="Community">
@@ -102,5 +102,5 @@
     <menu ref="reports" name="Other"/>
 
   </body>
-  
+
 </project>

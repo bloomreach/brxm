@@ -32,10 +32,10 @@ import junit.framework.TestCase;
 public class FacetedNavigationHippoCountTest extends TestCase
 {
         private Session session;
-        
+
         private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-   
+
     private static String[] contents = new String[] {
         "/documents", "nt:unstructured",
         "/documents/document", "hippo:document",
@@ -154,12 +154,12 @@ public class FacetedNavigationHippoCountTest extends TestCase
         return node;
     }
 
-        
+
         public void setUp() throws RepositoryException {
         HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
         session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
     }
-        
+
         public void testHippoCount() {
                 try {
                         build(session, contents);
@@ -170,7 +170,7 @@ public class FacetedNavigationHippoCountTest extends TestCase
                         e.printStackTrace();
                 }
         }
-        
+
         public void tearDown() {
                 session.logout();
         }

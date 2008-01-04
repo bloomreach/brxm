@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.security.Principal;
 
 public class FacetAuthPrincipal implements Serializable, Principal {
-    
+
     private static final long serialVersionUID = 1L;
     private final String name;
     private final String facet;
@@ -44,15 +44,15 @@ public class FacetAuthPrincipal implements Serializable, Principal {
         if (values.length == 0) {
             throw new IllegalArgumentException("values must contain at least one values");
         }
-        
-        
+
+
         // adding values
         this.facet = facet;
         this.values = values;
         this.name = buildString(facet, values, permissions);
         this.permissions = permissions;
     }
-    
+
     /**
      * String for pretty printing and generating the hashcode
      * @param facet

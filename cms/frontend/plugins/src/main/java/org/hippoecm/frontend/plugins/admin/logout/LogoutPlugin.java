@@ -25,16 +25,16 @@ import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-    
+
     public LogoutPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
         UserSession session = (UserSession) getSession();
         ValueMap credentials = session.getCredentials();
         String username = credentials.getString("username");
-        
+
         add(new DialogLink("logout-dialog", "Logout", LogoutDialog.class, model,
-                        pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));        
+                        pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
         add(new Label("username", username));
     }
 

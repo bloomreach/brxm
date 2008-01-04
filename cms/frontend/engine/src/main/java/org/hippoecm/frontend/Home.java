@@ -36,7 +36,7 @@ public class Home extends WebPage {
         if (rootNode == null) {
             throw new RestartResponseException(LoginPage.class);
         }
-        
+
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
         PluginManager pluginManager = new PluginManager(pluginConfig);
         PluginFactory pluginFactory = new PluginFactory(pluginManager);

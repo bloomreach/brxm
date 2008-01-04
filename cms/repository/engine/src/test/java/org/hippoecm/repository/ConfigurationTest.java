@@ -37,7 +37,7 @@ public class ConfigurationTest extends TestCase {
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
     }
-   
+
     public void tearDown() throws Exception {
         Node root = session.getRootNode();
         try {
@@ -58,7 +58,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentroot", "/configtest");
         session.save();
 
-        // observation manager calls listeners asynchronously  
+        // observation manager calls listeners asynchronously
         wait(1000);
 
         node = root.getNode("configtest");

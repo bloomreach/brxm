@@ -65,7 +65,7 @@ public class RepositoryGroup implements Group {
      * Is the class initialized
      */
     private boolean initialized = false;
-    
+
     /**
      * The current group roles
      */
@@ -85,15 +85,15 @@ public class RepositoryGroup implements Group {
      * The current context
      */
     private RepositoryAAContext context;
-    
+
     /**
-     * Logger 
+     * Logger
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
 
     //------------------------< Interface Impl >--------------------------//
-    
+
     public void init(AAContext context, String groupId) throws GroupNotFoundException {
         this.context = (RepositoryAAContext) context;
         this.rootSession = this.context.getRootSession();
@@ -103,7 +103,7 @@ public class RepositoryGroup implements Group {
         setGroup();
         setRoles();
         setPrincipals();
-        
+
     }
     public String getGroupId() throws GroupNotFoundException {
         if (!initialized) {
@@ -112,7 +112,7 @@ public class RepositoryGroup implements Group {
         return groupId;
     }
 
-    public Set<User> getMembers() throws GroupNotFoundException {        
+    public Set<User> getMembers() throws GroupNotFoundException {
         if (!initialized) {
             throw new GroupNotFoundException("Not initialized.");
         }
@@ -165,9 +165,9 @@ public class RepositoryGroup implements Group {
             }
             throw new GroupNotFoundException("Role not found: " + path);
         }
-        
+
     }
-    
+
     private void setRoles() {
         try {
             Value[] roles = group.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
@@ -206,9 +206,9 @@ public class RepositoryGroup implements Group {
                 log.error("Role not found for user after init: " + groupId);
             }
         }
-        
+
     }
-    
+
     private void setPrincipals() throws GroupNotFoundException {
         try {
             Node facetAuthPath = group.getNode(HippoNodeType.FACETAUTH_PATH);
@@ -219,7 +219,7 @@ public class RepositoryGroup implements Group {
             // wrap error
             throw new GroupNotFoundException("Error while getting group facetauth rules.", e);
         }
-        
+
     }
 
 }

@@ -70,7 +70,7 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
         super.close();
         initialized = false;
     }
-    
+
     protected boolean canAccessItem(ItemId id, int permissions) {
         for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
             String username = principal.getName();
@@ -127,7 +127,7 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
         }
 
         super.checkPermission(id, permissions);
-        
+
         if(!canAccessItem(id, permissions)) {
             throw new AccessDeniedException();
         }
@@ -155,7 +155,7 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
 
         if(super.isGranted(id, permissions) == false)
             return false;
-        
+
         return canAccessItem(id, permissions);
     }
 

@@ -88,7 +88,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
                         (virtualNodeType == null  ? null : stateMgr.resolver.getQName(virtualNodeType)));
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
-        
+
         querynameName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_QUERYNAME);
         docbaseName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_DOCBASE);
         facetsName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_FACETS);
@@ -141,7 +141,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
             }
             FacetedNavigationEngine.Query initialQuery;
             initialQuery = facetedEngine.parse(docbase);
-      
+
             HitsRequested hitsRequested = new HitsRequested();
             hitsRequested.setResultRequested(false);
 

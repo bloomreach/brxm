@@ -27,21 +27,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FacetPropExistsQuery {
-    
-   
+
+
     /**
      * The logger instance for this class
      */
     private static final Logger log = LoggerFactory.getLogger(FacetsQuery.class);
-    
+
     /**
      * The lucene query
      */
     private BooleanQuery query;
-    
+
     public FacetPropExistsQuery(String facet, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig) {
         this.query = new BooleanQuery(true);
-        
+
         Name nodeName;
         String internalName = "";
         try {
@@ -55,7 +55,7 @@ public class FacetPropExistsQuery {
                 log.warn("Property " + nodeName.getNamespaceURI()+":"+nodeName.getLocalName()+" not allowed for facetted search. " +
                         "Add the property to the indexing configuration to be defined as FACET");
             }
-            
+
         } catch (IllegalNameException e) {
                 log.error(e.toString());
                 }

@@ -40,11 +40,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class NodeTypesEditor extends CheckGroup {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(NodeTypesEditor.class);
 
     private ArrayList<String> current;
-    
+
     public NodeTypesEditor(String id, JcrNodeTypesProvider provider) {
         super(id, new ArrayList<String>());
 
@@ -60,14 +60,14 @@ public abstract class NodeTypesEditor extends CheckGroup {
 
                 String type = (String) model.getObject();
 
-                Check check = new Check("check", model); 
+                Check check = new Check("check", model);
                 item.add(check);
 
                 check.add(new Label("name", type));
             }
         });
     }
-    
+
     protected abstract void onAddNodeType(String name);
 
     protected abstract void onRemoveNodeType(String name);

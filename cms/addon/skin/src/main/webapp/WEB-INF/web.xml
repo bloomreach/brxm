@@ -16,9 +16,9 @@
   * limitations under the License.
 -->
 <web-app id="hippo-ecm-addon-skin">
-  
+
   <!-- General configuration -->
   <display-name>Hippo ECM Skin add-on</display-name>
   <description>Static content to be deployed along or merged with front-end as skin customization.</description>
-  
+
 </web-app>

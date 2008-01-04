@@ -96,7 +96,7 @@ public final class LoginPage extends WebPage {
             userSession.setHippo(selectedHippo);
             userSession.setJcrCredentials(credentials);
             userSession.getJcrSession();
-            
+
             setResponsePage(getApplication().getHomePage());
         }
 

@@ -29,7 +29,7 @@ public class Template extends Panel {
 
     public Template(String wicketId, IModel model, TemplateDescriptor descriptor, TemplateEngine engine) {
         super(wicketId, model);
-        
+
         provider = new TemplateProvider(descriptor, (Node) getModelObject(), engine);
         add(new FieldView("field", descriptor, provider, engine));
     }

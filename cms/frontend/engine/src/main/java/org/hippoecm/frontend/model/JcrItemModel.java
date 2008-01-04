@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class JcrItemModel extends LoadableDetachableModel {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(JcrItemModel.class);
 
     protected String path;
@@ -50,12 +50,12 @@ public class JcrItemModel extends LoadableDetachableModel {
         super();
         this.path = path;
     }
-    
+
     public String getPath() {
         return path;
     }
-    
-    
+
+
     public boolean exists() {
         boolean result = false;
         try {
@@ -80,16 +80,16 @@ public class JcrItemModel extends LoadableDetachableModel {
         }
         return result;
     }
-    
+
     // override Object
-    
+
     @Override
     public String toString() {
        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
            .append("path", path)
            .toString();
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object instanceof JcrItemModel == false) {
@@ -103,7 +103,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             .append(path, itemModel.path)
             .isEquals();
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder(177, 3)

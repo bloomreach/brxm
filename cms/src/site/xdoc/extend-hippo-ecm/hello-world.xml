@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -55,7 +55,7 @@
 
           <p>
             The contents of the individual files are described in the following sections.
-          </p>            
+          </p>
         </subsection>
 
         <subsection name="pom.xml">
@@ -64,7 +64,7 @@
             This component contains the abstract Plugin class which we need to extend
             in our Hello World Plugin.
           </p>
-          
+
           <p>
             We will package our plugin as a JAR so we can easily add it as a dependency
             to the Hippo ECM frontend application.
@@ -90,9 +90,9 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>2.01.00-dev</version>
-    </dependency>    
+    </dependency>
   </dependencies>
-  
+
   <build>
     <defaultGoal>install</defaultGoal>
     <resources>
@@ -148,15 +148,15 @@ public class HelloWorldPlugin extends Plugin {
 <![CDATA[
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    
+
     <div wicket:id="label">text goes here</div>
-    
+
   </wicket:panel>
 </html>
 ]]>
 </source>
         </subsection>
-        
+
       <subsection name="Building the plugin JAR">
         <p>
           Now build the JAR for the plugin and install it in your local Maven repository
@@ -166,7 +166,7 @@ public class HelloWorldPlugin extends Plugin {
 mvn install
 </source>
         </subsection>
-          
+
       </section>
 
       <section name="Testing the Hello World plugin">
@@ -197,29 +197,29 @@ hippo-ecm
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   ...
-  
+
   <dependencies>
-    
+
     ...
-    
+
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>hello-world-plugin</artifactId>
       <version>1.01.00</version>
       <type>jar</type>
     </dependency>
-    
+
     ...
-    
+
   </dependencies>
-  
+
   ...
-  
+
 </project>
-]]>            
+]]>
           </source>
       </subsection>
-      
+
       <subsection name="Running the repository application">
         <p>
           To test our frontend plugin we need to have a repository running. We can use the
@@ -232,7 +232,7 @@ cd hippo-ecm/application/cms-prototype/repository
 mvn jetty:run-war
 </source>
       </subsection>
-      
+
       <subsection name="Running the frontend application">
         <p>
           Now run the frontend application using the following Maven command:
@@ -255,7 +255,7 @@ mvn jetty:run-war
           standard plugins in the plugin configuration with our own. To do this, navigate to
           <b>/hippo:configuration/hippo:frontend/hippo:console/rootPlugin/contentPlugin</b>
           in the tree, and click on the contentPlugin node. The properties of the contentPlugin node
-          are displayed on the right side of the page. 
+          are displayed on the right side of the page.
           Now change the class name
           in the hippo:renderer property of this node to org.example.helloworld.HelloWorldPlugin.
         </p>
@@ -266,7 +266,7 @@ mvn jetty:run-war
         <img src="../images/hello-world-plugin.jpg" alt="Hello World screenshot"  style="border:1px solid grey;"/>
         <br/>
       </subsection>
-      
+
     </section>
 
 
@@ -276,21 +276,21 @@ mvn jetty:run-war
         the name of the node that is selected in the tree. To do this, we use a Wicket
         PropertyModel. Change the constructor so it looks like this:
       </p>
-          
+
 <source>
 <![CDATA[
     public HelloWorldPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(descriptor, model, parentPlugin);
         add(new Label("label", new PropertyModel(this, "model.node.name")));
     }
-]]>    
+]]>
 </source>
-          
+
       <p>
         To let the plugin update its model and view once a different node has been
         selected in the tree, we need to override the update() method of Plugin:
       </p>
-          
+
 <source>
 <![CDATA[
     public void update(AjaxRequestTarget target, PluginEvent event) {
@@ -302,7 +302,7 @@ mvn jetty:run-war
             target.addComponent(this);
         }
     }
-]]>    
+]]>
 </source>
 
       <p>
@@ -310,7 +310,7 @@ mvn jetty:run-war
         Follow the same procedure as before to test your plugin.
         The Hello World plugin should now display the name of the node selected in the tree.
       </p>
-      
+
     </section>
 
   </body>

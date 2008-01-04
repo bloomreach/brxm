@@ -25,7 +25,7 @@ public class AcceptRequestDialog extends AbstractWorkflowDialog {
 
     public AcceptRequestDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
-        dialogWindow.setTitle("Accept request");       
+        dialogWindow.setTitle("Accept request");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class MessageContext implements IClusterable {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(MessageContext.class);
 
     private List<Component> updates;

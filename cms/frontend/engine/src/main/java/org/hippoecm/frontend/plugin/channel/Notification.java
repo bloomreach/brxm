@@ -22,16 +22,16 @@ import org.slf4j.LoggerFactory;
 
 public class Notification extends Message {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(Notification.class);
 
     private Request request;
-    
+
     public Notification(String operation, Map map) {
         super(operation, map);
         this.request = null;
     }
-    
+
     public Notification(Request request) {
         super(request.getOperation(), request.getData());
         this.setContext(request.getContext());

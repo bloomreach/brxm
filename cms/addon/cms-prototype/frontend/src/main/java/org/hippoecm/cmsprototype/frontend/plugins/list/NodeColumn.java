@@ -26,15 +26,15 @@ public class NodeColumn extends AbstractColumn {
 
     private Channel channel;
     private String nodePropertyName;
-    
- 
+
+
     public NodeColumn(IModel displayModel, String nodePropertyName ,Channel channel) {
         super(displayModel, nodePropertyName);
         this.channel = channel;
         this.nodePropertyName = nodePropertyName;
     }
 
-    public void populateItem(Item item, String componentId, IModel model) { 
+    public void populateItem(Item item, String componentId, IModel model) {
         item.add(new NodeCell(componentId, (NodeModelWrapper) model, channel, nodePropertyName));
     }
 }

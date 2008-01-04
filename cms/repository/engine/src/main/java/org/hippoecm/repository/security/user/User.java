@@ -23,15 +23,15 @@ import org.hippoecm.repository.security.group.Group;
 import org.hippoecm.repository.security.role.Role;
 
 public interface User {
-    
+
     public void init(AAContext context, String UserId) throws UserNotFoundException;;
-    
+
     public String getUserID() throws UserNotFoundException;
-    
+
     public Set<Group> getMemberships() throws UserNotFoundException;
 
     public Set<Role> getRoles() throws UserNotFoundException;
-    
+
     public Set<Principal> getPrincipals() throws UserNotFoundException;
 
 }

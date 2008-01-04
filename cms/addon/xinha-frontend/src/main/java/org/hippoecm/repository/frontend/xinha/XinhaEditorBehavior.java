@@ -70,10 +70,10 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
         rendered = true;
 
         return new IHeaderContributor[] {
-    
+
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
-    
+
                 public void renderHead(IHeaderResponse response) {
                     StringBuffer sb = new StringBuffer();
                     sb.append("_editor_url = '/xinha/xinha/';\n");
@@ -81,12 +81,12 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                     response.renderJavascript(sb, null);
                 }
             },
-    
+
             HeaderContributor.forJavaScript("/xinha/xinha/XinhaCore.js"),
-    
+
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
-    
+
                 public void renderHead(IHeaderResponse response) {
                     StringBuffer sb = new StringBuffer();
                     Set plugins = new HashSet();
@@ -96,7 +96,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                         for (int i = 0; i < plugin.length; i++)
                             plugins.add(plugin[i]);
                     }
-    
+
                     sb.append("xinha_editors = null;\n");
                     sb.append("xinha_init    = null;\n");
                     sb.append("xinha_config  = null;\n");
@@ -132,14 +132,14 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                     sb.append("  Xinha.startEditors(xinha_editors);\n");
                     sb.append("}\n");
                     sb.append("Xinha._addEvent(window,'load', xinha_init);\n");
-    
+
                     response.renderJavascript(sb, null);
                 }
             },
-    
+
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
-    
+
                 public void renderHead(IHeaderResponse response) {
                     response.renderOnLoadJavascript("xinha_init();");
                 }

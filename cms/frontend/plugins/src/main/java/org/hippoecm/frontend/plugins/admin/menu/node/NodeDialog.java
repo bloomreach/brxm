@@ -46,11 +46,11 @@ public class NodeDialog extends AbstractDialog {
     @Override
     public void ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        
+
         //The actual JCR add node
         Node node = nodeModel.getNode().addNode(getName(), getType());
         JcrNodeModel newModel = new JcrNodeModel(node);
-        
+
         Channel channel = getIncoming();
         if(channel != null) {
             Request request = channel.createRequest("flush", nodeModel.getMapRepresentation());

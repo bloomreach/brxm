@@ -36,10 +36,10 @@ public class FacetResultCollector extends HitCollector {
     private int numhits;
     private Set<String> hits;
     private Map<String,Count> facetMap;
-    private FieldSelector fieldSelector; 
+    private FieldSelector fieldSelector;
     private int offset;
     private int limit;
-    
+
     public FacetResultCollector(IndexReader reader, String facet,  Map<String,Map<String,Count>> resultset, HitsRequested hitsRequested, NamespaceMappings nsMappings) {
         this.reader = reader;
         if(facet != null){
@@ -51,7 +51,7 @@ public class FacetResultCollector extends HitCollector {
              }
         }
         this.numhits = 0;
-        
+
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add(ServicingFieldNames.HIPPO_PATH);
         this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet());
@@ -62,7 +62,7 @@ public class FacetResultCollector extends HitCollector {
         } else {
             this.hits = null;
         }
-        
+
         if(facet != null && resultset.get(facet)!= null) {
              facetMap = resultset.get(facet);
         }
@@ -97,7 +97,7 @@ public class FacetResultCollector extends HitCollector {
                  /*
                   * only without facetMap the numHits are correct directly. With a non-null
                   * facet map, a seperate query is needed to get the correct count
-                  */ 
+                  */
                  ++numhits;
              }
         } catch(Exception ex) {
@@ -105,15 +105,15 @@ public class FacetResultCollector extends HitCollector {
             ex.printStackTrace(System.err);
         }
     }
-    
+
     public Set<String> getHits() {
         return hits;
     }
-    
+
     public int getNumhits() {
         return numhits;
     }
-    
+
     public void setNumhits(int numhits) {
         this.numhits = numhits;
 }

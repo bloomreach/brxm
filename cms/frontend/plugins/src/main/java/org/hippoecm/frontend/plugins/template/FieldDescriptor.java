@@ -68,7 +68,7 @@ public class FieldDescriptor implements IClusterable {
 
         defaults = null;
         constraints = new String[] {};
-        
+
         multiple = nd.allowsSameNameSiblings();
         prot = nd.isProtected();
         binary = false;
@@ -84,7 +84,7 @@ public class FieldDescriptor implements IClusterable {
 
         multiple = prot = binary = mandatory = false;
     }
-    
+
     public String getName() {
         return name;
     }

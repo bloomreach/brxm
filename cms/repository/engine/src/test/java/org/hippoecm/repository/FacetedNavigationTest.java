@@ -55,46 +55,46 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         check("/navigation/xyz/x2/y2/z2", 2, 2, 2);
         commonEnd();
     }
-    
+
     public void testGetItemFromSession() throws RepositoryException {
         commonStart();
-        
+
         String basePath = "/navigation/xyz/x1/y1/z2";
         Item item = session.getItem(basePath);
         assertNotNull(item);
-        assertTrue(item instanceof Node);        
+        assertTrue(item instanceof Node);
         Node baseNode = (Node)item;
-        
+
         Node resultSetNode_1 = baseNode.getNode(HippoNodeType.HIPPO_RESULTSET);
         assertNotNull(resultSetNode_1);
-        
+
         Node resultSetNode_2 = (Node)session.getItem(basePath + "/" + HippoNodeType.HIPPO_RESULTSET);
         assertNotNull(resultSetNode_2);
-        
+
         commonEnd();
     }
 
     public void testGetItemFromNode() throws RepositoryException {
         commonStart();
-        
+
         String basePath = "/navigation/xyz/x1/y1/z2";
         Item item = session.getItem(basePath);
         assertNotNull(item);
-        assertTrue(item instanceof Node);        
+        assertTrue(item instanceof Node);
         Node baseNode = (Node)item;
-        
+
         Node resultSetNode_1 = baseNode.getNode(HippoNodeType.HIPPO_RESULTSET);
         assertNotNull(resultSetNode_1);
-        
+
         Node resultSetNode_2 = (Node)session.getItem(basePath + "/" + HippoNodeType.HIPPO_RESULTSET);
         assertNotNull(resultSetNode_2);
-        
+
         commonEnd();
     }
 
     public void testVirtualNodeHasNoJcrUUID() throws RepositoryException {
         commonStart();
-        
+
         Node node = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1").getNode("y1").getNode("z2");
         node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
 
@@ -109,7 +109,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
              *  assertTrue(node.isNodeType("hippo:referenceable"));
              */
         } while(iter.hasNext());
-        
+
         commonEnd();
     }
 

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class HippoHierarchyManager implements HierarchyManager {
     private static Logger log = LoggerFactory.getLogger(HippoHierarchyManager.class);
-    
+
     protected HierarchyManager hierMgr;
     protected HippoSessionItemStateManager itemStateMgr;
 
@@ -65,6 +65,6 @@ public class HippoHierarchyManager implements HierarchyManager {
     }
 
     public boolean isAncestor(NodeId nodeId, ItemId itemId) throws ItemNotFoundException, RepositoryException {
-        return hierMgr.isAncestor(nodeId, itemId);        
+        return hierMgr.isAncestor(nodeId, itemId);
     }
 }

@@ -35,7 +35,7 @@ public class MenuPlugin extends Plugin {
 
     public MenuPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        
+
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         add(new DialogLink("node-dialog", "Add Node", NodeDialog.class, model, incoming, factory));

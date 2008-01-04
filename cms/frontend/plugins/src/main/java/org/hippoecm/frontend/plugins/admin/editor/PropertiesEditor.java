@@ -33,11 +33,11 @@ import org.slf4j.LoggerFactory;
 
 public class PropertiesEditor extends DataView {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(PropertiesEditor.class);
 
     private JcrPropertiesProvider provider;
-    
+
     public PropertiesEditor(String id, JcrPropertiesProvider model) {
         super(id, model);
         provider = model;
@@ -93,7 +93,7 @@ public class PropertiesEditor extends DataView {
         }
         return result;
     }
-    
+
     private AjaxLink addLink(String id, final JcrPropertyModel model) {
         return new AjaxLink(id, model) {
             private static final long serialVersionUID = 1L;
@@ -116,7 +116,7 @@ public class PropertiesEditor extends DataView {
             }
         };
     }
-    
+
     public void setProvider(JcrPropertiesProvider provider) {
         this.provider.setChainedModel(provider.getChainedModel());
     }

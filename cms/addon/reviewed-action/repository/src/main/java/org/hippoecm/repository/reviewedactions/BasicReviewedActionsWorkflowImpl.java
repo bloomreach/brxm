@@ -67,7 +67,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
             current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUsername());
         } else {
             throw new WorkflowException("publication request already pending");
-        }            
+        }
     }
 
     public void publish() throws WorkflowException, MappingException {

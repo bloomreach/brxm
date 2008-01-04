@@ -94,7 +94,7 @@ public class ValueTemplate extends Panel {
         }
         engine.onChange(target);
     }
-    
+
     // privates
 
     private Component deleteLink(String id, final JcrPropertyModel model) throws RepositoryException {

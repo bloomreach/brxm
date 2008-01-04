@@ -37,13 +37,13 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractWorkflowDialog extends AbstractDialog {
-    
+
     static final Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
 
     public AbstractWorkflowDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
     }
-    
+
     protected Workflow getWorkflow() {
         Plugin owningPlugin = getOwningPlugin();
         Workflow workflow = null;
@@ -51,7 +51,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
             JcrNodeModel nodeModel = owningPlugin.getNodeModel();
             WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
 
-            //TODO: add optional property 'workflowcategory' to 
+            //TODO: add optional property 'workflowcategory' to
             //frontend plugin configuration nodes and use that instead of the plugin id.
             String workflowCategory = owningPlugin.getDescriptor().getPluginId();
             WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, nodeModel.getNode());
@@ -70,12 +70,12 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         doOk();
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
-        // before saving (which possibly means deleting), find the handle 
+        // before saving (which possibly means deleting), find the handle
         JcrNodeModel handle = nodeModel;
         while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
             handle = handle.getParentModel();
         }
-        
+
         nodeModel.getNode().getSession().save();
         nodeModel.getNode().getSession().refresh(true);
 
@@ -86,10 +86,10 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
             channel.send(request);
         }
     }
-    
+
     /**
      * This abstract method is called from ok() and should implement
-     * the action to be performed when the dialog's ok button is clicked. 
+     * the action to be performed when the dialog's ok button is clicked.
      */
     protected abstract void doOk() throws Exception;
 

@@ -46,14 +46,14 @@ public class TransactionTest extends TestCase {
         root.addNode("transactiontest");
         session.save();
     }
-   
+
     public void tearDown() throws Exception {
         session.getRootNode().getNode("transactiontest").remove();
         session.save();
         session.logout();
         server.close();
     }
-    
+
     /**
      * Create Atomikos UserTransActionManger instance
      * @return
@@ -103,7 +103,7 @@ public class TransactionTest extends TestCase {
             // always rollback for test
             ut.rollback();
         }
-        try { 
+        try {
             txRoot.getNode("x2");
             fail("Node node not removed after rollback.");
         } catch (PathNotFoundException e) {

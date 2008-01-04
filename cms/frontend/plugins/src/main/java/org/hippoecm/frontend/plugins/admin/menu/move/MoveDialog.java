@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class MoveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
     private MoveTargetTreeView tree;
@@ -41,7 +41,7 @@ public class MoveDialog extends AbstractDialog {
 
     public MoveDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
-        
+
         dialogWindow.setTitle("Move selected node");
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
@@ -104,7 +104,7 @@ public class MoveDialog extends AbstractDialog {
         if (model != null) {
             try {
                 infoPanel.setDestinationPath(model.getNode().getPath());
-            } 
+            }
             catch (RepositoryException e) {
                 log.error(e.getMessage());
             }

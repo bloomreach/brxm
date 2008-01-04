@@ -64,14 +64,14 @@ public class RepositoryRole implements Role {
      * The role's principals
      */
     private Set<Principal> principals = new HashSet<Principal>();
-    
+
     /**
      * The admin role
      */
     private static final String ADMIN_ROLE_NAME = "admin";
 
     /**
-     * Logger 
+     * Logger
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -95,7 +95,7 @@ public class RepositoryRole implements Role {
         }
         return Collections.unmodifiableSet(principals);
     }
-    
+
     public String getRoleId() throws RoleNotFoundException {
         if (!initialized) {
             throw new RoleNotFoundException("Not initialized.");
@@ -135,7 +135,7 @@ public class RepositoryRole implements Role {
             }
             principals.add(new AdminPrincipal());
         }
-        
+
         try {
             Node facetAuthPath = role.getNode(HippoNodeType.FACETAUTH_PATH);
             principals.addAll(RepositoryLoginHelper.getFacetAuths(facetAuthPath));

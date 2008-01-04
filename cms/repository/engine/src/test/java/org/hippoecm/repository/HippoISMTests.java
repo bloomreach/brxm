@@ -23,28 +23,28 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 /**
  * These tests try all kind of variants of browsing through facetted navigation and
- * changing, with and without saving physical content (real nodes and external nodes), 
+ * changing, with and without saving physical content (real nodes and external nodes),
  * changing content from within other sessions, and concurrent runs. The tests should indicate
  * when there is a problem with the HippoLocalISM. Though take into account, that we are not testing
  * the HippoLocalISM directly because this is simply not possible, but only indirect by doing many
  * different tests, involving different JCR calls. This class cannot garantuee that there are
- * no possible errors in the HippoLocalISM. Though, it might be the first indication when something 
+ * no possible errors in the HippoLocalISM. Though, it might be the first indication when something
  * regargding the HippoLocalISM is broken.
- * 
+ *
  * If one of these tests fails, it might indicate that the <code>HippoLocalItemStateManager</code>
  * has a problem. Also changes to the item state managers in Jackrabbit trunk might result
- * in errors in these tests (the HippoLocalItemStateManager is pretty close coupled to the ISM;'s 
+ * in errors in these tests (the HippoLocalItemStateManager is pretty close coupled to the ISM;'s
  * in Jackrabbit)
  */
 public class HippoISMTests extends FacetedNavigationAbstractTest {
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-    
+
     public void testTrivialMultipleTraverseVirtualNavigation() throws RepositoryException{
         try {
             commonStart();
             // external node indicates for the half regular half virtual nodes
-            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz"); 
+            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
             traverse(externalNode);
             traverse(externalNode);
             traverse(externalNode);
@@ -58,25 +58,25 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             commonEnd();
         }
     }
-    
+
     public void testSaveRefetchExternalNode() throws RepositoryException {
         try {
             commonStart();
             Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
-            
+
             long countBefore = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
             session.refresh(false);
             session.save();
-            
+
             node = session.getRootNode().getNode("documents");
-            
+
             for(int i =1 ; i < 50; i++){
                 child = node.addNode("test"+i, HippoNodeType.NT_DOCUMENT);
                 child.setProperty("x", "x1");
                 child.setProperty("y", "yy");
                 node.save();
                 // refetch searchNode
-                searchNode = session.getRootNode().getNode("navigation").getNode("xyz"); 
+                searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
                 long countAfter = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
                 assertEquals(countBefore + i, countAfter);
             }
@@ -92,7 +92,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         }
     }
-    
+
     public void testSaveNoRefetchExternalNode() throws RepositoryException {
         try {
             commonStart();
@@ -100,13 +100,13 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             traverse(searchNode);
             traverse(searchNode);
             long countBefore = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
-            
+
             node = session.getRootNode().getNode("documents");
             child = node.addNode("test", HippoNodeType.NT_DOCUMENT);
             child.setProperty("x", "x1");
             child.setProperty("y", "yy");
             node.save();
-            
+
             /*
              * Without a refetch of the searchNode after a save(), a repository exception is allowed
              * because the node might not exist anymore. Refetch of a virtual/external node is needed after a save().
@@ -126,7 +126,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
 
-    
+
     public void testCorrectRemoveExternalNodeSave() throws RepositoryException{
         try{
             commonStart();
@@ -137,7 +137,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             session.save();
             externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
             externalNode.remove();
-            session.save(); 
+            session.save();
         } catch(NullPointerException ex) {
             fail(ex.getMessage());
         } catch(RepositoryException ex) {
@@ -147,11 +147,11 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             commonEnd();
         }
-        
+
     }
-    
+
     public void testWrongRemoveExternalNodeSave() throws RepositoryException{
-       
+
         try{
             commonStart();
             //external node indicates for the half regular half virtual nodes
@@ -161,7 +161,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             session.save();
             // without refetch gives correctly an exception!
             externalNode.remove();
-            session.save(); 
+            session.save();
             fail("An exception should have been thrown");
         } catch(NullPointerException ex) {
             fail(ex.getMessage());
@@ -175,7 +175,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             commonEnd();
         }
     }
-    
+
     public void testCorrectRemoveVirtualNodeSave() throws RepositoryException{
         try{
             commonStart();
@@ -186,7 +186,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             session.save();
             virtualNode = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1");
             virtualNode.remove();
-            session.save(); 
+            session.save();
         } catch(NullPointerException ex) {
             fail(ex.getMessage());
         } catch(RepositoryException ex) {
@@ -196,10 +196,10 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             commonEnd();
         }
-        
+
     }
 
-    
+
     public void testWrongRemoveVirtualNodeSave() throws RepositoryException{
         try{
             commonStart();
@@ -210,7 +210,7 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             session.save();
             // without refetch gives correctly an exception!
             virtualNode.remove();
-            session.save(); 
+            session.save();
             fail("An exception should have been thrown");
         } catch(NullPointerException ex) {
             fail(ex.getMessage());
@@ -225,9 +225,9 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
 
-    
+
     public void testPerformance() throws RepositoryException {
-    
+
     }
 
 

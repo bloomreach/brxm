@@ -90,7 +90,7 @@ public class RepositoryUser implements User {
     private Set<Principal> principals = new HashSet<Principal>();
 
     /**
-     * Logger 
+     * Logger
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -228,7 +228,7 @@ public class RepositoryUser implements User {
                 }
                 // check membership
                 boolean isMember = false;
-                Value[] memberValues = group.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues(); 
+                Value[] memberValues = group.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
                 for (int i = 0; i < memberValues.length; i++) {
                     if (memberValues[i].getString().equals(userId)) {
                         isMember = true;

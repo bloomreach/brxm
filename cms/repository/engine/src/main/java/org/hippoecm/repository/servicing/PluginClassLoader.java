@@ -38,7 +38,7 @@ public class PluginClassLoader extends RepositoryClassLoader {
 
     /**
      * Used by RMI to construct codebase for the classes that have been loaded.
-     * The "jcr" protocol is not generally available and would have to be 
+     * The "jcr" protocol is not generally available and would have to be
      * registered globally in a J2EE environment.  Assume that the client is using
      * a Hippo classloader, i.e. uses the same path in the repository.
      *

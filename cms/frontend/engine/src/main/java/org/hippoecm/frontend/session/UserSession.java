@@ -99,7 +99,7 @@ public class UserSession extends WebSession {
     private class JcrSessionModel extends LoadableDetachableModel {
         // The jcr session is wrapped in a LoadableDetachableModel because it can't be serialized
         // and therefore cannot be a direct field of the wicket session. Wrapping the jcr session
-        // like this has the added bonus of being a very simple reconnect mechanism.  
+        // like this has the added bonus of being a very simple reconnect mechanism.
         private static final long serialVersionUID = 1L;
 
         private ValueMap credentials;
@@ -140,7 +140,7 @@ public class UserSession extends WebSession {
             } catch (Exception e) {
                 detach();
             }
-            // this will call load() only if detached 
+            // this will call load() only if detached
             return (Session) getObject();
         }
 

@@ -46,7 +46,7 @@ public class HippoQuerySample extends TestCase {
         Node root = session.getRootNode();
         session.save();
     }
-   
+
     public void tearDown() throws Exception {
         session.save();
         session.logout();

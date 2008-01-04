@@ -108,7 +108,7 @@ public class RepositoryServlet extends HttpServlet {
     }
 
     /**
-     * 
+     *
      * @param config
      * @throws ServletException
      */
@@ -241,11 +241,11 @@ public class RepositoryServlet extends HttpServlet {
                 path = path.substring(1);
             }
             writer.print("Accessing node <code>");
-            
+
             writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "//\">/root</a>");
-            
+
             path = URLDecoder.decode(path, "UTF-8");
-            
+
             String pathElt = "";
             String pathEltName = "";
             String currentPath = "";

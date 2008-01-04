@@ -51,7 +51,7 @@ public class ResetDialog extends AbstractDialog {
     @Override
     public void ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        
+
         // The actual JCR refresh
         nodeModel.getNode().getSession().refresh(false);
 
@@ -59,7 +59,7 @@ public class ResetDialog extends AbstractDialog {
         if (channel != null) {
             Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
             channel.send(request);
-            
+
             if (hasPendingChanges) {
                 request = channel.createRequest("flush", nodeModel.findRootModel().getMapRepresentation());
                 channel.send(request);

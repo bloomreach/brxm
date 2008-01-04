@@ -37,10 +37,10 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 public class SortableDocumentsProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
-    
+
     Folder folder;
     List<NodeModelWrapper> resources;
-    
+
     public SortableDocumentsProvider(JcrNodeModel model) {
         this.folder = new Folder(model);
         setSort("name", true);
@@ -68,7 +68,7 @@ public class SortableDocumentsProvider extends SortableDataProvider {
     public int size() {
         return folder.getSubFoldersAndDocuments().size();
     }
-    
+
     private void sortResources() {
         Collections.sort(resources, new Comparator<NodeModelWrapper>() {
 
@@ -80,7 +80,7 @@ public class SortableDocumentsProvider extends SortableDataProvider {
                     }
             }
         });
-        
+
         if (getSort().isAscending() == false) {
             Collections.reverse(resources);
         }

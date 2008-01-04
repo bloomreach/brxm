@@ -37,7 +37,7 @@ import org.apache.webdav.lib.methods.PropPatchMethod;
 import org.apache.webdav.lib.properties.ResourceTypeProperty;
 
 /**
- * Class to hold a WebDAV node. The properties and the content are fetched from the 
+ * Class to hold a WebDAV node. The properties and the content are fetched from the
  * repository when needed (lazy method).
  */
 public class WebdavNode {
@@ -50,10 +50,10 @@ public class WebdavNode {
 
     /** the initialized httpClient */
     private HttpClient httpClient;
-    
+
     /** byte array to hold the contents */
     private byte[] contents = null;
-    
+
     /**
      * Setup the node
      * @param httpClient
@@ -63,7 +63,7 @@ public class WebdavNode {
         this.httpClient = httpClient;
         this.uri = uri;
     }
-    
+
     /**
      * Clear the cache of the content and the properties.
      */
@@ -79,7 +79,7 @@ public class WebdavNode {
     public String getUri() {
         return uri;
     }
-    
+
     /**
      * Execute a http method
      * @param method
@@ -145,7 +145,7 @@ public class WebdavNode {
                 if (propfindResult == 207) {
                     Enumeration responseUrls = propfind.getAllResponseURLs();
                     if (responseUrls.hasMoreElements()) {
-                        Enumeration propertiesEnumeration = propfind.getResponseProperties((String) responseUrls.nextElement());   
+                        Enumeration propertiesEnumeration = propfind.getResponseProperties((String) responseUrls.nextElement());
                         while (propertiesEnumeration.hasMoreElements()) {
                             Property prop = (Property) propertiesEnumeration.nextElement();
                             properties.put(new PropertyName(prop.getNamespaceURI(), prop.getLocalName()), prop);
@@ -174,11 +174,11 @@ public class WebdavNode {
     public void setProperty(String namespaceUri, String name, String value) throws ProcessingException, IOException {
         int status = 0;
         String statusText = null;
-        
+
         PropPatchMethod proppatch = new PropPatchMethod(uri);
         PropertyName propName = new PropertyName(namespaceUri, name);
         proppatch.addPropertyToSet(propName.getLocalName(), value, null, propName.getNamespaceURI());
-        
+
         try {
             status = executeMethod(proppatch);
             statusText = URIUtil.decode(proppatch.getStatusText());
@@ -198,7 +198,7 @@ public class WebdavNode {
         } else {
             throw new ProcessingException("ERROR invalid status from server: " + status + "(" + statusText + ")");
         }
-        
+
     }
 
     /**
@@ -216,7 +216,7 @@ public class WebdavNode {
         PropPatchMethod proppatch = new PropPatchMethod(uri);
         PropertyName propName = new PropertyName(namespaceUri, name);
         proppatch.addPropertyToRemove(propName.getLocalName(), null, propName.getNamespaceURI());
-        
+
         try {
             status = executeMethod(proppatch);
             statusText = URIUtil.decode(proppatch.getStatusText());
@@ -236,9 +236,9 @@ public class WebdavNode {
         } else {
             throw new ProcessingException("ERROR invalid status from server: " + status + "(" + statusText + ")");
         }
-        
+
     }
-    
+
     /**
      * Get the contents of a node from the cache or fetch it from the repository
      * @return the contents of the node
@@ -293,7 +293,7 @@ public class WebdavNode {
             throw new ProcessingException("ERROR invalid status from server: " + status + "(" + statusText + ")");
         }
     }
-    
+
     /**
      * Delete the node
      * @throws IOException
@@ -303,7 +303,7 @@ public class WebdavNode {
         int status = 0;
         String statusText = null;
         DeleteMethod delete = new DeleteMethod(uri);
-        
+
         try {
             status = executeMethod(delete);
             statusText = URIUtil.decode(delete.getStatusText());
@@ -323,7 +323,7 @@ public class WebdavNode {
         } else {
             throw new ProcessingException("ERROR invalid status from server: " + status + "(" + statusText + ")");
         }
-        
+
     }
 
 }

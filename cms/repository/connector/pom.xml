@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
   -->
 
@@ -27,19 +27,19 @@
     <version>2.01.00-dev</version>
     <relativePath>..</relativePath>
   </parent>
-  
+
   <name>Repository connector</name>
   <description>Hippo ECM repository connector</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-repository-connector</artifactId>
   <packaging>jar</packaging>
-  
+
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/connector</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/connector</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/repository/connector</url>
   </scm>
- 
+
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
@@ -70,14 +70,14 @@
       <groupId>jpox</groupId>
       <artifactId>jpox-core</artifactId>
     </dependency>
-    
+
     <!-- provided -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- test -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -95,7 +95,7 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- Testing needs a JTA implementation -->
     <dependency>
       <groupId>com.atomikos</groupId>
@@ -157,7 +157,7 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins> 
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -171,7 +171,7 @@
             </property>
           </systemProperties>
         </configuration>
-      </plugin>     
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -227,5 +227,5 @@
       </plugin>
    </plugins>
   </build>
-  
+
 </project>

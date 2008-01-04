@@ -22,14 +22,14 @@ public class ExtractorException extends Exception {
 
     /**
      * The ExtractorException class
-     * 
+     *
      */
     public ExtractorException() {
         super();
     }
 
     /**
-     * 
+     *
      * @param message
      */
     public ExtractorException(String message) {
@@ -37,7 +37,7 @@ public class ExtractorException extends Exception {
     }
 
     /**
-     * 
+     *
      * @param cause
      */
     public ExtractorException(Throwable cause) {
@@ -45,7 +45,7 @@ public class ExtractorException extends Exception {
     }
 
     /**
-     * 
+     *
      * @param message
      * @param cause
      */

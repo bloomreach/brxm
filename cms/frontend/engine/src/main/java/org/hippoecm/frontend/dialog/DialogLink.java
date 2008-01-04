@@ -40,10 +40,10 @@ public class DialogLink extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 dialogWindow.show(target);
-            } 
+            }
         };
         add(link);
-        
+
         link.add(new Label("dialog-link-text", linktext));
     }
 

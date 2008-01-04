@@ -56,16 +56,16 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 
 class HippoLocalItemStateManager extends XAItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
-    
+
     /** Mask pattern indicating a regular, non-virtual JCR item
      */
     static final int ITEM_TYPE_REGULAR  = 0x00;
-    
+
     /** Mask pattern indicating an externally defined node, patterns can
      * be OR-ed to indicate both external and virtual nodes.
      */
     static final int ITEM_TYPE_EXTERNAL = 0x01;
-    
+
     /** Mask pattern indicating a virtual node, patterns can be OR-ed to
      * indicate both external and virtual nodes.
      */
@@ -89,7 +89,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         virtualProviders = new HashMap<Name,HippoVirtualProvider>();
         virtualProperties = new HashSet<Name>();
     }
-    
+
     void register(Name nodeTypeName, HippoVirtualProvider provider) {
         virtualProviders.put(nodeTypeName, provider);
     }
@@ -195,7 +195,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         }
         super.edit();
     }
-    
+
     @Override
     protected void update(ChangeLog changeLog)
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
@@ -205,7 +205,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         filteredChangeLog.invalidate();
         super.update(filteredChangeLog);
     }
-    
+
     @Override
     public void update()
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
@@ -292,13 +292,13 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         }
         return state;
     }
-    
+
     @Override
     public PropertyState getPropertyState(PropertyId id) throws NoSuchItemStateException, ItemStateException {
         return super.getPropertyState(id);
     }
-    
-        
+
+
     int isVirtual(ItemState state) {
         if(state.isNode()) {
             int type = ITEM_TYPE_REGULAR;
@@ -333,17 +333,17 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         }
     }
     }
-        
+
     class FilteredChangeLog extends ChangeLog {
-        
+
         private ChangeLog upstream;
         private Set<ItemState> deletedExternals;
-        
+
         FilteredChangeLog(ChangeLog changelog) {
             upstream = changelog;
             deletedExternals = new HashSet();
         }
-        
+
         void invalidate() {
             for(Iterator iter = upstream.deletedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
@@ -449,7 +449,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         @Override public String toString() {
             return upstream.toString();
         }
-        
+
         class FilteredStateIterator implements Iterator {
             Iterator actualIterator;
             ItemState current;
@@ -487,6 +487,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 actualIterator.remove();
             }
         }
-        
+
     }
 }

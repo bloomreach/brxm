@@ -45,7 +45,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
      * the user ID that was used to acquire this session
      */
     private String userId;
-    
+
     protected XASessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
@@ -84,7 +84,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
         AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
         try {
-            
+
             AMContext ctx = new AMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()), ((RepositoryImpl)rep).getFileSystem(), subject, getItemStateManager().getAtticAwareHierarchyMgr(), ((RepositoryImpl)rep).getNamespaceRegistry(), wsp.getName());
             AccessManager accessMgr = (AccessManager) amConfig.newInstance();
             accessMgr.init(ctx);
@@ -119,7 +119,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
             userId = "Unknown";
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

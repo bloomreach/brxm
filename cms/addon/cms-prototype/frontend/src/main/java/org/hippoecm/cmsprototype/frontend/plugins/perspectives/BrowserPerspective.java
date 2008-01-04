@@ -56,7 +56,7 @@ public class BrowserPerspective extends Plugin {
         }
         super.receive(notification);
     }
-    
+
     @Override
     public void handle(Request request) {
         if ("select".equals(request.getOperation())) {

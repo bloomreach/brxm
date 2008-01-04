@@ -24,7 +24,7 @@ public class EditorPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     private TemplateEngine engine;
-    
+
     public EditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 

@@ -34,9 +34,9 @@ public class ServicingNameFormat {
                 + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx + 1);
         return internalName;
     }
-    
+
     public static String getInternalFacetName(String facet, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
-        
+
         Name nodeName = NameFactoryImpl.getInstance().create("", facet);
         String internalName = nsMappings.translatePropertyName(nodeName);
         //String internalName = NameFormat.format(nodeName,nsMappings);
@@ -45,6 +45,6 @@ public class ServicingNameFormat {
                 + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx + 1);
         return internalName;
     }
-    
-    
+
+
 }

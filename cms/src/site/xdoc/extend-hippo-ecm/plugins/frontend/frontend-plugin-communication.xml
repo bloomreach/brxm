@@ -4,17 +4,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License"); 
-  you may not use this file except in compliance with the License. 
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" 
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  See the License for the specific language governing permissions and 
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
   limitations under the License.
 -->
 <document>
@@ -49,7 +49,7 @@
           by calling their update() method.
         </p>
       </subsection>
-      
+
       <subsection name="Events">
         <p>
           Plugin events are the means of communication between plugins. The unit of communication however is a
@@ -66,7 +66,7 @@
           </li>
         </ul>
       </subsection>
-      
+
       <subsection name="Example">
         <p>
           A PluginEvent is created using three parameters: the plugin responsable for the event, the type of event, and
@@ -85,12 +85,12 @@ getPluginManager().update(target, event);]]>
 <![CDATA[public void update(AjaxRequestTarget target, PluginEvent event) {
     // get the JcrNodeModel from the event
     JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
-     
+
     // update the plugin's model
     if (newModel != null) {
         setNodeModel(newModel);
     }
-    
+
     // update the plugin's view
     if (target != null && findPage() != null) {
         target.addComponent(this);
@@ -98,7 +98,7 @@ getPluginManager().update(target, event);]]>
 }]]>
         </source>
       </subsection>
-      
+
       <subsection name="Configuration">
         <p>
           Incoming and outgoing channels are configured in the frontend plugin configuration, which

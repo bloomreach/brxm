@@ -36,7 +36,7 @@ public class JCRHelper {
     private static final String SELECTOR_NODETYPE = "hippo:facetselect";
     private static final String DOCUMENT_NODETYPE = "hippo:document";
     private static final String AUTHOR_NODETYPE = "hipposample:author";
-    
+
     // properties
     private static final String STATE_PROPERTY = "state";
     private static final String CONTENT_PROPERTY = "content";
@@ -45,7 +45,7 @@ public class JCRHelper {
     private static final String VALUES_PROPERTY = "hippo:values";
     private static final String MODES_PROPERTY = "hippo:modes";
 
-    
+
     /**
      * Check the JCR import root path and create the path if it doesn't exist
      * @throws RepositoryException
@@ -55,7 +55,7 @@ public class JCRHelper {
         if (path == null) {
             throw new IllegalArgumentException("Path cannot be null");
         }
-        
+
         if (path.startsWith("/")) {
             path = path.substring(1, path.length());
         }
@@ -63,16 +63,16 @@ public class JCRHelper {
         if ("".equals(path)) {
             throw new IllegalArgumentException("Path cannot be / or empty");
         }
-        
+
 
         javax.jcr.Node current = (javax.jcr.Node) session.getRootNode();
-        
+
         try {
             return current.getNode(path);
         } catch(PathNotFoundException e) {
             // ok, we should create it
         }
-        
+
         // TODO: can be optimized
         String currentPath = "";
         StringTokenizer st = new StringTokenizer(path, "/");
@@ -92,7 +92,7 @@ public class JCRHelper {
             }
             currentPath += "/" + nodeName;
 
-            // shift to child node 
+            // shift to child node
             current = current.getNode(nodeName);
         }
         return current;
@@ -115,7 +115,7 @@ public class JCRHelper {
         Node node = handle.addNode(name, AUTHOR_NODETYPE);
         return node;
     }
-    
+
     /**
      * Create statndard document with a hippo:handle
      * @param session
@@ -135,7 +135,7 @@ public class JCRHelper {
         doc.setProperty(STATE_PROPERTY, "unpublished");
         return doc;
     }
-    
+
     /**
      * create a hippo:handle, return the current handle if the node already exists
      * @param session
@@ -157,7 +157,7 @@ public class JCRHelper {
         }
         return parent.addNode(name, HANDLE_NODETYPE);
     }
-    
+
     /**
      * Set the content property (of a document)
      * @param session
@@ -182,12 +182,12 @@ public class JCRHelper {
             doc.addNode("authors");
         }
         Node authorsNode = doc.getNode("authors");
-        
+
         // author already set for this doc
         if (authorsNode.hasNode(author)) {
             return;
         }
-        
+
         // Make sure basepath starts with a slash
         Node selector = authorsNode.addNode(author, SELECTOR_NODETYPE);
         // map directly on author handle
@@ -196,7 +196,7 @@ public class JCRHelper {
         selector.setProperty(FACETS_PROPERTY, "name");
         selector.setProperty(VALUES_PROPERTY, author);
     }
-    
+
     /**
      * Create a published version of the document
      * @param session

@@ -80,7 +80,7 @@ public class ServicingDecoratorFactory
         } else
             return sessionDecorators.get(session);
     }
-    
+
     public Workspace getWorkspaceDecorator(Session session, Workspace workspace) {
         if(!workspaceDecorators.containsKey(workspace)) {
             WorkspaceDecorator wrapper = new WorkspaceDecorator(this, session, workspace);
@@ -89,7 +89,7 @@ public class ServicingDecoratorFactory
         } else
             return workspaceDecorators.get(workspace);
     }
-    
+
     public Node getNodeDecorator(Session session, Node node) {
         if (node instanceof Version) {
             return getVersionDecorator(session, (Version) node);
@@ -99,28 +99,28 @@ public class ServicingDecoratorFactory
             return new ServicingNodeImpl(this, session, node);
         }
     }
-    
+
     public Property getPropertyDecorator(Session session, Property property) {
         return new PropertyDecorator(this, session, property);
     }
-    
+
     public Lock getLockDecorator(Session session, Lock lock) {
         return new LockDecorator(this, session, lock);
     }
-    
+
     public Version getVersionDecorator(Session session, Version version) {
         return new VersionDecorator(this, session, version);
     }
-    
+
     public Version getVersionDecorator(Session session, Version version, String path, int depth) {
         return new VersionDecorator(this, session, version);
     }
-    
+
     public VersionHistory getVersionHistoryDecorator(Session session,
                                                      VersionHistory versionHistory) {
         return new VersionHistoryDecorator(this, session, versionHistory);
     }
-    
+
     public Item getItemDecorator(Session session, Item item) {
         if (item instanceof Version) {
             return getVersionDecorator(session, (Version) item);
@@ -134,26 +134,26 @@ public class ServicingDecoratorFactory
             return new ItemDecorator(this, session, item);
         }
     }
-    
+
     public QueryManager getQueryManagerDecorator(Session session,
                                                  QueryManager queryManager) {
         return new QueryManagerDecorator(this, session, queryManager);
     }
-    
+
     public Query getQueryDecorator(Session session, Query query) {
         return new QueryDecorator(this, session, query);
     }
-    
+
     public QueryResult getQueryResultDecorator(Session session,
                                                QueryResult result) {
         return new QueryResultDecorator(this, session, result);
     }
-    
+
     public ValueFactory getValueFactoryDecorator(Session session,
                                                  ValueFactory valueFactory) {
         return new ValueFactoryDecorator(this, session, valueFactory);
     }
-    
+
     public ItemVisitor getItemVisitorDecorator(Session session,
                                                ItemVisitor visitor) {
         return new ItemVisitorDecorator(this, session, visitor);

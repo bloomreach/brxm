@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 <rep='internal'>
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
@@ -21,7 +21,7 @@
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <hipposample='http://www.hippoecm.org/sample/nt/1.0'>
 
-// TODO: 
+// TODO:
 // - (Unique) contraints on hippo:id's?
 // - verioning rules
 
@@ -52,11 +52,11 @@
 - hipposample:review (string)
 
 [hipposample:newsArticle] > hippo:document
-- hipposample:id (long) 
+- hipposample:id (long)
 //  > [(0,)]
 - hipposample:categoryId (long)
   multiple
-- hipposample:newsArticleId (long) 
+- hipposample:newsArticleId (long)
   multiple
 - hipposample:magzineId (long)
   multiple

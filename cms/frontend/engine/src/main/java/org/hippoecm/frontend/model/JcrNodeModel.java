@@ -50,7 +50,7 @@ public class JcrNodeModel extends ItemModelWrapper {
         map.put("node", itemModel.getPath());
         return map;
     }
-    
+
     public HippoNode getNode() {
         return (HippoNode) itemModel.getObject();
     }

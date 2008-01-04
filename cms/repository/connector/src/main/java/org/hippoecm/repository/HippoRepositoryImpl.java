@@ -39,7 +39,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
 
     protected Repository repository;
     protected final Logger log = LoggerFactory.getLogger(HippoRepositoryImpl.class);
-    
+
     private String JTSLookupName = "java:comp/env/TransactionManager";
 
     private void initialize() {
@@ -73,7 +73,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
     }
 
     /**
-     * Mimic jcr repository login. 
+     * Mimic jcr repository login.
      * @return Session with Anonymous credentials
      * @throws LoginException
      * @throws RepositoryException
@@ -111,7 +111,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
         }
         return session;
     }
-    
+
     public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
         return login(credentials, null);
     }
@@ -119,7 +119,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
     public void close() {
         HippoRepositoryFactory.unregister(this);
     }
-    
+
     /**
      * Get a UserTransaction from the JTA transaction manager through JNDI
      * @param session
@@ -142,7 +142,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
     }
 
     /**
-     * Get a UserTransaction from the JTA transaction manager. 
+     * Get a UserTransaction from the JTA transaction manager.
      * @param tm the (external) transaction manager
      * @param session
      * @return a new UserTransactionImpl object

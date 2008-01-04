@@ -61,9 +61,9 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
     public void testFullFacetedNavigationTraversal() throws RepositoryException, IOException {
         numDocs = 500;
         long tBefore, tAfter;
-        
+
         Node node = commonStart();
-        
+
         tBefore = System.currentTimeMillis();
         facetedNavigationNodeTraversal(node, 1, node.getDepth() + 10);
         tAfter = System.currentTimeMillis();
@@ -84,7 +84,7 @@ public class FacetedNavigationPerfTest extends FacetedNavigationAbstractTest {
                 if(childNode.getDepth() <= depth ) {
                     facetedNavigationNodeTraversal(childNode, indent + 6, depth);
                 }
-            } 
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ package org.hippoecm.repository.security;
 import javax.jcr.Session;
 
 /**
- * Authentication and Authorization context for the Repository implementations 
+ * Authentication and Authorization context for the Repository implementations
  *
  */
 public class RepositoryAAContext implements AAContext {

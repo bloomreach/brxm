@@ -25,14 +25,14 @@ import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
-    
+
     private boolean logout = false;
 
     public LogoutDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
         dialogWindow.setTitle("Logout");
         add(new Label("logout-message", "Do you want to logout?"));
-        
+
         dialogWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
             public void onClose(AjaxRequestTarget target) {
@@ -48,7 +48,7 @@ public class LogoutDialog extends AbstractDialog {
     protected void ok() throws Exception {
         logout = true;
     }
-    
+
     @Override
     protected void cancel() {
     }

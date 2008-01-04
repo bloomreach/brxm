@@ -31,11 +31,11 @@ import org.apache.lucene.analysis.Analyzer;
  * todo introduce a node type hierarchy for efficient translation of NodeTypeQueryNode
  */
 public class ServicingLuceneQueryBuilder{
-    
+
     public ServicingLuceneQueryBuilder(QueryRootNode root, SessionImpl session, ItemStateManager sharedItemMgr,
             HierarchyManager hmgr, NamespaceMappings nsMappings, Analyzer analyzer, PropertyTypeRegistry propReg,
             SynonymProvider synonymProvider) {
-        
+
         // TODO
         //super(root, session, sharedItemMgr, hmgr, nsMappings, analyzer, propReg, synonymProvider);
     }

@@ -31,10 +31,10 @@ public interface ICustomizableDocumentListingDataTable {
      */
     public abstract void addTopPaging(int viewSize);
 
-    
+
     /**
      * Adds default ajax top headers above document listing. Calling this method multiple times
-     * will not duplicate the paging, so only calling it ones makes sense. 
+     * will not duplicate the paging, so only calling it ones makes sense.
      * @param int viewSize : the number of pages visible at one moment
      *
      */
@@ -46,7 +46,7 @@ public interface ICustomizableDocumentListingDataTable {
      *
      */
     public abstract void addBottomPaging();
-    
+
     /**
      * Add default ajax bottom paging above document listing. Calling this method multiple times
      * will not duplicate the paging, so only calling it ones makes sense.
