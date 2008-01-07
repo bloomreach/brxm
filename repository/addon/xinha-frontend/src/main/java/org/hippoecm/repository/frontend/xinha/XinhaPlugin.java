@@ -123,7 +123,7 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
                 return super.setModel(model);
             }
             JcrPropertyModel propModel = new JcrPropertyModel(property);
-            editor.setModel(new JcrPropertyValueModel(0, property.getValue().getString(), propModel));
+            editor.setModel(new JcrPropertyValueModel(0, property.getValue(), propModel));
         } catch (RepositoryException ex) {
             ex.printStackTrace();
         }
@@ -166,9 +166,9 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
     protected void onDetach() {
         super.onDetach();
         if(sharedBehavior != null) {
-                sharedBehavior.unregister(configuration);
-                sharedBehavior = null;
-            }
+            sharedBehavior.unregister(configuration);
+            sharedBehavior = null;
+        }
     }
 
     class XinhaHeaderContributor extends AbstractHeaderContributor {

@@ -43,6 +43,10 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
         super(prop);
     }
 
+    public JcrPropertyModel(String path) {
+        super(path);
+    }
+
     // The wrapped jcr property
 
     public Property getProperty() {
@@ -60,10 +64,10 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
             if (prop.getDefinition().isMultiple()) {
                 Value[] values = prop.getValues();
                 for (int i = 0; i < values.length; i++) {
-                    list.add(new IndexedValue(values[i].getString(), i));
+                    list.add(new IndexedValue(values[i], i));
                 }
             } else {
-                list.add(new IndexedValue(prop.getValue().getString(), 0));
+                list.add(new IndexedValue(prop.getValue(), 0));
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -90,10 +94,10 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
     }
 
     private class IndexedValue {
-        protected String value;
+        protected Value value;
         protected int index;
 
-        IndexedValue(String value, int index) {
+        IndexedValue(Value value, int index) {
             this.index = index;
             this.value = value;
         }
