@@ -48,9 +48,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractListingPlugin extends Plugin {
 
-    private static final String PROPERTYNAME_PROPERTY = "propertyname";
+    protected static final String USERSETTINGS_NODETYPE = "hippo:usersettings";
 
-    private static final String COLUMNNAME_PROPERTY = "columnname";
+    protected static final String PROPERTYNAME_PROPERTY = "propertyname";
+
+    protected static final String COLUMNNAME_PROPERTY = "columnname";
 
     private static final String PAGESIZE_PROPERTY = "pagesize";
     private static final String VIEWSIZE_PROPERTY = "viewsize";
@@ -127,10 +129,9 @@ public abstract class AbstractListingPlugin extends Plugin {
                 if(!jcrSession.itemExists(userPrefNodeLocation)) {
                     // User doesn't have a user folder yet
                     Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
-                    createDefaultPrefNodeSetting(userNode);
-                    columns.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
-                    columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
-                }
+                    Node prefNode = createDefaultPrefNodeSetting(userNode, pluginDescriptor.getIncoming());
+                    modifyDefaultPrefNode(prefNode, pluginDescriptor.getIncoming());
+                    }
                 /*
                  * We do not save the added node. If a user calls session.save his preferences are
                  * saved. So, as long as a user does not save, these default preference nodes are
@@ -166,6 +167,7 @@ public abstract class AbstractListingPlugin extends Plugin {
         addTable(model, pageSize, viewSize);
     }
 
+  
     private int getPropertyIntValue(Node userPrefNode,String property, int defaultValue) throws RepositoryException, ValueFormatException, PathNotFoundException {
         int value = 0;
         if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.LONG ){
@@ -186,19 +188,40 @@ public abstract class AbstractListingPlugin extends Plugin {
         return defaultValue;
     }
 
-
-    private void createDefaultPrefNodeSetting(Node userNode) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
-        Node prefNode = userNode.addNode(getPluginUserPrefNodeName(), "hippo:usersettings");
+    private Node createDefaultPrefNodeSetting(Node userNode, Channel channel) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+        Node prefNode = userNode.addNode(getPluginUserPrefNodeName(), USERSETTINGS_NODETYPE);
         prefNode.setProperty(PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
         prefNode.setProperty(VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);
-        Node pref = prefNode.addNode("name","hippo:usersettings");
+        Node pref = prefNode.addNode("name",USERSETTINGS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "Name");
         pref.setProperty(PROPERTYNAME_PROPERTY, "name");
 
-        pref = prefNode.addNode("type","hippo:usersettings");
+        pref = prefNode.addNode("type",USERSETTINGS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "Type");
         pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
+        columns.add(getNodeColumn(new Model("Name"), "name" , channel));
+        columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , channel));
+        return prefNode;
     }
+    
+    /**
+     * Override this method in your subclass to change the default listing view
+     * @param prefNode
+     * @param incoming
+     * @throws ItemExistsException
+     * @throws PathNotFoundException
+     * @throws NoSuchNodeTypeException
+     * @throws LockException
+     * @throws VersionException
+     * @throws ConstraintViolationException
+     * @throws RepositoryException
+     * @throws ValueFormatException
+     */
+    protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+        // only meant for subclasses if they want to change behavior
+    }
+
+
 
     private void defaultColumns(PluginDescriptor pluginDescriptor) {
         columns.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
