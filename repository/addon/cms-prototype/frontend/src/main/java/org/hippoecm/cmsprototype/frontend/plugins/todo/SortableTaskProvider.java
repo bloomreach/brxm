@@ -30,7 +30,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class SortableTaskProvider extends SortableDataProvider{
+public class SortableTaskProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,8 +38,8 @@ public class SortableTaskProvider extends SortableDataProvider{
 
     public SortableTaskProvider(JcrNodeModel model) {
 
-        if (model != null){
-                this.model = model;
+        if (model != null) {
+            this.model = model;
         }
 
     }
@@ -49,72 +49,62 @@ public class SortableTaskProvider extends SortableDataProvider{
         NodeIterator children = null;
 
         if (this.model != null) {
-                List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
+            List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
 
-                int i = 0;
+            int i = 0;
+
+            try {
+                children = model.getNode().getNodes();
+            } catch (RepositoryException e) {
+                return null;
+            }
+
+            while (children.hasNext()) {
+
+                HippoNode jcrChild = (HippoNode) children.nextNode();
 
                 try {
-                                children = model.getNode().getNodes();
-                        } catch (RepositoryException e) {
-                                return null;
+                    if (jcrChild.isNodeType(HippoNodeType.NT_REQUEST)) {
+                        i++;
+                        if (i >= first && i < (first + count)) {
+                            list.add(new JcrTreeNode(new JcrNodeModel(jcrChild)));
                         }
-
-                        while(children.hasNext()) {
-
-                                HippoNode jcrChild = (HippoNode) children.nextNode();
-
-                                try {
-                                        if (jcrChild.isNodeType(HippoNodeType.NT_REQUEST)) {
-
-                                                i++;
-
-                                                if (i >= first && i < (first + count)) {
-                                                        list.add(new JcrTreeNode(new JcrNodeModel(jcrChild)));
-                                            }
-                                        }
-                                } catch (RepositoryException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                }
+                    }
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
                 }
-                return list.iterator();
-        }
-        else
-        {
-                return null;
+            }
+            return list.iterator();
+        } else {
+            return null;
         }
 
     }
 
     public IModel model(Object object) {
-        if (model != null)
-        {
-                return (NodeModelWrapper) object;
-        }
-        else
-        {
-                return null;
+        if (model != null) {
+            return (NodeModelWrapper) object;
+        } else {
+            return null;
         }
     }
 
     public int size() {
-        if(model == null ) { return 0; }
+        if (model == null) {
+            return 0;
+        }
         try {
-                        if (model.getNode().getNodes() != null)
-                        {
+            if (model.getNode().getNodes() != null) {
 
-                                //TODO: filter out non-request items
-                                return (int) model.getNode().getNodes().getSize();
+                //TODO: filter out non-request items
+                return (int) model.getNode().getNodes().getSize();
 
-                        }
-                        else
-                        {
-                                return 0;
-                        }
-                } catch (RepositoryException e) {
-                        return 0;
-                }
+            } else {
+                return 0;
+            }
+        } catch (RepositoryException e) {
+            return 0;
+        }
     }
-
 
 }
