@@ -154,7 +154,7 @@ class ConnectionFactoryImpl implements ConnectionFactory {
         }
 
         public javax.transaction.xa.XAResource getXAResource() {
-            /*
+            /* FIXME
               if (session instanceof org.apache.jackrabbit.api.XASession) {
                   return ((org.apache.jackrabbit.api.XASession) session).getXAResource();
                   } else */{
