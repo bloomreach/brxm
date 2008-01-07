@@ -109,7 +109,7 @@ public abstract class AbstractListingPlugin extends Plugin {
 
             NodeIterator nodeIt = userPrefNode.getNodes();
             if(nodeIt.getSize() == 0) {
-                defaultColumns(columns,pluginDescriptor);
+                defaultColumns(pluginDescriptor);
             }
             while(nodeIt.hasNext()) {
                 Node n = nodeIt.nextNode();
@@ -117,11 +117,10 @@ public abstract class AbstractListingPlugin extends Plugin {
                     String columnName = n.getProperty(COLUMNNAME_PROPERTY).getString();
                     String propertyName = n.getProperty(PROPERTYNAME_PROPERTY).getString();
                     columns.add(getNodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
-                    columns.add(getNodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
                 }
             }
         } catch (PathNotFoundException e) {
-            // Th user preference node for the current plugin does not exist: create node now with default settings:
+            // The user preference node for the current plugin does not exist: create node now with default settings:
             log.debug("No user doclisting preference node found. Creating default doclisting preference node.");
             javax.jcr.Session jcrSession = session.getJcrSession();
             try {
@@ -139,32 +138,31 @@ public abstract class AbstractListingPlugin extends Plugin {
                  */
             } catch (PathNotFoundException e1) {
                 logError(e1.getMessage());
-                defaultColumns(columns,pluginDescriptor);
+                defaultColumns(pluginDescriptor);
             } catch (ItemExistsException e1) {
                 logError(e1.getMessage());
-                defaultColumns(columns,pluginDescriptor);
+                defaultColumns(pluginDescriptor);
             } catch (VersionException e1) {
                 logError(e1.getMessage());
-                defaultColumns(columns,pluginDescriptor);
+                defaultColumns(pluginDescriptor);
             } catch (ConstraintViolationException e1) {
                 logError(e1.getMessage());
-                defaultColumns(columns,pluginDescriptor);
+                defaultColumns(pluginDescriptor);
             } catch (LockException e1) {
                 logError(e1.getMessage());
-                defaultColumns(columns,pluginDescriptor);
+                defaultColumns(pluginDescriptor);
             } catch (ValueFormatException e1) {
                 logError(e1.getMessage());
-                defaultColumns(columns,pluginDescriptor);
+                defaultColumns(pluginDescriptor);
             } catch (RepositoryException e1) {
                 logError(e1.getMessage());
-                defaultColumns(columns,pluginDescriptor);
+                defaultColumns(pluginDescriptor);
             }
 
         } catch (RepositoryException e) {
             logError(e.getMessage());
-            defaultColumns(columns,pluginDescriptor);
+            defaultColumns(pluginDescriptor);
         }
-
         addTable(model, pageSize, viewSize);
     }
 
@@ -202,9 +200,9 @@ public abstract class AbstractListingPlugin extends Plugin {
         pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
     }
 
-    private void defaultColumns(List<IStyledColumn> columns2,PluginDescriptor pluginDescriptor) {
-        columns2.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
-        columns2.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
+    private void defaultColumns(PluginDescriptor pluginDescriptor) {
+        columns.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
+        columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
     }
     private void logError(String message) {
         log.error("error creating user doclisting preference " + message );
