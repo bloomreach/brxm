@@ -87,7 +87,7 @@ public class TextEditor extends Plugin implements ITemplatePlugin {
                 return super.setModel(model);
             }
             JcrPropertyModel propModel = new JcrPropertyModel(property);
-            valueModel.setChainedModel(new JcrPropertyValueModel(0, property.getValue().getString(), propModel));
+            valueModel.setChainedModel(new JcrPropertyValueModel(0, property.getValue(), propModel));
         } catch (RepositoryException ex) {
             ex.printStackTrace();
         }
