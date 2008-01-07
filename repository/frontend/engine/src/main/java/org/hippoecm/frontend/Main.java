@@ -15,12 +15,7 @@
  */
 package org.hippoecm.frontend;
 
-import java.net.MalformedURLException;
-
 import javax.jcr.RepositoryException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Request;
@@ -30,14 +25,11 @@ import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.settings.IResourceSettings;
-import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
-import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
-
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main extends WebApplication {
 
@@ -50,7 +42,7 @@ public class Main extends WebApplication {
     @Override
     protected void init() {
         super.init();
-        getDebugSettings().setAjaxDebugModeEnabled(true);
+        getDebugSettings().setAjaxDebugModeEnabled(false);
 
         getSecuritySettings().setAuthorizationStrategy(new IAuthorizationStrategy() {
 
@@ -78,41 +70,6 @@ public class Main extends WebApplication {
                 }
                 return Thread.currentThread().getContextClassLoader().loadClass(name);
             }
-        });
-
-        IResourceSettings resourceSettings = getResourceSettings();
-        //resourceSettings.addResourceFolder("WEB-INF/html");
-        final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
-        resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
-            public IResourceStream locate(final Class clazz, final String path) {
-                System.err.println("BERRY#A "+clazz.getName()+" "+path);
-                System.err.println("BERRY#B "+ getServletContext());
-                System.err.println("BERRY#C "+ getServletContext().getContext("skin/"));
-try {
-                System.err.println("BERRY#D "+ getServletContext().getResource(path));
-} catch(java.net.MalformedURLException ex) { System.err.println(ex.getMessage()); }
-try {
-                if(getServletContext().getContext("skin/") != null) {
-                  System.err.println("BERRY#E "+ getServletContext().getContext("skin/").getResource(path));
-                } else {
-                  System.err.println("BERRY#E "+ getServletContext().getResource("skin/"+path));
-                }
-} catch(java.net.MalformedURLException ex) { System.err.println(ex.getMessage()); }
-
-                return oldLocator.locate(clazz, path);
-                /*
-                IResourceStream located = super.locate(clazz, trimFolders(path));
-                if (located != null) {
-                    return located;
-                }
-                return super.locate(clazz, path);
-                */
-            }
-                /*
-            private String trimFolders(String path) {
-                return path.substring(path.lastIndexOf("/") + 1);
-            }
-                */
         });
     }
 
@@ -155,8 +112,6 @@ try {
                     repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
                 }
             } catch (RepositoryException e) {
-                System.err.println(e.getMessage());
-                e.printStackTrace(System.err);
                 log.error(e.getMessage());
             }
         }
