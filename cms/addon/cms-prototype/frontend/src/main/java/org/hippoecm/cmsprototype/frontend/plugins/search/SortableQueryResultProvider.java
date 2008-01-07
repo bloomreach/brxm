@@ -27,7 +27,6 @@ import javax.jcr.query.RowIterator;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 
@@ -59,7 +58,14 @@ public class SortableQueryResultProvider extends SortableDataProvider {
                 if (i >= first && i < (first + count)) {
                     String path = row.getValue("jcr:path").getString();
                     Node n = (Node) session.getItem(path);
-                    NodeModelWrapper node = new Document(new JcrNodeModel(n));
+                    SearchDocument node = new SearchDocument(new JcrNodeModel(n));
+                    if(row.getValue(SearchPlugin.REP_EXCERPT) != null ){
+                        node.setExcerpt(row.getValue(SearchPlugin.REP_EXCERPT).getString());
+                        String similarLink = "//element(*, hippo:document)[rep:similar(., '" + path + "')]/rep:excerpt(.)" ;
+                        node.setSimilar("similar");
+                        node.setSimilarLink(similarLink);
+                    }
+                    
                     list.add(node);
                 }
             }

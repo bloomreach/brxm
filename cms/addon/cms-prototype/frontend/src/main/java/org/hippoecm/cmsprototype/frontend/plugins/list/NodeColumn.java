@@ -28,6 +28,7 @@ public class NodeColumn extends AbstractColumn {
     private String nodePropertyName;
 
 
+
     public NodeColumn(IModel displayModel, String nodePropertyName ,Channel channel) {
         super(displayModel, nodePropertyName);
         this.channel = channel;
@@ -35,6 +36,25 @@ public class NodeColumn extends AbstractColumn {
     }
 
     public void populateItem(Item item, String componentId, IModel model) {
-        item.add(new NodeCell(componentId, (NodeModelWrapper) model, channel, nodePropertyName));
+        item.add(getNodeCell(componentId, model, nodePropertyName));
     }
+
+    /**
+     * Override this method to allow for a custom node cell implementation
+     * @param componentId
+     * @param model
+     * @return NodeCell
+     */
+    protected NodeCell getNodeCell(String componentId, IModel model, String nodePropertyName) {
+        return new NodeCell(componentId, (NodeModelWrapper) model, channel, nodePropertyName);
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public String getNodePropertyName() {
+        return nodePropertyName;
+    }
+    
 }
