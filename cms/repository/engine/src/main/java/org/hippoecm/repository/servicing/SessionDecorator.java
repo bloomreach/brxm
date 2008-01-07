@@ -84,8 +84,18 @@ public class SessionDecorator implements XASession, HippoSession {
         this.session = session;
     }
 
+    public static Session unwrap(Session session) {
+        if (session == null) {
+            return null;
+        }
+        if (session instanceof SessionDecorator) {
+            session = ((SessionDecorator)session).session;
+        }
+        return session;
+    }
+
     protected void finalize() {
-        /*
+        /* FIXME
         if (utm != null) {
             utm.close();
             utm = null;

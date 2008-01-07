@@ -47,11 +47,20 @@ import org.hippoecm.repository.ext.WorkflowImpl;
 public class WorkflowManagerImpl implements WorkflowManager {
     final Logger log = LoggerFactory.getLogger(Workflow.class);
 
+    /** Session from which this WorkflowManager instance was created.  Is used
+     * to look-up which workflows are active for a user.  It is however not
+     * used to instantiate workflows, persist and as execution context when
+     * performing a workflow step (i.e. method invocatin).
+     */
     Session session;
+
+    DocumentManagerImpl documentManager;
+
     String configuration;
 
-    public WorkflowManagerImpl(Session session) {
+    public WorkflowManagerImpl(Session session, DocumentManagerImpl documentManager) {
         this.session = session;
+        this.documentManager = documentManager;
         try {
             configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
                                                           HippoNodeType.WORKFLOWS_PATH).getUUID();
@@ -60,6 +69,15 @@ public class WorkflowManagerImpl implements WorkflowManager {
         } catch(RepositoryException ex) {
             log.error("workflow manager configuration failed: "+ex.getMessage(), ex);
         }
+    }
+
+    public WorkflowManagerImpl(Session session, String uuid) {
+        this.session = session;
+        configuration = uuid;
+    }
+
+    public Session getSession() throws RepositoryException {
+        return session;
     }
 
     private Node getWorkflowNode(String category, Node item) {
@@ -97,21 +115,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return null;
     }
 
-    public WorkflowManagerImpl(Session session, String uuid) {
-        this.session = session;
-        configuration = uuid;
-    }
-
-    void save(Workflow workflow, String uuid, Node types) throws RepositoryException {
-        HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
-        DocumentManagerImpl documentManager = (DocumentManagerImpl) workspace.getDocumentManager();
-        documentManager.putObject(uuid, types, workflow);
-    }
-
-    public Session getSession() throws RepositoryException {
-        return session;
-    }
-
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
         Node workflowNode = getWorkflowNode(category, item);
         if(workflowNode != null) {
@@ -144,71 +147,77 @@ public class WorkflowManagerImpl implements WorkflowManager {
             try {
                 String classname = workflowNode.getProperty(HippoNodeType.HIPPO_SERVICE).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
-                DocumentManagerImpl manager = (DocumentManagerImpl) ((HippoWorkspace)session.getWorkspace())
-                    .getDocumentManager();
+
                 String uuid = item.getUUID();
-                Object object = manager.getObject(uuid, classname, types);
-                Workflow workflow = (Workflow) object;
-                if(workflow instanceof WorkflowImpl) {
-                    ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
-                }
-
-                try {
-                    Class[] interfaces = workflow.getClass().getInterfaces();
-                    Vector vector = new Vector();
-                    for(int i=0; i<interfaces.length; i++)
-                        if(Remote.class.isAssignableFrom(interfaces[i])) {
-                            vector.add(interfaces[i]);
-                        }
-                    interfaces = (Class[]) vector.toArray(new Class[vector.size()]);
-                    InvocationHandler handler = new WorkflowInvocationHandler(workflow, uuid, types);
-                    Class proxyClass = Proxy.getProxyClass(workflow.getClass().getClassLoader(), interfaces);
-                    workflow = (Workflow) proxyClass.getConstructor(new Class[] { InvocationHandler.class }).
-                        newInstance(new Object[] { handler });
-
-                    /*
-                     * The following statement will fail under Java4, and requires Java5 and NO stub
-                     * generation (through rmic).
-                     *
-                     * This code here, where we use a proxy to wrap a workflow class, is to have control
-                     * before and after each call to a workflow.  This in order to automatically persist
-                     * changes made by the workflow, and let the workflow operate in a different session.
-                     * This requires intercepting each call to a workflow, which is exactly where auto-
-                     * generated proxy classes are good for.
-                     * However Proxy classes and RMI stub generated are not integrated in Java4.
-                     *
-                     * The reason for the failure is that the exportObject in Java4 will lookup the stub for
-                     * the proxy class generated above.  We cannot however beforehand generate the stub for
-                     * the proxy class, as these are generated on the fly.  We can also not use the stub of
-                     * the original workflow, as then we would bypass calling the proxy class.  This is
-                     * because the classname of the exported object must match the name of the stub class
-                     * being looked up.
-                     *
-                     * A labor-intensive solution, to be developed if really needed, is to perform an exportObject
-                     * on the original workflow (pre-wrapping it with a proxy).  But then modifying the stub
-                     * generated by rmic, not to call the workflow directly, but call the proxy class.
-                     * This solution is labor-intensive, hard to explain, and negates the easy to implement
-                     * workflows as they are now.  So if this route is the route to go, we would be better off
-                     * writing our own rmic, which performs this automatically.
-                     */
+                Session session = documentManager.getSession();
+		/* The synchronized must operate on the core root session, because there is
+		 * only one such session, while there may be many decorated ones.
+		 */
+                synchronized(SessionDecorator.unwrap(documentManager.getSession())) {
+                    Object object = documentManager.getObject(uuid, classname, types);
+                    Workflow workflow = (Workflow) object;
+                    if(workflow instanceof WorkflowImpl) {
+                        ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
+                    }
 
                     try {
-                        java.rmi.server.UnicastRemoteObject.exportObject(workflow, 0);
-                    } catch(java.rmi.RemoteException ex) {
-                        throw new RepositoryException("Problem creating workflow proxy", ex);
-                    }
-                } catch(NoSuchMethodException ex) {
-                    throw new RepositoryException("Impossible situation creating workflow proxy", ex);
-                } catch(InstantiationException ex) {
-                    log.error("Unable to create proxy for workflow");
-                    throw new RepositoryException("Unable to create proxy for workflow", ex);
-                } catch(IllegalAccessException ex) {
-                    throw new RepositoryException("Impossible situation creating workflow proxy", ex);
-                } catch(InvocationTargetException ex) {
-                    throw new RepositoryException("Impossible situation creating workflow proxy", ex);
-                }
+                        Class[] interfaces = workflow.getClass().getInterfaces();
+                        Vector vector = new Vector();
+                        for(int i=0; i<interfaces.length; i++) {
+                            if(Remote.class.isAssignableFrom(interfaces[i])) {
+                                vector.add(interfaces[i]);
+                            }
+                        }
+                        interfaces = (Class[]) vector.toArray(new Class[vector.size()]);
+                        InvocationHandler handler = new WorkflowInvocationHandler(workflow, uuid, types, documentManager);
+                        Class proxyClass = Proxy.getProxyClass(workflow.getClass().getClassLoader(), interfaces);
+                        workflow = (Workflow) proxyClass.getConstructor(new Class[] { InvocationHandler.class }).
+                            newInstance(new Object[] { handler });
 
-                return workflow;
+                        /*
+                         * The following statement will fail under Java4, and requires Java5 and NO stub
+                         * generation (through rmic).
+                         *
+                         * This code here, where we use a proxy to wrap a workflow class, is to have control
+                         * before and after each call to a workflow.  This in order to automatically persist
+                         * changes made by the workflow, and let the workflow operate in a different session.
+                         * This requires intercepting each call to a workflow, which is exactly where auto-
+                         * generated proxy classes are good for.
+                         * However Proxy classes and RMI stub generated are not integrated in Java4.
+                         *
+                         * The reason for the failure is that the exportObject in Java4 will lookup the stub for
+                         * the proxy class generated above.  We cannot however beforehand generate the stub for
+                         * the proxy class, as these are generated on the fly.  We can also not use the stub of
+                         * the original workflow, as then we would bypass calling the proxy class.  This is
+                         * because the classname of the exported object must match the name of the stub class
+                         * being looked up.
+                         *
+                         * A labor-intensive solution, to be developed if really needed, is to perform an exportObject
+                         * on the original workflow (pre-wrapping it with a proxy).  But then modifying the stub
+                         * generated by rmic, not to call the workflow directly, but call the proxy class.
+                         * This solution is labor-intensive, hard to explain, and negates the easy to implement
+                         * workflows as they are now.  So if this route is the route to go, we would be better off
+                         * writing our own rmic, which performs this automatically.
+                         */
+
+                        try {
+                            java.rmi.server.UnicastRemoteObject.exportObject(workflow, 0);
+                        } catch(java.rmi.RemoteException ex) {
+                            throw new RepositoryException("Problem creating workflow proxy", ex);
+                        }
+                    } catch(NoSuchMethodException ex) {
+                        throw new RepositoryException("Impossible situation creating workflow proxy", ex);
+                    } catch(InstantiationException ex) {
+                        log.error("Unable to create proxy for workflow");
+                        throw new RepositoryException("Unable to create proxy for workflow", ex);
+                    } catch(IllegalAccessException ex) {
+                        throw new RepositoryException("Impossible situation creating workflow proxy", ex);
+                    } catch(InvocationTargetException ex) {
+                        throw new RepositoryException("Impossible situation creating workflow proxy", ex);
+                    }
+
+                    return workflow;
+                }
             } catch(PathNotFoundException ex) {
                 log.error("Workflow specification corrupt on node " + workflowNode.getPath());
                 throw new RepositoryException("workflow specification corrupt", ex);
@@ -223,20 +232,26 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     class WorkflowInvocationHandler implements InvocationHandler {
+        DocumentManagerImpl documentMgr;
         Workflow upstream;
         String uuid;
         Node types;
-        WorkflowInvocationHandler(Workflow upstream, String uuid, Node types) {
+        WorkflowInvocationHandler(Workflow upstream, String uuid, Node types, DocumentManagerImpl documentMgr) {
+            this.documentMgr = documentMgr;
             this.upstream = upstream;
             this.uuid = uuid;
             this.types = types;
         }
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             try {
-                Method targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
-                Object returnObject = targetMethod.invoke(upstream, args);
-                save(upstream, uuid, types);
-                return returnObject;
+                Session session = documentMgr.getSession();
+                synchronized(SessionDecorator.unwrap(documentManager.getSession())) {
+                    Method targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
+                    Object returnObject = targetMethod.invoke(upstream, args);
+                    documentMgr.putObject(uuid, types, upstream);
+                    documentMgr.getSession().save();
+                    return returnObject;
+                }
             } catch(NoSuchMethodException ex) {
                 throw new RepositoryException("Impossible failure for workflow proxy", ex);
             } catch(IllegalAccessException ex) {

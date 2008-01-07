@@ -25,6 +25,7 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -40,6 +41,7 @@ import javax.jcr.version.VersionException;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -52,6 +54,8 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
     protected final Workspace workspace;
     protected DocumentManager documentManager;
     protected WorkflowManager workflowManager;
+    private SessionDecorator rootSession;
+    private DocumentManagerImpl workflowDocumentManager;
 
     /**
      * Creates a workspace decorator.
@@ -65,6 +69,17 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
         this.workspace = workspace;
         documentManager = null;
         workflowManager = null;
+
+        Repository repository = RepositoryDecorator.unwrap(session.getRepository());
+        rootSession = null;
+        try {
+            if(repository instanceof RepositoryImpl) {
+                rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(),
+                                                                             ((RepositoryImpl)repository).getRootSession(null));
+            }
+        } catch(RepositoryException ex) {
+            // We could log something, but having rootSession == null here also suffices
+        }
     }
 
     /** {@inheritDoc} */
@@ -142,7 +157,8 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
 
     public WorkflowManager getWorkflowManager() throws RepositoryException {
         if (workflowManager == null) {
-            workflowManager = new WorkflowManagerImpl(session);
+            workflowDocumentManager = new DocumentManagerImpl(rootSession);
+            workflowManager = new WorkflowManagerImpl(session, workflowDocumentManager);
         }
         return workflowManager;
     }

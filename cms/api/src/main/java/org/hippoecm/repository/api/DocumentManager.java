@@ -16,7 +16,10 @@
 package org.hippoecm.repository.api;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 public interface DocumentManager {
+    public Session getSession() throws RepositoryException;
+
     public Document getDocument(String category, String identifier) throws RepositoryException;
 }

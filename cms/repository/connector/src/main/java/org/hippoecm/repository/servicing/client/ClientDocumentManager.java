@@ -28,10 +28,16 @@ import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 
 public class ClientDocumentManager extends ClientObject implements DocumentManager {
     private RemoteDocumentManager remote;
+    private Session session;
 
     public ClientDocumentManager(Session session, RemoteDocumentManager remote, LocalServicingAdapterFactory factory) {
         super(factory);
         this.remote = remote;
+        this.session = session;
+    }
+
+    public Session getSession() {
+        return session;
     }
 
     public Document getDocument(String category, String identifier) throws RepositoryException {

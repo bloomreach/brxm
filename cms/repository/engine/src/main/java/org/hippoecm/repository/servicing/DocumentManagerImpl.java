@@ -80,6 +80,10 @@ public class DocumentManagerImpl
         }
     }
 
+    public Session getSession() {
+        return session;
+    }
+
     public Object getObject(String uuid, String classname, Node types) {
         Object obj = null;
         if(pm == null) {
