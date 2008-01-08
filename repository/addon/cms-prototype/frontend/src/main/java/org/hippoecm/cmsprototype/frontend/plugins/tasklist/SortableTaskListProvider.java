@@ -68,21 +68,6 @@ public class SortableTaskListProvider extends SortableDataProvider {
                         task.setDocumentname(document.getName());
                     }
                     
-                    
-                    /*
-                    node.setName(row.getValue("UUID"))
-                    n.getProperty(relPath)
-                    
-                    session.getNodeByUUID()
-                    
-                    if(row.getValue(TasklistPlugin.REP_EXCERPT) != null ){
-                        node.setExcerpt(row.getValue(SearchPlugin.REP_EXCERPT).getString());
-                        String similarLink = "//element(*, hippo:document)[rep:similar(., '" + path + "')]/rep:excerpt(.)" ;
-                        node.setSimilar("similar");
-                        node.setSimilarLink(similarLink);
-                    }
-                    */
-                    
                     list.add(task);
                 }
             }

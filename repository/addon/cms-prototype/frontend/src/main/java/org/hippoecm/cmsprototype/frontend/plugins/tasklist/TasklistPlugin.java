@@ -98,11 +98,11 @@ public class TasklistPlugin extends AbstractListingPlugin{
         pref.setProperty(COLUMNNAME_PROPERTY, "DocName");
         pref.setProperty(PROPERTYNAME_PROPERTY, "documentname");
 
-/*        pref = prefNode.addNode("type",USERSETTINGS_NODETYPE);
+        pref = prefNode.addNode("type",USERSETTINGS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "RequestType");
-        pref.setProperty(PROPERTYNAME_PROPERTY, "type");*/
+        pref.setProperty(PROPERTYNAME_PROPERTY, "type");
         columns.add(getNodeColumn(new Model("DocName"), "documentname" , incoming));
-        //columns.add(getNodeColumn(new Model("RequestType"), "type" , incoming));
+        columns.add(getNodeColumn(new Model("RequestType"), "type" , incoming));
     }
     
     @Override
