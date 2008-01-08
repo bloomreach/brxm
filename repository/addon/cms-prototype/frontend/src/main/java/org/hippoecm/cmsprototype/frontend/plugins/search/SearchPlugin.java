@@ -133,17 +133,9 @@ public class SearchPlugin extends AbstractListingPlugin{
 
     @Override
     protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
-        Node pref = prefNode.addNode("name",USERSETTINGS_NODETYPE);
-        pref.setProperty(COLUMNNAME_PROPERTY, "Name");
-        pref.setProperty(PROPERTYNAME_PROPERTY, "name");
-
-        pref = prefNode.addNode("type",USERSETTINGS_NODETYPE);
-        pref.setProperty(COLUMNNAME_PROPERTY, "Type");
-        pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
-        columns.add(getNodeColumn(new Model("Name"), "name" , incoming));
-        columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , incoming));
-
-        pref = prefNode.addNode(HIGHLIGHT,USERSETTINGS_NODETYPE);
+        super.modifyDefaultPrefNode(prefNode,incoming);
+        
+        Node pref = prefNode.addNode(HIGHLIGHT,USERSETTINGS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, HIGHLIGHT);
         pref.setProperty(PROPERTYNAME_PROPERTY, REP_EXCERPT);
         columns.add(getNodeColumn(new Model(HIGHLIGHT), REP_EXCERPT , incoming));
