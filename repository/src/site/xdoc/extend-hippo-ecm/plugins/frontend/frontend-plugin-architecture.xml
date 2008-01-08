@@ -75,20 +75,36 @@ class RootPlugin extends Plugin {
         <p>
           The child plugins are added instead through configuration:
         </p>
-<source>
-root:
-  class = org.example.RootPlugin
-  children = {list, tree, custom}
-list:
-  class = org.example.ListPlugin
-  children = {}
-tree:
-  class = org.example.TreePlugin
-  children = {}
-custom:
-  class = org.example.SimplePlugin
-  children = {}
-</source>
+        <ul>
+          <li>
+            root:
+            <ul>
+              <li>class = org.example.RootPlugin</li>
+              <li>children = {list, tree, custom}</li>
+            </ul>
+          </li>
+          <li>
+            list:
+            <ul>
+              <li>class = org.example.ListPlugin</li>
+              <li>children = {}</li>
+            </ul>
+          </li>
+          <li>
+            tree:
+            <ul>
+              <li>class = org.example.TreePlugin</li>
+              <li>children = {}</li>
+            </ul>
+          </li>
+          <li>
+            custom:
+            <ul>
+              <li>class = org.example.SimplePlugin</li>
+              <li>children = {}</li>
+            </ul>
+          </li>
+        </ul>
         <p>
           Changing the SimplePlugin to an AdvancedPlugin now only involves changing the configuration.
           No recompilation is needed.
