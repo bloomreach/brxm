@@ -418,7 +418,7 @@ public class SessionDecorator implements XASession, HippoSession {
 
             for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
                 Node node = iter.nextNode();
-                Node child = destNode.addNode(node.getName(), srcNode.getPrimaryNodeType().getName());
+                Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
                 copy(node, child);
             }
         } catch(PathNotFoundException ex) {
