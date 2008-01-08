@@ -23,6 +23,7 @@
   </properties>
   <body>
     <section name="Frontend Plugin Communication">
+      <!--
       <p>
         Each frontend plugin in itself is an independent GUI component. All frontend plugins together however
         form a complete application. Within such an application context, plugins are no longer independent,
@@ -130,7 +131,7 @@ browserPlugin: [hippo:frontendplugin]
           console frontend application.
         </p>
       </subsection>
-
+      -->
     </section>
 
   </body>
