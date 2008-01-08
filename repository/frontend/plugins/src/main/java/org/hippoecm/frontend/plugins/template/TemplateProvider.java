@@ -136,7 +136,7 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
         }
     }
 
-    protected void loadMandatory(FieldDescriptor field, Node node) throws RepositoryException {
+    protected void loadField(FieldDescriptor field, Node node) throws RepositoryException {
         Item item = null;
         if (field.isNode()) {
             if (!node.hasNode(field.getPath())) {
@@ -150,18 +150,6 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
             } else {
                 item = node.getProperty(field.getPath());
             }
-        }
-        if (item != null) {
-            addField(field, item);
-        }
-    }
-
-    protected void loadAvailable(FieldDescriptor field, Node node) throws RepositoryException {
-        Item item = null;
-        if (node.hasProperty(field.getPath())) {
-            item = node.getProperty(field.getPath());
-        } else if (node.hasNode(field.getPath())) {
-            item = node.getNode(field.getPath());
         }
         if (item != null) {
             addField(field, item);
@@ -196,10 +184,8 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
                         } else {
                             expandPropertyWildcard(node);
                         }
-                    } else if (field.isMandatory()) {
-                        loadMandatory(field, node);
                     } else {
-                        loadAvailable(field, node);
+                        loadField(field, node);
                     }
                 } catch (RepositoryException ex) {
                     ex.printStackTrace();

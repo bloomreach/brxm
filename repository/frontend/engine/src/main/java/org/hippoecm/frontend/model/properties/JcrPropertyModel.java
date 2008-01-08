@@ -53,7 +53,6 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
         return (Property) itemModel.getObject();
     }
 
-
     // IDataProvider implementation for use in DataViews
     // (lists and tables)
 
@@ -61,6 +60,9 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
         List list = new ArrayList();
         try {
             Property prop = getProperty();
+            if (prop == null) {
+                return list.iterator();
+            }
             if (prop.getDefinition().isMultiple()) {
                 Value[] values = prop.getValues();
                 for (int i = 0; i < values.length; i++) {
@@ -84,6 +86,9 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
         int result = 1;
         try {
             Property prop = getProperty();
+            if (prop == null) {
+                return 0;
+            }
             if (prop.getDefinition().isMultiple()) {
                 result = prop.getValues().length;
             }
@@ -107,9 +112,8 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("itemModel", itemModel.toString())
-            .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("itemModel", itemModel.toString())
+                .toString();
     }
 
     @Override

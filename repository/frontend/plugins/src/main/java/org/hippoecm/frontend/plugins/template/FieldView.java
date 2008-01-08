@@ -22,7 +22,6 @@ import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
 import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.Plugin;
 
 public class FieldView extends DataView {
