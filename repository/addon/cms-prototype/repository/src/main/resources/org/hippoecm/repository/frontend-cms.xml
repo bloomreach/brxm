@@ -55,12 +55,12 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.DashboardPerspective</sv:value>
         </sv:property>
-        <sv:node sv:name="todoPlugin">
+        <sv:node sv:name="tasklistPlugin">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.todo.TodoPlugin</sv:value>
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.tasklist.TasklistPlugin</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="addNewWizardPlugin">
