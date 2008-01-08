@@ -192,15 +192,6 @@ public abstract class AbstractListingPlugin extends Plugin {
         Node prefNode = userNode.addNode(getPluginUserPrefNodeName(), USERSETTINGS_NODETYPE);
         prefNode.setProperty(PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
         prefNode.setProperty(VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);
-        Node pref = prefNode.addNode("name",USERSETTINGS_NODETYPE);
-        pref.setProperty(COLUMNNAME_PROPERTY, "Name");
-        pref.setProperty(PROPERTYNAME_PROPERTY, "name");
-
-        pref = prefNode.addNode("type",USERSETTINGS_NODETYPE);
-        pref.setProperty(COLUMNNAME_PROPERTY, "Type");
-        pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
-        columns.add(getNodeColumn(new Model("Name"), "name" , channel));
-        columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , channel));
         return prefNode;
     }
     
@@ -218,7 +209,18 @@ public abstract class AbstractListingPlugin extends Plugin {
      * @throws ValueFormatException
      */
     protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
-        // only meant for subclasses if they want to change behavior
+        // subclasses should override this if they want to change behavior
+    	
+        Node pref = prefNode.addNode("name",USERSETTINGS_NODETYPE);
+        pref.setProperty(COLUMNNAME_PROPERTY, "Name");
+        pref.setProperty(PROPERTYNAME_PROPERTY, "name");
+
+        pref = prefNode.addNode("type",USERSETTINGS_NODETYPE);
+        pref.setProperty(COLUMNNAME_PROPERTY, "Type");
+        pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
+        columns.add(getNodeColumn(new Model("Name"), "name" , incoming));
+        columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , incoming));
+    	
     }
 
 
