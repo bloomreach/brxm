@@ -92,47 +92,15 @@
           deploying the application wars in an application server</a>.
         </p>
         <p>
-          To facilitate development it is also possible to run Hippo ECM from the commandline using Jetty,
-          this needs some preparation:
-        </p>
-        <p>
-          Start the <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/rmiregistry.html">rmiregistry</a>
-          This is a small program that is shipped with the JDK, it can be found in $JAVA_HOME/bin
-        </p>
-        <p>
-          For Windows:
-        </p>
-        <source>
-C:\> %JAVA_HOME%\bin\rmiregistry.exe
-        </source>
-        <p>
-          For Unix:
-        </p>
-        <source>
-~/hippo-ecm> $JAVA_HOME/bin/rmiregistry &amp;
-        </source>
-        <p>
+          To facilitate development it is also possible to run Hippo ECM from the commandline using Jetty.
           To start a sample application from the command line, execute the following commands:
         </p>
         <source>
-~/hippo-ecm> cd application/cms-prototype/repository
-~/hippo-ecm/application/cms-prototype/repository> mvn jetty:run-war
+~/hippo-ecm> cd package/war
+~/hippo-ecm/package/war> mvn jetty:run-war
         </source>
         <p>
-          This will start a repository server.
-          Open a browser and go to <a href="http://localhost:8081/repository">http://localhost:8081/repository</a>
-          to view its contents.
-        </p>
-        <p>
-          In another console execute the following commands:
-        </p>
-        <source>
-~/hippo-ecm> cd application/cms-prototype/frontend
-~/hippo-ecm/application/cms-prototype/frontend> mvn jetty:run-war
-        </source>
-        <p>
-          This will start the content browser.
-          Open a web browser and go to <a href="http://localhost:8082">http://localhost:8082</a>
+          Open a web browser and go to <a href="http://localhost:8080">http://localhost:8080</a>
           to navigate and edit your repository.
         </p>
       </subsection>

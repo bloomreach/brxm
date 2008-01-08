@@ -63,15 +63,14 @@ hippo-ecm                    Pom       hippo-ecm
 |       |-- frontend         Jar       hippo-ecm-addon-cms-prototype-frontend
 |       `-- test             Jar       hippo-ecm-addon-cms-prototype-test
 |-- api                      Jar       hippo-ecm-api
-|-- application              Pom       hippo-ecm-application
-|   `-- cms-prototype        Pom       hippo-ecm-application-cms-prototype
-|       |-- frontend         War       hippo-ecm-application-cms-prototype-frontend
-|       |-- repository       War       hippo-ecm-application-cms-prototype-repository
-|       `-- test             Jar       hippo-ecm-application-cms-prototype-test
 |-- frontend                 Pom       hippo-ecm-frontend
 |   |-- engine               Jar       hippo-ecm-frontend-engine
 |   |-- application          War       hippo-ecm-frontend-application
 |   `-- plugins              Jar       hippo-ecm-frontend-plugins
+|-- package                  Pom       hippo-ecm-package
+|   |-- ear                  Ear       hippo-ecm-package-ear
+|   |-- test                 jar       hippo-ecm-package-test
+|   `-- war                  War       hippo-ecm-package-war
 |-- repository               Pom       hippo-ecm-repository
 |   |-- engine               Jar       hippo-ecm-repository-engine
 |   `-- application          War       hippo-ecm-repository-application
@@ -143,22 +142,15 @@ hippo-ecm                    Pom       hippo-ecm
                         </source>
                 </section>
 
-                <section name="Applications">
+                <section name="Packages">
                         <p>
-                                Currently assembing an application requires creating dedicated maven project.
-                                A number of sample applications come in the <b>application</b> directory,
-                                these are pre-configured applications adding a selection
-                                of addons from the <b>addon</b> directory.
-                        </p>
-                        <p>
-                                By M3, you can use a generic downloadable WAR, and upload addons
-                                in the repository. The repository will then auto-configure the addons.
+                                Hippo ECM WAR and EAR packages to deploy in an application server.
                         </p>
                         <source>
-|-- application              Pom       hippo-ecm-application
-|   |-- cms-prototype        Pom       hippo-ecm-application-cms-prototype
-|   |   |-- frontend         War       hippo-ecm-application-cms-prototype-frontend
-|   |   `-- repository       War       hippo-ecm-application-cms-prototype-repository
+|-- package                  Pom       hippo-ecm-package
+|   |-- ear                  Ear       hippo-ecm-package-ear
+|   |-- test                 jar       hippo-ecm-package-test
+|   `-- war                  War       hippo-ecm-package-war
                         </source>
                 </section>
 
