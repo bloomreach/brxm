@@ -15,16 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,28 +45,25 @@ public class ValueTemplate extends Panel {
 
         this.engine = engine;
 
-        if (model.getProperty() != null) {
-            try {
-                if (!descriptor.isProtected()) {
+        try {
+            if (!descriptor.isProtected()) {
+                if (model.getObject() != null) {
                     add(deleteLink("delete", model));
                 } else {
-                    add(new Label("delete", "(protected)"));
+                    add(new Label("delete", ""));
                 }
-                add(new Label("name", descriptor.getName()));
-                add(new ValueEditor("values", model, descriptor, engine));
-                if (descriptor.isMultiple()) {
-                    add(addLink("add", model));
-                } else {
-                    add(new Label("add", ""));
-                }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+            } else {
+                add(new Label("delete", "(protected)"));
             }
-        } else {
-            add(new Label("delete", "null"));
-            add(new Label("name", "null"));
-            add(new Label("values", "null"));
-            add(new Label("add", "null"));
+            add(new Label("name", descriptor.getName()));
+            add(new ValueEditor("values", model, descriptor, engine));
+            if (descriptor.isMultiple() || model.getObject() == null) {
+                add(addLink("add", model));
+            } else {
+                add(new Label("add", ""));
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
         }
     }
 
@@ -71,17 +73,34 @@ public class ValueTemplate extends Panel {
         JcrPropertyModel model = (JcrPropertyModel) getModel();
         try {
             Property prop = model.getProperty();
-            Value[] oldValues = prop.getValues();
-            String[] newValues = new String[oldValues.length + 1];
-            for (int i = 0; i < oldValues.length; i++) {
-                newValues[i] = oldValues[i].getString();
+            if (prop != null) {
+                Value[] oldValues = prop.getValues();
+                Value[] newValues = new Value[oldValues.length + 1];
+                for (int i = 0; i < oldValues.length; i++) {
+                    newValues[i] = oldValues[i];
+                }
+                newValues[oldValues.length] = new StringValue("...");
+                prop.setValue(newValues);
+            } else {
+                Value value = new StringValue("");
+
+                // get the path to the node
+                JcrItemModel itemModel = model.getItemModel();
+                String path = itemModel.getPath().substring(1);
+
+                // get the parent
+                Node node = ((UserSession) Session.get()).getRootNode();
+                int pos = path.lastIndexOf('/');
+                node = node.getNode(path.substring(0, pos));
+                node.setProperty(path.substring(pos + 1), value);
             }
-            newValues[oldValues.length] = "...";
-            prop.setValue(newValues);
+            Component template = findParent(Template.class);
+            if (target != null && template != null) {
+                target.addComponent(template);
+            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        engine.onChange(target);
     }
 
     protected void onDeleteValue(AjaxRequestTarget target) {
@@ -89,10 +108,14 @@ public class ValueTemplate extends Panel {
         try {
             Property prop = model.getProperty();
             prop.remove();
+
+            Component template = findParent(Template.class);
+            if (target != null && template != null) {
+                target.addComponent(template);
+            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        engine.onChange(target);
     }
 
     // privates

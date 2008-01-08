@@ -18,20 +18,31 @@ package org.hippoecm.frontend.plugins.template;
 import javax.jcr.Node;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class Template extends Panel {
     private static final long serialVersionUID = 1L;
 
+    private String name;
     private TemplateProvider provider;
 
     public Template(String wicketId, IModel model, TemplateDescriptor descriptor, TemplateEngine engine) {
         super(wicketId, model);
 
+        if (descriptor != null) {
+            this.name = descriptor.getName();
+        } else {
+            this.name = "no name";
+        }
+        add(new Label("name", new PropertyModel(this, "name")));
         provider = new TemplateProvider(descriptor, (Node) getModelObject(), engine);
         add(new FieldView("field", descriptor, provider, engine));
+        
+        setOutputMarkupId(true);
     }
 
     @Override

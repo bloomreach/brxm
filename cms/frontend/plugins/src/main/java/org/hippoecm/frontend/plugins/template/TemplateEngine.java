@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.template;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
@@ -119,7 +118,11 @@ public class TemplateEngine extends Form implements INotificationListener {
             JcrNodeModel model = null;
             try {
                 Property property = (Property) fieldModel.getObject();
-                model = new JcrNodeModel((Node) property.getParent());
+                if (property != null) {
+                    model = new JcrNodeModel((Node) property.getParent());
+                } else {
+                    return new EmptyTemplate(wicketId, fieldModel, this);
+                }
             } catch (RepositoryException ex) {
                 ex.printStackTrace();
             }
@@ -144,12 +147,22 @@ public class TemplateEngine extends Form implements INotificationListener {
             TemplateDescriptor descriptor = getConfig().getTemplate(field.getType());
             if (descriptor != null) {
                 // the field specifies a template
-                JcrNodeModel nodeModel = new JcrNodeModel((Node) fieldModel.getObject());
-                return new Template(wicketId, nodeModel, descriptor, this);
+                Node node = (Node) fieldModel.getObject();
+                if (node != null) {
+                    return new Template(wicketId, new JcrNodeModel(node), descriptor, this);
+                } else {
+                    return new EmptyTemplate(wicketId, fieldModel, this);
+                }
             } else {
                 Property prop = (Property) fieldModel.getObject();
-                JcrPropertyModel model = new JcrPropertyModel(prop);
-                return new ValueTemplate(wicketId, model, field, this);
+                if (prop != null) {
+                    JcrPropertyModel model = new JcrPropertyModel(prop);
+                    return new ValueTemplate(wicketId, model, field, this);
+                } else {
+                    String path = fieldModel.getItemModel().getPath();
+                    JcrPropertyModel model = new JcrPropertyModel(path);
+                    return new ValueTemplate(wicketId, model, field, this);
+                }
             }
         }
     }
