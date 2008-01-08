@@ -171,23 +171,22 @@ mvn install
 
       <section name="Testing the Hello World plugin">
         <p>
-          To test our HelloWorldPlugin we can use the "console" application. Make sure you
+          To test our HelloWorldPlugin we need to add our hello world jar to the classpath
+          of our WAR application. Make sure you
           have a <a href="building/maven.html">complete SVN checkout of Hippo ECM</a>.
-          You will find this under <b>application/cms-prototype</b> in the Hippo ECM project tree:
+          You will find the WAR application under <b>package/war</b> in the Hippo ECM project tree:
         </p>
 
 <source>
 hippo-ecm
-`-- cms-prototype            hippo-ecm-cms-prototype
-    `-- default              hippo-ecm-cms-prototype-default
-        |-- frontend         hippo-ecm-cms-prototype-default-frontend
-        `-- repository       hippo-ecm-cms-prototype-default-repository
+`-- package            hippo-ecm-package
+    `-- war            hippo-ecm-package-war
 </source>
 
         <subsection name="Adding a dependency on our plugin">
           <p>
-            To be able to use our plugin we need to add a dependency on it to Maven POM of the frontend
-            application (<b>application/cms-prototype/frontend/pom.xml</b>).
+            To be able to use our plugin we need to add a dependency on it to Maven POM of the WAR
+            application (<b>package/war/pom.xml</b>).
           </p>
           <source>
 <![CDATA[
@@ -220,30 +219,17 @@ hippo-ecm
           </source>
       </subsection>
 
-      <subsection name="Running the repository application">
+      <subsection name="Running the application">
         <p>
-          To test our frontend plugin we need to have a repository running. We can use the
-          repository application (in <b>application/cms-prototype/repository</b>).
-          Start up rmiregistry (this comes with your JDK installation) and the repository using the following commands:
+          Now run the application using the following Maven command:
         </p>
 <source>
-rmiregistry &amp;
-cd hippo-ecm/application/cms-prototype/repository
-mvn jetty:run-war
-</source>
-      </subsection>
-
-      <subsection name="Running the frontend application">
-        <p>
-          Now run the frontend application using the following Maven command:
-        </p>
-<source>
-cd hippo-ecm/application/cms-prototype/frontend
+cd hippo-ecm/package/war
 mvn jetty:run-war
 </source>
         <p>
           You should now be able to approach the frontend application with your web browser
-          on <a href="http://localhost:8082/browser/">http://localhost:8082/browser/</a>.
+          on <a href="http://localhost:8080/">http://localhost:8080/</a>.
           Login with username "admin" and password "admin". Make sure you select the
           "hippo:console" application.
         </p>
@@ -269,7 +255,7 @@ mvn jetty:run-war
 
     </section>
 
-
+    <!--
     <section name="Making the Hello World plugin context sensitive">
       <p>
         Now let's make our plugin a little bit less static. We can make the label show
@@ -312,6 +298,7 @@ mvn jetty:run-war
       </p>
 
     </section>
+    -->
 
   </body>
 </document>
