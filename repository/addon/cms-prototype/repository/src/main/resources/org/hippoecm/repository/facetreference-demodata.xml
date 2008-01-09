@@ -57,6 +57,9 @@
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
           </sv:property>
+          <sv:property sv:name="state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
       <sv:node sv:name="the-invisible-man">
@@ -82,6 +85,9 @@
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
+          </sv:property>
+          <sv:property sv:name="state" sv:type="String">
+            <sv:value>unpublished</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -109,6 +115,9 @@
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
           </sv:property>
+          <sv:property sv:name="state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="war-of-the-worlds">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -126,6 +135,9 @@
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>dutch</sv:value>
+          </sv:property>
+          <sv:property sv:name="state" sv:type="String">
+            <sv:value>unpublished</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -153,6 +165,9 @@
           <sv:property sv:name="language" sv:type="String">
             <sv:value>dutch</sv:value>
           </sv:property>
+          <sv:property sv:name="state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="nineteeneightyfour">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -170,6 +185,9 @@
           </sv:property>
           <sv:property sv:name="language" sv:type="String">
             <sv:value>english</sv:value>
+          </sv:property>
+          <sv:property sv:name="state" sv:type="String">
+            <sv:value>unpublished</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
