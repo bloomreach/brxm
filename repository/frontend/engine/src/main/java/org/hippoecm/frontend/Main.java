@@ -15,7 +15,15 @@
  */
 package org.hippoecm.frontend;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.servlet.ServletContext;
+
 import javax.jcr.RepositoryException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Request;
@@ -25,11 +33,16 @@ import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.util.resource.AbstractResourceStream;
+import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.resource.UrlResourceStream;
+import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
+
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Main extends WebApplication {
 
@@ -69,6 +82,32 @@ public class Main extends WebApplication {
                     }
                 }
                 return Thread.currentThread().getContextClassLoader().loadClass(name);
+            }
+        });
+
+        IResourceSettings resourceSettings = getResourceSettings();
+        final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
+        resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
+            public IResourceStream locate(final Class clazz, final String path) {
+                if(skinContext != null) {
+                    try {
+                        URL url = skinContext.getResource("/" + path);
+                        if (url != null) {
+                            return new UrlResourceStream(url);
+                        }
+                    } catch(MalformedURLException ex) {
+                        log.warn("malformed url for skin override "+ex.getMessage());
+                    }
+                }
+                try {
+                    URL url = getServletContext().getResource("/skin/" + path);
+                    if (url != null) {
+                        return new UrlResourceStream(url);
+                    }
+                } catch(MalformedURLException ex) {
+                    log.warn("malformed url for skin override "+ex.getMessage());
+                }
+                return oldLocator.locate(clazz, path);
             }
         });
     }
