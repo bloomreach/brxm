@@ -27,6 +27,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
@@ -357,6 +359,33 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     assert (initializationNode != null); // cannot happen
                 }
                 log.info("Looking for custom initializations at " + initializationNode.getPath());
+
+                /* This orderes the list of nodes, according to a hippo:sequence property */
+                double highest = 0.0;
+                for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
+                    Node node = iter.nextNode();
+                    if (node.hasProperty(HippoNodeType.HIPPO_SEQUENCE)) {
+                        highest = node.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble();
+                    }
+                }
+                SortedMap<Double,String> ordered = new TreeMap<Double,String>();
+                for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
+                    Node node = iter.nextNode();
+                    if (node.hasProperty(HippoNodeType.HIPPO_SEQUENCE)) {
+                        ordered.put(new Double(- node.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble()), node.getName());
+                    } else {
+                        ordered.put(new Double(- highest), node.getName());
+                        highest += 1.0;
+                    }
+                }
+                String previous = null;
+                for (Iterator<String> iter = ordered.values().iterator(); iter.hasNext(); ) {
+                    String current = iter.next();
+                    initializationNode.orderBefore(current, previous);
+                    previous = current;
+                }
+                initializationNode.save();
+
                 for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
                     Node node = iter.nextNode();
                     log.info("Initializing configuration from " + node.getName());

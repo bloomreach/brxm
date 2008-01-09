@@ -31,6 +31,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>501</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.hippoecm.org/sample/nt/1.0</sv:value>
     </sv:property>

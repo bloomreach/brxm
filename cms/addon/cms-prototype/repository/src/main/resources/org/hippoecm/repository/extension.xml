@@ -33,6 +33,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>100</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.hippoecm.org/sample/nt/1.0</sv:value>
     </sv:property>
@@ -49,6 +52,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>101</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:nodetypes" sv:type="String">
       <sv:value>frontend.cnd</sv:value>
     </sv:property>
@@ -58,6 +64,9 @@
   <sv:node sv:name="frontend-cms">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>102</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>frontend-cms.xml</sv:value>
@@ -72,6 +81,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>103</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>frontend-console.xml</sv:value>
     </sv:property>
@@ -84,6 +96,9 @@
   <sv:node sv:name="mailsponge">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>104</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>mailsponge-model</sv:value>
@@ -104,6 +119,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>105</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>roles-config.xml</sv:value>
     </sv:property>
@@ -116,6 +134,9 @@
   <sv:node sv:name="users">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>106</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>users-config.xml</sv:value>
@@ -130,6 +151,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>107</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>groups-config.xml</sv:value>
     </sv:property>
@@ -142,6 +166,9 @@
   <sv:node sv:name="facetreference">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>108</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>facetreference-demodata.xml</sv:value>
@@ -156,6 +183,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>109</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>facetsearch-demodata.xml</sv:value>
     </sv:property>
@@ -168,6 +198,9 @@
   <sv:node sv:name="workflowdata">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>110</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>workflow-demodata.xml</sv:value>
@@ -182,6 +215,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>111</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>template-config.xml</sv:value>
     </sv:property>
@@ -194,6 +230,9 @@
   <sv:node sv:name="template-demo">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>112</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
       <sv:value>template-demodata.xml</sv:value>
