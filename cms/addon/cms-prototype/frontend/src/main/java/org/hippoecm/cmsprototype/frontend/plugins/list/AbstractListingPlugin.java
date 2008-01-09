@@ -131,12 +131,8 @@ public abstract class AbstractListingPlugin extends Plugin {
                     Node userNode = (Node) jcrSession.getItem(USER_PATH_PREFIX + session.getJcrSession().getUserID());
                     Node prefNode = createDefaultPrefNodeSetting(userNode, pluginDescriptor.getIncoming());
                     modifyDefaultPrefNode(prefNode, pluginDescriptor.getIncoming());
-                    }
-                /*
-                 * We do not save the added node. If a user calls session.save his preferences are
-                 * saved. So, as long as a user does not save, these default preference nodes are
-                 * recreated.
-                 */
+                    userNode.save();
+                }
             } catch (PathNotFoundException e1) {
                 logError(e1.getMessage());
                 defaultColumns(pluginDescriptor);
