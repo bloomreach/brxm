@@ -77,6 +77,7 @@ public class Main extends WebApplication {
     protected void onDestroy() {
         if(repository != null) {
             repository.close();
+	    repository = null;
         }
     }
 
