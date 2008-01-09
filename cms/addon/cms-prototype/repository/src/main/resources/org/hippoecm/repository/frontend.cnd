@@ -24,13 +24,13 @@
 - hippo:renderer (string) mandatory
 + * (hippo:frontendplugin) = hippo:frontendplugin
 
-[hippo:page] > nt:base
-+ *
+[hippo:page] > nt:unstructured
 
 [hippo:field] > nt:base
 - hippo:path (string) mandatory
 - hippo:template (string)
 - hippo:renderer (string)
+- hippo:multiple (boolean)
 
 [hippo:template] > nt:base orderable
 + * (hippo:field)

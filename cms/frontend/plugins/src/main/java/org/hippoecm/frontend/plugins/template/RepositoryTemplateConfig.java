@@ -25,6 +25,9 @@ import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.session.UserSession;
@@ -79,12 +82,17 @@ public class RepositoryTemplateConfig implements TemplateConfig {
     private Node lookupConfigNode(String template) throws RepositoryException {
         UserSession session = (UserSession) Session.get();
 
-        String path = HippoNodeType.CONFIGURATION_PATH + "/hippo:frontend/hippo:cms-prototype/hippo:templates/"
-                + template;
-        if (session.getRootNode().hasNode(path)) {
-            return session.getRootNode().getNode(path);
+        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
+                + session.getHippo() + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/" + template;
+
+        QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery(xpath, Query.XPATH);
+        QueryResult result = query.execute();
+        NodeIterator iter = result.getNodes();
+        if (iter.getSize() > 1) {
+            throw new IllegalStateException("Multiple templates defined for type " + template);
         }
-        return null;
+        return iter.hasNext() ? iter.nextNode() : null;
     }
 
     private List<FieldDescriptor> getNodeTypeDefined(String name) throws RepositoryException {

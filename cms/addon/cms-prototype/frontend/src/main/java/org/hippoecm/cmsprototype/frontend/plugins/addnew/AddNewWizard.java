@@ -21,6 +21,12 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -88,7 +94,8 @@ public class AddNewWizard extends Plugin {
             add(name);
 
             List<String> templates = getTemplates();
-            DropDownChoice template = new DropDownChoice("template", new PropertyModel(properties, "template"), templates);
+            DropDownChoice template = new DropDownChoice("template", new PropertyModel(properties, "template"),
+                    templates);
             template.setRequired(true);
             add(template);
 
@@ -106,9 +113,10 @@ public class AddNewWizard extends Plugin {
 
             if (doc != null && target != null) {
                 Channel channel = getDescriptor().getIncoming();
-                if(channel != null) {
+                if (channel != null) {
 
-                    Request request = channel.createRequest("flush", getNodeModel().findRootModel().getMapRepresentation());
+                    Request request = channel.createRequest("flush", getNodeModel().findRootModel()
+                            .getMapRepresentation());
                     MessageContext context = request.getContext();
                     channel.send(request);
 
@@ -134,18 +142,27 @@ public class AddNewWizard extends Plugin {
             UserSession session = (UserSession) Session.get();
 
             try {
-                Node rootNode = session.getRootNode();
-                String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH
-                                + "/" + session.getHippo() + "/hippo:templates";
-                if (rootNode.hasNode(path)) {
-                    Node configNode = rootNode.getNode(path);
-                    NodeIterator iterator = configNode.getNodes();
-                    while (iterator.hasNext()) {
-                        templates.add(iterator.nextNode().getName());
+                QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
+                NodeTypeManager ntMgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
+
+                String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
+                        + session.getHippo() + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/*";
+
+                Query query = queryManager.createQuery(xpath, Query.XPATH);
+                QueryResult result = query.execute();
+                NodeIterator iterator = result.getNodes();
+                while (iterator.hasNext()) {
+                    Node node = iterator.nextNode();
+                    try {
+                        NodeType type = ntMgr.getNodeType(node.getName());
+                        if (type.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                            templates.add(node.getName());
+                        }
+                    } catch (NoSuchNodeTypeException ex) {
+                        log.warn("Template " + node.getName() + " does not correspond to a node type");
                     }
                 }
-            }
-            catch (RepositoryException e) {
+            } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
 
@@ -159,42 +176,50 @@ public class AddNewWizard extends Plugin {
             try {
                 Node rootNode = session.getRootNode();
                 Node typeNode;
-                if (rootNode.hasNode((String)properties.get("template"))) {
-                    typeNode = rootNode.getNode((String)properties.get("template"));
+                if (rootNode.hasNode((String) properties.get("template"))) {
+                    typeNode = rootNode.getNode((String) properties.get("template"));
+                } else {
+                    typeNode = rootNode.addNode((String) properties.get("template"), "nt:unstructured");
                 }
-                else {
-                    typeNode = rootNode.addNode((String)properties.get("template"), "nt:unstructured");
-                }
-                Node handle = typeNode.addNode((String)properties.get("name"), HippoNodeType.NT_HANDLE);
-                Node doc = handle.addNode((String)properties.get("name"), (String)properties.get("template"));
+                Node handle = typeNode.addNode((String) properties.get("name"), HippoNodeType.NT_HANDLE);
+                Node doc = handle.addNode((String) properties.get("name"), (String) properties.get("template"));
                 doc.setProperty("state", "unpublished");
                 result = doc;
 
-                String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH
-                                + "/" + session.getHippo() + "/hippo:templates/" + (String)properties.get("template") ;
-                if (rootNode.hasNode(path)) {
-                    Node configNode = rootNode.getNode(path);
-                    NodeIterator iterator = configNode.getNodes();
-                    while (iterator.hasNext()) {
-                        Node fieldNode = iterator.nextNode();
+                // find template node describing the node type
+                QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
+                String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
+                        + session.getHippo() + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/"
+                        + (String) properties.get("template");
+                Query query = queryManager.createQuery(xpath, Query.XPATH);
+                NodeIterator templateIterator = query.execute().getNodes();
+                if (templateIterator.getSize() != 1) {
+                    log.error("Found " + templateIterator.getSize() + " matching templates, expected one.");
+                    return result;
+                }
 
-                        // TODO should be able to get a default value for field from config
-                        if (fieldNode.getName().equals("state")) {
-                            doc.setProperty(fieldNode.getProperty("hippo:path").getString(), "unpublished");
-                        }
-                        else {
-                            doc.setProperty(fieldNode.getProperty("hippo:path").getString(), "");
-                        }
+                // initialize the document node with the fields that are defined in the template
+                Node template = templateIterator.nextNode();
+                NodeIterator iterator = template.getNodes();
+                while (iterator.hasNext()) {
+                    Node fieldNode = iterator.nextNode();
+
+                    // TODO should be able to get a default value for field from config
+                    if (fieldNode.getName().equals("state")) {
+                        doc.setProperty(fieldNode.getProperty("hippo:path").getString(), "unpublished");
+                    } else {
+                        doc.setProperty(fieldNode.getProperty("hippo:path").getString(), "");
                     }
                 }
-            }
-            catch (RepositoryException e) {
+
+                // save the session; this is necessary to be able to have a workflow
+                session.getJcrSession().save();
+            } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
 
             return result;
         }
-
 
     }
 
