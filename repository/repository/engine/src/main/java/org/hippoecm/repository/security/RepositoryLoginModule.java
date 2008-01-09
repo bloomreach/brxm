@@ -71,9 +71,6 @@ public class RepositoryLoginModule implements LoginModule {
     // the principals, i.e. the authenticated identities
     private final Set principals = new HashSet();
 
-    // the special roles
-    private static final String ADMIN_ROLE_NAME = "admin";
-
     // keep the auth state of the user trying to login
     private boolean authenticated = false;
 
