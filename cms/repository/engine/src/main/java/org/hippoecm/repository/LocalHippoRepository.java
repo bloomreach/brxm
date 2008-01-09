@@ -324,6 +324,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }
 
+            refresh();
+
             /* Register a listener for the initialize node.  Whenever a node
              * or property is added, refresh the tree.  Processed properties
              * are deleted, so they will not be processed more than once.
@@ -336,8 +338,6 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             };
             obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/hippo:configuration/hippo:initialize",
                     true, null, null, false);
-
-            refresh();
 
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
