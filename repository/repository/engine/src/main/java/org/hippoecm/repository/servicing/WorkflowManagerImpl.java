@@ -85,6 +85,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
             return null;
         }
         try {
+            // if the user session has not yet been saved, no workflow is possible
+            // as the root session will not be able to find it.  (ItemNotFoundException)
+            documentManager.getSession().getNodeByUUID(item.getUUID());
+
             log.debug("looking for workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
             Node node = session.getNodeByUUID(configuration);
             if (node.hasNode(category)) {
