@@ -75,7 +75,9 @@ public class Main extends WebApplication {
 
     @Override
     protected void onDestroy() {
-        repository.close();
+        if(repository != null) {
+            repository.close();
+        }
     }
 
     @Override
