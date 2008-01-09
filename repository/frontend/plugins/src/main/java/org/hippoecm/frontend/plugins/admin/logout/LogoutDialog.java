@@ -31,7 +31,7 @@ public class LogoutDialog extends AbstractDialog {
     public LogoutDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
         dialogWindow.setTitle("Logout");
-        add(new Label("logout-message", "Do you want to logout?"));
+        add(new Label("logout-message", "There are pending changes. Do you want to logout?"));
 
         dialogWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
             private static final long serialVersionUID = 1L;
