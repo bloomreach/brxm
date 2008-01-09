@@ -69,7 +69,9 @@ public class TabsPlugin extends Plugin {
 
     @Override
     public void handle(Request request) {
-        if ("edit".equals(request.getOperation()) || "browse".equals(request.getOperation())) {
+        if ("edit".equals(request.getOperation()) 
+                || "browse".equals(request.getOperation())
+                || "flush".equals(request.getOperation()) ) {
             Channel channel = getDescriptor().getOutgoing();
             if (channel != null) {
                 Notification notification = channel.createNotification(request);

@@ -107,21 +107,21 @@ public class AddNewWizard extends Plugin {
             if (doc != null && target != null) {
                 Channel channel = getDescriptor().getIncoming();
                 if(channel != null) {
-                        // FIXME target is now available so an update event can be sent but how to get the correct JcrNodeModel?
 
-                        JcrNodeModel model = new JcrNodeModel(doc); // who is my parent??
-                        Request request = channel.createRequest("select", model.getMapRepresentation());
-                        channel.send(request);
-                        MessageContext context = request.getContext();
+                    Request request = channel.createRequest("flush", getNodeModel().findRootModel().getMapRepresentation());
+                    MessageContext context = request.getContext();
+                    channel.send(request);
 
-                        request = channel.createRequest("flush", getNodeModel().findRootModel().getMapRepresentation());
-                        request.setContext(context);
-                        channel.send(request);
+                    JcrNodeModel model = new JcrNodeModel(doc);
+                    request = channel.createRequest("select", model.getMapRepresentation());
+                    request.setContext(context);
+                    channel.send(request);
 
                     request = channel.createRequest("browse", model.getMapRepresentation());
                     request.setContext(context);
                     channel.send(request);
-                        context.apply(target);
+
+                    context.apply(target);
                 }
             }
 
@@ -136,7 +136,7 @@ public class AddNewWizard extends Plugin {
             try {
                 Node rootNode = session.getRootNode();
                 String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH
-                                + "/hippo:cms-prototype/hippo:templates";
+                                + "/" + session.getHippo() + "/hippo:templates";
                 if (rootNode.hasNode(path)) {
                     Node configNode = rootNode.getNode(path);
                     NodeIterator iterator = configNode.getNodes();
@@ -171,7 +171,7 @@ public class AddNewWizard extends Plugin {
                 result = doc;
 
                 String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH
-                                + "/hippo:cms-prototype/hippo:templates/" + (String)properties.get("template") ;
+                                + "/" + session.getHippo() + "/hippo:templates/" + (String)properties.get("template") ;
                 if (rootNode.hasNode(path)) {
                     Node configNode = rootNode.getNode(path);
                     NodeIterator iterator = configNode.getNodes();
