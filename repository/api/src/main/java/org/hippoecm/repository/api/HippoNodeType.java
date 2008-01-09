@@ -99,6 +99,7 @@ public interface HippoNodeType {
     final public static String HIPPO_RESULTSET = "hippo:resultset";
     final public static String HIPPO_ROLES = "hippo:roles";
     final public static String HIPPO_SEARCH = "hippo:search";
+    final public static String HIPPO_SEQUENCE = "hippo:sequence";
     final public static String HIPPO_SERVICE = "hippo:classname";
     final public static String HIPPO_TYPES = "hippo:types";
     final public static String HIPPO_UUID = "hippo:uuid";
