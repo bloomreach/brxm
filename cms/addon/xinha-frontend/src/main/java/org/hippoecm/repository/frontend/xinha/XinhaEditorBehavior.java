@@ -93,8 +93,10 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                     for (Iterator iter = configurations.iterator(); iter.hasNext();) {
                         XinhaPlugin.Configuration conf = (XinhaPlugin.Configuration) iter.next();
                         String[] plugin = conf.getPlugins();
-                        for (int i = 0; i < plugin.length; i++)
-                            plugins.add(plugin[i]);
+                        if (plugin != null) {
+                            for (int i = 0; i < plugin.length; i++)
+                                plugins.add(plugin[i]);
+                        }
                     }
 
                     sb.append("xinha_editors = null;\n");

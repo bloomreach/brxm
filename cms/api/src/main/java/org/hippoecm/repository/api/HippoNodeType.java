@@ -91,6 +91,7 @@ public interface HippoNodeType {
     final public static String HIPPO_NODETYPE = "hippo:nodetype";
     final public static String HIPPO_NODETYPES = "hippo:nodetypes";
     final public static String HIPPO_PASSWORD = "hippo:password";
+    final public static String HIPPO_PARAMETERS = "hippo:parameters";
     final public static String HIPPO_PATHS = "hippo:paths";
     final public static String HIPPO_PERMISSIONS = "hippo:permissions";
     final public static String HIPPO_QUERY = "hippo:query";

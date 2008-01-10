@@ -69,16 +69,7 @@ public class TabsPlugin extends Plugin {
 
     @Override
     public void handle(Request request) {
-        if ("edit".equals(request.getOperation()) 
-                || "browse".equals(request.getOperation())
-                || "flush".equals(request.getOperation()) ) {
-            Channel channel = getDescriptor().getOutgoing();
-            if (channel != null) {
-                Notification notification = channel.createNotification(request);
-                channel.publish(notification);
-            }
-            return;
-        } else if ("focus".equals(request.getOperation())) {
+        if ("focus".equals(request.getOperation())) {
             String pluginId = (String) request.getData().get("plugin");
             for (int i = 0; i < tabs.size(); i++) {
                 AbstractTab tabbie = tabs.get(i);

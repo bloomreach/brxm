@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Property;
@@ -90,8 +91,10 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
         add(editor);
 
         configuration = this . new Configuration();
-        configuration.setPlugins(new String[] { "CharacterMap", "ContextMenu", "ListType", "SpellChecker",
-                                                "SuperClean", "Stylist","TableOperations", "SaveSubmit" });
+        List<String> plugins = descriptor.getParameter("plugins");
+        if(plugins != null) {
+            configuration.setPlugins((String[]) plugins.toArray());
+        }
     }
 
     public String getName() {

@@ -45,6 +45,25 @@
         <sv:value>hippo:frontendplugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.filter.FilterPlugin</sv:value>
+      </sv:property>
+
+      <sv:node sv:name="hippo:parameters">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:parameters</sv:value>
+        </sv:property>
+        <sv:property sv:name="handle" sv:type="String">
+          <sv:value>browse</sv:value>
+          <sv:value>edit</sv:value>
+          <sv:value>flush</sv:value>
+        </sv:property>
+      </sv:node>
+      
+    <sv:node sv:name="panel">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:frontendplugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
         <sv:value>org.hippoecm.cmsprototype.frontend.plugins.tabs.TabsPlugin</sv:value>
       </sv:property>
 
@@ -184,6 +203,7 @@
       </sv:node>
     </sv:node>
 
+   </sv:node>
 
   </sv:node>
 </sv:node>

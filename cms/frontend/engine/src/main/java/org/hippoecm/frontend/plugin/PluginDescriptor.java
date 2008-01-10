@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugin;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -31,7 +32,7 @@ public class PluginDescriptor implements IClusterable {
     private String pluginId;
     private String wicketId;
     private String className;
-    private Map<String, PluginDescriptor> children;
+    private Map<String, List<String>> parameters;
 
     private Channel incoming;
     private Channel outgoing;
@@ -41,7 +42,7 @@ public class PluginDescriptor implements IClusterable {
         this.wicketId = pluginId;
         this.className = className;
         this.outgoing = outgoing;
-        children = new HashMap<String, PluginDescriptor>();
+        parameters = new HashMap<String, List<String>>();
     }
 
     // setters
@@ -58,6 +59,18 @@ public class PluginDescriptor implements IClusterable {
         this.className = className;
     }
 
+    public void addParameter(String key, List<String> value) {
+        parameters.put(key, value);
+    }
+    
+    public List<String> getParameter(String key) {
+        return parameters.get(key);
+    }
+
+    public Map<String,List<String>> getParameters() {
+        return parameters;
+    }
+    
     public void connect(Channel incoming) {
         this.incoming = incoming;
     }
