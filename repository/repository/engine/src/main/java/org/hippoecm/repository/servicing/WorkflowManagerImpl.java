@@ -247,11 +247,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.types = types;
         }
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            Session session = documentMgr.getSession();
+            Method targetMethod = null;
+            Object returnObject = null;
             try {
-                Session session = documentMgr.getSession();
                 synchronized(SessionDecorator.unwrap(documentManager.getSession())) {
-                    Method targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
-                    Object returnObject = targetMethod.invoke(upstream, args);
+                    targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
+                    returnObject = targetMethod.invoke(upstream, args);
                     documentMgr.putObject(uuid, types, upstream);
                     documentMgr.getSession().save();
                     return returnObject;
@@ -262,7 +264,25 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 throw new RepositoryException("Impossible failure for workflow proxy", ex);
             } catch(InvocationTargetException ex) {
                 throw ex.getCause();
-            }
+            } finally {
+		StringBuffer sb = new StringBuffer();
+		sb.append("workflow invocation ");
+		sb.append(upstream != null ? upstream.getClass().getName() : "<unknown>");
+		sb.append(".");
+		sb.append(method != null ? method.getName() : "<unknown>");
+		sb.append("(");
+                if (args != null) {
+                    for (int i=0; i<args.length; i++) {
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        sb.append(args[i] != null ? args[i].toString() : "null");
+                    }
+                }
+		sb.append(") -> ");
+		sb.append(returnObject != null ? returnObject.toString() : "null");
+	        log.info(new String(sb));
+	    }
         }
     }
 }
