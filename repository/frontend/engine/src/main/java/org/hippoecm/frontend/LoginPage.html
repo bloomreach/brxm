@@ -17,35 +17,34 @@
 <head>
     <title>Hippo CMS - Sign in</title>
     <link rel="stylesheet" type="text/css" href="skin/style.css"/>
-    <link rel="stylesheet" type="text/css" href="skin/blank.css"/>
 </head>
 <body>
     <span wicket:id = "feedback"></span>
     <p>
-        <form wicket:id = "signInForm">
-                <table>
-                        <tr>
-                          <td align = "right">Username:</td>
-                          <td>
-                            <input wicket:id="username" type="text" value="foo@goo.moo" size="30"/>
-                  </td>
-                        </tr>
-                        <tr>
-                          <td align = "right">Password:</td>
-                          <td>
-                            <input wicket:id="password" type="password" value="password" hidden="1" size="30"/>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                              <input wicket:id="submit" type ="submit" value="Sign In"/>
+	<form wicket:id = "signInForm">
+		<table>
+			<tr>
+			  <td align = "right">Username:</td>
+			  <td>
+			    <input wicket:id="username" type="text" value="foo@goo.moo" size="30"/>
+	          </td>
+			</tr>
+			<tr>
+			  <td align = "right">Password:</td>
+			  <td>
+			    <input wicket:id="password" type="password" value="password" hidden="1" size="30"/>
+			  </td>
+			</tr>
+			<tr>
+			  <td>
+			      <input wicket:id="submit" type ="submit" value="Sign In"/>
               </td>
-                          <td>
-                            <select wicket:id="hippos" />
-                            <span wicket:id="message"></span>
-                          </td>
-                        </tr>
-                </table>
-        </form>
+			  <td>
+			    <select wicket:id="hippos" />
+			    <span wicket:id="message"></span>
+			  </td>
+			</tr>
+		</table>	
+	</form>
 </body>
 </html>
