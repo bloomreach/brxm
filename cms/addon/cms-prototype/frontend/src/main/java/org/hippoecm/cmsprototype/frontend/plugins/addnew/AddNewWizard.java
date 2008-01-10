@@ -198,22 +198,9 @@ public class AddNewWizard extends Plugin {
                     return result;
                 }
 
-                // initialize the document node with the fields that are defined in the template
-                Node template = templateIterator.nextNode();
-                NodeIterator iterator = template.getNodes();
-                while (iterator.hasNext()) {
-                    Node fieldNode = iterator.nextNode();
-
-                    // TODO should be able to get a default value for field from config
-                    if (fieldNode.getName().equals("state")) {
-                        doc.setProperty(fieldNode.getProperty("hippo:path").getString(), "unpublished");
-                    } else {
-                        doc.setProperty(fieldNode.getProperty("hippo:path").getString(), "");
-                    }
-                }
-
-                // save the session; this is necessary to be able to have a workflow
-                session.getJcrSession().save();
+                // save the created nodes
+                typeNode.save();
+                
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
