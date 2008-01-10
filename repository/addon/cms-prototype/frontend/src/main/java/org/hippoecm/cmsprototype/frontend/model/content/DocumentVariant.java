@@ -19,16 +19,21 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentVariant extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(AbstractTreeNode.class);
+    
     // TODO: Replace with HippoNodeType when available: HREPTWO-342
     private static final String HIPPO_LANGUAGE = "language";
     private static final String HIPPO_STATE = "state";
 
     // Default labels
-    // TODO: needs i18m
+    // TODO: needs i18n
     private static final String NO_STATE = "no workflow";
     private static final String NO_LANGUAGE = "all languages";
 
@@ -54,7 +59,7 @@ public class DocumentVariant extends NodeModelWrapper {
                 return NO_STATE;
             }
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return e.getMessage();
         }
     }
@@ -70,6 +75,16 @@ public class DocumentVariant extends NodeModelWrapper {
         } catch (RepositoryException e) {
             e.printStackTrace();
             return e.getMessage();
+        }
+    }
+    
+    public Document getDocument() {
+        JcrNodeModel parentModel = nodeModel.getParentModel();
+        if (parentModel != null) {
+            return new Document(parentModel);
+        }
+        else {
+            return null;
         }
     }
 }
