@@ -33,7 +33,10 @@
             <a href="frontend-plugin-architecture.html">Frontend Plugin Architecture</a>
           </li>
           <li>
-            <a href="frontend-plugin-architecture.html">Frontend Plugin Communication</a>
+            <a href="frontend-plugin-communication.html">Frontend Plugin Communication</a>
+          </li>
+          <li>
+            <a href="frontend-plugin-skin.html">Frontend Skin Customization</a>
           </li>
         </ul>
 
