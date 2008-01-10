@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class Document extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(AbstractTreeNode.class);
+    static final Logger log = LoggerFactory.getLogger(Document.class);
 
     public Document(JcrNodeModel nodeModel) {
         super(nodeModel);

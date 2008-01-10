@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class Folder extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(AbstractTreeNode.class);
+    static final Logger log = LoggerFactory.getLogger(Folder.class);
 
     protected List<Folder> subFolders;
     protected List<Document> documents;

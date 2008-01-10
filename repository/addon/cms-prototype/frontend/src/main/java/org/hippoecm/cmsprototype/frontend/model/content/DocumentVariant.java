@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class DocumentVariant extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(AbstractTreeNode.class);
+    static final Logger log = LoggerFactory.getLogger(DocumentVariant.class);
     
     // TODO: Replace with HippoNodeType when available: HREPTWO-342
     private static final String HIPPO_LANGUAGE = "language";
