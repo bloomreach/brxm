@@ -16,11 +16,15 @@
 package org.hippoecm.frontend.plugin.config;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -66,7 +70,7 @@ public class PluginRepositoryConfig implements PluginConfig {
             NodeIterator it = pluginNode.getNodes();
             while (it.hasNext()) {
                 Node child = it.nextNode();
-                if (child != null) {
+                if (child != null && child.isNodeType(HippoNodeType.NT_PLUGIN)) {
                     result.add(nodeToDescriptor(child));
                 }
             }
@@ -96,8 +100,8 @@ public class PluginRepositoryConfig implements PluginConfig {
     private Node lookupConfigNode(String pluginId) throws RepositoryException {
         UserSession session = (UserSession) Session.get();
 
-        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
-                + session.getHippo() + "//" + pluginId;
+        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + session.getHippo()
+                + "//" + pluginId;
 
         QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);
@@ -114,6 +118,27 @@ public class PluginRepositoryConfig implements PluginConfig {
         String classname = pluginNode.getProperty(PLUGIN_RENDERER).getString();
         String pluginId = pluginNode.getName();
         Channel outgoing = channelFactory.createChannel();
-        return new PluginDescriptor(pluginId, classname, outgoing);
+        PluginDescriptor descriptor = new PluginDescriptor(pluginId, classname, outgoing);
+
+        // parse (optional) parameters
+        if (pluginNode.hasNode(HippoNodeType.HIPPO_PARAMETERS)) {
+            PropertyIterator iter = pluginNode.getNode(HippoNodeType.HIPPO_PARAMETERS).getProperties();
+            while (iter.hasNext()) {
+                Property property = iter.nextProperty();
+                if(property.getName().equals("jcr:primaryType"))
+                    continue;
+
+                List<String> list = new LinkedList<String>();
+                if (property.getDefinition().isMultiple()) {
+                    for (Value value : property.getValues()) {
+                        list.add(value.getString());
+                    }
+                } else {
+                    list.add(property.getValue().getString());
+                }
+                descriptor.addParameter(property.getName(), list);
+            }
+        }
+        return descriptor;
     }
 }

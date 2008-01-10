@@ -151,7 +151,11 @@
 [hippo:rolefolder] > nt:base
 + * (hippo:role) = hippo:role
 
+[hippo:parameters] > nt:base
+- * (string) multiple
+
 [hippo:plugin] > nt:unstructured
++ hippo:parameters (hippo:parameters) = hippo:parameters
 
 [hippo:pluginfolder] > nt:base
 + * (hippo:plugin) = hippo:plugin
