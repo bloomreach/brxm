@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class NodeCell extends Panel {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(NodeCell.class);
 
 
     public NodeCell(String id, final NodeModelWrapper model, final Channel channel, String nodePropertyName) {
