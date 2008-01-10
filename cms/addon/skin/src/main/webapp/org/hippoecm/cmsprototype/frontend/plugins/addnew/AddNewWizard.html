@@ -1,4 +1,4 @@
- <!--
+<!--
      * Copyright 2007 Hippo
      *
      * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -14,17 +14,24 @@
      * limitations under the License.
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:panel>
-        <ul>
-            <li>
-                <span wicket:id="acceptRequest-dialog"></span>
-            </li>
-            <li>
-                <span wicket:id="rejectRequest-dialog"></span>
-            </li>
-            <li>
-                <span wicket:id="cancelRequest-dialog"></span>
-            </li>
-        </ul>
-    </wicket:panel>
+  <wicket:panel>
+    <table width="100%" border="1" cellspacing="0" cellpadding="0">
+	    <tr>
+    		<td>
+			    <div>
+			      <span wicket:id="feedback">Feedback message</span>
+			      <form wicket:id="addNewForm">
+			        Name:
+			        <input wicket:id="name" type="text" value="name"/>
+			        <br/>
+			        Template:
+			        <select wicket:id="template" />
+			        <br/>
+			        <input wicket:id="submit" type="submit" value="Add"/>
+			      </form>
+			    </div>
+    		</td>
+    	</tr>
+    </table>
+  </wicket:panel>
 </html>
