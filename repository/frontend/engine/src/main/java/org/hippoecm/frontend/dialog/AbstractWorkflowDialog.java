@@ -67,17 +67,17 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     @Override
     protected void ok() throws Exception {
-        doOk();
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-
         // before saving (which possibly means deleting), find the handle
-        JcrNodeModel handle = nodeModel;
+        JcrNodeModel handle = dialogWindow.getNodeModel();
         while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
             handle = handle.getParentModel();
         }
 
-        nodeModel.getNode().getSession().save();
-        nodeModel.getNode().getSession().refresh(true);
+        // save the handle so that the workflow uses the correct content
+        handle.getNode().save();
+        doOk();
+
+        ((UserSession) Session.get()).getJcrSession().refresh(true);
 
         // enqueue a request to select the handle
         Channel channel = getIncoming();
