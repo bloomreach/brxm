@@ -23,11 +23,16 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Document extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(AbstractTreeNode.class);
 
     public Document(JcrNodeModel nodeModel) {
         super(nodeModel);
@@ -53,8 +58,7 @@ public class Document extends NodeModelWrapper {
                 }
             }
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return list;
     }

@@ -26,11 +26,16 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Folder extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(AbstractTreeNode.class);
 
     protected List<Folder> subFolders;
     protected List<Document> documents;
@@ -42,6 +47,16 @@ public class Folder extends NodeModelWrapper {
     public List<Folder> getSubFolders() {
         ensureSubFoldersAreLoaded();
         return subFolders;
+    }
+    
+    public Folder getParentFolder() {
+        JcrNodeModel parentModel = nodeModel.getParentModel();
+        if (parentModel != null) {
+            return new Folder(parentModel);
+        }
+        else {
+            return null;
+        }
     }
 
     public List<Document> getDocuments() {
@@ -95,7 +110,7 @@ public class Folder extends NodeModelWrapper {
             }
         }
         catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         // remove duplicates (if any) :-\
@@ -134,7 +149,7 @@ public class Folder extends NodeModelWrapper {
             }
         }
         catch (RepositoryException e) {
-
+            log.error(e.getMessage());
         }
 
         return folders;
