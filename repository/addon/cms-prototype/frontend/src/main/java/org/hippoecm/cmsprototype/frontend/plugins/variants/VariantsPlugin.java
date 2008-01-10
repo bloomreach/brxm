@@ -18,8 +18,14 @@ package org.hippoecm.cmsprototype.frontend.plugins.variants;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,6 +40,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -53,10 +60,14 @@ public class VariantsPlugin extends Plugin {
     // TODO: needs i18m
     private static final String NODE_NONE = "no node selected..";
 
+    private JcrNodeModel selectedVariantNodeModel = null;
+    
     /**
      * The label displaying the node name
      */
     protected String nodeName = NODE_NONE;
+    
+    
 
     /**
      * The list containing the variants for a hippo:handle
@@ -66,17 +77,24 @@ public class VariantsPlugin extends Plugin {
     public VariantsPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(descriptor, model, parentPlugin);
 
-        HippoNode node = model.getNode();
-        try {
-            nodeName = node.getDisplayName();
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                Document document = new Document(model);
-                variantsList.addAll(document.getVariants());
+        JcrNodeModel handleModel = findHandle(model);
+        
+        if (handleModel != null) {
+            HippoNode node = handleModel.getNode();
+            
+            try {
+                nodeName = node.getDisplayName();
+            } catch (RepositoryException e) {
+                e.printStackTrace();
             }
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
+            Document document = new Document(handleModel);
+            variantsList.addAll(document.getVariants());
         }
+        else {
+            variantsList.clear();
+        }
+         
 
         ListView listView = new ListView(VARIANTS_LIST, variantsList) {
             private static final long serialVersionUID = 1L;
@@ -91,6 +109,7 @@ public class VariantsPlugin extends Plugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
+                        
                         Channel channel = getDescriptor().getIncoming();
                         if (channel != null) {
                             Request request = channel.createRequest("select", variant.getNodeModel()
@@ -101,38 +120,114 @@ public class VariantsPlugin extends Plugin {
                     }
 
                 };
+                
+                String prefix = "";
+
+                if (variant.getNodeModel().equals(selectedVariantNodeModel)) {
+                    prefix = "-> ";
+                }
+                
                 item.add(link);
-                link.add(new Label(VARIANT_LABEL, variant.getLanguage() + " - " + variant.getState()));
+                link.add(new Label(VARIANT_LABEL, prefix + variant.getLanguage() + " - " + variant.getState()));
 
             }
         };
         add(new Label(NODE_NAME_LABEL, new PropertyModel(this, "nodeName")));
         add(listView);
     }
+    
+    /**
+     * Finds the first parent node that is a handle 
+     * @param nodeModel
+     * @return the Node of the matching parent node, or null
+     */
+    private JcrNodeModel findHandle(JcrNodeModel nodeModel) {
+        
+        JcrNodeModel result = nodeModel;
+        
+        if (result != null) {
+            Node resultNode = result.getNode();
+        
+            try {
+                if (!resultNode.getPrimaryNodeType().isNodeType(HippoNodeType.NT_HANDLE)){
+                    result = findHandle(result.getParentModel());
+                }
+            } catch (RepositoryException e) {
+                result = null;
+            }
+        
+        }
+        
+        return result;
+    }
+
 
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getData());
             // ignore documents; we select those ourselves
+            
+            nodeName = "";
+            selectedVariantNodeModel = null;
+
             try {
-                while (nodeModel != null) {
-                    HippoNode node = nodeModel.getNode();
-                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        nodeModel = nodeModel.getParentModel();
-                    } else {
-                        setNodeModel(nodeModel);
-                        variantsList.clear();
+                if (nodeModel.getNode().getPrimaryNodeType().isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    // The selected node is a variant. Select it in the list of variants.
+                    
+                    selectedVariantNodeModel = nodeModel;
+                }
+            } catch (RepositoryException e1) {
+                e1.printStackTrace();
+            }            
+
+            Node resultNode = nodeModel.getNode();
+            
+            try {
+                if (resultNode.getPrimaryNodeType().isNodeType(HippoNodeType.NT_REQUEST)) {
+                    // The selected node is a request on a document. Find which document it refers to and select that.
+                    
+                    if (resultNode.hasProperty("document")) {
+
+                        javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession());
+                        
+                        String docUUID = resultNode.getProperty("document").getString();
+                        
+                        selectedVariantNodeModel = new JcrNodeModel(session.getNodeByUUID(docUUID));
+                    }
+                        
+                }
+            } catch (ValueFormatException e1) {
+                // document UUID is not a string
+            } catch (PathNotFoundException e1) {
+                e1.printStackTrace();
+            } catch (ItemNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            } catch (RepositoryException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+            
+            try {
+                    JcrNodeModel handleModel = findHandle(nodeModel);
+
+                    variantsList.clear();
+                    setNodeModel(handleModel);
+
+                    if (handleModel != null) {
+                        
+                        HippoNode node = handleModel.getNode();
+
+                        Document document = new Document(handleModel);
+                        variantsList.addAll(document.getVariants());
 
                         nodeName = node.getDisplayName();
-                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            Document document = new Document(nodeModel);
-                            variantsList.addAll(document.getVariants());
-                        }
-                        notification.getContext().addRefresh(this);
-                        break;
+
                     }
-                }
+
+                    notification.getContext().addRefresh(this);
             } catch (RepositoryException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

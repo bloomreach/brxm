@@ -39,23 +39,31 @@ public class NodeCell extends Panel {
     static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
 
-    public NodeCell(String id, NodeModelWrapper model, final Channel channel, String nodePropertyName) {
+    public NodeCell(String id, final NodeModelWrapper model, final Channel channel, String nodePropertyName) {
         super(id, model);
         AjaxLink link = new AjaxLink("link", model) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                // create a "select" request with the node path as a parameter
-                JcrNodeModel nodeModel = ((NodeModelWrapper) this.getModel()).getNodeModel();
-                Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
-                channel.send(request);
-                request.getContext().apply(target);
+
+                sendChannelRequest(model, target, channel);
             }
 
         };
         addLabel(model, nodePropertyName, link);
         add(link);
+    }
+
+    /**
+     * Override this method if you want to send a different request
+     */
+    protected void sendChannelRequest(NodeModelWrapper model, AjaxRequestTarget target, Channel channel) {
+        // create a "select" request with the node path as a parameter
+        JcrNodeModel nodeModel = ((NodeModelWrapper) this.getModel()).getNodeModel();
+        Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
+        channel.send(request);
+        request.getContext().apply(target);
     }
 
     /**

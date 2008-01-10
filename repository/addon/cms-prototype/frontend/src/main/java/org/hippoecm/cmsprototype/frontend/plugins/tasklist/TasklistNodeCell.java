@@ -16,11 +16,14 @@
 
 package org.hippoecm.cmsprototype.frontend.plugins.tasklist;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.cmsprototype.frontend.plugins.list.NodeCell;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 
 public class TasklistNodeCell extends NodeCell {
 
@@ -30,7 +33,6 @@ public class TasklistNodeCell extends NodeCell {
         super(id, model, channel, nodePropertyName);
     }
 
-
     @Override
     protected boolean hasDefaultCustomizedLabels(String nodePropertyName) {
         // [TODO] use a constant
@@ -38,6 +40,18 @@ public class TasklistNodeCell extends NodeCell {
             return true;
         }
         return false; 
+    }
+
+    @Override
+    protected void sendChannelRequest(NodeModelWrapper model, AjaxRequestTarget target, Channel channel) {
+        // create a "select" request with the node path as a parameter
+
+        if(model instanceof Task) {
+            JcrNodeModel nodeModel = ((NodeModelWrapper) model).getNodeModel();            
+            Request request = channel.createRequest("browse", nodeModel.getMapRepresentation());
+            channel.send(request);
+            request.getContext().apply(target);
+        }
     }
     
     @Override
