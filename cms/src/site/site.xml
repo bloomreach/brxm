@@ -83,6 +83,7 @@
           <item name="Frontend Plugins" href="/extend-hippo-ecm/plugins/frontend/index.html" collapse="true">
             <item name="Architecture" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
             <item name="Communication" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-communication.html"/>
+            <item name="Skin" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-skin.html"/>
           </item>
         </item>
         <item name="Hello World" href="/extend-hippo-ecm/hello-world.html"/>

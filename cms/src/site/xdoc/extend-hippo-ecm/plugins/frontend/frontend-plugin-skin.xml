@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Frontend Skin Customization</title>
+  </properties>
+  <head>
+  </head>
+  <body>
+    <section name="Front-end skin customization">
+
+      <p>
+        The layout on the screen, the colors and formatting used, and things like the
+        icons in place for the front-end are generally known as a skin.  Customizing
+        the application to give a different look is performed by applying a different
+        skin.  A different skin should <em>not</em> be used to create a different
+        functional application.  Functionality is added by incorporating another
+        plugin in the packaged product.  This in itself should not lead to having to
+        apply a different skin.
+      </p>
+
+      <p>
+        The most obvious part of a skin is the cascading style sheet (CSS) file.  The
+        CSS file determines the default font sizes, spacing, etcetera to be used for
+        all elements.  Also part of the skin are icons in use by either CSS file (such
+        as declaring a button or background image) or elsewhere.
+      </p>
+
+      <p>
+        There always needs to be a skin with the CSS file and icons to be used.  A
+        default skin is supplied in the project <code>hippo-ecm-addon-skin</code>.
+        A skin itself is an Add-on plugin like others and can be combined with the
+        end-application.
+      </p>
+
+    <subsection name="Create your own skin">
+
+      <p>
+        You can create your own skin by creating a project with the same structure and
+        content as the hippo-ecm-addon-skin project as supplied in
+        <code>addon/skin</code>.  You can also take the hippo-ecm-addon-skin WAR,
+        rename it and modify it to your needs.  This works because this add-on is just
+        a collection of files, and building the WAR is just a packaging of the files.
+        No actual compilation of sources is required.
+      </p>
+
+      <p>
+        The first thing to do when creating a copy of the skin project is to change
+        the name of the artifact in the <code>pom.xml</code> (when building using
+        maven) and in the <code>src/main/webapp/WEB-INF/web.xml</code> (or
+        WEB-INF/web.xml when modifying the resulting WAR).  Do <em>not</em> use the
+        same package name as the one as the default.  The resulting WAR should have a
+        different name and different description in the WEB-INF/web.xml.
+      </p>
+
+      <p>
+        You can <em>not</em> change the context-root of the skin.  All skin files in
+        the final produced end-application are retrievale under the <code>skin/</code>
+        path.
+      </p>
+
+    </subsection>
+
+    <subsection name="What to customize">
+
+      <p>
+        <dl>
+          <dt>Cascading style sheets</dt>
+          <dd>
+            When creating your own skin you can modify the cascading style sheet in use,
+            such as the <code>src/main/webapp/style.css</code>.  In the packaged WAR this
+            file is placed in the root of the WAR.  The <code>style.css</code> is the
+            primary style file in use, but there are others for specific screens, such as
+            the login screen.
+          </dd>
+    
+          <dt>Icons</dt>
+          <dd>
+            Icons in use are placed in the <code>images</code> directory.  Just put any
+            different icons in your own project when you want them different.
+          </dd>
+    
+          <dt>Alternate HTML files</dt>
+          <dd>
+            Web pages as served back to a browsing client are not single HTML files in the
+            front-end.  Rather than single files bound to a specific page requested, a web
+            page is composed of HTML fragments.<br/>
+
+            Each item on a web-page is supplied by a piece of program code in the
+            front-end.  Together with this Java program code, a HTML fragment in given.
+            These HTML fragments are merged into a single HTML file.  These HTML fragment
+            files are not defined on a per-page basis, but on the class of the item used.
+            Therefor a change to the HTML file representing, for instance a kind of
+            button, is reflected in all buttons of that kind used everywhere.<br/>
+
+            By being able to override the HTML for all items, you are able to further customize
+            the layout of the pages.
+          </dd>
+        </dl>
+      </p>
+
+      <p>
+        To override HTML files, you need to identify which HTML fragment file you need
+        to override.  This depends on the add-on you are using and which 
+      </p>
+
+      <p>
+        Suppose an add-on in use defines an item which is a TasklistPlugin.  Next to the
+        Java class implementing this item, there is an HTML fragment file:
+      </p>
+
+<source>
+`-- src
+    `-- main
+        `-- java
+            `-- org
+                `-- hippoecm
+                    `-- cmsprototype
+                        `-- frontend
+                            `-- plugins
+                                `-- tasklist
+                                    |-- TasklistPlugin.java
+                                    `-- TasklistPlugin.html
+</source>
+
+      <p>
+        This is in the original add-on that supplies the item on the web-page.  If you
+        want to provide an override for this HTML fragment in your skin, then put this
+        alternate TasklistPlugin.html file in your skin project.
+      </p>
+
+      <p>
+        Within the skin project, the location of this HTML fragment should be the
+        location
+        <code>src/main/webapp/org/hippoecm/cmsprototype/frontend/plugins/tasklist/TasklistPlugin.html</code>
+        resulting in the final WAR project as file
+        <code>org/hippoecm/cmsprototype/frontend/plugins/tasklist/TasklistPlugin.html</code>.
+        of the root of the WAR file.
+      </p>
+
+      <p>
+        In summary, the location of an overriding HTML fragment file should follow the
+        same directory structure as the original HTML fragment file, but instead of
+        the initial location <code>src/main/java</code> you should use
+        <code>src/main/webapp</code>.
+      </p>
+
+    </subsection>
+
+    <subsection name="Overview of a skin project">
+
+<source>
+|-- pom.xml
+`-- src
+    `-- main
+        `-- site
+            ... <i>maven documentation</i>
+        `-- webapp
+            `-- WEB-INF
+                `-- web.xml
+            `-- org
+                `-- hippoecm
+                    `-- frontend
+                        ...<i>overriding HTML fragments</i>
+</source>
+
+    </subsection>
+
+    <subsection name="How to apply a skin">
+
+      <p>
+        The end application is a packaging of the core system as well as multiple
+        add-ons.  These add-ons are either WAR or JARs which are merged or put
+        together in an EAR.
+        Please refer to <a href="/extend-hippo-ecm/building/index.html">the building
+        section</a> on how to compose your end application by adding add-ons to your
+        application.
+      </p>
+
+      <p>
+        The default skin in use is defined by the project that produces the
+        hippo-ecm-addon-skin artifact.  If you want to apply a different skin, replace
+        this artifact with your own.
+      </p>
+
+      <p>
+        If you use an EAR target, this means simply replacing the
+        <code>hippo-ecm-addon-skin.war</code> by another skin WAR target.  If you use
+        a merged WAR target, then you need to rebuild the end WAR with a different
+        artifact dependency in the pom.xml.  Replace the dependency to the 
+        <code>hippo-ecm-addon-skin</code>
+        artifact by your own skin artifact.
+      </p>
+
+    </subsection>
+
+    </section>
+  </body>
+</document>
