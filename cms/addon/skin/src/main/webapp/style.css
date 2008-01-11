@@ -4,7 +4,7 @@ body {
   background: url('images/back.gif') repeat-x;
 }
 body.intro {
-  background: url('images/introback.gif') repeat-x; padding-top: 50px
+  background: url('images/introback.gif') repeat-x; padding-top: 50px;
   text-align: center;
 }
 
@@ -150,10 +150,10 @@ div.tabpanel div.tab-row a {
   padding-top: 11px;
 }
 
+div.tabpanel div.tab-row li a { background: url('images/edit.gif') no-repeat 0px 10px; }
 div.tabpanel div.tab-row li.tab0 a { background: url('images/home.gif') no-repeat 0px 10px; }
 div.tabpanel div.tab-row li.tab1 a { background: url('images/browse.gif') no-repeat 0px 10px; }
-div.tabpanel div.tab-row li.tab2 a { background: url('images/edit.gif') no-repeat 0px 10px; }
-div.tabpanel div.tab-row li.tab3 a { background: url('images/search.gif') no-repeat 0px 10px; }
+div.tabpanel div.tab-row li.tab2 a { background: url('images/search.gif') no-repeat 0px 10px; }
 
 div.tabpanel div.tab-row li.selected { background:url('images/tabbackactive.gif') repeat-x bottom right; }
 

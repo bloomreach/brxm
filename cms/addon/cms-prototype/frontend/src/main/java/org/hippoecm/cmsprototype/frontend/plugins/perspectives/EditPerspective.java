@@ -38,21 +38,27 @@ public class EditPerspective extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("edit".equals(notification.getOperation())) {
-            Channel incoming = getDescriptor().getIncoming();
-            if (incoming != null) {
-                Map data = new HashMap();
-                data.put("plugin", getDescriptor().getPluginId());
-                Request request = incoming.createRequest("focus", data);
-                request.setContext(notification.getContext());
-                incoming.send(request);
+            JcrNodeModel model = new JcrNodeModel(notification.getData());
+            if (model.equals(getNodeModel())) {
+                Channel incoming = getDescriptor().getIncoming();
+                if (incoming != null) {
+                    Map data = new HashMap();
+                    data.put("plugin", getDescriptor().getPluginId());
+                    Request request = incoming.createRequest("focus", data);
+                    request.setContext(notification.getContext());
+                    incoming.send(request);
+                }
+
+                Channel outgoing = getDescriptor().getOutgoing();
+                if (outgoing != null) {
+                    Notification selectNotice = outgoing.createNotification("select", notification.getData());
+                    selectNotice.setContext(notification.getContext());
+                    outgoing.publish(selectNotice);
+                }
             }
 
-            Channel outgoing = getDescriptor().getOutgoing();
-            if (outgoing != null) {
-                Notification selectNotice = outgoing.createNotification("select", notification.getData());
-                selectNotice.setContext(notification.getContext());
-                outgoing.publish(selectNotice);
-            }
+            // don't propagate edit notification to children
+            return;
         }
         super.receive(notification);
     }

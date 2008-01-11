@@ -17,6 +17,7 @@ package org.hippoecm.frontend.tree;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
@@ -53,44 +54,41 @@ public abstract class AbstractTreePlugin extends Plugin {
     protected void onSelect(AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
         Channel channel = getDescriptor().getIncoming();
         if(channel != null) {
-                // create a "select" request with the node path as a parameter
-                Request request = channel.createRequest("select",
-                                treeNodeModel.getNodeModel().getMapRepresentation());
+            // create a "select" request with the node path as a parameter
+            Request request = channel.createRequest("select",
+                            treeNodeModel.getNodeModel().getMapRepresentation());
 
-                // send the request to the incoming channel
-                channel.send(request);
+            // send the request to the incoming channel
+            channel.send(request);
 
-                // add all components that have changed (and are visible!)
-                request.getContext().apply(target);
+            // add all components that have changed (and are visible!)
+            request.getContext().apply(target);
         }
     }
 
-
     @Override
     public void receive(Notification notification) {
-        Request request = notification.getRequest();
-        if (request != null) {
-            if ("select".equals(notification.getOperation())) {
-                JcrNodeModel model = new JcrNodeModel(request.getData());
-                AbstractTreeNode node = null;
-                while (model != null) {
-                    node = rootNode.getTreeModel().lookup(model);
-                    if (node != null) {
-                        tree.getTreeState().selectNode(node, true);
-                        break;
-                    } else {
-                        model = model.getParentModel();
-                    }
-                }
-            } else if ("flush".equals(notification.getOperation())) {
-                AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(request.getData()));
+        if ("select".equals(notification.getOperation())) {
+            JcrNodeModel model = new JcrNodeModel(notification.getData());
+            AbstractTreeNode node = null;
+            while (model != null) {
+                node = rootNode.getTreeModel().lookup(model);
                 if (node != null) {
-                    node.markReload();
-                    node.getTreeModel().nodeStructureChanged(node);
-                    request.getContext().addRefresh(tree, "updateTree");
+                    tree.getTreeState().selectNode(node, true);
+                    break;
+                } else {
+                    model = model.getParentModel();
                 }
+            }
+        } else if ("flush".equals(notification.getOperation())) {
+            AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(notification.getData()));
+            if (node != null) {
+                node.markReload();
+                node.getTreeModel().nodeStructureChanged(node);
+                notification.getContext().addRefresh(tree, "updateTree");
             }
         }
         super.receive(notification);
     }
+
 }

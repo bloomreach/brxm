@@ -33,6 +33,7 @@
 - hippo:multiple (boolean)
 
 [hippo:template] > nt:base orderable
++ hippo:prototype (hippo:document)
 + * (hippo:field)
 
 [hippo:templatefolder] > nt:base

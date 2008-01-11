@@ -111,4 +111,4 @@
 - hipposample:body (string) mandatory
 - hipposample:subject (string) multiple mandatory
 - hipposample:links (string) multiple
-- hipposample:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'
+// - hipposample:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'

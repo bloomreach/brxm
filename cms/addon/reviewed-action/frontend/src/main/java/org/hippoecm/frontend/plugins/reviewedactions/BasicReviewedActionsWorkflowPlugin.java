@@ -21,6 +21,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
+import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableinstance.DisposeEditableInstanceDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinstance.ObtainEditableInstanceDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion.RequestDeletionDialog;
@@ -45,6 +46,14 @@ public class BasicReviewedActionsWorkflowPlugin extends Plugin {
                 RequestDePublicationDialog.class, model, incoming, factory));
         add(new DialogLink("requestDeletion-dialog", "Request delete",
                 RequestDeletionDialog.class, model, incoming, factory));
+    }
+
+    @Override
+    public void receive(Notification notification) {
+        if ("select".equals(notification.getOperation())) {
+            setNodeModel(new JcrNodeModel(notification.getData()));
+        }
+        super.receive(notification);
     }
 
 }

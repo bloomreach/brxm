@@ -59,7 +59,7 @@ margin: 0;
 padding: .5em;
 }
 
-#leftnav h5{margin-bottom: 15px; color: #333333; font-size: 12px; border-bottom: 1px dotted #666666; padding-bottom 5px;}
+#leftnav h5{margin-bottom: 15px; color: #333333; font-size: 12px; border-bottom: 1px dotted #666666; padding-bottom: 5px;}
 #leftnav ul{margin-left: 5px; margin-bottom: 5px; list-style-position: inside; margin-bottom: 10px;}
 #leftnav ul li{list-style-type: square; margin-bottom: 4px; color: #CECECE}
 #leftnav ul li a{color: #00a5e3}
