@@ -206,7 +206,7 @@ public abstract class AbstractListingPlugin extends Plugin {
      */
     protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
         // subclasses should override this if they want to change behavior
-    	
+        
         Node pref = prefNode.addNode("name",USERSETTINGS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "Name");
         pref.setProperty(PROPERTYNAME_PROPERTY, "name");
@@ -216,7 +216,7 @@ public abstract class AbstractListingPlugin extends Plugin {
         pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
         columns.add(getNodeColumn(new Model("Name"), "name" , incoming));
         columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , incoming));
-    	
+        
     }
 
 
