@@ -40,7 +40,6 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action/repository</url>
   </scm>
 
-
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
