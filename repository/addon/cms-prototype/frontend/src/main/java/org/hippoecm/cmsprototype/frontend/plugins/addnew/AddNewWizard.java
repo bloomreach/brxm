@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Workspace;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -47,6 +48,7 @@ import org.hippoecm.frontend.plugin.channel.MessageContext;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,19 +174,21 @@ public class AddNewWizard extends Plugin {
         private Node createDocument() {
             UserSession session = (UserSession) Session.get();
             Node result = null;
+            String name = (String) properties.get("name");
+            String type = (String) properties.get("template");
 
             try {
                 Node rootNode = session.getRootNode();
                 Node typeNode;
-                if (rootNode.hasNode((String) properties.get("template"))) {
-                    typeNode = rootNode.getNode((String) properties.get("template"));
+                if (rootNode.hasNode(type)) {
+                    typeNode = rootNode.getNode(type);
                 } else {
-                    typeNode = rootNode.addNode((String) properties.get("template"), "nt:unstructured");
+                    typeNode = rootNode.addNode(type, "nt:unstructured");
                 }
-                Node handle = typeNode.addNode((String) properties.get("name"), HippoNodeType.NT_HANDLE);
-                Node doc = handle.addNode((String) properties.get("name"), (String) properties.get("template"));
-                doc.setProperty("state", "unpublished");
-                result = doc;
+                Node handle = typeNode.addNode(name, HippoNodeType.NT_HANDLE);
+
+                // save the created nodes
+                session.getJcrSession().save();
 
                 // find template node describing the node type
                 QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
@@ -197,10 +201,15 @@ public class AddNewWizard extends Plugin {
                     log.error("Found " + templateIterator.getSize() + " matching templates, expected one.");
                     return result;
                 }
+                Node template = templateIterator.nextNode();
+                if(template.hasNode("hippo:prototype")) {
+                    Node prototype = template.getNode("hippo:prototype");
+                    Workspace workspace = ((UserSession) Session.get()).getJcrSession().getWorkspace();
+                    workspace.copy(prototype.getPath(), handle.getPath() + "/" + name);
+                }
 
-                // save the created nodes
-                typeNode.save();
-                
+                result = handle.getNode(name);
+
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }

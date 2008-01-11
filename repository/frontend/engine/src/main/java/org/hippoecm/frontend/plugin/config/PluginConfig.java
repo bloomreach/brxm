@@ -25,7 +25,7 @@ public interface PluginConfig extends IClusterable {
 
     public PluginDescriptor getRoot();
 
-    public List getChildren(PluginDescriptor plugin);
+    public List getChildren(String pluginId);
 
     public PluginDescriptor getPlugin(String pluginId);
 

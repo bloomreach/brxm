@@ -18,10 +18,7 @@ package org.hippoecm.frontend.plugin;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
@@ -30,11 +27,6 @@ import org.hippoecm.frontend.plugin.channel.IRequestHandler;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,12 +93,14 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     public void addChildren() {
         PluginDescriptor descriptor = getDescriptor();
         PluginConfig pluginConfig = getPluginManager().getPluginConfig();
-        List children = pluginConfig.getChildren(descriptor);
+        List children = pluginConfig.getChildren(descriptor.getPluginId());
         Iterator it = children.iterator();
         while (it.hasNext()) {
             PluginDescriptor childDescriptor = (PluginDescriptor) it.next();
             Plugin child = addChild(childDescriptor);
-            child.addChildren();
+            if (child != null) {
+                child.addChildren();
+            }
         }
     }
 
@@ -124,7 +118,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
 
     @Override
     public void remove(Component component) {
-        if(component instanceof Plugin) {
+        if (component instanceof Plugin) {
             ((Plugin) component).getDescriptor().disconnect();
         }
         super.remove(component);
@@ -133,11 +127,6 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     // implement INotificationListener
 
     public void receive(Notification notification) {
-        // update node model
-        if ("select".equals(notification.getOperation())) {
-            setNodeModel(new JcrNodeModel(notification.getData()));
-        }
-
         // forward the notification to children
         Channel outgoing = getDescriptor().getOutgoing();
         if (outgoing != null) {

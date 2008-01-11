@@ -70,9 +70,9 @@ public class PluginJavaConfig implements PluginConfig {
         return root;
     }
 
-    public List<PluginDescriptor> getChildren(PluginDescriptor pluginDescriptor) {
+    public List<PluginDescriptor> getChildren(String pluginId) {
         List<PluginDescriptor> result = new ArrayList<PluginDescriptor>();
-        if (pluginDescriptor.getPluginId().equals("rootPlugin")) {
+        if (pluginId.equals("rootPlugin")) {
             result.addAll(childrenOfRoot.values());
         }
         return result;

@@ -63,10 +63,10 @@ public class PluginRepositoryConfig implements PluginConfig {
         return null;
     }
 
-    public List getChildren(PluginDescriptor pluginDescriptor) {
+    public List getChildren(String pluginId) {
         List result = new ArrayList();
         try {
-            Node pluginNode = lookupConfigNode(pluginDescriptor.getPluginId());
+            Node pluginNode = lookupConfigNode(pluginId);
             NodeIterator it = pluginNode.getNodes();
             while (it.hasNext()) {
                 Node child = it.nextNode();

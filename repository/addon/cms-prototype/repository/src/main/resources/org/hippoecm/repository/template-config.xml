@@ -29,6 +29,23 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:template</sv:value>
     </sv:property>
+    <sv:node sv:name="hippo:prototype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposample:simpledocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposample:title" sv:type="String">
+        <sv:value>title</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposample:subject" sv:type="String">
+        <sv:value>subject</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposample:body" sv:type="String">
+        <sv:value>body</sv:value>
+      </sv:property>
+      <sv:property sv:name="state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+    </sv:node>
 
     <!-- title -->
     <sv:node sv:name="title">
@@ -171,6 +188,14 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:template</sv:value>
     </sv:property>
+    <sv:node sv:name="hippo:prototype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+    </sv:node>
 
     <!-- state -->
     <sv:node sv:name="state">

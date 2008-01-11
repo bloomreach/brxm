@@ -71,8 +71,10 @@ public class ActionsPlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
+            JcrNodeModel model = new JcrNodeModel(notification.getData());
+            setNodeModel(model);
             try {
-                HippoNode node = new JcrNodeModel(notification.getData()).getNode();
+                HippoNode node = model.getNode();
                 link.setVisible( node.isNodeType(HippoNodeType.NT_DOCUMENT)
                         && node.hasProperty("state")
                         && node.getProperty("state").getString().equals("draft") );
