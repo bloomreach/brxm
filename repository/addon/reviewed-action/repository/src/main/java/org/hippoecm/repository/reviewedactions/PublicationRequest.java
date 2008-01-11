@@ -30,6 +30,6 @@ public class PublicationRequest extends Document {
         this.username = username;
         this.type = type;
         reason = "";
-        reference = document.getJcrIdentity();
+        reference = document.getIdentity();
     }
 }

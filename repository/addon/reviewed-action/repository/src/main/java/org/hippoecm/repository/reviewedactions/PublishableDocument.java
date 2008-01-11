@@ -23,16 +23,10 @@ public class PublishableDocument extends Document {
     final public static String DRAFT = "draft";
     final public static String STALE = "stale";
 
-    String jcrIdentity = null;
     String state;
 
     public PublishableDocument() {
         this.state = UNPUBLISHED;
-    }
-
-    @Override
-    public final String getJcrIdentity() {
-        return jcrIdentity;
     }
 
     @Override

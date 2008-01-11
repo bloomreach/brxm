@@ -36,6 +36,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -154,9 +155,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
                 String uuid = item.getUUID();
                 Session session = documentManager.getSession();
-		/* The synchronized must operate on the core root session, because there is
-		 * only one such session, while there may be many decorated ones.
-		 */
+                /* The synchronized must operate on the core root session, because there is
+                 * only one such session, while there may be many decorated ones.
+                 */
                 synchronized(SessionDecorator.unwrap(documentManager.getSession())) {
                     Object object = documentManager.getObject(uuid, classname, types);
                     Workflow workflow = (Workflow) object;
@@ -256,6 +257,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     returnObject = targetMethod.invoke(upstream, args);
                     documentMgr.putObject(uuid, types, upstream);
                     documentMgr.getSession().save();
+
+                    if (returnObject instanceof Document) {
+                        returnObject = new Document(((Document)returnObject).getIdentity());
+                    }
                     return returnObject;
                 }
             } catch(NoSuchMethodException ex) {
@@ -265,12 +270,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
             } catch(InvocationTargetException ex) {
                 throw ex.getCause();
             } finally {
-		StringBuffer sb = new StringBuffer();
-		sb.append("workflow invocation ");
-		sb.append(upstream != null ? upstream.getClass().getName() : "<unknown>");
-		sb.append(".");
-		sb.append(method != null ? method.getName() : "<unknown>");
-		sb.append("(");
+                StringBuffer sb = new StringBuffer();
+                sb.append("workflow invocation ");
+                sb.append(upstream != null ? upstream.getClass().getName() : "<unknown>");
+                sb.append(".");
+                sb.append(method != null ? method.getName() : "<unknown>");
+                sb.append("(");
                 if (args != null) {
                     for (int i=0; i<args.length; i++) {
                         if (i > 0) {
@@ -279,10 +284,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         sb.append(args[i] != null ? args[i].toString() : "null");
                     }
                 }
-		sb.append(") -> ");
-		sb.append(returnObject != null ? returnObject.toString() : "null");
-	        log.info(new String(sb));
-	    }
+                sb.append(") -> ");
+                sb.append(returnObject != null ? returnObject.toString() : "null");
+                log.info(new String(sb));
+            }
         }
     }
 }

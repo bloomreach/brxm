@@ -18,6 +18,7 @@ package org.hippoecm.repository.reviewedactions;
 import java.util.Date;
 import java.rmi.RemoteException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.ext.WorkflowImpl;
@@ -34,7 +35,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     public BasicReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
-    public void obtainEditableInstance() throws WorkflowException {
+    public Document obtainEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("obtain editable instance on document ");
         if(draft == null) {
             try {
@@ -47,6 +48,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
             if(!getWorkflowContext().getUsername().equals(username))
             throw new WorkflowException("document already being edited");
         }
+        return draft;
     }
 
     public void disposeEditableInstance() throws WorkflowException {

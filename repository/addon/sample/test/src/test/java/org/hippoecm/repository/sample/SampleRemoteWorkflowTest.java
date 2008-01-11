@@ -29,6 +29,7 @@ import junit.framework.TestCase;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -99,6 +100,51 @@ public class SampleRemoteWorkflowTest extends TestCase {
             session.save();
             session.refresh(false);
             assertEquals(node.getProperty("hipposample:authorId").getLong(), SampleWorkflowSetup.newAuthorId);
+
+            session.logout();
+        } catch (NotSupportedException ex) {
+            System.err.println("NotSupportedException: " + ex.getMessage());
+            ex.printStackTrace(System.err);
+            fail("NotSupportedException: " + ex.getMessage());
+        } catch (SystemException ex) {
+            System.err.println("SystemException: " + ex.getMessage());
+            ex.printStackTrace(System.err);
+            fail("SystemException: " + ex.getMessage());
+        } finally {
+            SampleWorkflowSetup.commonEnd(backgroundServer);
+        }
+    }
+
+    public void testReturnDocument() throws RepositoryException, WorkflowException, IOException, Exception {
+        SampleWorkflowSetup.commonStart(backgroundServer);
+        try {
+
+            Session session = server.login("dummy", "dummy".toCharArray());
+
+            Node root = session.getRootNode();
+
+            Node node = root.getNode("files/myarticle");
+
+            WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+
+            try {
+                Workflow workflow = manager.getWorkflow("mycategory", node);
+                assertNotNull(workflow);
+                if (workflow instanceof SampleWorkflow) {
+                    SampleWorkflow myworkflow = (SampleWorkflow) workflow;
+                    Document document = myworkflow.getArticle();
+                    assertTrue(node.getUUID().equals(document.getIdentity()));
+                } else {
+                    fail("workflow not of proper type " + workflow.getClass().getName());
+                }
+            } catch (Exception ex) {
+                System.err.println(ex.getMessage());
+                ex.printStackTrace(System.err);
+                throw ex;
+            }
+
+            session.save();
+            session.refresh(false);
 
             session.logout();
         } catch (NotSupportedException ex) {

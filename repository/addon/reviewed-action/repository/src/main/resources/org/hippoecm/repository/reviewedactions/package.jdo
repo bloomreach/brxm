@@ -41,7 +41,6 @@
     <class name="PublishableDocument" detachable="true" table="documents">
       <inheritance strategy="new-table"/>
       <field name="state" column="state"/>
-      <field name="jcrIdentity" column="jcr:uuid"/>
     </class>
     <class name="PublicationRequest" detachable="true" table="documents">
       <datastore-identity strategy="native"/>

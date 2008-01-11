@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
@@ -34,5 +35,8 @@ public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow {
         if (author == null)
             throw new WorkflowException("author does not exist");
         article.authorId = author.authorId;
+    }
+    public Document getArticle() throws WorkflowException, RepositoryException {
+        return article;
     }
 }

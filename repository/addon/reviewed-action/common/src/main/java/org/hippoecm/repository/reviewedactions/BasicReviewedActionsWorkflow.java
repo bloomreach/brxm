@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
@@ -28,7 +29,7 @@ public interface BasicReviewedActionsWorkflow extends Workflow {
     /**
      * Request this editable copy of the document.
      */
-    public void obtainEditableInstance()
+    public Document obtainEditableInstance()
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
