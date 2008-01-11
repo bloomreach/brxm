@@ -16,17 +16,23 @@
 package org.hippoecm.repository.servicing.client;
 
 import javax.jcr.Node;
+import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.rmi.client.ClientAdapterFactory;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
+import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
+import org.apache.jackrabbit.rmi.remote.RemoteXASession;
+
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
 import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
+import org.hippoecm.repository.servicing.remote.RemoteServicingSession;
 import org.hippoecm.repository.servicing.remote.RemoteServicingWorkspace;
+import org.hippoecm.repository.servicing.remote.RemoteServicingXASession;
 import org.hippoecm.repository.servicing.remote.RemoteWorkflowManager;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
@@ -34,6 +40,14 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
     public ClientServicesAdapterFactory() {
     }
 
+    public Session getSession(Repository repository, RemoteSession remote) {
+        if (remote instanceof RemoteXASession) {
+            return new ClientServicingXASession(repository, (RemoteServicingXASession) remote, this);
+        } else {
+            return new ClientServicingSession(repository, (RemoteServicingSession) remote, this);
+        }
+     }
+    
     public Workspace getWorkspace(Session session, RemoteWorkspace remote) {
         if (remote instanceof RemoteServicingWorkspace)
             return new ClientServicingWorkspace(session, (RemoteServicingWorkspace) remote, this);
