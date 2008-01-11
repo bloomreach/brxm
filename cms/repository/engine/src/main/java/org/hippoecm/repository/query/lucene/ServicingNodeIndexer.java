@@ -19,6 +19,9 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -36,12 +39,10 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.extractor.TextExtractor;
-import org.apache.jackrabbit.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServicingNodeIndexer extends NodeIndexer {
 

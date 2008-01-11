@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeDef;
+import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
@@ -38,8 +39,6 @@ import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
-
-import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
 
 public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
 {
@@ -84,22 +83,21 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
                                 FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
         throws RepositoryException
     {
-        super(stateMgr, (externalNodeType == null ? null : stateMgr.resolver.getQName(externalNodeType)),
-                        (virtualNodeType == null  ? null : stateMgr.resolver.getQName(virtualNodeType)));
+        super(stateMgr, externalNodeType, virtualNodeType);
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
 
-        querynameName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_QUERYNAME);
-        docbaseName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_DOCBASE);
-        facetsName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_FACETS);
-        searchName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_SEARCH);
-        countName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_COUNT);
+        querynameName = resolveName(HippoNodeType.HIPPO_QUERYNAME);
+        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
+        facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
+        searchName = resolveName(HippoNodeType.HIPPO_SEARCH);
+        countName = resolveName(HippoNodeType.HIPPO_COUNT);
 
-        querynamePropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH), querynameName);
-        docbasePropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH), docbaseName);
-        facetsPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH), facetsName);
-        searchPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH), searchName);
-        countPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH), countName);
+        querynamePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), querynameName);
+        docbasePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), docbaseName);
+        facetsPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), facetsName);
+        searchPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), searchName);
+        countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), countName);
 
         stateMgr.registerProperty(countName);
     }
@@ -177,7 +175,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
                     newSearch[newSearch.length-1] = "@" + facets[0].substring(0,facets[0].indexOf("#")) + "='" + facetValue.getKey() + "'" + facets[0].substring(facets[0].indexOf("#"));
 
                 try {
-                    Name childName = stateMgr.resolver.getQName(ISO9075Helper.encodeLocalName(facetValue.getKey()));
+                    Name childName = resolveName(ISO9075Helper.encodeLocalName(facetValue.getKey()));
                     FacetSearchNodeId childNodeId = new FacetSearchNodeId(subSearchProvider, state.getNodeId(), childName);
                     state.addChildNodeEntry(childName, childNodeId);
                     childNodeId.queryname = queryname;
@@ -192,7 +190,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
         }
 
         FacetResultSetProvider.FacetResultSetNodeId childNodeId;
-        Name resultSetChildName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_RESULTSET);
+        Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
         childNodeId = subNodesProvider . new FacetResultSetNodeId(state.getNodeId(), resultSetChildName,
                                                                   queryname, docbase, search, count);
         state.addChildNodeEntry(resultSetChildName, childNodeId);
@@ -203,8 +201,8 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
     public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         FacetSearchNodeId searchNodeId = (FacetSearchNodeId) nodeId;
         NodeState state = createNew(nodeId, virtualNodeName, parentId);
-        state.setDefinitionId(lookupNodeDef(getNodeState(parentId), stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH), nodeId.name).getId());
-        state.setNodeTypeName(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH));
+        state.setDefinitionId(lookupNodeDef(getNodeState(parentId), resolveName(HippoNodeType.NT_FACETSUBSEARCH), nodeId.name).getId());
+        state.setNodeTypeName(resolveName(HippoNodeType.NT_FACETSUBSEARCH));
 
         PropertyState propState = createNew(querynameName, nodeId);
         propState.setType(PropertyType.STRING);

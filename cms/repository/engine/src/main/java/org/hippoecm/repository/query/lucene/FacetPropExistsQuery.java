@@ -15,16 +15,17 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import org.apache.jackrabbit.conversion.IllegalNameException;
-import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.name.NameFactoryImpl;
-import org.apache.jackrabbit.spi.Name;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
 
 public class FacetPropExistsQuery {
 
@@ -44,21 +45,20 @@ public class FacetPropExistsQuery {
 
         Name nodeName;
         String internalName = "";
-        try {
-                // TODO Assume empty namespace for facet. Is this always true?
-            nodeName = NameFactoryImpl.getInstance().create("", facet);
-            if(indexingConfig.isFacet(nodeName)){
+        // TODO Assume empty namespace for facet. Is this always true?
+        nodeName = NameFactoryImpl.getInstance().create("", facet);
+        if(indexingConfig.isFacet(nodeName)){
+            try {
                 internalName = nsMappings.translatePropertyName(nodeName);
                 Query q = new FixedScoreTermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,internalName));
                 this.query.add(q, Occur.MUST);
-            } else {
-                log.warn("Property " + nodeName.getNamespaceURI()+":"+nodeName.getLocalName()+" not allowed for facetted search. " +
-                        "Add the property to the indexing configuration to be defined as FACET");
+            } catch (IllegalNameException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
             }
-
-        } catch (IllegalNameException e) {
-                log.error(e.toString());
-                }
+        } else {
+            log.warn("Property " + nodeName.getNamespaceURI()+":"+nodeName.getLocalName()+" not allowed for facetted search. " +
+                     "Add the property to the indexing configuration to be defined as FACET");
+        }
     }
 
     public BooleanQuery getQuery() {

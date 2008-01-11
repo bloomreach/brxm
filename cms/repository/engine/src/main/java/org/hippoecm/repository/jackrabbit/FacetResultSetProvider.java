@@ -28,14 +28,14 @@ import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.conversion.IllegalNameException;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.name.NameConstants;
+import org.apache.jackrabbit.name.IllegalNameException;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
@@ -80,15 +80,15 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     FacetResultSetProvider(HippoLocalItemStateManager stateMgr, MirrorVirtualProvider subNodesProvider,
                            FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
         throws IllegalNameException, NamespaceException, RepositoryException {
-        super(stateMgr, null, stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT));
+        super(stateMgr, null, HippoNodeType.NT_FACETRESULT);
 
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
         this.subNodesProvider = subNodesProvider;
 
-        countName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_COUNT);
-        countPropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT), countName);
-        primaryTypePropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETRESULT), countName);
+        countName = resolveName(HippoNodeType.HIPPO_COUNT);
+        countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETRESULT), countName);
+        primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETRESULT), countName);
     }
 
     public NodeState populate(NodeState state) {

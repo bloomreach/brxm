@@ -32,8 +32,8 @@ import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.name.NameConstants;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.FacetedNavigationEngine;
@@ -58,7 +58,7 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
         this.subSearchProvider = this;
         this.subNodesProvider  = subNodesProvider;
 
-        primaryTypePropDef = lookupPropDef(stateMgr.resolver.getQName(HippoNodeType.NT_FACETSUBSEARCH), countName);
+        primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), countName);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {

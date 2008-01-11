@@ -48,9 +48,9 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.util.Dumpable;
-import org.apache.jackrabbit.name.NameConstants;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 
 public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
     private static Logger log = LoggerFactory.getLogger(ItemManager.class);

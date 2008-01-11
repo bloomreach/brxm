@@ -15,12 +15,16 @@
  */
 package org.hippoecm.repository.security;
 
+import javax.security.auth.Subject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.security.auth.Subject;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.jackrabbit.core.ItemId;
@@ -35,18 +39,16 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.name.NameConstants;
-import org.apache.jackrabbit.name.NameFactoryImpl;
-import org.apache.jackrabbit.name.PathFactoryImpl;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 import org.hippoecm.repository.jackrabbit.HippoPropertyId;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * HippoAccessManager

@@ -32,7 +32,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
     ViewVirtualProvider subNodesProvider;
 
     FacetSelectProvider(HippoLocalItemStateManager stateMgr, ViewVirtualProvider subNodesProvider) throws RepositoryException {
-        super(stateMgr, stateMgr.resolver.getQName(HippoNodeType.NT_FACETSELECT), null);
+        super(stateMgr, HippoNodeType.NT_FACETSELECT, null);
         this.subNodesProvider = subNodesProvider;
     }
 
