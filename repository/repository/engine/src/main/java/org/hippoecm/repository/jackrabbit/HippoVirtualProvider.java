@@ -16,36 +16,43 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import javax.jcr.NamespaceException;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.ConstraintViolationException;
 
-import org.apache.jackrabbit.conversion.IllegalNameException;
-import org.apache.jackrabbit.conversion.MalformedPathException;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.NodeDef;
-import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.PropDef;
-import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.name.NameConstants;
+import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.NameFactory;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.PathFactory;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.NameParser;
+import org.apache.jackrabbit.spi.commons.conversion.PathParser;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+
+//import org.apache.jackrabbit.name.NameResolver;
+import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 
 public abstract class HippoVirtualProvider
 {
-    protected HippoLocalItemStateManager stateMgr;
+    private HippoLocalItemStateManager stateMgr;
+    private NameFactory nameResolver;
+    private PathFactory pathResolver;
 
     protected Name externalNodeName;
     protected Name virtualNodeName;
@@ -69,7 +76,7 @@ public abstract class HippoVirtualProvider
             try {
                 return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.ntReg);
             } catch (RepositoryException re) {
-                // hack, use nt:unstructured as parent
+                // FIXME? hack, use nt:unstructured as parent
                 effNodeType = stateMgr.ntReg.getEffectiveNodeType(NameConstants.NT_UNSTRUCTURED);
                 return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.ntReg);
             }
@@ -86,15 +93,39 @@ public abstract class HippoVirtualProvider
     }
 
     HippoVirtualProvider(HippoLocalItemStateManager stateMgr) {
-        this(stateMgr, null, null);
+        this(stateMgr, (Name)null, (Name)null);
+        nameResolver = NameFactoryImpl.getInstance();
+        pathResolver = PathFactoryImpl.getInstance();
     }
 
     HippoVirtualProvider(HippoLocalItemStateManager stateMgr, Name external, Name virtual) {
         this.stateMgr = stateMgr;
+        nameResolver = NameFactoryImpl.getInstance();
+        pathResolver = PathFactoryImpl.getInstance();
         externalNodeName = external;
         virtualNodeName = virtual;
         if(external != null)
             stateMgr.register(externalNodeName, this);
+    }
+
+    HippoVirtualProvider(HippoLocalItemStateManager stateMgr, String external, String virtual) throws IllegalNameException, NamespaceException {
+        this.stateMgr = stateMgr;
+        nameResolver = NameFactoryImpl.getInstance();
+        pathResolver = PathFactoryImpl.getInstance();
+        externalNodeName = resolveName(external);
+        virtualNodeName = resolveName(virtual);
+        if(external != null)
+            stateMgr.register(externalNodeName, this);
+    }
+
+    public Name resolveName(String name) throws IllegalNameException, NamespaceException {
+        return name != null ? NameParser.parse(name, stateMgr.nsResolver, nameResolver) : null;
+    }
+
+    public Path resolvePath(String path) throws IllegalNameException, NamespaceException, MalformedPathException {
+        NameResolver nr = new org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver(nameResolver, stateMgr.nsResolver);
+        return path != null ? PathParser.parse((String)path, nr, (PathFactory)pathResolver)
+            : null;
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
@@ -145,10 +176,12 @@ public abstract class HippoVirtualProvider
 
     public String[] getProperty(NodeId nodeId, String name) {
         try {
-            return getProperty(nodeId, stateMgr.resolver.getQName(name));
+            return getProperty(nodeId, resolveName(name));
         } catch(IllegalNameException ex) {
+            System.err.println("BERRY IllegalNameException");
             return null;
         } catch(NamespaceException ex) {
+            System.err.println("BERRY NamespaceException");
             return null;
         }
     }
@@ -175,13 +208,11 @@ public abstract class HippoVirtualProvider
             return null;
         } catch(ItemStateException ex) {
             throw new RepositoryException(ex.getMessage(), ex);
-        } catch(MalformedPathException ex) {
-            throw new RepositoryException(ex.getMessage(), ex);
         }
     }
 
     public NodeId getNodeId(String absPath) throws RepositoryException {
-        ItemId itemId = stateMgr.hierMgr.resolvePath(stateMgr.resolver.getQPath(absPath));
+        ItemId itemId = stateMgr.hierMgr.resolvePath(resolvePath(absPath));
         if(itemId != null && itemId.denotesNode())
             return (NodeId) itemId;
         else

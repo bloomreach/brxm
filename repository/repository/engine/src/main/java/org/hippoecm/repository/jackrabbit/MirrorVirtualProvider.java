@@ -22,7 +22,6 @@ import java.util.Set;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.conversion.NamePathResolver;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.PropDef;
@@ -30,6 +29,7 @@ import org.apache.jackrabbit.core.nodetype.PropDefId;
 import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.name.NamePathResolver;
 import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -61,18 +61,18 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     PropDef hippoUUIDPropDef;
 
     private void initialize() throws RepositoryException {
-        docbaseName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_DOCBASE);
-        jcrUUIDdocbaseName = stateMgr.resolver.getQName("jcr:uuid");
-        hippoUUIDName = stateMgr.resolver.getQName(HippoNodeType.HIPPO_UUID);
-        hippoReferenceableName = stateMgr.resolver.getQName(HippoNodeType.NT_REFERENCEABLE);
-        mixinReferenceableName = stateMgr.resolver.getQName("mix:referenceable");
+        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
+        jcrUUIDdocbaseName = resolveName("jcr:uuid");
+        hippoUUIDName = resolveName(HippoNodeType.HIPPO_UUID);
+        hippoReferenceableName = resolveName(HippoNodeType.NT_REFERENCEABLE);
+        mixinReferenceableName = resolveName("mix:referenceable");
 
         hippoUUIDPropDef = lookupPropDef(hippoReferenceableName, hippoUUIDName);
 
     }
 
     MirrorVirtualProvider(HippoLocalItemStateManager stateMgr) throws RepositoryException {
-        super(stateMgr, stateMgr.resolver.getQName(HippoNodeType.NT_MIRROR), null);
+        super(stateMgr, HippoNodeType.NT_MIRROR, null);
         initialize();
     }
 

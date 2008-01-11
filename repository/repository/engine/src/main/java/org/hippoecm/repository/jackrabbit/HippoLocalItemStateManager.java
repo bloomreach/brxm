@@ -29,8 +29,6 @@ import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.conversion.IllegalNameException;
-import org.apache.jackrabbit.conversion.NamePathResolver;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
@@ -50,7 +48,10 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.core.state.XAItemStateManager;
+import org.apache.jackrabbit.name.IllegalNameException;
+import org.apache.jackrabbit.name.NamePathResolver;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
 
@@ -72,8 +73,8 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     static final int ITEM_TYPE_VIRTUAL  = 0x02;
 
     NodeTypeRegistry ntReg;
+    NamespaceResolver nsResolver;
     protected HierarchyManager hierMgr;
-    protected NamePathResolver resolver;
     private FacetedNavigationEngine facetedEngine;
     private FacetedNavigationEngine.Context facetedContext;
     protected FilteredChangeLog filteredChangeLog = null;
@@ -98,11 +99,11 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         virtualProperties.add(propName);
     }
 
-    void initialize(NamePathResolver resolver, HierarchyManager hierMgr,
+    void initialize(NamespaceResolver nsResolver, HierarchyManager hierMgr,
                     FacetedNavigationEngine facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) {
 
-        this.resolver = resolver;
+	this.nsResolver = nsResolver;
         this.hierMgr = hierMgr;
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
@@ -130,9 +131,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
         try {
             facetSelectProvider = new FacetSelectProvider(this, viewProvider);
-        } catch(IllegalNameException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
         } catch(NamespaceException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
@@ -156,9 +154,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
         try {
             facetSubSearchProvider = new FacetSubSearchProvider(this, facetedEngine, facetedContext, resultSetProvider);
-        } catch(IllegalNameException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
         } catch(NamespaceException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
@@ -170,9 +165,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         try {
             facetSearchProvider = new FacetSearchProvider(this, facetedEngine, facetedContext,
                                                           facetSubSearchProvider, resultSetProvider);
-        } catch(IllegalNameException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
         } catch(NamespaceException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);

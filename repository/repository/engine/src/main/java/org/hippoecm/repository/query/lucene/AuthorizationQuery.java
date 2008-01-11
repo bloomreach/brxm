@@ -19,18 +19,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jackrabbit.conversion.NameException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AuthorizationQuery {
 
@@ -106,7 +107,7 @@ public class AuthorizationQuery {
                                 + "Add the property to the indexing configuration to be defined as FACET");
                     }
 
-                } catch (NameException e) {
+                } catch (IllegalNameException e) {
                     log.error(e.toString());
                 }
             }

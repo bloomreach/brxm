@@ -15,19 +15,21 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HippoHierarchyManager implements HierarchyManager {
     private static Logger log = LoggerFactory.getLogger(HippoHierarchyManager.class);
@@ -46,6 +48,14 @@ public class HippoHierarchyManager implements HierarchyManager {
 
     public ItemId resolvePath(Path path) throws RepositoryException {
         return hierMgr.resolvePath(path);
+    }
+
+    public NodeId resolveNodePath(Path path) throws RepositoryException {
+        return hierMgr.resolveNodePath(path);
+    }
+
+    public PropertyId resolvePropertyPath(Path path) throws RepositoryException {
+        return hierMgr.resolvePropertyPath(path);
     }
 
     public Path getPath(ItemId id) throws ItemNotFoundException, RepositoryException {

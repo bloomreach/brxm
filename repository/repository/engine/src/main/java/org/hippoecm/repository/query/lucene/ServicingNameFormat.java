@@ -17,10 +17,10 @@ package org.hippoecm.repository.query.lucene;
 
 import javax.jcr.NamespaceException;
 
-import org.apache.jackrabbit.conversion.IllegalNameException;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 
 public class ServicingNameFormat {
     private ServicingNameFormat(){
