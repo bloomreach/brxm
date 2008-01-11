@@ -151,6 +151,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             workflow.rejectRequest("comma should be a point");
             session.save();
             session.refresh(true);
+            assertTrue(Utilities.getNode(root, "documents/myarticle/request").getProperty("reason").getString().equals("comma should be a point"));
             //Utilities.dump(root.getNode("documents"));
         }
 
