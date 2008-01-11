@@ -178,10 +178,8 @@ public abstract class HippoVirtualProvider
         try {
             return getProperty(nodeId, resolveName(name));
         } catch(IllegalNameException ex) {
-            System.err.println("BERRY IllegalNameException");
             return null;
         } catch(NamespaceException ex) {
-            System.err.println("BERRY NamespaceException");
             return null;
         }
     }
