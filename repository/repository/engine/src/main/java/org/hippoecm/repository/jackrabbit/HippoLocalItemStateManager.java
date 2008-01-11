@@ -103,7 +103,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     FacetedNavigationEngine facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) {
 
-	this.nsResolver = nsResolver;
+        this.nsResolver = nsResolver;
         this.hierMgr = hierMgr;
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
