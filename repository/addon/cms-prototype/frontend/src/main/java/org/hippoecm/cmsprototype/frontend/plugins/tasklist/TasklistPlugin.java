@@ -46,14 +46,14 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class TasklistPlugin extends AbstractListingPlugin{
 
-	private static final long serialVersionUID = 1L;
-	private JcrNodeModel model;
+        private static final long serialVersionUID = 1L;
+        private JcrNodeModel model;
     public static final String USER_PREF_NODENAME = "hippo:tasklist-listingview";
-	
-	public TasklistPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-		super(pluginDescriptor, model, parentPlugin);
-		this.model = model;
-	}
+        
+        public TasklistPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+                super(pluginDescriptor, model, parentPlugin);
+                this.model = model;
+        }
 
     
     
@@ -75,7 +75,7 @@ public class TasklistPlugin extends AbstractListingPlugin{
         
 }
 
-	private QueryResult getTaskList(javax.jcr.Session session, String xpath) {
+        private QueryResult getTaskList(javax.jcr.Session session, String xpath) {
         
         QueryResult result = null;
         
@@ -88,7 +88,7 @@ public class TasklistPlugin extends AbstractListingPlugin{
             e.printStackTrace();
         }
         return result;
-	}
+        }
 
     @Override
     protected String getPluginUserPrefNodeName() {
