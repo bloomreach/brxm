@@ -52,6 +52,15 @@
       <artifactId>jackrabbit-jcr-commons</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jpox</groupId>
+      <artifactId>jpox-core</artifactId>
+    </dependency>
+
     <!-- provided -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -59,5 +68,61 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jpox-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>jpox</groupId>
+              <artifactId>jpox</artifactId>
+              <version>1.2.0</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>javax.resource</groupId>
+                  <artifactId>jta</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>javax.resource</groupId>
+                  <artifactId>connector</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>jpox</groupId>
+          <artifactId>jpox-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>bcel</groupId>
+              <artifactId>bcel</artifactId>
+              <version>5.1</version>
+            </dependency>
+         </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>jpox</groupId>
+        <artifactId>jpox-maven-plugin</artifactId>
+        <version>1.2.0-beta-2</version>
+        <configuration>
+          <!-- log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration -->
+          <verbose>false</verbose>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals><goal>enhance</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+   </plugins>
+  </build>
 
 </project>

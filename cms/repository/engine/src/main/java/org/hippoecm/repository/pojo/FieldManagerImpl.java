@@ -764,13 +764,14 @@ class FieldManagerImpl extends AbstractFieldManager {
                 String classname = value.getClass().getName();
                 Node nodetypeNode = types.getNode(classname);
                 String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
-                if (value instanceof Document && ((Document) value).getJcrCloned() != null) {
+                if (value instanceof Document && ((Document) value).isCloned() != null) {
                     Entry last = new Entry();
                     child = (Node) getItem(node, field, false, last);
                     if (child == null) {
                         Document document = (Document) value;
-                        child = node.getSession().getNodeByUUID(document.getJcrCloned().getJcrIdentity());
+                        child = node.getSession().getNodeByUUID(document.isCloned().getIdentity());
                         child = ((HippoSession)node.getSession()).copy(child, last.node.getPath() + "/" + last.relPath);
+                        document.setIdentity(child.getUUID());
                     }
                 } else
                     child = getNode(node, field, nodetype);

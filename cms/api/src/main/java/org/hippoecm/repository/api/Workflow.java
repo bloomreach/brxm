@@ -18,5 +18,12 @@ package org.hippoecm.repository.api;
 import java.io.Serializable;
 import java.rmi.Remote;
 
+/**
+ * Implementors of this interface should never return subclasses of the
+ * #Document class in their interface.  It is allowed to return an instance of
+ * a subclass of a #Document, but the repository will force recreating the
+ * object returned as a direct instance of an #Document.
+ */
+
 public interface Workflow extends Remote, Serializable {
 }
