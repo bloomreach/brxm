@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2007 Hippo
+    * Copyright 2008 Hippo
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -13,8 +13,16 @@
     * See the License for the specific language governing permissions and
     * limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:panel>
-                <div wicket:id="tabs" class="tabpanel">[tabbed panel here]</div>
-    </wicket:panel>
-</html>
+<wicket:panel>
+<div wicket:id="tabs-container" class="tab-row">
+<ul>
+    <li wicket:id="tabs">
+        <div wicket:id="container">
+            <a href="#" wicket:id="link"><span wicket:id="title">[[tab title]]</span></a>
+            <a href="#" wicket:id="close" class="close">X</a>
+        </div>
+    </li>
+</ul>
+</div>
+<div wicket:id="panel" class="tab-panel">[panel]</div>
+</wicket:panel>
