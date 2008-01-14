@@ -133,14 +133,15 @@ div.tabpanel div.tab-row ul {
 }
 
 div.tabpanel div.tab-row li {
+  display:block;
   float:left;
   background:url('images/tabback.gif') repeat-x bottom right;
+  height: 15px;
   margin-right: 2px;
-  padding:0px 10px 0px 10px;
+  padding:10px 10px 10px 10px;
 }
 
 div.tabpanel div.tab-row a {
-  display:block;
   text-decoration:none;
   font-weight:bold;
   white-space:nowrap;
@@ -158,3 +159,5 @@ div.tabpanel div.tab-row li.tab2 a { background: url('images/search.gif') no-rep
 div.tabpanel div.tab-row li.selected { background:url('images/tabbackactive.gif') repeat-x bottom right; }
 
 div.tabpanel div.tab-row li.selected a { }
+
+div.tabpanel div.tab-row li a.close { background: none; }
