@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -51,7 +51,7 @@ public class RepositoryTemplateConfig implements TemplateConfig {
                 return new TemplateDescriptor(name, getNodeTypeDefined(name));
             }
 
-            List<FieldDescriptor> children = new ArrayList<FieldDescriptor>();
+            LinkedList<FieldDescriptor> children = new LinkedList<FieldDescriptor>();
             NodeIterator iter = node.getNodes();
             while (iter.hasNext()) {
                 Node child = iter.nextNode();
@@ -67,7 +67,7 @@ public class RepositoryTemplateConfig implements TemplateConfig {
                     if (child.hasProperty("hippo:renderer")) {
                         renderer = child.getProperty("hippo:renderer").getString();
                     }
-                    children.add(new FieldDescriptor(child.getName(), path, template, renderer));
+                    children.addLast(new FieldDescriptor(child.getName(), path, template, renderer));
                 }
             }
             return new TemplateDescriptor(name, children);
@@ -96,7 +96,7 @@ public class RepositoryTemplateConfig implements TemplateConfig {
     }
 
     private List<FieldDescriptor> getNodeTypeDefined(String name) throws RepositoryException {
-        List<FieldDescriptor> children = new ArrayList<FieldDescriptor>();
+        List<FieldDescriptor> children = new LinkedList<FieldDescriptor>();
 
         // create a descriptor based on the node type
         UserSession session = (UserSession) Session.get();

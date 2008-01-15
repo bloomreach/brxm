@@ -206,6 +206,9 @@ public class AddNewWizard extends Plugin {
                     Node prototype = template.getNode("hippo:prototype");
                     Workspace workspace = ((UserSession) Session.get()).getJcrSession().getWorkspace();
                     workspace.copy(prototype.getPath(), handle.getPath() + "/" + name);
+                } else {
+                    handle.addNode(name, type);
+                    handle.save();
                 }
 
                 result = handle.getNode(name);

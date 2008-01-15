@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -42,7 +42,7 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
 
     private TemplateDescriptor descriptor;
     private TemplateEngine engine;
-    private ArrayList<FieldModel> fields;
+    private LinkedList<FieldModel> fields;
 
     // Constructor
 
@@ -157,11 +157,11 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
     }
 
     private void addField(FieldDescriptor field, Item item) {
-        fields.add(new FieldModel(field, item));
+        fields.addLast(new FieldModel(field, item));
     }
 
     private void addField(FieldDescriptor field, String path) {
-        fields.add(new FieldModel(field, path));
+        fields.addLast(new FieldModel(field, path));
     }
 
     // internal (lazy) loading of fields
@@ -172,7 +172,7 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
         }
 
         Node node = getNode();
-        fields = new ArrayList<FieldModel>();
+        fields = new LinkedList<FieldModel>();
         if (descriptor != null) {
             Iterator<FieldDescriptor> iter = descriptor.getFieldIterator();
             while (iter.hasNext()) {
