@@ -66,39 +66,46 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
         editor = new TextArea("value", getModel());
 
         postBehavior = new AbstractDefaultAjaxBehavior() {
-                private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-                protected void onComponentTag(ComponentTag tag) {
-                    super.onComponentTag(tag);
-                    final String saveCall = "{wicketAjaxGet('" + getCallbackUrl()
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                final String saveCall = "{wicketAjaxGet('" + getCallbackUrl()
                         + "&save=true&'+this.name+'='+wicketEncode(this.value)); return false;}";
-                    tag.put("onblur", saveCall);
-                }
+                tag.put("onblur", saveCall);
+            }
 
-                protected void respond(AjaxRequestTarget target) {
-                    RequestCycle requestCycle = RequestCycle.get();
-                    boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
-                    if (save) {
-                        editor.processInput();
-                    }
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                RequestCycle requestCycle = RequestCycle.get();
+                boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
+                if (save) {
+                    editor.processInput();
                 }
-            };
+            }
+        };
 
         editor.setOutputMarkupId(true);
         editor.setVisible(true);
         editor.add(postBehavior);
-        add(this . new XinhaHeaderContributor());
+        add(this.new XinhaHeaderContributor());
         add(editor);
 
-        configuration = this . new Configuration();
+        configuration = this.new Configuration();
         List<String> plugins = descriptor.getParameter("plugins");
-        if(plugins != null) {
+        if (plugins != null) {
+            if (!plugins.contains("SaveSubmit")) {
+                plugins.add("SaveSubmit");
+            }
             configuration.setPlugins((String[]) plugins.toArray());
+        } else {
+            configuration.setPlugins(new String[] { "SaveSubmit" });
         }
     }
 
     public String getName() {
-        if(descriptor != null) {
+        if (descriptor != null) {
             return descriptor.getName();
         }
         return null;
@@ -116,7 +123,7 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
         JcrNodeModel jcrModel = (JcrNodeModel) model;
         try {
             Property property = null;
-            if(jcrModel.getNode().hasProperty(descriptor.getPath())) {
+            if (jcrModel.getNode().hasProperty(descriptor.getPath())) {
                 property = jcrModel.getNode().getProperty(descriptor.getPath());
             } else {
                 property = jcrModel.getNode().setProperty(descriptor.getPath(), "");
@@ -141,17 +148,18 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
         this.content = content;
     }
 
+    @Override
     public void onBeforeRender() {
         if (sharedBehavior == null) {
             Page page = findPage();
-            for(Iterator iter = page.getBehaviors().iterator(); iter.hasNext(); ) {
+            for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
                 IBehavior behavior = (IBehavior) iter.next();
-                if(behavior instanceof XinhaEditorBehavior) {
+                if (behavior instanceof XinhaEditorBehavior) {
                     sharedBehavior = (XinhaEditorBehavior) behavior;
                     break;
                 }
             }
-            if(sharedBehavior == null) {
+            if (sharedBehavior == null) {
                 sharedBehavior = new XinhaEditorBehavior(page);
             }
         }
@@ -166,17 +174,21 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
         super.onBeforeRender();
     }
 
+    @Override
     protected void onDetach() {
         super.onDetach();
-        if(sharedBehavior != null) {
+        if (sharedBehavior != null) {
             sharedBehavior.unregister(configuration);
             sharedBehavior = null;
         }
     }
 
     class XinhaHeaderContributor extends AbstractHeaderContributor {
+        private static final long serialVersionUID = 1L;
+
+        @Override
         public final IHeaderContributor[] getHeaderContributors() {
-            if(sharedBehavior != null) {
+            if (sharedBehavior != null) {
                 return sharedBehavior.getHeaderContributorsPartly();
             } else {
                 return null;

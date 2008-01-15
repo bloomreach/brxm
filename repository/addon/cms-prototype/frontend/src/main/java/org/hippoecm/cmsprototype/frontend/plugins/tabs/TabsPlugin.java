@@ -54,6 +54,7 @@ public class TabsPlugin extends Plugin {
     private Map<JcrNodeModel, Tab> editors;
     private TabbedPanel tabbedPanel;
     private int selectCount;
+    private int editCount;
 
     private String editPerspective;
 
@@ -74,6 +75,7 @@ public class TabsPlugin extends Plugin {
         }
 
         selectCount = 0;
+        editCount = 0;
     }
 
     // invoked by the TabbedPanel when a tab is selected    
@@ -138,11 +140,11 @@ public class TabsPlugin extends Plugin {
                 request.getContext().addRefresh(this);
 
                 // HACK: add children before setting the final pluginId.
-                // each perspective needs to have a unique Id to be able to fulfill
-                // focus requests.
-                // This should be handled by the plugin factory
+                // Each perspective needs to have a unique Id to be able to fulfill
+                // focus requests.  The plugin configuration uses the pluginId to
+                // find any children.
                 tabbie.getPlugin().addChildren();
-                descriptor.setPluginId(editors.size() + ":" + editPerspective);
+                descriptor.setPluginId((++editCount) + ":" + editPerspective);
             }
 
             // notify children; if tabs should be switched,
