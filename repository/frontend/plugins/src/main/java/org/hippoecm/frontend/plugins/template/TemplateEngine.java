@@ -119,7 +119,7 @@ public class TemplateEngine extends Form implements INotificationListener {
             try {
                 Property property = (Property) fieldModel.getObject();
                 if (property != null) {
-                    model = new JcrNodeModel((Node) property.getParent());
+                    model = new JcrNodeModel(property.getParent());
                 } else {
                     return new EmptyTemplate(wicketId, fieldModel, this);
                 }
@@ -167,8 +167,7 @@ public class TemplateEngine extends Form implements INotificationListener {
         }
     }
 
-    public Component createWidget(String wicketId, FieldDescriptor descriptor, JcrPropertyValueModel model)
-            throws RepositoryException {
+    public Component createWidget(String wicketId, FieldDescriptor descriptor, JcrPropertyValueModel model) {
         if (descriptor.isBinary()) {
             return new Label("value", "(binary)");
         } else if (descriptor.isProtected()) {

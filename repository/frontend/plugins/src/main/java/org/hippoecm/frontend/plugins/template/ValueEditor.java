@@ -50,12 +50,7 @@ public class ValueEditor extends DataView {
     @Override
     protected void populateItem(Item item) {
         final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
-        try {
-            item.add(engine.createWidget("value", descriptor, valueModel));
-        } catch (RepositoryException e) {
-            item.add(new Label("value", e.getMessage()));
-            log.error(e.getMessage());
-        }
+        item.add(engine.createWidget("value", descriptor, valueModel));
 
         //Remove value link
         if (descriptor.isMultiple()) {

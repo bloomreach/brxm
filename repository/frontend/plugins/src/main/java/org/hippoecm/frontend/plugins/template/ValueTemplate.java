@@ -38,32 +38,24 @@ public class ValueTemplate extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(ValueTemplate.class);
 
-    private TemplateEngine engine;
-
     public ValueTemplate(String wicketId, JcrPropertyModel model, FieldDescriptor descriptor, TemplateEngine engine) {
         super(wicketId, model);
 
-        this.engine = engine;
-
-        try {
-            if (!descriptor.isProtected()) {
-                if (model.getObject() != null) {
-                    add(deleteLink("delete", model));
-                } else {
-                    add(new Label("delete", ""));
-                }
+        if (!descriptor.isProtected()) {
+            if (model.getObject() != null) {
+                add(deleteLink("delete", model));
             } else {
-                add(new Label("delete", "(protected)"));
+                add(new Label("delete", ""));
             }
-            add(new Label("name", descriptor.getName()));
-            add(new ValueEditor("values", model, descriptor, engine));
-            if (descriptor.isMultiple() || model.getObject() == null) {
-                add(addLink("add", model));
-            } else {
-                add(new Label("add", ""));
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+        } else {
+            add(new Label("delete", "(protected)"));
+        }
+        add(new Label("name", descriptor.getName()));
+        add(new ValueEditor("values", model, descriptor, engine));
+        if (descriptor.isMultiple() || model.getObject() == null) {
+            add(addLink("add", model));
+        } else {
+            add(new Label("add", ""));
         }
     }
 
@@ -120,7 +112,7 @@ public class ValueTemplate extends Panel {
 
     // privates
 
-    private Component deleteLink(String id, final JcrPropertyModel model) throws RepositoryException {
+    private Component deleteLink(String id, final JcrPropertyModel model) {
         return new AjaxLink(id, model) {
             private static final long serialVersionUID = 1L;
 

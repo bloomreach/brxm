@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
 
 public class TemplateDescriptor implements IClusterable {
@@ -27,11 +30,11 @@ public class TemplateDescriptor implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private String name;
-    private Map<String,FieldDescriptor> fields;
+    private LinkedHashMap<String,FieldDescriptor> fields;
 
     public TemplateDescriptor(String name, List<FieldDescriptor> fields) {
         this.name = name;
-        this.fields = new HashMap<String,FieldDescriptor>(fields.size());
+        this.fields = new LinkedHashMap<String,FieldDescriptor>(fields.size());
         for(FieldDescriptor desc : fields) {
             this.fields.put(desc.getName(), desc);
         }
@@ -45,7 +48,31 @@ public class TemplateDescriptor implements IClusterable {
         return fields.values().iterator();
     }
 
-    public boolean hasField(String name) {
-        return fields.containsKey(name);
+    public boolean hasField(String fieldName) {
+        return fields.containsKey(fieldName);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("name", name).append(
+                "fields", fields).toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof TemplateDescriptor == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        TemplateDescriptor templateDescriptor = (TemplateDescriptor) object;
+        return new EqualsBuilder().append(name, templateDescriptor.name).append(fields,
+                templateDescriptor.fields).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(113, 419).append(name).append(fields).toHashCode();
     }
 }

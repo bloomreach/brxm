@@ -20,6 +20,10 @@ import javax.jcr.Value;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
 
 public class FieldDescriptor implements IClusterable {
@@ -123,5 +127,36 @@ public class FieldDescriptor implements IClusterable {
 
     public String[] getConstraints() {
         return constraints;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).
+            append("name", name).
+            append("path", path).
+            append("type", type).
+            append("renderer", renderer).
+            toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof FieldDescriptor == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        FieldDescriptor fieldDescriptor = (FieldDescriptor) object;
+        return new EqualsBuilder().append(name, fieldDescriptor.name).
+                append(path, fieldDescriptor.path).
+                append(type, fieldDescriptor.type).
+                append(renderer, fieldDescriptor.renderer).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(421, 23).append(name).append(path).append(type).append(renderer).toHashCode();
     }
 }
