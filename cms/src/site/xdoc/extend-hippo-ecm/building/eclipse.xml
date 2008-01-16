@@ -144,7 +144,7 @@
             <subsection name="JPOX">
                 <p>
                     Projects that provide document types (hippoecm-repository-engine,
-                    hippo-ecm-repository-connector and all repository addons like
+                    hippo-ecm-repository-connector, hippo-ecm-api and all repository addons like
                     hippo-ecm-addon-reviewed-action-repository)
                     must be enhanced by the JPOX plugin: open the 'Package explorer' view and:
                 </p>
