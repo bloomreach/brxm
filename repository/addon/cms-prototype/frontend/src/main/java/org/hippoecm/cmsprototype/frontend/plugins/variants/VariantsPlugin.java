@@ -22,9 +22,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
@@ -97,14 +99,12 @@ public class VariantsPlugin extends Plugin {
 
                 };
                 
-                String prefix = "";
-
                 if (variant.equals(selectedVariant)) {
-                    prefix = "-> ";
+                    item.add(new AttributeAppender("class", new Model("selected"), " "));
                 }
                 
                 item.add(link);
-                link.add(new Label(VARIANT_LABEL, prefix + variant.getLanguage() + " - " + variant.getState()));
+                link.add(new Label(VARIANT_LABEL, variant.getLanguage() + " - " + variant.getState()));
 
             }
         };

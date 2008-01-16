@@ -161,3 +161,13 @@ div.tabpanel div.tab-row li.selected { background:url('images/tabbackactive.gif'
 div.tabpanel div.tab-row li.selected a { }
 
 div.tabpanel div.tab-row li a.close { background: none; }
+
+
+/* selected variant */
+.selected {
+  background-color:#4b82c6;
+}
+
+.selected a {
+  color:#ffffff;
+}
