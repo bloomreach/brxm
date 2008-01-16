@@ -27,12 +27,17 @@ import javax.jcr.query.RowIterator;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SortableTaskListProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(SortableTaskListProvider.class);
 
     /**
      * result of query needs to be transient because it is not serializable
@@ -58,17 +63,21 @@ public class SortableTaskListProvider extends SortableDataProvider {
                 if (i >= first && i < (first + count)) {
                     String path = row.getValue("jcr:path").getString();
                     Node n = (Node) session.getItem(path);
-                    Task task = new Task(new JcrNodeModel(n));
-                    
-                    String docUUID = n.getProperty("document").getString();
-                    
-                    Node document = session.getNodeByUUID(docUUID);
-                    
-                    if (document != null) {
-                        task.setDocumentname(document.getName());
+                    try {
+                        Task task = new Task(new JcrNodeModel(n));
+                        
+                        String docUUID = n.getProperty("document").getString();
+                        
+                        Node document = session.getNodeByUUID(docUUID);
+                        
+                        if (document != null) {
+                            task.setDocumentname(document.getName());
+                        }
+                        
+                        list.add(task);
+                    } catch (ModelWrapException e) {
+                        log.error(e.getMessage());
                     }
-                    
-                    list.add(task);
                 }
             }
             

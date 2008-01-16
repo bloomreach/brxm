@@ -82,18 +82,11 @@ public abstract class AbstractListingPlugin extends Plugin {
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getData());
-            HippoNode node = nodeModel.getNode();
-            try {
-                if (!nodeModel.equals(getModel())
-                        && !node.isNodeType(HippoNodeType.NT_DOCUMENT)
-                        && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    setModel(nodeModel);
-                    remove((Component)dataTable);
-                    addTable(nodeModel, pageSize, viewSize);
-                    notification.getContext().addRefresh(this);
-                }
-            } catch(RepositoryException ex) {
-                log.error("Repository exception: " + ex.getMessage());
+            if (!nodeModel.equals(getModel())) {
+                setModel(nodeModel);
+                remove((Component)dataTable);
+                addTable(nodeModel, pageSize, viewSize);
+                notification.getContext().addRefresh(this);
             }
         }
         // don't propagate the notification to children

@@ -26,36 +26,40 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * For a given JCR node, provides the document handles among its children.
+ * Provides the {@link Folder}s and {@link Document}s contained within a given {@link Folder}.
  *
- * TODO: it's not sortable yet
  */
 public class SortableDocumentsProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(SortableDocumentsProvider.class);
+
     Folder folder;
     List<NodeModelWrapper> resources;
 
-    public SortableDocumentsProvider(JcrNodeModel model) {
-        this.folder = new Folder(model);
+    public SortableDocumentsProvider(Folder folder) {
+        this.folder = folder;
         setSort("name", true);
     }
-
+    
     public Iterator<NodeModelWrapper> iterator(int first, int count) {
         // TODO replace with a more efficient implementation
         List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
-        resources = folder.getSubFoldersAndDocuments();
-        sortResources();
-        int i = 0;
-        for (Iterator<NodeModelWrapper> iterator = resources.iterator(); iterator.hasNext(); i++) {
-            NodeModelWrapper doc = iterator.next();
-            if (i >= first && i < (first + count)) {
-                list.add(doc);
+        if (folder != null) {
+            resources = folder.getSubFoldersAndDocuments();
+            sortResources();
+            int i = 0;
+            for (Iterator<NodeModelWrapper> iterator = resources.iterator(); iterator.hasNext(); i++) {
+                NodeModelWrapper doc = iterator.next();
+                if (i >= first && i < (first + count)) {
+                    list.add(doc);
+                }
             }
         }
         return list.iterator();
@@ -66,18 +70,23 @@ public class SortableDocumentsProvider extends SortableDataProvider {
     }
 
     public int size() {
-        return folder.getSubFoldersAndDocuments().size();
+        if (folder != null) {
+            return folder.getSubFoldersAndDocuments().size();
+        }
+        else {
+            return 0;
+        }
     }
 
     private void sortResources() {
         Collections.sort(resources, new Comparator<NodeModelWrapper>() {
 
             public int compare(NodeModelWrapper o1, NodeModelWrapper o2) {
-                    try {
-                        return String.CASE_INSENSITIVE_ORDER.compare(o1.getNodeModel().getNode().getName(), o2.getNodeModel().getNode().getName());
-                    } catch (RepositoryException e) {
-                        return 0;
-                    }
+                try {
+                    return String.CASE_INSENSITIVE_ORDER.compare(o1.getNodeModel().getNode().getName(), o2.getNodeModel().getNode().getName());
+                } catch (RepositoryException e) {
+                    return 0;
+                }
             }
         });
 

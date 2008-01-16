@@ -39,23 +39,18 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class TasklistPlugin extends AbstractListingPlugin{
 
-        private static final long serialVersionUID = 1L;
-        private JcrNodeModel model;
+    private static final long serialVersionUID = 1L;
+    private JcrNodeModel model;
     public static final String USER_PREF_NODENAME = "hippo:tasklist-listingview";
         
-        public TasklistPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-                super(pluginDescriptor, model, parentPlugin);
-                this.model = model;
-        }
-
-    
+    public TasklistPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
+        this.model = model;
+    }
     
     @Override
     protected void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
