@@ -16,9 +16,10 @@
 package org.hippoecm.cmsprototype.frontend.plugins.tasklist;
 
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class Task extends  Document{
+public class Task extends Document{
 
     private static final long serialVersionUID = 1L;
     
@@ -32,7 +33,7 @@ public class Task extends  Document{
         this.documentname = documentname;
     }
     
-    public Task(JcrNodeModel nodeModel) {
+    public Task(JcrNodeModel nodeModel) throws ModelWrapException {
         super(nodeModel);
     }
     

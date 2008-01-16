@@ -48,7 +48,6 @@ import org.hippoecm.frontend.plugin.channel.MessageContext;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

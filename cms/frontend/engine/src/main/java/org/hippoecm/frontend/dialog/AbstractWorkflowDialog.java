@@ -82,7 +82,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         // enqueue a request to select the handle
         Channel channel = getIncoming();
         if(channel != null) {
-            Request request = channel.createRequest("select", handle.getMapRepresentation());
+            Request request = channel.createRequest("select", dialogWindow.getNodeModel().getMapRepresentation());
             channel.send(request);
         }
     }

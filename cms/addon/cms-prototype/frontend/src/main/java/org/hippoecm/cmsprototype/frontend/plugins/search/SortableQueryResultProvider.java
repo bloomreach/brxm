@@ -27,12 +27,18 @@ import javax.jcr.query.RowIterator;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SortableQueryResultProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(SortableQueryResultProvider.class);
+
 
     /**
      * result of query needs to be transient because it is not serializable
@@ -58,15 +64,19 @@ public class SortableQueryResultProvider extends SortableDataProvider {
                 if (i >= first && i < (first + count)) {
                     String path = row.getValue("jcr:path").getString();
                     Node n = (Node) session.getItem(path);
-                    SearchDocument node = new SearchDocument(new JcrNodeModel(n));
-                    if(row.getValue(SearchPlugin.REP_EXCERPT) != null ){
-                        node.setExcerpt(row.getValue(SearchPlugin.REP_EXCERPT).getString());
-                        String similarLink = "//element(*, hippo:document)[rep:similar(., '" + path + "')]/rep:excerpt(.)" ;
-                        node.setSimilar("similar");
-                        node.setSimilarLink(similarLink);
+                    try {
+                        SearchDocument node = new SearchDocument(new JcrNodeModel(n));
+                        if(row.getValue(SearchPlugin.REP_EXCERPT) != null ){
+                            node.setExcerpt(row.getValue(SearchPlugin.REP_EXCERPT).getString());
+                            String similarLink = "//element(*, hippo:document)[rep:similar(., '" + path + "')]/rep:excerpt(.)" ;
+                            node.setSimilar("similar");
+                            node.setSimilarLink(similarLink);
+                        }
+                        
+                        list.add(node);
+                    } catch (ModelWrapException e) {
+                        log.error(e.getMessage());
                     }
-                    
-                    list.add(node);
                 }
             }
             

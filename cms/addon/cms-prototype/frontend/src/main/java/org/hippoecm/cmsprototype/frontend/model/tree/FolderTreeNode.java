@@ -22,46 +22,66 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A folder tree. It shows all nodes in the JCR tree except for those
- * of that are either of type "hippo:handle" or descend from a node
+ * A folder tree node. It can be any node in the JCR tree except for those
+ * that are either of type "hippo:handle" or descend from a node
  * of type "hippo:handle".
  *
  */
 public class FolderTreeNode extends AbstractTreeNode {
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
+    
     private Folder folder;
 
     public FolderTreeNode(JcrNodeModel nodeModel) {
         super(nodeModel);
-        folder = new Folder(nodeModel);
+        try {
+            folder = new Folder(nodeModel);
+        } catch (ModelWrapException e) {
+            log.error(e.getMessage());
+        }
     }
 
     public FolderTreeNode(JcrNodeModel nodeModel, JcrTreeModel treeModel) {
         super(nodeModel);
-        folder = new Folder(nodeModel);
+        try {
+            folder = new Folder(nodeModel);
+        } catch (ModelWrapException e) {
+            log.error(e.getMessage());
+        }
         setTreeModel(treeModel);
         treeModel.register(this);
     }
 
     @Override
     protected int loadChildcount() throws RepositoryException {
-        return folder.getSubFolders().size();
+        if (folder != null) {
+            return folder.getSubFolders().size();
+        }
+        else {
+            return 0;
+        }
     }
 
     @Override
     protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
         List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
-        List<Folder> subFolders = folder.getSubFolders();
-        for (Folder subFolder : subFolders) {
-            result.add(new FolderTreeNode(subFolder.getNodeModel(), getTreeModel()));
+        if (folder != null) {
+            List<Folder> subFolders = folder.getSubFolders();
+            for (Folder subFolder : subFolders) {
+                result.add(new FolderTreeNode(subFolder.getNodeModel(), getTreeModel()));
+            }
         }
         return result;
     }

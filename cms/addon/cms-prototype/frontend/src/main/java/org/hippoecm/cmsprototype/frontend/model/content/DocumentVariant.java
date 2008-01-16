@@ -17,12 +17,24 @@ package org.hippoecm.cmsprototype.frontend.model.content;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.wicket.Session;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A variant of a document. The type of variation can be anything, e.g. language
+ * or workflow state.
+ * 
+ * A DocumentVariant's JCR node is of node type "hippo:document", and typically has
+ * a node of type "hippo:handle" as an ancestor (the {@link Document}). 
+ *
+ */
 public class DocumentVariant extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
 
@@ -33,15 +45,34 @@ public class DocumentVariant extends NodeModelWrapper {
     private static final String NO_STATE = "no workflow";
     private static final String NO_LANGUAGE = "all languages";
 
-    public DocumentVariant(JcrNodeModel nodeModel) {
+    public DocumentVariant(JcrNodeModel nodeModel) throws ModelWrapException {
         super(nodeModel);
+        try {
+            if (nodeModel.getNode().isNodeType(HippoNodeType.NT_REQUEST)) {
+                // find document variant associated with request object
+                javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession());
+                String docUUID;            
+                if (nodeModel.getNode().hasProperty("document")) {
+                    docUUID = nodeModel.getNode().getProperty("document").getString();
+                    setChainedModel(new JcrNodeModel(session.getNodeByUUID(docUUID)));
+                }
+                else {
+                    throw new ModelWrapException("Request object has no document associated.");
+                }
+            }
+            else if (!nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                throw new ModelWrapException("Node is not a document variant.");
+            }
+        } catch (RepositoryException e) {
+            throw new ModelWrapException(e);
+        }
     }
 
     public String getName() {
         try {
             return nodeModel.getNode().getDisplayName();
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return e.getMessage();
         }
     }
@@ -69,18 +100,33 @@ public class DocumentVariant extends NodeModelWrapper {
                 return NO_LANGUAGE;
             }
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return e.getMessage();
         }
     }
     
+    /**
+     * @return The Document this DocumentVariant is a variant of, or null if not found.
+     */
     public Document getDocument() {
-        JcrNodeModel parentModel = nodeModel.getParentModel();
-        if (parentModel != null) {
-            return new Document(parentModel);
-        }
-        else {
+        try {
+            return new Document(nodeModel);
+        } catch (ModelWrapException e) {
             return null;
         }
     }
+
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof DocumentVariant == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        DocumentVariant variant = (DocumentVariant) object;
+        return new EqualsBuilder().append(nodeModel, variant.nodeModel).isEquals();
+    }
+
 }

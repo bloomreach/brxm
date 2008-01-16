@@ -18,14 +18,8 @@ package org.hippoecm.cmsprototype.frontend.plugins.variants;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,21 +28,24 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
+import org.hippoecm.cmsprototype.frontend.model.workflow.WorkflowRequest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Plugin for showing the available variants of a document
  */
 public class VariantsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(VariantsPlugin.class);
 
     // wicket:id's
     private static final String NODE_NAME_LABEL = "nodename";
@@ -60,15 +57,14 @@ public class VariantsPlugin extends Plugin {
     // TODO: needs i18m
     private static final String NODE_NONE = "no node selected..";
 
-    private JcrNodeModel selectedVariantNodeModel = null;
+    private Document document;
+    private DocumentVariant selectedVariant;
     
     /**
      * The label displaying the node name
      */
     protected String nodeName = NODE_NONE;
     
-    
-
     /**
      * The list containing the variants for a hippo:handle
      */
@@ -77,24 +73,7 @@ public class VariantsPlugin extends Plugin {
     public VariantsPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
         super(descriptor, model, parentPlugin);
 
-        JcrNodeModel handleModel = findHandle(model);
-        
-        if (handleModel != null) {
-            HippoNode node = handleModel.getNode();
-            
-            try {
-                nodeName = node.getDisplayName();
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            }
-
-            Document document = new Document(handleModel);
-            variantsList.addAll(document.getVariants());
-        }
-        else {
-            variantsList.clear();
-        }
-         
+        populateView(model);
 
         ListView listView = new ListView(VARIANTS_LIST, variantsList) {
             private static final long serialVersionUID = 1L;
@@ -102,18 +81,15 @@ public class VariantsPlugin extends Plugin {
             @Override
             protected void populateItem(ListItem item) {
                 final DocumentVariant variant = (DocumentVariant) item.getModelObject();
-                //item.add(new Label(VARIANT_LABEL, variant));
 
                 AjaxLink link = new AjaxLink(VARIANT_LINK, variant) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        
                         Channel channel = getDescriptor().getIncoming();
                         if (channel != null) {
-                            Request request = channel.createRequest("select", variant.getNodeModel()
-                                    .getMapRepresentation());
+                            Request request = channel.createRequest("select", variant.getNodeModel().getMapRepresentation());
                             channel.send(request);
                             request.getContext().apply(target);
                         }
@@ -123,7 +99,7 @@ public class VariantsPlugin extends Plugin {
                 
                 String prefix = "";
 
-                if (variant.getNodeModel().equals(selectedVariantNodeModel)) {
+                if (variant.equals(selectedVariant)) {
                     prefix = "-> ";
                 }
                 
@@ -136,102 +112,70 @@ public class VariantsPlugin extends Plugin {
         add(listView);
     }
     
-    /**
-     * Finds the first parent node that is a handle 
-     * @param nodeModel
-     * @return the Node of the matching parent node, or null
-     */
-    private JcrNodeModel findHandle(JcrNodeModel nodeModel) {
+
+    private void populateView(JcrNodeModel nodeModel) {
         
-        JcrNodeModel result = nodeModel;
-        
-        if (result != null) {
-            Node resultNode = result.getNode();
-        
-            try {
-                if (!resultNode.getPrimaryNodeType().isNodeType(HippoNodeType.NT_HANDLE)){
-                    result = findHandle(result.getParentModel());
-                }
-            } catch (RepositoryException e) {
-                result = null;
+        // first check if the node is a request
+        try {
+            WorkflowRequest request = new WorkflowRequest(nodeModel);
+            selectedVariant = request.getDocumentVariant();
+            if (selectedVariant != null) {
+                setDocument(selectedVariant.getDocument());
+                return;
             }
-        
+        } catch (ModelWrapException e) {
+            selectedVariant = null;
+        }
+         
+        // then see if node is a document variant
+        try {
+            selectedVariant = new DocumentVariant(nodeModel);
+            setDocument(selectedVariant.getDocument());
+            return;
+        } catch (ModelWrapException e) {
+            selectedVariant = null;
+            document = null;
+        }
+
+        // then see if node is a document handle
+        try {
+            setDocument(new Document(nodeModel));
+            return;
+        } catch (ModelWrapException e) {
+            document = null;
         }
         
-        return result;
+        // catch all for any other nodeModel
+        try {
+            setNodeModel(nodeModel);
+            variantsList.clear();
+            nodeName = nodeModel.getNode().getDisplayName();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+            nodeName = NODE_NONE;
+        }
+        
+    }
+    
+    private void setDocument(Document newDoc) {
+        if (newDoc != null) {
+            document = newDoc;
+            setNodeModel(document.getNodeModel());
+            variantsList.clear();
+            variantsList.addAll(document.getVariants());
+            nodeName = document.getName();
+        }
+        else {
+            document = null;
+        }
     }
 
-
+    
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            JcrNodeModel nodeModel = new JcrNodeModel(notification.getData());
-            // ignore documents; we select those ourselves
-            
-            nodeName = "";
-            selectedVariantNodeModel = null;
-
-            try {
-                if (nodeModel.getNode().getPrimaryNodeType().isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    // The selected node is a variant. Select it in the list of variants.
-                    
-                    selectedVariantNodeModel = nodeModel;
-                }
-            } catch (RepositoryException e1) {
-                e1.printStackTrace();
-            }            
-
-            Node resultNode = nodeModel.getNode();
-            
-            try {
-                if (resultNode.getPrimaryNodeType().isNodeType(HippoNodeType.NT_REQUEST)) {
-                    // The selected node is a request on a document. Find which document it refers to and select that.
-                    
-                    if (resultNode.hasProperty("document")) {
-
-                        javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession());
-                        
-                        String docUUID = resultNode.getProperty("document").getString();
-                        
-                        selectedVariantNodeModel = new JcrNodeModel(session.getNodeByUUID(docUUID));
-                    }
-                        
-                }
-            } catch (ValueFormatException e1) {
-                // document UUID is not a string
-            } catch (PathNotFoundException e1) {
-                e1.printStackTrace();
-            } catch (ItemNotFoundException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            } catch (RepositoryException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-
-            
-            try {
-                    JcrNodeModel handleModel = findHandle(nodeModel);
-
-                    variantsList.clear();
-                    setNodeModel(handleModel);
-
-                    if (handleModel != null) {
-                        
-                        HippoNode node = handleModel.getNode();
-
-                        Document document = new Document(handleModel);
-                        variantsList.addAll(document.getVariants());
-
-                        nodeName = node.getDisplayName();
-
-                    }
-
-                    notification.getContext().addRefresh(this);
-            } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            populateView(new JcrNodeModel(notification.getData()));
+            notification.getContext().addRefresh(this);
         }
         super.receive(notification);
     }

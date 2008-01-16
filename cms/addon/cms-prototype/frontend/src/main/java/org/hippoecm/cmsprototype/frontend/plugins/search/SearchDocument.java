@@ -16,9 +16,10 @@
 package org.hippoecm.cmsprototype.frontend.plugins.search;
 
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class SearchDocument extends  Document{
+public class SearchDocument extends Document{
 
     private static final long serialVersionUID = 1L;
     
@@ -35,7 +36,7 @@ public class SearchDocument extends  Document{
     }
 
 
-    public SearchDocument(JcrNodeModel nodeModel) {
+    public SearchDocument(JcrNodeModel nodeModel) throws ModelWrapException {
         super(nodeModel);
     }
 
