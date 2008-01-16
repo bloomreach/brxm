@@ -19,7 +19,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +27,6 @@ public class DocumentVariant extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(DocumentVariant.class);
-    
-    // TODO: Replace with HippoNodeType when available: HREPTWO-342
-    private static final String HIPPO_LANGUAGE = "language";
-    private static final String HIPPO_STATE = "state";
 
     // Default labels
     // TODO: needs i18n
@@ -52,8 +48,8 @@ public class DocumentVariant extends NodeModelWrapper {
 
     public String getState() {
         try {
-            if (nodeModel.getNode().hasProperty(HIPPO_STATE)) {
-                return nodeModel.getNode().getProperty(HIPPO_STATE).getString();
+            if (nodeModel.getNode().hasProperty(HippoNodeType.HIPPO_STATE)) {
+                return nodeModel.getNode().getProperty(HippoNodeType.HIPPO_STATE).getString();
             }
             else {
                 return NO_STATE;
@@ -66,8 +62,8 @@ public class DocumentVariant extends NodeModelWrapper {
 
     public String getLanguage() {
         try {
-            if (nodeModel.getNode().hasProperty(HIPPO_LANGUAGE)) {
-                return nodeModel.getNode().getProperty(HIPPO_LANGUAGE).getString();
+            if (nodeModel.getNode().hasProperty(HippoNodeType.HIPPO_LANGUAGE)) {
+                return nodeModel.getNode().getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
             }
             else {
                 return NO_LANGUAGE;
