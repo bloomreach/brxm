@@ -19,6 +19,8 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -58,14 +60,11 @@ public class ActionsPlugin extends Plugin {
         };
         add(link);
 
-        HippoNode node = model.getNode();
         try {
-            link.setVisible(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.hasProperty("state")
-                    && node.getProperty("state").getString().equals("draft"));
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+            DocumentVariant variant = new DocumentVariant(model);
+            link.setVisible(variant.getState().equals("draft"));
+        } catch (ModelWrapException e1) {}
+
     }
 
     @Override
