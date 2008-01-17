@@ -19,10 +19,10 @@
     <link rel="stylesheet" type="text/css" href="skin/style.css"/>
     <link rel="stylesheet" type="text/css" href="skin/blank.css"/>
 </head>
-<body>
+<body onload="document.signInForm.username.focus();">
     <span wicket:id = "feedback"></span>
     <p>
-        <form wicket:id = "signInForm">
+        <form wicket:id="signInForm" name="signInForm">
                 <table>
                         <tr>
                           <td align = "right">Username:</td>
