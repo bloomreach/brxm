@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.template;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugins.template.config.RepositoryTemplateConfig;
 
 public class EditorPlugin extends Plugin {
 

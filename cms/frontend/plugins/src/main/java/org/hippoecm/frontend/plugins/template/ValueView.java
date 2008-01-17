@@ -28,18 +28,19 @@ import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValueEditor extends DataView {
+public class ValueView extends DataView {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ValueEditor.class);
+    static final Logger log = LoggerFactory.getLogger(ValueView.class);
 
     protected FieldDescriptor descriptor;
     protected TemplateEngine engine;
 
-    public ValueEditor(String id, JcrPropertyModel dataProvider, FieldDescriptor descriptor, TemplateEngine engine) {
+    public ValueView(String id, JcrPropertyModel dataProvider, FieldDescriptor descriptor, TemplateEngine engine) {
         super(id, dataProvider);
         this.descriptor = descriptor;
         this.engine = engine;
@@ -59,7 +60,7 @@ public class ValueEditor extends DataView {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    ValueEditor.this.onRemove(target, (JcrPropertyValueModel) getModel());
+                    ValueView.this.onRemove(target, (JcrPropertyValueModel) getModel());
                 }
             });
         } else {
@@ -69,7 +70,7 @@ public class ValueEditor extends DataView {
 
     protected void onRemove(AjaxRequestTarget target, JcrPropertyValueModel model) {
         try {
-            Property prop = ((JcrPropertyModel) ValueEditor.this.getModel()).getProperty();
+            Property prop = ((JcrPropertyModel) ValueView.this.getModel()).getProperty();
             Value[] values = prop.getValues();
             values = (Value[]) ArrayUtils.remove(values, model.getIndex());
             prop.setValue(values);

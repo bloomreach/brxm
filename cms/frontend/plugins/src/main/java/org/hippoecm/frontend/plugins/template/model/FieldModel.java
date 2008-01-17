@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
-
-import javax.jcr.Item;
+package org.hippoecm.frontend.plugins.template.model;
 
 import org.hippoecm.frontend.model.ItemModelWrapper;
+import org.hippoecm.frontend.model.JcrItemModel;
+import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 
 public class FieldModel extends ItemModelWrapper {
     private static final long serialVersionUID = 1L;
@@ -25,13 +25,8 @@ public class FieldModel extends ItemModelWrapper {
     private FieldDescriptor descriptor;
 
     //  Constructor
-    public FieldModel(FieldDescriptor descriptor, Item item) {
-        super(item);
-        this.descriptor = descriptor;
-    }
-
-    public FieldModel(FieldDescriptor descriptor, String path) {
-        super(path);
+    public FieldModel(FieldDescriptor descriptor, JcrItemModel model) {
+        super(model);
         this.descriptor = descriptor;
     }
 

@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.template;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
@@ -26,6 +25,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -35,6 +35,10 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.INotificationListener;
 import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
+import org.hippoecm.frontend.plugins.template.config.TemplateConfig;
+import org.hippoecm.frontend.plugins.template.config.TemplateDescriptor;
+import org.hippoecm.frontend.plugins.template.model.FieldModel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -59,6 +63,8 @@ public class TemplateEngine extends Form implements INotificationListener {
         }
 
         add(new Template("template", model, descriptor, this));
+
+        setModel(model);
     }
 
     public Plugin getPlugin() {
@@ -113,56 +119,46 @@ public class TemplateEngine extends Form implements INotificationListener {
 
     public Component createTemplate(String wicketId, FieldModel fieldModel) {
         FieldDescriptor field = fieldModel.getDescriptor();
-        if (field.getRenderer() != null) {
-            // the field specifies a renderer, let it handle the item
-            JcrNodeModel model = null;
-            try {
-                Property property = (Property) fieldModel.getObject();
-                if (property != null) {
-                    model = new JcrNodeModel(property.getParent());
-                } else {
-                    return new EmptyTemplate(wicketId, fieldModel, this);
-                }
-            } catch (RepositoryException ex) {
-                ex.printStackTrace();
-            }
+        JcrItemModel itemModel = fieldModel.getItemModel();
 
-            // create a new channel
-            // FIXME: should the outgoing channel be shared between plugins?
-            Channel outgoing = getPlugin().getPluginManager().getChannelFactory().createChannel();
+        if(field.isNode()) {
+            if (field.isMultiple()) {
+                // wrap multi-valued fields (i.e. same-name siblings or optional fields)
+                // in a MultiTemplate.  Fields can thus be added, removed and ordered.
+                return new MultiTemplate(wicketId, fieldModel, this);
 
-            // instantiate the plugin that should handle the field
-            String className = field.getRenderer();
-            PluginDescriptor pluginDescriptor = new PluginDescriptor(wicketId, className, outgoing);
-            PluginFactory pluginFactory = new PluginFactory(getPlugin().getPluginManager());
-            Plugin child = pluginFactory.createPlugin(pluginDescriptor, model, getPlugin());
-
-            if (child instanceof ITemplatePlugin) {
-                ((ITemplatePlugin) child).initTemplatePlugin(field, this);
-            }
-            return child;
-        } else {
-            // if no renderer is specified, fall back to default behaviour;
-            // for nodes, a template must be defined for the node type.
-            TemplateDescriptor descriptor = getConfig().getTemplate(field.getType());
-            if (descriptor != null) {
-                // the field specifies a template
-                Node node = (Node) fieldModel.getObject();
-                if (node != null) {
-                    return new Template(wicketId, new JcrNodeModel(node), descriptor, this);
-                } else {
-                    return new EmptyTemplate(wicketId, fieldModel, this);
-                }
             } else {
-                Property prop = (Property) fieldModel.getObject();
-                if (prop != null) {
-                    JcrPropertyModel model = new JcrPropertyModel(prop);
-                    return new ValueTemplate(wicketId, model, field, this);
-                } else {
-                    String path = fieldModel.getItemModel().getPath();
-                    JcrPropertyModel model = new JcrPropertyModel(path);
-                    return new ValueTemplate(wicketId, model, field, this);
+                // for nodes, a template must be defined for the node type.
+                // the field specifies a template
+                TemplateDescriptor descriptor = getConfig().getTemplate(field.getType());
+                return new Template(wicketId, new JcrNodeModel(itemModel), descriptor, this);
+            }
+        } else {
+            if (field.getRenderer() != null) {
+                // the field specifies a renderer, instantiate the plugin with the parent of the
+                // node.  The field description is passed with initTemplatePlugin call.
+    
+                // template does not apply to parent of root => parent exists
+                JcrNodeModel model = new JcrNodeModel(itemModel);
+    
+                // create a new channel
+                // FIXME: should the outgoing channel be shared between plugins?
+                Channel outgoing = getPlugin().getPluginManager().getChannelFactory().createChannel();
+    
+                // instantiate the plugin that should handle the field
+                String className = field.getRenderer();
+                PluginDescriptor pluginDescriptor = new PluginDescriptor(wicketId, className, outgoing);
+                PluginFactory pluginFactory = new PluginFactory(getPlugin().getPluginManager());
+                Plugin child = pluginFactory.createPlugin(pluginDescriptor, model, getPlugin());
+    
+                if (child instanceof ITemplatePlugin) {
+                    ((ITemplatePlugin) child).initTemplatePlugin(field, this);
                 }
+                return child;
+    
+            } else {
+                JcrPropertyModel model = new JcrPropertyModel(itemModel.getPath() + "/" + field.getPath());
+                return new ValueTemplate(wicketId, model, field, this);
             }
         }
     }

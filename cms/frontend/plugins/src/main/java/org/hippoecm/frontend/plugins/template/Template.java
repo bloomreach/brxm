@@ -15,22 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import javax.jcr.Node;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.template.config.TemplateDescriptor;
+import org.hippoecm.frontend.plugins.template.model.FieldProvider;
 
 public class Template extends Panel {
     private static final long serialVersionUID = 1L;
 
-    private TemplateProvider provider;
+    private FieldProvider provider;
 
-    public Template(String wicketId, IModel model, TemplateDescriptor descriptor, TemplateEngine engine) {
+    public Template(String wicketId, JcrNodeModel model, TemplateDescriptor descriptor, TemplateEngine engine) {
         super(wicketId, model);
 
+        // FIXME: move layout to decorator
         String name;
         if (descriptor != null) {
             name = descriptor.getName();
@@ -38,12 +39,19 @@ public class Template extends Panel {
             name = "no name";
         }
         add(new Label("name", name));
-        provider = new TemplateProvider(descriptor, (Node) getModelObject(), engine);
-        add(new FieldView("field", descriptor, provider, engine));
-        
+
+        provider = new FieldProvider(descriptor, (JcrNodeModel) getModel());
+        add(new FieldView("field", provider, engine));
+
         setOutputMarkupId(true);
     }
 
+    @Override
+    public void onDetach() {
+        provider.detach();
+        super.onDetach();
+    }
+    
     @Override
     public Component setModel(IModel model) {
         JcrNodeModel nodeModel = (JcrNodeModel) model;

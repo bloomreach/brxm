@@ -143,6 +143,14 @@ public class JcrPropertyValueModel extends Model {
         }
     }
 
+    @Override
+    public void detach() {
+        value = null;
+        loaded = false;
+        propertyModel.detach();
+        super.detach();
+    }
+
     // override Object
 
     @Override

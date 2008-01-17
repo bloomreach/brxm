@@ -30,6 +30,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.ItemModelWrapper;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,10 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
     static final Logger log = LoggerFactory.getLogger(ItemModelWrapper.class);
 
     //  Constructor
+    public JcrPropertyModel(JcrItemModel model) {
+        super(model);
+    }
+
     public JcrPropertyModel(Property prop) {
         super(prop);
     }

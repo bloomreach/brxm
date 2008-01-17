@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -30,54 +29,33 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
+import org.hippoecm.frontend.plugins.template.config.TemplateDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateProvider extends JcrNodeModel implements IDataProvider {
+/**
+ * This class provides FieldModel instances based on a template descriptor.
+ */
+public class FieldProvider extends AbstractProvider implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(TemplateProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(FieldProvider.class);
 
     private TemplateDescriptor descriptor;
-    private TemplateEngine engine;
-    private LinkedList<FieldModel> fields;
 
     // Constructor
 
-    public TemplateProvider(TemplateDescriptor descriptor, Node node, TemplateEngine engine) {
-        super(node);
+    public FieldProvider(TemplateDescriptor descriptor, JcrNodeModel nodeModel) {
+        super(nodeModel);
         this.descriptor = descriptor;
-        this.engine = engine;
     }
 
     public void setDescriptor(TemplateDescriptor descriptor) {
         this.descriptor = descriptor;
-        fields = null;
-    }
-
-    @Override
-    public void setChainedModel(IModel model) {
-        fields = null;
-        super.setChainedModel(model);
-    }
-
-    // IDataProvider implementation, provides the fields of the chained itemModel
-
-    public Iterator<FieldModel> iterator(int first, int count) {
-        load();
-        return fields.subList(first, first + count).iterator();
-    }
-
-    public IModel model(Object object) {
-        FieldModel model = (FieldModel) object;
-        return model;
-    }
-
-    public int size() {
-        load();
-        return fields.size();
+        detach();
     }
 
     // override Object
@@ -90,25 +68,25 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof TemplateProvider == false) {
+        if (object instanceof FieldProvider == false) {
             return false;
         }
         if (this == object) {
             return true;
         }
-        TemplateProvider fieldProvider = (TemplateProvider) object;
-        return new EqualsBuilder().append(engine, fieldProvider.engine).append(descriptor, fieldProvider.descriptor)
+        FieldProvider fieldProvider = (FieldProvider) object;
+        return new EqualsBuilder().append(descriptor, fieldProvider.descriptor)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 31).append(engine).append(descriptor).toHashCode();
+        return new HashCodeBuilder(17, 31).append(descriptor).toHashCode();
     }
 
     // handle wildcard expansion
 
-    protected void expandNodeWildcard(Node node) throws RepositoryException {
+    private void expandNodeWildcard(Node node) throws RepositoryException {
         // FIXME: a separate template should be loaded, i.e.
         // the FieldModel should be able to describe "multiple"
         NodeIterator iterator = node.getNodes();
@@ -119,59 +97,43 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
                 if (next.getPrimaryNodeType() != null) {
                     template = next.getPrimaryNodeType().getName();
                 }
-                FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName(), template, null);
-                addField(desc, next);
+                FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName());
+                desc.setType(template);
+                addField(desc, new JcrItemModel(next));
             }
         }
     }
 
-    protected void expandPropertyWildcard(Node node) throws RepositoryException {
+    private void expandPropertyWildcard(Node node) throws RepositoryException {
         PropertyIterator iterator = node.getProperties();
         while (iterator.hasNext()) {
             Property next = iterator.nextProperty();
             if (!descriptor.hasField(next.getName())) {
-                FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName(), null, null);
-                addField(desc, next);
+                FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName());
+                addField(desc, new JcrItemModel(next));
             }
         }
     }
 
-    protected void loadField(FieldDescriptor field, Node node) throws RepositoryException {
-        Item item = null;
-        if (field.isNode()) {
-            if (!node.hasNode(field.getPath())) {
-                item = node.addNode(field.getPath(), field.getType());
-            } else {
-                item = node.getNode(field.getPath());
-            }
-        } else {
-            if (!node.hasProperty(field.getPath())) {
-                addField(field, node.getPath() + "/" + field.getPath());
-            } else {
-                item = node.getProperty(field.getPath());
-            }
-        }
-        if (item != null) {
-            addField(field, item);
-        }
+    private void loadField(FieldDescriptor field, Node node) throws RepositoryException {
+        JcrItemModel model = null;
+        model = new JcrItemModel(node);
+        addField(field, model);
     }
 
-    private void addField(FieldDescriptor field, Item item) {
-        fields.addLast(new FieldModel(field, item));
-    }
-
-    private void addField(FieldDescriptor field, String path) {
-        fields.addLast(new FieldModel(field, path));
+    private void addField(FieldDescriptor field, JcrItemModel model) {
+        fields.addLast(new FieldModel(field, model));
     }
 
     // internal (lazy) loading of fields
 
-    private void load() {
+    @Override
+    protected void load() {
         if (fields != null) {
             return;
         }
 
-        Node node = getNode();
+        Node node = getNodeModel().getNode();
         fields = new LinkedList<FieldModel>();
         if (descriptor != null) {
             Iterator<FieldDescriptor> iter = descriptor.getFieldIterator();
@@ -188,7 +150,7 @@ public class TemplateProvider extends JcrNodeModel implements IDataProvider {
                         loadField(field, node);
                     }
                 } catch (RepositoryException ex) {
-                    ex.printStackTrace();
+                    log.error(ex.getMessage());
                 }
             }
         }
