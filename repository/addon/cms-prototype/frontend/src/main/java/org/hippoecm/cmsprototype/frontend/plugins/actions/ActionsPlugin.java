@@ -63,7 +63,9 @@ public class ActionsPlugin extends Plugin {
         try {
             DocumentVariant variant = new DocumentVariant(model);
             link.setVisible(variant.getState().equals("draft"));
-        } catch (ModelWrapException e1) {}
+        } catch (ModelWrapException e) {
+            link.setVisible(false);
+        }
 
     }
 
@@ -73,17 +75,14 @@ public class ActionsPlugin extends Plugin {
             JcrNodeModel model = new JcrNodeModel(notification.getData());
             setNodeModel(model);
             try {
-                HippoNode node = model.getNode();
-                link.setVisible( node.isNodeType(HippoNodeType.NT_DOCUMENT)
-                        && node.hasProperty("state")
-                        && node.getProperty("state").getString().equals("draft") );
-                notification.getContext().addRefresh(this);
-            } catch (RepositoryException ex) {
-                // TODO: log error
-                ex.printStackTrace();
+                DocumentVariant variant = new DocumentVariant(model);
+                link.setVisible(variant.getState().equals("draft"));
+            } catch (ModelWrapException e) {
+                link.setVisible(false);
             }
+            notification.getContext().addRefresh(this);
         }
         super.receive(notification);
     }
-
+    
 }
