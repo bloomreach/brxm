@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template.config;
 
 import javax.jcr.PropertyType;
 import javax.jcr.Value;
@@ -26,7 +26,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
 
-public class FieldDescriptor implements IClusterable {
+public class FieldDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     private String name;
@@ -80,15 +80,26 @@ public class FieldDescriptor implements IClusterable {
         node = true;
     }
 
-    public FieldDescriptor(String name, String path, String type, String renderer) {
+    public FieldDescriptor(String name, String path) {
         this.name = name;
         this.path = path;
-        this.type = type;
-        this.renderer = renderer;
+
+        this.node = false;
+        this.type = null;
+        this.renderer = null;
 
         multiple = prot = binary = mandatory = false;
     }
 
+    @Override
+    public FieldDescriptor clone() {
+        try {
+            return (FieldDescriptor) super.clone();
+        } catch(CloneNotSupportedException ex) {
+            return null;
+        }
+    }
+    
     public String getName() {
         return name;
     }
@@ -97,14 +108,27 @@ public class FieldDescriptor implements IClusterable {
         return path;
     }
 
+    public void setType(String type) {
+        this.type = type;
+        this.node = true;
+    }
+
     public String getType() {
         return type;
+    }
+    
+    public void setRenderer(String renderer) {
+        this.renderer = renderer;
     }
 
     public String getRenderer() {
         return renderer;
     }
 
+    public void setMultiple(boolean multiple) {
+        this.multiple = multiple;
+    }
+    
     public boolean isMultiple() {
         return multiple;
     }
@@ -121,6 +145,10 @@ public class FieldDescriptor implements IClusterable {
         return mandatory;
     }
 
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+    
     public boolean isNode() {
         return node;
     }

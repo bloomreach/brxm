@@ -18,9 +18,7 @@ package org.hippoecm.frontend.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -32,17 +30,19 @@ import org.hippoecm.repository.api.HippoNode;
 public class JcrNodeModel extends ItemModelWrapper {
     private static final long serialVersionUID = 1L;
 
-    private transient boolean parentCached;
+    private transient boolean parentCached = false;
     private transient JcrNodeModel parent;
+
+    public JcrNodeModel(JcrItemModel model) {
+        super(model);
+    }
 
     public JcrNodeModel(Node node) {
         super(node);
-        parentCached = false;
     }
 
     public JcrNodeModel(Map map) {
         super((String) map.get("node"));
-        parentCached = false;
     }
 
     public Map getMapRepresentation() {
@@ -57,17 +57,11 @@ public class JcrNodeModel extends ItemModelWrapper {
 
     public JcrNodeModel getParentModel() {
         if (!parentCached) {
-            Node node = getNode();
-            if (node != null) {
-                try {
-                    Node parentNode = node.getParent();
-                    parent = new JcrNodeModel(parentNode);
-                } catch (ItemNotFoundException ex) {
-                    parent = null;
-                } catch (RepositoryException ex) {
-                    ex.printStackTrace();
-                    return null;
-                }
+            JcrItemModel parentModel = itemModel.getParentModel();
+            if (parentModel != null) {
+                parent = new JcrNodeModel(parentModel);
+            } else {
+                parent = null;
             }
             parentCached = true;
         }

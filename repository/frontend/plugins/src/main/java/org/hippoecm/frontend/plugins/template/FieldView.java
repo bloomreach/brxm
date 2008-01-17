@@ -23,17 +23,17 @@ import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugins.template.model.AbstractProvider;
+import org.hippoecm.frontend.plugins.template.model.FieldModel;
 
 public class FieldView extends DataView {
     private static final long serialVersionUID = 1L;
 
-    private TemplateDescriptor descriptor;
-    private TemplateEngine engine;
+    TemplateEngine engine;
 
-    public FieldView(String wicketId, TemplateDescriptor descriptor, TemplateProvider provider, TemplateEngine engine) {
+    public FieldView(String wicketId, AbstractProvider provider, TemplateEngine engine) {
         super(wicketId, provider);
 
-        this.descriptor = descriptor;
         this.engine = engine;
 
         setItemReuseStrategy(new DefaultItemReuseStrategy() {
@@ -42,8 +42,7 @@ public class FieldView extends DataView {
             @Override
             public Iterator getItems(final IItemFactory factory, final Iterator newModels, final Iterator existingItems) {
                 // Wicket doesn't detach the items that are thrown away, so do
-                // it ourselves.  Furthermore, plugins must be disconnected so that
-                // they do not
+                // it ourselves.  Furthermore, plugins must be disconnected.
                 while (existingItems.hasNext()) {
                     Item item = (Item) existingItems.next();
                     item.detach();
@@ -55,10 +54,6 @@ public class FieldView extends DataView {
                 return super.getItems(factory, newModels, null);
             }
         });
-    }
-
-    public TemplateDescriptor getTemplateDescriptor() {
-        return descriptor;
     }
 
     @Override

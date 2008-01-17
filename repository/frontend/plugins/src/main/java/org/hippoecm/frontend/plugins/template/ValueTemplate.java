@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class ValueTemplate extends Panel {
         super(wicketId, model);
 
         if (!descriptor.isProtected()) {
-            if (model.getObject() != null) {
+            if (model.getItemModel().exists()) {
                 add(deleteLink("delete", model));
             } else {
                 add(new Label("delete", ""));
@@ -51,8 +52,8 @@ public class ValueTemplate extends Panel {
             add(new Label("delete", "(protected)"));
         }
         add(new Label("name", descriptor.getName()));
-        add(new ValueEditor("values", model, descriptor, engine));
-        if (descriptor.isMultiple() || model.getObject() == null) {
+        add(new ValueView("values", model, descriptor, engine));
+        if (descriptor.isMultiple() || !model.getItemModel().exists()) {
             add(addLink("add", model));
         } else {
             add(new Label("add", ""));

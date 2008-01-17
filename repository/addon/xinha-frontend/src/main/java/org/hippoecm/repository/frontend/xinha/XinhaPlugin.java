@@ -43,9 +43,9 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.template.FieldDescriptor;
 import org.hippoecm.frontend.plugins.template.ITemplatePlugin;
 import org.hippoecm.frontend.plugins.template.TemplateEngine;
+import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 
 public class XinhaPlugin extends Plugin implements ITemplatePlugin {
     private static final long serialVersionUID = 1L;

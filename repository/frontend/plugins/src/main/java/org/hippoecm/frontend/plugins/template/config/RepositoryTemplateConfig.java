@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template.config;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -58,16 +58,20 @@ public class RepositoryTemplateConfig implements TemplateConfig {
                 if (child.isNodeType("hippo:field")) {
                     String path = child.getProperty("hippo:path").getString();
 
-                    String template = null;
+                    FieldDescriptor descriptor = new FieldDescriptor(child.getName(), path);
+
                     if (child.hasProperty("hippo:template")) {
-                        template = child.getProperty("hippo:template").getString();
+                        descriptor.setType(child.getProperty("hippo:template").getString());
                     }
 
-                    String renderer = null;
                     if (child.hasProperty("hippo:renderer")) {
-                        renderer = child.getProperty("hippo:renderer").getString();
+                        descriptor.setRenderer(child.getProperty("hippo:renderer").getString());
                     }
-                    children.addLast(new FieldDescriptor(child.getName(), path, template, renderer));
+
+                    if(child.hasProperty("hippo:multiple")) {
+                        descriptor.setMultiple(child.getProperty("hippo:multiple").getBoolean());
+                    }
+                    children.addLast(descriptor);
                 }
             }
             return new TemplateDescriptor(name, children);

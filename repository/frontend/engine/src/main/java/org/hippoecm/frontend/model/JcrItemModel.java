@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.model;
 
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -55,7 +57,6 @@ public class JcrItemModel extends LoadableDetachableModel {
         return path;
     }
 
-
     public boolean exists() {
         boolean result = false;
         try {
@@ -65,6 +66,21 @@ public class JcrItemModel extends LoadableDetachableModel {
             log.error(e.getMessage());
         }
         return result;
+    }
+
+    public JcrItemModel getParentModel() {
+        Item item = (Item) getObject();
+        if (item != null) {
+            try {
+                Node parentNode = item.getParent();
+                return new JcrItemModel(parentNode);
+            } catch (ItemNotFoundException ex) {
+                // the root node has no parent, return null 
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        }
+        return null;
     }
 
     // LoadableDetachableModel

@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import org.hippoecm.frontend.plugins.template.FieldDescriptor;
 import org.hippoecm.frontend.plugins.template.TemplateEngine;
+import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 
 public interface ITemplatePlugin {
 

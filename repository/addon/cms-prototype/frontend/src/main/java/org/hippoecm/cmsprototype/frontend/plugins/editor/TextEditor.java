@@ -30,9 +30,9 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.template.FieldDescriptor;
 import org.hippoecm.frontend.plugins.template.ITemplatePlugin;
 import org.hippoecm.frontend.plugins.template.TemplateEngine;
+import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 
 public class TextEditor extends Plugin implements ITemplatePlugin {
@@ -107,12 +107,19 @@ public class TextEditor extends Plugin implements ITemplatePlugin {
             model = null;
         }
 
+        @Override
+        public void detach() {
+            model.detach();
+        }
+
+        @Override
         public Object getObject() {
             if(model != null)
                 return model.getObject();
             return null;
         }
 
+        @Override
         public void setObject(Object object) {
             if(model != null)
                 model.setObject(object);

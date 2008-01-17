@@ -24,6 +24,10 @@ public abstract class ItemModelWrapper implements IChainingModel {
 
     protected JcrItemModel itemModel;
 
+    public ItemModelWrapper(JcrItemModel model) {
+        itemModel = model;
+    }
+
     public ItemModelWrapper(Item item) {
         itemModel = new JcrItemModel(item);
     }
