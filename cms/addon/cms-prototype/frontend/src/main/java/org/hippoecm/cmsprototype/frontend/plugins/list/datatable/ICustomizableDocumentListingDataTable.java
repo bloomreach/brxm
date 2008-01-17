@@ -15,6 +15,8 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.list.datatable;
 
+import org.hippoecm.frontend.model.JcrNodeModel;
+
 public interface ICustomizableDocumentListingDataTable {
 
     /**
@@ -61,5 +63,11 @@ public interface ICustomizableDocumentListingDataTable {
      *
      */
     public abstract void addBottomColumnHeaders();
+    
+    /**
+     * Selects the node/document to highlight in the list.
+     * @param    nodeModel    A {@link JcrNodeModel} representing a node in the list 
+     */
+    public void setSelectedNode(JcrNodeModel nodeModel);
 
 }

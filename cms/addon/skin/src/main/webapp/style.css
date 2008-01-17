@@ -167,7 +167,11 @@ div.tabpanel div.tab-row li a.close { background: none; }
 .selected {
   background-color:#4b82c6;
 }
-
 .selected a {
   color:#ffffff;
+}
+
+/* selected document in list */
+tr.selected {
+  background-color:#4b82c6;
 }
