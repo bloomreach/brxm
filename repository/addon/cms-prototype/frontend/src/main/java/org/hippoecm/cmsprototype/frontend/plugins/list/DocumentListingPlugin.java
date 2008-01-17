@@ -16,6 +16,8 @@
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
+import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
@@ -23,6 +25,7 @@ import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.CustomizableDoc
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class DocumentListingPlugin extends AbstractListingPlugin {
 
@@ -62,6 +65,11 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     @Override
     protected String getPluginUserPrefNodeName() {
         return USER_PREF_NODENAME;
+    }
+
+    @Override
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel incoming) {
+        return new DocumentListingNodeColumn(model, propertyName, incoming);
     }
 
 

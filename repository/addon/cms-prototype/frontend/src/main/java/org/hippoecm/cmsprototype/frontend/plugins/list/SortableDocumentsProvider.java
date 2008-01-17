@@ -15,7 +15,6 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -25,7 +24,9 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
+import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,22 +47,19 @@ public class SortableDocumentsProvider extends SortableDataProvider {
     public SortableDocumentsProvider(Folder folder) {
         this.folder = folder;
         setSort("name", true);
+        
+        resources = folder.getSubFoldersAndDocuments();
+        Folder parentFolder = folder.getParentFolder();
+        if (parentFolder != null) {
+            try {
+                resources.add(new DocumentListingParentFolder(parentFolder.getNodeModel()));
+            } catch (ModelWrapException e) { }
+        }
     }
     
     public Iterator<NodeModelWrapper> iterator(int first, int count) {
-        // TODO replace with a more efficient implementation
-        List<NodeModelWrapper> list = new ArrayList<NodeModelWrapper>();
-        if (folder != null) {
-            resources = folder.getSubFoldersAndDocuments();
-            sortResources();
-            int i = 0;
-            for (Iterator<NodeModelWrapper> iterator = resources.iterator(); iterator.hasNext(); i++) {
-                NodeModelWrapper doc = iterator.next();
-                if (i >= first && i < (first + count)) {
-                    list.add(doc);
-                }
-            }
-        }
+        sortResources();
+        List<NodeModelWrapper> list = Collections.unmodifiableList(resources.subList(first, first + count));
         return list.iterator();
     }
 
@@ -70,18 +68,28 @@ public class SortableDocumentsProvider extends SortableDataProvider {
     }
 
     public int size() {
-        if (folder != null) {
-            return folder.getSubFoldersAndDocuments().size();
-        }
-        else {
-            return 0;
-        }
+        return resources.size();
     }
 
     private void sortResources() {
         Collections.sort(resources, new Comparator<NodeModelWrapper>() {
 
             public int compare(NodeModelWrapper o1, NodeModelWrapper o2) {
+                
+                // parent folder always on top
+                if ((o1 instanceof DocumentListingParentFolder 
+                            && SortableDocumentsProvider.this.getSort().isAscending())
+                        || (o2 instanceof DocumentListingParentFolder 
+                                && !SortableDocumentsProvider.this.getSort().isAscending())) {
+                    return Integer.MIN_VALUE;
+                }
+                else if ((o2 instanceof DocumentListingParentFolder 
+                                && SortableDocumentsProvider.this.getSort().isAscending())
+                            || (o1 instanceof DocumentListingParentFolder 
+                                    && !SortableDocumentsProvider.this.getSort().isAscending())) {
+                    return Integer.MAX_VALUE;
+                }
+                
                 try {
                     return String.CASE_INSENSITIVE_ORDER.compare(o1.getNodeModel().getNode().getName(), o2.getNodeModel().getNode().getName());
                 } catch (RepositoryException e) {

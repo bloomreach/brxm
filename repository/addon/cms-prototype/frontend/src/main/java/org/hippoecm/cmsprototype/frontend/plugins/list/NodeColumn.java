@@ -24,7 +24,7 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 public class NodeColumn extends AbstractColumn {
     private static final long serialVersionUID = 1L;
 
-    private Channel channel;
+    protected Channel channel;
     private String nodePropertyName;
 
 
