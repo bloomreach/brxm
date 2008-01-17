@@ -17,6 +17,7 @@ package org.hippoecm.cmsprototype.frontend.plugins.list.datatable;
 
 import java.util.List;
 
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
@@ -25,7 +26,10 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.paging.CustomizableNavigationToolBar;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 
 public class CustomizableDocumentListingDataTable extends DataTable implements ICustomizableDocumentListingDataTable {
 
@@ -39,6 +43,7 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
     private final static int DEFAULT_VIEWSIZE = Integer.MAX_VALUE;
 
     private ISortableDataProvider dataProvider;
+    private JcrNodeModel selectedNode;
 
     public CustomizableDocumentListingDataTable(String id, List/* <IColumn> */columns, ISortableDataProvider dataProvider, int rowsPerPage, boolean defaultsOn) {
         this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage, defaultsOn);
@@ -69,7 +74,16 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
 
     protected Item newRowItem(String id, int index, IModel model)
     {
-        return new OddEvenItem(id, index, model);
+        OddEvenItem item = new OddEvenItem(id, index, model);
+        
+        // check if a node in the list has been selected, if yes append appropriate CSS class
+        if (selectedNode != null
+                && model instanceof NodeModelWrapper
+                && selectedNode.equals(( (NodeModelWrapper)model ).getNodeModel())) {
+            item.add(new AttributeAppender("class", new Model("selected"), " "));
+        }
+        
+        return item;
     }
 
 
@@ -134,5 +148,7 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
         }
     }
 
-
+    public void setSelectedNode(JcrNodeModel nodeModel) {
+        selectedNode = nodeModel;
+    }
 }

@@ -16,6 +16,7 @@
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
 import org.apache.wicket.Component;
+import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.CustomizableDocumentListingDataTable;
@@ -39,12 +40,22 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         try {
             folder = new Folder(nodeModel);
         } catch (ModelWrapException e) {
-            // node is not a folder
+            // node is not a folder or in a folder
         }
-
+        
+        Document selectedDocument = null;
+        try {
+            selectedDocument = new Document(nodeModel);
+        } catch (ModelWrapException e) {
+            // node is not a document or document variant
+        }
+        
         dataTable = new CustomizableDocumentListingDataTable("table", columns, new SortableDocumentsProvider(folder), pageSize, false);
         dataTable.addBottomPaging(viewSize);
         dataTable.addTopColumnHeaders();
+        if (selectedDocument != null) {
+            dataTable.setSelectedNode(selectedDocument.getNodeModel());
+        }
         add((Component)dataTable);
     }
 
@@ -52,12 +63,6 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     protected String getPluginUserPrefNodeName() {
         return USER_PREF_NODENAME;
     }
-
-
-
-
-
-
 
 
 }
