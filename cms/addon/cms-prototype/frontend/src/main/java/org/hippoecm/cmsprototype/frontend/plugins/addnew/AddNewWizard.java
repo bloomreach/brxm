@@ -30,14 +30,12 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -65,27 +63,13 @@ public class AddNewWizard extends Plugin {
         super(pluginDescriptor, model, parentPlugin);
         final AddNewForm form = new AddNewForm("addNewForm");
         add(new FeedbackPanel("feedback"));
-
-        form.add(new AjaxEventBehavior("onsubmit") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                // FIXME save ajax request target so it can be used in onSubmit()
-                form.setTarget(target);
-            }
-
-        });
-
         add(form);
-
     }
 
     private final class AddNewForm extends Form {
         private static final long serialVersionUID = 1L;
 
         private ValueMap properties;
-        transient private AjaxRequestTarget target;
 
         public AddNewForm(String id) {
             super(id);
@@ -100,43 +84,48 @@ public class AddNewWizard extends Plugin {
             template.setRequired(true);
             add(template);
 
-            add(new Button("submit", new Model("Add")));
+            add(new AjaxButton("submit", this) {
+                private static final long serialVersionUID = 1L;
 
-        }
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
 
-        public void setTarget(AjaxRequestTarget target) {
-            this.target = target;
-        }
+                    Node doc = createDocument();
 
-        @Override
-        protected void onSubmit() {
-            Node doc = createDocument();
+                    if (doc != null && target != null) {
+                        Channel channel = getDescriptor().getIncoming();
+                        if (channel != null) {
 
-            if (doc != null && target != null) {
-                Channel channel = getDescriptor().getIncoming();
-                if (channel != null) {
+                            // FIXME looks like the flush doesn't work
+                            Request request = channel.createRequest("flush", getNodeModel().findRootModel()
+                                    .getMapRepresentation());
+                            MessageContext context = request.getContext();
+                            channel.send(request);
 
-                    Request request = channel.createRequest("flush", getNodeModel().findRootModel()
-                            .getMapRepresentation());
-                    MessageContext context = request.getContext();
-                    channel.send(request);
+                            JcrNodeModel model = new JcrNodeModel(doc);
+                            request = channel.createRequest("browse", model.getMapRepresentation());
+                            request.setContext(context);
+                            channel.send(request);
 
-                    JcrNodeModel model = new JcrNodeModel(doc);
-                    request = channel.createRequest("select", model.getMapRepresentation());
-                    request.setContext(context);
-                    channel.send(request);
+                            context.apply(target);
+                        }
+                    }
 
-                    request = channel.createRequest("browse", model.getMapRepresentation());
-                    request.setContext(context);
-                    channel.send(request);
-
-                    context.apply(target);
+                    properties.clear();
+                    
                 }
-            }
 
-            properties.clear();
-
+                @Override
+                protected void onError(AjaxRequestTarget target, Form form) {
+                    super.onError(target, form);
+                    System.out.println("onError!");
+                    target.addComponent(AddNewWizard.this);
+                }
+                
+            });
+            
         }
+
 
         private List<String> getTemplates() {
             List<String> templates = new ArrayList<String>();
