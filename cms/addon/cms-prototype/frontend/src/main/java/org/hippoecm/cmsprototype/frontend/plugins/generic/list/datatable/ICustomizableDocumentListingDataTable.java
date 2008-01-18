@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.cmsprototype.frontend.plugins.list.datatable;
+package org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 

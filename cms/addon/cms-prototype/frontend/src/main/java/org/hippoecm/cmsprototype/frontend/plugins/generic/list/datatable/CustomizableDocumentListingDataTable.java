@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.cmsprototype.frontend.plugins.list.datatable;
+package org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.cmsprototype.frontend.plugins.list.datatable.paging.CustomizableNavigationToolBar;
+import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.paging.CustomizableNavigationToolBar;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 
@@ -88,13 +88,13 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
 
 
     /* (non-Javadoc)
-     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging()
+     * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging()
      */
     public void addTopPaging(){
         addTopPaging(DEFAULT_VIEWSIZE);
     }
     /* (non-Javadoc)
-     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging(int viewSize)
+     * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging(int viewSize)
      */
     public void addTopPaging(int viewSize) {
         if(ajaxTopNavigationToolbar == null ) {
@@ -106,7 +106,7 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
     }
 
     /* (non-Javadoc)
-     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addTopColumnHeaders()
+     * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addTopColumnHeaders()
      */
     public void addTopColumnHeaders() {
         if(ajaxFallbackTopHeadersToolbar == null ) {
@@ -118,13 +118,13 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
     }
 
     /* (non-Javadoc)
-     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addBottomPaging()
+     * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addBottomPaging()
      */
     public void addBottomPaging() {
         addBottomPaging(DEFAULT_VIEWSIZE);
     }
     /* (non-Javadoc)
-     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addBottomPaging(int viewSize)
+     * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addBottomPaging(int viewSize)
      */
     public void addBottomPaging(int viewSize) {
         if(ajaxBottomNavigationToolbar == null ) {
@@ -137,7 +137,7 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
 
 
     /* (non-Javadoc)
-     * @see org.hippoecm.cmsprototype.frontend.plugins.list.datatable.ICustomizableDocumentListingDataTable#addBottomColumnHeaders()
+     * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addBottomColumnHeaders()
      */
     public void addBottomColumnHeaders() {
         if(ajaxFallbackBottomHeadersToolbar == null ) {
