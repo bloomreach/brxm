@@ -16,6 +16,8 @@
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.cmsprototype.frontend.plugins.generic.list.NodeCell;
+import org.hippoecm.cmsprototype.frontend.plugins.generic.list.NodeColumn;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
 

@@ -19,6 +19,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
+import org.hippoecm.cmsprototype.frontend.plugins.generic.list.NodeCell;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.api.HippoNode;

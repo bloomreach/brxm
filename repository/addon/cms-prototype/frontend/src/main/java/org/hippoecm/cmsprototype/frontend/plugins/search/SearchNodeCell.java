@@ -18,7 +18,7 @@ package org.hippoecm.cmsprototype.frontend.plugins.search;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.cmsprototype.frontend.plugins.list.NodeCell;
+import org.hippoecm.cmsprototype.frontend.plugins.generic.list.NodeCell;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;

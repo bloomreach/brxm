@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.cmsprototype.frontend.plugins.list;
+package org.hippoecm.cmsprototype.frontend.plugins.generic.list;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
