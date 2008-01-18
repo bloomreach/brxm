@@ -68,6 +68,14 @@ public class FolderTreePlugin extends AbstractTreePlugin {
                 log.error(e.getMessage());
             }
         }
+        else if ("flush".equals(notification.getOperation())) {
+            AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(notification.getData()));
+            if (node != null) {
+                node.markReload();
+                node.getTreeModel().nodeStructureChanged(node);
+                notification.getContext().addRefresh(tree, "updateTree");
+            }
+        }
     }
     
 }
