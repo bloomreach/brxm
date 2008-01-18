@@ -20,17 +20,17 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,25 +39,20 @@ public class ValueTemplate extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(ValueTemplate.class);
 
-    public ValueTemplate(String wicketId, JcrPropertyModel model, FieldDescriptor descriptor, TemplateEngine engine) {
+    private FieldDescriptor descriptor;
+
+    public ValueTemplate(String wicketId, JcrPropertyModel model,
+            FieldDescriptor descriptor, TemplateEngine engine) {
         super(wicketId, model);
 
-        if (!descriptor.isProtected()) {
-            if (model.getItemModel().exists()) {
-                add(deleteLink("delete", model));
-            } else {
-                add(new Label("delete", ""));
-            }
-        } else {
-            add(new Label("delete", "(protected)"));
-        }
+        this.descriptor = descriptor;
+
+        add(createAddLink(model));
+        add(createDeleteLink(model));
         add(new Label("name", descriptor.getName()));
         add(new ValueView("values", model, descriptor, engine));
-        if (descriptor.isMultiple() || !model.getItemModel().exists()) {
-            add(addLink("add", model));
-        } else {
-            add(new Label("add", ""));
-        }
+
+        setOutputMarkupId(true);
     }
 
     // Called when a new value is added to a multi-valued property
@@ -79,24 +74,42 @@ public class ValueTemplate extends Panel {
 
                 // get the path to the node
                 JcrItemModel itemModel = model.getItemModel();
-                String path = itemModel.getPath().substring(1);
+                Node parent = (Node) itemModel.getParentModel().getObject();
+                parent.setProperty(descriptor.getPath(), value);
 
-                // get the parent
-                Node node = ((UserSession) Session.get()).getRootNode();
-                int pos = path.lastIndexOf('/');
-                node = node.getNode(path.substring(0, pos));
-                node.setProperty(path.substring(pos + 1), value);
+                // use a fresh model; the property has to be re-retrieved
+                model.detach();
             }
-            Component template = findParent(Template.class);
-            if (target != null && template != null) {
-                target.addComponent(template);
+
+            // update labels/links
+            replace(createAddLink(model));
+            replace(createDeleteLink(model));
+
+            if (target != null) {
+                target.addComponent(this);
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
     }
 
-    protected void onDeleteValue(AjaxRequestTarget target) {
+    protected void onRemoveValue(AjaxRequestTarget target,
+            JcrPropertyValueModel model) {
+        try {
+            Property prop = model.getJcrPropertymodel().getProperty();
+            Value[] values = prop.getValues();
+            values = (Value[]) ArrayUtils.remove(values, model.getIndex());
+            prop.setValue(values);
+
+            if (target != null) {
+                target.addComponent(this);
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    protected void onDeleteProperty(AjaxRequestTarget target) {
         JcrPropertyModel model = (JcrPropertyModel) getModel();
         try {
             Property prop = model.getProperty();
@@ -113,25 +126,39 @@ public class ValueTemplate extends Panel {
 
     // privates
 
-    private Component deleteLink(String id, final JcrPropertyModel model) {
-        return new AjaxLink(id, model) {
-            private static final long serialVersionUID = 1L;
+    private Component createDeleteLink(final JcrPropertyModel model) {
+        String id = "delete";
+        if (!descriptor.isProtected()) {
+            if (model.getItemModel().exists()) {
+                return new AjaxLink(id, model) {
+                    private static final long serialVersionUID = 1L;
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                ValueTemplate.this.onDeleteValue(target);
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        ValueTemplate.this.onDeleteProperty(target);
+                    }
+                };
+            } else {
+                return new Label(id, "");
             }
-        };
+        } else {
+            return new Label("delete", "(protected)");
+        }
     }
 
-    private AjaxLink addLink(String id, final JcrPropertyModel model) {
-        return new AjaxLink(id, model) {
-            private static final long serialVersionUID = 1L;
+    private Component createAddLink(final JcrPropertyModel model) {
+        String id = "add";
+        if (descriptor.isMultiple() || !model.getItemModel().exists()) {
+            return new AjaxLink(id, model) {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                ValueTemplate.this.onAddValue(target);
-            }
-        };
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    ValueTemplate.this.onAddValue(target);
+                }
+            };
+        } else {
+            return new Label("add", "");
+        }
     }
 }

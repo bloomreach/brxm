@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -60,22 +55,14 @@ public class ValueView extends DataView {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    ValueView.this.onRemove(target, (JcrPropertyValueModel) getModel());
+                	ValueTemplate template = (ValueTemplate) findParent(ValueTemplate.class);
+                	if (template != null) {
+                		template.onRemoveValue(target, valueModel);
+                	}
                 }
             });
         } else {
             item.add(new Label("remove", ""));
-        }
-    }
-
-    protected void onRemove(AjaxRequestTarget target, JcrPropertyValueModel model) {
-        try {
-            Property prop = ((JcrPropertyModel) ValueView.this.getModel()).getProperty();
-            Value[] values = prop.getValues();
-            values = (Value[]) ArrayUtils.remove(values, model.getIndex());
-            prop.setValue(values);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
         }
     }
 }
