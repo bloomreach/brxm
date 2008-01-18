@@ -127,6 +127,26 @@
                     <li><p>Under tab 'Projects', add hippo-ecm-repository-application</p></li>
                 </ol>
             </subsection>
+            
+            <subsection name="Copy resources">
+                <p>
+                    The <a href="maven.html">Maven build</a> uses the 
+                    <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">WAR overlay</a>
+                    principle, which is not fully supported by Eclipse. Therefore some resources need to be copied to
+                    the hippo-ecm-package-war project to reach the same effect.
+                </p>
+                <ol>
+                    <li><p>Inside package/war/src/main/webapp, create a directory skin.</p></li>
+                    <li><p>Copy all files in addon/skin/src/main/webapp to package/war/src/main/webapp/skin.</p></li>
+                    <li><p>Inside package/war/src/main/webapp, create a directory xinha.</p></li>
+                    <li><p>Copy all files in addon/xinha/src/main/webapp to package/war/src/main/webapp/xinha.</p></li>
+                </ol>
+                <p>
+                    Unfortunately these steps have to be repeated after each change in hippo-ecm-addon-skin
+                    or hippo-ecm-addon-xinha.
+                </p>
+            </subsection>
+            
         </section>
 
         <section name="Configure plugins for projects">
