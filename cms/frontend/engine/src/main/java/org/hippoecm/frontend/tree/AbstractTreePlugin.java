@@ -17,7 +17,6 @@ package org.hippoecm.frontend.tree;
 
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
