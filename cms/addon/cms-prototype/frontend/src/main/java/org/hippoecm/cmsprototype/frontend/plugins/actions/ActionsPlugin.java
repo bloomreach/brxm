@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
@@ -27,13 +25,13 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 
 /**
- * This component extends the MenuPlugin but essentially only overrides
- * the markup.
- * TODO: find a way to use alternative markup without having to extend the class
+ * Simple plugin to list the available non-workflow actions for a
+ * {@ link DocumentVariant}.
+ * 
+ * At the moment there is only one (hardcoded) action ("edit")
+ * for {@ link DocumentVariant}s with state "draft".
  *
  */
 public class ActionsPlugin extends Plugin {
