@@ -67,6 +67,10 @@ public class JcrPropertyValueModel extends Model {
         return index;
     }
 
+    public JcrPropertyModel getJcrPropertymodel() {
+    	return propertyModel;
+    }
+    
     @Override
     public Object getObject() {
         try {
