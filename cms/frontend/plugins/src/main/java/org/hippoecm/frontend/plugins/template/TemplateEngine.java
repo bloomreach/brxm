@@ -122,7 +122,7 @@ public class TemplateEngine extends Form implements INotificationListener {
         JcrItemModel itemModel = fieldModel.getItemModel();
 
         if(field.isNode()) {
-            if (field.isMultiple()) {
+            if (field.isMultiple() || !field.isMandatory()) {
                 // wrap multi-valued fields (i.e. same-name siblings or optional fields)
                 // in a MultiTemplate.  Fields can thus be added, removed and ordered.
                 return new MultiTemplate(wicketId, fieldModel, this);
@@ -131,7 +131,7 @@ public class TemplateEngine extends Form implements INotificationListener {
                 // for nodes, a template must be defined for the node type.
                 // the field specifies a template
                 TemplateDescriptor descriptor = getConfig().getTemplate(field.getType());
-                return new Template(wicketId, new JcrNodeModel(itemModel), descriptor, this);
+                return new Template(wicketId, new JcrNodeModel(fieldModel.getChildModel()), descriptor, this);
             }
         } else {
             if (field.getRenderer() != null) {
