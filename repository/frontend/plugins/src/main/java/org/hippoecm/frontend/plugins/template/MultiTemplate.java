@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -44,6 +43,10 @@ public class MultiTemplate extends Panel {
 
         JcrItemModel itemModel = model.getItemModel();
         FieldDescriptor descriptor = model.getDescriptor();
+
+        if (!descriptor.isNode()) {
+            throw new IllegalArgumentException("Descriptor " + descriptor.getName() + " for " + descriptor.getPath() + "does not describe a node");
+        }
 
         String name;
         if (descriptor != null) {
@@ -74,13 +77,13 @@ public class MultiTemplate extends Panel {
             JcrItemModel model = fieldModel.getItemModel();
             FieldDescriptor descriptor = fieldModel.getDescriptor();
 
-            if (descriptor.isNode()) {
                 // create the node
-                String type = fieldModel.getDescriptor().getType();
-                Node parent = (Node) model.getObject();
+            String type = fieldModel.getDescriptor().getType();
+            Node parent = (Node) model.getObject();
+            if (parent != null) {
                 parent.addNode(descriptor.getPath(), type);
             } else {
-                // TODO: add property with some default value
+                log.error("parent " + model.getPath() + " does not exist");
             }
 
             // refresh
@@ -97,11 +100,17 @@ public class MultiTemplate extends Panel {
 
     public void onRemoveNode(FieldModel childModel, AjaxRequestTarget target) {
         try {
-            JcrItemModel model = childModel.getItemModel();
-            Item item = (Item) model.getObject();
+            JcrItemModel model = childModel.getChildModel();
 
-            // remove the item
-            item.remove();
+            if (model.exists()) {
+                Node child = (Node) model.getObject();
+
+                // remove the item
+                log.info("removing item " + model.getPath());
+                child.remove();
+            } else {
+                log.error("item " + model.getPath() + " does not exist");
+            }
 
             // refresh
             provider.detach();
@@ -117,7 +126,7 @@ public class MultiTemplate extends Panel {
 
     protected Component createAddLink() {
         FieldModel model = (FieldModel) getModel();
-        if (model.getDescriptor().isMultiple()) {
+        if (model.getDescriptor().isMultiple() || (provider.size() == 0)) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 

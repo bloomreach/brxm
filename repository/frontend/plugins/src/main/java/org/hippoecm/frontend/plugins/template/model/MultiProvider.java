@@ -44,7 +44,7 @@ public class MultiProvider extends AbstractProvider implements IDataProvider {
         this.descriptor = descriptor;
     }
 
-    private void addNode(Node sub) {
+    private void addNode(Node parent, int childIndex) {
         // create a new descriptor that is not multiple
         FieldDescriptor subDescriptor = descriptor.clone();
 
@@ -52,7 +52,9 @@ public class MultiProvider extends AbstractProvider implements IDataProvider {
         subDescriptor.setMultiple(false);
         subDescriptor.setMandatory(true);
 
-        fields.addLast(new FieldModel(subDescriptor, new JcrItemModel(sub)));
+        FieldModel model = new FieldModel(subDescriptor, new JcrItemModel(parent));
+        model.setIndex(childIndex);
+        fields.addLast(model);
     }
 
     @Override
@@ -67,8 +69,8 @@ public class MultiProvider extends AbstractProvider implements IDataProvider {
             try {
                 NodeIterator iterator = node.getNodes(descriptor.getPath());
                 while (iterator.hasNext()) {
-                    Node sub = iterator.nextNode();
-                    addNode(sub);
+                    Node child = iterator.nextNode();
+                    addNode(node, child.getIndex());
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());

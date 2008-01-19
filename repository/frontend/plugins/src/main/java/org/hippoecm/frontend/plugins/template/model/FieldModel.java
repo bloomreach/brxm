@@ -23,14 +23,25 @@ public class FieldModel extends ItemModelWrapper {
     private static final long serialVersionUID = 1L;
 
     private FieldDescriptor descriptor;
+    private int index;
 
     //  Constructor
     public FieldModel(FieldDescriptor descriptor, JcrItemModel model) {
         super(model);
         this.descriptor = descriptor;
+        this.index = 0;
     }
 
     public FieldDescriptor getDescriptor() {
         return descriptor;
+    }
+    
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public JcrItemModel getChildModel() {
+        String path = itemModel.getPath() + "/" + descriptor.getPath() + "[" + index + "]";
+        return new JcrItemModel(path);
     }
 }

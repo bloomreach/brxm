@@ -75,7 +75,11 @@ public class ValueTemplate extends Panel {
                 // get the path to the node
                 JcrItemModel itemModel = model.getItemModel();
                 Node parent = (Node) itemModel.getParentModel().getObject();
-                parent.setProperty(descriptor.getPath(), value);
+                if (descriptor.isMultiple()) {
+                    parent.setProperty(descriptor.getPath(), new Value[] { value });
+                } else {
+                    parent.setProperty(descriptor.getPath(), value);
+                }
 
                 // use a fresh model; the property has to be re-retrieved
                 model.detach();

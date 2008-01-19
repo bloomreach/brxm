@@ -77,6 +77,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             }
             return new JcrItemModel("/");
         } else {
+            log.error("Unrecognised path " + path);
             return null;
         }
     }
