@@ -96,17 +96,15 @@ public class AddNewWizard extends Plugin {
                         Channel channel = getDescriptor().getIncoming();
                         if (channel != null) {
 
-                            // FIXME looks like the flush doesn't work
-                            Request request = channel.createRequest("flush", getNodeModel().findRootModel()
-                                    .getMapRepresentation());
+                            JcrNodeModel model = new JcrNodeModel(doc);
+                            Request request = channel.createRequest("flush", getNodeModel().findRootModel().getMapRepresentation());
                             MessageContext context = request.getContext();
                             channel.send(request);
 
-                            JcrNodeModel model = new JcrNodeModel(doc);
                             request = channel.createRequest("browse", model.getMapRepresentation());
                             request.setContext(context);
                             channel.send(request);
-
+                            
                             context.apply(target);
                         }
                     }
