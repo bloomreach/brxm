@@ -122,7 +122,7 @@ public class SimpleDocumentConverter extends AbstractDocumentConverter implement
             JCRHelper.addAuhtorToDocument(getJcrSession(), authorBase, current, author);
         }
         if (isPublished) {
-            JCRHelper.createPublishDocument(getJcrSession(), current, publicationDate);
+            //JCRHelper.createPublishDocument(getJcrSession(), current, publicationDate);
         }
 
     }
