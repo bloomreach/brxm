@@ -51,7 +51,7 @@
 
   <properties>
     <!-- Unstable dependencies -->
-    <jackrabbit.version>1.4-rc1</jackrabbit.version>
+    <jackrabbit.version>1.4</jackrabbit.version>
 
     <!-- Test dependencies  -->
     <jmock.version>1.2.0</jmock.version>
