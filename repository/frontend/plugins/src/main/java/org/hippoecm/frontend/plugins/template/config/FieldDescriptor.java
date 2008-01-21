@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.template.config;
 
+import java.util.Set;
+
 import javax.jcr.PropertyType;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeDefinition;
@@ -29,6 +31,8 @@ import org.apache.wicket.IClusterable;
 public class FieldDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
 
+    private static String[] propertyTypes = { "String", "Boolean", "Name", "Reference" };
+
     private String name;
     private String path;
     private String type;
@@ -36,6 +40,7 @@ public class FieldDescriptor implements IClusterable, Cloneable {
 
     private Value[] defaults;
     private String[] constraints;
+    private Set<String> excluded;
 
     private boolean multiple;
     private boolean binary;
@@ -87,6 +92,7 @@ public class FieldDescriptor implements IClusterable, Cloneable {
         this.node = false;
         this.type = null;
         this.renderer = null;
+        this.excluded = null;
 
         multiple = prot = binary = mandatory = false;
     }
@@ -95,28 +101,41 @@ public class FieldDescriptor implements IClusterable, Cloneable {
     public FieldDescriptor clone() {
         try {
             return (FieldDescriptor) super.clone();
-        } catch(CloneNotSupportedException ex) {
+        } catch (CloneNotSupportedException ex) {
             return null;
         }
     }
-    
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPath() {
         return path;
     }
 
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public void setType(String type) {
         this.type = type;
+        for (String propertyType : propertyTypes) {
+            if (propertyType.equals(type)) {
+                return;
+            }
+        }
         this.node = true;
     }
 
     public String getType() {
         return type;
     }
-    
+
     public void setRenderer(String renderer) {
         this.renderer = renderer;
     }
@@ -128,7 +147,7 @@ public class FieldDescriptor implements IClusterable, Cloneable {
     public void setMultiple(boolean multiple) {
         this.multiple = multiple;
     }
-    
+
     public boolean isMultiple() {
         return multiple;
     }
@@ -148,7 +167,7 @@ public class FieldDescriptor implements IClusterable, Cloneable {
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
     }
-    
+
     public boolean isNode() {
         return node;
     }
@@ -157,14 +176,18 @@ public class FieldDescriptor implements IClusterable, Cloneable {
         return constraints;
     }
 
+    public Set<String> getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(Set<String> set) {
+        excluded = set;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).
-            append("name", name).
-            append("path", path).
-            append("type", type).
-            append("renderer", renderer).
-            toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("name", name).append("path", path)
+                .append("type", type).append("renderer", renderer).toString();
     }
 
     @Override
@@ -176,11 +199,8 @@ public class FieldDescriptor implements IClusterable, Cloneable {
             return true;
         }
         FieldDescriptor fieldDescriptor = (FieldDescriptor) object;
-        return new EqualsBuilder().append(name, fieldDescriptor.name).
-                append(path, fieldDescriptor.path).
-                append(type, fieldDescriptor.type).
-                append(renderer, fieldDescriptor.renderer).
-                isEquals();
+        return new EqualsBuilder().append(name, fieldDescriptor.name).append(path, fieldDescriptor.path).append(type,
+                fieldDescriptor.type).append(renderer, fieldDescriptor.renderer).isEquals();
     }
 
     @Override

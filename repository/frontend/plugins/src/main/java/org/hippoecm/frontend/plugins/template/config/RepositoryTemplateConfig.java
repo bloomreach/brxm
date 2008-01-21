@@ -15,13 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.template.config;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
@@ -51,12 +53,16 @@ public class RepositoryTemplateConfig implements TemplateConfig {
                 return new TemplateDescriptor(name, getNodeTypeDefined(name));
             }
 
+            Set<String> explicit = new HashSet<String>();
             LinkedList<FieldDescriptor> children = new LinkedList<FieldDescriptor>();
             NodeIterator iter = node.getNodes();
             while (iter.hasNext()) {
                 Node child = iter.nextNode();
                 if (child.isNodeType("hippo:field")) {
                     String path = child.getProperty("hippo:path").getString();
+                    if (!path.equals("*")) {
+                        explicit.add(path);
+                    }
 
                     FieldDescriptor descriptor = new FieldDescriptor(child.getName(), path);
 
@@ -68,12 +74,21 @@ public class RepositoryTemplateConfig implements TemplateConfig {
                         descriptor.setRenderer(child.getProperty("hippo:renderer").getString());
                     }
 
-                    if(child.hasProperty("hippo:multiple")) {
+                    if (child.hasProperty("hippo:multiple")) {
                         descriptor.setMultiple(child.getProperty("hippo:multiple").getBoolean());
                     }
                     children.addLast(descriptor);
                 }
             }
+
+            Iterator<FieldDescriptor> fieldIter = children.iterator();
+            while (fieldIter.hasNext()) {
+                FieldDescriptor field = fieldIter.next();
+                if (field.getPath().equals("*")) {
+                    field.setExcluded(explicit);
+                }
+            }
+
             return new TemplateDescriptor(name, children);
         } catch (RepositoryException ex) {
             ex.printStackTrace();
@@ -86,8 +101,8 @@ public class RepositoryTemplateConfig implements TemplateConfig {
     private Node lookupConfigNode(String template) throws RepositoryException {
         UserSession session = (UserSession) Session.get();
 
-        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
-                + session.getHippo() + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/" + template;
+        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + session.getHippo()
+                + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/" + template;
 
         QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);
@@ -108,9 +123,6 @@ public class RepositoryTemplateConfig implements TemplateConfig {
 
         // throws NoSuchNodeTypeException if type doesn't exist
         NodeType nt = ntMgr.getNodeType(name);
-        for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
-            children.add(new FieldDescriptor(nd));
-        }
         for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
             children.add(new FieldDescriptor(pd));
         }

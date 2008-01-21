@@ -133,7 +133,7 @@
     </sv:property>
 
     <!-- path -->
-    <sv:node sv:name="state">
+    <sv:node sv:name="path">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
       </sv:property>
@@ -161,6 +161,20 @@
         <sv:value>hippo:renderer</sv:value>
       </sv:property>
     </sv:node>
+    
+    <!-- multiple -->
+    <sv:node sv:name="multiple">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:multiple</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>Boolean</sv:value>
+      </sv:property>
+    </sv:node>
+    
   </sv:node>
   <!-- end "field" template -->
 
@@ -178,6 +192,12 @@
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>*</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

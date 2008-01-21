@@ -43,7 +43,7 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
             channel.subscribe(this);
         }
         if (proxy != null) {
-                proxy.register(this);
+            proxy.register(this);
         }
 
         setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
@@ -52,19 +52,19 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
             public void onClose(AjaxRequestTarget target) {
                 // forward the requests that have been sent by children (i.e. the dialog)
                 if (channel != null) {
-                        LinkedList<MessageContext> contexts = new LinkedList<MessageContext>();
-                        while (queue.size() > 0) {
-                                Request request = queue.removeLast();
-                                channel.send(request);
-                                contexts.add(request.getContext());
-                        }
-                        while (contexts.size() > 0) {
-                                contexts.remove().apply(target);
-                        }
+                    LinkedList<MessageContext> contexts = new LinkedList<MessageContext>();
+                    while (queue.size() > 0) {
+                        Request request = queue.removeLast();
+                        channel.send(request);
+                        contexts.add(request.getContext());
+                    }
+                    while (contexts.size() > 0) {
+                        contexts.remove().apply(target);
+                    }
                 } else {
-                        if (queue.size() > 0) {
-                                queue = new LinkedList<Request>();
-                        }
+                    if (queue.size() > 0) {
+                        queue = new LinkedList<Request>();
+                    }
                 }
             }
         });

@@ -18,12 +18,6 @@ package org.hippoecm.frontend.plugins.template.model;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -75,54 +69,12 @@ public class FieldProvider extends AbstractProvider implements IDataProvider {
             return true;
         }
         FieldProvider fieldProvider = (FieldProvider) object;
-        return new EqualsBuilder().append(descriptor, fieldProvider.descriptor)
-                .isEquals();
+        return new EqualsBuilder().append(descriptor, fieldProvider.descriptor).isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 31).append(descriptor).toHashCode();
-    }
-
-    // handle wildcard expansion
-
-    private void expandNodeWildcard(Node node) throws RepositoryException {
-        // FIXME: a separate template should be loaded, i.e.
-        // the FieldModel should be able to describe "multiple"
-        NodeIterator iterator = node.getNodes();
-        while (iterator.hasNext()) {
-            Node next = iterator.nextNode();
-            if (!descriptor.hasField(next.getName())) {
-                String template = null;
-                if (next.getPrimaryNodeType() != null) {
-                    template = next.getPrimaryNodeType().getName();
-                }
-                FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName());
-                desc.setType(template);
-                addField(desc, new JcrItemModel(next));
-            }
-        }
-    }
-
-    private void expandPropertyWildcard(Node node) throws RepositoryException {
-        PropertyIterator iterator = node.getProperties();
-        while (iterator.hasNext()) {
-            Property next = iterator.nextProperty();
-            if (!descriptor.hasField(next.getName())) {
-                FieldDescriptor desc = new FieldDescriptor(next.getName(), next.getName());
-                addField(desc, new JcrItemModel(next));
-            }
-        }
-    }
-
-    private void loadField(FieldDescriptor field, Node node) throws RepositoryException {
-        JcrItemModel model = null;
-        model = new JcrItemModel(node);
-        addField(field, model);
-    }
-
-    private void addField(FieldDescriptor field, JcrItemModel model) {
-        fields.addLast(new FieldModel(field, model));
     }
 
     // internal (lazy) loading of fields
@@ -133,25 +85,13 @@ public class FieldProvider extends AbstractProvider implements IDataProvider {
             return;
         }
 
-        Node node = getNodeModel().getNode();
+        JcrItemModel model = getNodeModel().getItemModel();
         fields = new LinkedList<FieldModel>();
         if (descriptor != null) {
             Iterator<FieldDescriptor> iter = descriptor.getFieldIterator();
             while (iter.hasNext()) {
                 FieldDescriptor field = iter.next();
-                try {
-                    if (field.getPath().equals("*")) {
-                        if (field.isNode()) {
-                            expandNodeWildcard(node);
-                        } else {
-                            expandPropertyWildcard(node);
-                        }
-                    } else {
-                        loadField(field, node);
-                    }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
-                }
+                fields.addLast(new FieldModel(field, model));
             }
         }
     }

@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2008 Hippo
+    * Copyright 2007 Hippo
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -14,13 +14,7 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-        <wicket:panel>
-              <b><span wicket:id="name">[ property name ]</span></b>
-              <a wicket:id="add">(add)</a>
-              <span wicket:id="dialog"></span>
-              <div wicket:id="field">
-                  <div wicket:id="sub">[ field goes here ]</div>
-                  <a wicket:id="remove">(remove)</a>
-              </div>
-        </wicket:panel>
+    <wicket:extend>
+        Name: <span wicket:id="path">[ path here ]</span>
+    </wicket:extend>
 </html>
