@@ -164,6 +164,15 @@ public class Folder extends NodeModelWrapper {
         if (subFolders == null) {
             subFolders = loadSubFolders();
         }
+        else {
+            try {
+                if (nodeModel.getNode().getNodes().getSize() != subFolders.size()) {
+                    subFolders = loadSubFolders();
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        }
     }
 
     private List<Folder> loadSubFolders() {
