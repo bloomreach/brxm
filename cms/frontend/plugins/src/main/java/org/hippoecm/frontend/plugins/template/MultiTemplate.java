@@ -23,20 +23,28 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
+import org.hippoecm.frontend.plugin.channel.IRequestHandler;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
+import org.hippoecm.frontend.plugins.template.dialog.PathDialog;
 import org.hippoecm.frontend.plugins.template.model.FieldModel;
 import org.hippoecm.frontend.plugins.template.model.MultiProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiTemplate extends Panel {
+public class MultiTemplate extends Panel implements IRequestHandler {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(MultiTemplate.class);
 
     private MultiProvider provider;
+    private DialogWindow pathDialog;
 
     public MultiTemplate(String wicketId, FieldModel model, TemplateEngine engine) {
         super(wicketId, model);
@@ -45,7 +53,8 @@ public class MultiTemplate extends Panel {
         FieldDescriptor descriptor = model.getDescriptor();
 
         if (!descriptor.isNode()) {
-            throw new IllegalArgumentException("Descriptor " + descriptor.getName() + " for " + descriptor.getPath() + "does not describe a node");
+            throw new IllegalArgumentException("Descriptor " + descriptor.getName() + " for " + descriptor.getPath()
+                    + "does not describe a node");
         }
 
         String name;
@@ -55,6 +64,15 @@ public class MultiTemplate extends Panel {
             name = "no name";
         }
         add(new Label("name", name));
+
+        ChannelFactory factory = engine.getPlugin().getPluginManager().getChannelFactory();
+        Channel proxy = factory.createChannel();
+        Channel channel = factory.createChannel();
+        channel.register(this);
+
+        pathDialog = new DialogWindow("dialog", new JcrNodeModel(itemModel), channel, proxy);
+        pathDialog.setPageCreator(new DynamicDialogFactory(pathDialog, PathDialog.class, proxy));
+        add(pathDialog);
 
         provider = new MultiProvider(descriptor, new JcrNodeModel(itemModel));
         add(new MultiView("field", provider, engine, this));
@@ -70,18 +88,24 @@ public class MultiTemplate extends Panel {
         super.onDetach();
     }
 
-    public void onAddNode(AjaxRequestTarget target) {
-        FieldModel fieldModel = (FieldModel) getModel();
-        try {
-            // get the path to the node
-            JcrItemModel model = fieldModel.getItemModel();
-            FieldDescriptor descriptor = fieldModel.getDescriptor();
+    public void handle(Request request) {
+        if ("name".equals(request.getOperation())) {
+            String path = (String) request.getData().get("name");
+            addNode(path);
+            request.getContext().addRefresh(this);
+        }
+    }
 
-                // create the node
-            String type = fieldModel.getDescriptor().getType();
-            Node parent = (Node) model.getObject();
+    protected void addNode(String path) {
+        FieldModel fieldModel = (FieldModel) getModel();
+
+        // create the node
+        String type = fieldModel.getDescriptor().getType();
+        JcrItemModel model = fieldModel.getItemModel();
+        Node parent = (Node) model.getObject();
+        try {
             if (parent != null) {
-                parent.addNode(descriptor.getPath(), type);
+                parent.addNode(path, type);
             } else {
                 log.error("parent " + model.getPath() + " does not exist");
             }
@@ -90,11 +114,23 @@ public class MultiTemplate extends Panel {
             provider.detach();
             replace(createAddLink());
 
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    public void onAddNode(AjaxRequestTarget target) {
+        FieldModel fieldModel = (FieldModel) getModel();
+        FieldDescriptor descriptor = fieldModel.getDescriptor();
+
+        if (descriptor.getPath().equals("*")) {
+            pathDialog.show(target);
+        } else {
+            addNode(descriptor.getPath());
+
             if (target != null) {
                 target.addComponent(this);
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
         }
     }
 

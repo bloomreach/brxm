@@ -30,18 +30,22 @@ public class TemplateDescriptor implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private String name;
-    private LinkedHashMap<String,FieldDescriptor> fields;
+    private LinkedHashMap<String, FieldDescriptor> fields;
 
     public TemplateDescriptor(String name, List<FieldDescriptor> fields) {
         this.name = name;
-        this.fields = new LinkedHashMap<String,FieldDescriptor>(fields.size());
-        for(FieldDescriptor desc : fields) {
+        this.fields = new LinkedHashMap<String, FieldDescriptor>(fields.size());
+        for (FieldDescriptor desc : fields) {
             this.fields.put(desc.getName(), desc);
         }
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Iterator<FieldDescriptor> getFieldIterator() {
@@ -54,8 +58,8 @@ public class TemplateDescriptor implements IClusterable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("name", name).append(
-                "fields", fields).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("name", name).append("fields", fields)
+                .toString();
     }
 
     @Override
@@ -67,8 +71,8 @@ public class TemplateDescriptor implements IClusterable {
             return true;
         }
         TemplateDescriptor templateDescriptor = (TemplateDescriptor) object;
-        return new EqualsBuilder().append(name, templateDescriptor.name).append(fields,
-                templateDescriptor.fields).isEquals();
+        return new EqualsBuilder().append(name, templateDescriptor.name).append(fields, templateDescriptor.fields)
+                .isEquals();
     }
 
     @Override

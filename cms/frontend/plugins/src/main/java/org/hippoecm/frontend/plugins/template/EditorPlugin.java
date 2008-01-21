@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.template;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.template.config.RepositoryTemplateConfig;
 
 public class EditorPlugin extends Plugin {
@@ -31,9 +32,17 @@ public class EditorPlugin extends Plugin {
 
         engine = new TemplateEngine("engine", null, model, new RepositoryTemplateConfig(), this);
         add(engine);
+
+        setOutputMarkupId(true);
     }
 
     @Override
     public void addChildren() {
+    }
+
+    @Override
+    public void receive(Notification notification) {
+        engine.receive(notification);
+        super.receive(notification);
     }
 }

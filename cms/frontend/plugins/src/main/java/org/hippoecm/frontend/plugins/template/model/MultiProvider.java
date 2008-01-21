@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.template.model;
 
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -44,11 +45,13 @@ public class MultiProvider extends AbstractProvider implements IDataProvider {
         this.descriptor = descriptor;
     }
 
-    private void addNode(Node parent, int childIndex) {
+    private void addNode(Node parent, String path, int childIndex) {
         // create a new descriptor that is not multiple
         FieldDescriptor subDescriptor = descriptor.clone();
 
-        // the subdescriptor identifies an entry in a series of fields. 
+        // the subdescriptor identifies an entry in a series of fields.
+        subDescriptor.setName(path);
+        subDescriptor.setPath(path);
         subDescriptor.setMultiple(false);
         subDescriptor.setMandatory(true);
 
@@ -67,10 +70,15 @@ public class MultiProvider extends AbstractProvider implements IDataProvider {
         fields = new LinkedList<FieldModel>();
         if (node != null) {
             try {
+                Set<String> excluded = descriptor.getExcluded();
+                // expand the name-pattern
                 NodeIterator iterator = node.getNodes(descriptor.getPath());
                 while (iterator.hasNext()) {
                     Node child = iterator.nextNode();
-                    addNode(node, child.getIndex());
+                    // add child if it is not excluded.
+                    if (excluded == null || !excluded.contains(child.getName())) {
+                        addNode(node, child.getName(), child.getIndex());
+                    }
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
