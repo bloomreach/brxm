@@ -65,6 +65,17 @@ public abstract class AbstractDocumentConverter implements DocumentConverter {
         setPluginConfiguration(configuration);
         postSetupHook();
     }
+    
+    /**
+     * Default translator does just echo's the string
+     */
+    public String nameTranslate(String name) {
+        return name;
+    }
+    
+    public boolean skipJcrPath(String path) {
+        return false;
+    }
 
     /**
      * Get the JCR session
@@ -113,4 +124,5 @@ public abstract class AbstractDocumentConverter implements DocumentConverter {
     public final void setPluginConfiguration(PluginConfiguration pluginConfiguration) {
         this.pluginConfiguration = pluginConfiguration;
     }
+  
 }

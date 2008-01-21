@@ -20,10 +20,14 @@ import java.util.Calendar;
 import java.util.StringTokenizer;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 
 /**
@@ -107,7 +111,7 @@ public class JCRHelper {
      * @throws RepositoryException
      */
     public static Node createDefaultAuthor(Session session, Node parent, String name) throws RepositoryException {
-        Node handle = JCRHelper.createHandle(session, parent, name);
+        Node handle = JCRHelper.createHandle(parent, name);
         // Overwrite existing nodes
         if (handle.hasNode(name)) {
             handle.getNode(name).remove();
@@ -125,7 +129,7 @@ public class JCRHelper {
      * @throws RepositoryException
      */
     public static Node createDefaultDocument(Session session, Node parent, String name) throws RepositoryException {
-        Node handle = JCRHelper.createHandle(session, parent, name);
+        Node handle = JCRHelper.createHandle(parent, name);
         // Overwrite existing nodes
         if (handle.hasNode(name)) {
             handle.getNode(name).remove();
@@ -144,18 +148,18 @@ public class JCRHelper {
      * @return
      * @throws RepositoryException
      */
-    public static Node createHandle(Session session, Node parent, String name) throws RepositoryException {
+    public static Node createHandle(Node parent, String name) throws RepositoryException {
         if (parent == null) {
             throw new RepositoryException("Parent node null while creating handle!");
         }
         if (parent.hasNode(name)) {
-            if (parent.getNode(name).getPrimaryNodeType().getName().equals(HANDLE_NODETYPE) ) {
+            if (parent.getNode(name).getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE) ) {
                 return parent.getNode(name);
             } else {
                 parent.getNode(name).remove();
             }
         }
-        return parent.addNode(name, HANDLE_NODETYPE);
+        return parent.addNode(name, HippoNodeType.NT_HANDLE);
     }
 
     /**
@@ -205,10 +209,31 @@ public class JCRHelper {
      * @return
      * @throws RepositoryException
      */
-    public static Node createPublishDocument(Session session, Node doc, Calendar publicationDate) throws RepositoryException {
-        Node published = ((HippoSession)session).copy(doc, doc.getPath());
+    public static Node createPublishedDocument(Node doc, Calendar publicationDate) throws RepositoryException {
+        Node published = createCopy(doc, doc.getParent());
+
         // states [published, unpublished, stale, draft]
         published.setProperty(STATE_PROPERTY, "published");
         return published;
+    }
+    
+    public static Node createCopy(Node doc, Node parentDest) throws RepositoryException {
+        Node destNode = parentDest.addNode(doc.getName(), doc.getPrimaryNodeType().getName());
+        for(PropertyIterator iter = doc.getProperties(); iter.hasNext(); ) {
+            Property property = iter.nextProperty();
+            if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:uuid")) {
+                if(property.getDefinition().isMultiple()) {
+                    destNode.setProperty(property.getName(), property.getValues());
+                } else {
+                    destNode.setProperty(property.getName(), property.getValue());
+                }
+            }
+        }
+
+        //TODO: copy subnodes
+        for(NodeIterator iter = doc.getNodes(); iter.hasNext(); ) {
+            createCopy(iter.nextNode(), destNode);
+        }
+        return destNode;
     }
 }

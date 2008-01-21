@@ -71,4 +71,18 @@ public interface DocumentConverter {
      * @param httpClient
      */
     void setHttpClient(HttpClient httpClient);
+    
+    /**
+     * Helper method to translate (node)names e.g. Frankrijk -> France
+     * @param name the string to translate
+     * @return the translated string
+     */
+    String nameTranslate(String name);
+    
+    /**
+     * Skip (translated) target paths
+     * @param path target jcr path
+     * @return
+     */
+    boolean skipJcrPath(String path);
 }
