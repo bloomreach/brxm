@@ -39,6 +39,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.extractor.TextExtractor;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.lucene.document.Document;
@@ -140,7 +141,10 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 // never facet;
                 break;
             case PropertyType.STRING:
-                indexFacet(doc,fieldName,value.toString());
+                // never index uuid as facet
+                if (!name.equals(NameConstants.JCR_UUID)) {
+                    indexFacet(doc,fieldName,value.toString());
+                }
                 break;
             case PropertyType.NAME:
                 // never facet;
