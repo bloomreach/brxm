@@ -80,6 +80,7 @@
     <javax.servlet.version>2.3</javax.servlet.version>
     <xerces.version>2.8.1</xerces.version>
     <cglib.version>2.1_3</cglib.version>
+    <lucene.version>2.2.0</lucene.version>
   </properties>
 
   <licenses>

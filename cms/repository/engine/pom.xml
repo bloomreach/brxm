@@ -54,11 +54,6 @@
       <artifactId>jackrabbit-classloader</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-spellchecker</artifactId>
-      <version>${jackrabbit.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>${parent.version}</version>
@@ -67,6 +62,11 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
       <version>${parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-spellchecker</artifactId>
+      <version>${lucene.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
