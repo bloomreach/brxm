@@ -210,7 +210,7 @@ public abstract class HippoVirtualProvider
     }
 
     public NodeId getNodeId(String absPath) throws RepositoryException {
-        ItemId itemId = stateMgr.hierMgr.resolvePath(resolvePath(absPath));
+        ItemId itemId = stateMgr.hierMgr.resolveNodePath(resolvePath(absPath));
         if(itemId != null && itemId.denotesNode())
             return (NodeId) itemId;
         else
