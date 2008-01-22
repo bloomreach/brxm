@@ -32,6 +32,7 @@ import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.cmsprototype.frontend.model.workflow.WorkflowRequest;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -72,10 +73,10 @@ public class VariantsPlugin extends Plugin {
      */
     protected List<DocumentVariant> variantsList = new ArrayList<DocumentVariant>();
 
-    public VariantsPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(descriptor, model, parentPlugin);
+    public VariantsPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
+        super(descriptor, new JcrNodeModel(model), parentPlugin);
 
-        populateView(model);
+        populateView((JcrNodeModel) getModel());
 
         ListView listView = new ListView(VARIANTS_LIST, variantsList) {
             private static final long serialVersionUID = 1L;
@@ -91,7 +92,7 @@ public class VariantsPlugin extends Plugin {
                     public void onClick(AjaxRequestTarget target) {
                         Channel channel = getDescriptor().getIncoming();
                         if (channel != null) {
-                            Request request = channel.createRequest("select", variant.getNodeModel().getMapRepresentation());
+                            Request request = channel.createRequest("select", variant.getNodeModel());
                             channel.send(request);
                             request.getContext().apply(target);
                         }
@@ -147,7 +148,7 @@ public class VariantsPlugin extends Plugin {
         
         // catch all for any other nodeModel
         try {
-            setNodeModel(nodeModel);
+            setPluginModel(nodeModel);
             variantsList.clear();
             nodeName = nodeModel.getNode().getDisplayName();
         } catch (RepositoryException e) {
@@ -160,7 +161,7 @@ public class VariantsPlugin extends Plugin {
     private void setDocument(Document newDoc) {
         if (newDoc != null) {
             document = newDoc;
-            setNodeModel(document.getNodeModel());
+            setPluginModel(document.getNodeModel());
             variantsList.clear();
             variantsList.addAll(document.getVariants());
             nodeName = document.getName();
@@ -174,7 +175,7 @@ public class VariantsPlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            populateView(new JcrNodeModel(notification.getData()));
+            populateView(new JcrNodeModel(notification.getModel()));
             notification.getContext().addRefresh(this);
         }
         super.receive(notification);

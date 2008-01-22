@@ -76,7 +76,7 @@ public class NodeEditor extends Form implements INotificationListener {
 
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            JcrNodeModel newModel = new JcrNodeModel(notification.getData());
+            JcrNodeModel newModel = new JcrNodeModel(notification.getModel());
             properties.setProvider(new JcrPropertiesProvider(newModel));
             types.setProvider(new JcrNodeTypesProvider(newModel));
             setModel(newModel);

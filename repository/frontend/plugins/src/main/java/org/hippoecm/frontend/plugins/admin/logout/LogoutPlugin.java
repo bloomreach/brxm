@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.admin.logout;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -25,14 +26,14 @@ import org.hippoecm.frontend.session.UserSession;
 public class LogoutPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public LogoutPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public LogoutPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         UserSession session = (UserSession) getSession();
         ValueMap credentials = session.getCredentials();
         String username = credentials.getString("username");
 
-        add(new LogoutLink("logout-link", "Logout", LogoutDialog.class, model,
+        add(new LogoutLink("logout-link", "Logout", LogoutDialog.class, (JcrNodeModel) getModel(),
                         pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
         add(new Label("username", username));
     }

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.admin.browser;
 
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -25,8 +26,8 @@ public class BrowserPlugin extends AbstractTreePlugin {
 
     private static final long serialVersionUID = 1L;
 
-    public BrowserPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel nodeModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrTreeNode(nodeModel), parentPlugin);
+    public BrowserPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrTreeNode(new JcrNodeModel(model)), parentPlugin);
     }
 
 }

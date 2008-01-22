@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -25,17 +26,17 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.Cance
 public class BasicRequestWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public BasicRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public BasicRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        add(new DialogLink("cancelRequest-dialog", "Cancel request", CancelRequestDialog.class, model, pluginDescriptor
-                .getIncoming(), getPluginManager().getChannelFactory()));
+        add(new DialogLink("cancelRequest-dialog", "Cancel request", CancelRequestDialog.class,
+                (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
     }
 
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            setNodeModel(new JcrNodeModel(notification.getData()));
+            setPluginModel(new JcrNodeModel(notification.getModel()));
         }
         super.receive(notification);
     }

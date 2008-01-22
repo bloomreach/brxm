@@ -15,7 +15,7 @@
  */
 package org.hippoecm.mailsponge.frontend.plugins;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -24,7 +24,7 @@ import org.hippoecm.frontend.plugins.admin.editor.EditorPlugin;
 public class MailEditorPlugin extends EditorPlugin {
     private static final long serialVersionUID = 1L;
 
-    public MailEditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public MailEditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 

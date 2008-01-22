@@ -48,7 +48,8 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         Plugin owningPlugin = getOwningPlugin();
         Workflow workflow = null;
         try {
-            JcrNodeModel nodeModel = owningPlugin.getNodeModel();
+            // cast the plugin model to a jcr model
+            JcrNodeModel nodeModel = new JcrNodeModel(owningPlugin.getPluginModel());
             WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
 
             //TODO: add optional property 'workflowcategory' to
@@ -81,8 +82,8 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
         // enqueue a request to select the handle
         Channel channel = getIncoming();
-        if(channel != null) {
-            Request request = channel.createRequest("select", dialogWindow.getNodeModel().getMapRepresentation());
+        if (channel != null) {
+            Request request = channel.createRequest("select", dialogWindow.getNodeModel());
             channel.send(request);
         }
     }

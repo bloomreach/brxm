@@ -48,7 +48,7 @@ public class TasklistNodeCell extends NodeCell {
 
         if(model instanceof Task) {
             JcrNodeModel nodeModel = ((NodeModelWrapper) model).getNodeModel();            
-            Request request = channel.createRequest("browse", nodeModel.getMapRepresentation());
+            Request request = channel.createRequest("browse", nodeModel);
             channel.send(request);
             request.getContext().apply(target);
         }

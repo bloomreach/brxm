@@ -83,14 +83,12 @@ public class MoveDialog extends AbstractDialog {
             jcrSession.move(sourcePath, targetPath);
 
             Channel channel = getIncoming();
-            if(channel != null) {
-                Request request = channel.createRequest("select",
-                                targetNodeModel.getNodeModel().getMapRepresentation());
+            if (channel != null) {
+                Request request = channel.createRequest("select", targetNodeModel.getNodeModel());
                 channel.send(request);
 
                 //TODO: lookup common ancestor iso root
-                request = channel.createRequest("flush",
-                                targetNodeModel.getNodeModel().findRootModel().getMapRepresentation());
+                request = channel.createRequest("flush", targetNodeModel.getNodeModel().findRootModel());
                 channel.send(request);
             }
         }
@@ -104,8 +102,7 @@ public class MoveDialog extends AbstractDialog {
         if (model != null) {
             try {
                 infoPanel.setDestinationPath(model.getNode().getPath());
-            }
-            catch (RepositoryException e) {
+            } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
         }

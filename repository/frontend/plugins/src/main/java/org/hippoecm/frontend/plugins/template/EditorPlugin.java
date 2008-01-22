@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -26,23 +27,25 @@ public class EditorPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     private TemplateEngine engine;
+    private EditorForm form;
 
-    public EditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        engine = new TemplateEngine("engine", null, model, new RepositoryTemplateConfig(), this);
-        add(engine);
+        engine = new TemplateEngine("engine", new RepositoryTemplateConfig(), this);
+        form = new EditorForm("form", (JcrNodeModel) getModel(), engine);
+        add(form);
 
         setOutputMarkupId(true);
     }
 
     @Override
-    public void addChildren() {
-    }
-
-    @Override
     public void receive(Notification notification) {
-        engine.receive(notification);
+        if ("select".equals(notification.getOperation())) {
+            JcrNodeModel model = new JcrNodeModel(notification.getModel());
+            form.setModel(model);
+            notification.getContext().addRefresh(this);
+        }
         super.receive(notification);
     }
 }

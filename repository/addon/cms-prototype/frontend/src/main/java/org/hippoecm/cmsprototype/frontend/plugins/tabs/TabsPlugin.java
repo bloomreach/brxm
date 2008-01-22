@@ -28,6 +28,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -58,7 +59,7 @@ public class TabsPlugin extends Plugin {
 
     private String editPerspective;
 
-    public TabsPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public TabsPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
         editors = new HashMap<JcrNodeModel, Tab>();
@@ -105,7 +106,7 @@ public class TabsPlugin extends Plugin {
     @Override
     public Plugin addChild(final PluginDescriptor childDescriptor) {
         if (editPerspective == null || !editPerspective.equals(childDescriptor.getPluginId())) {
-            Tab tab = new Tab(childDescriptor, getNodeModel(), false);
+            Tab tab = new Tab(childDescriptor, getPluginModel(), false);
             return tab.getPlugin();
         } else {
             return null;
@@ -121,7 +122,7 @@ public class TabsPlugin extends Plugin {
     @Override
     public void handle(Request request) {
         if ("edit".equals(request.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(request.getData());
+            JcrNodeModel model = new JcrNodeModel(request.getModel());
             if (!editors.containsKey(model)) {
                 // create a descriptor for the plugin
                 PluginDescriptor descriptor = getPluginManager().getPluginConfig().getPlugin(editPerspective);
@@ -158,7 +159,7 @@ public class TabsPlugin extends Plugin {
             // don't send request to parent
             return;
         } else if ("focus".equals(request.getOperation())) {
-            String pluginId = (String) request.getData().get("plugin");
+            String pluginId = (String) request.getModel().getMapRepresentation().get("plugin");
             Tab tab = getPluginTab(pluginId);
             if (tab != null) {
                 tab.select();
@@ -198,7 +199,7 @@ public class TabsPlugin extends Plugin {
         int lastSelected;
         boolean close;
 
-        Tab(PluginDescriptor descriptor, JcrNodeModel model, boolean close) {
+        Tab(PluginDescriptor descriptor, IPluginModel model, boolean close) {
             this.close = close;
 
             descriptor.setWicketId(TabbedPanel.TAB_PANEL_ID);

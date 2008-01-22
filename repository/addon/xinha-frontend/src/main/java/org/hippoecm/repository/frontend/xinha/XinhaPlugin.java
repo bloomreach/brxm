@@ -38,20 +38,18 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.template.ITemplatePlugin;
-import org.hippoecm.frontend.plugins.template.TemplateEngine;
 import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 
-public class XinhaPlugin extends Plugin implements ITemplatePlugin {
+public class XinhaPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     private FieldDescriptor descriptor;
-    private TemplateEngine engine;
 
     private String content;
     private TextArea editor;
@@ -59,8 +57,10 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
     private XinhaEditorBehavior sharedBehavior;
     private AbstractDefaultAjaxBehavior postBehavior;
 
-    public XinhaPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(descriptor, model, parentPlugin);
+    public XinhaPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
+        super(descriptor, new JcrNodeModel(model), parentPlugin);
+
+        this.descriptor = new FieldDescriptor((Map) model.getMapRepresentation().get("field"));
 
         add(new Label("name", new PropertyModel(this, "name")));
         editor = new TextArea("value", getModel());
@@ -102,6 +102,8 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
         } else {
             configuration.setPlugins(new String[] { "SaveSubmit" });
         }
+
+        setModel(getModel());
     }
 
     public String getName() {
@@ -109,13 +111,6 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
             return descriptor.getName();
         }
         return null;
-    }
-
-    public void initTemplatePlugin(FieldDescriptor descriptor, TemplateEngine engine) {
-        this.descriptor = descriptor;
-        this.engine = engine;
-
-        setModel(getModel());
     }
 
     @Override
@@ -127,10 +122,6 @@ public class XinhaPlugin extends Plugin implements ITemplatePlugin {
                 property = jcrModel.getNode().getProperty(descriptor.getPath());
             } else {
                 property = jcrModel.getNode().setProperty(descriptor.getPath(), "");
-            }
-            if (property.getDefinition().isMultiple()) {
-                editor.setModel(null);
-                return super.setModel(model);
             }
             JcrPropertyModel propModel = new JcrPropertyModel(property);
             editor.setModel(new JcrPropertyValueModel(0, property.getValue(), propModel));

@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -29,23 +30,24 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest.Rejec
 public class FullRequestWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
+        JcrNodeModel jcrModel = (JcrNodeModel) getPluginModel();
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         add(new DialogLink("acceptRequest-dialog", "Approve and execute request",
-                AcceptRequestDialog.class, model, incoming, factory));
+                AcceptRequestDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("rejectRequest-dialog", "Reject request (with reason)",
-                RejectRequestDialog.class, model, incoming, factory));
+                RejectRequestDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("cancelRequest-dialog", "Cancel request",
-                CancelRequestDialog.class, model, incoming, factory));
+                CancelRequestDialog.class, jcrModel, incoming, factory));
     }
 
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            setNodeModel(new JcrNodeModel(notification.getData()));
+            setPluginModel(new JcrNodeModel(notification.getModel()));
         }
         super.receive(notification);
     }

@@ -15,10 +15,9 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
@@ -31,27 +30,27 @@ import org.hippoecm.frontend.plugin.channel.Request;
 public class EditPerspective extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public EditPerspective(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public EditPerspective(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 
     @Override
     public void receive(Notification notification) {
         if ("edit".equals(notification.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(notification.getData());
-            if (model.equals(getNodeModel())) {
+            JcrNodeModel model = new JcrNodeModel(notification.getModel());
+            if (model.equals(getPluginModel())) {
                 Channel incoming = getDescriptor().getIncoming();
                 if (incoming != null) {
-                    Map data = new HashMap();
-                    data.put("plugin", getDescriptor().getPluginId());
-                    Request request = incoming.createRequest("focus", data);
+                    PluginModel pluginModel = new PluginModel();
+                    pluginModel.put("plugin", getDescriptor().getPluginId());
+                    Request request = incoming.createRequest("focus", pluginModel);
                     request.setContext(notification.getContext());
                     incoming.send(request);
                 }
 
                 Channel outgoing = getDescriptor().getOutgoing();
                 if (outgoing != null) {
-                    Notification selectNotice = outgoing.createNotification("select", notification.getData());
+                    Notification selectNotice = outgoing.createNotification("select", notification.getModel());
                     selectNotice.setContext(notification.getContext());
                     outgoing.publish(selectNotice);
                 }

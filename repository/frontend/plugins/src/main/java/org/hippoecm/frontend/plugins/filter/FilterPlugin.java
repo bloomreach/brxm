@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -35,8 +36,8 @@ public class FilterPlugin extends Plugin {
 
     private Set<String> handle;
 
-    public FilterPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(descriptor, model, parentPlugin);
+    public FilterPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
+        super(descriptor, new JcrNodeModel(model), parentPlugin);
 
         handle = null;
         List<String> ops = descriptor.getParameter("handle");

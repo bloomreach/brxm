@@ -90,7 +90,7 @@ public class MultiTemplate extends Panel implements IRequestHandler {
 
     public void handle(Request request) {
         if ("name".equals(request.getOperation())) {
-            String path = (String) request.getData().get("name");
+            String path = (String) request.getModel().getMapRepresentation().get("name");
             addNode(path);
             request.getContext().addRefresh(this);
         }

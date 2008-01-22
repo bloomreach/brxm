@@ -15,7 +15,7 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
@@ -25,7 +25,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 public class DashboardPerspective extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public DashboardPerspective(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public DashboardPerspective(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 

@@ -112,7 +112,7 @@ public class PropertyDialog extends AbstractDialog {
 
         Channel channel = getIncoming();
         if (channel != null) {
-            Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
+            Request request = channel.createRequest("select", nodeModel);
             channel.send(request);
         }
     }

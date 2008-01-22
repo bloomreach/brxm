@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.admin.editor;
 
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -24,10 +25,10 @@ public class EditorPlugin extends Plugin {
 
     private NodeEditor editor;
 
-    public EditorPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        editor = new NodeEditor("editor", model, pluginDescriptor.getIncoming());
+        editor = new NodeEditor("editor", (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming());
         add(editor);
     }
 }

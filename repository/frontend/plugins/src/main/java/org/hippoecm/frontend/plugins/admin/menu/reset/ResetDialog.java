@@ -57,11 +57,11 @@ public class ResetDialog extends AbstractDialog {
 
         Channel channel = getIncoming();
         if (channel != null) {
-            Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
+            Request request = channel.createRequest("select", nodeModel);
             channel.send(request);
 
             if (hasPendingChanges) {
-                request = channel.createRequest("flush", nodeModel.findRootModel().getMapRepresentation());
+                request = channel.createRequest("flush", nodeModel.findRootModel());
                 channel.send(request);
             }
         }

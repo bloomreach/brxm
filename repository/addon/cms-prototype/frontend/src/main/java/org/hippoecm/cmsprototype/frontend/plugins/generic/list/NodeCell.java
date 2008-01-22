@@ -61,7 +61,7 @@ public class NodeCell extends Panel {
     protected void sendChannelRequest(NodeModelWrapper model, AjaxRequestTarget target, Channel channel) {
         // create a "select" request with the node path as a parameter
         JcrNodeModel nodeModel = ((NodeModelWrapper) this.getModel()).getNodeModel();
-        Request request = channel.createRequest("select", nodeModel.getMapRepresentation());
+        Request request = channel.createRequest("select", nodeModel);
         channel.send(request);
         request.getContext().apply(target);
     }

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.template.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.PropertyType;
@@ -95,6 +97,36 @@ public class FieldDescriptor implements IClusterable, Cloneable {
         this.excluded = null;
 
         multiple = prot = binary = mandatory = false;
+    }
+
+    public FieldDescriptor(Map map) {
+        this.name = (String) map.get("name");
+        this.path = (String) map.get("path");
+        this.type = (String) map.get("type");
+        this.renderer = (String) map.get("renderer");
+        this.excluded = (Set<String>) map.get("excluded");
+
+        this.node = ((Boolean) map.get("node")).booleanValue();
+        this.prot = ((Boolean) map.get("prot")).booleanValue();
+        this.binary = ((Boolean) map.get("binary")).booleanValue();
+        this.multiple = ((Boolean) map.get("multiple")).booleanValue();
+        this.mandatory = ((Boolean) map.get("mandatory")).booleanValue();
+    }
+
+    public Map getMapRepresentation() {
+        HashMap map = new HashMap();
+        map.put("name", name);
+        map.put("path", path);
+        map.put("type", type);
+        map.put("renderer", renderer);
+        map.put("excluded", excluded);
+
+        map.put("node", new Boolean(node));
+        map.put("prot", new Boolean(prot));
+        map.put("binary", new Boolean(binary));
+        map.put("multiple", new Boolean(multiple));
+        map.put("mandatory", new Boolean(mandatory));
+        return map;
     }
 
     @Override

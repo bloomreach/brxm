@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.admin.breadcrumb;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -28,15 +29,15 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 public class BreadcrumbPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public BreadcrumbPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public BreadcrumbPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
         add(new Label("path", new PropertyModel(this, "model.node.path")));
     }
 
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            setNodeModel(new JcrNodeModel(notification.getData()));
+            setPluginModel(new JcrNodeModel(notification.getModel()));
             notification.getContext().addRefresh(this);
         }
         super.receive(notification);

@@ -18,7 +18,8 @@ package org.hippoecm.frontend.plugin;
 import java.lang.reflect.Constructor;
 
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.error.ErrorPlugin;
 import org.hippoecm.frontend.session.UserSession;
 
@@ -27,7 +28,13 @@ public class PluginFactory {
     public PluginFactory(PluginManager pluginManager) {
     }
 
-    public Plugin createPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parentPlugin) {
+    private IPluginModel getErrorModel(String message) {
+        PluginModel error = new PluginModel();
+        error.put("error", message);
+        return error;
+    }
+
+    public Plugin createPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
         if (parentPlugin != null) {
             descriptor.connect(parentPlugin.getDescriptor().getOutgoing());
         }
@@ -35,19 +42,20 @@ public class PluginFactory {
         if (descriptor.getClassName() == null) {
             String message = "Implementation class name for plugin '" + descriptor
                     + "' could not be retrieved from configuration.";
-            plugin = new ErrorPlugin(descriptor, null, message);
+            plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
         } else {
             try {
                 ClassLoader loader = ((UserSession) Session.get()).getClassLoader();
                 Class clazz = Class.forName(descriptor.getClassName(), true, loader);
-                Class[] formalArgs = new Class[] { PluginDescriptor.class, JcrNodeModel.class, Plugin.class };
+                Class[] formalArgs = new Class[] { PluginDescriptor.class, IPluginModel.class, Plugin.class };
                 Constructor constructor = clazz.getConstructor(formalArgs);
                 Object[] actualArgs = new Object[] { descriptor, model, parentPlugin };
                 plugin = (Plugin) constructor.newInstance(actualArgs);
             } catch (Exception e) {
-                String message = "Failed to instantiate plugin '" + descriptor.getClassName() + "' for id '"
-                        + descriptor + "'.";
-                plugin = new ErrorPlugin(descriptor, e, message);
+                String message = e.getClass().getName() + ": " + e.getMessage() + "\n"
+                        + "Failed to instantiate plugin '" + descriptor.getClassName() + "' for id '" + descriptor
+                        + "'.";
+                plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
             }
         }
         return plugin;

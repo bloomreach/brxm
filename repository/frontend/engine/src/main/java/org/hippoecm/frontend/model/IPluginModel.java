@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.model;
 
-import org.hippoecm.frontend.plugins.template.TemplateEngine;
-import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
+import java.util.Map;
 
-public interface ITemplatePlugin {
+import org.apache.wicket.model.IModel;
 
-    void initTemplatePlugin(FieldDescriptor descriptor, TemplateEngine engine);
+// WARNING: this interface is still experimental and subject to change
+
+public interface IPluginModel extends IModel {
+
+    public Map<String, Object> getMapRepresentation();
 }

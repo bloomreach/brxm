@@ -23,6 +23,7 @@ import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.AbstractListingPlugin;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -34,8 +35,8 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     public static final String USER_PREF_NODENAME = "hippo:browseperspective-listingview";
 
-    public DocumentListingPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public DocumentListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
     }
 
     @Override

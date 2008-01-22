@@ -27,7 +27,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 import org.hippoecm.repository.api.HippoNode;
 
-public class JcrNodeModel extends ItemModelWrapper {
+public class JcrNodeModel extends ItemModelWrapper implements IPluginModel {
     private static final long serialVersionUID = 1L;
 
     private transient boolean parentCached = false;
@@ -41,11 +41,11 @@ public class JcrNodeModel extends ItemModelWrapper {
         super(node);
     }
 
-    public JcrNodeModel(Map map) {
-        super((String) map.get("node"));
+    public JcrNodeModel(IPluginModel model) {
+        super((String) model.getMapRepresentation().get("node"));
     }
 
-    public Map getMapRepresentation() {
+    public Map<String, Object> getMapRepresentation() {
         Map map = new HashMap();
         map.put("node", itemModel.getPath());
         return map;
