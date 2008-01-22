@@ -15,24 +15,23 @@
  */
 package org.hippoecm.frontend.plugin.channel;
 
-import java.util.Map;
-
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Message implements IClusterable {
-        private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(Message.class);
 
     private MessageContext context;
     private String operation;
-    private Map data;
+    private IPluginModel model;
 
-    public Message(String operation, Map data) {
+    public Message(String operation, IPluginModel model) {
         this.operation = operation;
-        this.data = data;
+        this.model = model;
         this.context = new MessageContext();
     }
 
@@ -40,8 +39,8 @@ public class Message implements IClusterable {
         return operation;
     }
 
-    public Map getData() {
-        return data;
+    public IPluginModel getModel() {
+        return model;
     }
 
     public void setContext(MessageContext context) {

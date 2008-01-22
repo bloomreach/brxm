@@ -64,7 +64,7 @@ public class SearchNodeCell extends NodeCell {
     @Override
     protected void sendChannelRequest(NodeModelWrapper model, AjaxRequestTarget target, Channel channel) {
         JcrNodeModel nodeModel = ((NodeModelWrapper) this.getModel()).getNodeModel();
-        Request request = channel.createRequest("browse", nodeModel.getMapRepresentation());
+        Request request = channel.createRequest("browse", nodeModel);
         channel.send(request);
         request.getContext().apply(target);
     }

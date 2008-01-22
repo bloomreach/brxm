@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -34,33 +35,34 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication.
 public class FullReviewedActionsWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
+        JcrNodeModel jcrModel = (JcrNodeModel) getPluginModel();
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         add(new DialogLink("obtainEditableInstance-dialog", "Obtain editable copy",
-                ObtainEditableInstanceDialog.class, model, incoming, factory));
+                ObtainEditableInstanceDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("disposeEditableInstance-dialog", "Dispose editable copy",
-                DisposeEditableInstanceDialog.class, model, incoming, factory));
+                DisposeEditableInstanceDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("requestPublication-dialog", "Request publication",
-                RequestPublicationDialog.class, model, incoming, factory));
+                RequestPublicationDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("requestDePublication-dialog", "Request unpublication",
-                RequestDePublicationDialog.class, model, incoming, factory));
+                RequestDePublicationDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("requestDeletion-dialog", "Request delete",
-                RequestDeletionDialog.class, model, incoming, factory));
+                RequestDeletionDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("publish-dialog", "Publish",
-                PublishDialog.class, model, incoming, factory));
+                PublishDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("dePublish-dialog", "Unpublish",
-                DePublishDialog.class, model, incoming, factory));
+                DePublishDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("delete-dialog", "Unpublish and/or delete",
-                DeleteDialog.class, model, incoming, factory));
+                DeleteDialog.class, jcrModel, incoming, factory));
     }
 
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            setNodeModel(new JcrNodeModel(notification.getData()));
+            setPluginModel(new JcrNodeModel(notification.getModel()));
         }
         super.receive(notification);
     }

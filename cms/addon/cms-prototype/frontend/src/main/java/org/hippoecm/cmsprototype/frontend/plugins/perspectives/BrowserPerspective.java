@@ -15,12 +15,11 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.Node;
 
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
@@ -30,7 +29,7 @@ import org.hippoecm.frontend.plugin.channel.Request;
 public class BrowserPerspective extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public BrowserPerspective(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public BrowserPerspective(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 
@@ -39,16 +38,17 @@ public class BrowserPerspective extends Plugin {
         if ("browse".equals(notification.getOperation())) {
             Channel incoming = getDescriptor().getIncoming();
             if (incoming != null) {
-                Map data = new HashMap();
-                data.put("plugin", getDescriptor().getPluginId());
-                Request request = incoming.createRequest("focus", data);
+                // FIXME: should the map be constructed by the PluginDescriptor?
+                PluginModel model = new PluginModel();
+                model.put("plugin", getDescriptor().getPluginId());
+                Request request = incoming.createRequest("focus", model);
                 request.setContext(notification.getContext());
                 incoming.send(request);
             }
 
             Channel outgoing = getDescriptor().getOutgoing();
             if (outgoing != null) {
-                Notification selectNotice = outgoing.createNotification("select", notification.getData());
+                Notification selectNotice = outgoing.createNotification("select", notification.getModel());
                 selectNotice.setContext(notification.getContext());
                 outgoing.publish(selectNotice);
             }
@@ -60,7 +60,7 @@ public class BrowserPerspective extends Plugin {
     @Override
     public void handle(Request request) {
         if ("select".equals(request.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(request.getData());
+            JcrNodeModel model = new JcrNodeModel(request.getModel());
             Node node = model.getNode();
             if (node != null) {
                 Channel outgoing = getDescriptor().getOutgoing();

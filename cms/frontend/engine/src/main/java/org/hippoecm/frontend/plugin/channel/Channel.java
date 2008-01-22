@@ -18,9 +18,9 @@ package org.hippoecm.frontend.plugin.channel;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,12 +75,12 @@ public class Channel implements IClusterable {
         }
     }
 
-    public Request createRequest(String operation, Map data) {
-        return new Request(operation, data);
+    public Request createRequest(String operation, IPluginModel model) {
+        return new Request(operation, model);
     }
 
-    public Notification createNotification(String operation, Map data) {
-        return new Notification(operation, data);
+    public Notification createNotification(String operation, IPluginModel model) {
+        return new Notification(operation, model);
     }
 
     public Notification createNotification(Request request) {

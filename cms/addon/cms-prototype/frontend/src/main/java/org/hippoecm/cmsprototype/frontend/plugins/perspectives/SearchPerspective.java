@@ -15,14 +15,14 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class SearchPerspective extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public SearchPerspective(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public SearchPerspective(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 

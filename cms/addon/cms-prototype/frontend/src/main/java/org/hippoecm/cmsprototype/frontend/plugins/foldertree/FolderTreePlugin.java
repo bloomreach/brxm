@@ -18,6 +18,7 @@ package org.hippoecm.cmsprototype.frontend.plugins.foldertree;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.cmsprototype.frontend.model.tree.FolderTreeNode;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -36,14 +37,14 @@ public class FolderTreePlugin extends AbstractTreePlugin {
     
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
-    public FolderTreePlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new FolderTreeNode(model), parentPlugin);
+    public FolderTreePlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new FolderTreeNode(new JcrNodeModel(model)), parentPlugin);
     }
 
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(notification.getData());
+            JcrNodeModel model = new JcrNodeModel(notification.getModel());
             try {
                 Folder folder = new Folder(model);
                 AbstractTreeNode node = rootNode.getTreeModel().lookup(folder.getNodeModel());
@@ -69,7 +70,7 @@ public class FolderTreePlugin extends AbstractTreePlugin {
             }
         }
         else if ("flush".equals(notification.getOperation())) {
-            AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(notification.getData()));
+            AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(notification.getModel()));
             if (node != null) {
                 node.markReload();
                 node.getTreeModel().nodeStructureChanged(node);

@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.lang.Bytes;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -79,11 +80,11 @@ public class UploadPlugin extends Plugin {
 
     private FileUploadForm form;
 
-    public UploadPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public UploadPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         // Add upload form with ajax progress bar
-        form = new FileUploadForm("form", model);
+        form = new FileUploadForm("form", (JcrNodeModel) getModel());
         form.add(new UploadProgressBar("progress", form));
         add(form);
     }
@@ -91,7 +92,7 @@ public class UploadPlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if("select".equals(notification.getOperation())) {
-            JcrNodeModel newModel = new JcrNodeModel(notification.getData());
+            JcrNodeModel newModel = new JcrNodeModel(notification.getModel());
             form.setModel(newModel);
         }
         super.receive(notification);

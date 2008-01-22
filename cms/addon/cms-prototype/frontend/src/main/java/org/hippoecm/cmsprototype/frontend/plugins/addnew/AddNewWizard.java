@@ -38,6 +38,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -59,8 +60,8 @@ public class AddNewWizard extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(AddNewWizard.class);
 
-    public AddNewWizard(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public AddNewWizard(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
         final AddNewForm form = new AddNewForm("addNewForm");
         add(new FeedbackPanel("feedback"));
         add(form);
@@ -97,11 +98,11 @@ public class AddNewWizard extends Plugin {
                         if (channel != null) {
 
                             JcrNodeModel model = new JcrNodeModel(doc);
-                            Request request = channel.createRequest("flush", getNodeModel().findRootModel().getMapRepresentation());
+                            Request request = channel.createRequest("flush", model.findRootModel());
                             MessageContext context = request.getContext();
                             channel.send(request);
 
-                            request = channel.createRequest("browse", model.getMapRepresentation());
+                            request = channel.createRequest("browse", model);
                             request.setContext(context);
                             channel.send(request);
                             

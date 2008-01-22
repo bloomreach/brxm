@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.INotificationListener;
 import org.hippoecm.frontend.plugin.channel.IRequestHandler;
@@ -38,7 +38,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     private PluginDescriptor pluginDescriptor;
     private Plugin parentPlugin;
 
-    public Plugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public Plugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor.getWicketId(), model);
         setOutputMarkupId(true);
         this.parentPlugin = parentPlugin;
@@ -82,11 +82,11 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         return parentPlugin;
     }
 
-    public JcrNodeModel getNodeModel() {
-        return (JcrNodeModel) getModel();
+    public IPluginModel getPluginModel() {
+        return (IPluginModel) getModel();
     }
 
-    public void setNodeModel(JcrNodeModel model) {
+    public void setPluginModel(IPluginModel model) {
         setModel(model);
     }
 
@@ -106,7 +106,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
 
     public Plugin addChild(PluginDescriptor childDescriptor) {
         PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-        Plugin child = pluginFactory.createPlugin(childDescriptor, getNodeModel(), this);
+        Plugin child = pluginFactory.createPlugin(childDescriptor, getPluginModel(), this);
 
         add(child);
         return child;

@@ -19,61 +19,43 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.template.ITemplatePlugin;
-import org.hippoecm.frontend.plugins.template.TemplateEngine;
 import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 
-public class TextEditor extends Plugin implements ITemplatePlugin {
+public class TextEditor extends Plugin {
     private static final long serialVersionUID = 1L;
 
     private FieldDescriptor descriptor;
-    private TemplateEngine engine;
     private TextAreaWidget widget;
     private Wrapper valueModel;
 
-    public TextEditor(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public TextEditor(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         add(new Label("name", new PropertyModel(this, "name")));
 
         valueModel = new Wrapper();
-        widget = new TextAreaWidget("editor", valueModel) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onUpdate(AjaxRequestTarget target) {
-                if (TextEditor.this.engine != null) {
-                    TextEditor.this.engine.onChange(target);
-                }
-            }
-        };
+        widget = new TextAreaWidget("editor", valueModel);
         add(widget);
+
+        setModel(getModel());
     }
 
     public String getName() {
         if(descriptor != null)
             return descriptor.getName();
         return "[ property name ]";
-    }
-
-    // implement ITemplatePlugin
-
-    public void initTemplatePlugin(FieldDescriptor descriptor, TemplateEngine engine) {
-        this.engine = engine;
-        this.descriptor = descriptor;
-        setModel(getNodeModel());
     }
 
     @Override

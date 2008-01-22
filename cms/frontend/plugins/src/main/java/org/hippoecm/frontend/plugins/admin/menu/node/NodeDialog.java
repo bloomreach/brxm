@@ -53,10 +53,10 @@ public class NodeDialog extends AbstractDialog {
 
         Channel channel = getIncoming();
         if(channel != null) {
-            Request request = channel.createRequest("flush", nodeModel.getMapRepresentation());
+            Request request = channel.createRequest("flush", nodeModel);
             channel.send(request);
 
-            request = channel.createRequest("select", newModel.getMapRepresentation());
+            request = channel.createRequest("select", newModel);
             channel.send(request);
         }
     }

@@ -19,6 +19,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -39,17 +40,17 @@ public class ActionsPlugin extends Plugin {
 
     AjaxLink link;
 
-    public ActionsPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public ActionsPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        link = new AjaxLink("editlink", model) {
+        link = new AjaxLink("editlink", getPluginModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 Channel channel = getDescriptor().getIncoming();
                 if(channel != null) {
-                        Request request = channel.createRequest("edit", getNodeModel().getMapRepresentation());
+                        Request request = channel.createRequest("edit", getPluginModel());
                         channel.send(request);
                         request.getContext().apply(target);
                 }
@@ -59,7 +60,7 @@ public class ActionsPlugin extends Plugin {
         add(link);
 
         try {
-            DocumentVariant variant = new DocumentVariant(model);
+            DocumentVariant variant = new DocumentVariant((JcrNodeModel) getPluginModel());
             link.setVisible(variant.getState().equals("draft"));
         } catch (ModelWrapException e) {
             link.setVisible(false);
@@ -70,8 +71,8 @@ public class ActionsPlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(notification.getData());
-            setNodeModel(model);
+            JcrNodeModel model = new JcrNodeModel(notification.getModel());
+            setPluginModel(model);
             try {
                 DocumentVariant variant = new DocumentVariant(model);
                 link.setVisible(variant.getState().equals("draft"));

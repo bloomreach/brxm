@@ -15,6 +15,7 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins;
 
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -24,7 +25,7 @@ import org.hippoecm.frontend.plugin.channel.Request;
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public RootPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
+    public RootPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 

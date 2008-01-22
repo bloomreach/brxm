@@ -128,6 +128,9 @@ public class Application extends WicketTester.DummyWebApplication {
             session.isLive();
             sessionControl.setReturnValue(true, MockControl.ONE_OR_MORE);
 
+            session.getItem("/testnode");
+            sessionControl.setReturnValue(node, MockControl.ONE_OR_MORE);
+
             propertyIterator.getSize();
             propertyIteratorControl.setReturnValue(1, MockControl.ONE_OR_MORE);
 

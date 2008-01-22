@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugin.empty;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class EmptyPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public EmptyPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
+    public EmptyPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 

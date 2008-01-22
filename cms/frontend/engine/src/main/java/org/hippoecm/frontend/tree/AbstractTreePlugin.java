@@ -52,10 +52,9 @@ public abstract class AbstractTreePlugin extends Plugin {
 
     protected void onSelect(AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
         Channel channel = getDescriptor().getIncoming();
-        if(channel != null) {
+        if (channel != null) {
             // create a "select" request with the node path as a parameter
-            Request request = channel.createRequest("select",
-                            treeNodeModel.getNodeModel().getMapRepresentation());
+            Request request = channel.createRequest("select", treeNodeModel.getNodeModel());
 
             // send the request to the incoming channel
             channel.send(request);
@@ -68,7 +67,7 @@ public abstract class AbstractTreePlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(notification.getData());
+            JcrNodeModel model = new JcrNodeModel(notification.getModel());
             AbstractTreeNode node = null;
             while (model != null) {
                 node = rootNode.getTreeModel().lookup(model);
@@ -80,7 +79,7 @@ public abstract class AbstractTreePlugin extends Plugin {
                 }
             }
         } else if ("flush".equals(notification.getOperation())) {
-            AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(notification.getData()));
+            AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(notification.getModel()));
             if (node != null) {
                 node.markReload();
                 node.getTreeModel().nodeStructureChanged(node);

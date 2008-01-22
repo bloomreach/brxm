@@ -77,10 +77,10 @@ public class RenameDialog extends AbstractDialog {
             Channel channel = getIncoming();
             if(channel != null) {
                 JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
-                Request request = channel.createRequest("flush", parentModel.getMapRepresentation());
+                Request request = channel.createRequest("flush", parentModel);
                 channel.send(request);
 
-                request = channel.createRequest("select", newNodeModel.getMapRepresentation());
+                request = channel.createRequest("select", newNodeModel);
                 channel.send(request);
             }
         }

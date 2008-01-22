@@ -35,6 +35,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColum
 import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.AbstractListingPlugin;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -47,11 +48,11 @@ public class TasklistPlugin extends AbstractListingPlugin{
     private JcrNodeModel model;
     public static final String USER_PREF_NODENAME = "hippo:tasklist-listingview";
         
-    public TasklistPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
-        this.model = model;
+    public TasklistPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        this.model = (JcrNodeModel) getModel();
     }
-    
+
     @Override
     protected void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
         javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession()); 

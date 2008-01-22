@@ -87,7 +87,7 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
 
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            nodeModel = new JcrNodeModel(notification.getData());
+            nodeModel = new JcrNodeModel(notification.getModel());
         }
     }
 }

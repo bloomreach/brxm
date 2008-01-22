@@ -15,8 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.channel;
 
-import java.util.Map;
-
+import org.hippoecm.frontend.model.IPluginModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,7 @@ public class Request extends Message {
 
     static final Logger log = LoggerFactory.getLogger(Request.class);
 
-    public Request(String operation, Map data) {
-        super(operation, data);
+    public Request(String operation, IPluginModel model) {
+        super(operation, model);
     }
 }

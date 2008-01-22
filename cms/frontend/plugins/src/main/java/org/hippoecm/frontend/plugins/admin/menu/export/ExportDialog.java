@@ -69,7 +69,7 @@ public class ExportDialog extends AbstractDialog {
     public void ok() {
         Channel channel = getIncoming();
         if (channel != null) {
-            Request request = channel.createRequest("select", dialogWindow.getNodeModel().getMapRepresentation());
+            Request request = channel.createRequest("select", dialogWindow.getNodeModel());
             channel.send(request);
         }
     }

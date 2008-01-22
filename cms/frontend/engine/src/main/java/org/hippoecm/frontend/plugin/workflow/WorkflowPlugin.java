@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -37,8 +38,8 @@ public class WorkflowPlugin extends Plugin {
 
     private Plugin plugin;
 
-    public WorkflowPlugin(PluginDescriptor descriptor, JcrNodeModel model, Plugin parent) {
-        super(descriptor, model, parent);
+    public WorkflowPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parent) {
+        super(descriptor, new JcrNodeModel(model), parent);
 
         PluginDescriptor childDescriptor = new PluginDescriptor("workflowPlugin", EmptyPlugin.class.getName(), null);
         plugin = addChild(childDescriptor);
@@ -47,7 +48,7 @@ public class WorkflowPlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(notification.getData());
+            JcrNodeModel model = new JcrNodeModel(notification.getModel());
 
             try {
                 Node node = model.getNode();

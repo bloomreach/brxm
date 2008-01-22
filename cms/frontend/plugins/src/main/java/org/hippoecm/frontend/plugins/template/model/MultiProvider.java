@@ -76,6 +76,7 @@ public class MultiProvider extends AbstractProvider implements IDataProvider {
                 while (iterator.hasNext()) {
                     Node child = iterator.nextNode();
                     // add child if it is not excluded.
+                    // TODO: filter on node type
                     if (excluded == null || !excluded.contains(child.getName())) {
                         addNode(node, child.getName(), child.getIndex());
                     }

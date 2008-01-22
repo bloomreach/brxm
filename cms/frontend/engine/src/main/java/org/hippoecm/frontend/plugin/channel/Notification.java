@@ -15,8 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.channel;
 
-import java.util.Map;
-
+import org.hippoecm.frontend.model.IPluginModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +26,13 @@ public class Notification extends Message {
 
     private Request request;
 
-    public Notification(String operation, Map map) {
-        super(operation, map);
+    public Notification(String operation, IPluginModel model) {
+        super(operation, model);
         this.request = null;
     }
 
     public Notification(Request request) {
-        super(request.getOperation(), request.getData());
+        super(request.getOperation(), request.getModel());
         this.setContext(request.getContext());
         this.request = request;
     }

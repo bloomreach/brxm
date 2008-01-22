@@ -15,12 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.template.dialog;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -65,9 +63,9 @@ public class PathDialog extends AbstractDialog {
     protected void ok() throws Exception {
         Channel channel = getIncoming();
         if (channel != null) {
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("name", (String) getModelObject());
-            Request request = channel.createRequest("name", map);
+            PluginModel model = new PluginModel();
+            model.put("name", (String) getModelObject());
+            Request request = channel.createRequest("name", model);
             channel.send(request);
         }
     }

@@ -15,26 +15,24 @@
  */
 package org.hippoecm.frontend.plugin.error;
 
+import java.util.Map;
+
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class ErrorPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public ErrorPlugin(PluginDescriptor pluginDescriptor, Exception exception, String message) {
-        super(pluginDescriptor, null, null);
-        String errorMessage = "";
-        if (exception != null) {
-            errorMessage = exception.getClass().getName() + ": " + exception.getMessage();
+    public ErrorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, null);
+        Map<String, Object> map = model.getMapRepresentation();
+        String message = (String) map.get("error");
+        if(message == null) {
+            message = "An error occurred.  No further details available";
         }
-        if (exception != null && message != null) {
-            errorMessage += "\n";
-        }
-        if (message != null) {
-            errorMessage += message;
-        }
-        add(new MultiLineLabel("message", errorMessage));
+        add(new MultiLineLabel("message", message));
     }
 
     @Override

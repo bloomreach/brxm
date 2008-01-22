@@ -41,6 +41,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.AbstractListingPlugin;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -62,9 +63,9 @@ public class SearchPlugin extends AbstractListingPlugin{
     public static final String USER_PREF_NODENAME = "hippo:searchperspective-listingview";
    
     
-    public SearchPlugin(PluginDescriptor pluginDescriptor, final JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
-        this.model = model; 
+    public SearchPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        this.model = (JcrNodeModel) getModel(); 
         
         final SearchForm form = new SearchForm("searchform");
         add(form);

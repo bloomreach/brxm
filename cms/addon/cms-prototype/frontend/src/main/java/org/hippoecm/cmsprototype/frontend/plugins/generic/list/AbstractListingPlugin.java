@@ -35,6 +35,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -70,16 +71,16 @@ public abstract class AbstractListingPlugin extends Plugin {
     protected ICustomizableDocumentListingDataTable dataTable;
     protected List<IStyledColumn> columns;
 
-    public AbstractListingPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
-        this.createTableColumns(pluginDescriptor, model);
+    public AbstractListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        this.createTableColumns(pluginDescriptor, (JcrNodeModel) getPluginModel());
     }
 
 
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            JcrNodeModel nodeModel = new JcrNodeModel(notification.getData());
+            JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
             if (!nodeModel.equals(getModel())) {
                 setModel(nodeModel);
                 remove((Component)dataTable);
