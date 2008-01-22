@@ -168,7 +168,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     private void indexPath(Document doc, InternalValue[] values, Name name) {
-        String deepestPath = "";
         // index each level of the path for searching
         for (int i = 0; i < values.length; i++) {
             InternalValue value = values[i];
@@ -178,18 +177,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         Field.Store.NO,
                         Field.Index.NO_NORMS,
                         Field.TermVector.NO));
-                if(value.toString().length() > deepestPath.length()){
-                    deepestPath = value.toString();
-                }
             }
         }
-        // plus store the deepest path for retrieval
-        doc.add(new Field(ServicingFieldNames.HIPPO_PATH,
-                deepestPath,
-                Field.Store.YES,
-                Field.Index.NO_NORMS,
-                Field.TermVector.NO));
-
+        
         // make lexical sorting on depth possible. Max depth = 999;
         String depth = String.valueOf(values.length);
         depth="000".substring(depth.length()).concat(depth);

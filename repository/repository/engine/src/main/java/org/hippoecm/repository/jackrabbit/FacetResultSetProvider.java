@@ -154,20 +154,14 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         propState.setMultiValued(false);
         state.addPropertyName(countName);
 
-        for(String foundNodePath : facetedResult) {
-            try {
-                NodeId upstream = getNodeId(foundNodePath);
-                if(upstream == null)
-                    continue;
-                /* The next statement is painfull performance wise.
-                 * Only to obtain the child node name, we have to retrieve the parent state.
-                 */
-                Name name = getNodeState(getNodeState(upstream).getParentId()).getChildNodeEntry(upstream).getName();
-                state.addChildNodeEntry(name, subNodesProvider . new MirrorNodeId(state.getNodeId(), upstream, name));
-            } catch(RepositoryException ex) {
-                System.err.println(ex.getMessage());
-                ex.printStackTrace(System.err);
-            }
+        for(NodeId upstream : facetedResult) {
+            if(upstream == null)
+                continue;
+            /* The next statement is painfull performance wise.
+             * Only to obtain the child node name, we have to retrieve the parent state.
+             */
+            Name name = getNodeState(getNodeState(upstream).getParentId()).getChildNodeEntry(upstream).getName();
+            state.addChildNodeEntry(name, subNodesProvider . new MirrorNodeId(state.getNodeId(), upstream, name));
         }
 
         return state;

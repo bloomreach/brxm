@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.lucene.index.IndexReader;
@@ -59,8 +60,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     class ResultImpl extends FacetedNavigationEngine.Result {
         int length;
-        Iterator<String> iter = null;
-        ResultImpl(int length, Set<String> result) {
+        Iterator<NodeId> iter = null;
+        ResultImpl(int length, Set<NodeId> result) {
             this.length = length;
             if(result!= null) {
                 this.iter = result.iterator();
@@ -69,7 +70,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         public int length() {
             return length;
         }
-        public Iterator<String> iterator() {
+        public Iterator<NodeId> iterator() {
             return iter;
         }
         public String toString() {
