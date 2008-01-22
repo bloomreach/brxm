@@ -28,6 +28,8 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
+import org.apache.jackrabbit.core.NodeId;
+
 public class FacetedNavigationEngineFirstImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineFirstImpl.QueryImpl,
                                      FacetedNavigationEngineFirstImpl.ContextImpl>
@@ -43,15 +45,15 @@ public class FacetedNavigationEngineFirstImpl
     }
     class ResultImpl extends FacetedNavigationEngine.Result {
         int length;
-        Iterator<String> iter;
-        ResultImpl(int length, Iterator<String> iter) {
+        Iterator<NodeId> iter;
+        ResultImpl(int length, Iterator<NodeId> iter) {
             this.length = length;
             this.iter = iter;
         }
         public int length() {
             return length;
         }
-        public Iterator<String> iterator() {
+        public Iterator<NodeId> iterator() {
             return iter;
         }
         public String toString() {
@@ -197,7 +199,7 @@ public class FacetedNavigationEngineFirstImpl
                        Map<String,String> facetsQuery, QueryImpl openQuery, HitsRequested hitsRequested) {
         try {
             Session session = authorization.session;
-            LinkedList list = new LinkedList<String>();
+            LinkedList<NodeId> list = new LinkedList<NodeId>();
             int size = 0;
             String xpath = new String(getSearchQuery(initialQuery.xpath, facetsQuery, null));
             javax.jcr.query.Query facetValuesQuery = session.getWorkspace().getQueryManager().createQuery(xpath,
@@ -207,7 +209,8 @@ public class FacetedNavigationEngineFirstImpl
             size += iter.getSize();
             while(iter.hasNext()) {
                 Node node = iter.nextNode();
-                list.add(node.getPath());
+                list.add(NodeId.valueOf(node.getUUID()));
+                //list.add(node.getPath());
             }
             return this . new ResultImpl(size, list.iterator());
         } catch(javax.jcr.query.InvalidQueryException ex) {

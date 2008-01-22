@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -34,7 +36,7 @@ public class FacetResultCollector extends HitCollector {
     private IndexReader reader;
     private String internalName;
     private int numhits;
-    private Set<String> hits;
+    private Set<NodeId> hits;
     private Map<String,Count> facetMap;
     private FieldSelector fieldSelector;
     private int offset;
@@ -53,10 +55,10 @@ public class FacetResultCollector extends HitCollector {
         this.numhits = 0;
 
         Set<String> fieldNames = new HashSet<String>();
-        fieldNames.add(ServicingFieldNames.HIPPO_PATH);
+        fieldNames.add(FieldNames.UUID);
         this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet());
         if(hitsRequested.isResultRequested()) {
-            this.hits = new HashSet<String>();
+            this.hits = new HashSet<NodeId>();
             this.offset = hitsRequested.getOffset();
             this.limit = hitsRequested.getLimit();
         } else {
@@ -72,9 +74,9 @@ public class FacetResultCollector extends HitCollector {
             if(hits != null) {
                 if(offset == 0 && hits.size() < limit ) {
                     Document d = reader.document(docid,fieldSelector);
-                    Field f = d.getField(ServicingFieldNames.HIPPO_PATH);
-                    if(f!=null){
-                        hits.add(f.stringValue());
+                    Field uuidField = d.getField(FieldNames.UUID);
+                    if(uuidField != null) {
+                        hits.add(NodeId.valueOf(uuidField.stringValue()));
                     }
                 } else if (offset > 0){
                     // decrement offset untill it is 0. Then start gathering results above
@@ -106,7 +108,7 @@ public class FacetResultCollector extends HitCollector {
         }
     }
 
-    public Set<String> getHits() {
+    public Set<NodeId> getHits() {
         return hits;
     }
 

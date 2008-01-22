@@ -25,6 +25,7 @@ import java.util.WeakHashMap;
 
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SearchManager;
 import org.apache.jackrabbit.core.query.lucene.MultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
@@ -59,8 +60,8 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
 
   class ResultImpl extends FacetedNavigationEngine.Result {
       int length;
-      Iterator<String> iter = null;
-      ResultImpl(int length, Set<String> result) {
+      Iterator<NodeId> iter = null;
+      ResultImpl(int length, Set<NodeId> result) {
           this.length = length;
           if(result!= null) {
               this.iter = result.iterator();
@@ -69,7 +70,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
       public int length() {
           return length;
       }
-      public Iterator<String> iterator() {
+      public Iterator<NodeId> iterator() {
           return iter;
       }
       public String toString() {

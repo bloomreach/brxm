@@ -22,6 +22,8 @@ import java.util.Map;
 
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.core.NodeId;
+
 /**
 
 This interface is to be used internally only by the Hippo Repository.  It
@@ -247,18 +249,17 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
 
     /** An instance of a Result class contains the matching documents of a faceted view.
      */
-    abstract class Result implements Iterable<String> {
+    abstract class Result implements Iterable<NodeId> {
       /**
        * Total number of matches (even if iterator will return only a few.
        * @return the number of hits
        */
       public abstract int length();
       /**
-       * An iterator over the matched documents.  Returns either the Path or
-       * the JCR UUID (to be decided on).
+       * An iterator over the matched documents.  Returns NodeId's
        * @return an iterator over java.lang.String.
        */
-      public abstract Iterator<String> iterator();
+      public abstract Iterator<NodeId> iterator();
     }
 
     /** An abstract class passed between invocations of the parse()
