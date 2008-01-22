@@ -55,8 +55,6 @@ public class ServicingSearchIndex extends SearchIndex {
      */
     public ServicingSearchIndex() {
         super();
-        // TODO fix configuration for spellCheckerClass, it does for some reason not work. For now, hardcode the class
-        this.setSpellCheckerClass("org.apache.jackrabbit.core.query.lucene.spell.LuceneSpellChecker$OneMinuteRefreshInterval");
     }
 
     /**
