@@ -1,0 +1,30 @@
+#canvas {
+  width: 80%;
+  margin: 0 auto 30px auto;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+#block {
+  width: 100%;
+  background-color: #D0D0D0;
+}
+#menu {
+  width: 80%;
+  float: center;
+}
+#earmarks {
+  width: 15%;
+  float: right;
+}
+#left {
+  width: 45%;
+  float: left;
+}
+#right {
+  width: 45%;
+  float: right;
+}
+#menu ul li { list-style: none; text-decoration: none; }
+#menu a { text-decoration: none; }
+#earmarks a { text-decoration: none; }
