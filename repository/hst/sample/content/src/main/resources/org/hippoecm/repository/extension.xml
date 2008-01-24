@@ -24,7 +24,7 @@
       <sv:value>hst-sample.cnd</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:content" sv:type="String">
-      <sv:value>hst-content.xml</sv:value>
+      <sv:value>hst-sample-content.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
