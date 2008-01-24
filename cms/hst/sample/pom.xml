@@ -22,7 +22,7 @@
 
   <parent>
     <groupId>org.hippoecm.hst</groupId>
-    <artifactId>hst</artifactId>
+    <artifactId>hippo-ecm-hst</artifactId>
     <version>1.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -30,8 +30,7 @@
   <name>Hippo Site Toolkit ECM edition sample</name>
   <description>Hippo Site Toolkit ECM edition sample</description>
   <groupId>org.hippoecm.hst</groupId>
-  <artifactId>sample</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <artifactId>hippo-ecm-hst-sample</artifactId>
   <packaging>war</packaging>
 
   <scm>
@@ -54,20 +53,20 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
-      <artifactId>skeleton</artifactId>
-      <version>1.01.00-SNAPSHOT</version>
+      <artifactId>hippo-ecm-hst-skeleton</artifactId>
+      <version>${parent.version}</version>
       <type>war</type>
     </dependency>
     <!-- Following dependencies are only needed when running embedded repository -->
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
-      <artifactId>plugin</artifactId>
-      <version>1.01.00-SNAPSHOT</version>
+      <artifactId>hippo-ecm-hst-addon-repository</artifactId>
+      <version>${parent.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.01.00-dev</version>
+      <version>${ecm.version}</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
