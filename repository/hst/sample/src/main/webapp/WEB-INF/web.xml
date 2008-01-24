@@ -60,9 +60,4 @@
     <location>/error.jsp</location>
   </error-page>
 
-  <taglib>
-    <taglib-uri>http://www.hippoecm.org/jsp/hst</taglib-uri>
-    <taglib-location>hst.tld</taglib-location>
-  </taglib>
-
 </web-app>
