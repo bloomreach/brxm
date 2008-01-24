@@ -5,7 +5,7 @@
   <tlib-version>1.0</tlib-version>
   <jsp-version>1.2</jsp-version>
   <short-name>hst</short-name>
-  <uri>http://org.hippoecm.nl/jsp/ecc</uri>
+  <uri>http://www.hippoecm.org/jsp/hst</uri>
   <description>helper function</description>
   <info>
     Hippo Site Toolkit tag library
