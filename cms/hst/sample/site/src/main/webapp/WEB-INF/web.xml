@@ -6,19 +6,19 @@
   <description>Hippo ECM Sample site</description>
 
   <context-param>
-    <param-name>repository-address</param-name>
-    <!-- param-value>rmi://localhost:1099/hipporepository</param-value -->
-    <param-value>target</param-value>
     <description>The address of the repository</description>
+    <param-name>repository-address</param-name>
+    <!-- <param-value>rmi://localhost:1099/hipporepository</param-value>-->
+    <param-value>target</param-value>
   </context-param>
 
   <filter>
     <filter-name>filter</filter-name>
     <filter-class>org.hippoecm.hst.RewriteFilter</filter-class>
     <init-param>
+      <description>Where to find the map from URL to webpages</description>      
       <param-name>urlbasepath</param-name>
       <param-value>/hst-sample/pages</param-value>
-      <description>Where to find the map from URL to webpages</description>
     </init-param>
     <init-param>
       <param-name>urlbasehome</param-name>

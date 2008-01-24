@@ -22,26 +22,26 @@
 
   <parent>
     <groupId>org.hippoecm.hst</groupId>
-    <artifactId>hippo-ecm-hst</artifactId>
+    <artifactId>hippo-ecm-hst-sample</artifactId>
     <version>1.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo Site Toolkit ECM edition sample</name>
-  <description>Hippo Site Toolkit ECM edition sample</description>
+  <name>Hippo Site Toolkit ECM edition sample content</name>
+  <description>Hippo Site Toolkit ECM edition sample content</description>
   <groupId>org.hippoecm.hst</groupId>
-  <artifactId>hippo-ecm-hst-sample</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>hippo-ecm-hst-sample-content</artifactId>
+  <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample/content</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample/content</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample/content</url>
   </scm>
 
-  <modules>
-    <module>site</module>
-    <module>content</module>
-  </modules>
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <!-- finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName -->
+  </build>
 
 </project>
