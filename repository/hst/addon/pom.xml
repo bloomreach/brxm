@@ -22,7 +22,7 @@
 
   <parent>
     <groupId>org.hippoecm.hst</groupId>
-    <artifactId>hst</artifactId>
+    <artifactId>hippo-ecm-hst</artifactId>
     <version>1.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -30,8 +30,7 @@
   <name>Hippo Site Toolkit ECM edition addon</name>
   <description>Hippo Site Toolkit ECM edition addon</description>
   <groupId>org.hippoecm.hst</groupId>
-  <artifactId>addon</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <artifactId>hippo-ecm-hst-addon</artifactId>
   <packaging>pom</packaging>
 
   <scm>

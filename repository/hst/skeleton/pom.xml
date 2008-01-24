@@ -22,7 +22,7 @@
 
   <parent>
     <groupId>org.hippoecm.hst</groupId>
-    <artifactId>hst</artifactId>
+    <artifactId>hippo-ecm-hst</artifactId>
     <version>1.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -30,8 +30,7 @@
   <name>Hippo Site Toolkit ECM edition skeleton</name>
   <description>Hippo Site Toolkit ECM edition skeleton</description>
   <groupId>org.hippoecm.hst</groupId>
-  <artifactId>skeleton</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <artifactId>hippo-ecm-hst-skeleton</artifactId>
   <packaging>war</packaging>
 
   <scm>
@@ -55,18 +54,18 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.01.00-dev</version>
+      <version>${ecm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>2.01.00-dev</version>
+      <version>${ecm.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
-      <artifactId>taglib</artifactId>
-      <version>1.01.00-SNAPSHOT</version>
+      <artifactId>hippo-ecm-hst-taglib</artifactId>
+      <version>${parent.version}</version>
     </dependency>
   </dependencies>
 

@@ -26,14 +26,14 @@
   <name>Hippo Site Toolkit ECM edition</name>
   <description>Hippo Site Toolkit ECM edition</description>
   <groupId>org.hippoecm.hst</groupId>
-  <artifactId>hst</artifactId>
+  <artifactId>hippo-ecm-hst</artifactId>
   <version>1.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk</developerConnection>
-    <url>https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk</url>
+    <connection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst</developerConnection>
+    <url>https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst</url>
   </scm>
 
   <modules>
@@ -42,6 +42,10 @@
     <module>skeleton</module>
     <module>sample</module>
   </modules>
+  
+  <properties>
+    <ecm.version>2.01.00-dev</ecm.version>
+  </properties>
 
   <repositories>
     <repository>

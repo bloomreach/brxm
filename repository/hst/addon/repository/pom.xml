@@ -22,7 +22,7 @@
 
   <parent>
     <groupId>org.hippoecm.hst</groupId>
-    <artifactId>addon</artifactId>
+    <artifactId>hippo-ecm-hst-addon</artifactId>
     <version>1.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
@@ -30,8 +30,7 @@
   <name>Hippo Site Toolkit ECM edition addon repository plugin</name>
   <description>Hippo Site Toolkit ECM edition addon repository plugin</description>
   <groupId>org.hippoecm.hst</groupId>
-  <artifactId>plugin</artifactId>
-  <version>1.01.00-SNAPSHOT</version>
+  <artifactId>hippo-ecm-hst-addon-repository</artifactId>
   <packaging>jar</packaging>
 
   <scm>
