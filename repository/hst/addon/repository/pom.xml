@@ -35,9 +35,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/addon/repository</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/addon/repository</developerConnection>
-    <url>https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/addon/repository</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/addon/repository</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/addon/repository</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/addon/repository</url>
   </scm>
 
   <build>

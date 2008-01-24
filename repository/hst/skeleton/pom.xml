@@ -35,9 +35,9 @@
   <packaging>war</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/skeleton</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/skeleton</developerConnection>
-    <url>https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/skeleton</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/skeleton</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/skeleton</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/skeleton</url>
   </scm>
 
   <dependencies>

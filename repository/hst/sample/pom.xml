@@ -35,9 +35,9 @@
   <packaging>war</packaging>
 
   <scm>
-    <connection>scm:svn:https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/sampe</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/sampe</developerConnection>
-    <url>https://svn.hippocms.org/repos/closed/sandbox/berry/hst/trunk/sampe</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/sample</url>
   </scm>
 
   <dependencies>
@@ -76,6 +76,7 @@
     <defaultGoal>package</defaultGoal>
     <!-- finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName -->
     <plugins>
+      <!-- problems with this entry
       <plugin>
         <inherited>false</inherited>
         <groupId>org.apache.maven.plugins</groupId>
@@ -86,12 +87,11 @@
               <directory>.</directory>
               <includes>
                 <include>**/*~</include>
-                <include>**/derby.log</include>
-                <include>**/tmlog*</include>
-                <include>**/tm.*</include>
-                <include>**/.lock</include>
-                <include>**/atomikos</include>
                 <include>derby.log</include>
+                <include>tmlog*</include>
+                <include>tm.*</include>
+                <include>.lock</include>
+                <include>atomikos</include>
                 <include>repository</include>
                 <include>workspaces</include>
                 <include>version</include>
@@ -100,6 +100,7 @@
           </filesets>
         </configuration>
       </plugin>
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
