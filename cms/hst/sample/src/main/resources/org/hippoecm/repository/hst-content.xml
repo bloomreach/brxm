@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+  xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+  xmlns:jcr="http://www.jcp.org/jcr/1.0"
+  xmlns:rep="internal"
+  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+  xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  sv:name="hst-sample">
+
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>nt:unstructured</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="global">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="global">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkTitle" sv:type="String">
+        <sv:value>Print page</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkText" sv:type="String">
+        <sv:value>Print</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="pages">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+
+    <sv:node sv:name="home">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="home">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:document</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hst:page</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/index.jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="pageLabel" sv:type="String">
+          <sv:value>Repository Overview</sv:value>
+        </sv:property>
+        <sv:property sv:name="pageTitle" sv:type="String">
+          <sv:value>Home</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+    <sv:node sv:name="browse">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="browse">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:document</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hst:page</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/browse.jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="pageLabel" sv:type="String">
+          <sv:value>Browse</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+    <sv:node sv:name="hst-sample">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:node sv:name="documents">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:facetselect</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>/hst-sample/documents</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:facets" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hippo:values" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hippo:modes" sv:type="String">
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+  </sv:node>
+
+  <sv:node sv:name="documents">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+
+    <sv:node sv:name="first">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="first">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:samplePlainNodeType</sv:value>
+        </sv:property>
+        <sv:property sv:name="state" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="title" sv:type="String">
+          <sv:value>First</sv:value>
+        </sv:property>
+        <sv:property sv:name="content" sv:type="String">
+          <sv:value>First document</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+    <sv:node sv:name="second">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="second">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:samplePlainNodeType</sv:value>
+        </sv:property>
+        <sv:property sv:name="state" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="title" sv:type="String">
+          <sv:value>Second</sv:value>
+        </sv:property>
+        <sv:property sv:name="content" sv:type="String">
+          <sv:value>Second document</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+    <sv:node sv:name="third">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="third">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sampleSpecialNodeType</sv:value>
+        </sv:property>
+        <sv:property sv:name="state" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="title" sv:type="String">
+          <sv:value>Third</sv:value>
+        </sv:property>
+        <sv:property sv:name="link" sv:type="String">
+          <sv:value>http://www.hippocms.org/</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+  </sv:node>
+
+  <sv:node sv:name="defaultmapping">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:urlmappingfolder</sv:value>
+    </sv:property>
+
+    <sv:node sv:name="special">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:urlmapping</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:nodetype" sv:type="String">
+        <sv:value>hst:sampleSpecialNodeType</sv:value>
+      </sv:property>
+      <sv:node sv:name="hst:displaypage">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:pagedef</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/special.jsp</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+    <sv:node sv:name="plain">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:urlmapping</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:nodetype" sv:type="String">
+        <sv:value>hst:samplePlainNodeType</sv:value>
+      </sv:property>
+      <sv:node sv:name="hst:displaypage">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:pagedef</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/plain.jsp</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+  </sv:node>
+
+  <sv:node sv:name="alternatemapping">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:urlmappingfolder</sv:value>
+    </sv:property>
+
+    <sv:node sv:name="exceptional">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:urlmapping</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:nodetype" sv:type="String">
+        <sv:value>hst:sampleSpecialNodeType</sv:value>
+      </sv:property>
+      <sv:node sv:name="hst:displaypage">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:pagedef</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/exceptional.jsp</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+    <sv:node sv:name="any">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:urlmapping</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:nodetype" sv:type="String">
+        <sv:value>hippo:document</sv:value>
+      </sv:property>
+      <sv:node sv:name="hst:displaypage">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:pagedef</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/any.jsp</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
+  </sv:node>
+
+</sv:node>

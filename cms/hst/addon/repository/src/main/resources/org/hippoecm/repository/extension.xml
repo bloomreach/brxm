@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+         xmlns:jcr="http://www.jcp.org/jcr/1.0"
+         xmlns:rep="internal"
+         xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+         xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+         xmlns:fn="http://www.w3.org/2005/xpath-functions"
+         sv:name="hippo:initialize">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:initializefolder</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="hst">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>1000</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:namespace" sv:type="String">
+      <sv:value>http://www.hippoecm.org/hst/nt/1.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetypes" sv:type="String">
+      <sv:value>hst-model.cnd</sv:value>
+    </sv:property>
+  </sv:node>
+
+</sv:node>

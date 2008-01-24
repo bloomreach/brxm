@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>hst</short-name>
+  <uri>http://org.hippoecm.nl/jsp/ecc</uri>
+  <description>helper function</description>
+  <info>
+    Hippo Site Toolkit tag library
+  </info>
+
+  <tag>
+    <name>include</name>
+    <tagclass>org.hippoecm.hst.IncludeTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>page</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>map</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <function>
+    <name>concat</name>
+    <function-class>org.hippoecm.Helper</function-class>
+    <function-signature>java.lang.String concat(java.lang.String, java.lang.String)</function-signature>
+  </function>
+
+</taglib>
