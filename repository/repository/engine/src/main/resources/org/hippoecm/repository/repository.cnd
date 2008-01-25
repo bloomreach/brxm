@@ -57,8 +57,6 @@
 
 [hippo:request] > nt:unstructured, mix:referenceable
 
-[hippo:restricted] mixin
-
 [hippo:document] > nt:unstructured, mix:referenceable
 - hippo:paths (string) multiple
 
@@ -86,6 +84,7 @@
 
 [hippo:workflow] > hippo:type
 - hippo:renderer (string) mandatory
+- hippo:roles (string) multiple
 + hippo:types (hippo:types) = hippo:types mandatory autocreated
 
 [hippo:workflowcategory] > nt:base

@@ -30,6 +30,7 @@ import org.hippoecm.repository.security.AAContext;
 import org.hippoecm.repository.security.RepositoryAAContext;
 import org.hippoecm.repository.security.RepositoryLoginHelper;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
+import org.hippoecm.repository.security.principals.RolePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +129,12 @@ public class RepositoryRole implements Role {
     }
 
     private void setPrincipals() throws RoleNotFoundException {
+        // add role principal
+        if (log.isDebugEnabled()) {
+            log.debug("Adding role principal: " + roleId);
+        }
+        principals.add(new RolePrincipal(roleId));
+        
         // Special roles
         if (ADMIN_ROLE_NAME.equals(roleId)) {
             if (log.isDebugEnabled()) {
