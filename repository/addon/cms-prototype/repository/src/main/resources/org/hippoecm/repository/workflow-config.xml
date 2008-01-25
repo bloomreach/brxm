@@ -24,9 +24,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:workflow</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:restricted</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:nodetype" sv:type="String">
             <sv:value>hippo:document</sv:value>
         </sv:property>
@@ -76,6 +73,9 @@
     <sv:node sv:name="authorreviewedactions">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:workflow</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:roles" sv:type="String">
+            <sv:value>author</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:nodetype" sv:type="String">
             <sv:value>hippo:document</sv:value>
@@ -127,9 +127,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:workflow</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:restricted</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:nodetype" sv:type="String">
             <sv:value>hippo:request</sv:value>
         </sv:property>
@@ -179,6 +176,9 @@
     <sv:node sv:name="authorreviewedrequests">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:workflow</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:roles" sv:type="String">
+            <sv:value>author</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:nodetype" sv:type="String">
             <sv:value>hippo:request</sv:value>
