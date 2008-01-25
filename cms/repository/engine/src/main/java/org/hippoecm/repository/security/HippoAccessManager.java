@@ -15,16 +15,12 @@
  */
 package org.hippoecm.repository.security;
 
-import javax.security.auth.Subject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.security.auth.Subject;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.jackrabbit.core.ItemId;
@@ -43,12 +39,14 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 import org.hippoecm.repository.jackrabbit.HippoPropertyId;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.hippoecm.repository.security.principals.RolePrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HippoAccessManager
@@ -326,6 +324,12 @@ public class HippoAccessManager implements AccessManager {
         if (localName.equals(getLocalName(HippoNodeType.NT_FACETSUBSEARCH))) {
             return true;
         }
+        if (localName.equals(getLocalName(HippoNodeType.NT_WORKFLOWFOLDER))) {
+            return true;
+        }
+        if (localName.equals(getLocalName(HippoNodeType.NT_WORKFLOWCATEGORY))) {
+            return true;
+        }
         if (localName.equals(getLocalName(HippoNodeType.NT_FRONTENDPLUGIN))) {
             return true;
         }
@@ -338,28 +342,36 @@ public class HippoAccessManager implements AccessManager {
         if (localName.equals(getLocalName(HippoNodeType.NT_APPLICATION))) {
             return true;
         }
+        if (localName.equals(getLocalName(HippoNodeType.NT_PARAMETERS))) {
+            return true;
+        }
         if (localName.equals(getLocalName(HippoNodeType.NT_PAGE))) {
             return true;
         }
 
-        // check for parent node
-        NodeState parentState = (NodeState) hierMgr.getItemState(nodeState.getParentId());
-        namespaceURI = parentState.getNodeTypeName().getNamespaceURI();
-        localName = parentState.getNodeTypeName().getLocalName();
+        // FIXME: make more generic
+        // Special cases for worlkflow configuration based on roles.
+        // Workflow subentries are granted by permissions on the parent.
+        // Current (hard coded structure:
+        // hippo:configuration->hippo:workflows->workflowPlugin->[workflowName]->hippo:types->[workflow]
+        // primaryType workflowName -> hippo:workflow
+        // primaryType workflow -> hippo:type
+        if (localName.equals(getLocalName(HippoNodeType.NT_TYPE))) {
+            // shift one up in hierarchy
+            nodeState = (NodeState) hierMgr.getItemState(nodeState.getParentId());
+            namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
+            localName = nodeState.getNodeTypeName().getLocalName();
+        }
+        if (localName.equals(getLocalName(HippoNodeType.NT_TYPES))) {
+            // shift one up in hierarchy
+            nodeState = (NodeState) hierMgr.getItemState(nodeState.getParentId());
+            namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
+            localName = nodeState.getNodeTypeName().getLocalName();
+        }
+        if (localName.equals(getLocalName(HippoNodeType.NT_WORKFLOW))) {
+            return checkWorkflow(nodeState, permissions);
+        }
 
-        //not a hippo node
-//        if (!namespaceURI.equals(NAMESPACE_URI)) {
-//            return false;
-//        }
-//        if (localName.equals(getLocalName(HippoNodeType.NT_FACETRESULT))) {
-//            return true;
-//        }
-//        if (localName.equals(getLocalName(HippoNodeType.NT_FACETSUBSEARCH))) {
-//            return true;
-//        }
-//        if (localName.equals(getLocalName(HippoNodeType.NT_FACETSELECT))) {
-//            return true;
-//        }
         // else deny..
         return false;
     }
@@ -368,7 +380,6 @@ public class HippoAccessManager implements AccessManager {
      * Check permissions for FacetAuth
      * TODO: check for non-String types
      * @throws RepositoryException
-     * @throws
      */
     protected boolean checkFacetAuth(NodeState nodeState, FacetAuthPrincipal principal, int permissions) throws RepositoryException {
         // check if a permission is requested that you don't have
@@ -421,6 +432,64 @@ public class HippoAccessManager implements AccessManager {
         }
     }
 
+    /**
+     * Check for (read) permissions on workflow configuration based on roles
+     * @throws RepositoryException
+     */
+    protected boolean checkWorkflow(NodeState nodeState, int permissions) throws RepositoryException {
+        // only allow read access to the workflow configuration
+        if (permissions != READ) {
+            return false;
+        }
+
+        // check if node has the required property
+        Name name = NameFactoryImpl.getInstance().create(NAMESPACE_URI ,getLocalName(HippoNodeType.HIPPO_ROLES));
+
+        if (log.isTraceEnabled()) {
+            log.trace("Checking [" + pString(permissions) + "] for hippo role: " + nodeState.getNodeId() + " in prop " + name);
+        }
+        if (nodeState.hasPropertyName(name)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found [" + pString(permissions) + "] property hippo role: " + name);
+            }
+            HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(),name);
+            try {
+                // check if the property has a required value
+                PropertyState state = (PropertyState) hierMgr.getItemState(propertyId);
+                InternalValue[] iVals = state.getValues();
+                for (InternalValue iVal : iVals) {
+                    if (iVal.getType() != PropertyType.STRING) {
+                        continue;
+                    }
+                    for(RolePrincipal principal : subject.getPrincipals(RolePrincipal.class)) {
+                        String val = principal.getName();
+                        if (log.isTraceEnabled()) {
+                            log.trace("Checking [" + pString(permissions) + "] nodeVal->roleVal: " + iVal.getString() + "->" + val);
+                        }
+                        if (iVal.getString().equals(val)) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Found match [" + pString(permissions) + "] nodeVal->roleVal: " + iVal.getString() + "->" + val);
+                            }
+                            // found a match!
+                            return true;
+                        }
+                    }
+                }
+                // no valid value found
+                return false;
+            } catch (NoSuchItemStateException e) {
+                //e.printStackTrace();
+                return false;
+            } catch (ItemStateException e) {
+                //e.printStackTrace();
+                return false;
+            }
+        } else {
+            // node doesn't have the hippo roles property
+            return false;
+        }
+    }
+    
     /**
      * This method is currently only used by the JCR classloader
      */
@@ -508,7 +577,7 @@ public class HippoAccessManager implements AccessManager {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("Found [" + pString(permissions) + "] for: " + id + " granted: " + isGranted);
+                log.debug("Found [" + pString(permissions) + "] for: " + id + " -> " + nodeState.getNodeTypeName() + " granted: " + isGranted);
             }
 
             return isGranted;
