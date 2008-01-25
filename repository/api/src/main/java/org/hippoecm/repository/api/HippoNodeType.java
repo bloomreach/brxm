@@ -72,7 +72,8 @@ public interface HippoNodeType {
     final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
     final public static String NT_PLUGIN = "hippo:plugin";
     final public static String NT_FRONTENDPLUGIN = "hippo:frontendplugin";
-
+    final public static String NT_PARAMETERS = "hippo:parameters";
+    
     //--- Hippo Item Names ---//
     final public static String HIPPO_CLASSNAME = "hippo:classname";
     final public static String HIPPO_CONTENT = "hippo:content";
