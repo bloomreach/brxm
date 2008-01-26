@@ -21,6 +21,9 @@ import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory; 
+
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
@@ -33,31 +36,33 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.PathFactory;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
+import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
+import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.PathParser;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 
-//import org.apache.jackrabbit.name.NameResolver;
-import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
-
 public abstract class HippoVirtualProvider
 {
     private HippoLocalItemStateManager stateMgr;
-    private NameFactory nameResolver;
-    private PathFactory pathResolver;
+    private NameFactory nameFactory;
+    private PathFactory pathFactory;
+    private NameResolver nameResolver;
 
-    protected Name externalNodeName;
-    protected Name virtualNodeName;
+    private Name externalNodeName;
+    private Name virtualNodeName;
 
-    PropDef lookupPropDef(Name nodeTypeName, Name propName) throws RepositoryException {
+    protected final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class); 
+
+    protected final PropDef lookupPropDef(Name nodeTypeName, Name propName) throws RepositoryException {
         PropDef[] propDefs = stateMgr.ntReg.getNodeTypeDef(nodeTypeName).getPropertyDefs();
         int i;
         for(i=0; i<propDefs.length; i++)
@@ -67,7 +72,7 @@ public abstract class HippoVirtualProvider
         throw new RepositoryException("required property "+propName+" in nodetype "+nodeTypeName+" not or badly defined");
     }
 
-    NodeDef lookupNodeDef(NodeState parent, Name nodeTypeName, Name nodeName) throws RepositoryException {
+    protected final NodeDef lookupNodeDef(NodeState parent, Name nodeTypeName, Name nodeName) throws RepositoryException {
         EffectiveNodeType effNodeType;
         try {
             HashSet set = new HashSet(parent.getMixinTypeNames());
@@ -92,16 +97,20 @@ public abstract class HippoVirtualProvider
     private HippoVirtualProvider() {
     }
 
+    private void initialize() {
+        nameFactory = NameFactoryImpl.getInstance();
+        pathFactory = PathFactoryImpl.getInstance();
+        nameResolver = new ParsingNameResolver(nameFactory, stateMgr.nsResolver);
+    }
+
     HippoVirtualProvider(HippoLocalItemStateManager stateMgr) {
         this(stateMgr, (Name)null, (Name)null);
-        nameResolver = NameFactoryImpl.getInstance();
-        pathResolver = PathFactoryImpl.getInstance();
+        initialize();
     }
 
     HippoVirtualProvider(HippoLocalItemStateManager stateMgr, Name external, Name virtual) {
         this.stateMgr = stateMgr;
-        nameResolver = NameFactoryImpl.getInstance();
-        pathResolver = PathFactoryImpl.getInstance();
+        initialize();
         externalNodeName = external;
         virtualNodeName = virtual;
         if(external != null)
@@ -110,22 +119,19 @@ public abstract class HippoVirtualProvider
 
     HippoVirtualProvider(HippoLocalItemStateManager stateMgr, String external, String virtual) throws IllegalNameException, NamespaceException {
         this.stateMgr = stateMgr;
-        nameResolver = NameFactoryImpl.getInstance();
-        pathResolver = PathFactoryImpl.getInstance();
+        initialize();
         externalNodeName = resolveName(external);
         virtualNodeName = resolveName(virtual);
         if(external != null)
             stateMgr.register(externalNodeName, this);
     }
 
-    public Name resolveName(String name) throws IllegalNameException, NamespaceException {
-        return name != null ? NameParser.parse(name, stateMgr.nsResolver, nameResolver) : null;
+    protected final Name resolveName(String name) throws IllegalNameException, NamespaceException {
+        return name != null ? NameParser.parse(name, stateMgr.nsResolver, nameFactory) : null;
     }
 
-    public Path resolvePath(String path) throws IllegalNameException, NamespaceException, MalformedPathException {
-        NameResolver nr = new org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver(nameResolver, stateMgr.nsResolver);
-        return path != null ? PathParser.parse((String)path, nr, (PathFactory)pathResolver)
-            : null;
+    protected final Path resolvePath(String path) throws IllegalNameException, NamespaceException, MalformedPathException {
+        return path != null ? PathParser.parse((String)path, nameResolver, (PathFactory)pathFactory) : null;
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
@@ -146,48 +152,20 @@ public abstract class HippoVirtualProvider
         }
     }
 
-    public NodeState createNew(NodeId nodeId, Name nodeTypeName, NodeId parentId) {
+    protected final NodeState createNew(NodeId nodeId, Name nodeTypeName, NodeId parentId) {
         return stateMgr.createNew(nodeId, nodeTypeName, parentId);
     }
 
-    public PropertyState createNew(Name propName, NodeId parentId) {
+    protected final PropertyState createNew(Name propName, NodeId parentId) {
         return stateMgr.createNew(propName, parentId);
     }
 
-    public PropertyState getPropertyState(PropertyId propId) {
-        try {
-            return stateMgr.getPropertyState(propId);
-        } catch(NoSuchItemStateException ex) {
-            return null;
-        } catch(ItemStateException ex) {
-            return null;
-        }
-    }
-
-    public NodeState getNodeState(NodeId nodeId) {
-        try{
-            return stateMgr.getNodeState(nodeId);
-        } catch(NoSuchItemStateException ex) {
-            return null;
-        } catch(ItemStateException ex) {
-            return null;
-        }
-    }
-
-    public String[] getProperty(NodeId nodeId, String name) {
-        try {
-            return getProperty(nodeId, resolveName(name));
-        } catch(IllegalNameException ex) {
-            return null;
-        } catch(NamespaceException ex) {
-            return null;
-        }
-    }
-
-    public String[] getProperty(NodeId nodeId, Name propName) {
+    protected final String[] getProperty(NodeId nodeId, Name propName) {
         PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
-        if(propState == null)
+        if(propState == null) {
+            log.warn("expected property state " + propName + " in " + nodeId + " not found");
             return null;
+        }
         InternalValue[] values = propState.getValues();
         String[] strings = new String[values.length];
         for(int i=0; i<values.length; i++)
@@ -195,25 +173,48 @@ public abstract class HippoVirtualProvider
         return strings;
     }
 
-    public NodeState getNodeState(String absPath) throws RepositoryException {
+    protected final PropertyState getPropertyState(PropertyId propId) {
         try {
-            NodeId nodeId = getNodeId(absPath);
-            if(nodeId != null)
-                return stateMgr.getNodeState(nodeId);
-            else
-                return null;
+            return (PropertyState) stateMgr.getItemState(propId);
         } catch(NoSuchItemStateException ex) {
+            log.warn("expected property state " + propId + " not found: " +
+                     ex.getClass().getName() + ": " + ex.getMessage());
             return null;
         } catch(ItemStateException ex) {
-            throw new RepositoryException(ex.getMessage(), ex);
+            log.warn("expected property state " + propId + " not found: " +
+                     ex.getClass().getName()+": "+ex.getMessage());
+            return null;
         }
     }
 
-    public NodeId getNodeId(String absPath) throws RepositoryException {
-        ItemId itemId = stateMgr.hierMgr.resolveNodePath(resolvePath(absPath));
-        if(itemId != null && itemId.denotesNode())
-            return (NodeId) itemId;
-        else
+    protected final NodeState getNodeState(NodeId nodeId) {
+        try{
+            return (NodeState) stateMgr.getItemState(nodeId);
+        } catch(NoSuchItemStateException ex) {
+            log.warn("expected node state "+nodeId+" not found: " +
+                     ex.getClass().getName() + ": " + ex.getMessage());
             return null;
+        } catch(ItemStateException ex) {
+            log.warn("expected node state " + nodeId + " not found: " +
+                     ex.getClass().getName() + ": " + ex.getMessage());
+            return null;
+        }
+    }
+
+    protected final NodeState getNodeState(String absPath) throws RepositoryException {
+        try {
+            ItemId itemId = stateMgr.hierMgr.resolveNodePath(resolvePath(absPath));
+            if(itemId == null || !itemId.denotesNode())
+                return null;
+            return stateMgr.getNodeState((NodeId)itemId);
+        } catch(NoSuchItemStateException ex) {
+            log.warn("expected node " + absPath + " not found: " +
+                     ex.getClass().getName() + ": " + ex.getMessage());
+            return null;
+        } catch(ItemStateException ex) {
+            log.warn("expected node " + absPath + " not found: " +
+                     ex.getClass().getName() + ": " + ex.getMessage());
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
     }
 }

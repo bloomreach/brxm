@@ -23,6 +23,8 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.spi.Name;
+
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class FacetSelectProvider extends HippoVirtualProvider
@@ -30,29 +32,40 @@ public class FacetSelectProvider extends HippoVirtualProvider
     final static private String SVN_ID = "$Id$";
 
     ViewVirtualProvider subNodesProvider;
+    Name docbaseName;
+    Name facetsName;
+    Name valuesName;
+    Name modesName;
 
     FacetSelectProvider(HippoLocalItemStateManager stateMgr, ViewVirtualProvider subNodesProvider) throws RepositoryException {
         super(stateMgr, HippoNodeType.NT_FACETSELECT, null);
         this.subNodesProvider = subNodesProvider;
+        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
+        facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
+        valuesName = resolveName(HippoNodeType.HIPPO_VALUES);
+        modesName = resolveName(HippoNodeType.HIPPO_MODES);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
-        NodeId nodeId = state.getNodeId();
-        String docbase = getProperty(nodeId, HippoNodeType.HIPPO_DOCBASE)[0];
-        String[] newFacets = getProperty(nodeId, HippoNodeType.HIPPO_FACETS);
-        String[] newValues = getProperty(nodeId, HippoNodeType.HIPPO_VALUES);
-        String[] newModes  = getProperty(nodeId, HippoNodeType.HIPPO_MODES);
+        String[] docbase = getProperty(state.getNodeId(), docbaseName);
+        String[] newFacets = getProperty(state.getNodeId(), facetsName);
+        String[] newValues = getProperty(state.getNodeId(), valuesName);
+        String[] newModes  = getProperty(state.getNodeId(), modesName);
 
-        NodeState dereference = getNodeState(docbase);
+        if(docbase == null || newFacets == null || newValues == null || newModes == null) {
+            return state;
+        }
+
+        NodeState dereference = getNodeState(docbase[0]);
 
         if(dereference != null) {
 
-            Map<String,String> view = new HashMap<String,String>();
+            Map<Name,String> view = new HashMap<Name,String>();
             if(newFacets.length != newValues.length || newFacets.length != newModes.length)
                 throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
             for(int i=0; i<newFacets.length; i++) {
                 if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select")) {
-                    view.put(newFacets[i], newValues[i]);
+                    view.put(resolveName(newFacets[i]), newValues[i]);
                 } else if(newModes[i].equalsIgnoreCase("clear")) {
                     view.remove(newFacets[i]);
                 }

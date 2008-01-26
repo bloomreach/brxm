@@ -79,6 +79,8 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
     PropDef searchPropDef;
     PropDef countPropDef;
 
+    Name virtualNodeName;
+
     AbstractFacetSearchProvider(HippoLocalItemStateManager stateMgr, String externalNodeType, String virtualNodeType,
                                 FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
         throws RepositoryException
@@ -86,6 +88,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
         super(stateMgr, externalNodeType, virtualNodeType);
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
+        this.virtualNodeName = resolveName(virtualNodeType);
 
         querynameName = resolveName(HippoNodeType.HIPPO_QUERYNAME);
         docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
