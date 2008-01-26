@@ -221,6 +221,18 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 } else {
                     nodeState = ((HippoNodeId)id).populate();
                 }
+
+                Name nodeTypeName = nodeState.getNodeTypeName();
+                if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                    try {
+                        state = virtualProviders.get(nodeTypeName).populate(nodeState);
+                    } catch(RepositoryException ex) {
+                        System.err.println(ex.getMessage());
+                        ex.printStackTrace(System.err);
+                        return null;
+                    }
+                }
+
                 virtualNodes.put((HippoNodeId)id, nodeState);
                 stateDiscarded(nodeState);
                 store(nodeState);
@@ -280,6 +292,18 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             virtualNodes.put((HippoNodeId)id, nodeState);
             stateDiscarded(nodeState);
             store(nodeState);
+
+                Name nodeTypeName = nodeState.getNodeTypeName();
+                if(virtualProviders.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                    try {
+                        state = virtualProviders.get(nodeTypeName).populate(nodeState);
+                    } catch(RepositoryException ex) {
+                        System.err.println(ex.getMessage());
+                        ex.printStackTrace(System.err);
+                        return null;
+                    }
+                }
+
             return nodeState;
         }
         return state;
@@ -313,17 +337,14 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             PropertyState propState = (PropertyState) state;
             if(propState.getPropertyId() instanceof HippoPropertyId) {
                 return ITEM_TYPE_VIRTUAL;
-            }
-            else if(virtualProperties.contains(propState.getName())) {
+            } else if(virtualProperties.contains(propState.getName())) {
                 return ITEM_TYPE_VIRTUAL;
-            }
-            else if(propState.getParentId() instanceof HippoNodeId) {
+            } else if(propState.getParentId() instanceof HippoNodeId) {
                 return ITEM_TYPE_VIRTUAL;
-            }
-            else {
+            } else {
                 return ITEM_TYPE_REGULAR;
+            }
         }
-    }
     }
 
     class FilteredChangeLog extends ChangeLog {

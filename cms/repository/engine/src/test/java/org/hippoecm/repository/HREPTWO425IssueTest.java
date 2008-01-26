@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.Utilities;
 
 import junit.framework.TestCase;
 
@@ -58,22 +59,18 @@ public class HREPTWO425IssueTest extends TestCase {
     }
 
     public void testIssue() throws RepositoryException {
-
-        Node node = session.getRootNode().addNode("test", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/");
+        Node node = session.getRootNode().addNode("test");
+        node = node.addNode("n", HippoNodeType.NT_FACETSELECT);
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/test");
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { });
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { });
         session.save();
         session.refresh(false);
-
-        System.err.println("\n\n\n\n\n");
-        assertTrue(session.getRootNode().hasNode("test"));
-        assertTrue(session.getRootNode().getNode("test").hasNode("test"));
-
+        assertTrue(session.getRootNode().getNode("test").hasNode("n"));
+        assertTrue(session.getRootNode().getNode("test").getNode("n").hasNode("n"));
         // Actual issue test follows
-        assertFalse(session.getRootNode().getNode("test").getNode("test").hasNode("test"));
-
-        System.err.println("\n\n\n\n\n");
+        assertTrue(session.getRootNode().getNode("test").getNode("n").getNode("n").hasNode("n"));
+        assertTrue(session.getRootNode().getNode("test").getNode("n").getNode("n").getNode("n").hasNode("n"));
     }
 }

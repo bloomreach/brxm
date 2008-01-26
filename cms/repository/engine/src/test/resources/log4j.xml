@@ -72,6 +72,11 @@
     <appender-ref ref="root"/>
   </category>
 
+  <category additivity="true" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
+    <level value="error"/>
+    <appender-ref ref="console"/>
+  </category>
+
   <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetSearchProvider">
     <level value="debug"/>
     <appender-ref ref="root"/>

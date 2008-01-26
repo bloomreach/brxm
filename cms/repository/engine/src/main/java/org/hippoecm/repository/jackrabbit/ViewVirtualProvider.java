@@ -29,7 +29,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
     final static private String SVN_ID = "$Id$";
 
     protected class ViewNodeId extends MirrorNodeId {
-        Map<String,String> view; // must be immutable
+        Map<Name,String> view; // must be immutable
 
         ViewNodeId(NodeId parent, NodeId upstream, Name name, Map view) {
             super(ViewVirtualProvider.this, parent, name, upstream);
@@ -45,9 +45,9 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         return state;
     }
 
-    protected boolean match(Map<String,String> view, NodeId candidate) {
-        for(Map.Entry<String,String> entry : view.entrySet()) {
-            String facet = entry.getKey();
+    protected boolean match(Map<Name,String> view, NodeId candidate) {
+        for(Map.Entry<Name,String> entry : view.entrySet()) {
+            Name facet = entry.getKey();
             String value = entry.getValue();
             String[] matching = getProperty(candidate, facet);
             if(matching != null && matching.length > 0) {
