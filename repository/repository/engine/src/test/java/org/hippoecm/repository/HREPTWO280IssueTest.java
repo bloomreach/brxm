@@ -36,7 +36,6 @@ public class HREPTWO280IssueTest extends FacetedNavigationAbstractTest {
         Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
         traverse(session.getRootNode().getNode("navigation"));
 
-
         node = session.getRootNode().getNode("documents").addNode("aap");
         node.setProperty("x", "x1");
         session.save();
@@ -46,7 +45,7 @@ public class HREPTWO280IssueTest extends FacetedNavigationAbstractTest {
 
         try {
             session.getRootNode().getNode("navigation").remove();
-            //System.gc();  reproducability of correct result
+            System.gc();  // reproducability of correct result
             session.save();
             session.refresh(false);
             session.getRootNode().getNode("documents").remove();
