@@ -124,9 +124,7 @@
                     <ol>
                         <li>
                             getting indexing_configuration from a jar classpath instead of the current
-                            JackRabbit implementation which (at the moment of this writing though since there is a JIRA
-                            issue that addresses this issue, and describes indexing_configuration being fetched from the
-                            repository content itself) can only fetch an indexing_configuration from filesystem.
+                            JackRabbit implementation which can only fetch an indexing_configuration from filesystem.
                         </li>
                         <li>
                             extend the createDocument that is responsible for creating a lucene Document which will be
@@ -134,10 +132,6 @@
                             documents in a way to enable fast faceted searching on their properties.
                         </li>
                     </ol>
-                    Our createDocument function calls the Hippo Repository ServicingNodeIndexer which indexes
-                    like the normal JackRabbit NodeIndexer, but is also indexes properties in such a way that they can
-                    be search on in a facet way.
-
                 </subsection>
 
                 <subsection name="ServicingIndexingConfigurationImpl">
