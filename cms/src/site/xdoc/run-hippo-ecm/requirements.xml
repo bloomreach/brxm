@@ -29,7 +29,7 @@
         </p>
         <ul>
           <li><p>Windows XP/2000, Windows Server 2003</p></li>
-          <li><p>Linux, RedHat (RHEL), SUSE (SLES), Debian, Ubuntu and other distributions</p></li>
+          <li><p>Linux, RedHat (RHEL), SUSE (SLES), Debian, Ubuntu, Slackware and other distributions</p></li>
           <!--
           <li><p>FreeBSD and other BSD variants</p></li>
           <li><p>Solaris 9/10 and OpenSolaris</p></li>
@@ -43,7 +43,7 @@
 
       <subsection name="Java version">
         <p>
-          To run Hippo ECM <!--Java 1.4,--> Java 5 or Java 6 is required. The following JVMs can be used:
+          To run Hippo ECM Java 5 or Java 6 is required. The following JVMs can be used:
         </p>
         <ul>
           <li><p>Sun JVM</p></li>
