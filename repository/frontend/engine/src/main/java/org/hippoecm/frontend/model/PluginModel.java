@@ -23,6 +23,9 @@ import org.apache.wicket.model.IModel;
 public class PluginModel extends HashMap<String, Object> implements IModel, IPluginModel {
     private static final long serialVersionUID = 1L;
 
+    public PluginModel() {
+    }
+    
     // implement IPluginModel
 
     public Map<String, Object> getMapRepresentation() {
