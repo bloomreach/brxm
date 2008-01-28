@@ -24,46 +24,100 @@
     <body>
         <section name="Deploying the Hippo ECM wars">
 
-            <!--
-              TODO: complete this page once WAR downloads are available
-              -->
+            <subsection name="Obtain the packaged product">
+              <p>
+                Hippo ECM is still under development, and therefor there are no released packages available at
+                this time.  You can either build the packages yourself using a
+                <a href="../extend-hippo-ecm/building/maven.html">maven build</a>.  Or you can download a
+                current snapshot version from:
+              </p>
+<source>
+http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package/2.01.00-SNAPSHOT/hippo-ecm-package-2.01.00-SNAPSHOT.ear
+</source>
+            </subsection>
 
-            <!--
             <subsection name="Application Server">
                 <p>
-                    Start and configure your Application Server.
+                  Start and configure your Application Server.  The procedure to start and configure 
                 </p>
             </subsection>
 
             <subsection name="Hippo ECM Application Server settings">
-                No special settings are needed for the default wars. The default configuration can
-                be adjusted and overridden by adjusting the
-                <a href="configuration/index.html" alt="configuration">configurations</a>.
+                <p>
+                  No special settings are needed for the default targets, such as the EAR. The default
+                  configuration can be adjusted and overridden by adjusting the <a
+                  href="configuration/index.html" alt="configuration">configurations</a>.
+                </p>
+                <p>
+                  The configuration does however require you to deploy the EARs or WARs using an exploded
+                  model.
+                </p>
             </subsection>
-            -->
 
-            <subsection name="Download the wars">
-                Currently there are no pre-built WARs available and a
-                <a href="../extend-hippo-ecm/building/maven.html" title="building from source">source build</a>
-                is required to run Hippo ECM.
+            <subsection name="Deploying Hippo ECM EAR in application server">
+                <p>
+                  Once your have obtained the sample EAR and have started and configured your application
+                  server, you can proceed with deploying the EAR in the application server.  This procedure
+                  depends on the application server.  Hippo ECM does not require any special application
+                  dependent deployment procedure, nor does it dictate which application server environment
+                  is required.  As example we provide the procedure for GlassFish.  Although the procedure
+                  is similar for other application servers, it does differ and we need to refer the
+                  documentation of your application server.
+                </p>
+                <p>
+                  Go to the administration console of your GlassFish installation, once glassfish is running
+                  by accessing the following URL in your browser on the machine that runs the GlassFish
+                  instance:
+                </p>
+<source>
+http://localhost:4848/
+</source>
+                <p>
+                  Login using the username and password of the administrator you had selected during
+                  installation (default username is <code>admin</code> and default password is
+                  <code>adminadmin</code>
+                </p>
+                <p>
+                  Select in the left pane &quot;Enterprise applications&quot;
+                </p>
+                <img src="../images/glassfish1.gif" alt=""/>
+                <p>
+                  Then in the main pane select the button &quot;Deploy&quot;
+                </p>
+                <p>
+                  When the page has loaded make sure the &quot;Packaged file to be uploaded to the
+                  server&quot; is checked and use the browse button to select the build or downloaded EAR file
+                  of Hippo ECM.  Then just choose &quot;Ok&quot; to perform the deployment.
+                </p>
+                <img src="../images/glassfish2.gif" alt=""/>
+                <p>
+                  Once the server has finished, the application is now available on your server on the
+                  configured hostname and portname, which is by default:
+                </p>
+<source>
+http://localhost:8080/
+</source>
+                <p>
+                  The EAR contains both the Hippo CMS as well as the Hippo Repository.  You can also install
+                  individual WARs, or multiple EARs within each EAR only a repository or only an CMS.  This is
+                  a more advanced setup which is supported but requires a custom packaging.
+                </p>
+
+              <subsubsection name="Integration Glassfish and NetBeans">
+                <p>
+                  NetBeans can be installed with an integrated installation of the production quality
+                  application server Glassfish.  This allows you to directly start and deploy to Glassfish
+                  from within NetBeans.  To use this, simply select the project &quot;EAR packaging&quot; from
+                  the project windows.  When you right-click this sub-project you can select &quot;run&quot;
+                  to deploy the EAR once you have build the entire project.
+                </p>
+                <p>
+                  Use the &quot;Services&quot; window to inspect and undeploy the application through
+                  <code>Servers -> GlassFish V2 -> Applications -> Enterprise Applications</code>.
+                </p>
+              </subsubsection>
+
             </subsection>
-
-            <!--
-            <subsection name="Deploy the wars">
-                Upload the wars to your application server in the following order:
-                <ol>
-                    <li>hippo-ecm-application-cms-prototype-repository.war</li>
-                    <li>hippo-ecm-application-cms-prototype-frontend.war</li>
-                </ol>
-                Now you can browse to the following urls:
-                <ul>
-                    <li>http://[host]:[port]/hippo-ecm-application-cms-prototype-repository/</li>
-                    <li>http://[host]:[port]/hippo-ecm-application-cms-prototype-frontend/</li>
-                </ul>
-                Replace the [host] and [port] values to match you Application Server installation.
-            </subsection>
-            -->
-
         </section>
     </body>
 </document>
