@@ -29,7 +29,7 @@
         Hippo Repository adds extra functionality to the default Jackrabbit distribution while
         keeping full compliance with JCR 1.0
         <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
-        The main added features are facets, virtual nodes and workflow.
+        The main added features are virtual nodes based on facets (metadata), access management, authorization and workflow.
       </p>
     </section>
 
