@@ -100,11 +100,11 @@
             </subsection>
             
             <subsection name="Security element">
-              <p>
-                The Security element specifies the name of the app-entry
-                in the JAAS configuration and the access manager.
-                Hippo Repository by default uses the following configuration:
-              </p>
+                <p>
+                    The Security element specifies the name of the app-entry
+                    in the JAAS configuration and the access manager.
+                    Hippo Repository by default uses the following configuration:
+                </p>
 <source>
 &lt;Security appName="Jackrabbit"&gt;
     &lt;AccessManager
@@ -115,49 +115,48 @@
     &lt;/LoginModule&gt;
 &lt;/Security&gt;
 </source>
-              <p>
-                SimpleAccessManager is the Hippo Repository default access manager implementation, and 
-                <a href="repository-based-authentication-and-users.html">RepositoryLoginModule</a>
-                the default login implementation.
-              </p>
-              <p>
-                See <a href="repository-based-authentication-and-users.html">Authentication and Users</a>
-                for more information.
-              </p>
+                <p>
+                    SimpleAccessManager is the Hippo Repository default access manager implementation, and 
+                    <a href="repository-based-authentication-and-users.html">RepositoryLoginModule</a>
+                    the default login implementation.
+                </p>
+                <p>
+                    See <a href="repository-based-authentication-and-users.html">Authentication and Users</a>
+                    for more information.
+                </p>
             </subsection>
             
             <subsection name="Workspaces element">
-              <p>
-                Configures the location of the workspaces root directory and the name of the default workspace.
-              </p>
+                <p>
+                    Configures the location of the workspaces root directory and the name of the default workspace.
+                </p>
 <source>
 &lt;Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/&gt;
 </source>
             </subsection>
             <subsection name="Workspace element">
-              <p>
-                The Workspace element is used as a template for separate workspace configuration files created 
-                for each new workspace.
-              </p>
-              <p>
-                See <a href="workspace.html">Workspace configuration</a> for more information.
-              </p>
+                <p>
+                    The Workspace element is used as a template for separate workspace configuration files created 
+                    for each new workspace.
+                </p>
+                <p>
+                    See <a href="workspace.html">Workspace configuration</a> for more information.
+                </p>
             </subsection>
             <subsection name="SearchIndex element">
-              <p>
-                Search index for content that is shared repository wide
-                (/jcr:system tree, contains mainly versions).
-              </p>
-              <p>
-                See
-                <a href="searchindex.html">Search Index configuration</a> for more information.
-              </p>
+                <p>
+                    Search index for content that is shared repository wide
+                    (/jcr:system tree, contains mainly versions).
+                </p>
+                <p>
+                    See
+                    <a href="searchindex.html">Search Index configuration</a> for more information.
+                </p>
             </subsection>
             <subsection name="Versioning element">
-              <p>
-                A Versioning element that is used for configuring
-                versioning-related settings. At the moment of this writing this is not yet implemented.
-              </p>
+                <p>
+                    Used for configuring versioning related settings. Versioning is not yet implemented.
+                </p>
             </subsection>
         </section>
 
