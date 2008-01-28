@@ -85,7 +85,7 @@
 
         <subsection name="Virtual Node Engine">
           <p>
-            Exposes faceted search and faceted reference as regular hierarchical nodes and handles mirrored persitency
+            Exposes faceted search and faceted reference as regular hierarchical nodes and handles mirrored persistency
             of the nodes that are exposed in multiple parts of the JCR tree.
           </p>
         </subsection>
