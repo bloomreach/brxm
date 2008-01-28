@@ -28,7 +28,7 @@ import org.hippoecm.repository.Utilities;
 
 import junit.framework.TestCase;
 
-public class HREPTWO425IssueTest extends TestCase {
+public class HREPTWO425Test extends TestCase {
 
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
