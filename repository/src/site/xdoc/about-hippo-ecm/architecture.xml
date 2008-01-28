@@ -98,10 +98,12 @@
             The facet engine works through intelligent indexing in <a href="#Lucene">Apache Lucene</a>, and is extremely
             fast, as if you are browsing through a (fast cached) File System.
           </p>
+          <!-- below: this will be added in due time. Commented while not implemented
           <p>
             The Facet Engine can be configured if fast faceted browsing on some indirect value, like the week number of
             a date, is needed. See <a href="../run-hippo-ecm/configuration/searchindex.html">Search Index</a> at the bottom.
           </p>
+          -->
         </subsection>
 
         <subsection name="Databases">
