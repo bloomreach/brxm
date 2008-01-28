@@ -66,7 +66,7 @@
                 Currently, every JackRabbit property is indexed as a possible facet. Through this indexing_configuration,
                 a subset of nodes can be configured to be facets, which is more efficient. Also defining the type of facet
                 (date, long, etc) must be configurable, as well as some derived facet type (for example week number instead of
-                the date to have faceted navigation on). For M2, the indexing_configuration.xml is planned to be replaced
+                the date to have faceted navigation on). For M4, the indexing_configuration.xml is planned to be replaced
                 by configuration in the repository itself.
                 See <a href="searchindex.html">Search Index</a> for further explanation.
             </p>
