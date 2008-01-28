@@ -189,9 +189,9 @@ public class PasswordHelper {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    public static String buildHashString(String alogrithm, String plainText, byte[] salt)
+    public static String buildHashString(String algorithm, String plainText, byte[] salt)
             throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        return "$" + alogrithm + "$" + byteToBase64(salt) + "$" + getDigest(alogrithm, plainText, salt);
+        return "$" + algorithm + "$" + byteToBase64(salt) + "$" + getDigest(algorithm, plainText, salt);
     }
 
     /**
