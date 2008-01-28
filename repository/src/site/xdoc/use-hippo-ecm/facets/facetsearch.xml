@@ -19,7 +19,7 @@
 -->
 <document>
   <properties>
-    <title>Facets</title>
+    <title>Facet Search</title>
   </properties>
   <body>
     <section name="Facets">
@@ -90,20 +90,6 @@
         </p>
       </subsection>
 
-    </section>
-
-    <section name="Faceted selection">
-      <p>
-      </p>
-<!--
-    TODO:
-    faceted select
-    - no filter
-    - different tree structuur (not editable)
-    - getCanonincalNode (editable)
-
-    no facet search on search: should not be done.
--->
     </section>
   </body>
 </document>

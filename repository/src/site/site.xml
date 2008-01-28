@@ -67,8 +67,9 @@
       </item>
 
       <item name="Using Hippo ECM" href="/use-hippo-ecm/index.html" collapse="true">
-        <item name="Facets" href="/use-hippo-ecm/facets/index.html" collapse="true">
-        </item>
+        <item name="Facet Search" href="/use-hippo-ecm/facets/facetsearch.html" collapse="true"/>
+        <item name="Facet Select" href="/use-hippo-ecm/facets/facetselect.html" collapse="true"/>
+        
         <item name="Workflow" href="/use-hippo-ecm/workflow/index.html" collapse="true">
         </item>
       </item>

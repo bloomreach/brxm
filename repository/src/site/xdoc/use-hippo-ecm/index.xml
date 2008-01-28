@@ -31,9 +31,13 @@
 
         <ul>
           <li>
-            <a href="facets/index.html">Facets</a>
+            <a href="facets/facetsearch.html">Facetsearch</a>
             - Browse your content through multiple navigation paths based
             on meta information
+          </li>
+          <li>
+            <a href="facets/facetselect.html">Facetselect</a>
+            - Browse your content through a filter based on metadata (like only language 'en')
           </li>
           <li>
             <a href="workflow/index.html">Workflow</a>
