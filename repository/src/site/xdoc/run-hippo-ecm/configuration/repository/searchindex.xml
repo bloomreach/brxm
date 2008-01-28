@@ -78,7 +78,7 @@
                         The volatileIdleTime is the idle time in seconds until the volatile index part is moved to a
                         persistent index even though minMergeDocs is not reached.
                         Also see
-                        <a href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html">Expert: JackRabbit lucene implementation</a>.
+                        <a href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html">JackRabbit lucene implementation</a>.
                     </p>
                     <p>
                         Two other interesting SearchIndex params are
@@ -132,6 +132,7 @@
                             documents in a way to enable fast faceted searching on their properties.
                         </li>
                     </ol>
+
                 </subsection>
 
                 <subsection name="ServicingIndexingConfigurationImpl">

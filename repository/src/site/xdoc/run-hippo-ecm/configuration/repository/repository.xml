@@ -86,18 +86,18 @@
             </p>
             <subsection name="FileSystem element">
               <p>
-                a FileSystem element (the virtual file system
-                used by the repository to persist global state such as
-                registered namespaces, custom node types, etc..)
+                The virtual file system used by the repository to persist global state such as
+                registered namespaces, custom node types, etc.
               </p>
               <p>
-                See <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a> at Virtual file systems
+                See <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html#Virtual file systems</a>
+                for more information.
               </p>
             </subsection>
             <subsection name="Security element">
               <p>
-                A Security element that specifies the name of the app-entry
-                in the JAAS config and the access manager.
+                The Security element specifies the name of the app-entry
+                in the JAAS configuration and the access manager.
                 Hippo Repository by default uses the following configuration:
               </p>
 <source>
@@ -111,14 +111,14 @@
 &lt;/Security&gt;
 </source>
               <p>
-                The SimpleAccessManager is the Hippo Repository default access manager implementation, and RepositoryLoginModule
-                the default login implementation. See <a href="repository-based-authentication-and-users.html">repository-based-authentication-and-users.html</a>
-                for explanation about the RepositoryLoginModule.
+                SimpleAccessManager is the Hippo Repository default access manager implementation, and 
+                <a href="repository-based-authentication-and-users.html">RepositoryLoginModule</a>
+                the default login implementation.
               </p>
             </subsection>
-            <subsection name="Workspaces root directory element">
+            <subsection name="Workspaces element">
               <p>
-                Location of workspaces root directory and name of default workspace.
+                Configures the location of the workspaces root directory and the name of the default workspace.
               </p>
 <source>
 &lt;Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/&gt;
