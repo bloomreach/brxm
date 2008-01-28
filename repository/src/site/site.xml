@@ -55,13 +55,13 @@
         <item name="Deploying the WARs" href="/run-hippo-ecm/deploying-the-wars.html"/>
         <item name="Bootstrapping the Repository" href="/run-hippo-ecm/repository-bootstrap.html"/>
         <item name="Configuration" href="/run-hippo-ecm/configuration/index.html" collapse="true">
-          <item name="Repository" href="/run-hippo-ecm/configuration/repository/repository.html">
+          <item name="Repository" href="/run-hippo-ecm/configuration/repository/index.html">
             <item name="Workspace" href="/run-hippo-ecm/configuration/repository/workspace.html"/>
             <item name="Search Index" href="/run-hippo-ecm/configuration/repository/searchindex.html"/>
             <item name="Authentication and Users" href="/run-hippo-ecm/configuration/repository/repository-based-authentication-and-users.html"/>
           </item>
-          <item name="Configuration Nodes" href="/run-hippo-ecm/configuration/nodes/configuration.html">
-            <item name="Workflow" href="/run-hippo-ecm/configuration/nodes/workflow-configuration.html"/>
+          <item name="Configuration Nodes" href="/run-hippo-ecm/configuration/nodes/index.html">
+            <item name="Workflow" href="/run-hippo-ecm/configuration/nodes/workflow.html"/>
           </item>
         </item>
       </item>

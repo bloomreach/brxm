@@ -33,31 +33,13 @@
 
         <ul>
           <li>
-            <a href="repository/repository.html">Repository configuration</a>
+            <a href="repository/index.html">Repository configuration</a>
             - The base repository configuration
           </li>
           <li>
-            <a href="nodes/configuration.html">Configuration nodes</a>
+            <a href="nodes/index.html">Configuration nodes</a>
             - Configuration nodes inside the repository
           </li>
-          <!--
-          <li>
-            <a href="workspace.html">Workspace configuration</a>
-            - Configure different workspaces inside the repository
-          </li>
-          <li>
-            <a href="searchindex.html">Search index</a>
-            - Configure the indexing ans searching repository component
-          </li>
-          <li>
-            <a href="repository-based-authentication-and-users.html">Authentication and users</a>
-            - Define users and groups, and how they authenticate
-          </li>
-          <li>
-            <a href="workflow-configuration.html">Workflow</a>
-            - Configure the workflow
-          </li>
-          -->
         </ul>
 
       </section>

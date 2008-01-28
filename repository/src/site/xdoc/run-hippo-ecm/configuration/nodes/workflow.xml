@@ -35,7 +35,8 @@ repository itself.
 All available workflows are stored in the JCR repository in the tree
 <code>/hippo:configuration/hippo:workflows</code>.  Workflow definitions are not
 directly stored at this level, instead workflows are categorized.  At the
-structure /hippo:configuration/hippo:workflows the workflow categories are listed.
+structure <code>/hippo:configuration/hippo:workflows</code> the workflow categories
+are listed.
 </p>
 
 <p>
