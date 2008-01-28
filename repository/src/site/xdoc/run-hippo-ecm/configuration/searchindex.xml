@@ -67,7 +67,7 @@
                     </p>
                     <source>
 &lt;param name="useCompoundFile" value="true"/&gt;
-&lt;param name="minMergeDocs" value="100"/&gt;
+&lt;param name="minMergeDocs" value="1000"/&gt;
 &lt;param name="volatileIdleTime" value="10"/&gt;
 &lt;param name="maxMergeDocs" value="1000000000"/&gt;
 &lt;param name="mergeFactor" value="5"/&gt;
@@ -78,7 +78,7 @@
                         The volatileIdleTime is the idle time in seconds until the volatile index part is moved to a
                         persistent index even though minMergeDocs is not reached.
                         Also see
-                        <a href="#Expert: JackRabbit lucene implementation">JackRabbit lucene implementation</a>.
+                        <a href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html">Expert: JackRabbit lucene implementation</a>.
                     </p>
                     <p>
                         Two other interesting SearchIndex params are
@@ -93,10 +93,19 @@
                             in &lt;param name="analyzer" value="..."&gt; is used as default text analyzer. If needed, this
                             analyzer can be replaced by for example org.apache.lucene.analysis.Analyzer.GermanAnalyzer for
                             german texts.
-                            At <a href="http://wiki.apache.org/jackrabbit/IndexingConfiguration">IndexingConfiguration</a> at the bottom,
+                            See <a href="http://wiki.apache.org/jackrabbit/IndexingConfiguration">IndexingConfiguration</a> at the bottom,
                             there is described how to set different analyzers per property.
                         </li>
                     </ol>
+                    <p>
+                        For having search highlighting and spellchecking enable the following parameters are configured:
+                    </p>
+                    <source>
+                    &lt;param name="excerptProviderClass" value="org.apache.jackrabbit.core.query.lucene.DefaultHTMLExcerpt"/&gt;
+                    &lt;param name="supportHighlighting" value="true"/&gt;
+                    &lt;param name="spellCheckerClass" value="org.hippoecm.repository.query.lucene.LuceneSpellChecker$OneMinuteRefreshInterval"/&gt;      
+                    </source>
+                
                     <p>
                         At the moment of this writing we have forceConsistencyCheck, enableConsistencyCheck and autoRepair set to true.
                         Still needed investigation wether this is needed.
