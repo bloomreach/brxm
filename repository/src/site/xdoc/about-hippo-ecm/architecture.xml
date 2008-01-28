@@ -114,7 +114,7 @@
         <subsection name="Lucene">
           <p>
             Content and meta data is indexed through implementation of <a href="http://lucene.apache.org/java/docs/">Apache Lucene 2.2.0</a> search engine library.
-            It is a scalable, high-performance indexing, accurate and efficient search algorithm cross-platform Open Source application, with a strong
+            It is a scalable, high-performance indexing, accurate and efficient search algorithm, cross-platform Open Source application, with a strong
             prospering community.
           </p>
           <p>
