@@ -23,6 +23,19 @@
   </properties>
   <body>
     <section name="Configuration nodes">
+
+        <p>
+          Configuration of Hippo ECM functionality is stored inside Hippo Repository
+          as configuration nodes in the JCR tree, and is accessible through the standard
+          JCR interface.
+        </p>
+
+        <ul>
+          <li>
+            <a href="workflow.html">Workflow</a>
+          </li>
+        </ul>
+        
     </section>
   </body>
 </document>

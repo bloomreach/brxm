@@ -36,7 +36,7 @@
                 <a href="http://jackrabbit.apache.org/doc/config.html#Workspace configuration">http://jackrabbit.apache.org/doc/config.html</a>.
                 Hippo Repository has a custom workspace configuration for enabling fast faceted navigation through
                 custom indexing. The main differences with a default JackRabbit workspace configuration are
-                the SearchIndex class and indexingConfigurationClass. See <a href="searchindex.html">Search Index</a> for
+                the SearchIndex class and indexingConfigurationClass. See <a href="searchindex.html">Search Index configuration</a> for
                 explanation of all &lt;SearchIndex&gt; parameters.
             </p>
             <subsection name="Workspace Configuration">

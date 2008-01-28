@@ -82,18 +82,23 @@
             <p>
                 The XML attribute values in the configuration file are interpreted as plain strings
                 except for a few special variables, namely ${rep.home}, ${wsp.name} and ${wsp.home}.
-                See <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a>
             </p>
-            <subsection name="FileSystem element">
-              <p>
-                The virtual file system used by the repository to persist global state such as
-                registered namespaces, custom node types, etc.
-              </p>
-              <p>
-                See <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html#Virtual file systems</a>
+            <p>
+                See the <a href="http://jackrabbit.apache.org/doc/config.html">Jackrabbit documentation</a>
                 for more information.
-              </p>
+            </p>
+            
+            <subsection name="FileSystem element">
+                <p>
+                    The virtual file system used by the repository to persist global state such as
+                    registered namespaces, custom node types, etc.
+                </p>
+                <p>
+                    See the <a href="http://jackrabbit.apache.org/doc/config.html#Virtual file systems">Jackrabbit documentation</a>
+                    for more information.
+                </p>
             </subsection>
+            
             <subsection name="Security element">
               <p>
                 The Security element specifies the name of the app-entry
@@ -115,7 +120,12 @@
                 <a href="repository-based-authentication-and-users.html">RepositoryLoginModule</a>
                 the default login implementation.
               </p>
+              <p>
+                See <a href="repository-based-authentication-and-users.html">Authentication and Users</a>
+                for more information.
+              </p>
             </subsection>
+            
             <subsection name="Workspaces element">
               <p>
                 Configures the location of the workspaces root directory and the name of the default workspace.
@@ -126,29 +136,21 @@
             </subsection>
             <subsection name="Workspace element">
               <p>
-                The Workspace element is used as a template for separate workspace configuration files created for each new workspace.
-                Because of this the Workspace element is not interpreted directly from the repository
-                configuration file. Instead the workspace configuration template is first copied into the
-                workspace configuration file which is then interpreted to set up the configured workspace
-                components. Thus modifying the workspace configuration template in the repository configuration
-                file will not affect existing workspace configurations.
+                The Workspace element is used as a template for separate workspace configuration files created 
+                for each new workspace.
               </p>
               <p>
-                See <a href="workspace.html">Workspace</a> for more information.
+                See <a href="workspace.html">Workspace configuration</a> for more information.
               </p>
             </subsection>
             <subsection name="SearchIndex element">
               <p>
                 Search index for content that is shared repository wide
-                (/jcr:system tree, contains mainly versions). This configuration never needs adjustments, and looks like
+                (/jcr:system tree, contains mainly versions).
               </p>
-<source>
-&lt;SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex"&gt;
-    &lt;param name="path" value="${rep.home}/repository/index"/&gt;
-&lt;/SearchIndex&gt;
-</source>
               <p>
-                See <a href="searchindex.html">Search Index</a> for more information.
+                See
+                <a href="searchindex.html">Search Index configuration</a> for more information.
               </p>
             </subsection>
             <subsection name="Versioning element">
