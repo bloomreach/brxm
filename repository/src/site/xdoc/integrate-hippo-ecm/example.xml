@@ -86,40 +86,28 @@ mvn clean install
 </source>
 
                 <p>
-                Start Hippo Repository:
+                Start Hippo Repository and the user interface:
                 </p>
 <source>
-cd hippo-ecm/application/default/repository
+cd hippo-ecm/package/war
 mvn jetty:run-war
 </source>
                 <p>
-                Open up <a href="http://localhost:8081/repository">http://localhost:8081/repository</a> to check
+                Open up <a href="http://localhost:8080/repository">http://localhost:8080/repository</a> to check
                 if everthing is working.
                 </p>
 
                 <p>
-                Start the user interface for browsing the repository:
+                  The user interface is accessible at <a href="http://localhost:8080">http://localhost:8080/</a>
                 </p>
-<source>
-cd hippo-ecm/application/default/frontend
-mvn jetty:run-war
-</source>
-                <p>
-                Open up <a href="http://localhost:8082">http://localhost:8082</a> to check
-                if everthing is working.
-                <br/>
-                (tip: the location is displayed in the last lines of the shell output)
-                </p>
-
                 <p>
                 Now that we have everything up and running we need to configure the demo's pom.xml located in the root
-                of the project. Open pom.xml and look for the arguments tag. <br/>
+                of the project. Open pom.xml and look for the <code>&lt;arguments&gt;</code> tag. <br/>
                 argument 1: the location of your repository<br/>
                 argument 2: the location of your dropbox<br/>
                 argument 3: the username for logging into the repository<br/>
                 argument 4: and the password
                 <br/><br/>
-
                 Everything configured? Let's start the demo.
                 </p>
 <source>
@@ -143,14 +131,18 @@ mvn exec:java
                 <br/>
               <ul>
                 <li>
-                  Using the user interfave, select the root node.
+                  Using the user interface, select the root node.
                 </li>
                 <li>
-                  Add a new node with a name of your choice.
+                    Add a new node with a name of your choice and jcr:primaryTyp <code>hippo:facetsearch</code>.
                 </li>
                 <li>
-                  Select this node and add the following properties, hippo:docbase -> dropbox, hippo:facets ->
-                  (multi-value) DocType.
+                  Select this node and add the following properties:
+                    <ol>
+                        <li>hippo:docbase :  <code>/dropbox</code> </li>
+                        <li>hippo:facets : <code>DocType</code> (multi-value)</li>
+                        <li>hippo:queryname : <code>anything you want..just a name</code></li>
+                    </ol>
                 </li>
                 <li>
                     Then again select the previously constructed node and the result should look like something as depicted below. <br/>
