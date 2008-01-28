@@ -147,11 +147,8 @@ public class Dropbox {
         FileDataSource ds = new FileDataSource(f);
         ds.setFileTypeMap(new MimetypesFileTypeMap(getClass().getResourceAsStream("mime.types")));
 
-        //String nodeName = f.getName().replace(":", "_"); // fix for colons in filenames, clashes with xmlns
-        //String nodeName = org.apache.jackrabbit.util.ISO9075.encode(f.getName());
-
-        String nodeName = ISO9075Helper.encodeLocalName(f.getName() + ":testing...");
-
+        String nodeName = ISO9075Helper.encodeLocalName(f.getName());
+        
         if (folder.hasNode(nodeName)) {
             if (recreate) {
                 folder.getNode(nodeName).remove();
@@ -161,6 +158,7 @@ public class Dropbox {
             folder.addNode(nodeName, "hippo:document");
         }
         Node n = folder.getNode(nodeName);
+        
         n.setProperty("mimeType", ds.getContentType());
         n.setProperty("lastModified", fileDate.format(new Date(f.lastModified())));
         n.setProperty("filePath", f.getAbsolutePath());

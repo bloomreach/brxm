@@ -121,12 +121,18 @@ mvn exec:java
                 <img src="../images/dropbox-running.jpg" alt=""/>
                 <br/><br/>
                 All content from your dropbox folder is now stored in Hippo Repository. You can explore
-                the contents through the provided user interface.
+                the contents through the provided user interface. 
+                </p>
+                <p>
+                    The DropBoxExt creates by default a facet node for you, to let you browse through
+                    your imported content categorized by <code>mimetype</code>. Go to '/myDropBox/byMimeType' node which is created. See
+                    below how to create your own facetted navigation.
                 </p>
 
-
             </subsection>
-            <subsection name="Applying Hippo Facets">
+            
+            
+            <subsection name="Applying Your Own Hippo Facets">
                 Prerequisite: <a href="../use-hippo-ecm/facets/index.html">knowlegde of facets</a>
                 <br/>
               <ul>
@@ -140,7 +146,7 @@ mvn exec:java
                   Select this node and add the following properties:
                     <ol>
                         <li>hippo:docbase :  <code>/dropbox</code> </li>
-                        <li>hippo:facets : <code>DocType</code> (multi-value)</li>
+                        <li>hippo:facets : <code>mimeType</code> (multi-value)</li>
                         <li>hippo:queryname : <code>anything you want..just a name</code></li>
                     </ol>
                 </li>
@@ -154,6 +160,9 @@ mvn exec:java
                 Congratulations! You just ran a custom application interfacing with the Hippo ECM Repository and
                 applyed a facet search on the stored data!
                 </p>
+            </subsection>
+            <subsection name="Try out yourself">
+                Check out the MP3Box.java which works similar to the Dropbox yourself! 
             </subsection>
         </section>
     </body>

@@ -20,6 +20,7 @@ import java.io.File;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 public class DropboxExt extends Dropbox {
@@ -28,6 +29,21 @@ public class DropboxExt extends Dropbox {
         super(repoLoc, dropbox);
     }
 
+    protected void initFacets(Session session) throws RepositoryException {
+        String docbase = "/dropbox";
+        String navRootName = "myDropBox";
+        // create/reset the navigation base
+        System.out.println("Initializing facets.");
+        Node root = session.getRootNode();
+        if (root.hasNode(navRootName)) {
+            root.getNode(navRootName).remove();
+        }
+        Node navRoot = root.addNode(navRootName);
+
+        // some demo facets
+        createFacet(navRoot, docbase, "byMimeType", new String[] { "mimeType"});
+    }
+    
     protected Node createFile(Node folder, File f) throws RepositoryException {
         Node n = super.createFile(folder, f);
         Property prop = n.getProperty("mimeType");
