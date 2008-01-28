@@ -28,7 +28,7 @@
       <subsection name="Install Maven">
         <p>
           Hippo ECM is built using Maven 2 (version 2.0.6 or newer). Follow the
-          <a href="http://maven.apache.org/download.html"> Maven installation instructions</a>.
+          <a href="http://maven.apache.org/download.html">Maven installation instructions</a>.
         </p>
 
         <div style="border:1px solid black; padding:1em;">
@@ -74,17 +74,20 @@
 
       <subsection name="Build">
         <p>
-          Assuming that you have checked out the Hippo ECM source in the directory
-          ~/hippo-ecm
+          Assuming that you have checked out the Hippo ECM source in the
+          directory <code>~/hippo-ecm</code>.  If you want to build the Hippo
+          ECM packages you should run the command:
         </p>
         <source>
 ~/> cd hippo-ecm
-~/hippo-ecm> mvn install
+~/hippo-ecm> mvn package
         </source>
         <p>
-          This will take a while and put all project artifacts (jars, wars) in your local maven repository
+          This will build the packages and leave them in the target
+          directories of your maven build.  For instance the produced EAR
+          containing all the applications is available in
+          <code>hippo-ecm/package/ear/target/hippo-ecm-package-ear-2.01.00-dev.ear</code>.
         </p>
-      </subsection>
 
       <subsection name="Run">
         <p>
@@ -96,9 +99,15 @@
           To start a sample application from the command line, execute the following commands:
         </p>
         <source>
+~/> cd hippo-ecm
+~/hippo-ecm> mvn install
 ~/hippo-ecm> cd package/war
-~/hippo-ecm/package/war> mvn jetty:run-war
+~/hippo-ecm/package/war> mvn clean jetty:run-war
         </source>
+        <p>
+          The <code>mvn install</code> is required to put all project artifacts (jars, wars) in your local
+          maven repository, as required by the maven-jetty-plugin.
+        </p>
         <p>
           Open a web browser and go to <a href="http://localhost:8080">http://localhost:8080</a>
           to navigate and edit your repository.
