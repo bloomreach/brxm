@@ -25,6 +25,12 @@
   
     <section name="Faceted selection">
       <p>
+        Faceted selection gives you the possibility to browse through your filtered hierarchical content. The filter
+        is based on facets on documents, ie on their meta data. An example would be, that you only want to 
+        show documents which are english and published. By creating some smart faceted selections, you can
+        very easily create websites which are multilingual, have a preview/live or any other state in between.
+        Exposing your DMS with faceted selection and authorization (and even facet search combined!) gives you a lot of 
+        flexibility in exposing your content.
       </p>
 <!--
     TODO:
