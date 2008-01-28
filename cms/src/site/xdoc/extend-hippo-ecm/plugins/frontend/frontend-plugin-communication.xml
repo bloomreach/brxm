@@ -23,115 +23,146 @@
   </properties>
   <body>
     <section name="Frontend Plugin Communication">
-      <!--
       <p>
-        Each frontend plugin in itself is an independent GUI component. All frontend plugins together however
-        form a complete application. Within such an application context, plugins are no longer independent,
-        and need to communicate with each other. One plugin might cause an event, on which certain other plugins
-        might react (by performing whatever action). Yet other plugins may stay unaffected. Which plugins react
-        on which other plugins, is configured by means of "channels" in the frontend plugin configuration.
+        Each frontend plugin in itself is an independent GUI component.  All frontend plugins together however
+        form a complete application. Within such an application context, plugins are no longer independent, and
+        need to communicate with each other.  One plugin might cause an event, on which certain other plugins
+        might react (by performing whatever action).  Yet other plugins may stay unaffected.
       </p>
 
-      <subsection name="Channels">
+      <subsection name="Models">
         <p>
-          A channel is a medium through which plugin events are communicated. For each plugin, any number of
-          incoming and outgoing channels can be configured. A channel is identified by a string.
+          In an application, plugins can share a model and send messages when this model changes.  Control of the
+          model is effectively assigned to the plugin that handles the requests that are related to it.  Some of
+          the models are:
         </p>
-        <p>
-          When a plugin sends an event (e.g. a node has been selected), it is broadcasted on each of the outgoing
-          channels configured for that plugin. Then for each plugin which has an incoming channel configured which
-          matches any of the channels on which the event was broadcasted, that plugin's update() method is called.
-          Within its update() method, a plugin can do with the event whatever it considers necessary, e.g. updating
-          its model and view.
-        </p>
-        <p>
-          It is important to understand that plugins have no knowledgde of channels. Plugins sends events through
-          the plugin manager. The plugin manager reads the configured channels and notifies the affected plugins
-          by calling their update() method.
-        </p>
-      </subsection>
 
-      <subsection name="Events">
-        <p>
-          Plugin events are the means of communication between plugins. The unit of communication however is a
-          JcrNodeModel, which is contained within the PluginEvent. This JcrNodeModel tells the receivers of the
-          event which JCR node has been selected, created, changed, or removed. To indicate what kind of event
-          has occurred, an event type must be specified. There are two predefined event types:
-        </p>
         <ul>
           <li>
-            JcrEvent.NEW_MODEL
+            "The selected node": a JcrNodeModel that identifies a node in the repository.  Many plugins use a
+            model of this type, e.g. in the browser or editor perspective.  In the CMS configuration, these
+            perspectives handle requests to change this selection.
           </li>
           <li>
-            JcrEvent.NEEDS_RELOAD
+            "The selected tab": one of the tabs that is managed by the TabsPlugin.  The TabsPlugin updates this
+            model when one of the perspectives requests focus.
+          </li>
+          <li>
+            "The jcr cache": a JcrTreeModel that reflects the hierarchy of nodes in the repository in the frontend.
+            As this model changes when nodes are added or removed, the cached hierarchy is flushed and re-read.
           </li>
         </ul>
       </subsection>
 
+      <subsection name="Messages">
+        <p>
+          Each plugin has two channels, one connecting it to its parent plugin ("incoming") and one connecting it
+          to its children ("outgoing").  Plugins effectively act as filters on the message streams.  There are
+          two kinds of messages:
+        </p>
+
+        <ul>
+          <li>
+            <em>Requests</em>: When a plugin wishes to change a model that is shared with other plugins, it must
+            send a request to its parent plugin.  If the parent does not control the model, it should forward the
+            request further up the hierarchy.
+          </li>
+          <li>
+            <em>Notifications</em>: these messages are received through the channel that connects a plugin with its
+            parent.  They are sent when a model changes and the plugin should update its copy of the model.  The
+            message should be forwarded to the children of the plugin, so that they can take action as well.
+          </li>
+        </ul>
+
+        <p>
+          Each message consists of an operation and a model.  The operation is a String such as "select", the
+          model is of type IPluginModel.  The model is weakly typed, i.e. all accessible objects are of type
+          java.*, but should contain sufficient information to reconstruct the object upon which the operation
+          should be (request) or has been (notification) applied.  There is one plugin in the hierarchy that
+          handles the request and will send notifications if necessary.  A plugin nested deeply in the hierarchy
+          can thus request a change in an ancestor plugin, but it is up to the ancestor (configuration) how it
+          interprets the request and whether it even accepts it.
+        </p>
+
+        <p>
+          The following messages are currently used:
+        </p>
+
+        <ul>
+          <li>edit: the associated node should be opened in an editor</li>
+          <li>browse: the node should be shown in a browser</li>
+          <li>select: the associated node should be selected</li>
+          <li>flush: caches of JCR nodes under the node in the message should be flushed</li>
+          <li>focus: the associated plugin should receive focus</li>
+        </ul>
+      </subsection>
+
+      <subsection name="Ajax">
+        <p>
+          To support Ajax updates of the page, each message has a MessageContext.  Plugins can request a
+          redrawing by adding themselves to this context when processing a message.  Wicket entry points for
+          (e.g. onClick) that send requests or notifications should apply the AjaxRequestTarget to this context.
+          When a new message is created in response to another message, the original context should be attached
+          to the new message.
+        </p>
+
+        <p>
+          When a plugin should be re-rendered as a result of receiving a message, it adds itself to the
+          context.  The plugin may be invisible at the time of reception, but this may change later as 
+          messages cascade through the plugin configuration.  A plugin should therefore always add itself when
+          its visual representation would change, were it visible.
+        </p>
+      </subsection>
+
+      <subsection name="Filter Plugin">
+        <p>
+          To separate the control over a model from any visual components, the FilterPlugin has been created.
+          This non-visual plugin can be configured to handle requests in a trivial manner.  A request is
+          converted into a notification with the same operation and model.
+        </p>
+      </subsection>
+
       <subsection name="Example">
         <p>
-          A PluginEvent is created using three parameters: the plugin responsable for the event, the type of event, and
-          the JcrNodeModel representing the affected node in the repository. Using the PluginManager, the event can
-          then be broadcasted. For this, an AjaxRequestTarget is necessary, so the receiving plugins can update
-          their view if necessary.
+          As an example, here is how to send a request from a Wicket entry point:
         </p>
         <source>
-<![CDATA[PluginEvent event = new PluginEvent(this, JcrEvent.NEW_MODEL, getNodeModel());
-getPluginManager().update(target, event);]]>
+<![CDATA[public void onClick(AjaxRequestTarget target) {
+    // Create a request to select the model for this plugin
+    PluginDescriptor descriptor = getDescriptor();
+    Channel incoming = descriptor.getIncoming();
+    Request request = incoming.createRequest("select", getPluginModel());
+    incoming.send(request);
+
+    // Render plugins that have been updated
+    MessageContext context = request.getContext();
+    context.apply(target);
+}]]>
         </source>
         <p>
-          To let a plugin react on an event, the update method needs to be implemented.
+          To handle notifications, the receive method should be overridden:
         </p>
         <source>
-<![CDATA[public void update(AjaxRequestTarget target, PluginEvent event) {
-    // get the JcrNodeModel from the event
-    JcrNodeModel newModel = event.getNodeModel(JcrEvent.NEW_MODEL);
+<![CDATA[public void receive(Notification notification) {
+    if ("select".equals(notification.getOperation())) {
+        // Create a new JcrNodeModel
+        JcrNodeModel model = new JcrNodeModel(notification.getModel());
 
-    // update the plugin's model
-    if (newModel != null) {
-        setNodeModel(newModel);
+        // Select the new model if it differs from the current one
+        if (!model.equals(getPluginModel())) {
+            setPluginModel(model);
+
+            // rerender the plugin
+            notification.getContext().addRefresh(this);
+        }
     }
 
-    // update the plugin's view
-    if (target != null && findPage() != null) {
-        target.addComponent(this);
-    }
+    // forward the notification to children
+    super.receive(notification);
 }]]>
         </source>
       </subsection>
 
-      <subsection name="Configuration">
-        <p>
-          Incoming and outgoing channels are configured in the frontend plugin configuration, which
-          is typically stored in the repository. Two multivalue properties, "hippo:incoming" and
-          "hippo:outgoing", list the incoming and outgoing channels for a plugin.
-        </p>
-        <p>
-          Example:
-        </p>
-        <source>
-browserPlugin: [hippo:frontendplugin]
-  hippo:renderer: org.hippoecm.cmsprototype.frontend.plugins.foldertree.FolderTreePlugin
-  hippo:incoming: {browsing}
-  hippo:outcoming: {browsing, details}
-        </source>
-        <p>
-          The example above shows the configuration for a "browser plugin". In addition to the
-          "renderer" (the plugin class, FolderTreePlugin), the incoming and outgoing channels for this plugin
-          are specified. This plugin has one incoming channel ("browsing"), and two outgoing
-          channels ("browsing" and "details"). So this plugin broadcasts events on the "browsing" channel,
-          and it listens to the "browsing" channels as well. This means this plugin needs to react
-          on its own events (e.g. when a node in the tree is expanded, the view needs to be updated).
-          The second outgoing channel ("details") is very likely being listened to by some plugin(s)
-          showing details of the node selected in the tree. The browser plugin does not know this
-          however.
-        </p>
-        <p>
-          Note that the configuration is stored in the repository, so it can be edited using the
-          console frontend application.
-        </p>
-      </subsection>
-      -->
     </section>
 
   </body>
