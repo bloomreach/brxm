@@ -24,7 +24,8 @@
     <body>
         <section name="Workspace configuration">
             <p>
-                The Workspace element is used as a template for separate workspace configuration files created for each new workspace.
+                The Workspace element is used as a template for separate workspace configuration files created
+                for each new workspace.
                 Because of this the Workspace element is not interpreted directly from the repository
                 configuration file. Instead the workspace configuration template is first copied into the
                 workspace configuration file which is then interpreted to set up the configured workspace
@@ -32,8 +33,8 @@
                 file will not affect existing workspace configurations.
             </p>
             <p>
-                An example JackRabbit workspace configuration can be found at
-                <a href="http://jackrabbit.apache.org/doc/config.html#Workspace configuration">http://jackrabbit.apache.org/doc/config.html</a>.
+                An example JackRabbit workspace configuration can be found in the
+                <a href="http://jackrabbit.apache.org/doc/config.html#Workspace configuration">Jackrabbit documentation</a>.
                 Hippo Repository has a custom workspace configuration for enabling fast faceted navigation through
                 custom indexing. The main differences with a default JackRabbit workspace configuration are
                 the SearchIndex class and indexingConfigurationClass. See <a href="searchindex.html">Search Index configuration</a> for
@@ -59,6 +60,8 @@
 &lt;/Workspace&gt;
 </source>
             </subsection>
+
+<!-- commented out speculation on future functionality
             <p>
                 <b>Note:</b>
                 <br/>
@@ -70,6 +73,8 @@
                 by configuration in the repository itself.
                 See <a href="searchindex.html">Search Index</a> for further explanation.
             </p>
+-->
+
          </section>
     </body>
 </document>
