@@ -25,7 +25,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class HREPTWO280IssueTest extends FacetedNavigationAbstractTest {
+public class HREPTWO280Test extends FacetedNavigationAbstractTest {
 
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
@@ -43,27 +43,13 @@ public class HREPTWO280IssueTest extends FacetedNavigationAbstractTest {
         searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
         traverse(searchNode);
 
-        try {
-            session.getRootNode().getNode("navigation").remove();
-            System.gc();  // reproducability of correct result
-            session.save();
-            session.refresh(false);
-            session.getRootNode().getNode("documents").remove();
-            session.save();
-            session.refresh(false);
-            System.err.println("ISSUE HREPTWO-280 resolved (part 2, 3)");
-        } catch(NullPointerException ex) {
-            System.err.println("ISSUE HREPTWO-280 still present (part 2)");
-            System.err.println(ex.getMessage());
-            // ex.printStackTrace(System.err);
-        } catch(RepositoryException ex) {
-            System.err.println("ISSUE HREPTWO-280 still present (part 3)");
-            System.err.println(ex.getMessage());
-            // ex.printStackTrace(System.err);
-        } finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        }
+        session.getRootNode().getNode("navigation").remove();
+        // System.gc();  // reproducability of correct result
+        session.save();
+        session.refresh(false);
+        session.getRootNode().getNode("documents").remove();
+        session.save();
+        session.refresh(false);
 
         commonEnd();
     }
