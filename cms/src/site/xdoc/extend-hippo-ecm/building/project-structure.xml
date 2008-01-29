@@ -73,6 +73,7 @@ hippo-ecm                    Pom       hippo-ecm
 |   `-- war                  War       hippo-ecm-package-war
 |-- repository               Pom       hippo-ecm-repository
 |   |-- engine               Jar       hippo-ecm-repository-engine
+|   |-- connector            Jar       hippo-ecm-repository-connector
 |   `-- application          War       hippo-ecm-repository-application
 `-- tools                    Pom       hippo-ecm-tools
     |-- migration            Jar       hippo-ecm-tools-migration
@@ -83,7 +84,7 @@ hippo-ecm                    Pom       hippo-ecm
 
                 <section name="API">
                         <p>
-                                To be determined
+                                Hippo ECM specific extensions to the JCR API.
                         </p>
                         <source>
 |-- api                      Jar
@@ -97,6 +98,7 @@ hippo-ecm                    Pom       hippo-ecm
                         <source>
 |-- repository               Pom
 |   |-- engine               Jar       Repository core
+|   |-- connector            Jar       Repository connector
 |   `-- application          War       Minimal repository application, all other repository application projects are
                                        <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">'WAR overlays'</a> of this project.
                         </source>
@@ -132,6 +134,11 @@ hippo-ecm                    Pom       hippo-ecm
                                 for integration tests on the addon (plugged in a running repository
                                 and/or frontend server)
                         </p>
+                        <p>
+                                Even Hippo CMS itself is implemented as add-on. Frontend plugins specific
+                                to the CMS application are inside the cms-prototype add-on subproject.
+                          
+                        </p>
                         <source>
 |-- addon                    Pom       hippo-ecm-addon
 |   |-- reviewed-action      Pom       hippo-ecm-addon-reviewed-action
@@ -139,6 +146,9 @@ hippo-ecm                    Pom       hippo-ecm
 |   |   |-- frontend         Jar       hippo-ecm-addon-reviewed-action-frontend
 |   |   |-- repository       Jar       hippo-ecm-addon-reviewed-action-repository
 |   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test
+|   `-- cms-prototype        Pom       hippo-ecm-addon-cms-prototype
+|       |-- frontend         Jar       hippo-ecm-addon-cms-prototype-frontend
+|       `-- test             Jar       hippo-ecm-addon-cms-prototype-test
                         </source>
                 </section>
 
