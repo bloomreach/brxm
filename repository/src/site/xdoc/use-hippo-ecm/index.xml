@@ -28,7 +28,14 @@
           Hippo ECM provides a number of functionalities "out of the box". This section
           describes how to make use of those functionalities.
         </p>
-
+        <p>
+          Hippo Repository is built on top of
+          <a href="http://jackrabbit.apache.org/" title="Apache Jackrabbit">Apache Jackrabbit</a>.
+          Hippo Repository adds extra functionality to the default Jackrabbit distribution while
+          keeping full compliance with JCR 1.0
+          <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
+          The main added features are virtual nodes based on facets (metadata), access management, authorization and workflow.
+        </p>
         <ul>
           <li>
             <a href="facets/facetsearch.html">Facetsearch</a>
@@ -44,7 +51,9 @@
             - Define and automate business rules for your documents
           </li>
         </ul>
-
+        Combining facet selects and facet searches gives you an enormeous flexibility in exposing your 
+        data in endless possible ways. Every user could have her own desirable view of the data, obviously
+        automatically combined with their access rules!
       </section>
     </body>
 </document>
