@@ -36,7 +36,7 @@
         defined by their meta information. This results in virtual node trees
         providing a faceted navigation. See <a href="/hippo-ecm-trunk/target/site/integrate-hippo-ecm/example.html">here</a> for a ready to use demo project creating faceted navigation.
       </p>
-       <subsection name="Faceted navigation explained">
+       <subsection name="Faceted navigation explained: visual">
          <p>
          Suppose, you have the following physical documents structure (like on filesystem)
          </p>
@@ -61,7 +61,8 @@
  
          <p>So, for example, we have 4 Dogs, 3 Rabbits and 3 Horses. 3 small animals, 1 medium and 6 large ones. Some old and some young. Now, instead of 
          always browsing through the content like it is structured above, some people might want to have a navigation based on
-           the <b>type</b> of animal, then on <b>age</b>, and then on <b>size</b>. These people would have a navigation like below</p>
+           the <b>type</b> of animal, then on <b>age</b>, and then on <b>size</b>. Suppose you would make a facet search node called 'By-type-age-size'. These people would then 
+           have a navigation like below</p>
          <source>
  Folder                       Resulset
  ------------------------------------------------------------------------
