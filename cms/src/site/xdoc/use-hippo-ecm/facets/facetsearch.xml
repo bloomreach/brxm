@@ -40,143 +40,120 @@
          <p>
          Suppose, you have the following physical documents structure (like on filesystem)
          </p>
-         <ul>
-           <li>Pets
-             <ul>
-               <li>Dogs
-               <ul>
-                 <li>Dog1:
-                   <br/>
-                   - type:Dog<br/>
-                   - size:Large<br/>
-                   - age:Adult
-                 </li>
-                 <li>Dog2:
-                   <br/>
-                   - type:Dog<br/>
-                   - size:Medium<br/>
-                   - age:Young
-                 </li>
-               </ul>
-               </li>
-             </ul>
-             <ul>
-               <li>Rabbits<ul>
-                 <li>Rabbit1:
-                   <br/>
-                   - type:Rabbit<br/>
-                   - size:Large<br/>
-                   - age:Young
-                 </li>
-                 <li>Rabbit2:
-                   <br/>
-                   - type:Rabbit<br/>
-                   - size:Large<br/>
-                   - age:Old
-                 </li>
-                 <li>Rabbit3:
-                   <br/>
-                   - type:Rabbit<br/>
-                   - size:Small<br/>
-                   - age:Young
-                 </li>
-               </ul>
-               </li>
-             </ul>
-             <ul>
-               <li>Horse<ul>
-                 <li>Horse1:
-                   <br/>
-                   - type:Horse<br/>
-                   - size:Small<br/>
-                   - age:Young
-                 </li>
-                 <li>Horse2:
-                   <br/>
-                   - type:Horse<br/>
-                   - size:Large<br/>
-                   - age:Young
-                 </li>
-                 <li>Horse2:
-                   <br/>
-                   - type:Horse<br/>
-                   - size:Large<br/>
-                   - age:Old
-                 </li>
-               </ul>
-               </li>
-             </ul>
-           </li>
-         </ul>
-         <p>So, for example, we have 2 Dogs, 3 Rabbits and 3 Horses. 2 small animals, 1 medium and 5 large ones. Some old and some young. Now, instead of 
+         <source>
+ Folder                       Type      Size      Age
+ ------------------------------------------------------------------------
+ Pets                           
+ |-- Dogs                           
+ |   |-- dog1                 Dog       Large     Adult          
+ |   |-- dog2                 Dog       Medium    Adult       
+ |   |-- dog3                 Dog       Small     Young
+ |   `-- dog4                 Dog       Large     Adult
+ |-- Rabbits
+ |   |-- rabbit1              Rabbit    Large     Young
+ |   |-- rabbit2              Rabbit    Large	  Old
+ |   |-- rabbit3              Rabbit    Small     Young
+ `-- Horses
+     |-- horse1               Horse     Small     Young
+     |-- horse2               Horse     Large     Young
+     `-- horse3               Horse     Large     Old
+         </source>
+ 
+         <p>So, for example, we have 4 Dogs, 3 Rabbits and 3 Horses. 3 small animals, 1 medium and 6 large ones. Some old and some young. Now, instead of 
          always browsing through the content like it is structured above, some people might want to have a navigation based on
-           the type of animal, then on age, and then on size. These people would have a navigation like <code>navigation1</code></p>
+           the <b>type</b> of animal, then on <b>age</b>, and then on <b>size</b>. These people would have a navigation like below</p>
+         <source>
+ Folder                       Resulset
+ ------------------------------------------------------------------------
+ By-type-age-size                           
+ |-- Dogs (4)                 4 Dogs          
+ |   |-- Adult (3)            3 Dogs
+ |   |   |-- Large  (2)       2 Dogs
+ |   |   `-- Medium (1)       1 Dogs        
+ |   `-- Young (1)            1 Dog            
+ |       `-- Small  (1)       1 Dog        
+ |-- Rabbits (3)              3 Rabbits
+ |   |-- Old   (1)            1 Rabbit 
+ |   |   `-- Large (1)        1 Rabbit  
+ |   `-- Young (2)            2 Rabbits      
+ |       |-- Small (1)        1 Rabbit
+ |       `-- Large (1)        1 Rabbit       
+ `-- Horses (3)               3 Horses
+     |-- Old  (1)             1 Horse
+     |   `-- Large (1)        1 Horse
+     `-- Young(2)             2 Horses
+         |-- Large (1)        1 Horse
+         `-- Small (1)        1 Horse
+         </source>
          
-         <ul>
-           <li>Navigation 1
-             <ul>
-               <li>Dogs (2)
-                 <ul>
-                   <li>Adult (1)
-                     <ul>
-                       <li>Large (1)</li>
-                     </ul>
-                   </li>
-                   <li>Young (1)<ul>
-                     <li>Medium (1)</li>
-                   </ul>
-                   </li>
-                 </ul>
-               </li>
-               <li>Rabbits (3)
-                 <ul><li>...etc...</li></ul>
-               </li>
-               <li>Horses (3)
-                 <ul><li>...etc...</li></ul>
-               </li>
-             </ul>
-             </li>
-         </ul>
-         <p>But obviously, somebosy else, might want to navigate on size and then on type. He is not interested in age at all.
-           His navigation would look like <code>navigation2</code>:
+         <p>But obviously, somebosy else, might want to navigate on <b>size</b> and then on <b>type</b>. He is not interested in age at all.
+           His navigation would look like :
          </p>
-         <ul>
-           <li>Navigation 2
-             <ul>
-               <li> Large (5)
-                 <ul>
-                   <li>
-                     Dogs (1)
-                   </li>
-                   <li>
-                     Rabbit (2)
-                   </li>
-                   <li>
-                     Horse (2)
-                   </li>
-                 </ul>
-               </li>
-               <li> Medium (1)
-                 <ul><li>...etc..</li></ul>
-               </li>
-               <li>
-                 Small (2)
-                 <ul><li>...etc..</li></ul>
-               </li>
-             </ul>
-           </li>
-         </ul>
+         <source>
+ Folder                       Resulset
+ ------------------------------------------------------------------------
+ By-size-type                           
+ |-- Large (6)                2 Dogs, 2 Rabbits, 2 Horses          
+ |   |-- Dogs   (2)           2 Dogs 
+ |   |-- Horses (2)           2 Horses
+ |   `-- Rabbits(2)           2 Rabbits                 
+ |-- Medium (1)               1 Dog
+ |   |-- Dogs   (1)           1 Dog      
+ `-- Small (3)                1 Dog, 1 Rabbit, 1 Horse
+     |-- Dogs   (1)           1 Dog
+     |-- Horses (1)           1 Horse
+     `-- Rabbits(1)           1 Rabbit 
+         </source>
          <p>
-           Ofcourse, one and the same person can have many multiple facet navigations, for example,  
+           Ofcourse, one and the same person can have many multiple facet navigations, for example the two above combined:  
          </p>
-         <ul>
-           <li> ByTypeAgeSize
-             <ul><li>navigation 1<ul><li>...</li></ul></li></ul>
-           </li>
-           <li> BySizeType
-             <ul><li>navigation 2<ul><li>...</li></ul></li></ul>
-           </li>
-         </ul>
+         <source>
+ Folder                       Resulset
+ ------------------------------------------------------------------------
+ MyNavigation
+ |-- By-type-age-size                           
+ |   |-- Dogs (4)                 4 Dogs          
+ |   |   |-- Adult (3)            3 Dogs
+ |   |   |   |-- Large  (2)       2 Dogs
+ |   |   |   `-- Medium (1)       1 Dogs        
+ |   |   `-- Young (1)            1 Dog            
+ |   |       `-- Small  (1)       1 Dog        
+ |   |-- Rabbits (3)              3 Rabbits
+ |   |   |-- Old   (1)            1 Rabbit 
+ |   |   |   `-- Large (1)        1 Rabbit  
+ |   |   `-- Young (2)            2 Rabbits      
+ |   |       |-- Small (1)        1 Rabbit
+ |   |       `-- Large (1)        1 Rabbit       
+ |   `-- Horses (3)               3 Horses
+ |   |-- Old  (1)                 1 Horse
+ |   |   `-- Large (1)            1 Horse
+ |   `-- Young(2)                 2 Horses
+ |   |-- Large (1)                1 Horse
+ |   `-- Small (1)                1 Horse
+ `-- By-size-type
+     |-- Large (6)                2 Dogs, 2 Rabbits, 2 Horses          
+     |   |-- Dogs   (2)           2 Dogs 
+     |   |-- Horses (2)           2 Horses
+     |   `-- Rabbits(2)           2 Rabbits                 
+     |-- Medium (1)               1 Dog
+     |   |-- Dogs   (1)           1 Dog      
+     `-- Small (3)                1 Dog, 1 Rabbit, 1 Horse
+         |-- Dogs   (1)           1 Dog
+         |-- Horses (1)           1 Horse
+         `-- Rabbits(1)           1 Rabbit 
+         </source>
+         <p>
+           You see you can navigate the (possibly unstructured) content in multiple different structured ways, just how you would like
+           to navigate. Imagine booking an online air travel ticket in this way. Instead of the regular
+           dropdowns you are used to, and date fields, you just first say: I want to find tickets based on
+           'departure from location x, arrival at location y, fly on date, return at date, on price, on company'. So, I would just
+           see a navigation of folders with 'all locations' I can depart from, I choose 'London'. Then, below
+           London, I see all location I can fly to, I choose 'Amsterdam', then I see available dates, etc etc. You are 
+           narrowing down the number of results, always see how many results, and easily change a value by navigation through another folder.
+           <br/>
+           But, somebody else who might want to book a ticket as well, might be searching for tickets in a completely different way: 
+           He is a student, and he wants to leave from Londonm, tomorrow, cheapest price, and then the list of possible arrivals.   
+         </p>
        </subsection>
        
       
