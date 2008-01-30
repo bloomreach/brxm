@@ -57,8 +57,8 @@ program code (workflows) from untrusted code (front-end).
 <subsection name="Workflow model">
 
 <p>
-Hippo OCM workflow is defined as a procedure to transform part of the
-information in the repository into an reprocessed form.
+Hippo ECM workflow is defined as a procedure to transform part of the
+information in the repository into a reprocessed form.
 </p>
 <ol>
 <li>On which information to perform the procedure is indicated by a calling
@@ -93,7 +93,7 @@ A workflow is available to other modules and to the front-end, as a Java
 interface with methods.  The implementation of a workflow is provided by a
 Java class implementing the interface.  The individual workflow steps are
 the methods of the interface that defines the workflow.
-Invoking a workflow step therefor maps directly to calling the method of the
+Invoking a workflow step therefore maps directly to calling the method of the
 workflow Java interface.
 </p>
 
@@ -130,8 +130,13 @@ expected.
 </subsection>
 
 
+<!--
 <subsection name="Configuring the workflow">
+  <p>
+    TODO
+  </p>
 </subsection>
+-->
 
 <subsection name="Reviewed actions workflow">
 
@@ -143,20 +148,27 @@ actions workflow.
 <p>
 At this time a sample application that comes in the SVN source in the
 directory <code>application/cms-prototype</code> is pre-configured with the
-add-on.  Building using maven with goal package in the directories
+add-on.
+<a href="../../extend-hippo-ecm/building/maven.html">Building using Maven</a>
+with goal 'package' in the directories
 <code>application/cms-prototype/repository</code> and
 <code>application/cms-prototype/frontend</code> results in two WAR packages
-which can be deployed in your application or can be run using Jetty (see
-FIXME).
-In the maven repository at FIXME is a pre-built WAR of both front-end and
+which can be
+<a href="../../run-hippo-ecm/deploying-the-wars.html">deployed in your application</a>
+or can be <a href="../../run-hippo-ecm/index.html">run using Jetty</a>.
+<!-- FIXME
+In the Maven repository at FIXME is a pre-built WAR of both front-end and
 repository which include the pre-configured reviewed actions workflow.
+-->
 </p>
 
+<!-- FIXME
 <p>
 By M3, you can use the generic downloadable WAR, and upload the JAR package at
 a special location in the repository.  The repository will auto-configure the
 workflow.
 </p>
+-->
 
 </subsection>
 

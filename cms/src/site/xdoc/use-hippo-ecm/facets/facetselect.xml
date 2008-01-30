@@ -24,21 +24,22 @@
   <body>
   
     <section name="Faceted selection">
-      Note:
-      <source>
-         Faceted selection and faceted reference are used intertwined and refer to the exact same thing.
-      </source>
       <p>
-        Faceted selection gives you the possibility to browse through your filtered hierarchical physical content (and virtual content, but we'll keep this
-        for advanced content modelling). The filter is based on facets (metadata) on documents. An example would be, that you only want to 
-        show documents which are english and published. By creating some smart faceted selections, you can
-        very easily create websites which are multilingual, and have a preview/live or any other state in between.
-        Exposing your DMS with faceted selection and authorization (and even facet search combined!) gives you a lot of 
-        flexibility in exposing your (unstructured) physical content in many different (virtual) structured ways.
+        <i><b>Note:</b> Faceted selection and faceted reference are used intertwined and refer to the exact same thing.</i>
+      </p>
+      <p>
+        Faceted selection gives you the possibility to browse through your filtered hierarchical physical content
+        (and virtual content, but we'll keep this for advanced content modelling). The filter is based on facets 
+        (metadata) on documents. An example would be, that you only want to show documents which are English and 
+        published. By creating some smart faceted selections, you can very easily create websites which are 
+        multilingual, and have "preview" and "live" sites (or any other state in between). Exposing your DMS with faceted 
+        selection and authorization (and even facet search combined!) gives you a lot of flexibility in exposing 
+        your (unstructured) physical content in many different (virtual) structured ways.
       </p>
       <subsection name="Faceted selection explained: visual">
         <p>
-        Suppose we have the same hierachical repository data as with the <a href="/site/use-hippo-ecm/facets/facetsearch.html">facet search</a>, so:
+          Suppose we have the same hierachical repository data as in the 
+          <a href="facetsearch.html#Faceted navigation explained: visual">facet search example</a>:
         </p>
         <source>
 Folder                       Type      Size      Age
@@ -59,9 +60,9 @@ Pets
     `-- horse3               Horse     Large     Old
         </source>  
         <p>
-           Now, suppose, I want to browse through the data, but a filter applied to only show <code>large animals</code>. This is
+           Now, suppose, you want to browse through the data, but with a filter applied to only show <i>large animals</i>. This is
            realized by simply creating a facet select node that indicates to only show animals which are of size 'large'. Suppose 
-           that my facet select node is called 'IsLarge', then my navigation would look like: 
+           that the facet select node is called 'IsLarge', then the navigation would look like: 
         </p>
           <source>
 Folder                       Type      Size      Age
@@ -78,7 +79,10 @@ IsLarge
     |-- horse2               Horse     Large     Young
     `-- horse3               Horse     Large     Old
           </source>            
-      <p>I might also have a facet select node which filters such that I get 'large' and 'young' only. Then, my navigation would be</p>
+      <p>
+        You might also have a facet select node which filters such that I get 'large' and 'young' only.
+        Then, the navigation would be:
+      </p>
         <source>
 Folder                       Type      Size      Age
 ------------------------------------------------------------------------
@@ -90,9 +94,11 @@ IsLargeAndYoung
         `-- horse2           Horse     Large     Young
         </source>
         
-      <p>Obviously you can have as many facet select nodes as you want. What we did not yet explain, is that
-      you do not need to have the facet select starting filtering on the root node. You can also make a facet select node, that
-      filters for only 'large' animals, and has starting point /Pets/Dogs. This would result in a navigation like:</p>
+      <p>
+        You can have as many facet select nodes as you want.
+        You do not need to have the facet select starting filtering on the root node. You can also make a facet select node, that
+        filters for only 'large' animals, and has starting point <code>/Pets/Dogs</code>. This would result in a navigation like:
+      </p>
       <source>
 Folder                       Type      Size      Age
 ------------------------------------------------------------------------
@@ -104,10 +110,12 @@ IsLarge
           You can even have a facet select, which filters a hierarchical tree which contains in turn another facet select. So, you can have facet selects in facet selects. 
           Instead of a facetselect in a facetselect, you can have a <a href="/site/use-hippo-ecm/facets/facetsearch.html">facetsearch</a> node <b>inside</b> the result of a facetselect node!
           From this facetsearch node on, faceted navigation will be displayed.
-          <br/>
+        </p>
+        <p>
           By understanding the possibilities, you can model endless combinations of structured data resulting from unstructered data. Obviously, under water all documents
           are being checked wether the user is authorized to see the document. 
-          <br/>
+        </p>
+        <p>
           Take a look at advanced content modelling to learn about possibilities and use cases. Note 
           that you might want to look at it twice because it is not trivial. In the end, understanding
           modelling of data on unstructured data will give you an enormeous freedom and enables you developing 

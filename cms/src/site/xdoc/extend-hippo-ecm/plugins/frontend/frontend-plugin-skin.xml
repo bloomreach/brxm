@@ -24,7 +24,7 @@
   <head>
   </head>
   <body>
-    <section name="Front-end skin customization">
+    <section name="Frontend skin customization">
 
       <p>
         The layout on the screen, the colors and formatting used, and things like the
@@ -64,9 +64,9 @@
       <p>
         The first thing to do when creating a copy of the skin project is to change
         the name of the artifact in the <code>pom.xml</code> (when building using
-        maven) and in the <code>src/main/webapp/WEB-INF/web.xml</code> (or
+        Maven) and in the <code>src/main/webapp/WEB-INF/web.xml</code> (or
         WEB-INF/web.xml when modifying the resulting WAR).  Do <em>not</em> use the
-        same package name as the one as the default.  The resulting WAR should have a
+        same package name as the default.  The resulting WAR should have a
         different name and different description in the WEB-INF/web.xml.
       </p>
 
@@ -107,7 +107,7 @@
             front-end.  Together with this Java program code, a HTML fragment in given.
             These HTML fragments are merged into a single HTML file.  These HTML fragment
             files are not defined on a per-page basis, but on the class of the item used.
-            Therefor a change to the HTML file representing, for instance a kind of
+            Therefore a change to the HTML file representing, for instance a kind of
             button, is reflected in all buttons of that kind used everywhere.<br/>
 
             By being able to override the HTML for all items, you are able to further customize
@@ -118,7 +118,8 @@
 
       <p>
         To override HTML files, you need to identify which HTML fragment file you need
-        to override.  This depends on the add-on you are using and which 
+        to override.  This depends on the add-on you are using and which frontend plugin
+        delivers that particular HTML fragment.
       </p>
 
       <p>
@@ -147,12 +148,10 @@
       </p>
 
       <p>
-        Within the skin project, the location of this HTML fragment should be the
-        location
+        Within the skin project, the location of this HTML fragment should be 
         <code>src/main/webapp/org/hippoecm/cmsprototype/frontend/plugins/tasklist/TasklistPlugin.html</code>
         resulting in the final WAR project as file
         <code>org/hippoecm/cmsprototype/frontend/plugins/tasklist/TasklistPlugin.html</code>.
-        of the root of the WAR file.
       </p>
 
       <p>
@@ -189,7 +188,7 @@
         The end application is a packaging of the core system as well as multiple
         add-ons.  These add-ons are either WAR or JARs which are merged or put
         together in an EAR.
-        Please refer to <a href="/extend-hippo-ecm/building/index.html">the building
+        Please refer to the <a href="../../building/index.html">building
         section</a> on how to compose your end application by adding add-ons to your
         application.
       </p>

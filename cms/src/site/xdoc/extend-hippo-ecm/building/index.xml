@@ -26,8 +26,9 @@
 
         <p>
           Getting the Hippo ECM source code and building it is easy. Hippo ECM
-          uses a Maven build environment, but it is also possible to use
-          a Java IDE like Eclipse or Netbeans.
+          uses a <a href="http://maven.apache.org/">Maven</a> build environment,
+          but it is also possible to use a Java IDE like <a href="http://www.eclipse.org/">Eclipse</a>
+          or <a href="http://www.netbeans.org/">Netbeans</a>.
         </p>
 
         <ul>

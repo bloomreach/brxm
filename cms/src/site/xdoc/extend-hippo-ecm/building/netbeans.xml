@@ -35,11 +35,11 @@
         <section name="Configure Netbeans">
             <subsection name="Install the Subversion Plugin">
                 <ol>
-                    <li>Tools -&gt; Update Center</li>
-                    <li>Select Netbeans Update Center</li>
-                    <li>Continue to next screen</li>
-                    <li>Select the Subversion feature</li>
-                    <li>Finish the wizard</li>
+                    <li><p>Tools -&gt; Update Center</p></li>
+                    <li><p>Select Netbeans Update Center</p></li>
+                    <li><p>Continue to next screen</p></li>
+                    <li><p>Select the Subversion feature</p></li>
+                    <li><p>Finish the wizard</p></li>
                 </ol>
             </subsection>
 
@@ -47,32 +47,32 @@
                 <p>This section assumes that you're using Netbeans 5.5.  In version 6.0 the plugin is available
                     as a feature in the Netbeans Update Center.</p>
                 <ol>
-                    <li>Select "Tools &gt; Options" menu item, click the "Advanced Options" button</li>
-                    <li>Right Click on "IDE Configuration &gt; System &gt; Autoupdate Types", select "new &gt; General Update Center"</li>
-                    <li>Enter "Mevenide2 Update Center" for the object name</li>
-                    <li>Copy/paste the following URL in "Server URL" field :
-                        <a href="http://mevenide.codehaus.org/nbm_release2/NBM_AutoUpdate.xml">http://mevenide.codehaus.org/nbm_release2/NBM_AutoUpdate.xml</a></li>
-                    <li>Select "Tools &gt; Update Center" menu item and select "Mevenide2 Update Center"</li>
-                    <li>Click the "addAll &gt;&gt;" modules button</li>
+                    <li><p>Select "Tools &gt; Options" menu item, click the "Advanced Options" button</p></li>
+                    <li><p>Right Click on "IDE Configuration &gt; System &gt; Autoupdate Types", select "new &gt; General Update Center"</p></li>
+                    <li><p>Enter "Mevenide2 Update Center" for the object name</p></li>
+                    <li><p>Copy/paste the following URL in "Server URL" field :
+                        <a href="http://mevenide.codehaus.org/nbm_release2/NBM_AutoUpdate.xml">http://mevenide.codehaus.org/nbm_release2/NBM_AutoUpdate.xml</a></p></li>
+                    <li><p>Select "Tools &gt; Update Center" menu item and select "Mevenide2 Update Center"</p></li>
+                    <li><p>Click the "addAll &gt;&gt;" modules button</p></li>
                 </ol>
             </subsection>
         </section>
 
         <section name="Run / Debug">
             <p>
-                Projects that produce a WAR can be run inside the tomcat container that is included with Netbeans.  If you want
+                Projects that produce a WAR can be run inside the Tomcat container included with Netbeans.  If you want
                 to run several projects concurrently, each should get a separate context path.  You can e.g. run the frontend
                 application and the repository inside the same container.  This can be achieved as [project right-click] -&gt; Properties
                 -&gt; Run
             </p>
             <p>
-                The netbeans memory limit may should be set to a reasonable size (say, 512Mb) to run the included tomcat container
+                The Netbeans memory limit should be set to a reasonable size (say, 512Mb) to run the included Tomcat container
                 comfortably.  This is specified by <code>-J-Xmx512m</code> in the netbeans_default_options parameter
-                in <code>etc/netbeans.conf</code>, found under the netbeans installation.
+                in <code>etc/netbeans.conf</code>, found under the Netbeans installation.
             </p>
             <p>
                 <b>Note:</b> project dependencies are not automatically handled.  I.e. if a source file changes, all projects that use the
-                containing package must be rebuilt in the correct order.  (maven itself has the same limitation)
+                containing package must be rebuilt in the correct order (Maven itself has the same limitation).
             </p>
         </section>
 

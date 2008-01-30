@@ -28,7 +28,7 @@
                 <p>
                     A typical application that interfaces with Hippo Repository most likely
                     has an architecture like the one depicted above. The application consists
-                    of a custom software component and a JCR api for communicating in a standarized way with
+                    of a custom software component and a JCR API for communicating in a standarized way with
                     Hippo Repository. This makes it extremely simple to write an application that operates on the
                     content repository. All you have to know is where to get a repository instance and
                     how to manipulate a JCR tree, which has a very self explanatory interface. You'll be
