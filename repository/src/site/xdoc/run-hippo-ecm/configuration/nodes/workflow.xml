@@ -27,7 +27,7 @@
 
 <p>
 Workflows are configured by specifying how the workflow can be accessed and
-the workflow workflow is applicable.  This definition is stored in the
+how the workflow is applicable.  This definition is stored in the
 repository itself.
 </p>
 
@@ -76,10 +76,9 @@ means that you should just add the definition shipped with a workflow at the loc
 </source>
 
 <p>
-Only a single category at this time, with the name <code>workflowPlugin</code>
-is in use by the front-end application at this time.
-Note the category name <code>workflowPlugin</code> should be changed before
-M3.
+Only a single category, with the name <code>workflowPlugin</code>
+is in use by the supplied Hippo CMS application.
+<!-- FIXME Note the category name <code>workflowPlugin</code> should be changed before M3. -->
 </p>
 
 <p>

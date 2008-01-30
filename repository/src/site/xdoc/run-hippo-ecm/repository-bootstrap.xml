@@ -121,14 +121,21 @@
         </p>
 
         <p>
-          At this time, the repository will only load the new features at start-up time.
+          The repository will only load the new features at start-up time.
           It is therefore required that you stop and restart the repository server.
-          This is scheduled to be fixed for M3.
+          <!-- This is scheduled to be fixed for M3. -->
         </p>
 
       </subsection>
 
       <subsection name="Example:">
+
+        <p>
+          This is the programmatic example how the new namespace "demo" is defined with
+          address "http://www.revolutionware.org/nt/1.0". Subsequently the repository
+          will try to access the resource "nodetypes.cnd" which should be available on
+          the classpath and load the node type definitions from this file.
+        </p>
 
         <source>
 Session session = ...;
@@ -142,23 +149,16 @@ session.save();
 session.getRootNode().addNode("test", "demo:mynodetype");
         </source>
 
-
-        <p>
-          This is the programmatic example how the new namespace "demo" is defined with
-          address "http://www.revolutionware.org/nt/1.0". Subsequently the repository
-          will try to access the resource "nodetypes.cnd" which should be available on
-          the classpath and load the node type definitions from this file.
-        </p>
-
         <p>
           You can also use a front-end to create the node and properties.
         </p>
 
       </subsection>
 
-      <subsection name="Building package which build in bootstrap procedures">
+      <subsection name="Building package with built-in bootstrap procedures">
 
         <p>
+          <!-- FIXME outdated? -->
           To automate the procedure of initializing modules, you can add the content to
           <a href="configuration/configuration.html">configuration.xml</a>.
           At this time, there can be only a single configuration.xml which is packaged
@@ -166,6 +166,7 @@ session.getRootNode().addNode("test", "demo:mynodetype");
         </p>
 
         <p>
+          <!-- FIXME outdated? -->
           Therefor if you want a repository to have the plugins automatically available,
           it is required to rebuild the repository in a custom project, such that the
           <a href="configuration/configuration.html">configuration.xml</a> can be overridden.

@@ -31,10 +31,13 @@
       </p>
       <p>
         Hippo Repository supports a faceted representation of physical
-        nodes. These representations are again exposed as 'normal' JCR nodes (according jsr-170 specification), and
+        nodes. These representations are again exposed as 'normal' JCR nodes (according to JSR-170 specification), and
         can be used to represent all kinds of data in all kinds of different structures purely
         defined by their meta information. This results in virtual node trees
-        providing a faceted navigation. See <a href="/hippo-ecm-trunk/target/site/integrate-hippo-ecm/example.html">here</a> for a ready to use demo project creating faceted navigation.
+        providing a faceted navigation. See the
+        <a href="../../integrate-hippo-ecm/example.html">example</a> under 
+        <a href="../../integrate-hippo-ecm/index.html">Integrating Hippo ECM</a>
+        for a ready to use demo project creating faceted navigation.
       </p>
        <subsection name="Faceted navigation explained: visual">
          <p>
@@ -87,7 +90,7 @@
          `-- Small (1)        1 Horse
          </source>
          
-         <p>But obviously, somebosy else, might want to navigate on <b>size</b> and then on <b>type</b>. He is not interested in age at all.
+         <p>However, someone else might want to navigate on <b>size</b> and then on <b>type</b>. He is not interested in age at all.
            His navigation would look like :
          </p>
          <source>
@@ -106,7 +109,7 @@
      `-- Rabbits(1)           1 Rabbit 
          </source>
          <p>
-           Ofcourse, one and the same person can have many multiple facet navigations, for example the two above combined:  
+           One and the same person can have many multiple faceted navigations, for example the two above combined:  
          </p>
          <source>
  Folder                       Resulset
@@ -144,16 +147,22 @@
          `-- Rabbits(1)           1 Rabbit 
          </source>
          <p>
-           You see you can navigate the (possibly unstructured) content in multiple different structured ways, just how you would like
-           to navigate. Imagine booking an online air travel ticket in this way. Instead of the regular
-           dropdowns you are used to, and date fields, you just first say: I want to find tickets based on
-           'departure from location x, arrival at location y, fly on date, return at date, on price, on company'. So, I would just
+           So you can navigate the (possibly unstructured) content in multiple different structured ways, just how you would like
+           to navigate. 
+         </p>  
+         <p>  
+           As another example, imagine booking an online air travel ticket in this way. Instead of the regular
+           dropdowns you are used to, and date fields, you say: I want to find tickets based on
+           'departure from location x, arrival at location y, fly on date, return at date, on price, on company'. You would
            see a navigation of folders with 'all locations' I can depart from, I choose 'London'. Then, below
            London, I see all location I can fly to, I choose 'Amsterdam', then I see available dates, etc etc. You are 
-           narrowing down the number of results, always see how many results, and easily change a value by navigation through another folder.
-           <br/>
-           But, somebody else who might want to book a ticket as well, might be searching for tickets in a completely different way: 
-           He is a student, and he wants to leave from Londonm, tomorrow, cheapest price, and then the list of possible arrivals.   
+           narrowing down the number of results, always see how many results, and easily change a value by navigation through
+           another folder.
+         </p>
+         <p>
+           Someone else who might want to book a ticket as well, might be searching for tickets in a completely different way: 
+           He is a student, and he wants to leave from London, tomorrow, cheapest price, and then the list of possible arrivals.
+           All this is possible through faceted navigation.   
          </p>
        </subsection>
        
@@ -184,20 +193,15 @@
         </ul>
       </subsection>
 
-      <!--
-      <subsection name="Example">
-
-      </subsection>
-      -->
-
       <subsection name="Screencast">
         <p>
-          A screenshot showing off the faceted navigation features can be found on Arj&#233; Cahn's blog
-          posting 11/09/2007 with embedded screencast:<br />
-          <a href="http://blogs.hippo.nl/arje/2007/09/status_update_defining_facets.html">
-            <img src="../../images/facets-screenshot.jpg" width="421" height="410" alt="Facets screenshot" />
-          </a>
+          A screencast demonstrating the faceted navigation features of Hippo ECM can be found in Arj&#233; Cahn's blog
+          post <a href="http://blogs.hippo.nl/arje/2007/09/status_update_defining_facets.html">Developers update:
+          Defining facets in Hippo Repository 2.0</a>. 
         </p>
+        <a href="http://blogs.hippo.nl/arje/2007/09/10/Faceted first demo 2.camrec.html">
+          <img src="../../images/facets-screenshot.jpg" width="421" height="410" alt="Facets screenshot" />
+        </a>
       </subsection>
 
     </section>

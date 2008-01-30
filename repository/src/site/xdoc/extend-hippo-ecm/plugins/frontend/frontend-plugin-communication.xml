@@ -39,17 +39,23 @@
 
         <ul>
           <li>
-            "The selected node": a JcrNodeModel that identifies a node in the repository.  Many plugins use a
-            model of this type, e.g. in the browser or editor perspective.  In the CMS configuration, these
-            perspectives handle requests to change this selection.
+            <p>
+              "The selected node": a JcrNodeModel that identifies a node in the repository.  Many plugins use a
+              model of this type, e.g. in the browser or editor perspective.  In the CMS configuration, these
+              perspectives handle requests to change this selection.
+            </p>
           </li>
           <li>
-            "The selected tab": one of the tabs that is managed by the TabsPlugin.  The TabsPlugin updates this
-            model when one of the perspectives requests focus.
+            <p>
+              "The selected tab": one of the tabs that is managed by the TabsPlugin.  The TabsPlugin updates this
+              model when one of the perspectives requests focus.
+            </p>
           </li>
           <li>
-            "The jcr cache": a JcrTreeModel that reflects the hierarchy of nodes in the repository in the frontend.
-            As this model changes when nodes are added or removed, the cached hierarchy is flushed and re-read.
+            <p>
+              "The JCR cache": a JcrTreeModel that reflects the hierarchy of nodes in the repository in the frontend.
+              As this model changes when nodes are added or removed, the cached hierarchy is flushed and re-read.
+            </p>
           </li>
         </ul>
       </subsection>
@@ -63,14 +69,18 @@
 
         <ul>
           <li>
-            <em>Requests</em>: When a plugin wishes to change a model that is shared with other plugins, it must
-            send a request to its parent plugin.  If the parent does not control the model, it should forward the
-            request further up the hierarchy.
+            <p>
+              <em>Requests</em>: When a plugin wishes to change a model that is shared with other plugins, it must
+              send a request to its parent plugin.  If the parent does not control the model, it should forward the
+              request further up the hierarchy.
+            </p>
           </li>
           <li>
-            <em>Notifications</em>: these messages are received through the channel that connects a plugin with its
-            parent.  They are sent when a model changes and the plugin should update its copy of the model.  The
-            message should be forwarded to the children of the plugin, so that they can take action as well.
+            <p>
+              <em>Notifications</em>: these messages are received through the channel that connects a plugin with its
+              parent.  They are sent when a model changes and the plugin should update its copy of the model.  The
+              message should be forwarded to the children of the plugin, so that they can take action as well.
+            </p>
           </li>
         </ul>
 
@@ -89,11 +99,11 @@
         </p>
 
         <ul>
-          <li>edit: the associated node should be opened in an editor</li>
-          <li>browse: the node should be shown in a browser</li>
-          <li>select: the associated node should be selected</li>
-          <li>flush: caches of JCR nodes under the node in the message should be flushed</li>
-          <li>focus: the associated plugin should receive focus</li>
+          <li><p>edit: the associated node should be opened in an editor</p></li>
+          <li><p>browse: the node should be shown in a browser</p></li>
+          <li><p>select: the associated node should be selected</p></li>
+          <li><p>flush: caches of JCR nodes under the node in the message should be flushed</p></li>
+          <li><p>focus: the associated plugin should receive focus</p></li>
         </ul>
       </subsection>
 

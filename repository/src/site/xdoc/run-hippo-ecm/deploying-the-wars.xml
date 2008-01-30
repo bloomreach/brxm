@@ -26,9 +26,9 @@
 
             <subsection name="Obtain the packaged product">
               <p>
-                Hippo ECM is still under development, and therefor there are no released packages available at
+                Hippo ECM is still under development, and therefore there are no released packages available at
                 this time.  You can either build the packages yourself using a
-                <a href="../extend-hippo-ecm/building/maven.html">maven build</a>.  Or you can download a
+                <a href="../extend-hippo-ecm/building/maven.html">Maven build</a>.  Or you can download a
                 current snapshot version from:
               </p>
 <source>
@@ -39,6 +39,7 @@ http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package/2.01.00-SNA
             <subsection name="Application Server">
                 <p>
                   Start and configure your Application Server.  The procedure to start and configure 
+                  depends on your application server environment.
                 </p>
             </subsection>
 
@@ -60,8 +61,9 @@ http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package/2.01.00-SNA
                   server, you can proceed with deploying the EAR in the application server.  This procedure
                   depends on the application server.  Hippo ECM does not require any special application
                   dependent deployment procedure, nor does it dictate which application server environment
-                  is required.  As example we provide the procedure for GlassFish.  Although the procedure
-                  is similar for other application servers, it does differ and we need to refer the
+                  is required.  As example we provide the procedure for
+                  <a href="https://glassfish.dev.java.net/">GlassFish</a>. Although the procedure
+                  is similar for other application servers, it does differ, so check the
                   documentation of your application server.
                 </p>
                 <p>
@@ -75,7 +77,7 @@ http://localhost:4848/
                 <p>
                   Login using the username and password of the administrator you had selected during
                   installation (default username is <code>admin</code> and default password is
-                  <code>adminadmin</code>
+                  <code>adminadmin</code>.
                 </p>
                 <p>
                   Select in the left pane &quot;Enterprise applications&quot;
@@ -98,8 +100,8 @@ http://localhost:4848/
 http://localhost:8080/
 </source>
                 <p>
-                  The EAR contains both the Hippo CMS as well as the Hippo Repository.  You can also install
-                  individual WARs, or multiple EARs within each EAR only a repository or only an CMS.  This is
+                  The EAR contains both Hippo CMS and Hippo Repository.  You can also install
+                  individual WARs, or multiple EARs within each EAR only a repository or only a CMS.  This is
                   a more advanced setup which is supported but requires a custom packaging.
                 </p>
 
