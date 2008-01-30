@@ -63,27 +63,25 @@
 
         <subsection name="Build Hippo ECM and deploy using Maven and Jetty">
 
-        <subsection name="Checkout the sources">
+          <p>Checkout the sources:</p>
 <source>
 ~/> svn co https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
 </source>
-        </subsection>
 
-        <subsection name="Build Hippo ECM">
+          <p>Build Hippo ECM:</p>
 <source>
 ~/> cd hippo-ecm
 ~/hippo-ecm> mvn install
 </source>
-        </subsection>
 
-        <subsection name="Run Hippo ECM">
+          <p>Run Hippo ECM:</p>
 <source>
 ~/hippo-ecm> cd package/war
 ~/hippo-ecm/package/war> mvn clean jetty:run-war
 </source>
-        <p>
-          Finally, direct your browser to <a href="http://localhost:8080/">http://localhost:8080/</a>.
-        </p>
+          <p>
+            Finally, direct your browser to <a href="http://localhost:8080/">http://localhost:8080/</a>.
+          </p>
         </subsection>
 
         <subsection name="Build Hippo ECM and deploy in application container">
@@ -104,8 +102,7 @@
 <source>
 asadmin deploy package/ear/target/hippo-ecm-package-ear-2.01.00-dev.ear
 </source>
-
-      </section>
-
-    </body>
+      </subsection>
+    </section>
+  </body>
 </document>
