@@ -22,6 +22,52 @@
         <title>Repository Plugins</title>
     </properties>
     <body>
-      <section name="Repository Plugins"></section>
+      <section name="Repository Plugins">
+
+The repository can be extended with additional functionality in a number of
+explicit ways.  It allows the addition of:
+
+<ul>
+<li><a href="../../../run-hippo-ecm/repository-bootstrap.html">Default content,
+pre-defining a namespace, and node-types</a>;</li>
+<li><a href="workflow.html">New types of workflows</a>;</li>
+<li>Mirroring of external data in the repository (not yet available as API).</li>
+</ul>
+
+<p>
+These repository plugins are add-ons for Hippo ECM and can be built without
+having the source available of the Hippo ECM.  Building the add-on should
+result in a self-contained JAR file which is placed in the classpath of the
+repository.  If you have a running repository, you have the option of
+uploading the plugin in a special location in the repository which is also
+interpreted to be part of the classpath.
+</p>
+
+<p>
+However in many cases you want to package your add-on along with a clean
+repository such it can be deployed as is and can run out of the box.  If your
+repository is packages as an EAR (possibly along with an CMS) then just add
+the JAR containing your plugin to the EAR:
+</p>
+
+<source>
+jar -uf hippo-ecm-package-ear-2.01.00.ear your-plugin.jar
+</source>
+
+<p>
+If you build your repository or combination of repository with CMS, then add
+the plugin JAR to repackage the WAR and add the plugin to the
+<code>WEB-INF/lib</code> directory.
+</p>
+
+<blockquote>
+Plugins for the repository are developed <em>independently</em> from the repository.
+</blockquote>
+
+<blockquote>
+A plugin should be packaged as a JAR and can be added to the repository.
+</blockquote>
+
+      </section>
     </body>
 </document>
