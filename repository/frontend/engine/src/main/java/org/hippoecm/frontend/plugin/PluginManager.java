@@ -15,11 +15,11 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
+import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +29,11 @@ public class PluginManager implements IClusterable {
     static final Logger log = LoggerFactory.getLogger(PluginManager.class);
 
     private PluginConfig pluginConfig;
+    private TemplateEngine templateEngine;
 
-    public PluginManager(PluginConfig pluginConfig) {
+    public PluginManager(PluginConfig pluginConfig, TemplateConfig templateConfig) {
         this.pluginConfig = pluginConfig;
+        this.templateEngine = new TemplateEngine(templateConfig, this);
     }
 
     public PluginConfig getPluginConfig() {
@@ -40,5 +42,9 @@ public class PluginManager implements IClusterable {
 
     public ChannelFactory getChannelFactory() {
         return pluginConfig.getChannelFactory();
+    }
+    
+    public TemplateEngine getTemplateEngine() {
+        return templateEngine;
     }
 }

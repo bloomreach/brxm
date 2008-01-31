@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,8 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.channel.Channel;
 
-public class PluginDescriptor implements IClusterable {
-    private static final long serialVersionUID = 1L;
+public class PluginDescriptor implements IClusterable, Cloneable {
+    private static final long serialVersionUID = 1L;	
 
     private String pluginId;
     private String wicketId;
@@ -43,6 +44,32 @@ public class PluginDescriptor implements IClusterable {
         this.className = className;
         this.outgoing = outgoing;
         parameters = new HashMap<String, List<String>>();
+    }
+
+    public PluginDescriptor(Map<String, Object> map, Channel bottom) {
+        this.pluginId = (String) map.get("pluginId");
+        this.wicketId = (String) map.get("wicketId");
+        this.className = (String) map.get("className");
+        this.parameters = (Map<String, List<String>>) map.get("parameters");
+        this.outgoing = bottom;
+    }
+
+    public PluginDescriptor clone() {
+        try {
+            return (PluginDescriptor) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            // cannot occur
+        }
+        return null;
+    }
+
+    public Map<String, Object> getMapRepresentation() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("pluginId", pluginId);
+        map.put("wicketId", wicketId);
+        map.put("className", className);
+        map.put("parameters", parameters);
+        return map;
     }
 
     // setters
@@ -62,15 +89,15 @@ public class PluginDescriptor implements IClusterable {
     public void addParameter(String key, List<String> value) {
         parameters.put(key, value);
     }
-    
+
     public List<String> getParameter(String key) {
         return parameters.get(key);
     }
 
-    public Map<String,List<String>> getParameters() {
+    public Map<String, List<String>> getParameters() {
         return parameters;
     }
-    
+
     public void connect(Channel incoming) {
         this.incoming = incoming;
     }
@@ -100,6 +127,16 @@ public class PluginDescriptor implements IClusterable {
     public Channel getOutgoing() {
         return outgoing;
     }
+
+    public void setOutgoing(Channel channel) {
+        outgoing = channel;
+    }
+
+    public List<PluginDescriptor> getChildren() {
+        return new ArrayList<PluginDescriptor>();
+    }
+
+    // override Object methods
 
     @Override
     public String toString() {

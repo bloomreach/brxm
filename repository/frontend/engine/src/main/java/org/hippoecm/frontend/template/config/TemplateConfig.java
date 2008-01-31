@@ -1,4 +1,4 @@
-<!--
+/*
  * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -12,10 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
--->
-<html>
-  <wicket:panel>
-    <b><span wicket:id="name">Property name</span></b>
-    <div wicket:id="editor">[ editor goes here ]</div>
-  </wicket:panel>
-</html>
+ */
+package org.hippoecm.frontend.template.config;
+
+import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.template.TemplateDescriptor;
+
+public interface TemplateConfig extends IClusterable {
+
+    public TemplateDescriptor getTemplate(String name);
+}

@@ -73,7 +73,9 @@ public interface HippoNodeType {
     final public static String NT_PLUGIN = "hippo:plugin";
     final public static String NT_FRONTENDPLUGIN = "hippo:frontendplugin";
     final public static String NT_PARAMETERS = "hippo:parameters";
-    
+    final public static String NT_TEMPLATE = "hippo:template";
+    final public static String NT_FIELD = "hippo:field";
+
     //--- Hippo Item Names ---//
     final public static String HIPPO_CLASSNAME = "hippo:classname";
     final public static String HIPPO_CONTENT = "hippo:content";
@@ -84,15 +86,22 @@ public interface HippoNodeType {
     final public static String HIPPO_DOCUMENTS = "hippo:documents";
     final public static String HIPPO_FACET = "hippo:facet";
     final public static String HIPPO_FACETS = "hippo:facets";
+    final public static String HIPPO_FIELD = "hippo:field";
     final public static String HIPPO_INITIALIZE = "hippo:initialize";
     final public static String HIPPO_LANGUAGE = "hippo:language";
     final public static String HIPPO_MEMBERS = "hippo:members";
+    final public static String HIPPO_MANDATORY = "hippo:mandatory";
     final public static String HIPPO_MODES = "hippo:modes";
+    final public static String HIPPO_MULTIPLE = "hippo:multiple";
+    final public static String HIPPO_NAME = "hippo:name";
     final public static String HIPPO_NAMESPACE = "hippo:namespace";
+    final public static String HIPPO_NODE = "hippo:node";
     final public static String HIPPO_NODETYPE = "hippo:nodetype";
     final public static String HIPPO_NODETYPES = "hippo:nodetypes";
+    final public static String HIPPO_ORDERED = "hippo:ordered";
     final public static String HIPPO_PASSWORD = "hippo:password";
     final public static String HIPPO_PARAMETERS = "hippo:parameters";
+    final public static String HIPPO_PATH = "hippo:path";
     final public static String HIPPO_PATHS = "hippo:paths";
     final public static String HIPPO_PERMISSIONS = "hippo:permissions";
     final public static String HIPPO_QUERY = "hippo:query";
@@ -104,7 +113,9 @@ public interface HippoNodeType {
     final public static String HIPPO_SEQUENCE = "hippo:sequence";
     final public static String HIPPO_SERVICE = "hippo:classname";
     final public static String HIPPO_STATE = "state";
+    final public static String HIPPO_TEMPLATE = "hippo:template";
     final public static String HIPPO_TEMPLATES = "hippo:templates";
+    final public static String HIPPO_TYPE = "hippo:type";
     final public static String HIPPO_TYPES = "hippo:types";
     final public static String HIPPO_UUID = "hippo:uuid";
     final public static String HIPPO_VALUES = "hippo:values";

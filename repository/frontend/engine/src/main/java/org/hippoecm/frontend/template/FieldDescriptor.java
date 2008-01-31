@@ -13,119 +13,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template.config;
+package org.hippoecm.frontend.template;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.jcr.PropertyType;
-import javax.jcr.Value;
-import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 public class FieldDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
 
-    private static String[] propertyTypes = { "String", "Boolean", "Name", "Reference" };
-
     private String name;
     private String path;
-    private String type;
-    private String renderer;
 
-    private Value[] defaults;
+    private PluginDescriptor plugin;
+    private TemplateDescriptor template;
+    private FieldDescriptor field;
+
     private String[] constraints;
     private Set<String> excluded;
 
+    private boolean node;
     private boolean multiple;
     private boolean binary;
-    private boolean prot;
+    private boolean protect;
     private boolean mandatory;
-    private boolean node;
+    private boolean ordered;
 
-    public FieldDescriptor(PropertyDefinition pd) {
-        name = pd.getName();
-        path = pd.getName();
-        type = null;
-        renderer = null;
-
-        defaults = pd.getDefaultValues();
-        constraints = pd.getValueConstraints();
-
-        multiple = pd.isMultiple();
-        prot = pd.isProtected();
-        binary = pd.getRequiredType() == PropertyType.BINARY;
-        mandatory = pd.isMandatory();
-        node = false;
-    }
-
-    public FieldDescriptor(NodeDefinition nd) {
-        name = nd.getName();
-        path = nd.getName();
-        if (nd.getDefaultPrimaryType() != null) {
-            type = nd.getDefaultPrimaryType().getName();
-        } else {
-            // FIXME: throw an exception?
-            type = "nt:unstructured";
-        }
-        renderer = null;
-
-        defaults = null;
-        constraints = new String[] {};
-
-        multiple = nd.allowsSameNameSiblings();
-        prot = nd.isProtected();
-        binary = false;
-        mandatory = nd.isMandatory();
-        node = true;
-    }
-
-    public FieldDescriptor(String name, String path) {
+    public FieldDescriptor(String name, String path, PluginDescriptor plugin) {
         this.name = name;
         this.path = path;
+        this.plugin = plugin;
 
-        this.node = false;
-        this.type = null;
-        this.renderer = null;
         this.excluded = null;
+        this.node = true;
 
-        multiple = prot = binary = mandatory = false;
+        multiple = protect = binary = mandatory = ordered = false;
     }
 
-    public FieldDescriptor(Map map) {
+    public FieldDescriptor(Map<String, Object> map, TemplateEngine engine) {
         this.name = (String) map.get("name");
         this.path = (String) map.get("path");
-        this.type = (String) map.get("type");
-        this.renderer = (String) map.get("renderer");
         this.excluded = (Set<String>) map.get("excluded");
+        if (map.get("template") != null)
+            this.template = engine.getConfig().getTemplate((String) map.get("template"));
+        if (map.get("field") != null)
+            this.field = new FieldDescriptor((Map) map.get("field"), engine);
+        this.plugin = new PluginDescriptor((Map) map.get("plugin"), engine.getChannelFactory().createChannel());
 
-        this.node = ((Boolean) map.get("node")).booleanValue();
-        this.prot = ((Boolean) map.get("prot")).booleanValue();
-        this.binary = ((Boolean) map.get("binary")).booleanValue();
+        this.node = ((Boolean) map.get("isNode")).booleanValue();
         this.multiple = ((Boolean) map.get("multiple")).booleanValue();
+        this.binary = ((Boolean) map.get("binary")).booleanValue();
+        this.protect = ((Boolean) map.get("protect")).booleanValue();
         this.mandatory = ((Boolean) map.get("mandatory")).booleanValue();
+        this.ordered = ((Boolean) map.get("ordered")).booleanValue();
     }
 
-    public Map getMapRepresentation() {
-        HashMap map = new HashMap();
-        map.put("name", name);
-        map.put("path", path);
-        map.put("type", type);
-        map.put("renderer", renderer);
-        map.put("excluded", excluded);
+    public Map<String, Object> getMapRepresentation() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("name", getName());
+        map.put("path", getPath());
+        map.put("excluded", getExcluded());
+        if (getTemplate() != null)
+            map.put("template", getTemplate().getName());
+        if (getField() != null)
+            map.put("field", getField().getMapRepresentation());
+        map.put("plugin", getPlugin().getMapRepresentation());
 
-        map.put("node", new Boolean(node));
-        map.put("prot", new Boolean(prot));
-        map.put("binary", new Boolean(binary));
+        map.put("isNode", new Boolean(node));
         map.put("multiple", new Boolean(multiple));
+        map.put("binary", new Boolean(binary));
+        map.put("protect", new Boolean(protect));
         map.put("mandatory", new Boolean(mandatory));
+        map.put("ordered", new Boolean(ordered));
         return map;
     }
 
@@ -134,8 +100,9 @@ public class FieldDescriptor implements IClusterable, Cloneable {
         try {
             return (FieldDescriptor) super.clone();
         } catch (CloneNotSupportedException ex) {
-            return null;
+            // not reached
         }
+        return null;
     }
 
     public String getName() {
@@ -154,29 +121,31 @@ public class FieldDescriptor implements IClusterable, Cloneable {
         this.path = path;
     }
 
-    public void setType(String type) {
-        this.type = type;
-        for (String propertyType : propertyTypes) {
-            if (propertyType.equals(type)) {
-                return;
-            }
-        }
-        this.node = true;
+    public TemplateDescriptor getTemplate() {
+        return template;
     }
 
-    public String getType() {
-        return type;
+    public void setTemplate(TemplateDescriptor template) {
+        this.template = template;
     }
 
-    public void setRenderer(String renderer) {
-        this.renderer = renderer;
+    public FieldDescriptor getField() {
+        return field;
     }
 
-    public String getRenderer() {
-        return renderer;
+    public void setField(FieldDescriptor field) {
+        this.field = field;
     }
 
-    public void setMultiple(boolean multiple) {
+    public PluginDescriptor getPlugin() {
+        return plugin;
+    }
+
+    public void setPlugin(PluginDescriptor plugin) {
+        this.plugin = plugin;
+    }
+
+    public void setIsMultiple(boolean multiple) {
         this.multiple = multiple;
     }
 
@@ -189,7 +158,7 @@ public class FieldDescriptor implements IClusterable, Cloneable {
     }
 
     public boolean isProtected() {
-        return prot;
+        return protect;
     }
 
     public boolean isMandatory() {
@@ -202,6 +171,18 @@ public class FieldDescriptor implements IClusterable, Cloneable {
 
     public boolean isNode() {
         return node;
+    }
+
+    public void setIsNode(boolean isNode) {
+        this.node = isNode;
+    }
+
+    public boolean isOrdered() {
+        return node;
+    }
+
+    public void setIsOrdered(boolean isOrdered) {
+        this.ordered = isOrdered;
     }
 
     public String[] getConstraints() {
@@ -219,7 +200,7 @@ public class FieldDescriptor implements IClusterable, Cloneable {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("name", name).append("path", path)
-                .append("type", type).append("renderer", renderer).toString();
+                .toString();
     }
 
     @Override
@@ -231,12 +212,11 @@ public class FieldDescriptor implements IClusterable, Cloneable {
             return true;
         }
         FieldDescriptor fieldDescriptor = (FieldDescriptor) object;
-        return new EqualsBuilder().append(name, fieldDescriptor.name).append(path, fieldDescriptor.path).append(type,
-                fieldDescriptor.type).append(renderer, fieldDescriptor.renderer).isEquals();
+        return new EqualsBuilder().append(name, fieldDescriptor.name).append(path, fieldDescriptor.path).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(421, 23).append(name).append(path).append(type).append(renderer).toHashCode();
+        return new HashCodeBuilder(421, 23).append(name).append(path).toHashCode();
     }
 }

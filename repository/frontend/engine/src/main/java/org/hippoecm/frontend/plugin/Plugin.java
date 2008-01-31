@@ -26,7 +26,6 @@ import org.hippoecm.frontend.plugin.channel.INotificationListener;
 import org.hippoecm.frontend.plugin.channel.IRequestHandler;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,12 +90,10 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     }
 
     public void addChildren() {
-        PluginDescriptor descriptor = getDescriptor();
-        PluginConfig pluginConfig = getPluginManager().getPluginConfig();
-        List children = pluginConfig.getChildren(descriptor.getPluginId());
-        Iterator it = children.iterator();
+        List<PluginDescriptor> children = getDescriptor().getChildren();
+        Iterator<PluginDescriptor> it = children.iterator();
         while (it.hasNext()) {
-            PluginDescriptor childDescriptor = (PluginDescriptor) it.next();
+            PluginDescriptor childDescriptor = it.next();
             Plugin child = addChild(childDescriptor);
             if (child != null) {
                 child.addChildren();

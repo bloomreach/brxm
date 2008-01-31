@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template.model;
+package org.hippoecm.frontend.template.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,17 +23,16 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
-import org.hippoecm.frontend.plugins.template.config.TemplateDescriptor;
+import org.hippoecm.frontend.template.FieldDescriptor;
+import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This class provides FieldModel instances based on a template descriptor.
  */
-public class FieldProvider extends AbstractProvider implements IDataProvider {
+public class FieldProvider extends AbstractProvider<FieldModel> implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(FieldProvider.class);
@@ -50,6 +49,25 @@ public class FieldProvider extends AbstractProvider implements IDataProvider {
     public void setDescriptor(TemplateDescriptor descriptor) {
         this.descriptor = descriptor;
         detach();
+    }
+
+    // internal (lazy) loading of fields
+
+    @Override
+    protected void load() {
+        if (elements != null) {
+            return;
+        }
+
+        JcrNodeModel model = getNodeModel();
+        elements = new LinkedList<FieldModel>();
+        if (descriptor != null) {
+            Iterator<FieldDescriptor> iter = descriptor.getFields().iterator();
+            while (iter.hasNext()) {
+                FieldDescriptor field = iter.next();
+                elements.addLast(new FieldModel(field, model));
+            }
+        }
     }
 
     // override Object
@@ -75,24 +93,5 @@ public class FieldProvider extends AbstractProvider implements IDataProvider {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 31).append(descriptor).toHashCode();
-    }
-
-    // internal (lazy) loading of fields
-
-    @Override
-    protected void load() {
-        if (fields != null) {
-            return;
-        }
-
-        JcrItemModel model = getNodeModel().getItemModel();
-        fields = new LinkedList<FieldModel>();
-        if (descriptor != null) {
-            Iterator<FieldDescriptor> iter = descriptor.getFieldIterator();
-            while (iter.hasNext()) {
-                FieldDescriptor field = iter.next();
-                fields.addLast(new FieldModel(field, model));
-            }
-        }
     }
 }

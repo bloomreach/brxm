@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template.editor;
 
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.template.config.RepositoryTemplateConfig;
 
 public class EditorPlugin extends Plugin {
 
     private static final long serialVersionUID = 1L;
 
-    private TemplateEngine engine;
     private EditorForm form;
 
     public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        engine = new TemplateEngine("engine", new RepositoryTemplateConfig(), this);
-        form = new EditorForm("form", (JcrNodeModel) getModel(), engine);
+        form = new EditorForm("form", (JcrNodeModel) getModel(), this);
         add(form);
 
         setOutputMarkupId(true);

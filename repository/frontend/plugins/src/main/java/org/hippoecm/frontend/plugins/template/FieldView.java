@@ -15,50 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import java.util.Iterator;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
-import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugins.template.model.AbstractProvider;
-import org.hippoecm.frontend.plugins.template.model.FieldModel;
+import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.model.FieldModel;
+import org.hippoecm.frontend.template.model.FieldProvider;
 
-public class FieldView extends DataView {
+public class FieldView extends AbstractView {
     private static final long serialVersionUID = 1L;
 
-    TemplateEngine engine;
-
-    public FieldView(String wicketId, AbstractProvider provider, TemplateEngine engine) {
-        super(wicketId, provider);
-
-        this.engine = engine;
-
-        setItemReuseStrategy(new DefaultItemReuseStrategy() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Iterator getItems(final IItemFactory factory, final Iterator newModels, final Iterator existingItems) {
-                // Wicket doesn't detach the items that are thrown away, so do
-                // it ourselves.  Furthermore, plugins must be disconnected.
-                while (existingItems.hasNext()) {
-                    Item item = (Item) existingItems.next();
-                    item.detach();
-                    Component template = item.get("sub");
-                    if (template instanceof Plugin) {
-                        ((Plugin) template).destroy();
-                    }
-                }
-                return super.getItems(factory, newModels, null);
-            }
-        });
+    public FieldView(String wicketId, FieldProvider provider, Plugin plugin) {
+        super(wicketId, provider, plugin);
     }
 
     @Override
     protected void populateItem(Item item) {
         FieldModel fieldModel = (FieldModel) item.getModel();
-        item.add(engine.createTemplate("sub", fieldModel));
+        TemplateEngine engine = getPlugin().getPluginManager().getTemplateEngine();
+        item.add(engine.createField("field", fieldModel, getPlugin()));
     }
 }

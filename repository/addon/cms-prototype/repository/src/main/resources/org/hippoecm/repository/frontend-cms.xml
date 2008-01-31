@@ -204,7 +204,7 @@
             <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.EditorPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.template.editor.EditorPlugin</sv:value>
           </sv:property>
         </sv:node>
 

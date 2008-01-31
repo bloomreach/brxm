@@ -26,15 +26,19 @@
 
 [hippo:page] > nt:unstructured
 
-[hippo:field] > nt:base
-- hippo:path (string) mandatory
-- hippo:template (string)
-- hippo:renderer (string)
+[hippo:field] > hippo:plugin
+- hippo:path (string)
+- hippo:name (string)
+- hippo:type (string)
 - hippo:multiple (boolean)
+- hippo:mandatory (boolean)
+- hippo:ordered (boolean)
 
-[hippo:template] > nt:base orderable
+[hippo:template] > hippo:frontendplugin orderable
+- hippo:type (string)
+- hippo:multiple (boolean)
 + hippo:prototype (hippo:document)
-+ * (hippo:field)
++ hippo:field (hippo:field) multiple
 
 [hippo:templatefolder] > nt:base
 + * (hippo:template) = hippo:template

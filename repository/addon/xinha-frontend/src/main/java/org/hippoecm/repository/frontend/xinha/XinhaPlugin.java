@@ -16,16 +16,14 @@
 package org.hippoecm.repository.frontend.xinha;
 
 import java.io.Serializable;
-
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -34,22 +32,18 @@ import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
+import org.hippoecm.frontend.template.model.TemplateModel;
 
 public class XinhaPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    private FieldDescriptor descriptor;
+    private JcrPropertyValueModel valueModel;
 
     private String content;
     private TextArea editor;
@@ -57,13 +51,19 @@ public class XinhaPlugin extends Plugin {
     private XinhaEditorBehavior sharedBehavior;
     private AbstractDefaultAjaxBehavior postBehavior;
 
-    public XinhaPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
-        super(descriptor, new JcrNodeModel(model), parentPlugin);
+    public XinhaPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
+        super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()), parentPlugin);
 
-        this.descriptor = new FieldDescriptor((Map) model.getMapRepresentation().get("field"));
+        TemplateModel model = (TemplateModel) getPluginModel();
+        JcrPropertyModel propertyModel = new JcrPropertyModel(model.getNodeModel().getItemModel().getPath() + "/" + model.getPath());
+        try {
+            Value value = propertyModel.getProperty().getValue();
+            valueModel = new JcrPropertyValueModel(0, value, propertyModel);
+        } catch(RepositoryException ex) {
+            ex.printStackTrace();
+        }
 
-        add(new Label("name", new PropertyModel(this, "name")));
-        editor = new TextArea("value", getModel());
+        editor = new TextArea("value", valueModel);
 
         postBehavior = new AbstractDefaultAjaxBehavior() {
             private static final long serialVersionUID = 1L;
@@ -93,7 +93,7 @@ public class XinhaPlugin extends Plugin {
         add(editor);
 
         configuration = this.new Configuration();
-        List<String> plugins = descriptor.getParameter("plugins");
+        List<String> plugins = pluginDescriptor.getParameter("plugins");
         if (plugins != null) {
             if (!plugins.contains("SaveSubmit")) {
                 plugins.add("SaveSubmit");
@@ -102,33 +102,6 @@ public class XinhaPlugin extends Plugin {
         } else {
             configuration.setPlugins(new String[] { "SaveSubmit" });
         }
-
-        setModel(getModel());
-    }
-
-    public String getName() {
-        if (descriptor != null) {
-            return descriptor.getName();
-        }
-        return null;
-    }
-
-    @Override
-    public Component setModel(IModel model) {
-        JcrNodeModel jcrModel = (JcrNodeModel) model;
-        try {
-            Property property = null;
-            if (jcrModel.getNode().hasProperty(descriptor.getPath())) {
-                property = jcrModel.getNode().getProperty(descriptor.getPath());
-            } else {
-                property = jcrModel.getNode().setProperty(descriptor.getPath(), "");
-            }
-            JcrPropertyModel propModel = new JcrPropertyModel(property);
-            editor.setModel(new JcrPropertyValueModel(0, property.getValue(), propModel));
-        } catch (RepositoryException ex) {
-            ex.printStackTrace();
-        }
-        return super.setModel(model);
     }
 
     public String getContent() {

@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,7 +23,6 @@ import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.plugins.template.config.FieldDescriptor;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +32,11 @@ public class ValueView extends DataView {
 
     static final Logger log = LoggerFactory.getLogger(ValueView.class);
 
-    protected FieldDescriptor descriptor;
-    protected TemplateEngine engine;
+    private boolean multiple;
 
-    public ValueView(String id, JcrPropertyModel dataProvider, FieldDescriptor descriptor, TemplateEngine engine) {
+    public ValueView(String id, JcrPropertyModel dataProvider, boolean multiple) {
         super(id, dataProvider);
-        this.descriptor = descriptor;
-        this.engine = engine;
+        this.multiple = multiple;
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
 
@@ -48,16 +44,16 @@ public class ValueView extends DataView {
     @Override
     protected void populateItem(Item item) {
         final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
-        item.add(createWidget("value", descriptor, valueModel));
+        item.add(new TextFieldWidget("value", valueModel));
 
         //Remove value link
-        if (descriptor.isMultiple()) {
+        if (multiple) {
             item.add(new AjaxLink("remove", valueModel) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    ValueTemplate template = (ValueTemplate) findParent(ValueTemplate.class);
+                    PropertyTemplatePlugin template = (PropertyTemplatePlugin) findParent(PropertyTemplatePlugin.class);
                     if (template != null) {
                         template.onRemoveValue(target, valueModel);
                     }
@@ -65,16 +61,6 @@ public class ValueView extends DataView {
             });
         } else {
             item.add(new Label("remove", ""));
-        }
-    }
-
-    public Component createWidget(String wicketId, FieldDescriptor descriptor, JcrPropertyValueModel model) {
-        if (descriptor.isBinary()) {
-            return new Label("value", "(binary)");
-        } else if (descriptor.isProtected()) {
-            return new Label("value", model);
-        } else {
-            return new TextFieldWidget("value", model);
         }
     }
 }

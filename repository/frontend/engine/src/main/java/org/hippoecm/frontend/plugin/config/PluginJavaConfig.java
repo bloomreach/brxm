@@ -40,7 +40,16 @@ public class PluginJavaConfig implements PluginConfig {
         Channel outgoing = factory.createChannel();
 
         String className = "org.hippoecm.frontend.plugins.admin.RootPlugin";
-        PluginDescriptor descriptor = new PluginDescriptor("rootPlugin", className, outgoing);
+        PluginDescriptor descriptor = new PluginDescriptor("rootPlugin", className, outgoing) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public List<PluginDescriptor> getChildren() {
+                List<PluginDescriptor> result = new ArrayList<PluginDescriptor>();
+                result.addAll(childrenOfRoot.values());
+                return result;
+            }
+        };
         root = descriptor;
 
         childrenOfRoot = new HashMap<String, PluginDescriptor>();
@@ -68,14 +77,6 @@ public class PluginJavaConfig implements PluginConfig {
 
     public PluginDescriptor getRoot() {
         return root;
-    }
-
-    public List<PluginDescriptor> getChildren(String pluginId) {
-        List<PluginDescriptor> result = new ArrayList<PluginDescriptor>();
-        if (pluginId.equals("rootPlugin")) {
-            result.addAll(childrenOfRoot.values());
-        }
-        return result;
     }
 
     public PluginDescriptor getPlugin(String pluginId) {

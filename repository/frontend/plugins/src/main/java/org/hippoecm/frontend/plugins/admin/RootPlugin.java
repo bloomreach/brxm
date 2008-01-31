@@ -34,8 +34,15 @@ public class RootPlugin extends Plugin {
         // update node model
         if ("select".equals(request.getOperation()) || "flush".equals(request.getOperation())) {
             Channel outgoing = getDescriptor().getOutgoing();
-            if(outgoing != null) {
+            if (outgoing != null) {
                 Notification notification = outgoing.createNotification(request);
+                outgoing.publish(notification);
+            }
+        } else if ("edit".equals(request.getOperation())) {
+            Channel outgoing = getDescriptor().getOutgoing();
+            if (outgoing != null) {
+                Notification notification = outgoing.createNotification("select", request.getModel());
+                notification.setContext(request.getContext());
                 outgoing.publish(notification);
             }
         }
