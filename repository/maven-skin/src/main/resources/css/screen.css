@@ -102,3 +102,5 @@ div#content_main ol {
   margin-left:1em;
 }
 
+dl dt{font-weight:bold; font-size: 11px}
+dl dd{margin-left: 15px;}

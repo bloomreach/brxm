@@ -366,7 +366,7 @@
 </div>
 </div>
 <div id="teaser">
-<a href="#"><img src="$relativePath/images/maven.jpg" alt="Hippo" title="Hippo"></a>
+<a href="#"><img src="$relativePath/images/globalsmall.jpg" alt="Hippo" title="Hippo"></a>
 </div>
 <div id="secondary_navigation">
   <ul class="module-list">
