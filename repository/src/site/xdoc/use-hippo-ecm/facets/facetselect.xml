@@ -22,20 +22,22 @@
     <title>Facet Select</title>
   </properties>
   <body>
-  
     <section name="Faceted selection">
       <p>
         <i><b>Note:</b> Faceted selection and faceted reference are used intertwined and refer to the exact same thing.</i>
       </p>
       <p>
-        Faceted selection gives you the possibility to browse through your filtered hierarchical physical content
-        (and virtual content, but we'll keep this for advanced content modelling). The filter is based on facets 
-        (metadata) on documents. An example would be, that you only want to show documents which are English and 
-        published. By creating some smart faceted selections, you can very easily create websites which are 
-        multilingual, and have "preview" and "live" sites (or any other state in between). Exposing your DMS with faceted 
-        selection and authorization (and even facet search combined!) gives you a lot of flexibility in exposing 
-        your (unstructured) physical content in many different (virtual) structured ways.
+        The easiest way to understand <code>faceted selection</code> is to see it as a mirror of some folder, possibly with some filter applied. 
+        The filter is based on facets (metadata) of documents (nodes). An example would be, that you only want to 
+        show documents which are english and published. By creating some faceted selections, you can
+        very easily create websites which are multilingual, and have a "preview" and "live" sites (or any other state in between).
+        Exposing your DMS with faceted selection and authorization (and even facet search combined!) gives you a lot of 
+        flexibility in exposing your (unstructured) physical content in many different (virtual) structured ways. 
       </p>
+      <p><b>Recapitulating:</b> Faceted selection is like a mirror of the folder you point to. If you leave the selection empty and only select a folder, it 
+        acts like an exact mirror (similar to a linux mount except for possible authorization). If you apply a selection, it is a 
+        filtered mirror of the folder you pointed to to be mirrored. 
+        Authorization acts as a default filter dependent on the user. </p>
       <subsection name="Faceted selection explained: visual">
         <p>
           Suppose we have the same hierachical repository data as in the 
