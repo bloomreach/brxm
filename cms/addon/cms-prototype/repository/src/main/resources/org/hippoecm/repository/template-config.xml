@@ -40,6 +40,33 @@
     </sv:property>
   </sv:node>
 
+  <!-- "SimpleReference" template -->
+  <sv:node sv:name="Reference">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.template.PropertyTemplatePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>Reference</sv:value>
+    </sv:property>
+
+    <sv:node sv:name="hippo:parameters">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:parameters</sv:value>
+      </sv:property>
+      <sv:property sv:name="types" sv:type="String">
+        <sv:value>hippo:document</sv:value>
+        <sv:value>hipposample:simpledocument</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <!-- end "SimpleReference" template -->
+  
   
   <!-- "Document" template -->
   <sv:node sv:name="hipposample:simpledocument">
@@ -193,16 +220,16 @@
         <sv:value>hippo:field</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>links</sv:value>
+        <sv:value>link</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>hipposample:links</sv:value>
+        <sv:value>hipposample:link</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>MultiString</sv:value>
+        <sv:value>SimpleReference</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:node" sv:type="Boolean">
         <sv:value>false</sv:value>
