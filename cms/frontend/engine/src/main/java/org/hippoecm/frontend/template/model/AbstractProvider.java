@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template.model;
+package org.hippoecm.frontend.template.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 
-public abstract class AbstractProvider extends NodeModelWrapper implements IDataProvider {
+public abstract class AbstractProvider<M extends IPluginModel> extends NodeModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
-    protected transient LinkedList<FieldModel> fields = null;
+    protected transient LinkedList<M> elements = null;
 
     // Constructor
 
     public AbstractProvider(JcrNodeModel nodeModel) {
         super(nodeModel);
+    }
+
+    public void refresh() {
+        elements = null;
     }
 
     @Override
@@ -42,32 +47,31 @@ public abstract class AbstractProvider extends NodeModelWrapper implements IData
 
     @Override
     public void detach() {
-        if (fields != null) {
-            Iterator<FieldModel> iterator = fields.iterator();
+        if (elements != null) {
+            Iterator<M> iterator = elements.iterator();
             while (iterator.hasNext()) {
-                FieldModel model = iterator.next();
+                M model = iterator.next();
                 model.detach();
             }
-            fields = null;
         }
         super.detach();
     }
 
     // IDataProvider implementation, provides the fields of the chained itemModel
 
-    public Iterator<FieldModel> iterator(int first, int count) {
+    public Iterator<M> iterator(int first, int count) {
         load();
-        return fields.subList(first, first + count).iterator();
+        return elements.subList(first, first + count).iterator();
     }
 
     public IModel model(Object object) {
-        FieldModel model = (FieldModel) object;
+        M model = (M) object;
         return model;
     }
 
     public int size() {
         load();
-        return fields.size();
+        return elements.size();
     }
 
     protected abstract void load();

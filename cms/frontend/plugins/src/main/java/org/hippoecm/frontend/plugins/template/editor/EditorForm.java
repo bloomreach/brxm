@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template.editor;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.template.config.TemplateDescriptor;
+import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.PluginFactory;
+import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
+import org.hippoecm.frontend.template.TemplateDescriptor;
+import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.model.TemplateModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,30 +36,41 @@ public class EditorForm extends Form {
 
     private static Logger log = LoggerFactory.getLogger(EditorForm.class);
 
-    private TemplateEngine engine;
+    private Plugin plugin;
 
-    public EditorForm(String wicketId, JcrNodeModel model, TemplateEngine engine) {
+    public EditorForm(String wicketId, JcrNodeModel model, EditorPlugin plugin) {
         super(wicketId, model);
-        this.engine = engine;
+
+        this.plugin = plugin;
 
         add(createTemplate());
     }
 
     @Override
     public Component setModel(IModel model) {
+        super.setModel(model);
         Component template = createTemplate();
         if (template != null) {
             replace(template);
         }
-        return super.setModel(model);
+        return this;
     }
 
     protected Component createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
         try {
-            NodeType type = model.getNode().getPrimaryNodeType();
-            TemplateDescriptor descriptor = engine.getConfig().getTemplate(type.getName());
-            return engine.createTemplate("template", model, descriptor);
+            String type = model.getNode().getPrimaryNodeType().getName();
+            TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
+            TemplateDescriptor templateDescriptor = engine.getConfig().getTemplate(type);
+            if (templateDescriptor != null) {
+                String relPath = model.getNode().getName() + "[" + model.getNode().getIndex() + "]";
+                TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(), relPath);
+
+                return engine.createTemplate("template", templateModel, (Plugin) findParent(Plugin.class));
+            } else {
+                PluginDescriptor descriptor = new PluginDescriptor("template", EmptyPlugin.class.getName(), null);
+                return new PluginFactory(plugin.getPluginManager()).createPlugin(descriptor, null, plugin);
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }

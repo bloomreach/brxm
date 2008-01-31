@@ -25,9 +25,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -44,47 +41,28 @@ public class PluginRepositoryConfig implements PluginConfig {
     static final Logger log = LoggerFactory.getLogger(PluginRepositoryConfig.class);
 
     // FIXME: move these to HippoNodeType
-    private final static String ROOTPLUGIN = "rootPlugin";
-    private final static String PLUGIN_RENDERER = "hippo:renderer";
+    protected final static String ROOTPLUGIN = "rootPlugin";
+    protected final static String PLUGIN_RENDERER = "hippo:renderer";
 
+    private String basePath;
     private ChannelFactory channelFactory;
 
-    public PluginRepositoryConfig() {
+    public PluginRepositoryConfig(String base) {
+        basePath = base;
         channelFactory = new ChannelFactory();
     }
 
     public PluginDescriptor getRoot() {
-        try {
-            Node rootPluginConfigNode = lookupConfigNode(ROOTPLUGIN);
-            return nodeToDescriptor(rootPluginConfigNode);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-        return null;
-    }
-
-    public List getChildren(String pluginId) {
-        List result = new ArrayList();
-        try {
-            Node pluginNode = lookupConfigNode(pluginId);
-            NodeIterator it = pluginNode.getNodes();
-            while (it.hasNext()) {
-                Node child = it.nextNode();
-                if (child != null && child.isNodeType(HippoNodeType.NT_PLUGIN)) {
-                    result.add(nodeToDescriptor(child));
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-        return result;
-    }
-
-    public PluginDescriptor getPlugin(String pluginId) {
         PluginDescriptor result = null;
         try {
-            Node pluginNode = lookupConfigNode(pluginId);
-            result = nodeToDescriptor(pluginNode);
+            UserSession session = (UserSession) Session.get();
+
+            Node pluginNode = session.getJcrSession().getRootNode().getNode(basePath + "/" + ROOTPLUGIN);
+            if (pluginNode != null) {
+                result = nodeToDescriptor(pluginNode);
+            } else {
+                log.error("No plugin node found for " + ROOTPLUGIN);
+            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
@@ -95,37 +73,18 @@ public class PluginRepositoryConfig implements PluginConfig {
         return channelFactory;
     }
 
-    // Privates
-
-    private Node lookupConfigNode(String pluginId) throws RepositoryException {
-        UserSession session = (UserSession) Session.get();
-
-        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + session.getHippo()
-                + "//" + pluginId;
-
-        QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery(xpath, Query.XPATH);
-        QueryResult result = query.execute();
-        NodeIterator iter = result.getNodes();
-        if (iter.getSize() > 1) {
-            throw new IllegalStateException("Plugin id's must be unique within a configuration, but " + pluginId
-                    + " is configured more than once");
-        }
-        return iter.hasNext() ? iter.nextNode() : null;
-    }
-
-    private PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
+    protected PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
         String classname = pluginNode.getProperty(PLUGIN_RENDERER).getString();
         String pluginId = pluginNode.getName();
         Channel outgoing = channelFactory.createChannel();
-        PluginDescriptor descriptor = new PluginDescriptor(pluginId, classname, outgoing);
+        PluginDescriptor descriptor = createDescriptor(pluginNode, pluginId, classname, outgoing);
 
         // parse (optional) parameters
         if (pluginNode.hasNode(HippoNodeType.HIPPO_PARAMETERS)) {
             PropertyIterator iter = pluginNode.getNode(HippoNodeType.HIPPO_PARAMETERS).getProperties();
             while (iter.hasNext()) {
                 Property property = iter.nextProperty();
-                if(property.getName().equals("jcr:primaryType"))
+                if (property.getName().equals("jcr:primaryType"))
                     continue;
 
                 List<String> list = new LinkedList<String>();
@@ -140,5 +99,51 @@ public class PluginRepositoryConfig implements PluginConfig {
             }
         }
         return descriptor;
+    }
+
+    protected PluginDescriptor createDescriptor(Node node, String pluginId, String className, Channel outgoing) {
+        return new Descriptor(node, pluginId, className, outgoing);
+    }
+
+    protected class Descriptor extends PluginDescriptor {
+        private static final long serialVersionUID = 1L;
+
+        private String jcrPath;
+
+        protected Descriptor(Node node, String pluginId, String className, Channel outgoing) {
+            super(pluginId, className, outgoing);
+            try {
+                this.jcrPath = node.getPath();
+            } catch (RepositoryException ex) {
+                log.error("Could not obtain plugin configuration node path: " + ex.getMessage());
+            }
+        }
+
+        @Override
+        public List<PluginDescriptor> getChildren() {
+            List<PluginDescriptor> result = new ArrayList<PluginDescriptor>();
+            try {
+                Node pluginNode = getNode();
+                if (pluginNode != null) {
+                    NodeIterator it = pluginNode.getNodes();
+                    while (it.hasNext()) {
+                        Node child = it.nextNode();
+                        if (child != null && child.isNodeType(HippoNodeType.NT_PLUGIN)) {
+                            result.add(nodeToDescriptor(child));
+                        }
+                    }
+                } else {
+                    log.error("No plugin node found under " + jcrPath);
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+            return result;
+        }
+
+        protected Node getNode() throws RepositoryException {
+            UserSession session = (UserSession) Session.get();
+            return (Node) session.getJcrSession().getItem(jcrPath);
+        }
     }
 }

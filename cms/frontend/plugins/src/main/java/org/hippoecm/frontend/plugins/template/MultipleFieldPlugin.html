@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2007 Hippo
+    * Copyright 2008 Hippo
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -15,22 +15,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
         <wicket:panel>
-        <b><span wicket:id="name">Property name</span></b>
-        <sup><a wicket:id="delete">(delete)</a></sup>
-        <table>
-            <tr>
-                <td>
-                    <ul style="list-style: none">
-                        <li wicket:id="values">
-                            <span wicket:id="value"></span>
-                            <sup><a wicket:id="remove">X</a></sup>
-                        </li>
-                    </ul>
-                </td>
-                <td>
-                    <sup><a wicket:id="add">(add)</a></sup>
-                </td>
-            </tr>
-        </table>
+              <b><span wicket:id="name">[ field name ]</span></b>
+              <div wicket:id="field">
+                  <a wicket:id="remove">(delete)</a> <a wicket:id="up">(up)</a>
+                  <div wicket:id="template">[ field goes here ]</div>
+              </div>
+            <a wicket:id="add">(add)</a>
         </wicket:panel>
 </html>

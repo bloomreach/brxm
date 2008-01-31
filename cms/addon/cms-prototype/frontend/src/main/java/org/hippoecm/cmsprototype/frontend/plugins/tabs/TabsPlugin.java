@@ -58,6 +58,7 @@ public class TabsPlugin extends Plugin {
     private int editCount;
 
     private String editPerspective;
+    private PluginDescriptor editDescriptor;
 
     public TabsPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
@@ -109,6 +110,7 @@ public class TabsPlugin extends Plugin {
             Tab tab = new Tab(childDescriptor, getPluginModel(), false);
             return tab.getPlugin();
         } else {
+            editDescriptor = childDescriptor;
             return null;
         }
     }
@@ -123,9 +125,10 @@ public class TabsPlugin extends Plugin {
     public void handle(Request request) {
         if ("edit".equals(request.getOperation())) {
             JcrNodeModel model = new JcrNodeModel(request.getModel());
-            if (!editors.containsKey(model)) {
+            if (!editors.containsKey(model) && editDescriptor != null) {
                 // create a descriptor for the plugin
-                PluginDescriptor descriptor = getPluginManager().getPluginConfig().getPlugin(editPerspective);
+                PluginDescriptor descriptor = editDescriptor.clone();
+                descriptor.setOutgoing(getPluginManager().getChannelFactory().createChannel());
                 try {
                     // set the title to the name of the node
                     List<String> titleParam = new LinkedList<String>();

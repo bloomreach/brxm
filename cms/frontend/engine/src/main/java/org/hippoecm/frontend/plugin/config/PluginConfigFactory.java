@@ -37,7 +37,7 @@ public class PluginConfigFactory {
             boolean builtIn = session.getHippo().contains("(builtin)");
 
             if (!builtIn && hipposAvailable) {
-                pluginConfig = new PluginRepositoryConfig();
+                pluginConfig = new PluginRepositoryConfig(path + "/" + session.getHippo());
             } else {
                 pluginConfig = new PluginJavaConfig();
             }

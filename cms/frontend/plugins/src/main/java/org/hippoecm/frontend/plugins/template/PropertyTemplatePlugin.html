@@ -14,7 +14,13 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:extend>
-        Name: <span wicket:id="path">[ path here ]</span>
-    </wicket:extend>
+        <wicket:panel>
+            <ul style="list-style: none">
+                <li wicket:id="values">
+                    <span wicket:id="value"></span>
+                    <sup><a wicket:id="remove">X</a></sup>
+                </li>
+            </ul>
+            <a wicket:id="add">(add)</a>
+        </wicket:panel>
 </html>

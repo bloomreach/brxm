@@ -24,11 +24,35 @@
     <sv:value>hippo:templatefolder</sv:value>
   </sv:property>
 
+  <!-- "Xinha" template -->
+  <sv:node sv:name="Xinha">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>String</sv:value>
+    </sv:property>
+  </sv:node>
+
+  
   <!-- "Document" template -->
   <sv:node sv:name="hipposample:simpledocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:template</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>hipposample:simpledocument</sv:value>
+    </sv:property>
+
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposample:simpledocument</sv:value>
@@ -46,200 +70,277 @@
         <sv:value>unpublished</sv:value>
       </sv:property>
     </sv:node>
-
+    
     <!-- title -->
-    <sv:node sv:name="title">
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>title</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Xinha</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:title</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
-
+    
     <!-- creation date -->
-    <sv:node sv:name="creationDate">
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>creation date</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:cdate</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
     </sv:node>
-
+    
     <!-- owner -->
-    <sv:node sv:name="owner">
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>owner</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:owner</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
     </sv:node>
-
+    
     <!-- body -->
-    <sv:node sv:name="body">
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>body</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Xinha</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:body</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
+      <sv:property sv:name="hippo:mandatory" sv:type="String">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
-
+    
     <!-- subject -->
-    <sv:node sv:name="subject">
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>subject</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:subject</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>MultiString</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:mandatory" sv:type="String">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
     </sv:node>
-
+    
     <!-- links -->
-    <sv:node sv:name="links">
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>links</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:links</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>MultiString</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
     </sv:node>
-
+    
     <!-- state -->
-    <sv:node sv:name="state">
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:state</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
     </sv:node>
+
   </sv:node>
   <!-- end "Document" template -->
 
 
-  <!-- "Field" template -->
-  <sv:node sv:name="hippo:field">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
-    </sv:property>
-
-    <!-- path -->
-    <sv:node sv:name="path">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>hippo:path</sv:value>
-      </sv:property>
-    </sv:node>
-
-    <!-- template -->
-    <sv:node sv:name="template">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>hippo:template</sv:value>
-      </sv:property>
-    </sv:node>
-
-    <!-- renderer -->
-    <sv:node sv:name="renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>hippo:renderer</sv:value>
-      </sv:property>
-    </sv:node>
-    
-    <!-- multiple -->
-    <sv:node sv:name="multiple">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>hippo:multiple</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:template" sv:type="String">
-        <sv:value>Boolean</sv:value>
-      </sv:property>
-    </sv:node>
-    
-  </sv:node>
-  <!-- end "field" template -->
-
-
-  <!-- "Template" template -->
-  <sv:node sv:name="hippo:template">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
-    </sv:property>
-
-    <!-- field -->
-    <sv:node sv:name="field">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>*</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:template" sv:type="String">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:multiple" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <!-- end "Template" template -->
-
-  <!-- "workflow demo" template -->
+  <!-- "Document" template -->
   <sv:node sv:name="hippo:document">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:template</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:document</sv:value>
-      </sv:property>
-      <sv:property sv:name="state" sv:type="String">
-        <sv:value>unpublished</sv:value>
-      </sv:property>
-    </sv:node>
-
-    <!-- state -->
-    <sv:node sv:name="state">
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>hippo:document</sv:value>
+    </sv:property>
+    
+    <!-- paths -->
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>paths</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>MultiString</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>state</sv:value>
+        <sv:value>hippo:paths</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
 
-    <!-- body -->
-    <sv:node sv:name="content">
+    <!-- content -->
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>content</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Xinha</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>content</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
+      <sv:property sv:name="hippo:mandatory" sv:type="String">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="String">
+        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
-  </sv:node>
-  <!-- end template -->
+    
+    <!-- state -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>state</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:mandatory" sv:type="String">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!-- language -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>language</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>language</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+    </sv:node>
 
+  </sv:node>
+  
 </sv:node>
