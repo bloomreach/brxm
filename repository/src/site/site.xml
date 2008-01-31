@@ -83,7 +83,7 @@
         </item>
         <item name="Plugins" href="/extend-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extend-hippo-ecm/plugins/repository/index.html">
-            <item name="Workflow" href="/extend-hippo-ecm/plugins/frontend/workflow.html"/>
+            <item name="Workflow" href="/extend-hippo-ecm/plugins/repository/workflow.html"/>
           </item>
           <item name="Frontend Plugins" href="/extend-hippo-ecm/plugins/frontend/index.html" collapse="true">
             <item name="Architecture" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
