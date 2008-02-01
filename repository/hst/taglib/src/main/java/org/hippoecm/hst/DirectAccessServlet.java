@@ -18,52 +18,30 @@ package org.hippoecm.hst;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.net.URLDecoder;
-
 import java.util.StringTokenizer;
 
+import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.ValueFormatException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.ISO9075Helper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DirectAccessServlet extends HttpServlet {
-    static HippoRepository repository;
-    Session session;
+    private static final long serialVersionUID = 1L;
+
+    public static final Logger logger = LoggerFactory.getLogger(DirectAccessServlet.class);
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        String location = config.getServletContext().getInitParameter("repository-address");
-
-        HippoRepositoryFactory.setDefaultRepository(location);
-        try {
-            repository = HippoRepositoryFactory.getHippoRepository();
-            if (session == null) {
-                session = repository.login("admin", "admin".toCharArray());
-            }
-        } catch (RepositoryException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
-        }
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -77,14 +55,11 @@ public class DirectAccessServlet extends HttpServlet {
 
         path = URLDecoder.decode(path, "UTF-8");
 
-        String pathElt = "";
-        String pathEltName = "";
         String currentPath = "";
         StringTokenizer pathElts = new StringTokenizer(path, "/");
         while (pathElts.hasMoreTokens()) {
-            pathElt = pathElts.nextToken();
-            pathEltName = ISO9075Helper.decodeLocalName(pathElt);
-            currentPath += "/" + pathElt;
+            String pathElt = pathElts.nextToken();
+            currentPath += "/" + ISO9075Helper.decodeLocalName(pathElt);
         }
         path = currentPath;
 
@@ -93,7 +68,13 @@ public class DirectAccessServlet extends HttpServlet {
         }
 
         try {
-            Item item = Context.getItem(session, path);
+            Session session = JcrConnector.getJcrSession(req.getSession());
+            Item item = JcrConnector.getItem(session, path);
+            if (item == null) {
+                logger.warn(path + "not found, response status = 404)");
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             if (!item.isNode()) {
                 res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
@@ -112,7 +93,7 @@ public class DirectAccessServlet extends HttpServlet {
             while ((len = istream.read(buffer)) >= 0) {
                 ostream.write(buffer, 0, len);
             }
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
