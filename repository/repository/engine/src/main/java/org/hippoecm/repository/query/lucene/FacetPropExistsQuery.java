@@ -45,8 +45,7 @@ public class FacetPropExistsQuery {
 
         Name nodeName;
         String internalName = "";
-        // TODO Assume empty namespace for facet. Is this always true?
-        nodeName = NameFactoryImpl.getInstance().create("", facet);
+        nodeName = NameFactoryImpl.getInstance().create(facet);
         if(indexingConfig.isFacet(nodeName)){
             try {
                 internalName = nsMappings.translatePropertyName(nodeName);

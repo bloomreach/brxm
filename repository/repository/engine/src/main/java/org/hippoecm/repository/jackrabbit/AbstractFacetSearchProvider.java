@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
@@ -34,6 +35,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.FacetedNavigationEngine;
@@ -131,13 +133,21 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
             facetSearchResultMap = new TreeMap<String,Map<String,FacetedNavigationEngine.Count>>();
             Map<String,FacetedNavigationEngine.Count> facetSearchResult;
             facetSearchResult = new TreeMap<String,FacetedNavigationEngine.Count>();
-            facetSearchResultMap.put(facets[0], facetSearchResult);
+            facetSearchResultMap.put(resolveName(facets[0]).toString(), facetSearchResult);
 
             Map<String,String> currentFacetQuery = new TreeMap<String,String>();
             for(int i=0; search != null && i < search.length; i++) {
                 Matcher matcher = facetPropertyPattern.matcher(search[i]);
                 if(matcher.matches() && matcher.groupCount() == 2) {
-                    currentFacetQuery.put(matcher.group(1), matcher.group(2));
+                    try {
+                        currentFacetQuery.put(resolveName(matcher.group(1)).toString(), matcher.group(2));
+                    } catch(IllegalNameException ex) {
+                        // FIXME: log a very serious error
+                        return state;
+                    } catch(NamespaceException ex) {
+                        // FIXME: log a very serious error
+                        return state;
+                    }
                 }
             }
             FacetedNavigationEngine.Query initialQuery;

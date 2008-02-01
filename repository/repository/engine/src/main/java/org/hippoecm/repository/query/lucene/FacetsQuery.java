@@ -45,27 +45,25 @@ public class FacetsQuery {
         this.query = new BooleanQuery(true);
 
         if(facetsQuery != null){
-                for(Map.Entry<String,String> entry : facetsQuery.entrySet()) {
+            for(Map.Entry<String,String> entry : facetsQuery.entrySet()) {
 
                 Name nodeName;
                 String internalName = "";
                 try {
-                        nodeName = NameFactoryImpl.getInstance().create("", entry.getKey());
+                    nodeName = NameFactoryImpl.getInstance().create(entry.getKey());
                     if(indexingConfig.isFacet(nodeName)){
                         internalName = ServicingNameFormat.getInternalFacetName(nodeName,nsMappings);
                         Query q = new FixedScoreTermQuery(new Term(internalName,entry.getValue()));
                         this.query.add(q, Occur.MUST);
-                    } else {
-                        log.warn("Property " + nodeName.getNamespaceURI()+":"+nodeName.getLocalName()+" not allowed for facetted search. " +
-                                "Add the property to the indexing configuration to be defined as FACET");
                     }
-
+ else {
+                        log.warn("Property " + nodeName.getNamespaceURI()+":"+nodeName.getLocalName()+" not allowed for facetted search. " +
+                                 "Add the property to the indexing configuration to be defined as FACET");
+                    }
+                } catch (IllegalNameException e) {
+                    log.error(e.toString());
                 }
-                catch (IllegalNameException e) {
-                     log.error(e.toString());
-                                }
-
-              }
+            }
         }
     }
 
