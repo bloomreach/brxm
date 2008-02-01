@@ -42,7 +42,7 @@ public class FacetResultCollector extends HitCollector {
     private int offset;
     private int limit;
 
-    public FacetResultCollector(IndexReader reader, String facet,  Map<String,Map<String,Count>> resultset, HitsRequested hitsRequested, NamespaceMappings nsMappings) {
+    public FacetResultCollector(IndexReader reader, String facet,  Map<String,Count> facetMap, HitsRequested hitsRequested, NamespaceMappings nsMappings) {
         this.reader = reader;
         if(facet != null){
              try {
@@ -65,9 +65,7 @@ public class FacetResultCollector extends HitCollector {
             this.hits = null;
         }
 
-        if(facet != null && resultset.get(facet)!= null) {
-             facetMap = resultset.get(facet);
-        }
+        this.facetMap = facetMap;
     }
     public final void collect(final int docid, final float score) {
         try {

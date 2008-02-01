@@ -28,7 +28,7 @@ import org.hippoecm.repository.Utilities;
 
 import junit.framework.TestCase;
 
-public class HREPTWO451IssueTest extends TestCase {
+public class HREPTWO451Test extends TestCase {
 
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
@@ -62,7 +62,7 @@ public class HREPTWO451IssueTest extends TestCase {
         Node node, root = session.getRootNode().addNode("test");
         node = root.addNode("documents");
         node = node.addNode("document",HippoNodeType.NT_DOCUMENT);
-        node.setProperty("hippo:testfacet","aap");
+        node.setProperty("hippo:testfacet", "aap");
         session.save();
         node = root.addNode("navigation");
         node = node.addNode("search",HippoNodeType.NT_FACETSEARCH);
@@ -70,7 +70,9 @@ public class HREPTWO451IssueTest extends TestCase {
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/test/documents");
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:testfacet" });
         session.save();
-        // Utilities.dump(root);
-        assertFalse(root.getNode("navigation").getNode("search").hasNode("aap"));
+        Utilities.dump(root);
+        assertTrue(root.getNode("navigation").getNode("search").hasNode("aap"));
+        assertTrue(root.getNode("navigation").getNode("search").getNode("aap").getNode("hippo:resultset").hasNode("document"));
+        assertTrue(root.getNode("navigation").getNode("search").getNode("hippo:resultset").hasNode("document"));
     }
 }

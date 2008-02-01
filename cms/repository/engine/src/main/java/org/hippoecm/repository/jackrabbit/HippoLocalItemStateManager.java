@@ -141,9 +141,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
         try {
             resultSetProvider = new FacetResultSetProvider(this, mirrorProvider, facetedEngine, facetedContext);
-        } catch(IllegalNameException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
         } catch(NamespaceException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);

@@ -23,14 +23,20 @@ import java.util.Set;
 
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.BooleanClause.Occur;
+
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
@@ -41,8 +47,6 @@ import org.hippoecm.repository.query.lucene.FixedScoreTermQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
   implements FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl,
@@ -189,7 +193,9 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
                     long start = System.currentTimeMillis();
-                    collector = new FacetResultCollector(indexReader, facet, resultset, hitsRequested, nsMappings);
+                    collector = new FacetResultCollector(indexReader,
+                                                  nsMappings.translatePropertyName(NameFactoryImpl.getInstance().create(facet)),
+                                                  (facet != null ? resultset.get(facet) : null), hitsRequested, nsMappings);
                     searcher.search(searchQuery, collector);
                     // set the numHits value
                     collector.setNumhits(numHits);
@@ -212,6 +218,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
             }
 
+        } catch (IllegalNameException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
