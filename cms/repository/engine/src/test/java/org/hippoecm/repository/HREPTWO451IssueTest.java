@@ -70,6 +70,7 @@ public class HREPTWO451IssueTest extends TestCase {
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/test/documents");
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:testfacet" });
         session.save();
-        Utilities.dump(root);
+        // Utilities.dump(root);
+        assertFalse(root.getNode("navigation").getNode("search").hasNode("aap"));
     }
 }
