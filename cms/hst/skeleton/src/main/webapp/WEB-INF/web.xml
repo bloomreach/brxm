@@ -21,49 +21,60 @@
   <description>Hippo ECM Sample site</description>
 
   <context-param>
-    <description>The address of the repository</description>    
+    <description>The address of the repository</description>
     <param-name>repository-address</param-name>
-    <!-- param-value>rmi://localhost:1099/hipporepository</param-value -->
-    <param-value>target</param-value>
+    <param-value>rmi://localhost:1099/hipporepository</param-value>
+    <!--<param-value>target</param-value>-->
   </context-param>
 
   <filter>
-    <filter-name>filter</filter-name>
+    <filter-name>RewriteFilter</filter-name>
     <filter-class>org.hippoecm.hst.RewriteFilter</filter-class>
     <init-param>
-      <description>Where to find the map from URL to webpages</description>      
+      <description>
+        Where to find the nodes of type hippo:document
+        that can be accessed using url rewriting 
+      </description>      
       <param-name>urlbasepath</param-name>
       <param-value>/hst-sample/pages</param-value>
     </init-param>
     <init-param>
+      <description>
+        TODO
+      </description>
       <param-name>urlbasehome</param-name>
       <param-value>home</param-value>
     </init-param>
     <init-param>
+      <description>
+        Where to find the default 'node type -> jsp file' mapping,
+        must be of type hst:urlmappingfolder
+      </description>
       <param-name>urlmapping</param-name>
       <param-value>/hst-sample/defaultmapping</param-value>
     </init-param>
   </filter>
 
   <filter-mapping>
-    <filter-name>filter</filter-name>
+    <filter-name>RewriteFilter</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
   <servlet>
-    <servlet-name>Servlet</servlet-name>
+    <servlet-name>DirectAccessServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.DirectAccessServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>Servlet</servlet-name>
+    <servlet-name>DirectAccessServlet</servlet-name>
     <url-pattern>/static/*</url-pattern>
   </servlet-mapping>
+  
 
   <!-- Timeout in minutes -->
   <session-config>
-    <session-timeout>5</session-timeout>
+    <session-timeout>1</session-timeout>
   </session-config>
 
   <welcome-file-list>

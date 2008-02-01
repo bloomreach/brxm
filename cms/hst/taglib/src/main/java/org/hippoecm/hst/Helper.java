@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm;
+package org.hippoecm.hst;
 
 public class Helper {
+    
     public static String concat(String a, String b) {
         return a + b;
     }

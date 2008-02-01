@@ -16,47 +16,49 @@
 package org.hippoecm.hst;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
-import javax.servlet.http.*;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 
-public class IncludeTag extends TagSupport
-{
-    private static String SVN_ID = "$Id$";
+public class IncludeTag extends TagSupport {
+    private static final long serialVersionUID = 1L;
+    
     private String page;
     private String map;
 
     public void setPage(String page) {
         this.page = page;
     }
+
     public void setMap(String map) {
         this.map = map;
     }
 
-    public int doEndTag() throws JspException
-    {
-        Context newContext, oldContext = (Context) pageContext.findAttribute("context");
-        HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
-        HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();
-        boolean success;
+    public int doEndTag() throws JspException {
+        Context context = (Context) pageContext.findAttribute(Context.class.getName());
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
         try {
             pageContext.getOut().flush();
-            newContext = new Context(oldContext, page, -1);
-            request.setAttribute("context", newContext); // should be request.setAttribute("org.hippoecm.hst.context", ..);
-            success = RewriteFilter.redirectRepositoryDocument(request, response, newContext, map, page, true);
-            if(!success)
-                throw new JspException("No document or no document mapping found for "+page);
-        } catch(ServletException ex) {
+            Context newContext = new Context(context, page, -1);
+            request.setAttribute(Context.class.getName(), newContext);
+            RewriteResponseWrapper responseWrapper = new RewriteResponseWrapper(newContext, request, response);
+
+            if (!responseWrapper.redirectRepositoryDocument(map, page, true)) {
+                throw new JspException("No document or no document mapping found for " + page);
+            }
+        } catch (ServletException ex) {
             throw new JspException(ex);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             throw new JspException(ex);
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             throw new JspException(ex);
         } finally {
-            request.setAttribute("context", oldContext); // should be request.setAttribute("org.hippoecm.hst.context", ..);
+            request.setAttribute(Context.class.getName(), context);
         }
         return EVAL_PAGE;
     }
