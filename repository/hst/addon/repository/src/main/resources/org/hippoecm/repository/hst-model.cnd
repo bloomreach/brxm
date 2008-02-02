@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 <rep='internal'>
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
-<hipposample='http://www.hippoecm.org/sample/nt/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/1.0'>
 
 [hst:page] mixin
-- hst:pageType (string) mandatory // = 'jsp' < 'jsp', 'jsf'
-- hst:pageFile (string) mandatory // = 'index.jsp'
+- hst:pageType (string) = 'jsp' mandatory < 'jsp', 'jsf'
+- hst:pageFile (string) = 'index.jsp' mandatory 
 
 [hst:pagedef] > nt:base, hst:page
 
 [hst:urlmapping] > nt:base
 - hst:nodetype (string) mandatory
-+ hst:displaypage (hst:pagedef) mandatory
++ hst:displaypage (hst:pagedef) = hst:pagedef mandatory
 
-[hst:urlmappingfolder] > nt:base
-+ * (hst:urlmapping) multiple ordered
-
+[hst:urlmappingfolder] > nt:base orderable
++ * (hst:urlmapping) = hst:urlmapping
