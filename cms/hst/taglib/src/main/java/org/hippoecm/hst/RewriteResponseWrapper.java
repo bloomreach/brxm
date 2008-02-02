@@ -56,7 +56,7 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
 
         //Fetch the requested document node
         Node documentNode = null;
-        Session session = JcrConnector.getJcrSession(request.getSession());
+        Session session = JCRConnector.getJCRSession(request.getSession());
         if (session.getRootNode().hasNode(documentPath)) {
             documentNode = session.getRootNode().getNode(documentPath);
         } else {
@@ -77,14 +77,14 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
 
         //Locate the display node associated with the document node.
         Node displayNode = null;
-        if (documentNode.isNodeType(HstNodeTypes.NT_HST_PAGE)) {
+        if (documentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
             displayNode = documentNode;
         }
         for (NodeIterator iter = session.getRootNode().getNode(mapLocation).getNodes(); iter.hasNext();) {
             Node matchNode = iter.nextNode();
             try {
-                if (documentNode.isNodeType(matchNode.getProperty(HstNodeTypes.HST_NODETYPE).getString())) {
-                    displayNode = matchNode.getNode(HstNodeTypes.HST_DISPLAYPAGE);
+                if (documentNode.isNodeType(matchNode.getProperty(HSTNodeTypes.HST_NODETYPE).getString())) {
+                    displayNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
                     break;
                 }
             } catch (PathNotFoundException ex) {
@@ -101,7 +101,7 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
         context = new Context(context, documentPath, -1);
         
         // The (jsp) page that will be used  
-        String pageFile = displayNode.getProperty(HstNodeTypes.HST_PAGEFILE).getString();
+        String pageFile = displayNode.getProperty(HSTNodeTypes.HST_PAGEFILE).getString();
         
         // Forward/include the request to that jsp page
         RequestDispatcher dispatcher = request.getRequestDispatcher(pageFile);
@@ -133,7 +133,7 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
                     reversedPath = reversedPath.substring(1);
                 }
 
-                Session jcrSession = JcrConnector.getJcrSession(request.getSession());
+                Session jcrSession = JCRConnector.getJCRSession(request.getSession());
                 if (jcrSession.getRootNode().hasNode(reversedPath)) {
                     reversedUrl = contextPath + "/" + reversedPath;
                 }

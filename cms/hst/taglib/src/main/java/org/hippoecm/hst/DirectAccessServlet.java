@@ -68,8 +68,8 @@ public class DirectAccessServlet extends HttpServlet {
         }
 
         try {
-            Session session = JcrConnector.getJcrSession(req.getSession());
-            Item item = JcrConnector.getItem(session, path);
+            Session session = JCRConnector.getJCRSession(req.getSession());
+            Item item = JCRConnector.getItem(session, path);
             if (item == null) {
                 logger.warn(path + "not found, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
