@@ -73,7 +73,7 @@ public class RewriteFilter implements Filter {
             documentPath = documentPath + pathAfterContext;
         }
 
-        Session jcrSession = JcrConnector.getJcrSession(req.getSession());
+        Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = new Context(jcrSession, urlbasepath);
         req.setAttribute(Context.class.getName(), context);
 

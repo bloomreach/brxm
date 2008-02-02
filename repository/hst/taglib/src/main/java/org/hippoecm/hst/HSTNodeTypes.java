@@ -7,7 +7,7 @@ package org.hippoecm.hst;
  * This file has to be kept in sync with:
  * hippo-ecm-hst-addon-repository/src/main/resources/org/hippoecm/repository/hst-model.cnd
  */
-public interface HstNodeTypes {
+public interface HSTNodeTypes {
 
     //Node types
     final public static String NT_HST_PAGE = "hst:page";

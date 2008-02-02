@@ -20,14 +20,14 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrConnector {
+public class JCRConnector {
 
-    public static final Logger logger = LoggerFactory.getLogger(JcrConnector.class);
+    public static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
 
     public static final String REPOSITORY_ADRESS_PARAM = "repository-address";
-    public static final String JCR_SESSION_KEY = "jcrSession";
+    public static final String JCR_SESSION_KEY = "org.hippoecm.hst.JCRSESSION";
 
-    static Session getJcrSession(HttpSession httpSession) {
+    static Session getJCRSession(HttpSession httpSession) {
         Session result = null;
         String location = httpSession.getServletContext().getInitParameter(REPOSITORY_ADRESS_PARAM);
         try {
@@ -130,11 +130,11 @@ public class JcrConnector {
 
         SessionWrapper(String location) throws LoginException, RepositoryException {
             //FIXME: setDefaultRepository(location); getHippoRepository() results in an endless loop for embedded.
-            HippoRepositoryFactory.setDefaultRepository(location);
+            //HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
-            //HippoRepositoryFactory.setDefaultRepository(repository);
-            //jcrSession = repository.login();
-            jcrSession = repository.login("admin", "admin".toCharArray());
+            HippoRepositoryFactory.setDefaultRepository(repository);
+            jcrSession = repository.login();
+            //jcrSession = repository.login("admin", "admin".toCharArray());
         }
 
         public void valueBound(HttpSessionBindingEvent event) {

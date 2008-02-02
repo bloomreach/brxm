@@ -78,7 +78,7 @@ public class Context extends AbstractMap {
 
     public String getPath() {
         try {
-            Item item = JcrConnector.getItem(session, path);
+            Item item = JCRConnector.getItem(session, path);
             return item.getPath();
         } catch (PathNotFoundException ex) {
             logger.error("getPath", ex);
@@ -91,7 +91,7 @@ public class Context extends AbstractMap {
 
     public String getName() {
         try {
-            Item item = JcrConnector.getItem(session, path);
+            Item item = JCRConnector.getItem(session, path);
             return item.getName();
         } catch (PathNotFoundException ex) {
             logger.error("getName", ex);
@@ -119,7 +119,7 @@ public class Context extends AbstractMap {
                         rtvalue.add(child);
                     }
                 } else {
-                    Item item = JcrConnector.getItem(session, path);
+                    Item item = JCRConnector.getItem(session, path);
                     if (item.isNode()) {
                         Node node = (Node) item;
                         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
@@ -153,7 +153,7 @@ public class Context extends AbstractMap {
                         rtvalue.add(child.getPath());
                     }
                 } else {
-                    Item item = JcrConnector.getItem(session, path);
+                    Item item = JCRConnector.getItem(session, path);
                     if (item.isNode()) {
                         Node node = (Node) item;
                         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
@@ -191,7 +191,7 @@ public class Context extends AbstractMap {
                             requestedPath += "/" + field;
                         }
                     }
-                    Item item = JcrConnector.getItem(session, requestedPath);
+                    Item item = JCRConnector.getItem(session, requestedPath);
                     if (item == null) {
                         result = "PathNotFound " + requestedPath;
                     } else if (item.isNode()) {
