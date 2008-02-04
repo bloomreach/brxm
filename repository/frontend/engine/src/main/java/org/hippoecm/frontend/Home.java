@@ -40,7 +40,7 @@ public class Home extends WebPage {
         }
 
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
-        TemplateConfig templateConfig = new RepositoryTemplateConfig();
+        TemplateConfig templateConfig = new RepositoryTemplateConfig(session.getJcrSessionModel(), session.getHippo());
         PluginManager pluginManager = new PluginManager(pluginConfig, templateConfig);
         PluginFactory pluginFactory = new PluginFactory(pluginManager);
 

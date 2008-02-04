@@ -34,14 +34,14 @@ import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateProvider extends AbstractProvider<TemplateModel> implements IDataProvider {
+public class NodeTemplateProvider extends AbstractProvider<TemplateModel> implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(FieldProvider.class);
 
     private FieldDescriptor descriptor;
 
-    public TemplateProvider(FieldDescriptor descriptor, JcrNodeModel nodeModel) {
+    public NodeTemplateProvider(FieldDescriptor descriptor, JcrNodeModel nodeModel) {
         super(nodeModel);
         this.descriptor = descriptor;
     }
@@ -53,26 +53,47 @@ public class TemplateProvider extends AbstractProvider<TemplateModel> implements
     public void addNew() {
         load();
 
-        TemplateModel templateModel = new TemplateModel(descriptor.getTemplate(), getNodeModel(), null);
-        if (!descriptor.getPath().equals("*")) {
-            templateModel.setPath(descriptor.getPath());
+        try {
+            Node parent = getNodeModel().getNode();
+            TemplateDescriptor template = descriptor.getTemplate();
+            Node node = parent.addNode(descriptor.getPath(), template.getType());
+            TemplateModel templateModel = new TemplateModel(descriptor.getTemplate(), getNodeModel(), descriptor
+                    .getPath(), node.getIndex());
+            elements.addLast(templateModel);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
-
-        elements.addLast(templateModel);
     }
 
     public void remove(TemplateModel model) {
         load();
         Iterator<TemplateModel> iterator = elements.iterator();
+        int newIndex = 1;
         while (iterator.hasNext()) {
-            if (model.equals(iterator.next())) {
+            TemplateModel currentModel = iterator.next();
+            if (model.equals(currentModel)) {
                 iterator.remove();
-                model.remove();
+                JcrNodeModel nodeModel = model.getJcrNodeModel();
+                try {
+                    JcrItemModel itemModel = nodeModel.getItemModel();
+
+                    if (itemModel.exists()) {
+                        Item item = (Item) itemModel.getObject();
+
+                        // remove the item
+                        log.info("removing item " + item.getPath());
+                        item.remove();
+                    } else {
+                        log.info("item " + itemModel.getPath() + " does not exist");
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
                 log.info("removed " + model);
-                return;
+            } else {
+                currentModel.setIndex(newIndex++);
             }
         }
-        log.warn("could not find " + model);
     }
 
     public void moveUp(TemplateModel model) {
@@ -136,11 +157,8 @@ public class TemplateProvider extends AbstractProvider<TemplateModel> implements
         TemplateDescriptor template = descriptor.getTemplate();
         Set<String> excluded = descriptor.getExcluded();
         if (excluded == null || !excluded.contains(name)) {
-            String path = name;
-            if (descriptor.isNode()) {
-                path += "[" + ((Node) item).getIndex() + "]";
-            }
-            elements.addLast(new TemplateModel(template, getNodeModel(), path));
+            int index = ((Node) item).getIndex();
+            elements.addLast(new TemplateModel(template, getNodeModel(), name, index));
         }
     }
 }

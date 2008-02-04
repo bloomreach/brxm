@@ -17,17 +17,11 @@ package org.hippoecm.frontend.template.model;
 
 import java.util.Map;
 
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.template.FieldDescriptor;
@@ -62,30 +56,6 @@ public class FieldModel extends NodeModelWrapper implements IPluginModel {
 
     public FieldDescriptor getDescriptor() {
         return descriptor;
-    }
-
-    public void remove() {
-        if (descriptor.getPath() != null) {
-            Node node = getNodeModel().getNode();
-            try {
-                NodeIterator iterator = node.getNodes(descriptor.getPath());
-                while (iterator.hasNext()) {
-                    JcrItemModel itemModel = new JcrItemModel(iterator.nextNode());
-
-                    if (itemModel.exists()) {
-                        Item item = (Item) itemModel.getObject();
-
-                        // remove the item
-                        log.info("removing item " + item.getPath());
-                        item.remove();
-                    } else {
-                        log.info("item " + itemModel.getPath() + " does not exist");
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        }
     }
 
     // override Object methods

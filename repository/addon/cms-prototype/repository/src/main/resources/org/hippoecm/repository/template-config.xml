@@ -46,7 +46,7 @@
       <sv:value>hippo:template</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.PropertyTemplatePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:node" sv:type="Boolean">
       <sv:value>false</sv:value>
@@ -79,7 +79,10 @@
     <sv:property sv:name="hippo:type" sv:type="String">
       <sv:value>hipposample:simpledocument</sv:value>
     </sv:property>
-
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposample:simpledocument</sv:value>
@@ -107,16 +110,13 @@
         <sv:value>title</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:property sv:name="hippo:template" sv:type="String">
         <sv:value>Xinha</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:title</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
     
@@ -129,16 +129,13 @@
         <sv:value>creation date</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:cdate</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:property sv:name="hippo:template" sv:type="String">
         <sv:value>String</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
     
@@ -151,16 +148,13 @@
         <sv:value>owner</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:owner</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:property sv:name="hippo:template" sv:type="String">
         <sv:value>String</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
     
@@ -173,9 +167,9 @@
         <sv:value>body</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:property sv:name="hippo:template" sv:type="String">
         <sv:value>Xinha</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
@@ -183,9 +177,6 @@
       </sv:property>
       <sv:property sv:name="hippo:mandatory" sv:type="String">
         <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
     
@@ -198,19 +189,19 @@
         <sv:value>subject</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:subject</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>MultiString</sv:value>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:mandatory" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
+      <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
     </sv:node>
     
@@ -223,15 +214,15 @@
         <sv:value>link</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:link</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>SimpleReference</sv:value>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:property sv:name="hippo:multiple" sv:type="Boolean">
         <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
@@ -245,16 +236,13 @@
         <sv:value>state</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hipposample:state</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:property sv:name="hippo:template" sv:type="String">
         <sv:value>String</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
 
@@ -283,16 +271,13 @@
         <sv:value>paths</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>MultiString</sv:value>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hippo:paths</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
 
@@ -305,9 +290,9 @@
         <sv:value>content</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:property sv:name="hippo:template" sv:type="String">
         <sv:value>Xinha</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
@@ -315,9 +300,6 @@
       </sv:property>
       <sv:property sv:name="hippo:mandatory" sv:type="String">
         <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="String">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
     
@@ -330,9 +312,9 @@
         <sv:value>state</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:property sv:name="hippo:template" sv:type="String">
         <sv:value>String</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
@@ -340,9 +322,6 @@
       </sv:property>
       <sv:property sv:name="hippo:mandatory" sv:type="String">
         <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
     
@@ -355,16 +334,13 @@
         <sv:value>language</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.MultipleFieldPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:property sv:name="hippo:template" sv:type="String">
         <sv:value>String</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>language</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:node" sv:type="Boolean">
-        <sv:value>false</sv:value>
       </sv:property>
     </sv:node>
 

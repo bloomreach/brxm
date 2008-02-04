@@ -24,7 +24,6 @@ import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,17 +52,16 @@ public class WildcardModel extends FieldModel {
                     jcrSession.move(node.getPath() + "/" + descriptor.getPath(), node.getPath() + "/" + path);
                 }
             } else {
-                TemplateDescriptor templateDescriptor = descriptor.getTemplate();
                 if (descriptor.getPath() == null) {
-                    Value value = templateDescriptor.createValue("");
-                    if (templateDescriptor.isMultiple()) {
+                    Value value = descriptor.getTemplate().createValue("");
+                    if (descriptor.isMultiple()) {
                         node.setProperty(path, new Value[] { value });
                     } else {
                         node.setProperty(path, value);
                     }
                 } else if (descriptor.getPath() != path) {
                     Property prop = node.getProperty(descriptor.getPath());
-                    if (templateDescriptor.isMultiple()) {
+                    if (descriptor.isMultiple()) {
                         Value[] values = prop.getValues();
                         node.setProperty(path, values);
                         prop.remove();
