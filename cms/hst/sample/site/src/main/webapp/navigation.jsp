@@ -20,12 +20,12 @@
     limitations under the License.
 --%>
 
-<c:set var="global" value="${context['../../../global/global']}" scope="page"/>
-
 <div id="block">
 
+  <div id="bar" width="100%"><img src="/static/hst-sample/images/test/jcr:content"></div><br/>
+
   <div id="earmarks">
-    <a href="#" onclick="window.print();" class="printpage" title="${global.linkTitle}">${global.linkText}</a>
+    <a href="#" onclick="window.print();" class="printpage" title="${global[global._name].linkTitle}">${global[global._name].linkText}</a>
   </div>
 
   <div id="menu">

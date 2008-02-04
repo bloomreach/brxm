@@ -1,5 +1,3 @@
-//FIXME
-
 /*
  * Copyright 2007 Hippo.
  *
@@ -71,9 +69,11 @@ public class DirectAccessServlet extends HttpServlet {
 
         try {
             Session session = JCRConnector.getJCRSession(req.getSession());
+
             Item item = JCRConnector.getItem(session, path);
+
             if (item == null) {
-                logger.warn(path + "not found, response status = 404)");
+                logger.warn("item at path " + path + " not found, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
@@ -83,8 +83,8 @@ public class DirectAccessServlet extends HttpServlet {
             }
             Node node = (Node) item;
 
-            String mimeType = node.getProperty("mime-type").getString();
-            InputStream istream = node.getProperty("data").getStream();
+            String mimeType = node.getProperty("jcr:mimeType").getString();
+            InputStream istream = node.getProperty("jcr:data").getStream();
 
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType(mimeType);

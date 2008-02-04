@@ -28,6 +28,11 @@
   width: 80%;
   float: center;
 }
+#bar {
+  width: 100%;
+  float: center;
+  background-color: #4B83C8;
+}
 #earmarks {
   width: 15%;
   float: right;

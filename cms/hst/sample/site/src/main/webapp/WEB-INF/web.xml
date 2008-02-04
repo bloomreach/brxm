@@ -23,8 +23,8 @@
   <context-param>
     <description>The address of the repository</description>
     <param-name>repository-address</param-name>
-    <param-value>rmi://localhost:1099/hipporepository</param-value>
-    <!-- param-value>WEB-INF/storage</param-value -->
+    <!-- param-value>rmi://localhost:1099/hipporepository</param-value -->
+    <param-value>WEB-INF/storage</param-value>
   </context-param>
 
   <filter>
@@ -66,8 +66,8 @@
     </init-param>
   </filter>
 
-  <!-- filter>
-    <filter-name>AdditionalContext</filter-name>
+  <filter>
+    <filter-name>GlobalContext</filter-name>
     <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
     <init-param>
       <description>
@@ -81,10 +81,10 @@
       <description>
         The path to bind as context.
       </description>      
-      <param-name></param-name>
+      <param-name>location</param-name>
       <param-value>/hst-sample/global</param-value>
     </init-param>
-  </filter -->
+  </filter>
 
   <filter-mapping>
     <filter-name>Context</filter-name>
@@ -92,12 +92,12 @@
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
-  <!-- filter-mapping>
+  <filter-mapping>
     <filter-name>GlobalContext</filter-name>
     <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
-  </filter-mapping -->
+  </filter-mapping>
 
   <servlet>
     <servlet-name>DirectAccessServlet</servlet-name>
