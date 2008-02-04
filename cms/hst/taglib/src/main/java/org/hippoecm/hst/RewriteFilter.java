@@ -32,17 +32,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RewriteFilter implements Filter {
-
     public static final Logger logger = LoggerFactory.getLogger(RewriteFilter.class);
+    static String ATTRIBUTE = RewriteFilter.class.getName() + ".ATTRIBUTE";
 
     private String urlbasehome;
     private String urlbasepath;
     private String urlmapping;
+    private String attributename = "context";
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        urlbasehome = filterConfig.getInitParameter("urlbasehome");
-        urlbasepath = filterConfig.getInitParameter("urlbasepath");
-        urlmapping = filterConfig.getInitParameter("urlmapping");
+        String param;
+
+        param = filterConfig.getInitParameter("urlbasehome");
+        if (param != null && !param.trim().equals("")) {
+            urlbasehome = param;
+        } else
+            throw new ServletException("Missing parameter urlbasehome in "+filterConfig.getFilterName());
+
+        param = filterConfig.getInitParameter("urlbasepath");
+        if (param != null && !param.trim().equals("")) {
+            urlbasepath = param;
+        } else
+            throw new ServletException("Missing parameter urlbasepath in "+filterConfig.getFilterName());
+
+        param = filterConfig.getInitParameter("urlmapping");
+        if (param != null && !param.trim().equals("")) {
+            urlmapping = param;
+        } else
+            throw new ServletException("Missing parameter urlmapping in "+filterConfig.getFilterName());
+
+        param = filterConfig.getInitParameter("attributename");
+        if (param != null && !param.trim().equals("")) {
+            attributename = param.trim();
+            filterConfig.getServletContext().setAttribute(ATTRIBUTE, attributename);
+        }
     }
 
     public void destroy() {
@@ -75,7 +98,8 @@ public class RewriteFilter implements Filter {
 
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = new Context(jcrSession, urlbasepath);
-        req.setAttribute(Context.class.getName(), context);
+        context.setPath(documentPath);
+        req.setAttribute(attributename, context);
 
         try {
             RewriteResponseWrapper responseWrapper = new RewriteResponseWrapper(context, req, res);
@@ -87,6 +111,4 @@ public class RewriteFilter implements Filter {
             throw new ServletException(ex);
         }
     }
-
-
 }

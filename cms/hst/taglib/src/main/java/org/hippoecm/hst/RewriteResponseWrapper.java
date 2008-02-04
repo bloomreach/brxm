@@ -41,12 +41,11 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
     public String encodeRedirectURL(String url) {
         return super.encodeURL(reverseURL(request.getContextPath(), url));
     }
-
     
     boolean redirectRepositoryDocument(String mapLocation, String documentPath, boolean include)
             throws RepositoryException, IOException, ServletException {
 
-        //Strip any leading slashes
+        // Strip any leading slashes
         while (documentPath.startsWith("/")) {
             documentPath = documentPath.substring(1);
         }
@@ -54,7 +53,7 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
             mapLocation = mapLocation.substring(1);
         }
 
-        //Fetch the requested document node
+        // Fetch the requested document node
         Node documentNode = null;
         Session session = JCRConnector.getJCRSession(request.getSession());
         if (session.getRootNode().hasNode(documentPath)) {
@@ -63,7 +62,7 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
             return false;
         }
 
-        //If the requested document node is a handle go one level deeper.
+        // If the requested document node is a handle go one level deeper.
         try {
             if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 documentNode = documentNode.getNode(documentNode.getName());
@@ -75,7 +74,7 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
         }
         documentPath = documentNode.getPath();
 
-        //Locate the display node associated with the document node.
+        // Locate the display node associated with the document node.
         Node displayNode = null;
         if (documentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
             displayNode = documentNode;
@@ -97,12 +96,11 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
             return false;
         }
 
-        // Set the context to the requested document node
-        context = new Context(context, documentPath, -1);
+        context.setPath(documentPath);
         
         // The (jsp) page that will be used  
         String pageFile = displayNode.getProperty(HSTNodeTypes.HST_PAGEFILE).getString();
-        
+
         // Forward/include the request to that jsp page
         RequestDispatcher dispatcher = request.getRequestDispatcher(pageFile);
         if (include) {
@@ -112,7 +110,6 @@ class RewriteResponseWrapper extends HttpServletResponseWrapper {
         }
         return true;
     }
-
     
     private String reverseURL(String contextPath, String url) {
         /* Something like the following may be more appropriate, but the

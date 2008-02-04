@@ -33,9 +33,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 
-import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.hippoecm.repository.api.HippoQuery;
 
 public class Context extends AbstractMap {
 
@@ -52,6 +53,7 @@ public class Context extends AbstractMap {
     Context(Session jcrSession, String urlbasepath) {
         this.session = jcrSession;
         this.urlbasepath = urlbasepath;
+        this.path = null;
     }
 
     Context(Context parent, String path, int index) {
@@ -76,32 +78,9 @@ public class Context extends AbstractMap {
         return urlbasepath;
     }
 
-    public String getPath() {
-        try {
-            Item item = JCRConnector.getItem(session, path);
-            return item.getPath();
-        } catch (PathNotFoundException ex) {
-            logger.error("getPath", ex);
-            return "PathNotFoundException " + path;
-        } catch (RepositoryException ex) {
-            logger.error("getPath", ex);
-            return "RepositoryException " + ex.getMessage();
-        }
+    void setPath(String path) {
+        this.path = path;
     }
-
-    public String getName() {
-        try {
-            Item item = JCRConnector.getItem(session, path);
-            return item.getName();
-        } catch (PathNotFoundException ex) {
-            logger.error("getName", ex);
-            return "PathNotFoundException " + path;
-        } catch (RepositoryException ex) {
-            logger.error("getName", ex);
-            return "RepositoryException " + ex.getMessage();
-        }
-    }
-    
 
     public Collection values() {
         Set rtvalue = new LinkedHashSet();
