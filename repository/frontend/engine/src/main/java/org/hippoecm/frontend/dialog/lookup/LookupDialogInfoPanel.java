@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.move;
+package org.hippoecm.frontend.dialog.lookup;
 
 import javax.jcr.RepositoryException;
 
@@ -24,14 +24,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MoveDialogInfoPanel extends Panel {
+class LookupDialogInfoPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(MoveDialogInfoPanel.class);
+    static final Logger log = LoggerFactory.getLogger(LookupDialogInfoPanel.class);
 
-    private String destinationPath;
+    private String target;
 
-    public MoveDialogInfoPanel(String id, JcrNodeModel model) {
+    LookupDialogInfoPanel(String id, JcrNodeModel model) {
         super(id, model);
         setOutputMarkupId(true);
 
@@ -41,15 +41,15 @@ public class MoveDialogInfoPanel extends Panel {
             log.error(e.getMessage());
         }
 
-        add(new Label("destination", new PropertyModel(this, "destinationPath")));
+        add(new Label("target", new PropertyModel(this, "target")));
     }
 
-    public String getDestinationPath() {
-        return destinationPath;
+    String getTarget() {
+        return target;
     }
 
-    public void setDestinationPath(String destinationPath) {
-        this.destinationPath = destinationPath;
+    void setTarget(String target) {
+        this.target = target;
     }
 
 }

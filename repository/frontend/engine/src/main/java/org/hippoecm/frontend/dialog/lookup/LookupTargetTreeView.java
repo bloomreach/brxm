@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.move;
+package org.hippoecm.frontend.dialog.lookup;
 
 import javax.swing.tree.TreeNode;
 
@@ -22,13 +22,13 @@ import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.tree.JcrTree;
 
-public class MoveTargetTreeView extends JcrTree {
+class LookupTargetTreeView extends JcrTree {
     private static final long serialVersionUID = 1L;
 
     private TreeNode selectedNode;
-    private MoveDialog dialog;
+    private LookupDialog dialog;
 
-    public MoveTargetTreeView(String id, JcrTreeModel treeModel, MoveDialog dialog) {
+    LookupTargetTreeView(String id, JcrTreeModel treeModel, LookupDialog dialog) {
         super(id, treeModel);
         this.dialog = dialog;
     }
@@ -40,7 +40,7 @@ public class MoveTargetTreeView extends JcrTree {
         dialog.update(target, treeNodeModel.getNodeModel());
     }
 
-    public TreeNode getSelectedNode() {
+    TreeNode getSelectedNode() {
         return selectedNode;
     }
 }

@@ -13,56 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.move;
+package org.hippoecm.frontend.plugins.admin.menu.copy;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MoveDialog extends LookupDialog {
+public class CopyDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
+    static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
-
-    public MoveDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Move selected node", dialogWindow, channel);
+    public CopyDialog(DialogWindow dialogWindow, Channel channel) {
+        super("Copy selected node", dialogWindow, channel);
     }
-
 
     @Override
     public void ok() throws RepositoryException {
         JcrNodeModel sourceNodeModel = dialogWindow.getNodeModel();
         if (sourceNodeModel.getParentModel() != null) {
-            String nodeName = sourceNodeModel.getNode().getName();
-            String sourcePath = sourceNodeModel.getNode().getPath();
-
-            AbstractTreeNode targetNodeModel = getSelectedNode();
-            String targetPath = targetNodeModel.getNodeModel().getNode().getPath();
+            JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
+            String targetPath = targetNodeModel.getNode().getPath();
             if (!targetPath.endsWith("/")) {
                 targetPath += "/";
             }
-            targetPath += nodeName;
+            targetPath += sourceNodeModel.getNode().getName();
 
-            // The actual move
-            Session jcrSession = ((UserSession) getSession()).getJcrSession();
-            jcrSession.move(sourcePath, targetPath);
+            // The actual copy
+            UserSession wicketSession =  (UserSession) getSession();
+            HippoSession jcrSession = (HippoSession)wicketSession.getJcrSession();
+            jcrSession.copy(sourceNodeModel.getNode(), targetPath);
 
             if (channel != null) {
-                Request request = channel.createRequest("select", targetNodeModel.getNodeModel());
+                Request request = channel.createRequest("select", targetNodeModel);
                 channel.send(request);
 
                 //TODO: lookup common ancestor iso root
-                request = channel.createRequest("flush", targetNodeModel.getNodeModel().findRootModel());
+                request = channel.createRequest("flush", targetNodeModel.findRootModel());
                 channel.send(request);
             }
         }
@@ -71,6 +66,5 @@ public class MoveDialog extends LookupDialog {
     @Override
     public void cancel() {
     }
-
 
 }

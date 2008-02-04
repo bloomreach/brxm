@@ -22,6 +22,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
+import org.hippoecm.frontend.plugins.admin.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.admin.menu.export.ExportDialog;
 import org.hippoecm.frontend.plugins.admin.menu.move.MoveDialog;
@@ -43,6 +44,7 @@ public class MenuPlugin extends Plugin {
         add(new DialogLink("node-dialog", "Add Node", NodeDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("delete-dialog", "Delete Node", DeleteDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("move-dialog", "Move Node", MoveDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("copy-dialog", "Copy Node", CopyDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("rename-dialog", "Rename Node", RenameDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("export-dialog", "Export Node", ExportDialog.class, jcrModel, incoming, factory));
         add(new DialogLink("property-dialog", "Add Property", PropertyDialog.class, jcrModel, incoming, factory));

@@ -46,24 +46,21 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
-
-import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Path;
-
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  */
 public class SessionDecorator implements XASession, HippoSession {
+    
+    @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     protected final DecoratorFactory factory;
@@ -229,7 +226,6 @@ public class SessionDecorator implements XASession, HippoSession {
      */
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
-        WorkspaceDecorator wsp = (WorkspaceDecorator) getWorkspace();
         session.save();
     }
 
@@ -378,6 +374,12 @@ public class SessionDecorator implements XASession, HippoSession {
      */
     public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
       LockException, VersionException, RepositoryException {
+        
+        if (destAbsNodePath.startsWith(srcNode.getPath()) && !destAbsNodePath.equals(srcNode.getPath())) {
+            String msg = srcNode.getPath() + ": Invalid destination path (cannot be descendant of source path)";
+            throw new RepositoryException(msg);
+        }
+
         while (destAbsNodePath.startsWith("/")) {
             destAbsNodePath = destAbsNodePath.substring(1);
         }
