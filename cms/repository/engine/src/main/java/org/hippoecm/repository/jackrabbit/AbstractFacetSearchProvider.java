@@ -83,15 +83,20 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
 
     Name virtualNodeName;
 
-    AbstractFacetSearchProvider(HippoLocalItemStateManager stateMgr, String externalNodeType, String virtualNodeType,
-                                FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
-        throws RepositoryException
-    {
-        super(stateMgr, externalNodeType, virtualNodeType);
-        this.facetedEngine = facetedEngine;
-        this.facetedContext = facetedContext;
-        this.virtualNodeName = resolveName(virtualNodeType);
+    protected AbstractFacetSearchProvider() {
+        super();
+    }
 
+    @Override
+    void initialize(HippoLocalItemStateManager stateMgr) throws RepositoryException {
+        super.initialize(stateMgr);
+        this.facetedEngine = stateMgr.facetedEngine;
+        this.facetedContext = stateMgr.facetedContext;
+        stateMgr.registerProviderProperty(countName);
+    }
+
+    @Override
+    protected void initialize() throws RepositoryException {
         querynameName = resolveName(HippoNodeType.HIPPO_QUERYNAME);
         docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
         facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
@@ -103,8 +108,6 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
         facetsPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), facetsName);
         searchPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), searchName);
         countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), countName);
-
-        stateMgr.registerProperty(countName);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {

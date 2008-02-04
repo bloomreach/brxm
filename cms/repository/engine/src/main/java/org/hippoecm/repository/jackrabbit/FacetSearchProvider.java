@@ -45,15 +45,19 @@ public class FacetSearchProvider extends AbstractFacetSearchProvider
 {
     final static private String SVN_ID = "$Id$";
 
-    FacetSearchProvider(HippoLocalItemStateManager stateMgr,
-                        FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext,
-                        FacetSubSearchProvider subSearchProvider, FacetResultSetProvider subNodesProvider)
+    FacetSearchProvider()
         throws RepositoryException
     {
-        super(stateMgr, HippoNodeType.NT_FACETSEARCH, HippoNodeType.NT_FACETSUBSEARCH, facetedEngine, facetedContext);
+        super();
+    }
 
-        this.subSearchProvider = subSearchProvider;
-        this.subNodesProvider  = subNodesProvider;
+    @Override
+    protected void initialize() throws RepositoryException {
+        super.initialize();
+        subSearchProvider = (FacetSubSearchProvider) lookup("org.hippoecm.repository.jackrabbit.FacetSubSearchProvider");
+        subNodesProvider  = (FacetResultSetProvider) lookup("org.hippoecm.repository.jackrabbit.FacetResultSetProvider");
+        virtualNodeName = resolveName(HippoNodeType.NT_FACETSUBSEARCH);
+        register(resolveName(HippoNodeType.NT_FACETSEARCH), virtualNodeName);
     }
 
     public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {

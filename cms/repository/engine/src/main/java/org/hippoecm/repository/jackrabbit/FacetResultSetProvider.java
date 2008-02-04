@@ -77,18 +77,26 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     PropDef countPropDef;
     PropDef primaryTypePropDef;
 
-    FacetResultSetProvider(HippoLocalItemStateManager stateMgr, MirrorVirtualProvider subNodesProvider,
-                           FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext)
+    FacetResultSetProvider()
         throws IllegalNameException, NamespaceException, RepositoryException {
-        super(stateMgr, null, HippoNodeType.NT_FACETRESULT);
+        super();
+    }
 
-        this.facetedEngine = facetedEngine;
-        this.facetedContext = facetedContext;
-        this.subNodesProvider = subNodesProvider;
+    @Override
+    void initialize(HippoLocalItemStateManager stateMgr) throws RepositoryException {
+        super.initialize(stateMgr);
+        this.facetedEngine = stateMgr.facetedEngine;
+        this.facetedContext = stateMgr.facetedContext;
+    }
 
+    @Override
+    protected void initialize() throws RepositoryException {
+        subNodesProvider = (MirrorVirtualProvider) lookup("org.hippoecm.repository.jackrabbit.MirrorVirtualProvider");
         countName = resolveName(HippoNodeType.HIPPO_COUNT);
         countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETRESULT), countName);
         primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETRESULT), countName);
+        this.subNodesProvider = (MirrorVirtualProvider) lookup("org.hippoecm.repository.jackrabbit.MirrorVirtualProvider");
+        register(null, resolveName(HippoNodeType.NT_FACETRESULT));
     }
 
     public NodeState populate(NodeState state) {

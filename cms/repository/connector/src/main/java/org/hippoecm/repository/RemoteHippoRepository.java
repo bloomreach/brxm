@@ -33,4 +33,9 @@ class RemoteHippoRepository extends HippoRepositoryImpl {
         ClientRepositoryFactory repositoryFactory = new ClientRepositoryFactory(adapterFactory);
         repository = repositoryFactory.getRepository(location);
     }
+
+    public static HippoRepository create(String location) throws MalformedURLException, NotBoundException, RemoteException,
+            RepositoryException {
+        return new RemoteHippoRepository(location);
+    }
 }

@@ -37,8 +37,11 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         }
     }
 
-    ViewVirtualProvider(HippoLocalItemStateManager stateMgr) throws RepositoryException {
-        super(stateMgr, null, null);
+    ViewVirtualProvider() throws RepositoryException {
+        super();
+    }
+
+    protected void initialize() {
     }
 
     public NodeState populate(NodeState state) {
