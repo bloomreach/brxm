@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JCRConnector {
-
     public static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
 
     public static final String REPOSITORY_ADRESS_PARAM = "repository-address";
@@ -61,7 +60,6 @@ public class JCRConnector {
                 conditions = new TreeMap<String, String>();
                 int beginIndex = relPath.indexOf("[") + 1;
                 int endIndex = relPath.lastIndexOf("]");
-                // FIXME should do something more
                 String[] conditionElts = relPath.substring(beginIndex, endIndex).split(",");
                 for (int conditionIdx = 0; conditionIdx < conditionElts.length; conditionIdx++) {
                     int pos = conditionElts[conditionIdx].indexOf("=");
@@ -83,16 +81,16 @@ public class JCRConnector {
                     try {
                         return node.getProperty(relPath);
                     } catch (PathNotFoundException ex) {
-                        return null; // FIXME should do something more
+                        return null;
                     }
                 } else if (node.hasNode(relPath)) {
                     try {
                         node = node.getNode(relPath);
                     } catch (PathNotFoundException ex) {
-                        return null; // FIXME should do something more
+                        return null;
                     }
                 } else
-                    return null; // FIXME should do something more
+                    return null;
             } else {
                 for (NodeIterator iter = node.getNodes(relPath); iter.hasNext();) {
                     node = iter.nextNode();
@@ -101,38 +99,43 @@ public class JCRConnector {
                             if (condition.getValue() != null) {
                                 try {
                                     if (!node.getProperty(condition.getKey()).getString().equals(condition.getValue())) {
-                                        node = null; // FIXME should do something more
+                                        node = null;
                                         break;
                                     }
                                 } catch (PathNotFoundException ex) {
-                                    node = null; // FIXME should do something more
+                                    node = null;
                                     break;
                                 } catch (ValueFormatException ex) {
-                                    node = null; // FIXME should do something more
+                                    node = null;
                                     break;
                                 }
                             }
                         } else {
-                            node = null; // FIXME should do something more
+                            node = null;
                             break;
                         }
                     }
                     if (node != null)
-                        break; // FIXME should do something more
+                        break;
                 }
             }
         }
         return node;
     }
-    
-        
+
     private static class SessionWrapper implements HttpSessionBindingListener {
         Session jcrSession;
 
         SessionWrapper(String location) throws LoginException, RepositoryException {
             HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
-            jcrSession = repository.login("admin", "admin".toCharArray());
+            try {
+                jcrSession = repository.login("admin", "admin".toCharArray());
+                logger.debug("logged in as administrative user");
+            } catch(LoginException ex) {
+                jcrSession = repository.login();
+                logger.debug("logged in as anonymous user");
+            }
         }
 
         public void valueBound(HttpSessionBindingEvent event) {

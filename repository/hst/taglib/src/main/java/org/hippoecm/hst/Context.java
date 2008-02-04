@@ -99,7 +99,10 @@ public class Context extends AbstractMap {
                     }
                 } else {
                     Item item = JCRConnector.getItem(session, path);
-                    if (item.isNode()) {
+                    logger.debug("Item has disappeared " + path);
+                    if (item == null) {
+                        logger.debug("Item has disappeared " + path);
+                    } else if (item.isNode()) {
                         Node node = (Node) item;
                         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                             Node child = iter.nextNode();
@@ -133,7 +136,9 @@ public class Context extends AbstractMap {
                     }
                 } else {
                     Item item = JCRConnector.getItem(session, path);
-                    if (item.isNode()) {
+                    if (item == null) {
+                        logger.debug("Item has disappeared " + path);
+                    } else if (item.isNode()) {
                         Node node = (Node) item;
                         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                             Node child = iter.nextNode();
@@ -172,6 +177,7 @@ public class Context extends AbstractMap {
                     }
                     Item item = JCRConnector.getItem(session, requestedPath);
                     if (item == null) {
+                        logger.info("Path not found on "+requestedPath);
                         result = "PathNotFound " + requestedPath;
                     } else if (item.isNode()) {
                         Node node = (Node) item;
