@@ -60,6 +60,12 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
         initialize();
     }
 
+    /* Implementors of this abstract class should also provide the following
+     * static method:
+     *     public static HippoRepository create(String location);
+     * which may throw any number of exceptions.
+     */
+
     public Repository getRepository() {
         return repository;
     }

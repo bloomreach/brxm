@@ -45,23 +45,30 @@ public interface HippoNodeType {
     final public static String NT_FACETAUTH = "hippo:facetauth";
     final public static String NT_FACETAUTHFOLDER = "hippo:facetauthfolder";
     final public static String NT_FACETRESULT = "hippo:facetresult";
-    final public static String NT_FACETSUBSEARCH = "hippo:facetsubsearch";
     final public static String NT_FACETSEARCH = "hippo:facetsearch";
     final public static String NT_FACETSELECT = "hippo:facetselect";
+    final public static String NT_FACETSUBSEARCH = "hippo:facetsubsearch";
+    final public static String NT_FIELD = "hippo:field";
+    final public static String NT_FRONTEND = "hippo:frontend";
+    final public static String NT_FRONTENDPLUGIN = "hippo:frontendplugin";
     final public static String NT_GROUP = "hippo:group";
     final public static String NT_GROUPFOLDER = "hippo:groupfolder";
     final public static String NT_HANDLE = "hippo:handle";
-    final public static String NT_MIRROR = "hippo:mirror";
-    final public static String NT_FRONTEND = "hippo:frontend";
-    final public static String NT_PAGE = "hippo:page";
     final public static String NT_INITIALIZEFOLDER = "hippo:initializefolder";
     final public static String NT_INITIALIZEITEM = "hippo:initializeitem";
+    final public static String NT_MIRROR = "hippo:mirror";
+    final public static String NT_MOUNT = "hippo:mount";
+    final public static String NT_PAGE = "hippo:page";
+    final public static String NT_PARAMETERS = "hippo:parameters";
+    final public static String NT_PLUGIN = "hippo:plugin";
+    final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
     final public static String NT_QUERY = "hippo:query";
     final public static String NT_QUERYFOLDER = "hippo:queryfolder";
     final public static String NT_REFERENCEABLE = "hippo:referenceable";
     final public static String NT_REQUEST = "hippo:request";
     final public static String NT_ROLE = "hippo:role";
     final public static String NT_ROLEFOLDER = "hippo:rolefolder";
+    final public static String NT_TEMPLATE = "hippo:template";
     final public static String NT_TYPE = "hippo:type";
     final public static String NT_TYPES = "hippo:types";
     final public static String NT_USER = "hippo:user";
@@ -69,12 +76,6 @@ public interface HippoNodeType {
     final public static String NT_WORKFLOW = "hippo:workflow";
     final public static String NT_WORKFLOWCATEGORY = "hippo:workflowcategory";
     final public static String NT_WORKFLOWFOLDER = "hippo:workflowfolder";
-    final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
-    final public static String NT_PLUGIN = "hippo:plugin";
-    final public static String NT_FRONTENDPLUGIN = "hippo:frontendplugin";
-    final public static String NT_PARAMETERS = "hippo:parameters";
-    final public static String NT_TEMPLATE = "hippo:template";
-    final public static String NT_FIELD = "hippo:field";
 
     //--- Hippo Item Names ---//
     final public static String HIPPO_CLASSNAME = "hippo:classname";

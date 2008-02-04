@@ -94,36 +94,28 @@ public abstract class HippoVirtualProvider
         }
     }
 
-    private HippoVirtualProvider() {
+    protected HippoVirtualProvider() {
     }
 
-    private void initialize() {
+    void initialize(HippoLocalItemStateManager stateMgr) throws RepositoryException {
+        this.stateMgr = stateMgr;
         nameFactory = NameFactoryImpl.getInstance();
         pathFactory = PathFactoryImpl.getInstance();
         nameResolver = new ParsingNameResolver(nameFactory, stateMgr.nsResolver);
-    }
-
-    HippoVirtualProvider(HippoLocalItemStateManager stateMgr) {
-        this(stateMgr, (Name)null, (Name)null);
         initialize();
     }
 
-    HippoVirtualProvider(HippoLocalItemStateManager stateMgr, Name external, Name virtual) {
-        this.stateMgr = stateMgr;
-        initialize();
+    protected abstract void initialize() throws RepositoryException;
+
+    protected void register(Name external, Name virtual) {
         externalNodeName = external;
         virtualNodeName = virtual;
         if(external != null)
-            stateMgr.register(externalNodeName, this);
+            stateMgr.registerProvider(externalNodeName, this);
     }
 
-    HippoVirtualProvider(HippoLocalItemStateManager stateMgr, String external, String virtual) throws IllegalNameException, NamespaceException {
-        this.stateMgr = stateMgr;
-        initialize();
-        externalNodeName = resolveName(external);
-        virtualNodeName = resolveName(virtual);
-        if(external != null)
-            stateMgr.register(externalNodeName, this);
+    protected HippoVirtualProvider lookup(String providerName) {
+        return stateMgr.lookupProvider(providerName);
     }
 
     protected final Name resolveName(String name) throws IllegalNameException, NamespaceException {

@@ -37,9 +37,13 @@ public class FacetSelectProvider extends HippoVirtualProvider
     Name valuesName;
     Name modesName;
 
-    FacetSelectProvider(HippoLocalItemStateManager stateMgr, ViewVirtualProvider subNodesProvider) throws RepositoryException {
-        super(stateMgr, HippoNodeType.NT_FACETSELECT, null);
-        this.subNodesProvider = subNodesProvider;
+    FacetSelectProvider() {
+        super();
+    }
+
+    protected void initialize() throws RepositoryException {
+        this.subNodesProvider = (ViewVirtualProvider) lookup("org.hippoecm.repository.jackrabbit.ViewVirtualProvider");
+        register(resolveName(HippoNodeType.NT_FACETSELECT), null);
         docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
         facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
         valuesName = resolveName(HippoNodeType.HIPPO_VALUES);

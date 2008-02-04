@@ -34,46 +34,36 @@ import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class MirrorVirtualProvider extends HippoVirtualProvider
+public class BootstrapRepositoryProvider extends HippoVirtualProvider
 {
     final static private String SVN_ID = "$Id$";
 
-    protected class MirrorNodeId extends HippoNodeId {
+    protected class BootstrapNodeId extends HippoNodeId {
         NodeId upstream;
 
-        protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, Name name, NodeId upstream) {
+        protected BootstrapNodeId(HippoVirtualProvider provider, NodeId parent, Name name, NodeId upstream) {
             super(provider, parent, name);
             this.upstream = upstream;
         }
 
-        MirrorNodeId(NodeId parent, NodeId upstream, Name name) {
-            super(MirrorVirtualProvider.this, parent, name);
+        BootstrapNodeId(NodeId parent, NodeId upstream, Name name) {
+            super(BootstrapRepositoryProvider.this, parent, name);
             this.upstream = upstream;
         }
     }
 
     Name docbaseName;
     Name jcrUUIDdocbaseName;
-    Name hippoUUIDName;
-    Name hippoReferenceableName;
     Name mixinReferenceableName;
-
-    PropDef hippoUUIDPropDef;
 
     @Override
     protected void initialize() throws RepositoryException {
-        register(resolveName(HippoNodeType.NT_MIRROR), null);
-
-        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
+        register(resolveName(HippoNodeType.NT_MOUNT), null);
         jcrUUIDdocbaseName = resolveName("jcr:uuid");
-        hippoUUIDName = resolveName(HippoNodeType.HIPPO_UUID);
-        hippoReferenceableName = resolveName(HippoNodeType.NT_REFERENCEABLE);
         mixinReferenceableName = resolveName("mix:referenceable");
-
-        hippoUUIDPropDef = lookupPropDef(hippoReferenceableName, hippoUUIDName);
     }
 
-    MirrorVirtualProvider() throws RepositoryException {
+    BootstrapRepositoryProvider() throws RepositoryException {
         super();
     }
 
@@ -83,14 +73,14 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         NodeState upstream = getNodeState(docbase);
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            NodeId childNodeId = new MirrorNodeId(nodeId, entry.getId(), entry.getName());
+            NodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }
         return state;
     }
 
     public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
-        NodeState upstream = getNodeState(((MirrorNodeId)nodeId).upstream);
+        NodeState upstream = getNodeState(((BootstrapNodeId)nodeId).upstream);
         NodeState state = createNew(nodeId, upstream.getNodeTypeName(), parentId);
         state.setNodeTypeName(upstream.getNodeTypeName());
 
@@ -98,7 +88,6 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         if(mixins.contains(mixinReferenceableName)) {
             mixins = new HashSet(mixins);
             mixins.remove(mixinReferenceableName);
-            mixins.add(hippoReferenceableName);
             state.setMixinTypeNames(mixins);
         } else {
             state.setMixinTypeNames(mixins);
@@ -111,8 +100,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
             PropertyState upstreamPropState = getPropertyState(upstreamPropId);
             PropDefId propDefId = upstreamPropState.getDefinitionId();
             if(propName.equals(jcrUUIDdocbaseName)) {
-                propName = hippoUUIDName;
-                propDefId = hippoUUIDPropDef.getId();
+                continue;
             }
             state.addPropertyName(propName);
             PropertyState propState = createNew(propName, state.getNodeId());
@@ -129,7 +117,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            MirrorNodeId childNodeId = new MirrorNodeId(nodeId, entry.getId(), entry.getName());
+            BootstrapNodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }
     }

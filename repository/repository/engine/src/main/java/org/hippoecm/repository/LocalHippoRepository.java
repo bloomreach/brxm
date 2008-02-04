@@ -116,6 +116,13 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         initialize();
     }
 
+    public static HippoRepository create(String location) throws RepositoryException {
+        if(location == null)
+            return new LocalHippoRepository();
+        else
+            return new LocalHippoRepository(location);
+    }
+
     public String getLocation() {
         return super.getLocation();
     }

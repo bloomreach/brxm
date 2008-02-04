@@ -32,8 +32,10 @@ public class HippoRepositoryFactory {
     private static HippoRepository defaultRepository = null;
 
     public static void setDefaultRepository(String location) {
-        defaultLocation = location;
-        defaultRepository = null;
+        if(!location.equals(defaultLocation)) {
+            defaultLocation = location;
+            defaultRepository = null;
+        }
     }
 
     public static void setDefaultRepository(HippoRepository repository) {
@@ -64,13 +66,14 @@ public class HippoRepositoryFactory {
     }
 
     public static HippoRepository getHippoRepository(String location) throws RepositoryException {
-        // strip
+        HippoRepository repository = null;
+
         if (location.startsWith("file:")) {
-            location = location.substring(5);
+            location = location.substring("file:".length());
         }
 
-        // already configured?
-        if (defaultRepository != null && location.equals(defaultRepository.getLocation())) {
+        if (defaultRepository != null && (location.equals(defaultRepository.getLocation()) ||
+                                          (defaultLocation != null && location.equals(defaultLocation)))) {
             return defaultRepository;
         }
 
@@ -78,10 +81,8 @@ public class HippoRepositoryFactory {
             try {
                 defaultLocation = location;
                 try {
-                    return (HippoRepository) Class.forName("org.hippoecm.repository.RemoteHippoRepository").getConstructor(new Class[] { String.class }).newInstance(new Object[] { location });
+                    return (HippoRepository) Class.forName("org.hippoecm.repository.RemoteHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
                 } catch(ClassNotFoundException ex) {
-                    throw new RepositoryException(ex);
-                } catch(InstantiationException ex) {
                     throw new RepositoryException(ex);
                 } catch(NoSuchMethodException ex) {
                     throw new RepositoryException(ex);
@@ -112,27 +113,39 @@ public class HippoRepositoryFactory {
         }
 
         if(location.startsWith("java:")) {
-          try {
-            defaultLocation = location;
-            InitialContext ctx = new InitialContext();
-            return (HippoRepository) ctx.lookup(location);
-          } catch (NamingException ex) {
-            return null;
-            // FIXME
-          }
+            try {
+                defaultLocation = location;
+                InitialContext ctx = new InitialContext();
+                return (HippoRepository) ctx.lookup(location);
+            } catch (NamingException ex) {
+                return null;
+                // FIXME
+            }
         }
 
-        // embedded/local default
-        if (defaultRepository == null && location.equals(defaultLocation)) {
-            return getHippoRepository();
+        if(location.startsWith("bootstrap:")) {
+            try {
+                defaultLocation = location;
+                location = location.substring("bootstrap:".length());
+                return (HippoRepository) Class.forName("org.hippoecm.repository.BootstrapHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
+            } catch(ClassNotFoundException ex) {
+                throw new RepositoryException(ex);
+            } catch(NoSuchMethodException ex) {
+                throw new RepositoryException(ex);
+            } catch(IllegalAccessException ex) {
+                throw new RepositoryException(ex);
+            } catch(InvocationTargetException ex) {
+                if(ex.getCause() instanceof RepositoryException)
+                    throw (RepositoryException) ex.getCause();
+                else
+                    throw new RepositoryException("unchecked exception: "+ex.getMessage());
+            }
         }
 
         // embedded/local with location
         try {
-            return (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").getConstructor(new Class[] { String.class }).newInstance(new Object[] { location });
+            repository = (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
         } catch(ClassNotFoundException ex) {
-            throw new RepositoryException(ex);
-        } catch(InstantiationException ex) {
             throw new RepositoryException(ex);
         } catch(NoSuchMethodException ex) {
             throw new RepositoryException(ex);
@@ -144,6 +157,12 @@ public class HippoRepositoryFactory {
             else
                 throw new RepositoryException("unchecked exception: "+ex.getMessage());
         }
+
+        if (defaultRepository == null && location.equals(defaultLocation)) {
+            defaultRepository = repository;
+        }
+
+        return repository;
     }
 
     static void unregister(HippoRepository repository) {

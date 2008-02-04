@@ -48,17 +48,19 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 
     PropDef primaryTypePropDef;
 
-    FacetSubSearchProvider(HippoLocalItemStateManager stateMgr,
-                           FacetedNavigationEngine facetedEngine, FacetedNavigationEngine.Context facetedContext,
-                           FacetResultSetProvider subNodesProvider)
+    FacetSubSearchProvider()
         throws RepositoryException
     {
-        super(stateMgr, null, HippoNodeType.NT_FACETSUBSEARCH, facetedEngine, facetedContext);
+    }
 
-        this.subSearchProvider = this;
-        this.subNodesProvider  = subNodesProvider;
-
+    @Override
+    protected void initialize() throws RepositoryException {
+        super.initialize();
+        subSearchProvider = this;
+        subNodesProvider  = (FacetResultSetProvider) lookup("org.hippoecm.repository.jackrabbit.FacetResultSetProvider");
         primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), countName);
+        virtualNodeName = resolveName(HippoNodeType.NT_FACETSUBSEARCH);
+        register(null, virtualNodeName);
     }
 
     public NodeState populate(NodeState state) throws RepositoryException {
