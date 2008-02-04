@@ -46,7 +46,6 @@ public class TemplateDescriptor implements IClusterable {
     private String name;
     private String type;
     private boolean node;
-    private boolean multiple;
     private PluginDescriptor plugin;
     private LinkedList<FieldDescriptor> fields;
 
@@ -55,7 +54,6 @@ public class TemplateDescriptor implements IClusterable {
         this.type = type;
         this.plugin = plugin;
         this.node = true;
-        this.multiple = false;
         this.fields = new LinkedList<FieldDescriptor>();
     }
 
@@ -63,7 +61,6 @@ public class TemplateDescriptor implements IClusterable {
         this.name = (String) map.get("name");
         this.type = (String) map.get("type");
         this.node = ((Boolean) map.get("isNode")).booleanValue();
-        this.multiple = ((Boolean) map.get("isMultiple")).booleanValue();
 
         this.fields = new LinkedList<FieldDescriptor>();
         LinkedList<Map<String, Object>> fieldList = (LinkedList<Map<String, Object>>) map.get("fields");
@@ -71,7 +68,8 @@ public class TemplateDescriptor implements IClusterable {
             fields.addLast(new FieldDescriptor(fieldMap, engine));
         }
 
-        this.plugin = new PluginDescriptor((Map<String, Object>) map.get("plugin"), engine.getChannelFactory().createChannel());
+        this.plugin = new PluginDescriptor((Map<String, Object>) map.get("plugin"), engine.getChannelFactory()
+                .createChannel());
     }
 
     public Map<String, Object> getMapRepresentation() {
@@ -79,7 +77,6 @@ public class TemplateDescriptor implements IClusterable {
         map.put("name", name);
         map.put("type", type);
         map.put("isNode", new Boolean(node));
-        map.put("isMultiple", new Boolean(multiple));
 
         LinkedList<Map<String, Object>> fieldList = new LinkedList<Map<String, Object>>();
         for (FieldDescriptor field : getFields()) {
@@ -105,14 +102,6 @@ public class TemplateDescriptor implements IClusterable {
 
     public void setIsNode(boolean isNode) {
         this.node = isNode;
-    }
-
-    public boolean isMultiple() {
-        return multiple;
-    }
-
-    public void setIsMultiple(boolean isMultiple) {
-        this.multiple = isMultiple;
     }
 
     public PluginDescriptor getPlugin() {

@@ -15,21 +15,14 @@
  */
 package org.hippoecm.frontend.session;
 
-import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.Request;
-import org.apache.wicket.RestartResponseException;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.LoginPage;
-import org.hippoecm.frontend.Main;
-import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +45,10 @@ public class UserSession extends WebSession {
 
     public Session getJcrSession() {
         return jcrSessionModel.getSession();
+    }
+
+    public JcrSessionModel getJcrSessionModel() {
+        return jcrSessionModel;
     }
 
     public void setJcrCredentials(ValueMap credentials) {
@@ -96,103 +93,4 @@ public class UserSession extends WebSession {
         return this.hippo;
     }
 
-    private class JcrSessionModel extends LoadableDetachableModel {
-        // The jcr session is wrapped in a LoadableDetachableModel because it can't be serialized
-        // and therefore cannot be a direct field of the wicket session. Wrapping the jcr session
-        // like this has the added bonus of being a very simple reconnect mechanism.
-        private static final long serialVersionUID = 1L;
-
-        private ValueMap credentials;
-        private transient ClassLoader classLoader = null;
-        private transient WorkflowManager workflowManager = null;
-
-        JcrSessionModel() {
-            credentials = new ValueMap();
-        }
-
-        public JcrSessionModel(ValueMap credentials) {
-            this.credentials = credentials;
-        }
-
-        void logout() {
-            Session session = (Session) getObject();
-            if (session != null) {
-                session.logout();
-                detach();
-                credentials = new ValueMap();
-            }
-            throw new RestartResponseException(LoginPage.class);
-        }
-
-        ValueMap getCredentials() {
-            return credentials;
-        }
-
-        Session getSession() {
-            try {
-                Session session = (Session) getObject();
-                if (session == null) {
-                    return null;
-                }
-                if (!session.isLive()) {
-                    detach();
-                }
-            } catch (Exception e) {
-                detach();
-            }
-            // this will call load() only if detached
-            return (Session) getObject();
-        }
-
-        public ClassLoader getClassLoader() {
-            if (classLoader == null) {
-                Session session = getSession();
-                if (session != null) {
-                    classLoader = new SessionClassLoader(session);
-                }
-            }
-            return classLoader;
-        }
-
-        public WorkflowManager getWorkflowManager() {
-            if (workflowManager == null) {
-                try {
-                    HippoWorkspace workspace = (HippoWorkspace) getSession().getWorkspace();
-                    workflowManager = new WorkflowManagerDecorator(workspace.getWorkflowManager(), getClassLoader());
-                } catch (RepositoryException ex) {
-                    ex.printStackTrace();
-                    workflowManager = null;
-                }
-            }
-            return workflowManager;
-        }
-
-        @Override
-        protected Object load() {
-            javax.jcr.Session result = null;
-            try {
-                Main main = (Main) Application.get();
-                HippoRepository repository = main.getRepository();
-
-                String username = credentials.getString("username");
-                String password = credentials.getString("password");
-
-                if (repository != null && username != null && password != null) {
-                    result = repository.login(username, password.toCharArray());
-                }
-            } catch (LoginException e) {
-                log.warn(e.getMessage());
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-
-            if (result == null) {
-                Main main = (Main) getApplication();
-                main.resetConnection();
-                throw new RestartResponseException(LoginPage.class);
-            }
-            return result;
-        }
-
-    }
 }

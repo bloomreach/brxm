@@ -16,24 +16,24 @@
 package org.hippoecm.frontend.template.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.Session;
+import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -46,8 +46,11 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryTemplateConfig.class);
 
-    public RepositoryTemplateConfig() {
-        super("");
+    private String application;
+
+    public RepositoryTemplateConfig(JcrSessionModel sessionModel, String application) {
+        super(sessionModel, "");
+        this.application = application;
     }
 
     public TemplateDescriptor getTemplate(String name) {
@@ -74,6 +77,30 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         return result;
     }
 
+    public List<TemplateDescriptor> getTemplates() {
+        Session session = getJcrSession();
+
+        List<TemplateDescriptor> list = new LinkedList<TemplateDescriptor>();
+        try {
+            String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + application
+                    + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/*";
+
+            QueryManager queryManager = session.getWorkspace().getQueryManager();
+            Query query = queryManager.createQuery(xpath, Query.XPATH);
+            QueryResult result = query.execute();
+            NodeIterator iter = result.getNodes();
+            while (iter.hasNext()) {
+                Node pluginNode = iter.nextNode();
+                PluginDescriptor descriptor = createDescriptor(pluginNode, pluginNode.getName(), null, null);
+                TemplateDescriptor template = ((Descriptor) descriptor).template;
+                list.add(template);
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return list;
+    }
+
     // overrides
 
     @Override
@@ -84,12 +111,12 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     // Privates
 
     private Node lookupConfigNode(String template) throws RepositoryException {
-        UserSession session = (UserSession) Session.get();
+        Session session = getJcrSession();
 
-        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + session.getHippo()
-                + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/" + template;
+        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + application + "/*/"
+                + HippoNodeType.HIPPO_TEMPLATES + "/" + template;
 
-        QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
+        QueryManager queryManager = session.getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);
         QueryResult result = query.execute();
         NodeIterator iter = result.getNodes();
@@ -119,8 +146,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     protected class Descriptor extends PluginRepositoryConfig.Descriptor {
         private static final long serialVersionUID = 1L;
 
-        private FieldDescriptor field;
-        private TemplateDescriptor template;
+        FieldDescriptor field;
+        TemplateDescriptor template;
 
         Descriptor(Node pluginNode, String pluginId, String className, Channel outgoing) {
             super(pluginNode, pluginId, className, outgoing);
@@ -201,11 +228,6 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
                 if (node.hasProperty(HippoNodeType.HIPPO_NODE)) {
                     setIsNode(node.getProperty(HippoNodeType.HIPPO_NODE).getBoolean());
                 }
-
-                if (node.hasProperty(HippoNodeType.HIPPO_MULTIPLE)) {
-                    boolean multiple = node.getProperty(HippoNodeType.HIPPO_MULTIPLE).getBoolean();
-                    setIsMultiple(multiple);
-                }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
@@ -253,12 +275,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
                     setMandatory(mandatory);
                 }
 
-                if (pluginNode.hasProperty(HippoNodeType.HIPPO_NODE)) {
-                    setIsNode(pluginNode.getProperty(HippoNodeType.HIPPO_NODE).getBoolean());
-                }
-
                 if (pluginNode.hasProperty(HippoNodeType.HIPPO_ORDERED)) {
-                    setIsNode(pluginNode.getProperty(HippoNodeType.HIPPO_ORDERED).getBoolean());
+                    setIsOrdered(pluginNode.getProperty(HippoNodeType.HIPPO_ORDERED).getBoolean());
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -289,9 +307,9 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             } else {
                 try {
                     Node pluginNode = plugin.getNode();
-                    if (pluginNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
-                        String type = pluginNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
-                        return RepositoryTemplateConfig.this.getTemplate(type);
+                    if (pluginNode.hasProperty(HippoNodeType.HIPPO_TEMPLATE)) {
+                        String template = pluginNode.getProperty(HippoNodeType.HIPPO_TEMPLATE).getString();
+                        return RepositoryTemplateConfig.this.getTemplate(template);
                     }
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());

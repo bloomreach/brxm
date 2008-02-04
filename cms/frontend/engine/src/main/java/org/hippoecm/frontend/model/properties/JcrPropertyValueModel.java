@@ -41,7 +41,7 @@ public class JcrPropertyValueModel extends Model {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrPropertyValueModel.class);
-    static private int NO_INDEX = -1;
+    static public int NO_INDEX = -1;
 
     // dynamically reload value
     private transient boolean loaded = false;

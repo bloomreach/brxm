@@ -24,13 +24,13 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.apache.wicket.Session;
+import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +44,12 @@ public class PluginRepositoryConfig implements PluginConfig {
     protected final static String ROOTPLUGIN = "rootPlugin";
     protected final static String PLUGIN_RENDERER = "hippo:renderer";
 
+    private JcrSessionModel jcrSession;
     private String basePath;
     private ChannelFactory channelFactory;
 
-    public PluginRepositoryConfig(String base) {
+    public PluginRepositoryConfig(JcrSessionModel session, String base) {
+        jcrSession = session;
         basePath = base;
         channelFactory = new ChannelFactory();
     }
@@ -55,9 +57,7 @@ public class PluginRepositoryConfig implements PluginConfig {
     public PluginDescriptor getRoot() {
         PluginDescriptor result = null;
         try {
-            UserSession session = (UserSession) Session.get();
-
-            Node pluginNode = session.getJcrSession().getRootNode().getNode(basePath + "/" + ROOTPLUGIN);
+            Node pluginNode = getJcrSession().getRootNode().getNode(basePath + "/" + ROOTPLUGIN);
             if (pluginNode != null) {
                 result = nodeToDescriptor(pluginNode);
             } else {
@@ -71,6 +71,10 @@ public class PluginRepositoryConfig implements PluginConfig {
 
     public ChannelFactory getChannelFactory() {
         return channelFactory;
+    }
+
+    protected Session getJcrSession() {
+        return jcrSession.getSession();
     }
 
     protected PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
@@ -142,8 +146,7 @@ public class PluginRepositoryConfig implements PluginConfig {
         }
 
         protected Node getNode() throws RepositoryException {
-            UserSession session = (UserSession) Session.get();
-            return (Node) session.getJcrSession().getItem(jcrPath);
+            return (Node) getJcrSession().getItem(jcrPath);
         }
     }
 }

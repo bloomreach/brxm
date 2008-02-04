@@ -36,7 +36,7 @@
 
 [hippo:template] > hippo:frontendplugin orderable
 - hippo:type (string)
-- hippo:multiple (boolean)
+- hippo:node (boolean)
 + hippo:prototype (hippo:document)
 + hippo:field (hippo:field) multiple
 

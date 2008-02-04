@@ -15,10 +15,14 @@
  */
 package org.hippoecm.frontend.template.config;
 
+import java.util.List;
+
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 
 public interface TemplateConfig extends IClusterable {
 
     public TemplateDescriptor getTemplate(String name);
+
+    public List<TemplateDescriptor> getTemplates();
 }

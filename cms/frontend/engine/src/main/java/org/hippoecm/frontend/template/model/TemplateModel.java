@@ -17,9 +17,7 @@ package org.hippoecm.frontend.template.model;
 
 import java.util.Map;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
@@ -32,6 +30,8 @@ import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
@@ -44,20 +44,23 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
     private static final Logger log = LoggerFactory.getLogger(TemplateModel.class);
 
     private TemplateDescriptor templateDescriptor;
-    private String path;
+    private String name;
+    private int index;
 
     //  Constructor
-    public TemplateModel(TemplateDescriptor descriptor, JcrNodeModel model, String path) {
+    public TemplateModel(TemplateDescriptor descriptor, JcrNodeModel model, String name, int index) {
         super(model);
         this.templateDescriptor = descriptor;
-        this.path = path;
+        this.name = name;
+        this.index = index;
     }
 
     public TemplateModel(IPluginModel model, TemplateEngine engine) {
         super(new JcrNodeModel(model));
         Map<String, Object> map = model.getMapRepresentation();
         this.templateDescriptor = new TemplateDescriptor((Map) map.get("template"), engine);
-        this.path = (String) map.get("path");
+        this.name = (String) map.get("name");
+        this.index = ((Integer) map.get("index")).intValue();
     }
 
     // implement IPluginModel
@@ -65,7 +68,8 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = getNodeModel().getMapRepresentation();
         map.put("template", templateDescriptor.getMapRepresentation());
-        map.put("path", path);
+        map.put("name", name);
+        map.put("index", new Integer(index));
         return map;
     }
 
@@ -74,70 +78,65 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
     }
 
     public String getPath() {
-        return path;
+        return name + "[" + index + "]";
     }
 
-    public void setPath(String path) {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         try {
-            Node node = getNodeModel().getNode();
+            Node parent = getNodeModel().getNode();
             if (templateDescriptor.isNode()) {
-                if (this.path == null) {
-                    Node child = node.addNode(path, templateDescriptor.getType());
-                    this.path = child.getName() + "[" + child.getIndex() + "]";
-                } else if (this.path != path) {
+                if (this.name != name) {
                     javax.jcr.Session jcrSession = ((UserSession) Session.get()).getJcrSession();
-                    jcrSession.move(node.getPath() + "/" + this.path, node.getPath() + "/" + path);
-                    this.path = path;
+                    jcrSession.move(parent.getPath() + "/" + getPath(), parent.getPath() + "/" + name);
+                    this.name = name;
+                    this.index = (int) parent.getNodes(name).getSize();
                 }
             } else {
-                if (this.path == null) {
-                    Value value = templateDescriptor.createValue("");
-                    if (templateDescriptor.isMultiple()) {
-                        node.setProperty(path, new Value[] { value });
-                    } else {
-                        node.setProperty(path, value);
-                    }
-                    this.path = path;
-                } else if (this.path != path) {
-                    Property prop = node.getProperty(this.path);
-                    if (templateDescriptor.isMultiple()) {
-                        Value[] values = prop.getValues();
-                        node.setProperty(path, values);
-                        prop.remove();
-                    } else {
-                        Value value = prop.getValue();
-                        node.setProperty(path, value);
-                        prop.remove();
-                    }
-                    this.path = path;
-                }
+                log.warn("renaming values in properties is not supported");
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public boolean isNew() {
-        return (path == null);
+        return (name == null);
     }
 
-    public void remove() {
-        Node node = getNodeModel().getNode();
+    public JcrNodeModel getJcrNodeModel() {
+        return new JcrNodeModel(new JcrItemModel(getNodeModel().getItemModel().getPath() + "/" + getPath()));
+    }
+
+    public JcrPropertyValueModel getJcrPropertyValueModel() {
+        JcrPropertyModel propertyModel = new JcrPropertyModel(getNodeModel().getItemModel().getPath() + "/" + getName());
         try {
-            JcrItemModel itemModel = new JcrItemModel(node.getPath() + "/" + path);
-
-            if (itemModel.exists()) {
-                Item item = (Item) itemModel.getObject();
-
-                // remove the item
-                log.info("removing item " + item.getPath());
-                item.remove();
+            int index = getIndex();
+            if (index == JcrPropertyValueModel.NO_INDEX) {
+                return new JcrPropertyValueModel(index, propertyModel.getProperty().getValue(), propertyModel);
             } else {
-                log.info("item " + itemModel.getPath() + " does not exist");
+                Value[] values = propertyModel.getProperty().getValues();
+                if (index >= values.length || index < 0) {
+                    log.error("invalid index " + index + ", should be >= 0 and < " + values.length);
+                    index = 0;
+                }
+                return new JcrPropertyValueModel(index, values[index], propertyModel);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
+        return null;
     }
 
     // override Object methods
@@ -145,7 +144,7 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("descriptor", templateDescriptor)
-                .append("node", getNodeModel()).append("path", path).toString();
+                .append("node", getNodeModel()).append("name", name).append("index", index).toString();
     }
 
     @Override
@@ -157,12 +156,14 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
             return true;
         }
         TemplateModel templateModel = (TemplateModel) object;
-        return new EqualsBuilder().append(templateDescriptor, templateModel.templateDescriptor).append(nodeModel.getItemModel(),
-                templateModel.nodeModel.getItemModel()).append(path, templateModel.path).isEquals();
+        return new EqualsBuilder().append(templateDescriptor, templateModel.templateDescriptor).append(
+                nodeModel.getItemModel(), templateModel.nodeModel.getItemModel()).append(name, templateModel.name)
+                .append(index, templateModel.index).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(71, 67).append(templateDescriptor).append(nodeModel.getItemModel()).append(path).toHashCode();
+        return new HashCodeBuilder(71, 67).append(templateDescriptor).append(nodeModel.getItemModel()).append(name)
+                .append(index).toHashCode();
     }
 }

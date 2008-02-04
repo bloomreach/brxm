@@ -63,8 +63,8 @@ public class EditorForm extends Form {
             TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
             TemplateDescriptor templateDescriptor = engine.getConfig().getTemplate(type);
             if (templateDescriptor != null) {
-                String relPath = model.getNode().getName() + "[" + model.getNode().getIndex() + "]";
-                TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(), relPath);
+                TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(),
+                        model.getNode().getName(), model.getNode().getIndex());
 
                 return engine.createTemplate("template", templateModel, (Plugin) findParent(Plugin.class));
             } else {

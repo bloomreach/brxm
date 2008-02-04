@@ -54,6 +54,7 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
         load();
 
         FieldDescriptor subDescriptor = descriptor.getField().clone();
+        subDescriptor.setPath(null);
         elements.addLast(new WildcardModel(subDescriptor, getNodeModel()));
     }
 
@@ -63,7 +64,34 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
         while (iterator.hasNext()) {
             if (model.equals(iterator.next())) {
                 iterator.remove();
-                model.remove();
+                if (model.getPath() != null) {
+                    Node node = getNodeModel().getNode();
+                    try {
+                        if (descriptor.getField().isNode()) {
+                            NodeIterator nodeIterator = node.getNodes(model.getPath());
+                            while (nodeIterator.hasNext()) {
+                                JcrItemModel itemModel = new JcrItemModel(nodeIterator.nextNode());
+
+                                if (itemModel.exists()) {
+                                    Item item = (Item) itemModel.getObject();
+
+                                    // remove the item
+                                    log.info("removing item " + item.getPath());
+                                    item.remove();
+                                } else {
+                                    log.info("item " + itemModel.getPath() + " does not exist");
+                                }
+                            }
+                        } else {
+                            if (node.hasProperty(model.getPath())) {
+                                Property property = node.getProperty(model.getPath());
+                                property.remove();
+                            }
+                        }
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
                 log.info("removed " + model);
                 return;
             }

@@ -27,19 +27,19 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.model.FieldModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
-import org.hippoecm.frontend.template.model.TemplateProvider;
+import org.hippoecm.frontend.template.model.NodeTemplateProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultipleFieldPlugin extends Plugin {
+public class NodeFieldPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(MultipleFieldPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
 
-    private TemplateProvider provider;
+    private NodeTemplateProvider provider;
     private TemplateView view;
 
-    public MultipleFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
+    public NodeFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new FieldModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()),
                 parentPlugin);
 
@@ -48,8 +48,8 @@ public class MultipleFieldPlugin extends Plugin {
 
         add(new Label("name", descriptor.getName()));
 
-        provider = new TemplateProvider(descriptor, model.getNodeModel());
-        view = new TemplateView("field", provider, this);
+        provider = new NodeTemplateProvider(descriptor, model.getNodeModel());
+        view = new TemplateView("field", provider, this, provider.getDescriptor());
         add(view);
 
         add(createAddLink());
@@ -124,7 +124,7 @@ public class MultipleFieldPlugin extends Plugin {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    MultipleFieldPlugin.this.onAddNode(target);
+                    NodeFieldPlugin.this.onAddNode(target);
                 }
             };
         } else {

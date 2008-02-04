@@ -21,9 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -34,7 +31,6 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -55,13 +51,7 @@ public class XinhaPlugin extends Plugin {
         super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()), parentPlugin);
 
         TemplateModel model = (TemplateModel) getPluginModel();
-        JcrPropertyModel propertyModel = new JcrPropertyModel(model.getNodeModel().getItemModel().getPath() + "/" + model.getPath());
-        try {
-            Value value = propertyModel.getProperty().getValue();
-            valueModel = new JcrPropertyValueModel(0, value, propertyModel);
-        } catch(RepositoryException ex) {
-            ex.printStackTrace();
-        }
+        valueModel = model.getJcrPropertyValueModel();
 
         editor = new TextArea("value", valueModel);
 

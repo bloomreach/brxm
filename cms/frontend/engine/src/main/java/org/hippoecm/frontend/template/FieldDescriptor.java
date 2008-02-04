@@ -39,7 +39,6 @@ public class FieldDescriptor implements IClusterable, Cloneable {
     private String[] constraints;
     private Set<String> excluded;
 
-    private boolean node;
     private boolean multiple;
     private boolean binary;
     private boolean protect;
@@ -52,7 +51,6 @@ public class FieldDescriptor implements IClusterable, Cloneable {
         this.plugin = plugin;
 
         this.excluded = null;
-        this.node = true;
 
         multiple = protect = binary = mandatory = ordered = false;
     }
@@ -67,7 +65,6 @@ public class FieldDescriptor implements IClusterable, Cloneable {
             this.field = new FieldDescriptor((Map) map.get("field"), engine);
         this.plugin = new PluginDescriptor((Map) map.get("plugin"), engine.getChannelFactory().createChannel());
 
-        this.node = ((Boolean) map.get("isNode")).booleanValue();
         this.multiple = ((Boolean) map.get("multiple")).booleanValue();
         this.binary = ((Boolean) map.get("binary")).booleanValue();
         this.protect = ((Boolean) map.get("protect")).booleanValue();
@@ -86,7 +83,6 @@ public class FieldDescriptor implements IClusterable, Cloneable {
             map.put("field", getField().getMapRepresentation());
         map.put("plugin", getPlugin().getMapRepresentation());
 
-        map.put("isNode", new Boolean(node));
         map.put("multiple", new Boolean(multiple));
         map.put("binary", new Boolean(binary));
         map.put("protect", new Boolean(protect));
@@ -169,20 +165,16 @@ public class FieldDescriptor implements IClusterable, Cloneable {
         this.mandatory = mandatory;
     }
 
-    public boolean isNode() {
-        return node;
-    }
-
-    public void setIsNode(boolean isNode) {
-        this.node = isNode;
-    }
-
     public boolean isOrdered() {
-        return node;
+        return ordered;
     }
 
     public void setIsOrdered(boolean isOrdered) {
         this.ordered = isOrdered;
+    }
+
+    public boolean isNode() {
+        return getTemplate().isNode();
     }
 
     public String[] getConstraints() {

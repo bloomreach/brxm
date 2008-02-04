@@ -19,15 +19,20 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.repeater.Item;
+import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.model.AbstractProvider;
 import org.hippoecm.frontend.template.model.TemplateModel;
-import org.hippoecm.frontend.template.model.TemplateProvider;
 
 public class TemplateView extends AbstractView {
     private static final long serialVersionUID = 1L;
 
-    public TemplateView(String wicketId, TemplateProvider provider, MultipleFieldPlugin template) {
+    private FieldDescriptor descriptor;
+
+    public TemplateView(String wicketId, AbstractProvider provider, Plugin template, FieldDescriptor descriptor) {
         super(wicketId, provider, template);
+        this.descriptor = descriptor;
     }
 
     protected void populate() {
@@ -37,12 +42,10 @@ public class TemplateView extends AbstractView {
     @Override
     protected void populateItem(Item item) {
         final TemplateModel model = (TemplateModel) item.getModel();
-        final MultipleFieldPlugin plugin = (MultipleFieldPlugin) getPlugin();
+        final NodeFieldPlugin plugin = (NodeFieldPlugin) getPlugin();
 
         TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
         item.add(engine.createTemplate("template", model, plugin));
-
-        TemplateProvider provider = (TemplateProvider) getDataProvider();
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
@@ -52,7 +55,7 @@ public class TemplateView extends AbstractView {
                 plugin.onRemoveNode(model, target);
             }
         };
-        if (provider.getDescriptor().isMandatory()) {
+        if (descriptor.isMandatory()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -65,7 +68,7 @@ public class TemplateView extends AbstractView {
                 plugin.onMoveNodeUp(model, target);
             }
         };
-        if (!provider.getDescriptor().isOrdered()) {
+        if (!descriptor.isOrdered()) {
             upLink.setVisible(false);
         }
         if (item.getIndex() == 0) {
