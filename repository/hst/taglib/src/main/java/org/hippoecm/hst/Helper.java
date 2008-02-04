@@ -16,7 +16,12 @@
 package org.hippoecm.hst;
 
 public class Helper {
-    
+    /** Concat is a simple helper function, to allow two strings to be
+     * concatted together within EL expressions.
+     * @param a the first string
+     * @param b the second string
+     * @returns The first and second string concatenated in that order
+     */
     public static String concat(String a, String b) {
         return a + b;
     }

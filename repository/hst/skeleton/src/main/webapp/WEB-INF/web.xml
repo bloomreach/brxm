@@ -24,12 +24,21 @@
     <description>The address of the repository</description>
     <param-name>repository-address</param-name>
     <param-value>rmi://localhost:1099/hipporepository</param-value>
-    <!--<param-value>target</param-value>-->
+    <!-- param-value>WEB-INF/storage</param-value -->
   </context-param>
 
   <filter>
-    <filter-name>RewriteFilter</filter-name>
+    <filter-name>Context</filter-name>
     <filter-class>org.hippoecm.hst.RewriteFilter</filter-class>
+    <init-param>
+      <description>
+        Bind the context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+        Defaults to context.
+      </description>
+      <param-name>attributename</param-name>
+      <param-value>context</param-value>
+    </init-param>
     <init-param>
       <description>
         Where to find the nodes of type hippo:document
@@ -40,7 +49,9 @@
     </init-param>
     <init-param>
       <description>
-        TODO
+        This parameter describes which document is responsible for
+        requests send to the bare context root.   In effect a
+        welcome page, but for the context root itself only.
       </description>
       <param-name>urlbasehome</param-name>
       <param-value>home</param-value>
@@ -55,11 +66,38 @@
     </init-param>
   </filter>
 
+  <!-- filter>
+    <filter-name>AdditionalContext</filter-name>
+    <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
+    <init-param>
+      <description>
+        Bind an additional context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+      </description>
+      <param-name>attributename</param-name>
+      <param-value>global</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        The path to bind as context.
+      </description>      
+      <param-name></param-name>
+      <param-value>/hst-sample/global</param-value>
+    </init-param>
+  </filter -->
+
   <filter-mapping>
-    <filter-name>RewriteFilter</filter-name>
+    <filter-name>Context</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
+
+  <!-- filter-mapping>
+    <filter-name>GlobalContext</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>INCLUDE</dispatcher>
+  </filter-mapping -->
 
   <servlet>
     <servlet-name>DirectAccessServlet</servlet-name>

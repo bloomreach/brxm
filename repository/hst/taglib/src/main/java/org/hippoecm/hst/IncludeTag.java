@@ -39,13 +39,15 @@ public class IncludeTag extends TagSupport {
     }
 
     public int doEndTag() throws JspException {
-        Context context = (Context) pageContext.findAttribute(Context.class.getName());
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+        String contextName = (String) pageContext.findAttribute(RewriteFilter.ATTRIBUTE);
+        Context context = (Context) pageContext.findAttribute(contextName);
         try {
             pageContext.getOut().flush();
             Context newContext = new Context(context, page, -1);
-            request.setAttribute(Context.class.getName(), newContext);
+
+            request.setAttribute(contextName, newContext);
             RewriteResponseWrapper responseWrapper = new RewriteResponseWrapper(newContext, request, response);
 
             if (!responseWrapper.redirectRepositoryDocument(map, page, true)) {
@@ -58,7 +60,7 @@ public class IncludeTag extends TagSupport {
         } catch (RepositoryException ex) {
             throw new JspException(ex);
         } finally {
-            request.setAttribute(Context.class.getName(), context);
+            request.setAttribute(contextName, context);
         }
         return EVAL_PAGE;
     }

@@ -43,16 +43,11 @@
     <!-- Runtime dependencies for logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.4.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.4.0</version>
       <scope>runtime</scope>
     </dependency>
-    
+
     <!-- War overlay of the hst skeleton -->
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
@@ -60,7 +55,7 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    
+
     <!--Some sample content -->
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
@@ -68,50 +63,33 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Following dependencies are only needed when running embedded repository -->
-    <dependency>
-      <groupId>org.hippoecm.hst</groupId>
-      <artifactId>hippo-ecm-hst-addon-repository</artifactId>
-      <version>${parent.version}</version>
-    </dependency>
+    <!--
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
       <version>${ecm.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-addon-repository</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-sample-content</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    -->
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
     <!-- finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName -->
     <plugins>
-      <!-- problems with this entry
-      <plugin>
-        <inherited>false</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>.</directory>
-              <includes>
-                <include>**/*~</include>
-                <include>derby.log</include>
-                <include>tmlog*</include>
-                <include>tm.*</include>
-                <include>.lock</include>
-                <include>atomikos</include>
-                <include>repository</include>
-                <include>workspaces</include>
-                <include>version</include>
-              </includes>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -132,7 +110,7 @@
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>8080</port>
+              <port>8083</port>
             </connector>
           </connectors>
           <contextPath>/</contextPath>
@@ -164,6 +142,18 @@
             <scope>runtime</scope>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-alpha-1</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>

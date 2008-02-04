@@ -50,7 +50,7 @@ public class JCRConnector {
     
     static Item getItem(Session session, String path) throws RepositoryException {
         Node node = session.getRootNode();
-        if (path.startsWith("/")) {
+        while (path.startsWith("/")) {
             path = path.substring(1);
         }
         String[] pathElts = path.split("/");
@@ -61,6 +61,7 @@ public class JCRConnector {
                 conditions = new TreeMap<String, String>();
                 int beginIndex = relPath.indexOf("[") + 1;
                 int endIndex = relPath.lastIndexOf("]");
+                // FIXME should do something more
                 String[] conditionElts = relPath.substring(beginIndex, endIndex).split(",");
                 for (int conditionIdx = 0; conditionIdx < conditionElts.length; conditionIdx++) {
                     int pos = conditionElts[conditionIdx].indexOf("=");
@@ -82,16 +83,16 @@ public class JCRConnector {
                     try {
                         return node.getProperty(relPath);
                     } catch (PathNotFoundException ex) {
-                        return null;
+                        return null; // FIXME should do something more
                     }
                 } else if (node.hasNode(relPath)) {
                     try {
                         node = node.getNode(relPath);
                     } catch (PathNotFoundException ex) {
-                        return null;
+                        return null; // FIXME should do something more
                     }
                 } else
-                    return null;
+                    return null; // FIXME should do something more
             } else {
                 for (NodeIterator iter = node.getNodes(relPath); iter.hasNext();) {
                     node = iter.nextNode();
@@ -100,24 +101,24 @@ public class JCRConnector {
                             if (condition.getValue() != null) {
                                 try {
                                     if (!node.getProperty(condition.getKey()).getString().equals(condition.getValue())) {
-                                        node = null;
+                                        node = null; // FIXME should do something more
                                         break;
                                     }
                                 } catch (PathNotFoundException ex) {
-                                    node = null;
+                                    node = null; // FIXME should do something more
                                     break;
                                 } catch (ValueFormatException ex) {
-                                    node = null;
+                                    node = null; // FIXME should do something more
                                     break;
                                 }
                             }
                         } else {
-                            node = null;
+                            node = null; // FIXME should do something more
                             break;
                         }
                     }
                     if (node != null)
-                        break;
+                        break; // FIXME should do something more
                 }
             }
         }
@@ -129,12 +130,9 @@ public class JCRConnector {
         Session jcrSession;
 
         SessionWrapper(String location) throws LoginException, RepositoryException {
-            //FIXME: setDefaultRepository(location); getHippoRepository() results in an endless loop for embedded.
-            //HippoRepositoryFactory.setDefaultRepository(location);
+            HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
-            HippoRepositoryFactory.setDefaultRepository(repository);
-            jcrSession = repository.login();
-            //jcrSession = repository.login("admin", "admin".toCharArray());
+            jcrSession = repository.login("admin", "admin".toCharArray());
         }
 
         public void valueBound(HttpSessionBindingEvent event) {
