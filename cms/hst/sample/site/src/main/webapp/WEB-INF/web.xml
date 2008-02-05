@@ -109,7 +109,6 @@
     <url-pattern>/static/*</url-pattern>
   </servlet-mapping>
   
-
   <!-- Timeout in minutes -->
   <session-config>
     <session-timeout>1</session-timeout>
