@@ -25,8 +25,6 @@ import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,23 +36,18 @@ public abstract class LookupDialog extends AbstractDialog {
     private LookupTargetTreeView tree;
     private LookupDialogInfoPanel infoPanel;
 
-    protected LookupDialog(String title, DialogWindow dialogWindow, Channel channel) {
+    protected LookupDialog(String title, JcrNodeModel root, DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
 
         dialogWindow.setTitle(title);
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-
-        UserSession session = (UserSession) getSession();
-        HippoNode rootNode = session.getRootNode();
-        JcrNodeModel rootModel = new JcrNodeModel(rootNode);
-
-        JcrTreeNode rootNodeModel = new JcrTreeNode(rootModel);
-        JcrTreeModel treeModel = new JcrTreeModel(rootNodeModel);
-
+        
+        JcrTreeNode rootNode = new JcrTreeNode(root);
+        JcrTreeModel treeModel = new JcrTreeModel(rootNode);
         tree = new LookupTargetTreeView("tree", treeModel, this);
-        tree.getTreeState().expandNode(rootNodeModel);
+        tree.getTreeState().expandNode(rootNode);
         add(tree);
 
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         infoPanel = new LookupDialogInfoPanel("info", nodeModel);
         add(infoPanel);
 

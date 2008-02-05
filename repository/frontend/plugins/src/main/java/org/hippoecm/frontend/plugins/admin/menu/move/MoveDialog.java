@@ -35,7 +35,7 @@ public class MoveDialog extends LookupDialog {
 
 
     public MoveDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Move selected node", dialogWindow, channel);
+        super("Move", dialogWindow.getNodeModel().findRootModel(), dialogWindow, channel);
     }
 
 
