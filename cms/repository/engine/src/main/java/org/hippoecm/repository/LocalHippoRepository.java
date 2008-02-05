@@ -57,6 +57,7 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
+import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -506,10 +507,35 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     private void initializeNamespace(NamespaceRegistry nsreg, String prefix, String uri)
             throws UnsupportedRepositoryOperationException, AccessDeniedException, RepositoryException {
         try {
+
+            /* Try to remap namespace if a namespace already exists and the uri is similar.
+             * This assumes a convention to use in the namespace URI.  It should end with a version
+             * number of the nodetypes, such as in http://www.sample.org/nt/1.0.0
+             */
+            try {
+                String currentURI = nsreg.getURI(prefix);
+                if (currentURI.equals(uri)) {
+                    log.debug("Namespace already exists: " + prefix + ":" + uri);
+                    return;
+                }
+                String uriPrefix = currentURI.substring(0, currentURI.lastIndexOf("/") + 1);
+                if(!uriPrefix.equals(uri.substring(0,uri.lastIndexOf("/")+1))) {
+                    log.error("Prefix already used for different namespace");
+                    return;
+                }
+                String newPrefix = prefix + "_" + currentURI.substring(uriPrefix.length());
+                ((NamespaceRegistryImpl)nsreg).externalRemap(prefix, newPrefix, currentURI);
+            } catch (NamespaceException ex) {
+                if (!ex.getMessage().endsWith("is not a registered namespace prefix.")) {
+                    log.warn(ex.getMessage());
+                }
+            }
+
             nsreg.registerNamespace(prefix, uri);
+
         } catch (NamespaceException ex) {
             if (ex.getMessage().endsWith("mapping already exists")) {
-                log.debug("Namespace already exists: " + prefix + ":" + uri);
+                log.error("Namespace already exists: " + prefix + ":" + uri);
             } else {
                 log.warn(ex.getMessage());
             }
