@@ -111,4 +111,5 @@
 - hipposample:body (string) mandatory
 - hipposample:subject (string) multiple mandatory
 - hipposample:link (reference)
++ * (hippo:facetselect)
 // - hipposample:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'

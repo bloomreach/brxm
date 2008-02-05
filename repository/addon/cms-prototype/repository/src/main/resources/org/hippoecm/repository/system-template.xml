@@ -440,5 +440,133 @@
 
   </sv:node>
   <!-- end "Plugin" template -->
-
+  
+  <!-- hippo:facetselect template -->
+  <sv:node sv:name="hippo:facetselect">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>hippo:facetselect</sv:value>
+    </sv:property>
+    
+    <!-- docbase-->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>docbase</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:docbase</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!-- hippo:facets-->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>facets</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:facets</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:ordered" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!-- hippo:values-->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>values</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:values</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:ordered" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!-- hippo:modes-->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>modes</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:modes</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:ordered" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  
+  <!-- end "hippo:facetselect" template -->
+  
+  
 </sv:node>
