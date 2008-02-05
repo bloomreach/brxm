@@ -168,6 +168,14 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     private void indexPath(Document doc, InternalValue[] values, Name name) {
+        // index root node path
+        
+        doc.add(new Field(ServicingFieldNames.HIPPO_PATH,
+                "/",
+                Field.Store.NO,
+                Field.Index.NO_NORMS,
+                Field.TermVector.NO));
+        
         // index each level of the path for searching
         for (int i = 0; i < values.length; i++) {
             InternalValue value = values[i];
