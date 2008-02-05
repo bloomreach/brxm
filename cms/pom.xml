@@ -107,7 +107,7 @@
 
   <ciManagement>
     <system>Bamboo</system>
-    <url>http://bamboo-intern.hippocms.org//</url>
+    <url>http://bamboo-intern.hippocms.org/</url>
  </ciManagement>
 
   <issueManagement>
