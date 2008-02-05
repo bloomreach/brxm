@@ -400,7 +400,7 @@ public class SessionDecorator implements XASession, HippoSession {
         }
     }
 
-    private static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
+    static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
             srcNode = ServicingNodeImpl.unwrap(srcNode);
 
