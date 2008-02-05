@@ -51,6 +51,7 @@ import javax.transaction.xa.XAResource;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Path;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.xml.sax.ContentHandler;
@@ -403,7 +404,7 @@ public class SessionDecorator implements XASession, HippoSession {
     static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
             srcNode = ServicingNodeImpl.unwrap(srcNode);
-
+            
             for(PropertyIterator iter = srcNode.getProperties(); iter.hasNext(); ) {
                 Property property = iter.nextProperty();
                 if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:uuid")) {
@@ -414,14 +415,22 @@ public class SessionDecorator implements XASession, HippoSession {
                 }
             }
 
-            // don't copy childeren of virtual nodes
-            if (srcNode.isNodeType(HippoNodeType.NT_FACETSELECT) || srcNode.isNodeType(HippoNodeType.NT_FACETSEARCH))
-                return;
-
-            for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
-                Node node = iter.nextNode();
-                Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
-                copy(node, child);
+            /*
+             * don't copy virtual nodes
+             * Half virtual nodes like HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH
+             * should be copied, even if they are 'half virtual'. On save(), the virtual part will
+             * be ignored. 
+             * TODO : verify that for HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH
+             * EVEN when they are 'half-virtual' 
+             * ((HippoNode)srcNode).getCanonicalNode().isSame(srcNode) returns true. It should!
+             */ 
+            if(((HippoNode)srcNode).getCanonicalNode().isSame(srcNode) )
+            {
+                for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
+                    Node node = iter.nextNode();
+                    Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
+                    copy(node, child);
+                }
             }
         } catch(PathNotFoundException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
