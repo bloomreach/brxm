@@ -633,7 +633,7 @@
     </sv:node>
     
     <!-- hippo:docbase -->
-    <sv:node sv:name="hippo:facets">
+    <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
       </sv:property>
