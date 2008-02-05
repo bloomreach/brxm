@@ -38,7 +38,7 @@
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.hippoecm.org/hst/nt/1.0</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetypes" sv:type="String">
+    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>hst-model.cnd</sv:value>
     </sv:property>
   </sv:node>

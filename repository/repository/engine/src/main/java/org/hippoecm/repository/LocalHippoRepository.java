@@ -412,13 +412,26 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                 assert (p != null); // cannot happen
                             }
                         }
-                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
+                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE) ||
+                            node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
                             if (log.isDebugEnabled())
                                 log.debug("Found nodetypes configuration");
+                            if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE) &&
+                                node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
+                                log.error("Initialize cannot contain both " + HippoNodeType.HIPPO_NODETYPESRESOURCE + " and " +
+                                          HippoNodeType.HIPPO_NODETYPES + " definition");
+                            }
                             Property p = null;
                             try {
-                                String cndName = (p = node.getProperty(HippoNodeType.HIPPO_NODETYPES)).getString();
-                                InputStream cndStream = getClass().getResourceAsStream(cndName);
+                                String cndName;
+                                InputStream cndStream;
+                                if(node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
+                                    cndName = (p = node.getProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)).getString();
+                                    cndStream = getClass().getResourceAsStream(cndName);
+                                } else {
+                                    cndName = "<<internal>>";
+                                    cndStream = (p = node.getProperty(HippoNodeType.HIPPO_NODETYPES)).getStream();
+                                }
                                 if (cndStream == null) {
                                     log.warn("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
                                 } else {
@@ -430,14 +443,29 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                 assert (p != null); // cannot happen
                             }
                         }
-                        if (node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
+                        if (node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) ||
+                            node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
                             if (log.isDebugEnabled())
                                 log.debug("Found content configuration");
+                            if (node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) &&
+                                node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
+                                log.error("Initialize cannot contain both " + HippoNodeType.HIPPO_CONTENTRESOURCE + " and " +
+                                          HippoNodeType.HIPPO_CONTENT + " definition");
+                            }
                             Property contentProperty = null;
                             Property rootProperty = null;
                             try {
-                                String contentName = (contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT)).getString();
-                                InputStream contentStream = getClass().getResourceAsStream(contentName);
+                                String contentName;
+                                InputStream contentStream;
+                                if(node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
+                                    contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE);
+                                    contentName = contentProperty.getString();
+                                    contentStream = getClass().getResourceAsStream(contentName);
+                                } else {
+                                    contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT);
+                                    contentName = "<<internal>>";
+                                    contentStream = contentProperty.getStream();
+                                }
                                 if (contentStream == null) {
                                     log.warn("Cannot locate content configuration '" + contentName + "', initialization skipped");
                                 } else {
@@ -466,35 +494,27 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                         rootSession.save();
                     } catch (ParseException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (AccessDeniedException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (ConstraintViolationException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (InvalidItemStateException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (ItemExistsException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (LockException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (NoSuchNodeTypeException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (UnsupportedRepositoryOperationException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (ValueFormatException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                        rootSession.refresh(false);
                     } catch (VersionException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                    } finally {
                         rootSession.refresh(false);
-                    }
+}
                 }
             }
         } catch (PathNotFoundException ex) {

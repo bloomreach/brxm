@@ -89,7 +89,7 @@
             </p>
           </li>
           <li>
-            <b>hippo:nodetypes</b>
+            <b>hippo:nodetypesresource</b>
             <br/>
             The value of this property specifies a resource (file) available on the
             classpath of the repository.  The content of this file should be a proper JCR
@@ -97,7 +97,7 @@
             repository.
           </li>
           <li>
-            <b>hippo:content</b>
+            <b>hippo:contentresource</b>
             <br/>
             The value of this property indicates a resource available on the
             classpath.  The content of this resource should be a valid XML dump describing
@@ -109,13 +109,13 @@
             <b>hippo:contentroot</b>
             <br/>
             The value of this property indicates an alternative location where to load
-            the content as indicated by the hippo:content property.  The value should be
+            the content as indicated by the hippo:contentresource property.  The value should be
             an absolute JCR path starting with a single leading slash.
           </li>
         </ul>
 
         <p>
-          Because the hippo:nodetypes, hippo:namespace and hippo:content are interpreted
+          Because the hippo:nodetypesresource, hippo:namespace and hippo:contentresource are interpreted
           in the indicated order, they may make use of their subsequent effect.  So the
           content can use the namespace as earlier defined.
         </p>
@@ -142,7 +142,7 @@ Session session = ...;
 Node node = session.getRootNode().addNode("/hippo:configuration/hippo:initialize", "hippo:initializefolder");
 node = node.addNode("demo","hippo:initializeitem");
 node.setProperty("hippo:namespace", "http://www.revolutionware.org/nt/1.0");
-node.setProperty("hippo:nodetypes", "nodetypes.cnd");
+node.setProperty("hippo:nodetypesresource", "nodetypes.cnd");
 session.save();
 // At this time the initialization procedure may have created
 // a new node type demo:mynodetype if present in nodetypes.cnd.

@@ -51,8 +51,8 @@ public class Initialize
     else
       node = node.getNode(HippoNodeType.INITIALIZE_PATH);
     node = node.addNode("newsmodel",HippoNodeType.NT_INITIALIZEITEM);
-    node.setProperty(HippoNodeType.HIPPO_NODETYPES,"newsmodel.cnd");
-    node.setProperty(HippoNodeType.HIPPO_CONTENT,"navigation.xml");
+    node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE,"newsmodel.cnd");
+    node.setProperty(HippoNodeType.HIPPO_CONTENTRESOURCE,"navigation.xml");
     session.logout();
   }
 

@@ -64,7 +64,7 @@ public class RedefineNodetypeTest extends TestCase {
     private static void waitForRefresh(Session session) throws PathNotFoundException, RepositoryException {
         session.refresh(true);
         Node base = session.getRootNode().getNode("hippo:configuration").getNode("hippo:initialize");
-        while(base.getNode("hippotest").hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
+        while(base.getNode("hippotest").hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
             try {
                 Thread.sleep(300);
             } catch(InterruptedException ex) {
@@ -85,7 +85,7 @@ public class RedefineNodetypeTest extends TestCase {
         node = session.getRootNode().getNode("hippo:configuration").getNode("hippo:initialize");
         node = node.addNode("hippotest");
         node.setProperty(HippoNodeType.HIPPO_NAMESPACE, "http://www.hippoecm.org/test/1.0");
-        node.setProperty(HippoNodeType.HIPPO_NODETYPES, "RedefineNodetypeTest-1.cnd");
+        node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE, "RedefineNodetypeTest-1.cnd");
         session.save();
 
         // this update is asynchronously
@@ -100,7 +100,7 @@ public class RedefineNodetypeTest extends TestCase {
         session.save();
         node = node.addNode("hippotest");
         node.setProperty(HippoNodeType.HIPPO_NAMESPACE, "http://www.hippoecm.org/test/1.1");
-        node.setProperty(HippoNodeType.HIPPO_NODETYPES, "RedefineNodetypeTest-2.cnd");
+        node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE, "RedefineNodetypeTest-2.cnd");
         session.save();
 
         // this update is asynchronously
