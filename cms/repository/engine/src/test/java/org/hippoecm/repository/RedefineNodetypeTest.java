@@ -30,6 +30,7 @@ import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
+
 import org.hippoecm.repository.api.HippoNodeType;
 
 import junit.framework.TestCase;
@@ -124,6 +125,6 @@ public class RedefineNodetypeTest extends TestCase {
         }
         // query for all properties except jcr:uuid with the old uuids as value
         // put new uuid into property according to earlier map
+        // 'return nodes list'
     }
 }
-// HREPTWO-466
