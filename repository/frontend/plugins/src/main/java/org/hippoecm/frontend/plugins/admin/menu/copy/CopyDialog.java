@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
@@ -33,7 +34,8 @@ public class CopyDialog extends LookupDialog {
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
     public CopyDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Copy", dialogWindow.getNodeModel().findRootModel(), dialogWindow, channel);
+        super("Copy", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()),
+              dialogWindow, channel);
     }
 
     @Override
@@ -48,8 +50,8 @@ public class CopyDialog extends LookupDialog {
             targetPath += sourceNodeModel.getNode().getName();
 
             // The actual copy
-            UserSession wicketSession =  (UserSession) getSession();
-            HippoSession jcrSession = (HippoSession)wicketSession.getJcrSession();
+            UserSession wicketSession = (UserSession) getSession();
+            HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
             jcrSession.copy(sourceNodeModel.getNode(), targetPath);
 
             if (channel != null) {

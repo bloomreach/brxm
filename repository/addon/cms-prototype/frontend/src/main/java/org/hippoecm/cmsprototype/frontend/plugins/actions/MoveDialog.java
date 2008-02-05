@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.move;
+package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.cmsprototype.frontend.model.tree.FolderTreeNode;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
@@ -34,12 +34,9 @@ public class MoveDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
-
     public MoveDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Move", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()),
-                dialogWindow, channel);
+        super("Move", new FolderTreeNode(dialogWindow.getNodeModel().findRootModel()), dialogWindow, channel);
     }
-
 
     @Override
     public void ok() throws RepositoryException {
@@ -73,6 +70,5 @@ public class MoveDialog extends LookupDialog {
     @Override
     public void cancel() {
     }
-
 
 }
