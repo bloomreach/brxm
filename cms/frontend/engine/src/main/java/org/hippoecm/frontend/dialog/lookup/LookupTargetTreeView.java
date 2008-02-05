@@ -18,8 +18,8 @@ package org.hippoecm.frontend.dialog.lookup;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.tree.JcrTree;
 
 class LookupTargetTreeView extends JcrTree {
@@ -36,7 +36,7 @@ class LookupTargetTreeView extends JcrTree {
     @Override
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
         this.selectedNode = treeNode;
-        JcrTreeNode treeNodeModel = (JcrTreeNode) treeNode;
+        AbstractTreeNode treeNodeModel = (AbstractTreeNode) treeNode;
         dialog.update(target, treeNodeModel.getNodeModel());
     }
 

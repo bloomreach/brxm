@@ -28,8 +28,6 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugins.admin.menu.copy.CopyDialog;
-import org.hippoecm.frontend.plugins.admin.menu.move.MoveDialog;
 
 /**
  * Simple plugin to list the available non-workflow actions for a
