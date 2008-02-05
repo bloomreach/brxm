@@ -327,8 +327,8 @@
         #end
       #end
     #end
-<link media="screen" href="http://www.hippo.nl/css/screen.css" type="text/css" rel="stylesheet">
-<link media="print" href="http://www.hippo.nl/css/print.css" type="text/css" rel="stylesheet">
+<link media="screen" href="http://static.hippo.nl/hippo-master-screen.css" type="text/css" rel="stylesheet">
+<link media="print" href="http://static.hippo.nl/hippo-master-print.css" type="text/css" rel="stylesheet">
     <style type="text/css" media="all">
       @import url("$relativePath/css/screen.css");
     </style>
@@ -337,7 +337,7 @@
 <div id="container">
 <div id="top">
     <div id="navigation">
-<h1>
+<h1 class="logo">
 <a title="Hippo" href="http://www.hippo.nl/en/home"> Hippo </a>
 </h1>
 <ul id="nav_supplementary">
