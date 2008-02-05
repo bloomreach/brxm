@@ -34,10 +34,10 @@
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.hippoecm.org/sample/nt/1.0</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetypes" sv:type="String">
+    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>newsmodel.cnd</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:content" sv:type="String">
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>navigation.xml</sv:value>
     </sv:property>
   </sv:node>

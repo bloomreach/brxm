@@ -54,7 +54,7 @@ public class ConfigurationTest extends TestCase {
     public synchronized void testConfiguration() throws Exception {
         Node root = session.getRootNode();
         Node node = root.addNode("hippo:configuration/hippo:initialize/testnode", "hippo:initializeitem");
-        node.setProperty("hippo:content", "configtest.xml");
+        node.setProperty("hippo:contentresource", "configtest.xml");
         node.setProperty("hippo:contentroot", "/configtest");
         session.save();
 

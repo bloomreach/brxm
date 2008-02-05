@@ -124,7 +124,7 @@ workflow defined in workflow-config.xml.
       &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
         &lt;sv:value&gt;hippo:initializeitem&lt;/sv:value&gt;
       &lt;/sv:property&gt;
-      &lt;sv:property sv:name="hippo:content" sv:type="String"&gt;
+      &lt;sv:property sv:name="hippo:contentresource" sv:type="String"&gt;
         &lt;sv:value&gt;workflow-config.xml&lt;/sv:value&gt;
       &lt;/sv:property&gt;
       &lt;sv:property sv:name="hippo:contentroot" sv:type="String"&gt;

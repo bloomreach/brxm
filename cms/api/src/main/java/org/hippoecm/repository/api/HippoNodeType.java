@@ -80,6 +80,7 @@ public interface HippoNodeType {
     //--- Hippo Item Names ---//
     final public static String HIPPO_CLASSNAME = "hippo:classname";
     final public static String HIPPO_CONTENT = "hippo:content";
+    final public static String HIPPO_CONTENTRESOURCE = "hippo:contentresource";
     final public static String HIPPO_CONTENTROOT = "hippo:contentroot";
     final public static String HIPPO_COUNT = "hippo:count";
     final public static String HIPPO_DISPLAY = "hippo:display";
@@ -99,6 +100,7 @@ public interface HippoNodeType {
     final public static String HIPPO_NODE = "hippo:node";
     final public static String HIPPO_NODETYPE = "hippo:nodetype";
     final public static String HIPPO_NODETYPES = "hippo:nodetypes";
+    final public static String HIPPO_NODETYPESRESOURCE = "hippo:nodetypesresource";
     final public static String HIPPO_ORDERED = "hippo:ordered";
     final public static String HIPPO_PASSWORD = "hippo:password";
     final public static String HIPPO_PARAMETERS = "hippo:parameters";

@@ -105,8 +105,8 @@
 [hippo:initializeitem] > nt:base
 - hippo:sequence (double)
 - hippo:namespace (string)
-- hippo:nodetypes (string)
-- hippo:content (string)
+- hippo:nodetypesresource (string)
+- hippo:contentresource (string)
 - hippo:contentroot (string)
 
 [hippo:initializefolder] > nt:base orderable
