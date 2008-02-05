@@ -155,7 +155,9 @@ public abstract class HippoVirtualProvider
     protected final String[] getProperty(NodeId nodeId, Name propName) {
         PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
         if(propState == null) {
-            log.warn("expected property state " + propName + " in " + nodeId + " not found");
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected property state " + propName + " in " + nodeId + " not found");
+            }
             return null;
         }
         InternalValue[] values = propState.getValues();
@@ -169,12 +171,16 @@ public abstract class HippoVirtualProvider
         try {
             return (PropertyState) stateMgr.getItemState(propId);
         } catch(NoSuchItemStateException ex) {
-            log.warn("expected property state " + propId + " not found: " +
-                     ex.getClass().getName() + ": " + ex.getMessage());
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected property state " + propId + " not found: " +
+                          ex.getClass().getName() + ": " + ex.getMessage());
+            }
             return null;
         } catch(ItemStateException ex) {
-            log.warn("expected property state " + propId + " not found: " +
-                     ex.getClass().getName()+": "+ex.getMessage());
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected property state " + propId + " not found: " +
+                          ex.getClass().getName()+": "+ex.getMessage());
+            }
             return null;
         }
     }
@@ -183,12 +189,16 @@ public abstract class HippoVirtualProvider
         try{
             return (NodeState) stateMgr.getItemState(nodeId);
         } catch(NoSuchItemStateException ex) {
-            log.warn("expected node state "+nodeId+" not found: " +
-                     ex.getClass().getName() + ": " + ex.getMessage());
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected node state "+nodeId+" not found: " +
+                          ex.getClass().getName() + ": " + ex.getMessage());
+            }
             return null;
         } catch(ItemStateException ex) {
-            log.warn("expected node state " + nodeId + " not found: " +
-                     ex.getClass().getName() + ": " + ex.getMessage());
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected node state " + nodeId + " not found: " +
+                          ex.getClass().getName() + ": " + ex.getMessage());
+            }
             return null;
         }
     }
@@ -200,12 +210,16 @@ public abstract class HippoVirtualProvider
                 return null;
             return stateMgr.getNodeState((NodeId)itemId);
         } catch(NoSuchItemStateException ex) {
-            log.warn("expected node " + absPath + " not found: " +
-                     ex.getClass().getName() + ": " + ex.getMessage());
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected node " + absPath + " not found: " +
+                          ex.getClass().getName() + ": " + ex.getMessage());
+            }
             return null;
         } catch(ItemStateException ex) {
-            log.warn("expected node " + absPath + " not found: " +
-                     ex.getClass().getName() + ": " + ex.getMessage());
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected node " + absPath + " not found: " +
+                          ex.getClass().getName() + ": " + ex.getMessage());
+            }
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }
