@@ -19,13 +19,17 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugins.admin.menu.copy.CopyDialog;
+import org.hippoecm.frontend.plugins.admin.menu.move.MoveDialog;
 
 /**
  * Simple plugin to list the available non-workflow actions for a
@@ -38,12 +42,14 @@ import org.hippoecm.frontend.plugin.channel.Request;
 public class ActionsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    AjaxLink link;
+    private AjaxLink edit;
+    private DialogLink copy;
+    private DialogLink move;
 
     public ActionsPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        link = new AjaxLink("editlink", getPluginModel()) {
+        edit = new AjaxLink("editlink", getPluginModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -57,15 +63,19 @@ public class ActionsPlugin extends Plugin {
             }
 
         };
-        add(link);
+        add(edit);
+        
+        JcrNodeModel jcrModel = (JcrNodeModel) getModel();
+        Channel incoming = pluginDescriptor.getIncoming();
+        ChannelFactory factory = getPluginManager().getChannelFactory();
+        
+        copy = new DialogLink("copy-dialog", "Copy Document", CopyDialog.class, jcrModel, incoming, factory);
+        add(copy);
+        
+        move = new DialogLink("move-dialog", "Move Document", MoveDialog.class, jcrModel, incoming, factory);
+        add(move);
 
-        try {
-            DocumentVariant variant = new DocumentVariant((JcrNodeModel) getPluginModel());
-            link.setVisible(variant.getState().equals("draft"));
-        } catch (ModelWrapException e) {
-            link.setVisible(false);
-        }
-
+        setVisibilities();
     }
 
     @Override
@@ -73,15 +83,24 @@ public class ActionsPlugin extends Plugin {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel model = new JcrNodeModel(notification.getModel());
             setPluginModel(model);
-            try {
-                DocumentVariant variant = new DocumentVariant(model);
-                link.setVisible(variant.getState().equals("draft"));
-            } catch (ModelWrapException e) {
-                link.setVisible(false);
-            }
+            setVisibilities();
             notification.getContext().addRefresh(this);
         }
         super.receive(notification);
     }
+    
+    private void setVisibilities() {
+        try {
+            DocumentVariant variant = new DocumentVariant((JcrNodeModel) getPluginModel());
+            edit.setVisible(variant.getState().equals("draft"));
+            copy.setVisible(variant.getDocument() != null);
+            move.setVisible(variant.getDocument() != null);
+        } catch (ModelWrapException e) {
+            edit.setVisible(false);
+            copy.setVisible(false);
+            move.setVisible(false);
+        }
+    }
+    
     
 }

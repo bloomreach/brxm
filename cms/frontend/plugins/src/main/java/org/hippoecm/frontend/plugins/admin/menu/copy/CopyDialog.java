@@ -33,7 +33,7 @@ public class CopyDialog extends LookupDialog {
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
     public CopyDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Copy selected node", dialogWindow, channel);
+        super("Copy", dialogWindow.getNodeModel().findRootModel(), dialogWindow, channel);
     }
 
     @Override
