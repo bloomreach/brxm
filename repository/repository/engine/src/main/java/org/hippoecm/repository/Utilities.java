@@ -23,6 +23,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
@@ -79,11 +80,20 @@ public class Utilities {
                 Value[] values = prop.getValues();
                 out.print("{ ");
                 for (int i = 0; i < values.length; i++) {
-                    out.print((i > 0 ? ", " : "") + values[i].getString());
+                    out.print(i > 0 ? ", " : "");
+                    if (values[i].getType() == PropertyType.BINARY) {
+                        out.print("<<binary>>");
+                    } else {
+                        out.print(values[i].getString());
+                    }
                 }
                 out.println(" } ");
             } else {
-                out.println(prop.getString());
+                if (prop.getType() == PropertyType.BINARY) {
+                    out.print("<<binary>>");
+                } else {
+                    out.println(prop.getString());
+                }
             }
         }
         for (NodeIterator iter = parent.getNodes(); iter.hasNext(); ) {
