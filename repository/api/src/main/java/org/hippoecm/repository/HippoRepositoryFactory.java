@@ -158,6 +158,7 @@ public class HippoRepositoryFactory {
                 throw new RepositoryException("unchecked exception: "+ex.getMessage());
         }
 
+	// in case this local repository is build from the default location
         if (defaultRepository == null && location.equals(defaultLocation)) {
             defaultRepository = repository;
         }
