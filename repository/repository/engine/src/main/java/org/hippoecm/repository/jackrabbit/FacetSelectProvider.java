@@ -71,7 +71,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
                 if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select")) {
                     view.put(resolveName(newFacets[i]), newValues[i]);
                 } else if(newModes[i].equalsIgnoreCase("clear")) {
-                    view.remove(newFacets[i]);
+                    view.remove(resolveName(newFacets[i]));
                 }
             }
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
