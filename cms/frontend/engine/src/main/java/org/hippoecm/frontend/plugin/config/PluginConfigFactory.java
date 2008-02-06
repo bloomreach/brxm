@@ -19,6 +19,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.Application;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -33,11 +35,13 @@ public class PluginConfigFactory {
             String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
             Node configNode = rootNode.getNode(path);
 
+            Main main = (Main) Application.get();
+            String application = main.getHippoApplication();
             boolean hipposAvailable = configNode.getNodes().hasNext();
-            boolean builtIn = session.getHippo().contains("(builtin)");
+            boolean builtIn = application.contains("(builtin)");
 
             if (!builtIn && hipposAvailable) {
-                pluginConfig = new PluginRepositoryConfig(session.getJcrSessionModel(), path + "/" + session.getHippo());
+                pluginConfig = new PluginRepositoryConfig(session.getJcrSessionModel(), path + "/" + application);
             } else {
                 pluginConfig = new PluginJavaConfig();
             }

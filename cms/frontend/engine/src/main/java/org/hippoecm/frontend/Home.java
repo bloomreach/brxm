@@ -39,8 +39,10 @@ public class Home extends WebPage {
             throw new RestartResponseException(LoginPage.class);
         }
 
+        Main main = (Main) getApplication();
+
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
-        TemplateConfig templateConfig = new RepositoryTemplateConfig(session.getJcrSessionModel(), session.getHippo());
+        TemplateConfig templateConfig = new RepositoryTemplateConfig(session.getJcrSessionModel(), main.getHippoApplication());
         PluginManager pluginManager = new PluginManager(pluginConfig, templateConfig);
         PluginFactory pluginFactory = new PluginFactory(pluginManager);
 

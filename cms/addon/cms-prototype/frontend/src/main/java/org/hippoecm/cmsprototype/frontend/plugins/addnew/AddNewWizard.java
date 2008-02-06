@@ -38,6 +38,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -60,11 +61,17 @@ public class AddNewWizard extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(AddNewWizard.class);
 
+    private String templatePath;
+
     public AddNewWizard(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
         final AddNewForm form = new AddNewForm("addNewForm");
         add(new FeedbackPanel("feedback"));
         add(form);
+
+        Main main = (Main) getApplication();
+        templatePath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
+                + main.getHippoApplication();
     }
 
     private final class AddNewForm extends Form {
@@ -105,13 +112,13 @@ public class AddNewWizard extends Plugin {
                             request = channel.createRequest("browse", model);
                             request.setContext(context);
                             channel.send(request);
-                            
+
                             context.apply(target);
                         }
                     }
 
                     properties.clear();
-                    
+
                 }
 
                 @Override
@@ -120,11 +127,10 @@ public class AddNewWizard extends Plugin {
                     System.out.println("onError!");
                     target.addComponent(AddNewWizard.this);
                 }
-                
-            });
-            
-        }
 
+            });
+
+        }
 
         private List<String> getTemplates() {
             List<String> templates = new ArrayList<String>();
@@ -134,8 +140,7 @@ public class AddNewWizard extends Plugin {
                 QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
                 NodeTypeManager ntMgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
 
-                String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
-                        + session.getHippo() + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/*";
+                String xpath = templatePath +"/*/" + HippoNodeType.HIPPO_TEMPLATES + "/*";
 
                 Query query = queryManager.createQuery(xpath, Query.XPATH);
                 QueryResult result = query.execute();
@@ -179,8 +184,7 @@ public class AddNewWizard extends Plugin {
 
                 // find template node describing the node type
                 QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
-                String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
-                        + session.getHippo() + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/"
+                String xpath = templatePath + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/"
                         + (String) properties.get("template");
                 Query query = queryManager.createQuery(xpath, Query.XPATH);
                 NodeIterator templateIterator = query.execute().getNodes();
@@ -189,7 +193,7 @@ public class AddNewWizard extends Plugin {
                     return result;
                 }
                 Node template = templateIterator.nextNode();
-                if(template.hasNode("hippo:prototype")) {
+                if (template.hasNode("hippo:prototype")) {
                     Node prototype = template.getNode("hippo:prototype");
                     Workspace workspace = ((UserSession) Session.get()).getJcrSession().getWorkspace();
                     workspace.copy(prototype.getPath(), handle.getPath() + "/" + name);
