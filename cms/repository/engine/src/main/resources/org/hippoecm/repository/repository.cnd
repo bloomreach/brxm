@@ -62,9 +62,9 @@
 
 [hippo:facetselect] > nt:unstructured
 - hippo:docbase (string) mandatory
-- hippo:facets (string) multiple
-- hippo:values (string) multiple
-- hippo:modes (string) multiple < 'select', 'stick', 'clear'
+- hippo:facets (string) mandatory multiple
+- hippo:values (string) mandatory multiple
+- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear'
 + * multiple
 
 [hippo:handle] > nt:unstructured, mix:referenceable
