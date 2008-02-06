@@ -85,6 +85,10 @@
     <level value="debug"/>
     <appender-ref ref="root"/>
   </category>
+  <category additivity="true" name="org.hippoecm.repository.servicing.WorkflowManagerImpl">
+    <level value="debug"/>
+    <appender-ref ref="root"/>
+  </category>
 
   <root>
     <level value="warn"/>

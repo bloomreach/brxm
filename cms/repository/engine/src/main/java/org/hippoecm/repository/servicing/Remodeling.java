@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Iterator;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
@@ -46,6 +47,7 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query ;
 import javax.jcr.query.QueryManager;
@@ -61,24 +63,26 @@ import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class Remodeling implements Serializable
+public class Remodeling // implements Serializable
 {
     protected final static Logger log = LoggerFactory.getLogger(Remodeling.class);
 
+    /** The prefix of the namespace which has been changed
+     */
+    private String prefix;
+
     /** Paths to the changed nodes.
      */
-    private String[] nodes;
+    private Set<String> changes;
 
     /** Reference to the session in which the changes are prepared
      */
-    Session session;
+    transient Session session;
 
-    Remodeling(Session session, Set<Node> nodes) throws RepositoryException {
+    Remodeling(Session session, String prefix) throws RepositoryException {
         this.session = session;
-        this.nodes = new String[nodes.size()];
-        int i = 0;
-        for(Node node : nodes)
-            this.nodes[i++] = node.getPath();
+        this.prefix = prefix;
+        changes = new TreeSet<String>();
     }
 
     public NodeIterator getNodes() {
@@ -86,12 +90,17 @@ public class Remodeling implements Serializable
     }
 
     private class ChangedNodesIterator implements NodeIterator {
+        Iterator<String> iter;
         int index;
         ChangedNodesIterator() {
+            iter = changes.iterator();
+            index = 0;
         }
         public Node nextNode() {
             try {
-                return (Node) session.getItem(nodes[++index]);
+                Node node = (Node) session.getItem(iter.next());
+                ++index;
+                return node;
             } catch(PathNotFoundException ex) {
                 return null;
             } catch(RepositoryException ex) {
@@ -99,13 +108,13 @@ public class Remodeling implements Serializable
             }
         }
         public boolean hasNext() {
-            return index + 1 < nodes.length;
+            return iter.hasNext();
         }
-        public Object next() {
+        public Object next() throws NoSuchElementException {
             try {
-                if(index + 1 == nodes.length)
-                    throw new NoSuchElementException();
-                return session.getItem(nodes[++index]);
+                Object object = session.getItem(iter.next());
+                ++index;
+                return object;
             } catch(RepositoryException ex) {
                 return null;
             }
@@ -114,15 +123,49 @@ public class Remodeling implements Serializable
             throw new UnsupportedOperationException();
         }
         public void skip(long skipNum) {
-            if(index + skipNum >= nodes.length)
-                throw new NoSuchElementException();
-            index += skipNum;
+            while(skipNum-- > 0) {
+                iter.next();
+                ++index;
+            }
         }
         public long getSize() {
-            return nodes.length;
+            return changes.size();
         }
         public long getPosition() {
             return index;
+        }
+    }
+
+    protected void traverse(Set<String> types, Node node, boolean copy, Node target) throws RepositoryException {
+        if(copy) {
+            for(PropertyIterator iter = node.getProperties(); iter.hasNext(); ) {
+                Property prop = iter.nextProperty();
+                if(!prop.equals("jcr:primaryType"))
+                    target.setProperty(prop.getName(), prop.getValue());
+            }
+        }
+        for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+            Node child = iter.nextNode();
+            NodeType nodeType = child.getPrimaryNodeType();
+            boolean found = false;
+            for(Iterator<String> find = types.iterator(); find.hasNext(); )
+                if(nodeType.isNodeType((find.next()))) {
+                    found = true;
+                    break;
+                }
+            if(found) {
+                if(!copy)
+                    iter.remove();
+                Node newChild = target.addNode(child.getName(),
+                                               prefix + nodeType.getName().substring(nodeType.getName().indexOf(":")));
+                changes.add(newChild.getPath());
+                traverse(types, child, true, newChild);
+            } else if(copy) {
+                Node newChild = target.addNode(child.getName(), nodeType.getName());
+                traverse(types, child, true, newChild);
+            } else {
+                traverse(types, child, false, child);
+            }
         }
     }
 
@@ -152,12 +195,15 @@ public class Remodeling implements Serializable
             Node node = base.getNode(prefix);
             node.setProperty(HippoNodeType.HIPPO_NAMESPACE, newNamespaceURI);
             node.setProperty(HippoNodeType.HIPPO_NODETYPES, cnd);
+            session.save();
 
             // wait for node types to be reloaded
             session.refresh(true);
-            while(base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
+            while(base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPES) ||
+                  base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(500);
+                    org.hippoecm.repository.Utilities.dump(base);
                 } catch(InterruptedException ex) {
                 }
                 session.refresh(true);
@@ -177,6 +223,19 @@ public class Remodeling implements Serializable
         // compute old prefix, similar as in LocalHippoResository.initializeNamespace(NamespaceRegistry,String,uri)
         String oldPrefix = prefix + "_" + oldNamespaceURI.lastIndexOf("/");
 
+        Set<Node> newNodes = new TreeSet<Node>();
+        Set<String> changedNodeTypes = new TreeSet<String>();
+        Name[] allNodeTypes = ntreg.getRegisteredNodeTypes();
+        for(int i=0; i<allNodeTypes.length; i++) {
+            if(allNodeTypes[i].getNamespaceURI().equals(oldNamespaceURI)) {
+                changedNodeTypes.add(allNodeTypes[i].toString());
+            }
+        }
+        Remodeling remodel = new Remodeling(session, prefix);
+        remodel.traverse(changedNodeTypes, session.getRootNode(), false, session.getRootNode());
+        return remodel;
+
+        /*
         // find all nodes in namespace that was changed, and put into ordered set for depth-first traversal
         // for all these old-namespaced node types find the nodes of these types
         Name[] nodetypes = ntreg.getRegisteredNodeTypes();
@@ -219,10 +278,10 @@ public class Remodeling implements Serializable
             for(Node node : oldNodes) {
                 String nodeType = node.getPrimaryNodeType().getName();
                 nodeType = prefix + nodeType.substring(nodeType.indexOf(":"));
-                /* We may need to check if the parent is also in the set, and if
+                * We may need to check if the parent is also in the set, and if
                  * so, use the node instance from the set.  In order to implement
                  * this, it may be necessary to turn the set into an ordered map
-                 */
+                 *
                 Node newNode = node.getParent().addNode(node.getName(), nodeType);
                 SessionDecorator.copy(node, newNode);
                 if(node.isNodeType("mix:referenceable")) {
@@ -290,5 +349,6 @@ public class Remodeling implements Serializable
         }
 
         return new Remodeling(session, newNodes);
+*/
     }
 }

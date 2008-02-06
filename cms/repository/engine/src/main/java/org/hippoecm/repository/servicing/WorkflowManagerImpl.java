@@ -92,7 +92,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             // if the user session has not yet been saved, no workflow is possible
             // as the root session will not be able to find it.  (ItemNotFoundException)
-            documentManager.getSession().getNodeByUUID(item.getUUID());
+            try {
+                documentManager.getSession().getNodeByUUID(item.getUUID());
+            } catch(RepositoryException ex) {
+            }
 
             log.debug("looking for workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
             Node node = session.getNodeByUUID(configuration);
@@ -157,7 +160,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 String classname = workflowNode.getProperty(HippoNodeType.HIPPO_SERVICE).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
-                String uuid = item.getUUID();
+                String uuid = null;
                 Session session = documentManager.getSession();
                 /* The synchronized must operate on the core root session, because there is
                  * only one such session, while there may be many decorated ones.
@@ -181,6 +184,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             throw new RepositoryException("standards plugin invalid", ex);
                         }
                     } else {
+                        uuid = item.getUUID();
                         Object object = documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow) object;
                         if(workflow instanceof WorkflowImpl) {
@@ -275,17 +279,18 @@ public class WorkflowManagerImpl implements WorkflowManager {
             Method targetMethod = null;
             Object returnObject = null;
             try {
-                synchronized(SessionDecorator.unwrap(documentManager.getSession())) {
-                    targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
-                    returnObject = targetMethod.invoke(upstream, args);
-                    documentMgr.putObject(uuid, types, upstream);
-                    documentMgr.getSession().save();
-
-                    if (returnObject instanceof Document) {
-                        returnObject = new Document(((Document)returnObject).getIdentity());
+                targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
+                returnObject = targetMethod.invoke(upstream, args);
+                if(uuid != null) {
+                    synchronized(SessionDecorator.unwrap(documentManager.getSession())) {
+                        documentMgr.putObject(uuid, types, upstream);
+                        documentMgr.getSession().save();
                     }
-                    return returnObject;
                 }
+                if (returnObject instanceof Document) {
+                    returnObject = new Document(((Document)returnObject).getIdentity());
+                }
+                return returnObject;
             } catch(NoSuchMethodException ex) {
                 throw new RepositoryException("Impossible failure for workflow proxy", ex);
             } catch(IllegalAccessException ex) {
@@ -294,7 +299,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 throw ex.getCause();
             } finally {
                 StringBuffer sb = new StringBuffer();
-                sb.append("workflow invocation ");
+                sb.append("AUDIT workflow invocation ");
                 sb.append(upstream != null ? upstream.getClass().getName() : "<unknown>");
                 sb.append(".");
                 sb.append(method != null ? method.getName() : "<unknown>");

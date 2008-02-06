@@ -16,7 +16,7 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          xmlns:hippo="http://www.hippoecm.org/nt/1.0"
-         sv:name="workflow">
+         sv:name="internal">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:workflowcategory</sv:value>
     </sv:property>
