@@ -403,6 +403,7 @@ public class SessionDecorator implements XASession, HippoSession {
 
     static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
+            boolean copyChildren = ((HippoNode)srcNode).getCanonicalNode().isSame(srcNode);
             srcNode = ServicingNodeImpl.unwrap(srcNode);
             
             for(PropertyIterator iter = srcNode.getProperties(); iter.hasNext(); ) {
@@ -415,17 +416,13 @@ public class SessionDecorator implements XASession, HippoSession {
                 }
             }
 
-            /*
-             * don't copy virtual nodes
-             * Half virtual nodes like HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH
-             * should be copied, even if they are 'half virtual'. On save(), the virtual part will
-             * be ignored. 
-             * TODO : verify that for HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH
-             * EVEN when they are 'half-virtual' 
-             * ((HippoNode)srcNode).getCanonicalNode().isSame(srcNode) returns true. It should!
-             */ 
-            if(((HippoNode)srcNode).getCanonicalNode().isSame(srcNode) )
-            {
+            /* Do not copy virtual nodes.  Partial virtual nodes like
+             * HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH
+             * should be copied except for their children, even if though they
+             * are half virtual. On save(), the virtual part will be
+             * ignored.
+             */
+            if(copyChildren) {
                 for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
                     Node node = iter.nextNode();
                     Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
