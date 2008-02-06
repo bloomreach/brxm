@@ -38,7 +38,7 @@
     <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
     <init-param>
       <param-name>repository-directory</param-name>
-      <param-value>bootstrap:jdbc/hreptwo</param-value>
+      <param-value>WEB-INF/storage</param-value>
       <description>The (relative) location where to store files</description>
     </init-param>
     <init-param>
