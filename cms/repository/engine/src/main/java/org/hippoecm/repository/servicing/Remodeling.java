@@ -63,7 +63,7 @@ import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class Remodeling // implements Serializable
+public class Remodeling
 {
     protected final static Logger log = LoggerFactory.getLogger(Remodeling.class);
 
@@ -73,7 +73,7 @@ public class Remodeling // implements Serializable
 
     /** Paths to the changed nodes.
      */
-    private Set<String> changes;
+    private Set<Node> changes;
 
     /** Reference to the session in which the changes are prepared
      */
@@ -82,7 +82,7 @@ public class Remodeling // implements Serializable
     Remodeling(Session session, String prefix) throws RepositoryException {
         this.session = session;
         this.prefix = prefix;
-        changes = new TreeSet<String>();
+        changes = new TreeSet<Node>();
     }
 
     public NodeIterator getNodes() {
@@ -90,34 +90,24 @@ public class Remodeling // implements Serializable
     }
 
     private class ChangedNodesIterator implements NodeIterator {
-        Iterator<String> iter;
+        Iterator<Node> iter;
         int index;
         ChangedNodesIterator() {
             iter = changes.iterator();
             index = 0;
         }
         public Node nextNode() {
-            try {
-                Node node = (Node) session.getItem(iter.next());
-                ++index;
-                return node;
-            } catch(PathNotFoundException ex) {
-                return null;
-            } catch(RepositoryException ex) {
-                return null;
-            }
+            Node node = iter.next();
+            ++index;
+            return node;
         }
         public boolean hasNext() {
             return iter.hasNext();
         }
         public Object next() throws NoSuchElementException {
-            try {
-                Object object = session.getItem(iter.next());
-                ++index;
-                return object;
-            } catch(RepositoryException ex) {
-                return null;
-            }
+            Object object = iter.next();
+            ++index;
+            return object;
         }
         public void remove() throws UnsupportedOperationException {
             throw new UnsupportedOperationException();
@@ -136,30 +126,37 @@ public class Remodeling // implements Serializable
         }
     }
 
+    protected void visit(Node source, Node target) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        for(PropertyIterator iter = source.getProperties(); iter.hasNext(); ) {
+            Property prop = iter.nextProperty();
+            if(!prop.getDefinition().isProtected()) {
+                target.setProperty(prop.getName(), prop.getValue());
+            }
+        }
+    }
+
     protected void traverse(Set<String> types, Node node, boolean copy, Node target) throws RepositoryException {
         if(copy) {
-            for(PropertyIterator iter = node.getProperties(); iter.hasNext(); ) {
-                Property prop = iter.nextProperty();
-                if(!prop.equals("jcr:primaryType"))
-                    target.setProperty(prop.getName(), prop.getValue());
-            }
+            visit(node, target);
         }
         for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
             Node child = iter.nextNode();
             NodeType nodeType = child.getPrimaryNodeType();
             boolean found = false;
-            for(Iterator<String> find = types.iterator(); find.hasNext(); )
-                if(nodeType.isNodeType((find.next()))) {
+            for(Iterator<String> find = types.iterator(); find.hasNext(); ) {
+                String type = (String) find.next();
+                if(nodeType.isNodeType(type)) {
                     found = true;
                     break;
                 }
+            }
             if(found) {
-                if(!copy)
-                    iter.remove();
                 Node newChild = target.addNode(child.getName(),
                                                prefix + nodeType.getName().substring(nodeType.getName().indexOf(":")));
-                changes.add(newChild.getPath());
+                changes.add(newChild);
                 traverse(types, child, true, newChild);
+                if(!copy)
+                    child.remove(); // iter.remove();
             } else if(copy) {
                 Node newChild = target.addNode(child.getName(), nodeType.getName());
                 traverse(types, child, true, newChild);
@@ -203,7 +200,6 @@ public class Remodeling // implements Serializable
                   base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
                 try {
                     Thread.sleep(500);
-                    org.hippoecm.repository.Utilities.dump(base);
                 } catch(InterruptedException ex) {
                 }
                 session.refresh(true);
@@ -221,134 +217,19 @@ public class Remodeling // implements Serializable
         }
 
         // compute old prefix, similar as in LocalHippoResository.initializeNamespace(NamespaceRegistry,String,uri)
-        String oldPrefix = prefix + "_" + oldNamespaceURI.lastIndexOf("/");
+        String oldPrefix = oldNamespaceURI.substring(oldNamespaceURI.lastIndexOf("/")+1);
+        oldPrefix = prefix + "_" + oldPrefix;
 
         Set<Node> newNodes = new TreeSet<Node>();
         Set<String> changedNodeTypes = new TreeSet<String>();
         Name[] allNodeTypes = ntreg.getRegisteredNodeTypes();
         for(int i=0; i<allNodeTypes.length; i++) {
             if(allNodeTypes[i].getNamespaceURI().equals(oldNamespaceURI)) {
-                changedNodeTypes.add(allNodeTypes[i].toString());
+                changedNodeTypes.add(oldPrefix + ":" + allNodeTypes[i].getLocalName());
             }
         }
         Remodeling remodel = new Remodeling(session, prefix);
         remodel.traverse(changedNodeTypes, session.getRootNode(), false, session.getRootNode());
         return remodel;
-
-        /*
-        // find all nodes in namespace that was changed, and put into ordered set for depth-first traversal
-        // for all these old-namespaced node types find the nodes of these types
-        Name[] nodetypes = ntreg.getRegisteredNodeTypes();
-        Set<Node> newNodes = new TreeSet<Node>();
-        SortedSet<Node> oldNodes = new TreeSet<Node>(new Comparator<Node>() {
-            boolean errorFlagged = false;
-            public int compare(Node o1, Node o2) {
-                try {
-                    int order = o2.getDepth() - o1.getDepth();
-                    if(order == 0)
-                    order = o2.getIndex() - o1.getIndex();
-                    return order;
-                } catch(RepositoryException ex) {
-                    if(!errorFlagged) {
-                        log.error("Cannot determin depth of nodes to remap");
-                        errorFlagged = true;
-                    }
-                    return 0;
-                }
-            }});
-        try {
-            for(int i=0; i<nodetypes.length; i++) {
-                if(nodetypes[i].getNamespaceURI().equals(oldNamespaceURI)) {
-                    Query query = qmgr.createQuery("select * from "+oldPrefix, Query.SQL);
-                    QueryResult result = query.execute();
-                    for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
-                        Node node = iter.nextNode();
-                        if(node != null)
-                            oldNodes.add(node);
-                    }
-                }
-            }
-        } catch(InvalidQueryException ex) {
-            throw new RepositoryException("Internal error finding old namespaced nodes", ex);
-        }
-
-        // copy the content of these nodes to an more-or-less identical copy
-        Map<String,Node> uuids = new TreeMap<String,Node>();
-        try {
-            for(Node node : oldNodes) {
-                String nodeType = node.getPrimaryNodeType().getName();
-                nodeType = prefix + nodeType.substring(nodeType.indexOf(":"));
-                * We may need to check if the parent is also in the set, and if
-                 * so, use the node instance from the set.  In order to implement
-                 * this, it may be necessary to turn the set into an ordered map
-                 *
-                Node newNode = node.getParent().addNode(node.getName(), nodeType);
-                SessionDecorator.copy(node, newNode);
-                if(node.isNodeType("mix:referenceable")) {
-                    uuids.put(node.getUUID(), newNode);
-                }
-                newNodes.add(newNode);
-            }
-        } catch(UnsupportedRepositoryOperationException ex) {
-            throw new RepositoryException("cannot copy old nodes", ex);
-        } catch(ConstraintViolationException ex) {
-            throw new RepositoryException("cannot copy old nodes", ex);
-        } catch(VersionException ex) {
-            throw new RepositoryException("cannot copy old nodes", ex);
-        } catch(NoSuchNodeTypeException ex) {
-            throw new RepositoryException("cannot copy old nodes", ex);
-        } catch(AccessDeniedException ex) {
-            throw new RepositoryException("cannot copy old nodes", ex);
-        } catch(PathNotFoundException ex) {
-            throw new RepositoryException("cannot copy old nodes", ex);
-        } catch(LockException ex) {
-            throw new RepositoryException("cannot copy old nodes", ex);
-        } catch(ItemNotFoundException ex) {
-            throw new RepositoryException("cannot copy old nodes, conflict in copying", ex);
-        } catch(ItemExistsException ex) {
-            throw new RepositoryException("cannot copy old nodes because of same-name siblings", ex);
-        }
-
-        // remove the old nodes, has to be done after recreating to preserve ordering
-        try {
-            for(Node node : oldNodes) {
-                node.remove();
-            }
-        } catch(ConstraintViolationException ex) {
-            throw new RepositoryException("cannot remove old nodes", ex);
-        } catch(LockException ex) {
-            throw new RepositoryException("cannot remove old nodes", ex);
-        } catch(VersionException ex) {
-            throw new RepositoryException("cannot remove old nodes", ex);
-        }
-
-        // hunt all properties containing uuids to the old nodes and remap them
-        try {
-            Query query = qmgr.createQuery("//*[?", Query.XPATH);
-            QueryResult result = query.execute();
-            for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
-                Node n = iter.nextNode();
-                for(PropertyIterator piter = n.getProperties(); piter.hasNext(); ) {
-                    Property p = piter.nextProperty();
-                    if(!p.getName().equals("jcr:uuid") && p.getType() == PropertyType.REFERENCE) {
-                        if(uuids.containsKey(p.getString()))
-                            p.setValue(uuids.get(p.getString()));
-                    }
-                }
-            }
-        } catch(ConstraintViolationException ex) {
-            throw new RepositoryException("Internal error finding old uuid based nodes", ex);
-        } catch(LockException ex) {
-            throw new RepositoryException("Internal error finding old uuid based nodes", ex);
-        } catch(VersionException ex) {
-            throw new RepositoryException("Internal error finding old uuid based nodes", ex);
-        } catch(ValueFormatException ex) {
-            throw new RepositoryException("Internal error finding old uuid based nodes", ex);
-        } catch(InvalidQueryException ex) {
-            throw new RepositoryException("Internal error finding old uuid based nodes", ex);
-        }
-
-        return new Remodeling(session, newNodes);
-*/
     }
 }
