@@ -122,10 +122,11 @@
         <version>2.1-alpha-1</version>
         <configuration>
           <overlays>
+            <!-- repeat this overlay for all applications that use the skin -->
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-skin</artifactId>
-              <targetPath>skin</targetPath>
+              <targetPath>cms/skin</targetPath>
               <excludes>
                 <exclude>WEB-INF/web.xml</exclude>
               </excludes>

@@ -84,13 +84,4 @@ public class UserSession extends WebSession {
         return result;
     }
 
-    public void setHippo(String hippo) {
-        this.hippo = hippo;
-        dirty();
-    }
-
-    public String getHippo() {
-        return this.hippo;
-    }
-
 }
