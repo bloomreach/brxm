@@ -38,7 +38,7 @@
     <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
     <init-param>
       <param-name>repository-directory</param-name>
-      <param-value>WEB-INF/storage</param-value>
+      <param-value>bootstrap:jdbc/hreptwo</param-value>
       <description>The (relative) location where to store files</description>
     </init-param>
     <init-param>
@@ -64,5 +64,11 @@
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
+
+  <resource-ref>
+    <res-ref-name>jdbc/hreptwo</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
 
 </web-app>
