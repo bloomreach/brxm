@@ -19,7 +19,7 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
-<hippotest='http://www.hippoecm.org/test/1.1'>
+<hippotest1='http://www.hippoecm.org/test/1.1'>
 
-[hippotest:test] > nt:base
-- hippotest:second (string) mandatory
+[hippotest1:test] > nt:base
+- hippotest1:second (string) mandatory

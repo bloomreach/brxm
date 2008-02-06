@@ -81,42 +81,41 @@ public class RedefineNodetypeTest extends TestCase {
         }
     }
 
-    /*
     public void testRedefine() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test");
         try {
-            root.addNode("node", "hippotest:test");
+            root.addNode("node", "hippotest1:test");
             fail("node type should not yet exist");
         } catch(NoSuchNodeTypeException ex) {
             // expected
         }
 
         node = session.getRootNode().getNode("hippo:configuration").getNode("hippo:initialize");
-        node = node.addNode("hippotest");
+        node = node.addNode("hippotest1");
         node.setProperty(HippoNodeType.HIPPO_NAMESPACE, "http://www.hippoecm.org/test/1.0");
         node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE, "RedefineNodetypeTest-1.cnd");
         session.save();
 
         // this update is asynchronously
-        waitForRefresh(session, "hippotest");
+        waitForRefresh(session, "hippotest1");
 
-        node = root.addNode("node1", "hippotest:test");
-        node.setProperty("hippotest:first", "aap");
+        node = root.addNode("node1", "hippotest1:test");
+        node.setProperty("hippotest1:first", "aap");
         session.save();
 
         node = session.getRootNode().getNode("hippo:configuration").getNode("hippo:initialize");
-        node.getNode("hippotest").remove();
+        node.getNode("hippotest1").remove();
         session.save();
-        node = node.addNode("hippotest");
+        node = node.addNode("hippotest1");
         node.setProperty(HippoNodeType.HIPPO_NAMESPACE, "http://www.hippoecm.org/test/1.1");
         node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE, "RedefineNodetypeTest-2.cnd");
         session.save();
 
         // this update is asynchronously
-        waitForRefresh(session, "hippotest");
+        waitForRefresh(session, "hippotest1");
 
-        node = root.addNode("node2", "hippotest:test");
-        node.setProperty("hippotest:second", "mies");
+        node = root.addNode("node2", "hippotest1:test");
+        node.setProperty("hippotest1:second", "mies");
         session.save();
 
         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) session.getWorkspace().getNodeTypeManager();
@@ -136,7 +135,6 @@ public class RedefineNodetypeTest extends TestCase {
         // put new uuid into property according to earlier map
         // 'return nodes list'
     }
-    */
 
     public void testWorkflow() throws RepositoryException, WorkflowException, RemoteException {
 
@@ -148,7 +146,7 @@ public class RedefineNodetypeTest extends TestCase {
             "<hippo='http://www.hippoecm.org/nt/1.0'>\n" +
             "<hippotest2='http://www.hippoecm.org/test2/1.0'>\n" +
             "\n" +
-            "[hippotest2:test] > nt:base\n" +
+            "[hippotest2:test] > nt:unstructured\n" +
             "- hippotest2:first (string) mandatory\n";
         String cnd2 =
             "<rep='internal'>\n" +
@@ -158,8 +156,8 @@ public class RedefineNodetypeTest extends TestCase {
             "<hippo='http://www.hippoecm.org/nt/1.0'>\n" +
             "<hippotest2='http://www.hippoecm.org/test2/1.1'>\n" +
             "\n" +
-            "[hippotest2:test] > nt:base\n" +
-            "- hippotest2:second (string) mandatory\n";
+            "[hippotest2:test] > nt:unstructured\n" +
+            "- hippotest2:second (string)\n";
 
         session.getRootNode().addNode("test");
 
@@ -181,8 +179,8 @@ public class RedefineNodetypeTest extends TestCase {
         String[] nodes = ((RemodelWorkflow)wf).remodel(cnd2);
         assertNotNull(nodes);
 
-        org.hippoecm.repository.Utilities.dump(session.getRootNode());
         node = session.getRootNode().getNode("test").getNode("testing");
-        assertTrue(node.getPrimaryNodeType().getName().equals("hippotest2_1.0:test"));
+        assertTrue(node.getPrimaryNodeType().getName().equals("hippotest2:test"));
+        session.save();
     }
 }
