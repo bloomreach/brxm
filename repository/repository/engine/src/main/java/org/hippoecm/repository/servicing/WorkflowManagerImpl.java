@@ -15,11 +15,15 @@
  */
 package org.hippoecm.repository.servicing;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -159,10 +163,29 @@ public class WorkflowManagerImpl implements WorkflowManager {
                  * only one such session, while there may be many decorated ones.
                  */
                 synchronized(SessionDecorator.unwrap(documentManager.getSession())) {
-                    Object object = documentManager.getObject(uuid, classname, types);
-                    Workflow workflow = (Workflow) object;
-                    if(workflow instanceof WorkflowImpl) {
-                        ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
+                    Workflow workflow;
+                    if(classname.startsWith("org.hippoecm.repository.standardworkflow")) {
+                        try {
+                            Class clazz = Class.forName(classname);
+                            Constructor constructor = clazz.getConstructor(new Class[] { Session.class, Session.class, Node.class });
+                            workflow = (Workflow) constructor.newInstance(getSession(), session, item);
+                        } catch(IllegalAccessException ex) {
+                            throw new RepositoryException("no access to standards plugin", ex);
+                        } catch(ClassNotFoundException ex) {
+                            throw new RepositoryException("standards plugin missing", ex);
+                        } catch(NoSuchMethodException ex) {
+                            throw new RepositoryException("standards plugin invalid", ex);
+                        } catch(InstantiationException ex) {
+                            throw new RepositoryException("standards plugin invalid", ex);
+                        } catch(InvocationTargetException ex) {
+                            throw new RepositoryException("standards plugin invalid", ex);
+                        }
+                    } else {
+                        Object object = documentManager.getObject(uuid, classname, types);
+                        workflow = (Workflow) object;
+                        if(workflow instanceof WorkflowImpl) {
+                            ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
+                        }
                     }
 
                     try {
@@ -206,8 +229,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                          */
 
                         try {
-                            java.rmi.server.UnicastRemoteObject.exportObject(workflow, 0);
-                        } catch(java.rmi.RemoteException ex) {
+                            UnicastRemoteObject.exportObject(workflow, 0);
+                        } catch(RemoteException ex) {
                             throw new RepositoryException("Problem creating workflow proxy", ex);
                         }
                     } catch(NoSuchMethodException ex) {

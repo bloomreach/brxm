@@ -85,6 +85,12 @@
       <artifactId>jpox-core</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-standards-common</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+
     <!-- provided -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
