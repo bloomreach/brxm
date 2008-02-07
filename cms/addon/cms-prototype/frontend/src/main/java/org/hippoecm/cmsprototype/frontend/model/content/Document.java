@@ -92,15 +92,15 @@ public class Document extends NodeModelWrapper {
     
     /**
      * Finds the handle to which nodeModel belongs.
-     * @param   nodeModel   Any JcrNodeModel
+     * @param   model   Any JcrNodeModel
      * @return  nodeModel's first ancestor-or-self of type "hippo:handle", or null if not found
      */
-    private JcrNodeModel findHandle(JcrNodeModel nodeModel) {
+    private JcrNodeModel findHandle(JcrNodeModel model) {
         try {
-            while (nodeModel != null && !nodeModel.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                nodeModel = nodeModel.getParentModel();
+            while (model != null && !model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                model = model.getParentModel();
             }
-            return nodeModel;
+            return model;
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             return null;

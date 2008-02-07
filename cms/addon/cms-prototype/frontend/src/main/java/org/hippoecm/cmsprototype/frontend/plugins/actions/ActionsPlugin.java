@@ -17,7 +17,9 @@ package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
+import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
@@ -43,11 +45,13 @@ public class ActionsPlugin extends Plugin {
     private AjaxLink edit;
     private DialogLink copy;
     private DialogLink move;
+    private DialogLink delete;
+    //private DialogLink rename;
 
     public ActionsPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        edit = new AjaxLink("editlink", getPluginModel()) {
+        edit = new AjaxLink("edit-link", getPluginModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -67,12 +71,18 @@ public class ActionsPlugin extends Plugin {
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         
-        copy = new DialogLink("copy-dialog", "Copy Document", CopyDialog.class, jcrModel, incoming, factory);
+        copy = new DialogLink("copy-dialog", "Copy", CopyDialog.class, jcrModel, incoming, factory);
         add(copy);
         
-        move = new DialogLink("move-dialog", "Move Document", MoveDialog.class, jcrModel, incoming, factory);
+        move = new DialogLink("move-dialog", "Move", MoveDialog.class, jcrModel, incoming, factory);
         add(move);
 
+        delete = new DialogLink("delete-dialog", "Delete", DeleteDialog.class, jcrModel, incoming, factory);
+        add(delete);
+
+//        rename = new DialogLink("rename-dialog", "Rename", RenameDialog.class, jcrModel, incoming, factory);
+//        add(rename);
+        
         setVisibilities();
     }
 
@@ -91,14 +101,30 @@ public class ActionsPlugin extends Plugin {
         try {
             DocumentVariant variant = new DocumentVariant((JcrNodeModel) getPluginModel());
             edit.setVisible(variant.getState().equals("draft"));
-            copy.setVisible(variant.getDocument() != null);
-            move.setVisible(variant.getDocument() != null);
         } catch (ModelWrapException e) {
             edit.setVisible(false);
-            copy.setVisible(false);
-            move.setVisible(false);
         }
+        
+        boolean isDocument;
+        try {
+            new Document((JcrNodeModel) getPluginModel());
+            isDocument = true;
+        } catch (ModelWrapException e) {
+            isDocument = false;
+        }
+        boolean isFolder;
+        try {
+            new Folder((JcrNodeModel) getPluginModel());
+            isFolder = true;
+        } catch (ModelWrapException e) {
+            isFolder = false;
+        }
+        copy.setVisible(isDocument || isFolder);
+        move.setVisible(isDocument || isFolder);
+        delete.setVisible(isDocument || isFolder);
+//        rename.setVisible(isDocument || isFolder);
     }
+    
     
     
 }
