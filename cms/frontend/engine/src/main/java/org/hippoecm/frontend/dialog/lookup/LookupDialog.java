@@ -15,10 +15,7 @@
  */
 package org.hippoecm.frontend.dialog.lookup;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -34,52 +31,53 @@ public abstract class LookupDialog extends AbstractDialog {
     static final Logger log = LoggerFactory.getLogger(LookupDialog.class);
 
     private LookupTargetTreeView tree;
-    private LookupDialogDefaultInfoPanel infoPanel;
-
+    private InfoPanel defaultInfoPanel;
+ 
     protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow, Channel channel) {
-        this(title, root, dialogWindow, null, channel);
-    }
-    
-    protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow, Panel lookupDialogInfoPanel, Channel channel) {
         super(dialogWindow, channel);
         
         dialogWindow.setTitle(title);
-
+        
         JcrTreeModel treeModel = new JcrTreeModel(root);
         tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(root);
         add(tree);
+        
+        setInfoPanel(dialogWindow);
+     
+    }
+
+    protected void setDefaultInfoPanel(DialogWindow dialogWindow){
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        
-        if(lookupDialogInfoPanel == null ) {
-            infoPanel = new LookupDialogDefaultInfoPanel("info", nodeModel);
-            add(infoPanel);
-        } else {
-            add(lookupDialogInfoPanel);
-        }
-        
+        defaultInfoPanel = new LookupDialogDefaultInfoPanel("info", nodeModel);
+        add(defaultInfoPanel);
         if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
+        
     }
+    
+    protected InfoPanel getDefaultInfoPane(){
+        return defaultInfoPanel;
+    }
+
+
+    protected void setInfoPanel(DialogWindow dialogWindow) {
+        this.setDefaultInfoPanel(dialogWindow);
+    }
+    
+    protected InfoPanel getInfoPanel() {
+        return getDefaultInfoPane();
+    }
+
     
     protected AbstractTreeNode getSelectedNode() {
         return (AbstractTreeNode)tree.getSelectedNode();
     }
 
     void update(AjaxRequestTarget target, JcrNodeModel model) {
-        if (model != null) {
-            try {
-                infoPanel.setTarget(model.getNode().getPath());
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-        }
-        if (target != null) {
-            target.addComponent(infoPanel);
-        }
+        getInfoPanel().update(target, model);
     }
     
-
 
 }
