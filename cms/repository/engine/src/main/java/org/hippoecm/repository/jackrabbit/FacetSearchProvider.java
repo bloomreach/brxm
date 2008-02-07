@@ -60,6 +60,7 @@ public class FacetSearchProvider extends AbstractFacetSearchProvider
         register(resolveName(HippoNodeType.NT_FACETSEARCH), virtualNodeName);
     }
 
+    @Override
     public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         throw new RepositoryException("Cannot populate top facetsearch node");
     }
