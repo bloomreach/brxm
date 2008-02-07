@@ -79,7 +79,7 @@ public abstract class AbstractListingPlugin extends Plugin {
 
     @Override
     public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
+        if ("select".equals(notification.getOperation()) || "flush".equals(notification.getOperation())) {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
             if (!nodeModel.equals(getModel())) {
                 setModel(nodeModel);

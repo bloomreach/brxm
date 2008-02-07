@@ -49,9 +49,17 @@ public class Folder extends NodeModelWrapper {
         JcrNodeModel folderNodeModel = findFolderNode(nodeModel);
         if (folderNodeModel != null) {
             this.nodeModel = folderNodeModel;
-        }
-        else {
+        } else {
             throw new ModelWrapException("Node is not a folder, and has no folder among its ancestors.");
+        }
+    }
+    
+    public String getName() {
+        try {
+            return nodeModel.getNode().getDisplayName();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+            return e.getMessage();
         }
     }
 
@@ -59,7 +67,7 @@ public class Folder extends NodeModelWrapper {
         ensureSubFoldersAreLoaded();
         return subFolders;
     }
-    
+
     public Folder getParentFolder() {
         JcrNodeModel parentModel = nodeModel.getParentModel();
         if (parentModel != null) {
@@ -70,9 +78,7 @@ public class Folder extends NodeModelWrapper {
                 return null;
             }
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     public List<Document> getDocuments() {
@@ -89,22 +95,21 @@ public class Folder extends NodeModelWrapper {
         return list;
     }
 
-    
-    private JcrNodeModel findFolderNode(JcrNodeModel nodeModel) {
+    private JcrNodeModel findFolderNode(JcrNodeModel model) {
         try {
-            while (nodeModel != null 
-                    && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT)
-                            || nodeModel.getNode().isNodeType(HippoNodeType.NT_HANDLE)
-                            || nodeModel.getNode().isNodeType(HippoNodeType.NT_REQUEST)
-                            || nodeModel.getNode().isNodeType(HippoNodeType.NT_FACETRESULT)
-                            || nodeModel.getNode().isNodeType(HippoNodeType.NT_WORKFLOW))) {
-                nodeModel = nodeModel.getParentModel();
+            while (model != null
+                    && (model.getNode().isNodeType(HippoNodeType.NT_DOCUMENT)
+                            || model.getNode().isNodeType(HippoNodeType.NT_HANDLE)
+                            || model.getNode().isNodeType(HippoNodeType.NT_REQUEST)
+                            || model.getNode().isNodeType(HippoNodeType.NT_FACETRESULT) || model.getNode()
+                            .isNodeType(HippoNodeType.NT_WORKFLOW))) {
+                model = model.getParentModel();
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             return null;
         }
-        return nodeModel;
+        return model;
     }
 
     private void ensureDocumentsAreLoaded() {
@@ -120,7 +125,7 @@ public class Folder extends NodeModelWrapper {
             NodeIterator jcrChildren = node.getNodes();
             while (jcrChildren.hasNext()) {
                 HippoNode jcrChild = (HippoNode) jcrChildren.nextNode();
-                if (jcrChild != null ) {
+                if (jcrChild != null) {
                     if (jcrChild.isNodeType(HippoNodeType.NT_HANDLE) && jcrChild.hasNodes()) {
                         docs.add(new Document(new JcrNodeModel(jcrChild)));
                     }
@@ -141,11 +146,9 @@ public class Folder extends NodeModelWrapper {
                     }
                 }
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.error(e.getMessage());
-        }
-        catch (ModelWrapException e) {
+        } catch (ModelWrapException e) {
             log.error(e.getMessage());
         }
 
@@ -158,13 +161,10 @@ public class Folder extends NodeModelWrapper {
         return docs;
     }
 
-
-
     private void ensureSubFoldersAreLoaded() {
         if (subFolders == null) {
             subFolders = loadSubFolders();
-        }
-        else {
+        } else {
             try {
                 if (nodeModel.getNode().getNodes().getSize() != subFolders.size()) {
                     subFolders = loadSubFolders();
@@ -182,21 +182,19 @@ public class Folder extends NodeModelWrapper {
             NodeIterator jcrChildren = node.getNodes();
             while (jcrChildren.hasNext()) {
                 Node jcrChild = jcrChildren.nextNode();
-                if (jcrChild != null ) {
+                if (jcrChild != null) {
                     if (!(jcrChild.isNodeType(HippoNodeType.NT_HANDLE)
-                            || jcrChild.isNodeType(HippoNodeType.NT_DOCUMENT)
-                            || jcrChild.isNodeType(HippoNodeType.NT_FACETRESULT))) {
+                            || jcrChild.isNodeType(HippoNodeType.NT_DOCUMENT) || jcrChild
+                            .isNodeType(HippoNodeType.NT_FACETRESULT))) {
                         JcrNodeModel newNodeModel = new JcrNodeModel(jcrChild);
                         Folder subFolder = new Folder(newNodeModel);
                         folders.add(subFolder);
                     }
                 }
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.error(e.getMessage());
-        }
-        catch (ModelWrapException e) {
+        } catch (ModelWrapException e) {
             log.error(e.getMessage());
         }
 

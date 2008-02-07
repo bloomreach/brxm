@@ -16,13 +16,12 @@
 package org.hippoecm.cmsprototype.frontend.model.content;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.wicket.Session;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,17 +49,14 @@ public class DocumentVariant extends NodeModelWrapper {
         try {
             if (nodeModel.getNode().isNodeType(HippoNodeType.NT_REQUEST)) {
                 // find document variant associated with request object
-                javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession());
-                String docUUID;            
+                Session session = nodeModel.getNode().getSession();
                 if (nodeModel.getNode().hasProperty("document")) {
-                    docUUID = nodeModel.getNode().getProperty("document").getString();
+                    String docUUID = nodeModel.getNode().getProperty("document").getString();
                     setChainedModel(new JcrNodeModel(session.getNodeByUUID(docUUID)));
-                }
-                else {
+                } else {
                     throw new ModelWrapException("Request object has no document associated.");
                 }
-            }
-            else if (!nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            } else if (!nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 throw new ModelWrapException("Node is not a document variant.");
             }
         } catch (RepositoryException e) {
@@ -78,33 +74,35 @@ public class DocumentVariant extends NodeModelWrapper {
     }
 
     public String getState() {
+        String result;
         try {
             if (nodeModel.getNode().hasProperty(HippoNodeType.HIPPO_STATE)) {
-                return nodeModel.getNode().getProperty(HippoNodeType.HIPPO_STATE).getString();
-            }
-            else {
-                return NO_STATE;
+                result = nodeModel.getNode().getProperty(HippoNodeType.HIPPO_STATE).getString();
+            } else {
+                result = NO_STATE;
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
-            return e.getMessage();
+            result = e.getMessage();
         }
+        return result;
     }
 
     public String getLanguage() {
+        String result;
         try {
             if (nodeModel.getNode().hasProperty(HippoNodeType.HIPPO_LANGUAGE)) {
-                return nodeModel.getNode().getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-            }
-            else {
-                return NO_LANGUAGE;
+                result = nodeModel.getNode().getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+            } else {
+                result = NO_LANGUAGE;
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
-            return e.getMessage();
+            result = e.getMessage();
         }
+        return result;
     }
-    
+
     /**
      * @return The Document this DocumentVariant is a variant of, or null if not found.
      */
@@ -115,7 +113,6 @@ public class DocumentVariant extends NodeModelWrapper {
             return null;
         }
     }
-
 
     @Override
     public boolean equals(Object object) {
