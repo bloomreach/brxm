@@ -49,13 +49,16 @@ import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
+import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Path;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
 /**
  */
@@ -403,10 +406,16 @@ public class SessionDecorator implements XASession, HippoSession {
 
     static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
-            boolean copyChildren = ((HippoNode)srcNode).getCanonicalNode().isSame(srcNode);
-            srcNode = ServicingNodeImpl.unwrap(srcNode);
+            // TODO for virtual nodes with no physcial equivalent, (HippoNode)srcNode).getCanonicalNode() returns null after JIRA HREPTWO-503 is solved
+            boolean copyChildren = ( ((HippoNode)srcNode).getCanonicalNode()!=null) && ((HippoNode)srcNode).getCanonicalNode().isSame(srcNode);
+            Node unwrappedSrcNode = ServicingNodeImpl.unwrap(srcNode);
             
-            for(PropertyIterator iter = srcNode.getProperties(); iter.hasNext(); ) {
+            //  TODO : for now do not copy NT_FACETSELECT or NT_FACETSEARCH nodes while ISSUE HREPTWO-502 is present
+            if (srcNode.isNodeType(HippoNodeType.NT_FACETSELECT) || srcNode.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+                return;
+            }
+            
+            for(PropertyIterator iter = unwrappedSrcNode.getProperties(); iter.hasNext(); ) {
                 Property property = iter.nextProperty();
                 if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:uuid")) {
                     if(property.getDefinition().isMultiple())
@@ -425,8 +434,15 @@ public class SessionDecorator implements XASession, HippoSession {
             if(copyChildren) {
                 for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
                     Node node = iter.nextNode();
-                    Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
-                    copy(node, child);
+                    // TODO : for now do not copy NT_FACETSELECT or NT_FACETSEARCH nodes while ISSUE HREPTWO-502 is present
+                    if (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+                        return;
+                    }
+                    
+                    if(((HippoNode)node).getCanonicalNode().isSame(node)) {
+                        Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
+                        copy(node, child);
+                    }
                 }
             }
         } catch(PathNotFoundException ex) {
