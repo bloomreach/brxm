@@ -17,14 +17,14 @@ package org.hippoecm.frontend.dialog.lookup;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class LookupDialogDefaultInfoPanel extends Panel {
+class LookupDialogDefaultInfoPanel extends InfoPanel {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LookupDialogDefaultInfoPanel.class);
@@ -43,12 +43,27 @@ class LookupDialogDefaultInfoPanel extends Panel {
 
         add(new Label("target", new PropertyModel(this, "target")));
     }
-
-    String getTarget() {
+    
+    @Override
+    protected void update(AjaxRequestTarget target, JcrNodeModel model) {
+        if (model != null) {
+            try {
+                this.setTarget(model.getNode().getPath());
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        }
+        if (target != null) {
+            target.addComponent(this);
+        }
+    }
+    
+  
+    protected String getTarget() {
         return target;
     }
 
-    void setTarget(String target) {
+    protected void setTarget(String target) {
         this.target = target;
     }
 
