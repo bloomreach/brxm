@@ -110,6 +110,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
         countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), countName);
     }
 
+    @Override
     public NodeState populate(NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         String queryname;
@@ -214,6 +215,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider
         return state;
     }
 
+    @Override
     public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         FacetSearchNodeId searchNodeId = (FacetSearchNodeId) nodeId;
         NodeState state = createNew(nodeId, virtualNodeName, parentId);

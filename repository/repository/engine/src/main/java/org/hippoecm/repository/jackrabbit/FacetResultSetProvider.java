@@ -99,6 +99,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         register(null, resolveName(HippoNodeType.NT_FACETRESULT));
     }
 
+    @Override
     public NodeState populate(NodeState state) {
         FacetResultSetNodeId nodeId = (FacetResultSetNodeId) state.getNodeId();
         String queryname = nodeId.queryname;

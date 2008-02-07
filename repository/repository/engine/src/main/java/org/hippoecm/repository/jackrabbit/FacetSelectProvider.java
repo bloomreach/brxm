@@ -50,6 +50,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
         modesName = resolveName(HippoNodeType.HIPPO_MODES);
     }
 
+    @Override
     public NodeState populate(NodeState state) throws RepositoryException {
         String[] docbase = getProperty(state.getNodeId(), docbaseName);
         String[] newFacets = getProperty(state.getNodeId(), facetsName);
@@ -86,7 +87,8 @@ public class FacetSelectProvider extends HippoVirtualProvider
         return state;
     }
 
-    public NodeState populate(NodeId nodeId, NodeId parentId) throws RepositoryException {
+    @Override
+    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         throw new RepositoryException("Illegal internal state");
     }
 }
