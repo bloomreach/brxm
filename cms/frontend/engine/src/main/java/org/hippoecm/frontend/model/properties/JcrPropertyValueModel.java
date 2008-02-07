@@ -86,64 +86,66 @@ public class JcrPropertyValueModel extends Model {
 
     @Override
     public void setObject(Object object) {
-        if (object != null) {
-            load();
-            try {
-                String string = object.toString();
-                switch (type) {
-                case PropertyType.BOOLEAN:
-                    value = BooleanValue.valueOf(string);
-                    break;
-                case PropertyType.DATE:
-                    value = DateValue.valueOf(string);
-                    break;
-                case PropertyType.DOUBLE:
-                    value = DoubleValue.valueOf(string);
-                    break;
-                case PropertyType.LONG:
-                    value = LongValue.valueOf(string);
-                    break;
-                case PropertyType.NAME:
-                    value = NameValue.valueOf(string);
-                    break;
-                case PropertyType.PATH:
-                    value = PathValue.valueOf(string);
-                    break;
-                case PropertyType.REFERENCE:
-                    value = ReferenceValue.valueOf(string);
-                    break;
-                case PropertyType.STRING:
-                case PropertyType.UNDEFINED:
-                    value = new StringValue(string);
-                    break;
-                default:
-                    log.info("Unable to parse property type " + PropertyType.nameFromValue(type));
-                    return;
-                }
-            } catch (ValueFormatException ex) {
-                log.info(ex.getMessage());
+        if (object == null) {
+            object = "";
+        }
+
+        load();
+        try {
+            String string = object.toString();
+            switch (type) {
+            case PropertyType.BOOLEAN:
+                value = BooleanValue.valueOf(string);
+                break;
+            case PropertyType.DATE:
+                value = DateValue.valueOf(string);
+                break;
+            case PropertyType.DOUBLE:
+                value = DoubleValue.valueOf(string);
+                break;
+            case PropertyType.LONG:
+                value = LongValue.valueOf(string);
+                break;
+            case PropertyType.NAME:
+                value = NameValue.valueOf(string);
+                break;
+            case PropertyType.PATH:
+                value = PathValue.valueOf(string);
+                break;
+            case PropertyType.REFERENCE:
+                value = ReferenceValue.valueOf(string);
+                break;
+            case PropertyType.STRING:
+            case PropertyType.UNDEFINED:
+                value = new StringValue(string);
+                break;
+            default:
+                log.info("Unable to parse property type " + PropertyType.nameFromValue(type));
                 return;
             }
+        } catch (ValueFormatException ex) {
+            log.info(ex.getMessage());
+            return;
+        }
 
-            try {
-                Property prop = propertyModel.getProperty();
-                if (prop.getDefinition().isMultiple()) {
-                    Value[] oldValues = prop.getValues();
-                    Value[] newValues = new Value[oldValues.length];
-                    for (int i = 0; i < oldValues.length; i++) {
-                        if (i == index) {
-                            newValues[i] = value;
-                        } else {
-                            newValues[i] = oldValues[i];
-                        }
+        try {
+            Property prop = propertyModel.getProperty();
+            if (prop.getDefinition().isMultiple()) {
+                Value[] oldValues = prop.getValues();
+                Value[] newValues = new Value[oldValues.length];
+                for (int i = 0; i < oldValues.length; i++) {
+                    if (i == index) {
+                        newValues[i] = value;
+                    } else {
+                        newValues[i] = oldValues[i];
                     }
-                    prop.setValue(newValues);
-                } else {
-                    prop.setValue(value);
                 }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+                prop.setValue(newValues);
+            } else {
+                prop.setValue(value);
             }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
         }
     }
 
