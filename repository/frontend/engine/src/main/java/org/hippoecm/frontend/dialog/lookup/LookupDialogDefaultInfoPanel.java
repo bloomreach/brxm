@@ -24,14 +24,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class LookupDialogInfoPanel extends Panel {
+class LookupDialogDefaultInfoPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(LookupDialogInfoPanel.class);
+    static final Logger log = LoggerFactory.getLogger(LookupDialogDefaultInfoPanel.class);
 
     private String target;
 
-    LookupDialogInfoPanel(String id, JcrNodeModel model) {
+    LookupDialogDefaultInfoPanel(String id, JcrNodeModel model) {
         super(id, model);
         setOutputMarkupId(true);
 

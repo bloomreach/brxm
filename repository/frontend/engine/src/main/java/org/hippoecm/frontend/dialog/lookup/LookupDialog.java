@@ -33,22 +33,30 @@ public abstract class LookupDialog extends AbstractDialog {
     static final Logger log = LoggerFactory.getLogger(LookupDialog.class);
 
     private LookupTargetTreeView tree;
-    private LookupDialogInfoPanel infoPanel;
+    private LookupDialogDefaultInfoPanel infoPanel;
 
     protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow, Channel channel) {
+        this(title, root, dialogWindow, null, channel);
+    }
+    
+    protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow, LookupDialogDefaultInfoPanel lookupDialogInfoPanel, Channel channel) {
         super(dialogWindow, channel);
-
+        
         dialogWindow.setTitle(title);
 
         JcrTreeModel treeModel = new JcrTreeModel(root);
         tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(root);
         add(tree);
-
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        infoPanel = new LookupDialogInfoPanel("info", nodeModel);
-        add(infoPanel);
-
+        
+        if(lookupDialogInfoPanel == null ) {
+            infoPanel = new LookupDialogDefaultInfoPanel("info", nodeModel);
+            add(infoPanel);
+        } else {
+            add(lookupDialogInfoPanel);
+        }
+        
         if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
