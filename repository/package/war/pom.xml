@@ -126,7 +126,7 @@
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-skin</artifactId>
-              <targetPath>cms/skin</targetPath>
+              <targetPath>skin</targetPath>
               <excludes>
                 <exclude>WEB-INF/web.xml</exclude>
               </excludes>
