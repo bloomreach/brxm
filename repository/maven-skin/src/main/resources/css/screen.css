@@ -25,30 +25,17 @@ width: 90%;
 margin: 10px auto;
 }
 
-div#top
-{
-padding: .5em;
-}
-
-div#top h1
-{
-padding: 0;
-margin: 0;
-}
-
 div#leftnav
 {
 float: left;
 width: 180px;
 margin: 0;
-padding: 1em;
 }
 
 div#content_main
 {
 float: none;
 margin-left: 220px;
-padding: 1em;
 
 }
 
@@ -56,19 +43,9 @@ div#footer
 {
 clear: both;
 margin: 0;
-padding: .5em;
 }
 
-#leftnav h5{margin-bottom: 15px; color: #333333; font-size: 12px; border-bottom: 1px dotted #666666; padding-bottom: 5px;}
-#leftnav ul{margin-left: 5px; margin-bottom: 5px; list-style-position: inside; margin-bottom: 10px;}
-#leftnav ul li{list-style-type: square; margin-bottom: 4px; color: #CECECE}
-#leftnav ul li a{color: #00a5e3}
-#leftnav ul li.expanded ul{margin-left: 12px;}
-#leftnav ul li ul{margin-top: 5px;}
-#leftnav ul li.expanded strong, #leftnav ul li.none strong{font-weight: normal; color: #1f5177}
-#leftnav ul li.expanded ul li{margin-left: 5px;}
-#leftnav ul li.collapsed a {}
-#leftnav p { margin: 0 0 1em 0; }
+
 
 div#navigation {width: auto; background-repeat: repeat-x}
 div#navigation_main{width: auto}
@@ -82,15 +59,8 @@ div#content_main img{padding-top: 10px; padding-bottom: 10px}
 div#content_main pre{background: #f1f1f1; padding: 10px; padding-bottom: 10px;}
 
 
-div#teaser{background: #00a4e0; width: auto; height: auto;}
+div#teaser{width: auto; height: auto;}
 
-ul#nav_supplementary li{background: none; font-size: 14px;}
-
-table.bodyTable {margin-top: 15px;}
-table.bodyTable tbody tr td{padding: 5px; border-bottom: 1px #cccccc solid;}
-table.bodyTable tbody tr.a td{background: #fafafa}
-table.bodyTable tbody tr.b td{background: #f5f5f5}
-table.bodyTable tbody tr th{padding: 5px; padding-top: 8px; padding-bottom: 13px; background: #239dd9; color: white; padding-right: 15px; background: url("../images/tableheadback.gif")}
 
 div#content_main div.source{padding: 15px;}
 
