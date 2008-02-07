@@ -18,6 +18,7 @@ package org.hippoecm.frontend.dialog.lookup;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -39,7 +40,7 @@ public abstract class LookupDialog extends AbstractDialog {
         this(title, root, dialogWindow, null, channel);
     }
     
-    protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow, LookupDialogDefaultInfoPanel lookupDialogInfoPanel, Channel channel) {
+    protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow, Panel lookupDialogInfoPanel, Channel channel) {
         super(dialogWindow, channel);
         
         dialogWindow.setTitle(title);
