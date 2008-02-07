@@ -37,34 +37,6 @@
         </resource-ref>
         -->
 
-        <!--Builtin console-->
-        <filter>
-                <filter-name>BuiltinConsole</filter-name>
-                <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-                <init-param>
-                        <param-name>applicationClassName</param-name>
-                        <param-value>org.hippoecm.frontend.Main</param-value>
-                </init-param>
-                <init-param>
-                        <param-name>hippoApplication</param-name>
-                        <param-value>hippo:console (builtin)</param-value>
-                </init-param>
-        </filter>
-
-        <!--Console application-->
-        <filter>
-                <filter-name>Console</filter-name>
-                <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-                <init-param>
-                        <param-name>applicationClassName</param-name>
-                        <param-value>org.hippoecm.frontend.Main</param-value>
-                </init-param>
-                <init-param>
-                        <param-name>hippoApplication</param-name>
-                        <param-value>hippo:console</param-value>
-                </init-param>
-        </filter>
-
         <!--CMS application-->
         <filter>
                 <filter-name>CMSPrototype</filter-name>
@@ -80,22 +52,8 @@
         </filter>
 
         <filter-mapping>
-                <filter-name>BuiltinConsole</filter-name>
-                <url-pattern>/builtin/*</url-pattern>
-                <dispatcher>REQUEST</dispatcher>
-                <dispatcher>INCLUDE</dispatcher>
-        </filter-mapping>
-
-        <filter-mapping>
-                <filter-name>Console</filter-name>
-                <url-pattern>/console/*</url-pattern>
-                <dispatcher>REQUEST</dispatcher>
-                <dispatcher>INCLUDE</dispatcher>
-        </filter-mapping>
-
-        <filter-mapping>
                 <filter-name>CMSPrototype</filter-name>
-                <url-pattern>/cms/*</url-pattern>
+                <url-pattern>/*</url-pattern>
                 <dispatcher>REQUEST</dispatcher>
                 <dispatcher>INCLUDE</dispatcher>
         </filter-mapping>
