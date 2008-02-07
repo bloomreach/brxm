@@ -31,7 +31,7 @@ public abstract class LookupDialog extends AbstractDialog {
     static final Logger log = LoggerFactory.getLogger(LookupDialog.class);
 
     private LookupTargetTreeView tree;
-    private InfoPanel defaultInfoPanel;
+    private InfoPanel infoPanel;
  
     protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
@@ -47,30 +47,30 @@ public abstract class LookupDialog extends AbstractDialog {
      
     }
 
-    protected void setDefaultInfoPanel(DialogWindow dialogWindow){
+    /**
+     * Override this method to have a custom InfoPanel. 
+     * Make sure when you override this method, you end with 
+     * super.setInfoPanel(infoPanel);
+     * @param dialogWindow
+     */
+    protected void setInfoPanel(DialogWindow dialogWindow) {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        defaultInfoPanel = new LookupDialogDefaultInfoPanel("info", nodeModel);
-        add(defaultInfoPanel);
+        infoPanel = new LookupDialogDefaultInfoPanel("info", nodeModel);
+        add(infoPanel);
         if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
-        
+        setInfoPanel(infoPanel);
     }
     
-    protected InfoPanel getDefaultInfoPane(){
-        return defaultInfoPanel;
-    }
-
-
-    protected void setInfoPanel(DialogWindow dialogWindow) {
-        this.setDefaultInfoPanel(dialogWindow);
+    protected void setInfoPanel(InfoPanel infoPanel) {
+        this.infoPanel = infoPanel;
     }
     
     protected InfoPanel getInfoPanel() {
-        return getDefaultInfoPane();
+        return infoPanel;
     }
 
-    
     protected AbstractTreeNode getSelectedNode() {
         return (AbstractTreeNode)tree.getSelectedNode();
     }
