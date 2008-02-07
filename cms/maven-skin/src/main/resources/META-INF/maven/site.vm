@@ -308,7 +308,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>$title</title>
+    <title>$title - Hippo Open Source Enterprise Content Management</title>
       #foreach( $author in $authors )
       <meta name="author" content="$author" />
     #end
@@ -366,7 +366,7 @@
 </div>
 </div>
 <div id="teaser">
-<a href="#"><img src="$relativePath/images/globalsmall.jpg" alt="Hippo" title="Hippo"></a>
+<a href="#">&nbsp;</a>
 </div>
 <div id="secondary_navigation">
   <ul class="module-list">
