@@ -58,11 +58,14 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 
+import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.name.NameException;
 import org.apache.jackrabbit.name.Path;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+
+import org.hippoecm.repository.jackrabbit.HippoNodeId;
 
 public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     final static private String SVN_ID = "$Id$";
@@ -79,6 +82,8 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     public Node getCanonicalNode() throws RepositoryException {
         if (hasProperty("hippo:uuid")) {
             return getSession().getNodeByUUID(getProperty("hippo:uuid").getString());
+        } else if(((NodeImpl)node).getId() instanceof HippoNodeId) {
+            return null;
         } else {
             return this;
         }
