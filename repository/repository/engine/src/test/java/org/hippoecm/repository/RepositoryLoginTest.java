@@ -23,6 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 import junit.framework.TestCase;
 
 public class RepositoryLoginTest extends TestCase {
@@ -64,13 +66,13 @@ public class RepositoryLoginTest extends TestCase {
         // create test users
         Node testuser;
         users = serverSession.getRootNode().getNode(USERS_PATH);
-        testuser = users.addNode(TESTUSER_ID_PLAIN);
+        testuser = users.addNode(TESTUSER_ID_PLAIN, HippoNodeType.NT_USER);
         testuser.setProperty("hippo:password", TESTUSER_PASS);
-        testuser = users.addNode(TESTUSER_ID_MD5, "hippo:user");
+        testuser = users.addNode(TESTUSER_ID_MD5, HippoNodeType.NT_USER);
         testuser.setProperty("hippo:password", TESTUSER_HASH_MD5);
-        testuser = users.addNode(TESTUSER_ID_SHA1, "hippo:user");
+        testuser = users.addNode(TESTUSER_ID_SHA1, HippoNodeType.NT_USER);
         testuser.setProperty("hippo:password", TESTUSER_HASH_SHA1);
-        testuser = users.addNode(TESTUSER_ID_SHA256, "hippo:user");
+        testuser = users.addNode(TESTUSER_ID_SHA256, HippoNodeType.NT_USER);
         testuser.setProperty("hippo:password", TESTUSER_HASH_SHA256);
         serverSession.save();
     }

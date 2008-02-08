@@ -57,7 +57,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     protected HippoRepository server;
     protected Session session;
     private String[] nodeNames;
-    private boolean verbose = false;
+    protected boolean verbose = false;
     private Map<Integer,Document> documents;
 
     public FacetedNavigationAbstractTest() {
@@ -254,5 +254,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
 
     public boolean getVerbose() {
         return verbose;
+    }
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 }
