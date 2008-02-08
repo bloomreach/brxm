@@ -31,6 +31,18 @@ import org.slf4j.LoggerFactory;
 public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
 
+    /** Reference to the icon of open virtual tree folder */
+    private static final ResourceReference VIRTUAL_FOLDER_OPEN = new ResourceReference(
+        JcrTree.class, "icons/virtual_folder_into.png");
+    /** Reference to the icon of open closed tree folder */
+    private static final ResourceReference VIRTUAL_FOLDER_CLOSED = new ResourceReference(
+        JcrTree.class, "icons/virtual_folder_closed.png");
+    /** Reference to the icon of virtual document */
+    private static final ResourceReference VIRTUAL_DOCUMENT = new ResourceReference(
+        JcrTree.class, "icons/virtual_document.png");
+    
+    
+    
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
 
     public JcrTree(String id, JcrTreeModel treeModel) {
@@ -52,18 +64,34 @@ public abstract class JcrTree extends Tree {
 
     @Override
     protected ResourceReference getNodeIcon(TreeNode node) {
-        boolean isVirtual = false;
+        boolean isVirtualFolder = false;
+        boolean isVirtualDocument = false;
         try {
             if (node instanceof AbstractTreeNode) {
                 AbstractTreeNode treeNode = (AbstractTreeNode) node;
                 HippoNode jcrNode = treeNode.getNodeModel().getNode();
-                isVirtual = jcrNode.getCanonicalNode() == null || !jcrNode.getCanonicalNode().isSame(jcrNode);
+                isVirtualFolder = jcrNode.getCanonicalNode() == null;
+                if(!isVirtualFolder) {
+                    isVirtualDocument = !jcrNode.getCanonicalNode().isSame(jcrNode);
+                }
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         }
-        if (isVirtual) {
-            return new ResourceReference(JcrTree.class, "icons/virtual.gif");
+        if (isVirtualFolder) {
+            if (isNodeExpanded(node))
+            {
+                return VIRTUAL_FOLDER_OPEN;
+            }
+            else
+            {
+                return VIRTUAL_FOLDER_CLOSED;
+            }
+            
+        }
+        
+        if (isVirtualDocument) {
+                return VIRTUAL_DOCUMENT;
         }
         return super.getNodeIcon(node);
 
