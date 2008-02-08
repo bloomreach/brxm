@@ -28,7 +28,7 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.AAContext;
 import org.hippoecm.repository.security.RepositoryAAContext;
-import org.hippoecm.repository.security.RepositoryLoginHelper;
+import org.hippoecm.repository.security.FacetAuthHelper;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.hippoecm.repository.security.principals.RolePrincipal;
 import org.slf4j.Logger;
@@ -145,7 +145,7 @@ public class RepositoryRole implements Role {
 
         try {
             Node facetAuthPath = role.getNode(HippoNodeType.FACETAUTH_PATH);
-            principals.addAll(RepositoryLoginHelper.getFacetAuths(facetAuthPath));
+            principals.addAll(FacetAuthHelper.getFacetAuths(facetAuthPath));
         } catch (PathNotFoundException e) {
             // no facet auths for role
         } catch (RepositoryException e) {

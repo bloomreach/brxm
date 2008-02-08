@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.IndexReader;
@@ -85,8 +86,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     class ContextImpl extends FacetedNavigationEngine.Context {
         Session session;
         String principal;
-        Map<String,String[]> authorizationQuery;
-        ContextImpl(Session session, String principal, Map<String,String[]> authorizationQuery) {
+        Map<Name,String[]> authorizationQuery;
+        ContextImpl(Session session, String principal, Map<Name,String[]> authorizationQuery) {
             this.session = session;
             this.principal = principal;
             this.authorizationQuery = authorizationQuery;
@@ -99,13 +100,13 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     public FacetedNavigationEngineThirdImpl() {
     }
 
-    public ContextImpl prepare(String principal, Map<String,String[]> authorizationQuery, List<QueryImpl> initialQueries, Session session) {
+    public ContextImpl prepare(String principal, Map<Name,String[]> authorizationQuery, List<QueryImpl> initialQueries, Session session) {
         return new ContextImpl(session, principal, authorizationQuery);
     }
     public void unprepare(ContextImpl authorization) {
         // deliberate ignore
     }
-    public void reload(Map<String,String[]> facetValues) {
+    public void reload(Map<Name,String[]> facetValues) {
         // deliberate ignore
     }
     public boolean requiresReload() {
@@ -114,7 +115,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     public boolean requiresNotify() {
         return false;
     }
-    public void notify(String docId, Map<String,String[]> oldFacets, Map<String,String[]> newFacets) {
+    public void notify(String docId, Map<Name,String[]> oldFacets, Map<Name,String[]> newFacets) {
         // deliberate ignore
     }
     public void purge() {

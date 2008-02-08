@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.spi.Name;
 
 /**
 
@@ -287,7 +288,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @param initialQueries A list of initial queries later used in the #view methods
      * @see #unprepare(C)
      */
-    public C prepare(String principal, Map<String,String[]> authorizationQuery, List<Q> initialQueries, Session session);
+    public C prepare(String principal, Map<Name,String[]> authorizationQuery, List<Q> initialQueries, Session session);
 
     /**
      * This method is called when a user logouts from the system.
@@ -315,7 +316,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *
      * @see #requiresReload()
      */
-    public void reload(Map<String,String[]> facetValues);
+    public void reload(Map<Name,String[]> facetValues);
 
     /**
      * If the implementation of this interface requires to be informed of facet
@@ -349,7 +350,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @param oldFacets the old set of facet values
      * @param newFacets the new set of facet values, not just the changed values
      */
-    public void notify(String docId, Map<String,String[]> oldFacets, Map<String,String[]> newFacets);
+    public void notify(String docId, Map<Name,String[]> oldFacets, Map<Name,String[]> newFacets);
 
     /**
      * The purge method is used to inform the engine that it should clear out

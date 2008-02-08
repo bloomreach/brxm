@@ -29,6 +29,7 @@ import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.spi.Name;
 
 public class FacetedNavigationEngineFirstImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineFirstImpl.QueryImpl,
@@ -63,8 +64,8 @@ public class FacetedNavigationEngineFirstImpl
     class ContextImpl extends FacetedNavigationEngine.Context {
         Session session;
         String principal;
-        Map<String,String[]> authorizationQuery;
-        ContextImpl(Session session, String principal, Map<String,String[]> authorizationQuery) {
+        Map<Name,String[]> authorizationQuery;
+        ContextImpl(Session session, String principal, Map<Name,String[]> authorizationQuery) {
             this.session = session;
             this.principal = principal;
             this.authorizationQuery = authorizationQuery;
@@ -72,7 +73,7 @@ public class FacetedNavigationEngineFirstImpl
         public String toString() {
             StringBuffer sb = null;
             if(authorizationQuery != null) {
-                for(Map.Entry<String,String[]> authorizationEntry : authorizationQuery.entrySet()) {
+                for(Map.Entry<Name,String[]> authorizationEntry : authorizationQuery.entrySet()) {
                     if(sb == null)
                         sb = new StringBuffer();
                     else
@@ -96,7 +97,7 @@ public class FacetedNavigationEngineFirstImpl
     public FacetedNavigationEngineFirstImpl() {
     }
 
-    public ContextImpl prepare(String principal, Map<String,String[]> authorizationQuery, List<QueryImpl> initialQueries,
+    public ContextImpl prepare(String principal, Map<Name,String[]> authorizationQuery, List<QueryImpl> initialQueries,
                                Session session) {
         return new ContextImpl(session, principal, authorizationQuery);
     }
@@ -105,7 +106,7 @@ public class FacetedNavigationEngineFirstImpl
         // deliberate ignore
     }
 
-    public void reload(Map<String,String[]> facetValues) {
+    public void reload(Map<Name,String[]> facetValues) {
         // deliberate ignore
     }
 
@@ -117,7 +118,7 @@ public class FacetedNavigationEngineFirstImpl
         return false;
     }
 
-    public void notify(String docId, Map<String,String[]> oldFacets, Map<String,String[]> newFacets) {
+    public void notify(String docId, Map<Name,String[]> oldFacets, Map<Name,String[]> newFacets) {
         // deliberate ignore
     }
 
@@ -127,7 +128,6 @@ public class FacetedNavigationEngineFirstImpl
 
     private static StringBuffer getSearchQuery(String initialQuery, Map<String,String> facetsQuery, String facet) {
         StringBuffer searchquery = new StringBuffer();
-        String clause;
         for(Map.Entry<String,String> entry : facetsQuery.entrySet()) {
             if(searchquery.length() > 0)
                 searchquery.append(",");
@@ -168,7 +168,6 @@ public class FacetedNavigationEngineFirstImpl
                 javax.jcr.query.Query facetValuesQuery = session.getWorkspace().getQueryManager().createQuery(xpath,
                                                                                                    javax.jcr.query.Query.XPATH);
                 QueryResult facetValuesResult = facetValuesQuery.execute();
-                int count;
                 Map<String,Count> facetValuesMap = resultset.get(facet);
                 RowIterator iter=facetValuesResult.getRows();
                 while(iter.hasNext()) {
