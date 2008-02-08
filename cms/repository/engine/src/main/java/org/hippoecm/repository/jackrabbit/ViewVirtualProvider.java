@@ -47,6 +47,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
 
     @Override
     protected void initialize() throws RepositoryException {
+        super.initialize();
         handleName = resolveName(HippoNodeType.NT_HANDLE);
     }
 
