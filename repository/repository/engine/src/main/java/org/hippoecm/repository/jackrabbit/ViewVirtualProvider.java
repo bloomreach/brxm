@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -50,8 +51,21 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         super.initialize();
         handleName = resolveName(HippoNodeType.NT_HANDLE);
     }
-
-    public NodeState populate(NodeState state) {
+    
+    @Override
+    public NodeState populate(NodeState state) throws RepositoryException {
+        String[] docbase = getProperty(state.getNodeId(), docbaseName);
+        NodeState dereference = getNodeState(docbase[0]);
+        Map<Name,String> view = new HashMap<Name,String>();
+        if(dereference != null) {
+            for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
+                NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+                if(this.match(view, entry.getId())) {
+                    NodeId childNodeId = this . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view);
+                    state.addChildNodeEntry(entry.getName(), childNodeId);
+                }
+            }
+        }
         return state;
     }
 
