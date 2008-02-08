@@ -419,6 +419,8 @@ public class SessionDecorator implements XASession, HippoSession {
                 }
             }
 
+            ServicingNodeImpl.decoratePathProperty(destNode);
+
             /* Do not copy virtual nodes.  Partial virtual nodes like
              * HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH
              * should be copied except for their children, even if though they
