@@ -18,11 +18,13 @@ package org.hippoecm.repository.security.principals;
 import java.io.Serializable;
 import java.security.Principal;
 
+import org.apache.jackrabbit.spi.Name;
+
 public class FacetAuthPrincipal implements Serializable, Principal {
 
     private static final long serialVersionUID = 1L;
     private final String name;
-    private final String facet;
+    private final Name facet;
     private final String[] values;
     private final long permissions;
 
@@ -34,7 +36,7 @@ public class FacetAuthPrincipal implements Serializable, Principal {
      * @param permissionss
      * @throws IllegalArgumentException if <code>name</code> is <code>null</code>.
      */
-    public FacetAuthPrincipal(String facet, String[] values, long permissions) throws IllegalArgumentException {
+    public FacetAuthPrincipal(Name facet, String[] values, long permissions) throws IllegalArgumentException {
         if (facet == null) {
             throw new IllegalArgumentException("facet can not be null");
         }
@@ -48,7 +50,7 @@ public class FacetAuthPrincipal implements Serializable, Principal {
 
         // adding values
         this.facet = facet;
-        this.values = values;
+        this.values = values.clone();
         this.name = buildString(facet, values, permissions);
         this.permissions = permissions;
     }
@@ -60,7 +62,7 @@ public class FacetAuthPrincipal implements Serializable, Principal {
      * @param permissions
      * @return
      */
-    private String buildString(String facet, String[] values, long permissions) {
+    private String buildString(Name facet, String[] values, long permissions) {
         // create nice name (also used for hashing)
         StringBuffer buf = new StringBuffer();
         buf.append("[");
@@ -104,12 +106,12 @@ public class FacetAuthPrincipal implements Serializable, Principal {
         return name;
     }
 
-    public String getFacet() {
+    public Name getFacet() {
         return facet;
     }
 
     public String[] getValues() {
-        return values;
+        return values.clone();
     }
 
     public long getPermissions() {

@@ -47,6 +47,7 @@ import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.apache.jackrabbit.spi.Name;
 
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
@@ -83,7 +84,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
             org.apache.jackrabbit.core.SessionImpl session, Subject subject) {
         FacetedNavigationEngine facetedEngine = getFacetedNavigationEngine();
         Set principals = subject.getPrincipals(FacetAuthPrincipal.class);
-        Map<String, String[]> authorizationQuery = new HashMap<String, String[]>();
+        Map<Name, String[]> authorizationQuery = new HashMap<Name, String[]>();
         for (Iterator i = principals.iterator(); i.hasNext();) {
             FacetAuthPrincipal p = (FacetAuthPrincipal) i.next();
             log.info("FacetAuthPrincipal for authorizationQuery: " + p.getName());

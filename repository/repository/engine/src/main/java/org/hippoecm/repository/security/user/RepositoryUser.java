@@ -32,7 +32,7 @@ import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.AAContext;
 import org.hippoecm.repository.security.RepositoryAAContext;
-import org.hippoecm.repository.security.RepositoryLoginHelper;
+import org.hippoecm.repository.security.FacetAuthHelper;
 import org.hippoecm.repository.security.group.Group;
 import org.hippoecm.repository.security.group.GroupNotFoundException;
 import org.hippoecm.repository.security.group.RepositoryGroup;
@@ -203,7 +203,7 @@ public class RepositoryUser implements User {
         try {
             // principals from user
             Node facetAuthPath = user.getNode(HippoNodeType.FACETAUTH_PATH);
-            principals.addAll(RepositoryLoginHelper.getFacetAuths(facetAuthPath));
+            principals.addAll(FacetAuthHelper.getFacetAuths(facetAuthPath));
         } catch (PathNotFoundException e) {
             // no facet auths for user
         } catch (RepositoryException e) {

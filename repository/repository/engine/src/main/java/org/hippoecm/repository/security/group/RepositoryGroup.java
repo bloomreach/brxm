@@ -30,7 +30,7 @@ import javax.jcr.ValueFormatException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.AAContext;
 import org.hippoecm.repository.security.RepositoryAAContext;
-import org.hippoecm.repository.security.RepositoryLoginHelper;
+import org.hippoecm.repository.security.FacetAuthHelper;
 import org.hippoecm.repository.security.role.RepositoryRole;
 import org.hippoecm.repository.security.role.Role;
 import org.hippoecm.repository.security.role.RoleNotFoundException;
@@ -212,7 +212,7 @@ public class RepositoryGroup implements Group {
     private void setPrincipals() throws GroupNotFoundException {
         try {
             Node facetAuthPath = group.getNode(HippoNodeType.FACETAUTH_PATH);
-            principals.addAll(RepositoryLoginHelper.getFacetAuths(facetAuthPath));
+            principals.addAll(FacetAuthHelper.getFacetAuths(facetAuthPath));
         } catch (PathNotFoundException e) {
             // no facet auths for user
         } catch (RepositoryException e) {

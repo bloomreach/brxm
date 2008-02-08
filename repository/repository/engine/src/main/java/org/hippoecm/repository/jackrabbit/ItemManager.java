@@ -75,8 +75,8 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
     /*
     @Override
     org.apache.jackrabbit.core.NodeImpl createNodeInstance(NodeState state, NodeDefinition def) throws RepositoryException {
-        if (state.getNodeTypeName().equals(NameConstants.NT_VERSION) ||
-            state.getNodeTypeName().equals(NameConstants.NT_VERSIONHISTORY)) {
+        if (state.getNodeTypeName().equals(HippoNameConstants.NT_VERSION) ||
+            state.getNodeTypeName().equals(HippoNameConstants.NT_VERSIONHISTORY)) {
             return super.createNodeInstance(state, def);
         } else {
             NodeId id = state.getNodeId();

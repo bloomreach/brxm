@@ -51,7 +51,7 @@ public class AuthorizationQuery {
      * @param nsMappings nameSpace mappings to find the lucene field names
      * @param indexingConfig the index configuration
      */
-    public AuthorizationQuery(Map<String, String[]> authorizationQuery, NamespaceMappings nsMappings,
+    public AuthorizationQuery(Map<Name, String[]> authorizationQuery, NamespaceMappings nsMappings,
             ServicingIndexingConfiguration indexingConfig) {
         this(authorizationQuery, null, nsMappings, indexingConfig, true);
     }
@@ -66,19 +66,17 @@ public class AuthorizationQuery {
      * @param indexingConfig the index configuration
      * @param facetsORed Wether different facet fields are OR-ed or AND-ed. Most efficient is OR-ed
      */
-    public AuthorizationQuery(Map<String, String[]> authorizationQuery, Map<String, String> facetsQueryMap,
+    public AuthorizationQuery(Map<Name, String[]> authorizationQuery, Map<String, String> facetsQueryMap,
             NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig, boolean facetsORed) {
         this.query = new BooleanQuery(true);
 
         if (authorizationQuery != null && authorizationQuery.size() != 0) {
 
-            for (Map.Entry<String, String[]> entry : authorizationQuery.entrySet()) {
-                Name nodeName;
+            for (Map.Entry<Name, String[]> entry : authorizationQuery.entrySet()) {
                 String internalName = "";
                 try {
-                    nodeName = NameFactoryImpl.getInstance().create("", entry.getKey());
-                    if (indexingConfig.isFacet(nodeName)) {
-                        internalName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
+                    if (indexingConfig.isFacet(entry.getKey())) {
+                        internalName = ServicingNameFormat.getInternalFacetName(entry.getKey(), nsMappings);
                         String[] facetValues = entry.getValue();
                         BooleanQuery orQuery = new BooleanQuery(true);
                         Set tmpContainsSet = new HashSet();
@@ -102,7 +100,7 @@ public class AuthorizationQuery {
                         }
 
                     } else {
-                        log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName()
+                        log.warn("Property " + entry.getKey().getNamespaceURI() + ":" + entry.getKey().getLocalName()
                                 + " not allowed for facetted search. "
                                 + "Add the property to the indexing configuration to be defined as FACET");
                     }

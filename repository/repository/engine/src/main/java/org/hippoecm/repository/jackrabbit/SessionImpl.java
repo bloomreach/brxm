@@ -17,6 +17,8 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.security.auth.Subject;
 
@@ -29,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
-import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.AuthContext;
@@ -38,6 +39,7 @@ import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 
 
@@ -86,7 +88,14 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
         AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
         try {
-            AMContext ctx = new AMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()), ((RepositoryImpl)rep).getFileSystem(), subject, getItemStateManager().getAtticAwareHierarchyMgr(), ((RepositoryImpl)rep).getNamespaceRegistry(), wsp.getName());
+            HippoAMContext ctx = new HippoAMContext( new File(((RepositoryImpl)rep).getConfig().getHomeDir()), 
+                                                    ((RepositoryImpl)rep).getFileSystem(), 
+                                                    subject, 
+                                                    getItemStateManager().getAtticAwareHierarchyMgr(), 
+                                                    ((RepositoryImpl)rep).getNamespaceRegistry(), 
+                                                    wsp.getName(), 
+                                                    ((RepositoryImpl)rep).getNodeTypeRegistry() 
+                                                  );
             AccessManager accessMgr = (AccessManager) amConfig.newInstance();
             accessMgr.init(ctx);
             return accessMgr;
@@ -126,5 +135,13 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
      */
     public String getUserID() {
         return userId;
+    }
+
+    /**
+     * Method to expose the authenticated users' principals
+     * @return Set An unmodifialble set containing the principals
+      */
+    public Set<Principal> getUserPrincipals() {
+        return Collections.unmodifiableSet(subject.getPrincipals());
     }
 }

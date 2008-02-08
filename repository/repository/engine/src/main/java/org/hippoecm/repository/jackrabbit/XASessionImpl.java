@@ -17,6 +17,8 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.RepositoryException;
@@ -34,6 +36,7 @@ import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,8 +87,14 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
         AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
         try {
-
-            AMContext ctx = new AMContext(new File(((RepositoryImpl)rep).getConfig().getHomeDir()), ((RepositoryImpl)rep).getFileSystem(), subject, getItemStateManager().getAtticAwareHierarchyMgr(), ((RepositoryImpl)rep).getNamespaceRegistry(), wsp.getName());
+            HippoAMContext ctx = new HippoAMContext( new File(((RepositoryImpl)rep).getConfig().getHomeDir()), 
+                    ((RepositoryImpl)rep).getFileSystem(), 
+                    subject, 
+                    getItemStateManager().getAtticAwareHierarchyMgr(), 
+                    ((RepositoryImpl)rep).getNamespaceRegistry(), 
+                    wsp.getName(), 
+                    ((RepositoryImpl)rep).getNodeTypeRegistry() 
+                  );
             AccessManager accessMgr = (AccessManager) amConfig.newInstance();
             accessMgr.init(ctx);
             return accessMgr;
@@ -125,5 +134,13 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
      */
     public String getUserID() {
         return userId;
+    }
+    
+    /**
+     * Method to expose the authenticated users' principals
+     * @return Set An unmodifialble set containing the principals
+     */
+    public Set<Principal> getUserPrincipals() {
+        return Collections.unmodifiableSet(subject.getPrincipals());
     }
 }

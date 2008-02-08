@@ -20,6 +20,8 @@ import java.util.Map;
 
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.spi.Name;
+
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
   implements FacetedNavigationEngine<Q,C>
 {
@@ -29,7 +31,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     this.upstream = upstream;
   }
 
-  public C prepare(String principal, Map<String,String[]> authorizationQuery, List<Q> initialQueries, Session session) {
+  public C prepare(String principal, Map<Name,String[]> authorizationQuery, List<Q> initialQueries, Session session) {
     Context context = upstream.prepare(principal, authorizationQuery, initialQueries, session);
     return (C) context;
   }
@@ -38,7 +40,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     upstream.unprepare(authorization);
   }
 
-  public void reload(Map<String,String[]> facetValues) {
+  public void reload(Map<Name,String[]> facetValues) {
     upstream.reload(facetValues);
   }
 
@@ -52,7 +54,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     return rtvalue;
   }
 
-  public void notify(String docId, Map<String,String[]> oldFacets, Map<String,String[]> newFacets) {
+  public void notify(String docId, Map<Name,String[]> oldFacets, Map<Name,String[]> newFacets) {
     upstream.notify(docId, oldFacets, newFacets);
   }
 
