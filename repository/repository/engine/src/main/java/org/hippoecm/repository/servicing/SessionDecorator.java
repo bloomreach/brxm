@@ -228,7 +228,6 @@ public class SessionDecorator implements XASession, HippoSession {
         Node movedNode = getRootNode().getNode(destAbsPath.startsWith("/") ? destAbsPath.substring(1) : destAbsPath);
         movedNode.accept(new TraversingItemVisitor.Default() {
                 public void leaving(Node node, int level) throws RepositoryException {
-                    System.err.println("BERRY BERRY BERRY "+node.getPath());
                     ServicingNodeImpl.decoratePathProperty(node);
                 }
             });
