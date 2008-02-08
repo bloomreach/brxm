@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.tree;
 
+import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
@@ -33,15 +35,16 @@ public abstract class JcrTree extends Tree {
 
     /** Reference to the icon of open virtual tree folder */
     private static final ResourceReference VIRTUAL_FOLDER_OPEN = new ResourceReference(
-        JcrTree.class, "icons/virtual_folder_into.png");
+        JcrTree.class, "icons/virtual_folder_into.gif");
     /** Reference to the icon of open closed tree folder */
     private static final ResourceReference VIRTUAL_FOLDER_CLOSED = new ResourceReference(
-        JcrTree.class, "icons/virtual_folder_closed.png");
+        JcrTree.class, "icons/virtual_folder_closed.gif");
     /** Reference to the icon of virtual document */
     private static final ResourceReference VIRTUAL_DOCUMENT = new ResourceReference(
-        JcrTree.class, "icons/virtual_document.png");
-    
-    
+        JcrTree.class, "icons/virtual_document.gif");
+
+    private static final int IS_VIRTUAL_FOLDER = 1;
+    private static final int IS_VIRTUAL_DOCUMENT = 2;
     
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
 
@@ -64,37 +67,45 @@ public abstract class JcrTree extends Tree {
 
     @Override
     protected ResourceReference getNodeIcon(TreeNode node) {
-        boolean isVirtualFolder = false;
-        boolean isVirtualDocument = false;
+        int typeOfNode = 0;
         try {
             if (node instanceof AbstractTreeNode) {
                 AbstractTreeNode treeNode = (AbstractTreeNode) node;
                 HippoNode jcrNode = treeNode.getNodeModel().getNode();
-                isVirtualFolder = jcrNode.getCanonicalNode() == null;
-                if(!isVirtualFolder) {
-                    isVirtualDocument = !jcrNode.getCanonicalNode().isSame(jcrNode);
+                if(jcrNode.getCanonicalNode() == null) {
+                    typeOfNode = IS_VIRTUAL_DOCUMENT;
+                    if(jcrNode.hasNodes()) {
+                        typeOfNode = IS_VIRTUAL_FOLDER;
+                    } 
+                } else {
+                    if(!jcrNode.getCanonicalNode().isSame(jcrNode) && jcrNode.hasNodes()){
+                        typeOfNode = IS_VIRTUAL_FOLDER;
+                    } else if (!jcrNode.getCanonicalNode().isSame(jcrNode)) {
+                        typeOfNode = IS_VIRTUAL_DOCUMENT;
+                    }
                 }
+                
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         }
-        if (isVirtualFolder) {
-            if (isNodeExpanded(node))
-            {
-                return VIRTUAL_FOLDER_OPEN;
-            }
-            else
-            {
-                return VIRTUAL_FOLDER_CLOSED;
-            }
-            
+        
+        switch (typeOfNode) {
+            case IS_VIRTUAL_FOLDER:
+                if (isNodeExpanded(node))
+                {
+                    return VIRTUAL_FOLDER_OPEN;
+                }
+                else
+                {
+                    return VIRTUAL_FOLDER_CLOSED;
+                }
+            case IS_VIRTUAL_DOCUMENT:
+                return VIRTUAL_DOCUMENT;
+            default:
+                return super.getNodeIcon(node);
         }
         
-        if (isVirtualDocument) {
-                return VIRTUAL_DOCUMENT;
-        }
-        return super.getNodeIcon(node);
-
     }
 
 }
