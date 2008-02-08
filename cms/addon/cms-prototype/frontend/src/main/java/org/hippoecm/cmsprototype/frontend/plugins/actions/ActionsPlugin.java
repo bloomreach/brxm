@@ -15,6 +15,7 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -127,11 +128,19 @@ public class ActionsPlugin extends Plugin {
             isRoot = pluginModel.getNode().getPrimaryNodeType().getName().equals("rep:root");
         } catch (RepositoryException e) {
             isRoot = true;
-        } 
-        copy.setVisible((isDocument || isFolder) && !isRoot);
-        move.setVisible((isDocument || isFolder) && !isRoot);
-        delete.setVisible((isDocument || isFolder) && !isRoot);
-        rename.setVisible((isDocument || isFolder) && !isRoot);
+        }
+        boolean isVirtual;
+        try {
+            Node canonical = pluginModel.getNode().getCanonicalNode();
+            isVirtual = canonical == null || !canonical.isSame(pluginModel.getNode());
+        } catch (RepositoryException e) {
+            isVirtual = true;
+        }
+        
+        copy.setVisible((isDocument || isFolder) && !isRoot && !isVirtual);
+        move.setVisible((isDocument || isFolder) && !isRoot && !isVirtual);
+        delete.setVisible((isDocument || isFolder) && !isRoot && !isVirtual);
+        rename.setVisible((isDocument || isFolder) && !isRoot && !isVirtual);
     }
     
     
