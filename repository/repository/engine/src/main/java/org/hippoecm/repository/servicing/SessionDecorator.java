@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.AccessControlException;
 
+import javax.transaction.xa.XAResource;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.InvalidItemStateException;
@@ -45,19 +47,21 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
-import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Path;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
 /**
@@ -222,7 +226,12 @@ public class SessionDecorator implements XASession, HippoSession {
             VersionException, RepositoryException {
         session.move(srcAbsPath, destAbsPath);
         Node movedNode = getRootNode().getNode(destAbsPath.startsWith("/") ? destAbsPath.substring(1) : destAbsPath);
-        ServicingNodeImpl.decoratePathProperty(movedNode);
+        movedNode.accept(new TraversingItemVisitor.Default() {
+                public void leaving(Node node, int level) throws RepositoryException {
+                    System.err.println("BERRY BERRY BERRY "+node.getPath());
+                    ServicingNodeImpl.decoratePathProperty(node);
+                }
+            });
     }
 
     /**
