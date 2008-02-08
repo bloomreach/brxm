@@ -164,7 +164,7 @@ public class MirrorTest extends TestCase {
         return node;
     }
 
-    public void _testMirror() throws Exception {
+    public void testMirror() throws Exception {
         PrintStream pstream = new PrintStream("dump.txt");
 
         HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
