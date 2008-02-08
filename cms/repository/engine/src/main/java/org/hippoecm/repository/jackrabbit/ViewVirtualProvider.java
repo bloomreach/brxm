@@ -24,6 +24,8 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 public class ViewVirtualProvider extends MirrorVirtualProvider
 {
     final static private String SVN_ID = "$Id$";
@@ -41,7 +43,11 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         super();
     }
 
-    protected void initialize() {
+    private Name handleName;
+
+    @Override
+    protected void initialize() throws RepositoryException {
+        handleName = resolveName(HippoNodeType.NT_HANDLE);
     }
 
     public NodeState populate(NodeState state) {
@@ -69,9 +75,10 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
 
     protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
         ViewNodeId viewId = (ViewNodeId) nodeId;
+        boolean isHandle = state.getNodeTypeName().equals(handleName);
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            if(match(viewId.view, entry.getId())) {
+            if(!isHandle || match(viewId.view, entry.getId())) {
                 ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view);
                 state.addChildNodeEntry(entry.getName(), childNodeId);
             }
