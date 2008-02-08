@@ -15,53 +15,42 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-
-import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugins.admin.linkpicker.LinkPickerDialog;
-import org.hippoecm.frontend.template.model.FieldModel;
-import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.frontend.template.model.TemplateModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkPickerPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-
+    
+    private JcrPropertyValueModel valueModel;
+    
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
 
     public LinkPickerPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         
-        super(pluginDescriptor, new FieldModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()),
-                parentPlugin);
-        FieldModel model = (FieldModel)getPluginModel();  
+        super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()), parentPlugin);
         
-        add(new Label("name", model.getDescriptor().getName()));
+        TemplateModel tmplModel = (TemplateModel) getPluginModel();
+        
+        valueModel = tmplModel.getJcrPropertyValueModel();
         
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
-        HippoNode node = model.getNodeModel().getNode();
-        String value = "[...]";
-        try {
-            value = (node.hasProperty("hippo:docbase") && !"".equals(node.getProperty("hippo:docbase")) ) ? node.getProperty("hippo:docbase").getString() : value ;
-        } catch (ValueFormatException e) {
-            e.printStackTrace();
-        } catch (PathNotFoundException e) {
-            e.printStackTrace();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
+        
+        String value = (String) valueModel.getObject();
+        if(value == null || "".equals(value)){
+            value = "[...]";
         }
-        
-        //Panel infoPanel = new LookupDialogDefaultInfoPanel("info", nodeModel);
-        
-        DialogLink linkPicker = new DialogLink("value", value , LinkPickerDialog.class, model.getNodeModel(), incoming, factory);
+       
+        DialogLink linkPicker = new DialogLink("value", value , LinkPickerDialog.class, tmplModel.getNodeModel(), incoming, factory);
         add(linkPicker);
 
         setOutputMarkupId(true);
