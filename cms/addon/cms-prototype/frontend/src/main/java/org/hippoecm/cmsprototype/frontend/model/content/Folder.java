@@ -41,8 +41,8 @@ public class Folder extends NodeModelWrapper {
 
     static final Logger log = LoggerFactory.getLogger(Folder.class);
 
-    protected List<Folder> subFolders;
-    protected List<Document> documents;
+    protected List<Folder> subFolders = new ArrayList<Folder>();
+    protected List<Document> documents = new ArrayList<Document>();
 
     public Folder(JcrNodeModel nodeModel) throws ModelWrapException {
         super(nodeModel);
@@ -52,6 +52,11 @@ public class Folder extends NodeModelWrapper {
         } else {
             throw new ModelWrapException("Node is not a folder, and has no folder among its ancestors.");
         }
+    }
+    
+    public void flushCache() {
+        subFolders.clear();
+        documents.clear();
     }
     
     public String getName() {
@@ -113,7 +118,7 @@ public class Folder extends NodeModelWrapper {
     }
 
     private void ensureDocumentsAreLoaded() {
-        if (documents == null) {
+        if (documents.isEmpty()) {
             documents = loadDocuments();
         }
     }
@@ -162,7 +167,7 @@ public class Folder extends NodeModelWrapper {
     }
 
     private void ensureSubFoldersAreLoaded() {
-        if (subFolders == null) {
+        if (subFolders.isEmpty()) {
             subFolders = loadSubFolders();
         } else {
             try {

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
@@ -46,7 +48,7 @@ public class ActionsPlugin extends Plugin {
     private DialogLink copy;
     private DialogLink move;
     private DialogLink delete;
-    //private DialogLink rename;
+    private DialogLink rename;
 
     public ActionsPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
@@ -80,8 +82,8 @@ public class ActionsPlugin extends Plugin {
         delete = new DialogLink("delete-dialog", "Delete", DeleteDialog.class, jcrModel, incoming, factory);
         add(delete);
 
-//        rename = new DialogLink("rename-dialog", "Rename", RenameDialog.class, jcrModel, incoming, factory);
-//        add(rename);
+        rename = new DialogLink("rename-dialog", "Rename", RenameDialog.class, jcrModel, incoming, factory);
+        add(rename);
         
         setVisibilities();
     }
@@ -105,24 +107,31 @@ public class ActionsPlugin extends Plugin {
             edit.setVisible(false);
         }
         
+        JcrNodeModel pluginModel = (JcrNodeModel)getPluginModel();
         boolean isDocument;
         try {
-            new Document((JcrNodeModel) getPluginModel());
+            new Document(pluginModel);
             isDocument = true;
         } catch (ModelWrapException e) {
             isDocument = false;
         }
         boolean isFolder;
         try {
-            new Folder((JcrNodeModel) getPluginModel());
+            new Folder(pluginModel);
             isFolder = true;
         } catch (ModelWrapException e) {
             isFolder = false;
         }
-        copy.setVisible(isDocument || isFolder);
-        move.setVisible(isDocument || isFolder);
-        delete.setVisible(isDocument || isFolder);
-//        rename.setVisible(isDocument || isFolder);
+        boolean isRoot;
+        try {
+            isRoot = pluginModel.getNode().getPrimaryNodeType().getName().equals("rep:root");
+        } catch (RepositoryException e) {
+            isRoot = true;
+        } 
+        copy.setVisible((isDocument || isFolder) && !isRoot);
+        move.setVisible((isDocument || isFolder) && !isRoot);
+        delete.setVisible((isDocument || isFolder) && !isRoot);
+        rename.setVisible((isDocument || isFolder) && !isRoot);
     }
     
     

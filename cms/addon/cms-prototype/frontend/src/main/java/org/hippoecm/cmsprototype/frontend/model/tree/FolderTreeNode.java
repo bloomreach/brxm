@@ -41,7 +41,7 @@ public class FolderTreeNode extends AbstractTreeNode {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
-    
+
     private Folder folder;
 
     public FolderTreeNode(JcrNodeModel nodeModel) {
@@ -65,13 +65,17 @@ public class FolderTreeNode extends AbstractTreeNode {
     }
 
     @Override
+    public void markReload() {
+        folder.flushCache();
+        super.markReload();
+    }
+
+    @Override
     protected int loadChildcount() throws RepositoryException {
         if (folder != null) {
             return folder.getSubFolders().size();
         }
-        else {
-            return 0;
-        }
+        return 0;
     }
 
     @Override
@@ -102,7 +106,6 @@ public class FolderTreeNode extends AbstractTreeNode {
         }
         return result;
     }
-
 
     public TreeNode getParent() {
         JcrNodeModel parentModel = nodeModel.getParentModel();

@@ -17,25 +17,30 @@ package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
+import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RenameDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(RenameDialog.class);
+
     private String name;
-    
+
     public RenameDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
         String title;
@@ -59,51 +64,52 @@ public class RenameDialog extends AbstractDialog {
     @Override
     public void ok() throws RepositoryException {
         if (dialogWindow.getNodeModel().getParentModel() != null) {
-            JcrNodeModel toBeRenamed = null;
+            UserSession wicketSession = (UserSession) getSession();
+            HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
+            JcrNodeModel renamedNodeModel;
             try {
-                toBeRenamed = new Document(dialogWindow.getNodeModel()).getNodeModel();
+                Document document = new Document(dialogWindow.getNodeModel());
+                for (DocumentVariant variant : document.getVariants()) {
+                    renameNode(variant.getNodeModel(), jcrSession);
+                }
+                renamedNodeModel = renameNode(document.getNodeModel(), jcrSession);
             } catch (ModelWrapException e) {
                 try {
-                    toBeRenamed = new Folder(dialogWindow.getNodeModel()).getNodeModel();
+                    Folder folder = new Folder(dialogWindow.getNodeModel());
+                    renamedNodeModel = renameNode(folder.getNodeModel(), jcrSession);
                 } catch (ModelWrapException e1) {
-                    //Node to be deleted isn't a Document or a Folder
+                    renamedNodeModel = null;
                 }
             }
-            
-            if (toBeRenamed != null) {                
-                JcrNodeModel parent = toBeRenamed.findRootModel();
-                try {
-                    parent = new Document(toBeRenamed.getParentModel()).getNodeModel();
-                } catch (ModelWrapException e) {
-                    try {
-                        parent = new Folder(toBeRenamed.getParentModel()).getNodeModel();
-                    } catch (ModelWrapException e1) {
-                        //Parent isn't a Document or a Folder,
-                        //fall back to root node
-                    }
-                }
-                
-                UserSession wicketSession = (UserSession) getSession();
-                HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
-                
-               
-                jcrSession.save();
+            jcrSession.save();
 
-                if (channel != null) {
-                    Request request = channel.createRequest("select", parent);
-                    channel.send(request);
+            if (channel != null && renamedNodeModel != null) {
+                Request request = channel.createRequest("select", renamedNodeModel);
+                channel.send(request);
 
-                    request = channel.createRequest("flush", parent.findRootModel());
-                    channel.send(request);
-                }
+                request = channel.createRequest("flush", renamedNodeModel.findRootModel());
+                channel.send(request);
             }
         }
+    }
+
+    private JcrNodeModel renameNode(JcrNodeModel nodeModel, HippoSession session) {
+        JcrNodeModel result = null;
+        try {
+            String srcAbsPath = nodeModel.getNode().getPath();
+            String destAbsPath = srcAbsPath.substring(0, srcAbsPath.lastIndexOf("/") + 1) + name;
+            session.move(srcAbsPath, destAbsPath);
+            result = new JcrNodeModel(new JcrItemModel(session.getItem(destAbsPath)));
+        } catch (RepositoryException e) {
+            log.error("Rename node failed", e);
+        }
+        return result;
     }
 
     @Override
     public void cancel() {
     }
-    
+
     public String getName() {
         return name;
     }

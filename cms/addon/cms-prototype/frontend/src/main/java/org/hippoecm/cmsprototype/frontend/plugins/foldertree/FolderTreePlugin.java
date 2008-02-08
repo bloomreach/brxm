@@ -70,10 +70,11 @@ public class FolderTreePlugin extends AbstractTreePlugin {
             }
         }
         else if ("flush".equals(notification.getOperation())) {
-            AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(notification.getModel()));
-            if (node != null) {
-                node.markReload();
-                node.getTreeModel().nodeStructureChanged(node);
+            JcrNodeModel model = new JcrNodeModel(notification.getModel());
+            FolderTreeNode folder = (FolderTreeNode)rootNode.getTreeModel().lookup(model);
+            if (folder != null) {
+                folder.markReload();
+                folder.getTreeModel().nodeStructureChanged(folder);
                 notification.getContext().addRefresh(tree, "updateTree");
             }
         }
