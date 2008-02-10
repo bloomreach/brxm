@@ -29,12 +29,12 @@
   </sv:property>
 
   <!--Workflows configuration-->
-  <sv:node sv:name="workflows">
+  <sv:node sv:name="standard">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>400</sv:value>
+      <sv:value>10</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>standard-config.xml</sv:value>
