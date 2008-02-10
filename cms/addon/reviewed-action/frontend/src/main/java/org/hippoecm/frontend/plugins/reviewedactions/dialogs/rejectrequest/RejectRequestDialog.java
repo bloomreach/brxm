@@ -41,7 +41,6 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
     @Override
     protected void doOk() throws Exception {
         FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
-System.err.println("BERRY reject \""+reason+"\"");
         workflow.rejectRequest(reason);
     }
 
@@ -54,7 +53,6 @@ System.err.println("BERRY reject \""+reason+"\"");
     }
 
     public void setReason(String reason) {
-System.err.println("BERRY setReason");
         this.reason = reason;
     }
 
