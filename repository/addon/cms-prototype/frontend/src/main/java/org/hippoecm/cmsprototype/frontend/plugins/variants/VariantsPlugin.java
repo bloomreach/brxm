@@ -106,10 +106,6 @@ public class VariantsPlugin extends Plugin {
                     public void onClick(AjaxRequestTarget target) {
                         Channel channel = getDescriptor().getIncoming();
                         if (channel != null) {
-                            try {
-                            } catch(RepositoryException ex) {
-                                ex.printStackTrace();
-                            }
                             Request request = channel.createRequest("select", variant.getNodeModel());
                             channel.send(request);
                             request.getContext().apply(target);
