@@ -32,6 +32,7 @@ import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.jackrabbit.JcrConstants;;
 
 public class NodeCell extends Panel {
     private static final long serialVersionUID = 1L;
@@ -78,7 +79,7 @@ public class NodeCell extends Panel {
         else if (model.getObject() instanceof HippoNode) {
             try {
                 HippoNode n = (HippoNode) model.getObject();
-
+               
                 // hardcoded non-jcrnode properties
                 if (nodePropertyName.equals("name")) {
                     addLabel(link, n.getName());
@@ -88,6 +89,8 @@ public class NodeCell extends Panel {
                     addLabel(link, String.valueOf(n.isLocked()));
                 } else if (nodePropertyName.equals("path")) {
                     addLabel(link, n.getPath());
+                } else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
+                     addLabel(link, n.getPrimaryNodeType().getName());
                 }
                 else {
                     getLabel4Property(n.getProperty(nodePropertyName), link);
