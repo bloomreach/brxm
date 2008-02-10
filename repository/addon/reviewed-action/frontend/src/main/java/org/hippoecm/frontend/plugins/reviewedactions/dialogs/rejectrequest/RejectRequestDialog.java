@@ -55,6 +55,4 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
     public void setReason(String reason) {
         this.reason = reason;
     }
-
-
 }
