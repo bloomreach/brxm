@@ -16,15 +16,17 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
 
-        <span>Variants of:
-        <b wicket:id="nodename">node</b>
-    </span>
+    <span>Variants of: <b wicket:id="nodename">node</b></span>
 
     <div wicket:id="variants" style="margin-left:10px;">
-      <a wicket:id="variantlink" href="#">
-                <span wicket:id="variant">variant</span>
-      </a>
-        </div>
+      <a wicket:id="variantlink" href="#"><span wicket:id="variant">variant</span></a>
+    </div>
+
+    <br/><hr><span>Requests:</span>
+
+    <div wicket:id="requests" style="margin-left:10px;">
+      <a wicket:id="requestlink" href="#"><span wicket:id="request">request</span></a>
+    </div>
 
   </wicket:panel>
 </html>
