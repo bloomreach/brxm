@@ -15,11 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest;
 
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.model.PropertyModel;
+
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
 public class RejectRequestDialog extends AbstractWorkflowDialog {
@@ -31,7 +32,7 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
         super(dialogWindow, channel);
         dialogWindow.setTitle("Reject request");
 
-        add(new AjaxEditableLabel("reason", new PropertyModel(this, "reason")));
+        add(new TextFieldWidget("reason", new PropertyModel(this, "reason")));
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
@@ -40,6 +41,7 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
     @Override
     protected void doOk() throws Exception {
         FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
+System.err.println("BERRY reject \""+reason+"\"");
         workflow.rejectRequest(reason);
     }
 
@@ -52,6 +54,7 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
     }
 
     public void setReason(String reason) {
+System.err.println("BERRY setReason");
         this.reason = reason;
     }
 
