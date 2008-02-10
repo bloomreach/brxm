@@ -30,6 +30,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
@@ -205,9 +206,9 @@ public abstract class AbstractListingPlugin extends Plugin {
 
         pref = prefNode.addNode("type",USERSETTINGS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "Type");
-        pref.setProperty(PROPERTYNAME_PROPERTY, "jcr:primaryType");
+        pref.setProperty(PROPERTYNAME_PROPERTY, JcrConstants.JCR_PRIMARYTYPE);
         columns.add(getNodeColumn(new Model("Name"), "name" , incoming));
-        columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , incoming));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , incoming));
         
     }
 
@@ -215,7 +216,7 @@ public abstract class AbstractListingPlugin extends Plugin {
 
     private void defaultColumns(PluginDescriptor pluginDescriptor) {
         columns.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
-        columns.add(getNodeColumn(new Model("Type"), "jcr:primaryType" , pluginDescriptor.getIncoming()));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , pluginDescriptor.getIncoming()));
     }
     private void logError(String message) {
         log.error("error creating user doclisting preference " + message );
