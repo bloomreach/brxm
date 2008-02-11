@@ -19,19 +19,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.nodetype.PropDefId;
-import org.apache.jackrabbit.core.nodetype.PropDefImpl;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.name.NamePathResolver;
 import org.apache.jackrabbit.spi.Name;
-
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class MirrorVirtualProvider extends HippoVirtualProvider

@@ -19,7 +19,6 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RangeIterator;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;

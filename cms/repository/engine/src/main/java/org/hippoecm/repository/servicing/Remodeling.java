@@ -16,21 +16,11 @@
 package org.hippoecm.repository.servicing;
 
 import java.io.InputStream;
-import java.io.Serializable;
-
-import java.util.Comparator;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Iterator;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -38,30 +28,22 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.query.InvalidQueryException;
-import javax.jcr.query.Query ;
 import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
-
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Remodeling
 {

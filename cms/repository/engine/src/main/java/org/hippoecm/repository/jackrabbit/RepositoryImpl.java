@@ -20,11 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.security.auth.Subject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -32,6 +27,7 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
@@ -48,12 +44,13 @@ import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.spi.Name;
-
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);

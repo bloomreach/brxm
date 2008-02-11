@@ -15,21 +15,15 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.util.Set;
 import java.util.HashSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
@@ -45,12 +39,11 @@ import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
-import org.apache.jackrabbit.core.util.Dumpable;
-import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
     private static Logger log = LoggerFactory.getLogger(ItemManager.class);

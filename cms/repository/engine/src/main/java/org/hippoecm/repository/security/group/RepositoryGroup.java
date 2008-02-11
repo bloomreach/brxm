@@ -29,13 +29,12 @@ import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.RepositoryAAContext;
 import org.hippoecm.repository.security.FacetAuthHelper;
+import org.hippoecm.repository.security.RepositoryAAContext;
 import org.hippoecm.repository.security.role.RepositoryRole;
 import org.hippoecm.repository.security.role.Role;
 import org.hippoecm.repository.security.role.RoleNotFoundException;
 import org.hippoecm.repository.security.user.User;
-import org.hippoecm.repository.security.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
-
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class FacetSelectProvider extends HippoVirtualProvider

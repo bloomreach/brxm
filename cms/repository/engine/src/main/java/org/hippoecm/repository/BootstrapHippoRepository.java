@@ -15,74 +15,24 @@
  */
 package org.hippoecm.repository;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
+import java.util.Properties;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.LoginException;
-import javax.jcr.NamespaceException;
-import javax.jcr.NamespaceRegistry;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.ValueFormatException;
-import javax.jcr.Workspace;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.observation.Event;
-import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
-import javax.jcr.observation.ObservationManager;
-import javax.jcr.version.VersionException;
-
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
-import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
-import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
-import org.apache.jackrabbit.core.nodetype.compact.ParseException;
-
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.servicing.ServicingDecoratorFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -22,10 +22,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 
@@ -48,12 +44,11 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.core.state.XAItemStateManager;
-import org.apache.jackrabbit.name.IllegalNameException;
-import org.apache.jackrabbit.name.NamePathResolver;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
-
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class HippoLocalItemStateManager extends XAItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);

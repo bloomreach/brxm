@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.servicing;
 
-import java.io.Serializable;
-
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;

@@ -15,32 +15,15 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.nodetype.NodeDef;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-
-import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
-import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
-
-import org.apache.jackrabbit.core.nodetype.NodeDefImpl;
 
 public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 {
