@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,10 +39,10 @@ public class LinkPickerPlugin extends Plugin {
     
     private JcrPropertyValueModel valueModel;
     
-    private Set<String> nodetypes;
+    private List<String> nodetypes;
     
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
-
+ 
     
     public LinkPickerPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         
@@ -53,12 +54,9 @@ public class LinkPickerPlugin extends Plugin {
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         
-        nodetypes = null;
-        List<String> ops = pluginDescriptor.getParameter("nodetypes");
-        if (ops != null) {
-            nodetypes = new HashSet<String>(ops);
-        } else {
-            log.warn("No configuration specified for filtering on nodetypes.  No filtering will take place.");
+        nodetypes = new ArrayList<String>(pluginDescriptor.getParameter("nodetypes"));
+        if(nodetypes.size()==0) {
+            log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
         }
         String value = (String) valueModel.getObject();
         if(value == null || "".equals(value)){
@@ -68,7 +66,7 @@ public class LinkPickerPlugin extends Plugin {
         Channel proxy = factory.createChannel();
         
         final DialogWindow dialogWindow = new DialogWindow("dialog", tmplModel.getNodeModel(), incoming, proxy);
-        LookupDialog lookupDialog = new LinkPickerDialog(dialogWindow,incoming);
+        LookupDialog lookupDialog = new LinkPickerDialog(dialogWindow,incoming, nodetypes);
         DialogLink linkPicker = new DialogLink("value", value , lookupDialog, tmplModel.getNodeModel(), incoming, factory);
        
         add(linkPicker);

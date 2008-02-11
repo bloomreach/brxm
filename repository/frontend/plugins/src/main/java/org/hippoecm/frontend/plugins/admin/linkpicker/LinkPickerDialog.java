@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.admin.linkpicker;
 
+import java.util.List;
+import java.util.Set;
+
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.dialog.DialogWindow;
@@ -31,10 +35,11 @@ public class LinkPickerDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
     
-
-    public LinkPickerDialog(DialogWindow dialogWindow, Channel channel) {
+    private List<String> nodetypes;
+    public LinkPickerDialog(DialogWindow dialogWindow, Channel channel, List<String> nodetypes) {
         super("LinkPicker", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()),
               dialogWindow, channel);
+        this.nodetypes = nodetypes;
     }
     
     @Override
@@ -53,8 +58,18 @@ public class LinkPickerDialog extends LookupDialog {
         JcrNodeModel sourceNodeModel = this.dialogWindow.getNodeModel();
         if (sourceNodeModel.getParentModel() != null) {
             JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
-            String targetPath = targetNodeModel.getNode().getPath();
-            sourceNodeModel.getNode().setProperty("hippo:docbase", targetPath);
+            Node targetNode = targetNodeModel.getNode();
+            boolean validType = false;
+            for(int i = 0 ; i < nodetypes.size() ; i++){
+                if(targetNode.isNodeType(nodetypes.get(i))){
+                    validType = true;
+                    break;
+                }
+            }
+            if(validType) {
+                String targetPath = targetNodeModel.getNode().getPath();
+                sourceNodeModel.getNode().setProperty("hippo:docbase", targetPath);
+            }
         }
     }
 
