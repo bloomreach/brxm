@@ -33,7 +33,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String USER_PREF_NODENAME = "hippo:browseperspective-listingview";
+    public static final String USER_PREF_NODENAME = "browseperspective-listingview";
 
     public DocumentListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);

@@ -119,22 +119,33 @@
 [hippo:application] > nt:unstructured
 
 [hippo:facetauth] > nt:base
-- hippo:facet (string) mandatory
+- hippo:facet (string)  mandatory
 - hippo:values (string) mandatory multiple
 - hippo:permissions (long) mandatory
 
 [hippo:facetauthfolder] > nt:base
 + * (hippo:facetauth) = hippo:facetauth
 
-[hippo:usersettings] > nt:unstructured
+[hippo:usersettings] > nt:base
+- hippo:path (string)
+- hippo:name (string)
+- hippo:value (string)  
 
+[hippo:listingpropnode] > nt:base
+- * (string)
 
+[hippo:listing] > nt:base
+- hippo:pagesize (long) = '10' mandatory autocreated 
+- hippo:viewsize (long) = '10' mandatory autocreated 
++ * (hippo:listingpropnode) = hippo:listingpropnode  
+ 
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
 - hippo:roles (string) multiple
 + hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
++ * (hippo:listing) = hippo:listing
 + * (hippo:usersettings) = hippo:usersettings
-
+  
 [hippo:group] > nt:base
 - hippo:members (string) multiple
 - hippo:roles (string) multiple
@@ -152,7 +163,7 @@
 [hippo:rolefolder] > nt:base
 + * (hippo:role) = hippo:role
 
-[hippo:parameters] > nt:base
+[hippo:parameters] > nt:base 
 - * (string) multiple
 
 [hippo:plugin] > nt:unstructured
@@ -160,7 +171,7 @@
 
 [hippo:pluginfolder] > nt:base
 + * (hippo:plugin) = hippo:plugin
-
+ 
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:queryfolder) = hippo:queryfolder mandatory
