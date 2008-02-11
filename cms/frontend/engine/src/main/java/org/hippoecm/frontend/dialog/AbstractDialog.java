@@ -22,8 +22,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractDialog extends WebPage {
+    
+    static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
     protected AjaxLink ok;
     protected AjaxLink cancel;
@@ -48,7 +52,9 @@ public abstract class AbstractDialog extends WebPage {
                     ok();
                     dialogWindow.close(target);
                 } catch (Exception e) {
-                    setException(e.getClass().getName() + ": " + e.getMessage());
+                    String msg = e.getClass().getName() + ": " + e.getMessage();
+                    log.error(msg);
+                    setException(msg);
                     target.addComponent(exceptionLabel);
                 }
             }

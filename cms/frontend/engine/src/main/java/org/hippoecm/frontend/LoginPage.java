@@ -68,6 +68,7 @@ public final class LoginPage extends WebPage {
             userSession.setJcrCredentials(credentials);
             userSession.getJcrSession();
 
+            log.info("Logged in as " + credentials.getString("username") + " to Hippo CMS 7");
             setResponsePage(Home.class);
         }
     }
