@@ -15,14 +15,10 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
@@ -36,11 +32,11 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.AbstractFacetSearchProvider.FacetSearchNodeId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetResultSetProvider extends HippoVirtualProvider
 {

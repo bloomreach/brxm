@@ -20,7 +20,6 @@ import java.net.URL;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.classloader.RepositoryClassLoader;
-
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginClassLoader extends RepositoryClassLoader {

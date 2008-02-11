@@ -20,13 +20,9 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.security.auth.Subject;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.RepositoryException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
@@ -41,6 +37,8 @@ import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {

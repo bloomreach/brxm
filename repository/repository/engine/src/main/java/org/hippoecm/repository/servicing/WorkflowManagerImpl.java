@@ -23,14 +23,7 @@ import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Vector;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -42,12 +35,13 @@ import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorkflowManagerImpl implements WorkflowManager {
     final Logger log = LoggerFactory.getLogger(Workflow.class);

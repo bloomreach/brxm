@@ -17,19 +17,12 @@ package org.hippoecm.repository.security;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Credentials;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Value;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -38,14 +31,10 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import org.apache.jackrabbit.core.NodeIdIterator;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.CredentialsCallback;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.PasswordHelper;
-import org.hippoecm.repository.security.principals.AdminPrincipal;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.user.RepositoryUser;
 import org.hippoecm.repository.security.user.UserNotFoundException;
 import org.slf4j.Logger;

@@ -20,8 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.AccessControlException;
 
-import javax.transaction.xa.XAResource;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.InvalidItemStateException;
@@ -49,20 +47,15 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
+import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
-import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Path;
-
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoSession;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.jackrabbit.HippoNodeId;
-import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
 /**
  */

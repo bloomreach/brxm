@@ -17,28 +17,18 @@ package org.hippoecm.repository;
 
 import java.io.PrintStream;
 
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.servicing.ServicingNodeImpl;
 
 public class Utilities {
     private final static Logger log = LoggerFactory.getLogger(Utilities.class);

@@ -26,16 +26,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.jpox.PersistenceManagerFactoryImpl;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
@@ -43,6 +37,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.pojo.JCROID;
 import org.hippoecm.repository.pojo.StoreManagerImpl;
+import org.jpox.PersistenceManagerFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentManagerImpl
   implements DocumentManager

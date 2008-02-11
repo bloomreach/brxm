@@ -27,8 +27,8 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.RepositoryAAContext;
 import org.hippoecm.repository.security.FacetAuthHelper;
+import org.hippoecm.repository.security.RepositoryAAContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.hippoecm.repository.security.principals.RolePrincipal;
 import org.slf4j.Logger;

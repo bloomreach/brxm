@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
@@ -30,6 +27,8 @@ import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HippoHierarchyManager implements HierarchyManager {
     private static Logger log = LoggerFactory.getLogger(HippoHierarchyManager.class);

@@ -38,13 +38,11 @@ import javax.jdo.spi.PersistenceCapable;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-
 import org.jpox.StateManager;
 import org.jpox.exceptions.JPOXDataStoreException;
 import org.jpox.metadata.AbstractClassMetaData;
 import org.jpox.state.StateManagerFactory;
 import org.jpox.store.fieldmanager.AbstractFieldManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
