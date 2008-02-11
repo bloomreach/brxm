@@ -22,210 +22,283 @@
         <title>Developing with Eclipse</title>
     </properties>
     <body>
-
-        <section name="Building with Eclipse"></section>
-
+        <section name="Developing with Eclipse"/>
         <section name="Prepare">
-            <p>
-                Follow all steps documented on the <a href="maven.html">Building with Maven</a> page.
-                Don't continue with the instructions on this page before you have seen a running application.
-            </p>
+            <ol>
+                <li>
+                    <p> Follow all steps documented on the <a href="maven.html">Building with
+                        Maven</a> page. Don't continue with the instructions on this page before you
+                        have seen a running application. </p>
+                </li>
+                <li>
+                    <p> Download and install <a href="http://www.eclipse.org/">Eclipse</a> version
+                        >= 3.2 </p>
+                </li>
+                <li>
+                    <p>
+                        <a href="http://docs.codehaus.org/display/JETTY/Downloading+and+Installing">
+                            Download and install</a> Jetty version >= 6.0 </p>
+                </li>
+            </ol>
         </section>
-
-        <section name="Install eclipse plugins">
+        <section name="Install and configure eclipse plugins">
             <subsection name="Subversion">
                 <ol>
-                    <li><p>Help -&gt; Software Updates -&gt; Find and Install...</p></li>
-                    <li><p>Search for new features to install</p></li>
-                    <li><p>New remote site</p></li>
-                    <li><p>Name='Subversive' URL='http://www.polarion.org/projects/subversive/download/1.1/update-site/'</p></li>
-                    <li><p>Finish the wizard</p></li>
-                    <li><p>Window -&gt; Preferences -&gt; Team -&gt; SVN</p></li>
-                    <li><p>Select 'SVN Client' tab</p></li>
-                    <li><p>Set 'SVN Client' to 'SVN Kit'</p></li>
-                    <li><p>Apply changes and close the dialog</p></li>
+                    <li>
+                        <p>Name='Subversive'</p>
+                    </li>
+                    <li>
+                        <p>URL='http://www.polarion.org/projects/subversive/download/1.1/update-site/'</p>
+                    </li>
+                </ol>
+                <p>In the eclipse preferences dialog:</p>
+                <ol>
+                    <li>
+                        <p>Select Team -&gt; SVN</p>
+                    </li>
+                    <li>
+                        <p>Select 'SVN Client' tab</p>
+                    </li>
+                    <li>
+                        <p>Set 'SVN Client' to 'SVN Kit'</p>
+                    </li>
+                    <li>
+                        <p>Apply changes and close the dialog</p>
+                    </li>
                 </ol>
             </subsection>
             <subsection name="Jetty">
                 <ol>
-                    <li><p>
-                        <a href="http://docs.codehaus.org/display/JETTY/Downloading+and+Installing">
-                        Download and install</a> Jetty version >= 6.0
-                    </p></li>
-                    <li><p>Help -&gt; Software Updates -&gt; Find and Install...</p></li>
-                    <li><p>Search for new features to install</p></li>
-                    <li><p>New remote site</p></li>
-                    <li><p>Name='Jetty launcher' URL='http://dbpowder.sourceforge.net/etc/jettylauncher6/updates/'</p></li>
-                    <li><p>Finish the wizard</p></li>
+                    <li>
+                        <p>Name='Jetty launcher'</p>
+                    </li>
+                    <li>
+                        <p>URL='http://dbpowder.sourceforge.net/etc/jettylauncher6/updates/'</p>
+                    </li>
                 </ol>
             </subsection>
             <subsection name="RMI">
                 <ol>
-                    <li><p>Help -&gt; Software Updates -&gt; Find and Install...</p></li>
-                    <li><p>Search for new features to install</p></li>
-                    <li><p>New remote site</p></li>
-                    <li><p>Name='RMI plugin' URL='http://www.genady.net/rmi/v20/update/'</p></li>
-                    <li><p>Finish the wizard</p></li>
+                    <li>
+                        <p>Name='RMI plugin'</p>
+                    </li>
+                    <li>
+                        <p>URL='http://www.genady.net/rmi/v20/update/'</p>
+                    </li>
                 </ol>
             </subsection>
             <subsection name="JPOX">
                 <ol>
-                    <li><p>Help -&gt; Software Updates -&gt; Find and Install...</p></li>
-                    <li><p>Search for new features to install</p></li>
-                    <li><p>New remote site</p></li>
-                    <li><p>Name='JPOX launcher' URL='http://www.jpox.org/downloads/eclipse-update/'</p></li>
-                    <li><p>Finish the wizard</p></li>
-                    <li><p>Window -&gt; Preferences</p></li>
-                    <li><p>Select JPOX Eclipse Plugin -&gt; General</p></li>
-                    <li><p>Uncheck 'Use project classpath when running tools'</p></li>
-                    <li><p>Add the jars for jpox-core-1.2.0-beta-2, jpox-enhancer1.2.0-beta-2
-                        and bcel-5.1 to the classpath. You can find these in your local maven repository if
-                        you have followed the instructions on the <a href="maven.html">Building with Maven</a> page.</p>
+                    <li>
+                        <p>Name='JPOX launcher'</p>
+                    </li>
+                    <li>
+                        <p>URL='http://www.jpox.org/downloads/eclipse-update/'</p>
+                    </li>
+                </ol>
+                <p>In the eclipse preferences dialog:</p>
+                <ol>
+                    <li>
+                        <p>Select JPOX Eclipse Plugin -&gt; General</p>
+                    </li>
+                    <li>
+                        <p>Uncheck 'Use project classpath when running tools'</p>
+                    </li>
+                    <li>
+                        <p>Add the following jars to the classpath: You can find these jars in your
+                            local maven repository if you have followed the instructions on the <a
+                                href="maven.html">Building with Maven</a> page.</p>
+                        <ul>
+                            <li>&lt;maven-repository&gt;/jpox/jpox-core/1.2.0-beta-2/jpox-core-1.2.0-beta-2.jar</li>
+                            <li>&lt;maven-repository&gt;/jpox/jpox-enhancer/1.2.0-beta-2/jpox-enhancer-1.2.0-beta-2.jar</li>
+                            <li>&lt;maven-repository&gt;/bcel/bcel/5.1/bcel-5.1.jar</li>
+                        </ul>
                     </li>
                 </ol>
             </subsection>
         </section>
-
         <section name="Create eclipse projects, part one">
-            <div style="border:1px solid black; padding:1em;">
-                WARNING: Make sure that there is no .project file in the toplevel (hippo-ecm) directory
-                before proceding. If there is one the eclipse import projects wizard will fail.
-            </div>
-            <p>
-                Use the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">maven eclipse plugin</a>
-                to generate eclipse project files:
-            </p>
-            <source>
-~/> cd hippo-ecm
+            <div style="border:1px solid black; padding:1em;"> WARNING: Make sure that there is no
+                .project file in the toplevel (hippo-ecm) directory before proceding. If there is
+                one the eclipse import projects wizard will fail. </div>
+            <p> Use the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">maven
+                    eclipse plugin</a> to generate eclipse project files: </p>
+            <source> 
+~/> cd hippo-ecm 
 ~/hippo-ecm> mvn clean
 ~/hippo-ecm> mvn eclipse:eclipse
             </source>
             <ol>
-                <li><p>
-                    Start eclipse, the workspace directory can be any directory EXCEPT the directory
-                    under which you have checked out the source (~/hippo-ecm in the example)
-                </p></li>
-                <li><p>Define eclipse classpath variable: Window -&gt; Preferences -&gt; Java -&gt; Build Path -&gt; Classpath variables</p></li>
-                <li><p>Press 'New'</p></li>
-                <li><p>Name=M2_REPO, value=&lt;path-to-maven-repository&gt; (eg. /home/&lt;yourname&gt;/.m2/repository on UNIX)</p></li>
-                <li><p>Run the import project wizard: File -&gt; Import -&gt; General -&gt; Existing Projects into Workspace</p></li>
-                <li><p>Press 'Browse'</p></li>
-                <li><p>Select the 'hippo-ecm' directory, press OK</p></li>
-                <li><p>All hippo-ecm projects should be listed</p></li>
-                <li><p>Press 'Select all'</p></li>
-                <li><p>Press 'Finish'</p></li>
+                <li>
+                    <p> Start eclipse, the workspace directory can be any directory EXCEPT the
+                        directory under which you have checked out the source (~/hippo-ecm in the
+                        example). It is strongly advised to start with a clean workspace.</p>
+                </li>
+                <li>
+                    <p>Define eclipse classpath variable: eclipse preferences dialog -&gt; Java
+                        -&gt; Build Path -&gt; Classpath variables</p>
+                </li>
+                <li>
+                    <p>Press 'New'</p>
+                </li>
+                <li>
+                    <p>Name=M2_REPO, value=&lt;path-to-maven-repository&gt; (eg.
+                        /home/&lt;yourname&gt;/.m2/repository on UNIX)</p>
+                </li>
+                <li>
+                    <p>Run the import project wizard: File -&gt; Import -&gt; General
+                        -&gt; Existing Projects into Workspace</p>
+                </li>
+                <li>
+                    <p>Press 'Browse'</p>
+                </li>
+                <li>
+                    <p>Select the 'hippo-ecm' directory, press OK</p>
+                </li>
+                <li>
+                    <p>All hippo-ecm projects should be listed</p>
+                </li>
+                <li>
+                    <p>Press 'Select all'</p>
+                </li>
+                <li>
+                    <p>Press 'Finish'</p>
+                </li>
             </ol>
         </section>
-
         <section name="Create eclipse projects, part two">
-            <p>
-                The <a href="maven.html">maven build</a> uses the 
-                <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">WAR overlay</a>
-                principle which unfortunately isn't fully supported by the maven eclipse plugin. Therefore you need to manually
-                fix the eclipse projects before you can proceed.
-            </p>
+            <p> The <a href="maven.html">maven build</a> uses the <a
+                    href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html"
+                    >WAR overlay</a> principle which unfortunately isn't fully supported by the
+                maven eclipse plugin. Therefore you need to manually fix the eclipse projects before
+                you can proceed. </p>
             <subsection name="Resources">
                 <ul>
                     <li>
-                        <p><b>Windows</b></p>
-                        <ol>
-                            <li><p>Inside package/war/src/main/webapp, create a directory skin.</p></li>
-                            <li><p>Copy all files in addon/skin/src/main/webapp to package/war/src/main/webapp/skin.</p></li>
-                            <li><p>Inside package/war/src/main/webapp, create a directory xinha.</p></li>
-                            <li><p>Copy all files in addon/xinha/src/main/webapp to package/war/src/main/webapp/xinha.</p></li>
-                        </ol>
                         <p>
-                            These steps have to be repeated after each change in hippo-ecm-addon-skin
-                            or hippo-ecm-addon-xinha.
-                        </p>                        
+                            <b>Windows</b>
+                        </p>
+                        <ol>
+                            <li>
+                                <p>Inside package/war/src/main/webapp, create a directory skin.</p>
+                            </li>
+                            <li>
+                                <p>Copy all files in addon/skin/src/main/webapp to
+                                    package/war/src/main/webapp/skin.</p>
+                            </li>
+                            <li>
+                                <p>Inside package/war/src/main/webapp, create a directory xinha.</p>
+                            </li>
+                            <li>
+                                <p>Copy all files in addon/xinha/src/main/webapp to
+                                    package/war/src/main/webapp/xinha.</p>
+                            </li>
+                        </ol>
+                        <p> These steps have to be repeated after each change in
+                            hippo-ecm-addon-skin or hippo-ecm-addon-xinha. </p>
                     </li>
                     <li>
-                        <p><b>Unix</b></p>
-                        <source>
-~/> cd hippo-ecm/package/war/src/main/webapp
-~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/skin/src/main/webapp/ skin
-~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/xinha/src/main/webapp/ xinha 
-                        </source>
-                    </li>                    
+                        <p>
+                            <b>Unix</b>
+                        </p>
+                        <source> 
+ ~/> cd hippo-ecm/package/war/src/main/webapp
+ ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/skin/src/main/webapp/ skin
+ ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/xinha/src/main/webapp/ xinha
+                         </source>
+                    </li>
                 </ul>
             </subsection>
             <subsection name="Dependencies">
                 <ol>
-                    <li><p>Select project hippo-ecm-package-war</p></li>
-                    <li><p>In the configuration panel (Project -&gt; Properties), select 'Java Build Path'</p></li>
-                    <li><p>Under tab 'Projects', add hippo-ecm-repository-application</p></li>
+                    <li>
+                        <p>Select project hippo-ecm-package-war</p>
+                    </li>
+                    <li>
+                        <p>In the configuration panel (Project -&gt; Properties), select 'Java
+                            Build Path'</p>
+                    </li>
+                    <li>
+                        <p>Under tab 'Projects', add hippo-ecm-repository-application</p>
+                    </li>
+                </ol>
+            </subsection>
+        </section>
+        <section name="Create eclipse projects, part three">
+            <subsection name="RMI enhanced projects">
+                <p> For projects that provide objects that can be accessed remotely,
+                    (hippo-ecm-repository-engine, hippo-ecm-repository-connector and all repository
+                    addons like hippo-ecm-addon-reviewed-action-repository) stubs must be created by
+                    rmic.</p>
+                <ol>
+                    <li>
+                        <p>right-click project -&gt; RMI -&gt; Enable Stubs generation</p>
+                    </li>
+                </ol>
+            </subsection>
+            <subsection name="JPOX enhanced projects">
+                <p> Projects that provide document types (hippoecm-repository-engine,
+                    hippo-ecm-repository-connector, hippo-ecm-api and all repository addons like
+                    hippo-ecm-addon-reviewed-action-repository) must be enhanced by the JPOX plugin.
+                    Open the 'Package explorer' view and: </p>
+                <ol>
+                    <li>
+                        <p>Right-click the project -&gt; JPOX -&gt; Add JPOX Support</p>
+                    </li>
+                    <li>
+                        <p>Right-click again -&gt; JPOX -&gt; Enable Auto-Enhancement</p>
+                    </li>
                 </ol>
             </subsection>
         </section>
             
-
-        <section name="Configure eclipse plugins">
-            <subsection name="RMI">
-                <p>
-                    For projects that provide objects that can be accessed remotely,
-                    (hippo-ecm-repository-engine, hippo-ecm-repository-connector and
-                     all repository addons like hippo-ecm-addon-reviewed-action-repository)
-                    stubs must be created by rmic.  The plugin can be used to do this:
-                </p>
-                <ol>
-                    <li><p>right-click project -&gt; RMI -&gt; Enable Stubs generation</p></li>
-                </ol>
-            </subsection>
-            <subsection name="JPOX">
-                <p>
-                    Projects that provide document types (hippoecm-repository-engine,
-                    hippo-ecm-repository-connector, hippo-ecm-api and all repository addons like
-                    hippo-ecm-addon-reviewed-action-repository)
-                    must be enhanced by the JPOX plugin. Open the 'Package explorer' view and:
-                </p>
-                <ol>
-                    <li><p>Right-click the project -&gt; JPOX -&gt; Add JPOX Support</p></li>
-                    <li><p>Right-click again -&gt; JPOX -&gt; Enable Auto-Enhancement</p></li>
-                </ol>
-            </subsection>
-            <subsection name="Jetty launcher">
-                <p>
-                    <a href="http://jettylauncher.sourceforge.net/docs/quickstart.html">Create Jetty
-                    launcher configurations</a> for the project
-                    hippo-ecm-package-war.
-                </p>
-                <ol>
-                    <li><p>Open the debug configuration panel (e.g. Run -&gt; Open Run Dialog )</p></li>
-                    <li><p>Select 'Jetty Web'</p></li>
-                    <li><p>Press the 'New' button</p></li>
-                    <li><p>Name is 'hippo-ecm'</p></li>
-                    <li><p>Project is 'hippo-ecm-package-war'</p></li>                
-                    <li><p>Jetty home is location of you local jetty installation</p></li>
-                    <li><p>Webapp dir is 'src/main/webapp'</p></li>
-                    <li><p>Context path = '/'</p></li>
-                    <li><p>Port is '8080'</p></li>
-                    <li><p>Select the 'Arguments' tab:</p></li>
-                    <li><p>Define a variable <code>m2_loc</code> (Variables -&gt; Edit -&gt; New)
-                        as the path to your local maven repository (e.g. /home/user/.m2/repository)</p></li>
-                    <li><p>Define a variable <code>ecm_loc</code> as the path of your toplevel project directory
-                        (e.g. /home/user/hippo-ecm)</p></li>
-                    <li><p>Add</p>
-                        <source>
--Dorg.mortbay.util.FileResource.checkAliases=False
--Djava.rmi.server.codebase="file:///${m2_loc}/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4/jackrabbit-jcr-rmi-1.4.jar
-file:///${m2_loc}/javax/jcr/jcr/1.0/jcr-1.0.jar
-file:///${ecm_loc}/addon/reviewed-action/repository/target/classes/"
-                        </source>
-                     </li>
-                     <li><p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug'
-                     under 'display in favorites menu'</p></li>                
-                </ol>
-            </subsection>
-        </section>
-
         <section name="Run">
             <p>
-                You can now run and debug the application within Eclipse:
-                Run the Jetty launcher, open your browser and go to localhost:8080  
+                <a href="http://jettylauncher.sourceforge.net/docs/quickstart.html">Create Jetty
+                    launcher configuration</a>
             </p>
-            
+            <ul>
+                <li>
+                    <p>Name is 'hippo-ecm-package-war'</p>
+                </li>
+                <li>
+                    <p>Project is 'hippo-ecm-package-war'</p>
+                </li>
+                <li>
+                    <p>Webapp dir is 'src/main/webapp'</p>
+                </li>
+                <li>
+                    <p>Context path = '/'</p>
+                </li>
+                <li>
+                    <p>Port is '8080'</p>
+                </li>
+            </ul>
+            <p>Select the 'Arguments' tab:</p>            
+            <ul>
+                <li>
+                    <p>Define a variable <code>m2_loc</code> as the path to your local maven repository (e.g.
+                        /home/user/.m2/repository)</p>
+                </li>
+                <li>
+                    <p>Define a variable <code>ecm_loc</code> as the path of your toplevel
+                        project directory (e.g. /home/user/hippo-ecm)</p>
+                </li>
+                <li>
+                    <p>Add to 'VM Arguments':</p>
+                    <source> 
+-Dorg.mortbay.util.FileResource.checkAliases=False
+-Djava.rmi.server.codebase="file:///${m2_loc}/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4/jackrabbit-jcr-rmi-1.4.jar
+                            file:///${m2_loc}/javax/jcr/jcr/1.0/jcr-1.0.jar
+                            file:///${ecm_loc}/addon/reviewed-action/repository/target/classes/"
+                    </source>
+                </li>
+            </ul>
+            <p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug' under
+                'display in favorites menu'</p>            
+            <p> You can now run and debug the application within Eclipse: Run the Jetty launcher,
+            open your browser and go to localhost:8080 </p>
         </section>
-
     </body>
 </document>
 
