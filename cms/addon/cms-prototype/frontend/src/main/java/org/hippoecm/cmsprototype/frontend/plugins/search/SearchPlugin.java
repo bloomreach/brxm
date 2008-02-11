@@ -60,7 +60,7 @@ public class SearchPlugin extends AbstractListingPlugin{
     
     public static final String SIMILAR = "similar";
     public static final String REP_EXCERPT = "rep:excerpt(.)";
-    public static final String USER_PREF_NODENAME = "hippo:searchperspective-listingview";
+    public static final String USER_PREF_NODENAME = "searchperspective-listingview";
    
     
     public SearchPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
@@ -136,12 +136,12 @@ public class SearchPlugin extends AbstractListingPlugin{
     protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
         super.modifyDefaultPrefNode(prefNode,incoming);
         
-        Node pref = prefNode.addNode(HIGHLIGHT,USERSETTINGS_NODETYPE);
+        Node pref = prefNode.addNode(HIGHLIGHT,LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, HIGHLIGHT);
         pref.setProperty(PROPERTYNAME_PROPERTY, REP_EXCERPT);
         columns.add(getNodeColumn(new Model(HIGHLIGHT), REP_EXCERPT , incoming));
         
-        pref = prefNode.addNode(SIMILAR,USERSETTINGS_NODETYPE);
+        pref = prefNode.addNode(SIMILAR,LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, SIMILAR);
         pref.setProperty(PROPERTYNAME_PROPERTY, SIMILAR);
         columns.add(getNodeColumn(new Model(SIMILAR), SIMILAR , incoming));

@@ -46,7 +46,7 @@ public class TasklistPlugin extends AbstractListingPlugin{
 
     private static final long serialVersionUID = 1L;
     private JcrNodeModel model;
-    public static final String USER_PREF_NODENAME = "hippo:tasklist-listingview";
+    public static final String USER_PREF_NODENAME = "tasklist-listingview";
         
     public TasklistPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
@@ -93,11 +93,11 @@ public class TasklistPlugin extends AbstractListingPlugin{
 
     @Override
     protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
-        Node pref = prefNode.addNode("name",USERSETTINGS_NODETYPE);
+        Node pref = prefNode.addNode("name",LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "DocName");
         pref.setProperty(PROPERTYNAME_PROPERTY, "documentname");
 
-        pref = prefNode.addNode("type",USERSETTINGS_NODETYPE);
+        pref = prefNode.addNode("type",LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "RequestType");
         pref.setProperty(PROPERTYNAME_PROPERTY, "type");
         columns.add(getNodeColumn(new Model("DocName"), "documentname" , incoming));
