@@ -44,7 +44,6 @@ import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 import org.hippoecm.repository.jackrabbit.HippoPropertyId;
@@ -73,7 +72,7 @@ public class HippoAccessManager implements AccessManager {
     /**
      * namespace resolver for resolving namespaces in qualified paths
      */
-    private NamespaceResolver nsResolver;
+    //private NamespaceResolver nsResolver;
     
     /**
      * NodeTypeRegistry for resolving superclass node types
@@ -90,16 +89,26 @@ public class HippoAccessManager implements AccessManager {
      */
     public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.0";
 
-    /**
-     *  Hippo Namespace prefix, TODO: move to better place
-     */
-    public final static String NAMESPACE_PREFIX = "hippo";
     
-
-    public static Name hippoDoc;
-    public static Name hippoHandle;
-    public static Name hippoFacetSearch;
-    public static Name hippoFacetSelect;
+    /**
+     * Name of hippo:docucment 
+     */
+    private final Name hippoDoc;
+    
+    /**
+     * Name of hippo:handle
+     */
+    private final Name hippoHandle;
+    
+    /**
+     * Name of hippo:facetsearch
+     */
+    private final Name hippoFacetSearch;
+    
+    /**
+     * Name of hippo:facetselect
+     */
+    private final Name hippoFacetSelect;
 
     /**
      * Root NodeId of current session
@@ -120,11 +129,13 @@ public class HippoAccessManager implements AccessManager {
     /**
      * Flag wheter current user is anonymous
      */
+    @SuppressWarnings("unused")
     private boolean isAnonymous;
 
     /**
      * Flag wheter current user is a regular user
      */
+    @SuppressWarnings("unused")
     private boolean isUser;
 
     /**
@@ -146,6 +157,12 @@ public class HippoAccessManager implements AccessManager {
         isUser = false;
         isAdmin = false;
         isSystem = false;
+
+        // create useful names
+        hippoDoc = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_DOCUMENT));
+        hippoHandle = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_HANDLE));
+        hippoFacetSearch = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSEARCH));
+        hippoFacetSelect = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSELECT));
     }
 
     private static final Logger log = LoggerFactory.getLogger(HippoAccessManager.class);
@@ -159,7 +176,7 @@ public class HippoAccessManager implements AccessManager {
         }
         subject = context.getSubject();
         hierMgr = (HippoHierarchyManager) context.getHierarchyManager();
-        nsResolver = context.getNamespaceResolver();
+        //nsResolver = context.getNamespaceResolver();
         if (context instanceof HippoAMContext) {
             ntReg = ((HippoAMContext) context).getNodeTypeRegistry();
         }
@@ -172,12 +189,6 @@ public class HippoAccessManager implements AccessManager {
 
         // cache root NodeId
         rootNodeId = (NodeId) hierMgr.resolvePath(PathFactoryImpl.getInstance().getRootPath());
-
-        // create useful names
-        hippoDoc = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_DOCUMENT));
-        hippoHandle = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_HANDLE));
-        hippoFacetSearch = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSEARCH));
-        hippoFacetSelect = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSELECT));
 
         
         // we're done
@@ -364,13 +375,11 @@ public class HippoAccessManager implements AccessManager {
         if (localName.equals(getLocalName(HippoNodeType.NT_TYPE))) {
             // shift one up in hierarchy
             nodeState = (NodeState) hierMgr.getItemState(nodeState.getParentId());
-            namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
             localName = nodeState.getNodeTypeName().getLocalName();
         }
         if (localName.equals(getLocalName(HippoNodeType.NT_TYPES))) {
             // shift one up in hierarchy
             nodeState = (NodeState) hierMgr.getItemState(nodeState.getParentId());
-            namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
             localName = nodeState.getNodeTypeName().getLocalName();
         }
         if (localName.equals(getLocalName(HippoNodeType.NT_WORKFLOW))) {

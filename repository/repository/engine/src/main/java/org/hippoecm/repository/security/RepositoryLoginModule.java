@@ -17,6 +17,7 @@ package org.hippoecm.repository.security;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -58,7 +59,7 @@ public class RepositoryLoginModule implements LoginModule {
 
     // local authentication state:
     // the principals, i.e. the authenticated identities
-    private final Set principals = new HashSet();
+    private final Set<Principal> principals = new HashSet<Principal>();
 
     // keep the auth state of the user trying to login
     private boolean authenticated = false;

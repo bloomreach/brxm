@@ -23,6 +23,11 @@ import java.security.Principal;
  */
 public class RolePrincipal implements Principal, Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
+    /**
+     * The name of the role
+     */
     private final String name;
 
     /**
