@@ -15,12 +15,15 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.generic.list;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -30,9 +33,9 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.jackrabbit.JcrConstants;;
 
 public class NodeCell extends Panel {
     private static final long serialVersionUID = 1L;
@@ -90,19 +93,35 @@ public class NodeCell extends Panel {
                 } else if (nodePropertyName.equals("path")) {
                     addLabel(link, n.getPath());
                 } else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
-                     addLabel(link, n.getPrimaryNodeType().getName());
+                     if(n.getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE)) {
+                        NodeIterator nodeIt = n.getNodes();
+                        boolean notFound = true;
+                        while(nodeIt.hasNext()) {
+                            Node childNode = nodeIt.nextNode();
+                            if(childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                addLabel(link, childNode.getPrimaryNodeType().getName());
+                                notFound = false;
+                                break;
+                            }
+                        }
+                        if(notFound) {
+                            addEmptyLabel(link);
+                        }
+                     } else {
+                         addLabel(link, n.getPrimaryNodeType().getName());
+                     }
                 }
                 else {
                     getLabel4Property(n.getProperty(nodePropertyName), link);
                 }
             } catch (ValueFormatException e) {
-                log.debug("Unable to find property for culumn " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for column " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
                 addEmptyLabel(link);
             } catch (PathNotFoundException e) {
-                log.debug("Unable to find property for culumn " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for column " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
                 addEmptyLabel(link);
             } catch (RepositoryException e) {
-                log.debug("Unable to find property for culumn " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for column " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
                 addEmptyLabel(link);
             }
         } else {
