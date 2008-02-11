@@ -588,8 +588,18 @@ public class HippoAccessManager implements AccessManager {
                 // this can be either
                 // - a new property (not yet saved)
                 // - a deleted property (not yet saved)
-                // - a "virtual" property (eg. hippo:count)
-                log.debug("Item not found in hierarchy for id: " + id, e);
+                // - a "virtual" property (eg. hippo:count)?
+                if ((permissions & REMOVE) == REMOVE) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Checking [" + pString(permissions) + "] for: " + id);
+                        log.trace("Property item not found (probably parent node removed) in hierarchy for id: " + id);
+                    }
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Checking [" + pString(permissions) + "] for: " + id);
+                        log.debug("Property item not found (new or virtual?) in hierarchy for id: " + id);
+                    }
+                }
                 return true;
             } catch (ItemStateException e) {
                 log.error("ItemSate exception for id: " + id, e);
@@ -698,15 +708,15 @@ public class HippoAccessManager implements AccessManager {
         }
 
         // narrow down permissions
-        if ((permissions & REMOVE) == REMOVE) {
-            buf.append('d');
+        if ((permissions & WRITE) == WRITE) {
+            buf.append('w');
         } else {
             buf.append('-');
         }
 
         // narrow down permissions
-        if ((permissions & WRITE) == WRITE) {
-            buf.append('w');
+        if ((permissions & REMOVE) == REMOVE) {
+            buf.append('d');
         } else {
             buf.append('-');
         }
