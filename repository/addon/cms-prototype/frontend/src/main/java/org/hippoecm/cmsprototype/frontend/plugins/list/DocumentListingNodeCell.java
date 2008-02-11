@@ -23,6 +23,7 @@ import org.hippoecm.cmsprototype.frontend.plugins.generic.list.NodeCell;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.api.HippoNode;
+import org.apache.jackrabbit.JcrConstants;
 
 public class DocumentListingNodeCell extends NodeCell {
     private static final long serialVersionUID = 1L;
@@ -45,7 +46,7 @@ public class DocumentListingNodeCell extends NodeCell {
                     addEmptyLabel(link);
                 }
             }
-            else if (nodePropertyName.equals("jcr:primaryType")) {
+            else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
                 addLabel(link, "Folder");
             }
             else {
