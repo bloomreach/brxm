@@ -46,11 +46,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryTemplateConfig.class);
 
-    private String application;
-
-    public RepositoryTemplateConfig(JcrSessionModel sessionModel, String application) {
+    public RepositoryTemplateConfig(JcrSessionModel sessionModel) {
         super(sessionModel, "");
-        this.application = application;
     }
 
     public TemplateDescriptor getTemplate(String name) {
@@ -78,12 +75,16 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     }
 
     public List<TemplateDescriptor> getTemplates() {
+        return getTemplates("*");
+    }
+
+    public List<TemplateDescriptor> getTemplates(String namespace) {
         Session session = getJcrSession();
 
         List<TemplateDescriptor> list = new LinkedList<TemplateDescriptor>();
         try {
-            String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + application
-                    + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/*";
+            String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.NAMESPACES_PATH + "/" + namespace
+                    + "/*";
 
             QueryManager queryManager = session.getWorkspace().getQueryManager();
             Query query = queryManager.createQuery(xpath, Query.XPATH);
@@ -113,8 +114,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     private Node lookupConfigNode(String template) throws RepositoryException {
         Session session = getJcrSession();
 
-        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + application + "/*/"
-                + HippoNodeType.HIPPO_TEMPLATES + "/" + template;
+        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.NAMESPACES_PATH + "/*/" + template;
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);
@@ -227,6 +227,9 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             try {
                 if (node.hasProperty(HippoNodeType.HIPPO_NODE)) {
                     setIsNode(node.getProperty(HippoNodeType.HIPPO_NODE).getBoolean());
+                }
+                if (node.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
+                    setSuperType(node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getString());
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());

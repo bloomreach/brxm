@@ -33,7 +33,7 @@ public class CancelRequestDialog extends AbstractWorkflowDialog {
 
     @Override
     protected void doOk() throws Exception {
-        BasicRequestWorkflow workflow = (BasicRequestWorkflow) getWorkflow();
+        BasicRequestWorkflow workflow = (BasicRequestWorkflow) getWorkflow("reviewed-action");
         workflow.cancelRequest();
     }
 

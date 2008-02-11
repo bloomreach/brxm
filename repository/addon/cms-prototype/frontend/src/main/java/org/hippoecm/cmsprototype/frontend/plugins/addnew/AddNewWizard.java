@@ -21,14 +21,13 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Workspace;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -48,6 +47,7 @@ import org.hippoecm.frontend.plugin.channel.MessageContext;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,17 +61,18 @@ public class AddNewWizard extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(AddNewWizard.class);
 
-    String templatePath;
+    private String prototypePath;
 
     public AddNewWizard(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        Main main = (Main) getApplication();
-        templatePath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
-                + main.getHippoApplication();
+        Main main = (Main) Application.get();
+        prototypePath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
+                + main.getHippoApplication() + "/" + HippoNodeType.PROTOTYPES_PATH;
 
-        add(new AddNewForm("addNewForm"));
+        final AddNewForm form = new AddNewForm("addNewForm");
         add(new FeedbackPanel("feedback"));
+        add(form);
     }
 
     private final class AddNewForm extends Form {
@@ -86,11 +87,11 @@ public class AddNewWizard extends Plugin {
             name.setRequired(true);
             add(name);
 
-            List<String> templates = getTemplates();
-            DropDownChoice template = new DropDownChoice("template", new PropertyModel(properties, "template"),
-                    templates);
-            template.setRequired(true);
-            add(template);
+            List<String> prototypes = getPrototypes();
+            DropDownChoice prototype = new DropDownChoice("prototype", new PropertyModel(properties, "prototype"),
+                    prototypes);
+            prototype.setRequired(true);
+            add(prototype);
 
             add(new AjaxButton("submit", this) {
                 private static final long serialVersionUID = 1L;
@@ -132,15 +133,15 @@ public class AddNewWizard extends Plugin {
 
         }
 
-        private List<String> getTemplates() {
-            List<String> templates = new ArrayList<String>();
+        private List<String> getPrototypes() {
+            List<String> prototypes = new ArrayList<String>();
             UserSession session = (UserSession) Session.get();
 
             try {
                 QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
                 NodeTypeManager ntMgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
 
-                String xpath = templatePath + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/*";
+                String xpath = prototypePath + "/*";
 
                 Query query = queryManager.createQuery(xpath, Query.XPATH);
                 QueryResult result = query.execute();
@@ -148,10 +149,9 @@ public class AddNewWizard extends Plugin {
                 while (iterator.hasNext()) {
                     Node node = iterator.nextNode();
                     try {
-                        NodeType type = ntMgr.getNodeType(node.getName());
-                        if (type.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            templates.add(node.getName());
-                        }
+                        // name of the node should correspond to a registered node type
+                        ntMgr.getNodeType(node.getName());
+                        prototypes.add(node.getName());
                     } catch (NoSuchNodeTypeException ex) {
                         log.warn("Template " + node.getName() + " does not correspond to a node type");
                     }
@@ -160,42 +160,22 @@ public class AddNewWizard extends Plugin {
                 log.error(e.getMessage());
             }
 
-            return templates;
+            return prototypes;
         }
 
         Node createDocument() {
             UserSession session = (UserSession) Session.get();
             Node result = null;
             String name = (String) properties.get("name");
-            String type = (String) properties.get("template");
+            String type = (String) properties.get("prototype");
 
             try {
                 Node handle = session.getRootNode().addNode(name, HippoNodeType.NT_HANDLE);
 
-                // save the created nodes
-                session.getJcrSession().save();
-
-                // find template node describing the node type
-                QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
-                String xpath = templatePath + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/"
-                        + (String) properties.get("template");
-                Query query = queryManager.createQuery(xpath, Query.XPATH);
-                NodeIterator templateIterator = query.execute().getNodes();
-                if (templateIterator.getSize() != 1) {
-                    log.error("Found " + templateIterator.getSize() + " matching templates, expected one.");
-                    return result;
-                }
-                Node template = templateIterator.nextNode();
-                if (template.hasNode("hippo:prototype")) {
-                    Node prototype = template.getNode("hippo:prototype");
-                    Workspace workspace = ((UserSession) Session.get()).getJcrSession().getWorkspace();
-                    workspace.copy(prototype.getPath(), handle.getPath() + "/" + name);
-                } else {
-                    handle.addNode(name, type);
-                    handle.save();
-                }
-
-                result = handle.getNode(name);
+                // find prototype node; use the first node under the prototype handle
+                Node prototype = (Node) session.getJcrSession().getItem("/" + prototypePath + "/" + type + "/" + type);
+                result = ((HippoSession) session.getJcrSession()).copy(prototype, handle.getPath() + "/" + name);
+                handle.save();
 
             } catch (RepositoryException e) {
                 log.error(e.getMessage());

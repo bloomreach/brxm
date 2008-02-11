@@ -45,6 +45,7 @@ public class TemplateDescriptor implements IClusterable {
 
     private String name;
     private String type;
+    private String superType;
     private boolean node;
     private PluginDescriptor plugin;
     private LinkedList<FieldDescriptor> fields;
@@ -60,6 +61,7 @@ public class TemplateDescriptor implements IClusterable {
     public TemplateDescriptor(Map<String, Object> map, TemplateEngine engine) {
         this.name = (String) map.get("name");
         this.type = (String) map.get("type");
+        this.superType = (String) map.get("superType");
         this.node = ((Boolean) map.get("isNode")).booleanValue();
 
         this.fields = new LinkedList<FieldDescriptor>();
@@ -76,6 +78,7 @@ public class TemplateDescriptor implements IClusterable {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", name);
         map.put("type", type);
+        map.put("superType", superType);
         map.put("isNode", new Boolean(node));
 
         LinkedList<Map<String, Object>> fieldList = new LinkedList<Map<String, Object>>();
@@ -94,6 +97,14 @@ public class TemplateDescriptor implements IClusterable {
 
     public String getType() {
         return type;
+    }
+
+    public String getSuperType() {
+        return superType;
+    }
+
+    public void setSuperType(String superType) {
+        this.superType = superType;
     }
 
     public boolean isNode() {

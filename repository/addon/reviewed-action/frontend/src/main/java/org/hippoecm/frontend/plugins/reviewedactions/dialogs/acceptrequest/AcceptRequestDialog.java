@@ -33,7 +33,7 @@ public class AcceptRequestDialog extends AbstractWorkflowDialog {
 
     @Override
     protected void doOk() throws Exception {
-        FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
+        FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow("reviewed-action");
         workflow.acceptRequest();
     }
 

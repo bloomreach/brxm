@@ -31,26 +31,30 @@ import org.hippoecm.repository.servicing.Remodeling;
 
 public class RemodelWorkflowImpl implements RemodelWorkflow {
     private Session userSession;
-    private Node initializeNode;
+    private Node subject;
 
     public RemodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.userSession = userSession;
-        this.initializeNode = subject;
+        this.subject = subject;
     }
 
     public String[] remodel(String cnd) throws WorkflowException, MappingException, RepositoryException {
-        if(!initializeNode.isNodeType(HippoNodeType.NT_INITIALIZEITEM))
+        if (!subject.isNodeType(HippoNodeType.NT_DOCUMENT))
             throw new MappingException("bad workflow invocation");
+
         try {
+            String typeName = subject.getPrimaryNodeType().getName();
+            String prefix = typeName.substring(0, typeName.indexOf(':'));
+
             StringBufferInputStream istream = new StringBufferInputStream(cnd);
-            Remodeling remodel = Remodeling.remodel(userSession, initializeNode.getName(), istream);
+            Remodeling remodel = Remodeling.remodel(userSession, prefix, istream);
             NodeIterator iter = remodel.getNodes();
             String[] paths = new String[(int) iter.getSize()];
-            for(int i = 0; iter.hasNext(); i++) {
+            for (int i = 0; iter.hasNext(); i++) {
                 paths[i] = iter.nextNode().getPath();
             }
             return paths;
-        } catch(NamespaceException ex) {
+        } catch (NamespaceException ex) {
             throw new RepositoryException(ex);
         }
     }

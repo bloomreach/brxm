@@ -44,7 +44,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         super(dialogWindow, channel);
     }
 
-    protected Workflow getWorkflow() {
+    protected Workflow getWorkflow(String category) {
         Plugin owningPlugin = getOwningPlugin();
         Workflow workflow = null;
         try {
@@ -52,12 +52,10 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
             JcrNodeModel nodeModel = new JcrNodeModel(owningPlugin.getPluginModel());
             WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
 
-            //TODO: add optional property 'workflowcategory' to
-            //frontend plugin configuration nodes and use that instead of the plugin id.
-            String workflowCategory = owningPlugin.getDescriptor().getPluginId();
-            WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, nodeModel.getNode());
-            workflow = manager.getWorkflow(workflowDescriptor);
-
+            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(category, nodeModel.getNode());
+            if (descriptor != null) {
+                workflow = manager.getWorkflow(descriptor);
+            }
         } catch (MappingException e) {
             log.error(e.getMessage());
         } catch (RepositoryException e) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,37 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.logout;
+package org.hippoecm.frontend.plugins.standardworkflow;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.RemodelDialog;
 
-public class LogoutPlugin extends Plugin {
+public class RemodelWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public LogoutPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+    public RemodelWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        UserSession session = (UserSession) getSession();
-        ValueMap credentials = session.getCredentials();
-        String username = credentials.getString("username");
-
-        add(new LogoutLink("logout-link", "Logout", LogoutDialog.class, (JcrNodeModel) getModel(), pluginDescriptor
-                .getIncoming(), getPluginManager().getChannelFactory()));
-        add(new Label("username", username));
+        add(new DialogLink("remodelRequest-dialog", "Remodel request", RemodelDialog.class,
+                (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
     }
 
     @Override
     public void receive(Notification notification) {
-        if ("logout".equals(notification.getOperation())) {
-            UserSession userSession = (UserSession) getSession();
-            userSession.logout();
+        if ("select".equals(notification.getOperation())) {
+            setPluginModel(new JcrNodeModel(notification.getModel()));
         }
         super.receive(notification);
     }

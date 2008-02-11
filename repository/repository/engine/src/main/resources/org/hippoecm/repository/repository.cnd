@@ -172,6 +172,28 @@
 [hippo:pluginfolder] > nt:base
 + * (hippo:plugin) = hippo:plugin
  
+[hippo:field] > hippo:plugin
+- hippo:path (string)
+- hippo:name (string)
+- hippo:type (string)
+- hippo:multiple (boolean)
+- hippo:mandatory (boolean)
+- hippo:ordered (boolean)
+
+[hippo:template] > hippo:plugin
+- hippo:type (string)
+- hippo:supertype (string)
+- hippo:node (boolean)
+- hippo:renderer (string) mandatory
++ hippo:prototype (hippo:document)
++ hippo:field (hippo:field) multiple
+
+[hippo:namespace] > nt:base
++ * (hippo:template) = hippo:template
+
+[hippo:namespacefolder] > nt:base
++ * (hippo:namespace) = hippo:namespace
+
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:queryfolder) = hippo:queryfolder mandatory
@@ -180,4 +202,5 @@
 + hippo:users (hippo:userfolder) = hippo:userfolder
 + hippo:roles (hippo:rolefolder) = hippo:rolefolder
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
++ hippo:namespaces (hippo:namespacefolder) = hippo:namespacefolder
 + hippo:frontend (hippo:application) = hippo:application

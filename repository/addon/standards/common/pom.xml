@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Reviewed action common addon</name>
+  <name>Standard common addon</name>
   <description>Hippo ECM standards addon</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-standards-common</artifactId>

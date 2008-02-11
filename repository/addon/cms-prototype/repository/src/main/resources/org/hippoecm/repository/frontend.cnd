@@ -25,20 +25,3 @@
 + * (hippo:frontendplugin) = hippo:frontendplugin
 
 [hippo:page] > nt:unstructured
-
-[hippo:field] > hippo:plugin
-- hippo:path (string)
-- hippo:name (string)
-- hippo:type (string)
-- hippo:multiple (boolean)
-- hippo:mandatory (boolean)
-- hippo:ordered (boolean)
-
-[hippo:template] > hippo:frontendplugin orderable
-- hippo:type (string)
-- hippo:node (boolean)
-+ hippo:prototype (hippo:document)
-+ hippo:field (hippo:field) multiple
-
-[hippo:templatefolder] > nt:base
-+ * (hippo:template) = hippo:template
