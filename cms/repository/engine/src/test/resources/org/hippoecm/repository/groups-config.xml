@@ -38,7 +38,7 @@
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:facetauthfolder</sv:value>
             </sv:property>
-            <sv:node sv:name="language">
+            <sv:node sv:name="hippo:language">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                     <sv:value>hippo:facetauth</sv:value>
                 </sv:property>
@@ -46,7 +46,7 @@
                     <sv:value>7</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:facet" sv:type="String">
-                    <sv:value>language</sv:value>
+                    <sv:value>hippo:language</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:values" sv:type="String">
                     <sv:value>english</sv:value>
