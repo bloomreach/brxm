@@ -42,8 +42,7 @@ public class FilterPlugin extends Plugin {
         handle = null;
         List<String> ops = descriptor.getParameter("handle");
         if (ops != null) {
-            handle = new HashSet<String>(ops.size());
-            handle.addAll(ops);
+            handle = new HashSet<String>(ops);
         } else {
             log.warn("No configuration specified for FilterPlugin.  No filtering will take place.");
         }
