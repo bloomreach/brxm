@@ -19,6 +19,9 @@ import javax.jcr.RepositoryException;
 
 
 public class RoleNotFoundException extends RepositoryException {
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * Constructs a new instance of this class with <code>null</code> as its
      * detail message.

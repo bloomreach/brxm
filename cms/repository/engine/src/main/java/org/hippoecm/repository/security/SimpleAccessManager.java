@@ -72,11 +72,11 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.Sim
     }
 
     protected boolean canAccessItem(ItemId id, int permissions) {
-        for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
-            String username = principal.getName();
+        //for(UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
+            //String username = principal.getName();
             // FIXME: here the username could be used to determin the role
             // and allow or deny access
-        }
+        //}
 
         // FIXME Current simple implementation to be removed for M2 or M3 at the latest.
         try {
