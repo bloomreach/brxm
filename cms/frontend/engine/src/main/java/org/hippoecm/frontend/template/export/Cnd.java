@@ -39,7 +39,7 @@ public class Cnd {
 
     public static void main(final String[] args) {
         if (args.length < 1) {
-            System.out.println("usage: Cnd <application> [<repository location>]");
+            System.out.println("usage: Cnd <namespace> [<repository location>]");
             return;
         }
 
@@ -66,10 +66,10 @@ public class Cnd {
         credentials.put("password", SYSTEMUSER_PASSWORD);
         JcrSessionModel jcrSession = new JcrSessionModel(credentials);
 
-        RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig(jcrSession, args[0]);
+        RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig(jcrSession);
         List<TemplateDescriptor> list = templateConfig.getTemplates();
 
-        CndSerializer serializer = new CndSerializer(jcrSession);
+        CndSerializer serializer = new CndSerializer(jcrSession, templateConfig, args[0]);
         for (TemplateDescriptor template : list) {
             if (template.isNode()) {
                 serializer.addTemplate(template);

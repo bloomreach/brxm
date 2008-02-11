@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinst
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class ObtainEditableInstanceDialog extends AbstractWorkflowDialog {
@@ -33,7 +34,7 @@ public class ObtainEditableInstanceDialog extends AbstractWorkflowDialog {
 
     @Override
     protected void doOk() throws Exception {
-        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
+        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow("reviewed-action");
         workflow.obtainEditableInstance();
     }
 

@@ -134,4 +134,14 @@ public class JcrSessionModel extends LoadableDetachableModel {
         return result;
     }
 
+    @Override
+    public void detach() {
+        Session session = (Session) getObject();
+        if (session != null) {
+            classLoader = null;
+            workflowManager = null;
+            session.logout();
+        }
+        super.detach();
+    }
 }

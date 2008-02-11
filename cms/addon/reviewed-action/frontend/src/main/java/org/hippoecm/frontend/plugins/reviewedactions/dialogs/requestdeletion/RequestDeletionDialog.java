@@ -33,7 +33,7 @@ public class RequestDeletionDialog extends AbstractWorkflowDialog {
 
     @Override
     protected void doOk() throws Exception {
-        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
+        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow("reviewed-action");
         workflow.requestDeletion();
     }
 

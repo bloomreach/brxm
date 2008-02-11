@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.admin.logout;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -40,7 +41,7 @@ public class LogoutLink extends Panel {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
-    
+
     public LogoutLink(String id, String linktext, Class clazz, JcrNodeModel model, Channel channel,
             ChannelFactory factory) {
         super(id, model);
@@ -57,8 +58,11 @@ public class LogoutLink extends Panel {
             public void onClick(AjaxRequestTarget target) {
                 UserSession userSession = (UserSession) getSession();
                 try {
-                    if (userSession.getRootNode().getSession().hasPendingChanges()) {
-                        dialogWindow.show(target);
+                    Node rootNode = userSession.getRootNode();
+                    if (rootNode != null) {
+                        if (rootNode.getSession().hasPendingChanges()) {
+                            dialogWindow.show(target);
+                        }
                     } else {
                         userSession.logout();
                     }

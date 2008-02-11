@@ -25,4 +25,6 @@ public interface TemplateConfig extends IClusterable {
     public TemplateDescriptor getTemplate(String name);
 
     public List<TemplateDescriptor> getTemplates();
+
+    public List<TemplateDescriptor> getTemplates(String namespace);
 }

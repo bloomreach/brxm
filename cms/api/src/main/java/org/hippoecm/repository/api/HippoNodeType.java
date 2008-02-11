@@ -37,6 +37,8 @@ public interface HippoNodeType {
     final public static String ROLES_PATH = "hippo:roles";
     final public static String FACETAUTH_PATH = "hippo:facetauths";
     final public static String PLUGIN_PATH = "hippo:plugins";
+    final public static String PROTOTYPES_PATH = "hippo:prototypes";
+    final public static String NAMESPACES_PATH = "hippo:namespaces";
 
     //--- Hippo NodeTypes ---//
     final public static String NT_APPLICATION = "hippo:application";
@@ -58,6 +60,7 @@ public interface HippoNodeType {
     final public static String NT_INITIALIZEITEM = "hippo:initializeitem";
     final public static String NT_MIRROR = "hippo:mirror";
     final public static String NT_MOUNT = "hippo:mount";
+    final public static String NT_NAMESPACE = "hippo:namespace";
     final public static String NT_PAGE = "hippo:page";
     final public static String NT_PARAMETERS = "hippo:parameters";
     final public static String NT_PLUGIN = "hippo:plugin";
@@ -116,6 +119,7 @@ public interface HippoNodeType {
     final public static String HIPPO_SEQUENCE = "hippo:sequence";
     final public static String HIPPO_SERVICE = "hippo:classname";
     final public static String HIPPO_STATE = "state";
+    final public static String HIPPO_SUPERTYPE = "hippo:supertype";
     final public static String HIPPO_TEMPLATE = "hippo:template";
     final public static String HIPPO_TEMPLATES = "hippo:templates";
     final public static String HIPPO_TYPE = "hippo:type";

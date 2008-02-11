@@ -1,5 +1,5 @@
-<!--
-     * Copyright 2007 Hippo
+ <!--
+     * Copyright 2008 Hippo
      *
      * Licensed under the Apache License, Version 2.0 (the  "License");
      * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
      * limitations under the License.
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <div>
-      <span wicket:id="feedback">Feedback message</span>
-      <form wicket:id="addNewForm">
-        Name:
-        <input wicket:id="name" type="text" value="name"/>
-        <br/>
-        Template:
-        <select wicket:id="prototype" />
-        <br/>
-        <input wicket:id="submit" type="submit" value="Add"/>
-      </form>
-    </div>
-  </wicket:panel>
+    <wicket:panel>
+        <ul>
+            <li>
+                <span wicket:id="remodelRequest-dialog"></span>
+            </li>
+        </ul>
+    </wicket:panel>
 </html>

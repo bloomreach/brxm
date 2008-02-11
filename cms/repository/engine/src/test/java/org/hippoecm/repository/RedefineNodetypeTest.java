@@ -146,7 +146,7 @@ public class RedefineNodetypeTest extends TestCase {
             "<hippo='http://www.hippoecm.org/nt/1.0'>\n" +
             "<hippotest2='http://www.hippoecm.org/test2/1.0'>\n" +
             "\n" +
-            "[hippotest2:test] > nt:unstructured\n" +
+            "[hippotest2:test] > hippo:document\n" +
             "- hippotest2:first (string) mandatory\n";
         String cnd2 =
             "<rep='internal'>\n" +
@@ -156,7 +156,7 @@ public class RedefineNodetypeTest extends TestCase {
             "<hippo='http://www.hippoecm.org/nt/1.0'>\n" +
             "<hippotest2='http://www.hippoecm.org/test2/1.1'>\n" +
             "\n" +
-            "[hippotest2:test] > nt:unstructured\n" +
+            "[hippotest2:test] > hippo:document\n" +
             "- hippotest2:second (string)\n";
 
         session.getRootNode().addNode("test");
@@ -172,8 +172,12 @@ public class RedefineNodetypeTest extends TestCase {
         node.setProperty("hippotest2:first","aap");
         session.save();
 
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        node = session.getRootNode().getNode("test").getNode("testing");
+
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
-        Workflow wf = wfmgr.getWorkflow("internal", base.getNode("hippotest2"));
+        Workflow wf = wfmgr.getWorkflow("internal", node);
         assertNotNull(wf);
         assertTrue(wf instanceof RemodelWorkflow);
         String[] nodes = ((RemodelWorkflow)wf).remodel(cnd2);

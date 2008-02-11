@@ -197,10 +197,26 @@
       <sv:value>111</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>system-template.xml</sv:value>
+      <sv:value>template-system.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype/system</sv:value>
+      <sv:value>/hippo:configuration/hippo:namespaces</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <!-- Hippo Templates -->
+  <sv:node sv:name="hippo-templates">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>112</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>template-hippo.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:namespaces</sv:value>
     </sv:property>
   </sv:node>
   
@@ -210,23 +226,39 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>112</sv:value>
+      <sv:value>113</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>template-config.xml</sv:value>
+      <sv:value>template-hipposample.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype/demo</sv:value>
+      <sv:value>/hippo:configuration/hippo:namespaces</sv:value>
     </sv:property>
   </sv:node>
-
+  
+  <!-- Document Prototypes -->
+  <sv:node sv:name="doc-prototypes">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>114</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>prototypes-cms.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <!--Demo data for template engine-->
   <sv:node sv:name="template-demo">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>113</sv:value>
+      <sv:value>150</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>template-demodata.xml</sv:value>

@@ -28,6 +28,7 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +41,23 @@ public class CndSerializer implements IClusterable {
     private HashMap<String, String> namespaces;
     private LinkedHashSet<TemplateDescriptor> templates;
 
-    public CndSerializer(JcrSessionModel session) {
+    public CndSerializer(JcrSessionModel session, TemplateConfig config, String namespace) {
         this.jcrSession = session;
         namespaces = new HashMap<String, String>();
         templates = new LinkedHashSet<TemplateDescriptor>();
+
+        List<TemplateDescriptor> list = config.getTemplates(namespace);
+        for (TemplateDescriptor template : list) {
+            if (template.isNode()) {
+                String type = template.getType();
+                if (type.indexOf(':') > 0) {
+                    String prefix = type.substring(0, type.indexOf(':'));
+                    if (namespace.equals(prefix)) {
+                        addTemplate(template);
+                    }
+                }
+            }
+        }
     }
 
     public String getOutput() {
@@ -72,6 +86,23 @@ public class CndSerializer implements IClusterable {
         }
     }
 
+    public void versionNamespace(String prefix) {
+        if (namespaces.containsKey(prefix)) {
+            String namespace = namespaces.get(prefix);
+            int pos = namespace.lastIndexOf('/');
+            int minorPos = namespace.lastIndexOf('.');
+            if (minorPos > pos) {
+                int minor = Integer.parseInt(namespace.substring(minorPos + 1));
+                namespace = namespace.substring(0, minorPos + 1) + new Integer(minor + 1).toString();
+                namespaces.put(prefix, namespace);
+            } else {
+                log.warn("namespace for " + prefix + " does not conform to versionable format");
+            }
+        } else {
+            log.warn("namespace for " + prefix + " was not found");
+        }
+    }
+
     public Map<String, String> getNamespaces() {
         return namespaces;
     }
@@ -79,8 +110,20 @@ public class CndSerializer implements IClusterable {
     public void addTemplate(TemplateDescriptor template) {
         String type = template.getType();
         if (type.indexOf(':') > 0) {
-            addNamespace(type.substring(0, type.indexOf(':')));
-            templates.add(template);
+            if (!templates.contains(template)) {
+                for (FieldDescriptor field : template.getFields()) {
+                    if (field.isNode()) {
+                        TemplateDescriptor sub = field.getTemplate();
+                        if (sub == null) {
+                            sub = field.getField().getTemplate();
+                        }
+                        String subType = sub.getType();
+                        addNamespace(subType.substring(0, subType.indexOf(':')));
+                    }
+                }
+                templates.add(template);
+                addNamespace(type.substring(0, type.indexOf(':')));
+            }
         }
     }
 
@@ -122,7 +165,11 @@ public class CndSerializer implements IClusterable {
 
     private void renderTemplate(StringBuffer output, TemplateDescriptor template) {
         String type = template.getType();
-        output.append("[" + type + "]\n");
+        output.append("[" + type + "]");
+        if (template.getSuperType() != null) {
+            output.append(" > " + template.getSuperType());
+        }
+        output.append("\n");
         for (FieldDescriptor field : template.getFields()) {
             renderField(output, field);
         }
