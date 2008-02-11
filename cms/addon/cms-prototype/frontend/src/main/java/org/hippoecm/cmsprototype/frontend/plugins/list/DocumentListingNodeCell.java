@@ -15,13 +15,9 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
-import java.util.List;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.hippoecm.cmsprototype.frontend.model.content.Document;
-import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.NodeCell;
 import org.hippoecm.frontend.model.NodeModelWrapper;
@@ -39,42 +35,28 @@ public class DocumentListingNodeCell extends NodeCell {
     protected void addLabel(NodeModelWrapper model, String nodePropertyName, AjaxLink link) {
         if (model instanceof DocumentListingParentFolder && nodePropertyName.equals("name")) {
             addLabel(link, "[..]");
-        } else if (model instanceof Folder) {
+        }
+        else if (model instanceof Folder) {
             if (nodePropertyName.equals("name")) {
                 HippoNode n = (HippoNode) model.getObject();
                 try {
-                    addLabel(link, "[" + n.getName() + "]");
+                    addLabel(link, "["+n.getName()+"]");
                 } catch (RepositoryException e) {
                     addEmptyLabel(link);
                 }
-            } else if (nodePropertyName.equals("jcr:primaryType")) {
+            }
+            else if (nodePropertyName.equals("jcr:primaryType")) {
                 addLabel(link, "Folder");
-            } else {
+            }
+            else {
                 addEmptyLabel(link);
             }
-        } else if (model instanceof Document) {
-            if (nodePropertyName.equals("name")) {
-                HippoNode n = (HippoNode) model.getObject();
-                try {
-                    addLabel(link, "[" + n.getName() + "]");
-                } catch (RepositoryException e) {
-                    addEmptyLabel(link);
-                }
-            } else if (nodePropertyName.equals("jcr:primaryType")) {
-                List<DocumentVariant> variants = ((Document)model).getVariants();
-                String type;
-                try {
-                    type = variants.get(0).getNodeModel().getNode().getPrimaryNodeType().getName();
-                    addLabel(link, type);
-                } catch (RepositoryException e) {
-                    addEmptyLabel(link);
-                }
-            } else {
-                addEmptyLabel(link);
-            }
-        } else {
+        }
+        else {
             super.addLabel(model, nodePropertyName, link);
         }
     }
 
+    
+    
 }
