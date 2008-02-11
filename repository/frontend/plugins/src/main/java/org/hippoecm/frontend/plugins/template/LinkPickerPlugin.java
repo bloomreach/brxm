@@ -15,7 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -32,27 +38,40 @@ public class LinkPickerPlugin extends Plugin {
     
     private JcrPropertyValueModel valueModel;
     
+    private Set<String> nodetypes;
+    
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
 
+    
     public LinkPickerPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         
         super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()), parentPlugin);
         
         TemplateModel tmplModel = (TemplateModel) getPluginModel();
-        
         valueModel = tmplModel.getJcrPropertyValueModel();
         
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         
+        nodetypes = null;
+        List<String> ops = pluginDescriptor.getParameter("nodetypes");
+        if (ops != null) {
+            nodetypes = new HashSet<String>(ops);
+        } else {
+            log.warn("No configuration specified for filtering on nodetypes.  No filtering will take place.");
+        }
         String value = (String) valueModel.getObject();
         if(value == null || "".equals(value)){
             value = "[...]";
         }
+        
+        Channel proxy = factory.createChannel();
+        
+        final DialogWindow dialogWindow = new DialogWindow("dialog", tmplModel.getNodeModel(), incoming, proxy);
+        LookupDialog lookupDialog = new LinkPickerDialog(dialogWindow,incoming);
+        DialogLink linkPicker = new DialogLink("value", value , lookupDialog, tmplModel.getNodeModel(), incoming, factory);
        
-        DialogLink linkPicker = new DialogLink("value", value , LinkPickerDialog.class, tmplModel.getNodeModel(), incoming, factory);
         add(linkPicker);
-
         setOutputMarkupId(true);
     }
 

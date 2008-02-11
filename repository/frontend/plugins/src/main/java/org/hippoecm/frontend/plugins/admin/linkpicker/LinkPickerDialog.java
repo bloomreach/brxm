@@ -50,7 +50,7 @@ public class LinkPickerDialog extends LookupDialog {
     
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel sourceNodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel sourceNodeModel = this.dialogWindow.getNodeModel();
         if (sourceNodeModel.getParentModel() != null) {
             JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
             String targetPath = targetNodeModel.getNode().getPath();
