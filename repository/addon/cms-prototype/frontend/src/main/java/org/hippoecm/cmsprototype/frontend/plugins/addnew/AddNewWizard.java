@@ -61,23 +61,23 @@ public class AddNewWizard extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(AddNewWizard.class);
 
-    private String templatePath;
+    String templatePath;
 
     public AddNewWizard(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
-        final AddNewForm form = new AddNewForm("addNewForm");
-        add(new FeedbackPanel("feedback"));
-        add(form);
 
         Main main = (Main) getApplication();
         templatePath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
                 + main.getHippoApplication();
+
+        add(new AddNewForm("addNewForm"));
+        add(new FeedbackPanel("feedback"));
     }
 
     private final class AddNewForm extends Form {
         private static final long serialVersionUID = 1L;
 
-        private ValueMap properties;
+        ValueMap properties;
 
         public AddNewForm(String id) {
             super(id);
@@ -140,7 +140,7 @@ public class AddNewWizard extends Plugin {
                 QueryManager queryManager = session.getJcrSession().getWorkspace().getQueryManager();
                 NodeTypeManager ntMgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
 
-                String xpath = templatePath +"/*/" + HippoNodeType.HIPPO_TEMPLATES + "/*";
+                String xpath = templatePath + "/*/" + HippoNodeType.HIPPO_TEMPLATES + "/*";
 
                 Query query = queryManager.createQuery(xpath, Query.XPATH);
                 QueryResult result = query.execute();
@@ -163,21 +163,14 @@ public class AddNewWizard extends Plugin {
             return templates;
         }
 
-        private Node createDocument() {
+        Node createDocument() {
             UserSession session = (UserSession) Session.get();
             Node result = null;
             String name = (String) properties.get("name");
             String type = (String) properties.get("template");
 
             try {
-                Node rootNode = session.getRootNode();
-                Node typeNode;
-                if (rootNode.hasNode(type)) {
-                    typeNode = rootNode.getNode(type);
-                } else {
-                    typeNode = rootNode.addNode(type, "nt:unstructured");
-                }
-                Node handle = typeNode.addNode(name, HippoNodeType.NT_HANDLE);
+                Node handle = session.getRootNode().addNode(name, HippoNodeType.NT_HANDLE);
 
                 // save the created nodes
                 session.getJcrSession().save();
