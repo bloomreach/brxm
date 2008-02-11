@@ -54,7 +54,7 @@
             <sv:value>/facetreference-demo/documents/articles/brave-new-world</sv:value>
             <sv:value>/facetreference-demo/documents/articles/brave-new-world/brave-new-world</sv:value>
           </sv:property>
-          <sv:property sv:name="language" sv:type="String">
+          <sv:property sv:name="hippo:language" sv:type="String">
             <sv:value>english</sv:value>
           </sv:property>
           <sv:property sv:name="state" sv:type="String">
@@ -83,7 +83,7 @@
             <sv:value>/facetreference-demo/documents/articles/the-invisible-man</sv:value>
             <sv:value>/facetreference-demo/documents/articles/the-invisible-man/the-invisible-man</sv:value>
           </sv:property>
-          <sv:property sv:name="language" sv:type="String">
+          <sv:property sv:name="hippo:language" sv:type="String">
             <sv:value>english</sv:value>
           </sv:property>
           <sv:property sv:name="state" sv:type="String">
@@ -112,7 +112,7 @@
             <sv:value>/facetreference-demo/documents/articles/war-of-the-worlds</sv:value>
             <sv:value>/facetreference-demo/documents/articles/war-of-the-worlds/war-of-the-worlds</sv:value>
           </sv:property>
-          <sv:property sv:name="language" sv:type="String">
+          <sv:property sv:name="hippo:language" sv:type="String">
             <sv:value>english</sv:value>
           </sv:property>
           <sv:property sv:name="state" sv:type="String">
@@ -133,7 +133,7 @@
             <sv:value>/facetreference-demo/documents/articles/war-of-the-worlds</sv:value>
             <sv:value>/facetreference-demo/documents/articles/war-of-the-worlds/war-of-the-worlds[2]</sv:value>
           </sv:property>
-          <sv:property sv:name="language" sv:type="String">
+          <sv:property sv:name="hippo:language" sv:type="String">
             <sv:value>dutch</sv:value>
           </sv:property>
           <sv:property sv:name="state" sv:type="String">
@@ -162,7 +162,7 @@
             <sv:value>/facetreference-demo/documents/articles/nineteeneightyfour</sv:value>
             <sv:value>/facetreference-demo/documents/articles/nineteeneightyfour/nineteeneightyfour</sv:value>
           </sv:property>
-          <sv:property sv:name="language" sv:type="String">
+          <sv:property sv:name="hippo:language" sv:type="String">
             <sv:value>dutch</sv:value>
           </sv:property>
           <sv:property sv:name="state" sv:type="String">
@@ -183,7 +183,7 @@
             <sv:value>/facetreference-demo/documents/articles/nineteeneightyfour</sv:value>
             <sv:value>/facetreference-demo/documents/articles/nineteeneightyfour/nineteeneightyfour[2]</sv:value>
           </sv:property>
-          <sv:property sv:name="language" sv:type="String">
+          <sv:property sv:name="hippo:language" sv:type="String">
             <sv:value>english</sv:value>
           </sv:property>
           <sv:property sv:name="state" sv:type="String">
@@ -202,7 +202,7 @@
         <sv:value>hippo:facetselect</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>language</sv:value>
+        <sv:value>hippo:language</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:values" sv:type="String">
         <sv:value>english</sv:value>
@@ -219,7 +219,7 @@
         <sv:value>hippo:facetselect</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>language</sv:value>
+        <sv:value>hippo:language</sv:value>
         <sv:value>state</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:values" sv:type="String">

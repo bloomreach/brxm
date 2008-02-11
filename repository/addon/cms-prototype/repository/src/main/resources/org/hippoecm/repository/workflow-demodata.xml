@@ -50,7 +50,7 @@
             <sv:property sv:name="state" sv:type="String">
                 <sv:value>unpublished</sv:value>
             </sv:property>
-            <sv:property sv:name="language" sv:type="String">
+            <sv:property sv:name="hippo:language" sv:type="String">
                 <sv:value>english</sv:value>
             </sv:property>
         </sv:node>
