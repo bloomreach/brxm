@@ -122,7 +122,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
                 result = repository.login(username, password.toCharArray());
             }
         } catch (LoginException e) {
-            log.warn(e.getMessage());
+            log.info("Invalid login as user: " + credentials.getString("username"));
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
