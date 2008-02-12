@@ -43,14 +43,14 @@ public class LinkPickerDialog extends LookupDialog {
     }
     
     @Override
-    protected void setInfoPanel(DialogWindow dialogWindow) {
+    protected InfoPanel getInfoPanel(DialogWindow dialogWindow) {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         InfoPanel infoPanel = new LinkPickerDialogInfoPanel("info", nodeModel);
         add(infoPanel);
         if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
-        super.setInfoPanel(infoPanel);
+        return infoPanel;
     }
     
     @Override

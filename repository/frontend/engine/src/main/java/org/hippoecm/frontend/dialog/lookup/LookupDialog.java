@@ -42,9 +42,7 @@ public abstract class LookupDialog extends AbstractDialog {
         tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(root);
         add(tree);
-        
-        setInfoPanel(dialogWindow);
-     
+        setInfoPanel(getInfoPanel(dialogWindow));
     }
 
     /**
@@ -53,14 +51,14 @@ public abstract class LookupDialog extends AbstractDialog {
      * super.setInfoPanel(infoPanel);
      * @param dialogWindow
      */
-    protected void setInfoPanel(DialogWindow dialogWindow) {
+    protected InfoPanel getInfoPanel(DialogWindow dialogWindow) {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         infoPanel = new LookupDialogDefaultInfoPanel("info", nodeModel);
         add(infoPanel);
         if (nodeModel.getNode() == null) {
             ok.setVisible(false);
         }
-        setInfoPanel(infoPanel);
+        return infoPanel;
     }
     
     protected void setInfoPanel(InfoPanel infoPanel) {
