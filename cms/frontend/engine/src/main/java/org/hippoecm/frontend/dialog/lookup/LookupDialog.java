@@ -73,7 +73,7 @@ public abstract class LookupDialog extends AbstractDialog {
         return (AbstractTreeNode)tree.getSelectedNode();
     }
 
-    void update(AjaxRequestTarget target, JcrNodeModel model) {
+    public void update(AjaxRequestTarget target, JcrNodeModel model) {
         getInfoPanel().update(target, model);
     }
     
