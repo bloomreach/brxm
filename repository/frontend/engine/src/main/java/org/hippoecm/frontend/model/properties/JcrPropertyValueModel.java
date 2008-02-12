@@ -68,7 +68,7 @@ public class JcrPropertyValueModel extends Model {
     }
 
     public JcrPropertyModel getJcrPropertymodel() {
-    	return propertyModel;
+        return propertyModel;
     }
     
     @Override
