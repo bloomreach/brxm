@@ -28,7 +28,7 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class PluginDescriptor implements IClusterable, Cloneable {
-    private static final long serialVersionUID = 1L;	
+    private static final long serialVersionUID = 1L;
 
     private String pluginId;
     private String wicketId;
