@@ -55,12 +55,13 @@ public class JcrSessionModel extends LoadableDetachableModel {
     }
 
     public void logout() {
+        log.info("Logout as " + credentials.getStringValue("username") + " from Hippo CMS 7");
         Session session = (Session) getObject();
         if (session != null) {
             session.logout();
             detach();
-            credentials = new ValueMap();
         }
+        credentials = new ValueMap();
         throw new RestartResponseException(LoginPage.class);
     }
 
