@@ -17,8 +17,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -127,6 +126,20 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <!-- demo add-ons -->
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-addon-repository</artifactId>
+      <version>1.01.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-demo-addon</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
