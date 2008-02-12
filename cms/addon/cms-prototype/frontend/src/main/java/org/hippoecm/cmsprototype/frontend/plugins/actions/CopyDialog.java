@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
-import org.hippoecm.cmsprototype.frontend.model.tree.FolderTreeNode;
+import org.hippoecm.cmsprototype.frontend.plugins.foldertree.FolderTreeNode;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
