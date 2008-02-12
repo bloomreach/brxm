@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!--
  * Copyright 2007 Hippo
  *
@@ -14,36 +16,25 @@
  * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<head>
-    <title>Hippo CMS - Sign in</title>
-    <link rel="stylesheet" type="text/css" href="skin/style.css"/>
-    <link rel="stylesheet" type="text/css" href="skin/blank.css"/>
-</head>
-<body onload="document.signInForm.username.focus();">
-    <span wicket:id = "feedback"></span>
-    <p>
-        <form wicket:id="signInForm" name="signInForm">
-                <table>
-                        <tr>
-                          <td align = "right">Username:</td>
-                          <td>
-                            <input wicket:id="username" type="text" value="foo@goo.moo" size="30"/>
-                  </td>
-                        </tr>
-                        <tr>
-                          <td align = "right">Password:</td>
-                          <td>
-                            <input wicket:id="password" type="password" value="password" hidden="1" size="30"/>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                              <input wicket:id="submit" type ="submit" value="Sign In"/>
-              </td>
-                          <td>
-                          </td>
-                        </tr>
-                </table>
+    <head>
+        <title>Hippo CMS - Sign in</title>
+        <link href="skin/style.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body class="intro">
+        <h1 id="logointro"><img src="skin/images/hippoecm.gif" alt="Hippo ECM" /></h1>
+        <span wicket:id="feedback"></span>    
+        <form wicket:id="signInForm">
+            <div>
+                <label>Username:</label>
+                <input wicket:id="username" class="text" type="text" value="username" size="30"/>
+            </div>
+            <div>
+                <label>Password:</label>
+                <input wicket:id="password" class="text" type="password" value="password" hidden="1" size="30"/>
+            </div>
+            <div>          
+                <input class="submit" wicket:id="submit" type="submit" value="Sign In"/>
+            </div>
         </form>
-</body>
+    </body>
 </html>
