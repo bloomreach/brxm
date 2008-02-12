@@ -100,7 +100,7 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
     public abstract String renderNode();
 
     private void ensureChildcountLoaded() {
-        if (nodeModel.getNode() == null) {
+        if (nodeModel == null || nodeModel.getNode() == null) {
             reloadChildren = false;
             reloadChildcount = false;
             childcount = 0;

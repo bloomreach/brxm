@@ -71,18 +71,20 @@ public abstract class JcrTree extends Tree {
         try {
             if (node instanceof AbstractTreeNode) {
                 AbstractTreeNode treeNode = (AbstractTreeNode) node;
-                HippoNode jcrNode = treeNode.getNodeModel().getNode();
-                if(jcrNode.getCanonicalNode() == null) {
-                    typeOfNode = IS_VIRTUAL_DOCUMENT;
-                    if(jcrNode.hasNodes()) {
-                        typeOfNode = IS_VIRTUAL_FOLDER;
-                    } 
-                } else {
-                    if(!jcrNode.getCanonicalNode().isSame(jcrNode) && jcrNode.hasNodes()){
-                        typeOfNode = IS_VIRTUAL_FOLDER;
-                    } else if (!jcrNode.getCanonicalNode().isSame(jcrNode)) {
-                        typeOfNode = IS_VIRTUAL_DOCUMENT;
-                    }
+                if(treeNode.getNodeModel() != null) {
+                  HippoNode jcrNode = treeNode.getNodeModel().getNode();
+                  if(jcrNode.getCanonicalNode() == null) {
+                      typeOfNode = IS_VIRTUAL_DOCUMENT;
+                      if(jcrNode.hasNodes()) {
+                          typeOfNode = IS_VIRTUAL_FOLDER;
+                      } 
+                  } else {
+                      if(!jcrNode.getCanonicalNode().isSame(jcrNode) && jcrNode.hasNodes()){
+                          typeOfNode = IS_VIRTUAL_FOLDER;
+                      } else if (!jcrNode.getCanonicalNode().isSame(jcrNode)) {
+                          typeOfNode = IS_VIRTUAL_DOCUMENT;
+                      }
+                  }
                 }
                 
             }
