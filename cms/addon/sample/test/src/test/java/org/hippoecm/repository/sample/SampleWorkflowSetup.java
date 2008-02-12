@@ -59,9 +59,9 @@ abstract class SampleWorkflowSetup
     // set up the queryable document specification as a node "/configuration/hippo:documents/authors"
     node = root.getNode("hippo:configuration");
     node = node.getNode("hippo:documents");
-    node = node.addNode("authors","hippo:query");
-    node.setProperty("hippo:query","files//*[@jcr:primaryType='hipposample:author' and @hipposample:name='?']");
-    node.setProperty("hippo:language",Query.XPATH);
+    node = node.addNode("authors","hippo:ocmquery");
+    node.setProperty("jcr:statement","files//*[@jcr:primaryType='hipposample:author' and @hipposample:name='?']");
+    node.setProperty("jcr:language",Query.XPATH);
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.AuthorDocument");
     node = node.getNode("hippo:types");
     node = node.addNode("org.hippoecm.repository.sample.AuthorDocument","hippo:type");
@@ -94,7 +94,7 @@ abstract class SampleWorkflowSetup
     root.addNode("hippo:configuration/hippo:workflows", "hippo:workflowfolder");
 
     root.getNode("hippo:configuration/hippo:documents").remove();
-    root.addNode("hippo:configuration/hippo:documents", "hippo:queryfolder");
+    root.addNode("hippo:configuration/hippo:documents", "hippo:ocmqueryfolder");
     session.save();
     session.logout();
   }

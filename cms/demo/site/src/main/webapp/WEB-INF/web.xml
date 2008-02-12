@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+  <!-- General configuration -->
+  <display-name>sample website</display-name>
+  <description>Hippo ECM Sample site</description>
+
+  <context-param>
+    <description>The address of the repository</description>
+    <param-name>repository-address</param-name>
+    <param-value>rmi://localhost:1099/hipporepository</param-value>
+  </context-param>
+
+  <filter>
+    <filter-name>Context</filter-name>
+    <filter-class>org.hippoecm.hst.RewriteFilter</filter-class>
+    <init-param>
+      <description>
+        Bind the context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+        Defaults to context.
+      </description>
+      <param-name>attributename</param-name>
+      <param-value>context</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        Where to find the nodes of type hippo:document
+        that can be accessed using url rewriting 
+      </description>      
+      <param-name>urlbasepath</param-name>
+      <param-value>/site/pages</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        This parameter describes which document is responsible for
+        requests send to the bare context root.   In effect a
+        welcome page, but for the context root itself only.
+      </description>
+      <param-name>urlbasehome</param-name>
+      <param-value>home</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        Where to find the default 'node type -> jsp file' mapping,
+        must be of type hst:urlmappingfolder
+      </description>
+      <param-name>urlmapping</param-name>
+      <param-value>/site/defaultmapping</param-value>
+    </init-param>
+  </filter>
+
+  <filter>
+    <filter-name>GlobalContext</filter-name>
+    <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
+    <init-param>
+      <description>
+        Bind an additional context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+      </description>
+      <param-name>attributename</param-name>
+      <param-value>global</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        The path to bind as context.
+      </description>      
+      <param-name>location</param-name>
+      <param-value>/en</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>Context</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>GlobalContext</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>INCLUDE</dispatcher>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>DirectAccessServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.DirectAccessServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>DirectAccessServlet</servlet-name>
+    <url-pattern>/static/*</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Timeout in minutes -->
+  <session-config>
+    <session-timeout>1</session-timeout>
+  </session-config>
+
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  
+  <error-page>
+    <exception-type>javax.servlet.ServletException</exception-type>
+    <location>/error.jsp</location>
+  </error-page>
+
+</web-app>
