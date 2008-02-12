@@ -29,6 +29,8 @@
 
   <h1>${context['sample:pageTitle']}</h1>
 
+  ${context['sample:content']}
+
   <p>
     <c:forEach var="item" items="${global['documents']['countries']}">
       <li>${item[item._name]['sample:translation']['sample:translation']['sample:name']}
