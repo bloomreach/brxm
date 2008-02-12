@@ -15,13 +15,10 @@
  */
 package org.hippoecm.frontend.tree;
 
-import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
