@@ -51,6 +51,8 @@ public abstract class NodeModelWrapper implements IChainingModel {
     }
 
     public void detach() {
-        nodeModel.detach();
+        if(nodeModel != null) {
+            nodeModel.detach();
+        }
     }
 }

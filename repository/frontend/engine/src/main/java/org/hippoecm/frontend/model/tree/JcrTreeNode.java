@@ -34,6 +34,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class JcrTreeNode extends AbstractTreeNode {
     private static final long serialVersionUID = 1L;
 
+    private final static int MAXCOUNT = 3;
+
     public JcrTreeNode(JcrNodeModel nodeModel) {
         super(nodeModel);
     }
@@ -69,13 +71,20 @@ public class JcrTreeNode extends AbstractTreeNode {
         Node node = nodeModel.getNode();
         List<AbstractTreeNode> newChildren = new ArrayList();
         NodeIterator jcrChildren = node.getNodes();
-        while (jcrChildren.hasNext()) {
+        int count = 0;
+        while (jcrChildren.hasNext() && count < MAXCOUNT) {
             Node jcrChild = jcrChildren.nextNode();
             if (jcrChild != null) {
+                ++count;
                 JcrNodeModel childModel = new JcrNodeModel(jcrChild);
                 JcrTreeNode treeNodeModel = new JcrTreeNode(childModel, getTreeModel());
                 newChildren.add(treeNodeModel);
             }
+        }
+        if(jcrChildren.hasNext()) {
+          LabelTreeNode treeNodeModel = new LabelTreeNode(nodeModel, getTreeModel(),
+                                                          jcrChildren.getSize() - jcrChildren.getPosition());
+          newChildren.add(treeNodeModel);
         }
         return newChildren;
     }
