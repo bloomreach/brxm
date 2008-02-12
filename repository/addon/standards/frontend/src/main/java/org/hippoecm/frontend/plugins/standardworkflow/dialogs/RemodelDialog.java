@@ -57,7 +57,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
         // log out; the session model will log in again.
         // Sessions cache path resolver information, which is incorrect after remapping the prefix.
-        sessionModel.detach();
+        sessionModel.flush();
 
         RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow("internal");
         if (workflow != null) {

@@ -65,6 +65,14 @@ public class JcrSessionModel extends LoadableDetachableModel {
         throw new RestartResponseException(LoginPage.class);
     }
 
+    public void flush() {
+        Session session = (Session) getObject();
+        if (session != null) {
+            session.logout();
+            detach();
+        }
+    }
+
     public ValueMap getCredentials() {
         return credentials;
     }
@@ -133,16 +141,5 @@ public class JcrSessionModel extends LoadableDetachableModel {
             throw new RestartResponseException(LoginPage.class);
         }
         return result;
-    }
-
-    @Override
-    public void detach() {
-        Session session = (Session) getObject();
-        if (session != null) {
-            classLoader = null;
-            workflowManager = null;
-            session.logout();
-        }
-        super.detach();
     }
 }
