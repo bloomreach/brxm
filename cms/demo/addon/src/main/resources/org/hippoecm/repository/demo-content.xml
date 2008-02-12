@@ -162,98 +162,200 @@
 
   <sv:node sv:name="documents">
 
-    <sv:node sv:name="england">
+    <sv:node sv:name="countries">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-         <sv:value>hippo:handle</sv:value>
+         <sv:value>nt:unstructured</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:discriminator" sv:type="String">
-         <sv:value>hippostd:state</sv:value>
-      </sv:property>
+
       <sv:node sv:name="england">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>sample:countryDocument</sv:value>
+           <sv:value>hippo:handle</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>published</sv:value>
+        <sv:property sv:name="hippo:discriminator" sv:type="String">
+           <sv:value>hippostd:state</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="sample:symbol" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="translation">
+        <sv:node sv:name="england">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-             <sv:value>hippo:handle</sv:value>
+            <sv:value>sample:countryDocument</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:discriminator" sv:type="String">
-             <sv:value>hippostd:language</sv:value>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>published</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:username" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="sample:symbol" sv:type="String">
+            <sv:value>en</sv:value>
           </sv:property>
           <sv:node sv:name="sample:translation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>sample:countryInfoDocument</sv:value>
+               <sv:value>hippo:handle</sv:value>
             </sv:property>
-            <sv:property sv:name="hippostd:language" sv:type="String">
-              <sv:value>en</sv:value>
+            <sv:property sv:name="hippo:discriminator" sv:type="String">
+               <sv:value>hippostd:language</sv:value>
             </sv:property>
-            <sv:property sv:name="sample:name" sv:type="String">
-              <sv:value>England</sv:value>
-            </sv:property>
+            <sv:node sv:name="sample:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>sample:countryInfoDocument</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:language" sv:type="String">
+                <sv:value>en</sv:value>
+              </sv:property>
+              <sv:property sv:name="sample:name" sv:type="String">
+                <sv:value>England</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="sample:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>sample:countryInfoDocument</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:language" sv:type="String">
+                <sv:value>nl</sv:value>
+              </sv:property>
+              <sv:property sv:name="sample:name" sv:type="String">
+                <sv:value>Engeland</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
+        </sv:node>
+        <sv:node sv:name="england">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>sample:countryDocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:username" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="sample:symbol" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
           <sv:node sv:name="sample:translation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>sample:countryInfoDocument</sv:value>
+               <sv:value>hippo:handle</sv:value>
             </sv:property>
-            <sv:property sv:name="hippostd:language" sv:type="String">
-              <sv:value>nl</sv:value>
+            <sv:property sv:name="hippo:discriminator" sv:type="String">
+               <sv:value>hippostd:language</sv:value>
             </sv:property>
-            <sv:property sv:name="sample:name" sv:type="String">
-              <sv:value>Engeland</sv:value>
-            </sv:property>
+            <sv:node sv:name="sample:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>sample:countryInfoDocument</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:language" sv:type="String">
+                <sv:value>en</sv:value>
+              </sv:property>
+              <sv:property sv:name="sample:name" sv:type="String">
+                <sv:value>England</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="sample:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>sample:countryInfoDocument</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:language" sv:type="String">
+                <sv:value>nl</sv:value>
+              </sv:property>
+              <sv:property sv:name="sample:name" sv:type="String">
+                <sv:value>Engeland</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
       </sv:node>
-      <sv:node sv:name="england">
+      <sv:node sv:name="netherlands">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>sample:countryDocument</sv:value>
+           <sv:value>hippo:handle</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>unpublished</sv:value>
+        <sv:property sv:name="hippo:discriminator" sv:type="String">
+           <sv:value>hippostd:state</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="sample:symbol" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="translation">
+        <sv:node sv:name="netherlands">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-             <sv:value>hippo:handle</sv:value>
+            <sv:value>sample:countryDocument</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:discriminator" sv:type="String">
-             <sv:value>hippostd:language</sv:value>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>published</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:username" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="sample:symbol" sv:type="String">
+            <sv:value>nl</sv:value>
           </sv:property>
           <sv:node sv:name="sample:translation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>sample:countryInfoDocument</sv:value>
+               <sv:value>hippo:handle</sv:value>
             </sv:property>
-            <sv:property sv:name="hippostd:language" sv:type="String">
-              <sv:value>en</sv:value>
+            <sv:property sv:name="hippo:discriminator" sv:type="String">
+               <sv:value>hippostd:language</sv:value>
             </sv:property>
-            <sv:property sv:name="sample:name" sv:type="String">
-              <sv:value>England</sv:value>
-            </sv:property>
+            <sv:node sv:name="sample:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>sample:countryInfoDocument</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:language" sv:type="String">
+                <sv:value>en</sv:value>
+              </sv:property>
+              <sv:property sv:name="sample:name" sv:type="String">
+                <sv:value>The Netherlands</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="sample:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>sample:countryInfoDocument</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:language" sv:type="String">
+                <sv:value>nl</sv:value>
+              </sv:property>
+              <sv:property sv:name="sample:name" sv:type="String">
+                <sv:value>Nederland</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
+        </sv:node>
+        <sv:node sv:name="netherlands">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>sample:countryDocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:username" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="sample:symbol" sv:type="String">
+            <sv:value>nl</sv:value>
+          </sv:property>
           <sv:node sv:name="sample:translation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>sample:countryInfoDocument</sv:value>
+               <sv:value>hippo:handle</sv:value>
             </sv:property>
-            <sv:property sv:name="hippostd:language" sv:type="String">
-              <sv:value>nl</sv:value>
+            <sv:property sv:name="hippo:discriminator" sv:type="String">
+               <sv:value>hippostd:language</sv:value>
             </sv:property>
-            <sv:property sv:name="sample:name" sv:type="String">
-              <sv:value>Engeland</sv:value>
-            </sv:property>
+            <sv:node sv:name="sample:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>sample:countryInfoDocument</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:language" sv:type="String">
+                <sv:value>en</sv:value>
+              </sv:property>
+              <sv:property sv:name="sample:name" sv:type="String">
+                <sv:value>The Netherlands</sv:value>
+              </sv:property>
+            </sv:node>
+            <sv:node sv:name="sample:translation">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>sample:countryInfoDocument</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:language" sv:type="String">
+                <sv:value>nl</sv:value>
+              </sv:property>
+              <sv:property sv:name="sample:name" sv:type="String">
+                <sv:value>Nederland</sv:value>
+              </sv:property>
+            </sv:node>
           </sv:node>
         </sv:node>
       </sv:node>
@@ -292,7 +394,7 @@
               <sv:value>sample:paragraph</sv:value>
             </sv:property>
             <sv:property sv:name="sample:content" sv:type="String">
-              <sv:value>England is een land</sv:value>
+              <sv:value>Engeland is een land</sv:value>
             </sv:property>
           </sv:node>
           <sv:node sv:name="sample:paragraph2">
@@ -300,7 +402,7 @@
               <sv:value>sample:paragraph</sv:value>
             </sv:property>
             <sv:property sv:name="sample:content" sv:type="String">
-              <sv:value>En dat licht in het westen.</sv:value>
+              <sv:value>En dat ligt in het westen.</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>

@@ -81,7 +81,7 @@
         The path to bind as context.
       </description>      
       <param-name>location</param-name>
-      <param-value>/en</param-value>
+      <param-value>/site</param-value>
     </init-param>
   </filter>
 
