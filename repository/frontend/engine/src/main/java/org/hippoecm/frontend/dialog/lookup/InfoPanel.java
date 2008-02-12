@@ -26,6 +26,6 @@ public abstract class InfoPanel extends Panel {
         super(id, model);
     }
     
-    protected abstract void update(AjaxRequestTarget target, JcrNodeModel model);
+    public abstract void update(AjaxRequestTarget target, JcrNodeModel model);
     
 }

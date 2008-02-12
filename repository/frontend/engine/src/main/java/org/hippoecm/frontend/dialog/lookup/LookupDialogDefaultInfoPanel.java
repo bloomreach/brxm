@@ -45,7 +45,7 @@ class LookupDialogDefaultInfoPanel extends InfoPanel {
     }
     
     @Override
-    protected void update(AjaxRequestTarget target, JcrNodeModel model) {
+    public void update(AjaxRequestTarget target, JcrNodeModel model) {
         if (model != null) {
             try {
                 this.setTarget(model.getNode().getPath());
