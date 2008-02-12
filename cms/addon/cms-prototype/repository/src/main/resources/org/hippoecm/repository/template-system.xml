@@ -75,4 +75,30 @@
   </sv:node>
   <!-- end "Xinha" template -->
 
+
+  <!--  LinkPicker template -->
+  <sv:node sv:name="LinkPicker">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.template.LinkPickerPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>String</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:parameters">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:parameters</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodetypes" sv:type="String">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <!-- end LinkPicker template -->
+  
 </sv:node>
