@@ -77,10 +77,68 @@
           <sv:value>hst:page</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:language" sv:type="String">
+          <sv:value>en</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:username" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/index.jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="sample:pageLabel" sv:type="String">
+          <sv:value>Welcome</sv:value>
+        </sv:property>
+        <sv:property sv:name="sample:pageTitle" sv:type="String">
+          <sv:value>Home</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="home">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>sample:webPage</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hst:page</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:language" sv:type="String">
           <sv:value>nl</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:username" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/index.jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="sample:pageLabel" sv:type="String">
+          <sv:value>Welkom</sv:value>
+        </sv:property>
+        <sv:property sv:name="sample:pageTitle" sv:type="String">
+          <sv:value>Index</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="home">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>sample:webPage</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hst:page</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:language" sv:type="String">
+          <sv:value>nl</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:username" sv:type="String">
           <sv:value>admin</sv:value>

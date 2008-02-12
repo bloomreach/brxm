@@ -41,7 +41,7 @@ public class DocumentVariant extends NodeModelWrapper {
 
     // Default labels
     // TODO: needs i18n
-    private static final String NO_STATE = "no workflow";
+    public static final String NO_STATE = "no workflow";
     private static final String NO_LANGUAGE = "all languages";
 
     public DocumentVariant(JcrNodeModel nodeModel) throws ModelWrapException {

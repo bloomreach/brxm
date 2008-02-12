@@ -61,7 +61,7 @@
         must be of type hst:urlmappingfolder
       </description>
       <param-name>urlmapping</param-name>
-      <param-value>/site/defaultmapping</param-value>
+      <param-value>/defaultmapping</param-value>
     </init-param>
   </filter>
 
