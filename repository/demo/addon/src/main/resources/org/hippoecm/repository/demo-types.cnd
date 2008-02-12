@@ -26,10 +26,8 @@
 [sample:webFolder] > nt:unstructured
 
 [sample:webPage] > hippo:document, hst:page, hippostd:languagable, hippostd:publishable
-- sample:pageLabel
-- sample:pageTitle
-- *
-+ *
+- sample:pageLabel (string)
+- sample:pageTitle (string)
 
 [sample:webNavigation] > hippo:document, hippostd:languagable, hippostd:publishable orderable
 + * (hippo:facetselect) = hippo:facetselect

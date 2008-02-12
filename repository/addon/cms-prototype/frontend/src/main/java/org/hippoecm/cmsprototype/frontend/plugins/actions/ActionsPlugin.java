@@ -101,9 +101,10 @@ public class ActionsPlugin extends Plugin {
     }
     
     private void setVisibilities() {
+	/* FIXME: The whole CMS is now riddled with this kind of logic, which should not be there */
         try {
             DocumentVariant variant = new DocumentVariant((JcrNodeModel) getPluginModel());
-            edit.setVisible(variant.getState().equals("draft"));
+            edit.setVisible(variant.getState().equals("draft") || variant.getState().equals(DocumentVariant.NO_STATE));
         } catch (ModelWrapException e) {
             edit.setVisible(false);
         }
