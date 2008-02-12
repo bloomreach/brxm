@@ -57,6 +57,12 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-standards-repository</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
       <version>${parent.version}</version>
       <scope>test</scope>

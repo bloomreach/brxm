@@ -100,7 +100,8 @@ public class ReviewedActionsWorkflowTest extends TestCase {
         node = node.addNode("myarticle", "hippo:handle");
         node = node.addNode("myarticle", "hippo:document");
         node.setProperty("content", LOREM);
-        node.setProperty("state", "unpublished");
+        node.setProperty("hippostd:username", LOREM);
+        node.setProperty("hippostd:state", "unpublished");
 
         session.save();
     }
@@ -131,7 +132,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             Document document = workflow.obtainEditableInstance();
             session.save();
             session.refresh(true);
-            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='draft']");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[hippostd:state='draft']");
             assertTrue(node.getUUID().equals(document.getIdentity()));
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString() + ",");
@@ -170,13 +171,13 @@ public class ReviewedActionsWorkflowTest extends TestCase {
 
         // steps taken by an author
         {
-            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='unpublished']");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[hippostd:state='unpublished']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.obtainEditableInstance();
             session.save();
             session.refresh(true);
             //Utilities.dump(root.getNode("documents"));
-            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='draft']");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[hippostd:state='draft']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + "!");
             BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
@@ -199,7 +200,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
 
         // These steps would be taken by editor:
         {
-            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='unpublished']");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[hippostd:state='unpublished']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
             session.save();
@@ -214,7 +215,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
 
         // These steps would be taken by author
         {
-            node = Utilities.getNode(root, "documents/myarticle/myarticle[state='published']");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.requestDeletion();
             session.save();
