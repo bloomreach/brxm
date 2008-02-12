@@ -344,13 +344,11 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                             if(parentNodeState != null) {
                                 parentNodeState.removeChildNodeEntry(nodeState.getNodeId());
                                 stateDiscarded(nodeState);
-                                //stateDiscarded(parentNodeState);
                             }
                         } catch(NoSuchItemStateException ex) {
                         }
                     } else {
                         stateDiscarded(state);
-                        //state.setStatus(ItemState.STATUS_EXISTING);
                     }
                 } else if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     if(!deletedExternals.contains(state)) {
@@ -363,7 +361,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    //((NodeState)state).removeAllChildNodeEntries();
                     stateDiscarded((NodeState)state);
                     virtualStates.add(state);
                 }
