@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.pojo;
+package org.hippoecm.repository.ocm;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,6 +28,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -87,9 +88,13 @@ class FieldManagerImpl extends AbstractFieldManager {
         for(int pathIdx=0; pathIdx<pathEltsLength && node != null; pathIdx++) {
             String relPath = pathElts[pathIdx];
             if(relPath.startsWith("{.}")) {
-                relPath = ancestor.getName() + relPath.substring(3);
+                relPath = ancestor.getName() + relPath.substring("{.}".length());
+            } else if(relPath.startsWith("{_name}")) {
+                relPath = ancestor.getName() + relPath.substring("{_name}".length());
             } else if(relPath.startsWith("{..}")) {
-                relPath = ancestor.getParent().getName() + relPath.substring(4);
+                relPath = ancestor.getParent().getName() + relPath.substring("{..}".length());
+            } else if(relPath.startsWith("{_parent}")) {
+                relPath = ancestor.getParent().getName() + relPath.substring("{_parent}".length());
             } else if(relPath.startsWith("{") && relPath.endsWith("}")) {
                 String uuid = relPath.substring(1,relPath.length()-1);
                 uuid = ancestor.getProperty(uuid).getString();
@@ -105,11 +110,29 @@ class FieldManagerImpl extends AbstractFieldManager {
                     if(pos >= 0) {
                         String key = conditionElts[conditionIdx].substring(0,pos);
                         String value = conditionElts[conditionIdx].substring(pos+1);
-                        if(value.startsWith("'") && value.endsWith("'"))
+                        if(value.startsWith("'") && value.endsWith("'")) {
                             value = value.substring(1,value.length()-1);
-                        conditions.put(key, value);
-                    } else
-                        conditions.put(conditionElts[conditionIdx], null);
+                            conditions.put(key, value);
+                        } else if(value.startsWith("{") && value.endsWith("}")) {
+                            value = ancestor.getProperty(value.substring(1,value.length()-1)).getString();
+                            conditions.put(key, value);
+                        } else {
+                            conditions.put(key, value);
+                        }
+                    } else {
+                        if(conditionElts[conditionIdx].equals("{_similar}")) {
+                            Node parent = ancestor.getParent();
+                            if(parent.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
+                                Value[] discriminators = parent.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
+                                for(int i=0; i<discriminators.length; i++) {
+                                    conditions.put(discriminators[i].getString(),
+                                                   ancestor.getProperty(discriminators[i].getString()).getString());
+                                }
+                            }
+                        } else {
+                            conditions.put(conditionElts[conditionIdx], null);
+                        }
+                    }
                 }
                 relPath = relPath.substring(0,relPath.indexOf("["));
             }

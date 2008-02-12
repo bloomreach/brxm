@@ -76,8 +76,8 @@ public class DocumentVariant extends NodeModelWrapper {
     public String getState() {
         String result;
         try {
-            if (nodeModel.getNode().hasProperty(HippoNodeType.HIPPO_STATE)) {
-                result = nodeModel.getNode().getProperty(HippoNodeType.HIPPO_STATE).getString();
+            if (nodeModel.getNode().hasProperty("hippostd:state")) {
+                result = nodeModel.getNode().getProperty("hippostd:state").getString();
             } else {
                 result = NO_STATE;
             }
@@ -91,8 +91,8 @@ public class DocumentVariant extends NodeModelWrapper {
     public String getLanguage() {
         String result;
         try {
-            if (nodeModel.getNode().hasProperty(HippoNodeType.HIPPO_LANGUAGE)) {
-                result = nodeModel.getNode().getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+            if (nodeModel.getNode().hasProperty("hippostd:language")) {
+                result = nodeModel.getNode().getProperty("hippostd:language").getString();
             } else {
                 result = NO_LANGUAGE;
             }

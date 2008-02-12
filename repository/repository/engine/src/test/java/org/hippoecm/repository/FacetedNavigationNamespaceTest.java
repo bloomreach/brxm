@@ -72,24 +72,24 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
         // select without namespace
         node = navNode.addNode("normalselect", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_MODES, "stick");
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/documents/normal");
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "facettest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "val0" });
+        node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
 
         // select with namespace
         node = navNode.addNode("namespaceselect", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_MODES, "stick");
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/documents/namespace");
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:facettest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "val0" });
+        node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
         
         // select with both
         node = navNode.addNode("bothselect", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_MODES, "stick");
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/documents/both");
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:facettest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "val0" });
+        node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
     }
     
     public void testFacetSearchWithoutNamespace() throws RepositoryException {

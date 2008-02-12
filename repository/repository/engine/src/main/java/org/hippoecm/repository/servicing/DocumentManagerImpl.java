@@ -31,15 +31,17 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.jpox.PersistenceManagerFactoryImpl;
+
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.pojo.JCROID;
-import org.hippoecm.repository.pojo.StoreManagerImpl;
-import org.jpox.PersistenceManagerFactoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.ocm.JCROID;
+import org.hippoecm.repository.ocm.StoreManagerImpl;
 
 public class DocumentManagerImpl
   implements DocumentManager
@@ -131,8 +133,8 @@ public class DocumentManagerImpl
     public Document getDocument(String category, String identifier) throws MappingException, RepositoryException {
         try {
             Node queryNode = session.getNodeByUUID(configuration).getNode(category);
-            String queryLanguage = queryNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-            String queryString = queryNode.getProperty(HippoNodeType.HIPPO_QUERY).getString();
+            String queryLanguage = queryNode.getProperty("jcr:language").getString();
+            String queryString = queryNode.getProperty("jcr:statement").getString();
             queryString = queryString.replace("?", identifier);
             if(log.isDebugEnabled()) {
                 log.debug("executing query"+queryString);

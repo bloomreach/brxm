@@ -48,8 +48,8 @@ public class PersistanceInheritanceTest extends TestCase
         node = root.getNode("hippo:configuration");
         node = node.getNode("hippo:documents");
         node = node.addNode("test");
-        node.setProperty("hippo:query","documents/?");
-        node.setProperty("hippo:language",javax.jcr.query.Query.XPATH);
+        node.setProperty("jcr:statement","documents/?");
+        node.setProperty("jcr:language",javax.jcr.query.Query.XPATH);
         node.setProperty("hippo:classname","org.hippoecm.repository.test.SubClass");
         Node types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.test.SubClass","hippo:type");

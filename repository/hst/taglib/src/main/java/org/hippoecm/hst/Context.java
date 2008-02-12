@@ -181,7 +181,7 @@ public class Context extends AbstractMap {
                         result = "PathNotFound " + requestedPath;
                     } else if (item.isNode()) {
                         Node node = (Node) item;
-                        if (node.isNodeType("jcr:query")) {
+                        if (node.isNodeType("jcr:statement")) {
                             HippoQuery requestedQuery = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(node);
                             result = new Context(this, requestedQuery, new LinkedList());
                         } else {
