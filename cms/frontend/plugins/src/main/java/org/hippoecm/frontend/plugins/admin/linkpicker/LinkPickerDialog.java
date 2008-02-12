@@ -21,6 +21,8 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.InfoPanel;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
@@ -40,6 +42,24 @@ public class LinkPickerDialog extends LookupDialog {
         super("LinkPicker", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()),
               dialogWindow, channel);
         this.nodetypes = nodetypes;
+        setOutputMarkupId(true);
+    }
+    
+    @Override
+    public void update(AjaxRequestTarget target, JcrNodeModel model) {
+        super.update(target, model);
+        try {
+            if (isValidType(model)) {
+                ok.setEnabled(true);
+            } else {
+                ok.setEnabled(false);
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException " + e);
+        }
+        
+        target.addComponent(ok);
+        
     }
     
     @Override
@@ -47,9 +67,8 @@ public class LinkPickerDialog extends LookupDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         InfoPanel infoPanel = new LinkPickerDialogInfoPanel("info", nodeModel);
         add(infoPanel);
-        if (nodeModel.getNode() == null) {
-            ok.setVisible(false);
-        }
+        // only make it visible for allowed nodetypes
+        ok.setEnabled(false);
         return infoPanel;
     }
     
@@ -58,19 +77,26 @@ public class LinkPickerDialog extends LookupDialog {
         JcrNodeModel sourceNodeModel = this.dialogWindow.getNodeModel();
         if (sourceNodeModel.getParentModel() != null) {
             JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
-            Node targetNode = targetNodeModel.getNode();
-            boolean validType = false;
-            for(int i = 0 ; i < nodetypes.size() ; i++){
-                if(targetNode.isNodeType(nodetypes.get(i))){
-                    validType = true;
-                    break;
-                }
-            }
-            if(validType) {
+            if(isValidType(targetNodeModel)) {
                 String targetPath = targetNodeModel.getNode().getPath();
                 sourceNodeModel.getNode().setProperty("hippo:docbase", targetPath);
             }
         }
+    }
+
+    private boolean isValidType(JcrNodeModel targetNodeModel) throws RepositoryException {
+        Node targetNode = targetNodeModel.getNode();
+        boolean validType = false;
+        if (nodetypes.size() == 0) {
+            return true;
+        }
+        for(int i = 0 ; i < nodetypes.size() ; i++){
+            if(targetNode.isNodeType(nodetypes.get(i))){
+                validType = true;
+                break;
+            }
+        }
+        return validType;
     }
 
     @Override
