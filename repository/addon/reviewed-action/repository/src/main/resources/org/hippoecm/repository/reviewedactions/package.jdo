@@ -22,16 +22,15 @@
     </class>
     <class name="BasicReviewedActionsWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
-      <field name="content" column="content"/>
-      <field name="username" column="username"/>
-      <field name="draft" column="../{.}[state='draft']"/>
-      <field name="unpublished" column="../{.}[state='unpublished']"/>
-      <field name="published" column="../{.}[state='published']"/>
-      <field name="current" column="../request[state='current']"/>
+      <field name="username" column="hippostd:username"/>
+      <field name="draft" column="../{.}[hippostd:state='draft']"/>
+      <field name="unpublished" column="../{.}[hippostd:state='unpublished']"/>
+      <field name="published" column="../{.}[hippostd:state='published']"/>
+      <field name="current" column="../request[hippostd:state='current']"/>
     </class>
     <class name="FullRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
-      <field name="workflow" column="../{..}[state='draft']"/>
+      <field name="workflow" column="../{..}[hippostd:state='draft']"/>
     </class>
     <class name="BasicRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
@@ -40,7 +39,7 @@
     </class>
     <class name="PublishableDocument" detachable="true" table="documents">
       <inheritance strategy="new-table"/>
-      <field name="state" column="state"/>
+      <field name="state" column="hippostd:state"/>
     </class>
     <class name="PublicationRequest" detachable="true" table="documents">
       <datastore-identity strategy="native"/>

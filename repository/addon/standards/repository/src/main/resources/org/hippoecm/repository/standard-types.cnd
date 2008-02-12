@@ -26,3 +26,4 @@
 
 [hippostd:publishable] mixin
 - hippostd:state (string) < 'draft', 'unpublished', 'published', 'stale'
+- hippostd:username (string)

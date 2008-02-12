@@ -58,4 +58,21 @@
   </sv:node>
   <!-- end "Boolean" template -->
 
+  <!-- "Xinha" template -->
+  <sv:node sv:name="Xinha">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>String</sv:value>
+    </sv:property>
+  </sv:node>
+  <!-- end "Xinha" template -->
+
 </sv:node>

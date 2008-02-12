@@ -25,7 +25,6 @@ import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements FullReviewedActionsWorkflow {
 
-    protected String content;
     protected String username;
     protected PublicationRequest current;
     protected PublishableDocument published;

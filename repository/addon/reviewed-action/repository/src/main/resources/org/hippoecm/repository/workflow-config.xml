@@ -25,7 +25,7 @@
             <sv:value>hippo:workflow</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:nodetype" sv:type="String">
-            <sv:value>hippostd:publishableDocument</sv:value>
+            <sv:value>hippostd:publishable</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:classname" sv:type="String">
             <sv:value>org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl</sv:value>
@@ -45,7 +45,7 @@
                     <sv:value>hippo:type</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:nodetype" sv:type="String">
-                    <sv:value>hippostd:publishableDocument</sv:value>
+                    <sv:value>hippostd:publishable</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:classname" sv:type="String">
                     <sv:value>org.hippoecm.repository.reviewedactions.PublishableDocument</sv:value>
@@ -78,7 +78,7 @@
             <sv:value>author</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:nodetype" sv:type="String">
-            <sv:value>hippostd:publishableDocument</sv:value>
+            <sv:value>hippostd:publishable</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:classname" sv:type="String">
             <sv:value>org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflowImpl</sv:value>
@@ -98,7 +98,7 @@
                     <sv:value>hippo:type</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:nodetype" sv:type="String">
-                    <sv:value>hippostd:publishableDocument</sv:value>
+                    <sv:value>hippostd:publishable</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:classname" sv:type="String">
                     <sv:value>org.hippoecm.repository.reviewedactions.PublishableDocument</sv:value>
@@ -148,7 +148,7 @@
                     <sv:value>hippo:type</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:nodetype" sv:type="String">
-                    <sv:value>hippostd:publishableDocument</sv:value>
+                    <sv:value>hippostd:publishable</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:classname" sv:type="String">
                     <sv:value>org.hippoecm.repository.reviewedactions.PublishableDocument</sv:value>
@@ -201,7 +201,7 @@
                     <sv:value>hippo:type</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:nodetype" sv:type="String">
-                    <sv:value>hippostd:publishableDocument</sv:value>
+                    <sv:value>hippostd:publishable</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:classname" sv:type="String">
                     <sv:value>org.hippoecm.repository.reviewedactions.PublishableDocument</sv:value>
