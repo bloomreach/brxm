@@ -15,11 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.template.editor;
 
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 
 public class EditorPlugin extends Plugin {
 
@@ -29,6 +33,13 @@ public class EditorPlugin extends Plugin {
 
     public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+
+        JcrNodeModel jcrModel = (JcrNodeModel) getModel();
+        Channel incoming = pluginDescriptor.getIncoming();
+        ChannelFactory factory = getPluginManager().getChannelFactory();
+
+        DialogLink save = new DialogLink("save-dialog", "Save", SaveDialog.class, jcrModel, incoming, factory);
+        add(save);
 
         form = new EditorForm("form", (JcrNodeModel) getModel(), this);
         add(form);
