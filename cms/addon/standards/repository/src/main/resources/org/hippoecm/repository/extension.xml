@@ -28,7 +28,6 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <!--Workflows configuration-->
   <sv:node sv:name="standard">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -41,6 +40,21 @@
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippostd">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>15</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:namespace" sv:type="String">
+      <sv:value>http://www.hippoecm.org/hippostd/nt/1.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
+      <sv:value>standard-types.cnd</sv:value>
     </sv:property>
   </sv:node>
 

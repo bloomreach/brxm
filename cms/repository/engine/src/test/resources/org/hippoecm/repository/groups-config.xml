@@ -27,33 +27,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:groupfolder</sv:value>
     </sv:property>
-    <sv:node sv:name="english">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:group</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:members" sv:type="String">
-            <sv:value>demo</sv:value>
-        </sv:property>
-        <sv:node sv:name="hippo:facetauths">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetauthfolder</sv:value>
-            </sv:property>
-            <sv:node sv:name="hippo:language">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hippo:facetauth</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippo:permissions" sv:type="Long">
-                    <sv:value>7</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippo:facet" sv:type="String">
-                    <sv:value>hippo:language</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippo:values" sv:type="String">
-                    <sv:value>english</sv:value>
-                </sv:property>
-            </sv:node>
-        </sv:node>
-    </sv:node>
     <sv:node sv:name="admin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:group</sv:value>

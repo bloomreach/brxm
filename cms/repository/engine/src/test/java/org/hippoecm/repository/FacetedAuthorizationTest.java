@@ -112,7 +112,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         // select without namespace
         node = navNode.addNode("select", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_MODES, "stick");
+        node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/documents");
         //node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { READAUTH, WRITEAUTH });
         //node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { READAUTH_VAL, WRITEAUTH_VAL });

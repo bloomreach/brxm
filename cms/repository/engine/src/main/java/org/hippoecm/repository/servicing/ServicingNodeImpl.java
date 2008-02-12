@@ -80,7 +80,6 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
         //if (hasProperty(HippoNodeType.HIPPO_UUID) && hasProperty(HippoNodeType.HIPPO_SEARCH)) {
         if (hasProperty(HippoNodeType.HIPPO_SEARCH)) {
 
-            // hipposample:authorId#//element(*,hipposample:author)[hippo:id=?]/@hippo:name
             // just return the resultset
             if (getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
                 return HippoNodeType.HIPPO_RESULTSET;
