@@ -27,7 +27,6 @@ import org.hippoecm.frontend.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
-import org.hippoecm.frontend.plugins.admin.editor.NodeEditor;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class LogoutLink extends Panel {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
+    static final Logger log = LoggerFactory.getLogger(LogoutLink.class);
 
     public LogoutLink(String id, String linktext, Class clazz, JcrNodeModel model, Channel channel,
             ChannelFactory factory) {
@@ -59,10 +58,8 @@ public class LogoutLink extends Panel {
                 UserSession userSession = (UserSession) getSession();
                 try {
                     Node rootNode = userSession.getRootNode();
-                    if (rootNode != null) {
-                        if (rootNode.getSession().hasPendingChanges()) {
-                            dialogWindow.show(target);
-                        }
+                    if (rootNode != null && rootNode.getSession().hasPendingChanges()) {
+                        dialogWindow.show(target);
                     } else {
                         userSession.logout();
                     }
