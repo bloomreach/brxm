@@ -16,6 +16,7 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -24,6 +25,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -68,8 +70,13 @@ public final class LoginPage extends WebPage {
             userSession.setJcrCredentials(credentials);
             userSession.getJcrSession();
 
-            log.info("Logged in as " + credentials.getString("username") + " to Hippo CMS 7");
+            log.info("[" + getRemoteAddr() + "] Logged in as " + credentials.getString("username") + " to Hippo CMS 7");
             setResponsePage(Home.class);
+        }
+        
+        // log helper method
+        private String getRemoteAddr() {
+            return ((WebRequestCycle)RequestCycle.get()).getWebRequest().getHttpServletRequest().getRemoteAddr();
         }
     }
 

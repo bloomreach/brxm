@@ -20,8 +20,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.LoginPage;
 import org.hippoecm.frontend.Main;
@@ -55,7 +57,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
     }
 
     public void logout() {
-        log.info("Logout as " + credentials.getStringValue("username") + " from Hippo CMS 7");
+        log.info("[" + getRemoteAddr() + "] Logout as " + credentials.getStringValue("username") + " from Hippo CMS 7");
         Session session = (Session) getObject();
         if (session != null) {
             session.logout();
@@ -130,7 +132,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
                 result = repository.login(username, password.toCharArray());
             }
         } catch (LoginException e) {
-            log.info("Invalid login as user: " + credentials.getString("username"));
+            log.info("[" + getRemoteAddr() + "] Invalid login as user: " + credentials.getString("username"));
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
@@ -141,5 +143,13 @@ public class JcrSessionModel extends LoadableDetachableModel {
             throw new RestartResponseException(LoginPage.class);
         }
         return result;
+    }
+    
+    /**
+     * Helper method for logging
+     * @return ip address of client
+     */
+    private String getRemoteAddr() {
+        return ((WebRequestCycle)RequestCycle.get()).getWebRequest().getHttpServletRequest().getRemoteAddr();
     }
 }
