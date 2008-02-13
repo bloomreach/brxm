@@ -20,21 +20,29 @@
         <title>Hippo CMS - Sign in</title>
         <link href="skin/style.css" rel="stylesheet" type="text/css"/>
     </head>
-    <body class="intro" onload="document.forms.signInForm.username.focus();">
-        <h1 id="logointro"><img src="skin/images/hippoecm.gif" alt="Hippo ECM" /></h1>
-        <span wicket:id="feedback"></span>    
-        <form wicket:id="signInForm" name="signInForm">
-            <div>
-                <label>Username:</label>
-                <input wicket:id="username" class="text" type="text" value="username" size="30"/>
-            </div>
-            <div>
-                <label>Password:</label>
-                <input wicket:id="password" class="text" type="password" value="password" hidden="1" size="30"/>
-            </div>
-            <div>          
-                <input class="submit" wicket:id="submit" type="submit" value="Sign In"/>
-            </div>
+    <body onload="document.signInForm.username.focus();" class="login">
+      <div id="login-logo"><h3>&#160;</h3></div>
+      <div>
+         <div class="feedback" wicket:id="feedback">
+           [ Feedback panel ]
+         </div>            
+
+         <form wicket:id="signInForm" name="signInForm">
+          <div id="login-header">
+            <wicket:message key="key.key">Login</wicket:message>
+          </div>
+          <div id="login-input">
+            <label>Username</label>
+            <input wicket:id="username" type="text" value="foo@goo.moo"/>
+            
+            <label>Password</label>
+            <input wicket:id="password" type="password" value="password"/>
+            
+          </div>
+          <div id="login-submit">
+            <input type="submit" name="submit" wicket:id="submit" value="Sign in" class="blue_button"/>
+          </div>
         </form>
+        </div>        
     </body>
 </html>
