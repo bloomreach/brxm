@@ -20,10 +20,10 @@
         <title>Hippo CMS - Sign in</title>
         <link href="skin/style.css" rel="stylesheet" type="text/css"/>
     </head>
-    <body class="intro">
+    <body class="intro" onload="document.forms.signInForm.username.focus();">
         <h1 id="logointro"><img src="skin/images/hippoecm.gif" alt="Hippo ECM" /></h1>
         <span wicket:id="feedback"></span>    
-        <form wicket:id="signInForm">
+        <form wicket:id="signInForm" name="signInForm">
             <div>
                 <label>Username:</label>
                 <input wicket:id="username" class="text" type="text" value="username" size="30"/>
