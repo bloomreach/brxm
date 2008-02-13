@@ -94,11 +94,16 @@ public class HippoAccessManager implements AccessManager {
      * Name of hippo:docucment 
      */
     private final Name hippoDoc;
-    
+
     /**
      * Name of hippo:handle
      */
     private final Name hippoHandle;
+    
+    /**
+     * Name of hippo:folder
+     */
+    private final Name hippoFolder;
     
     /**
      * Name of hippo:facetsearch
@@ -161,6 +166,7 @@ public class HippoAccessManager implements AccessManager {
         // create useful names
         hippoDoc = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_DOCUMENT));
         hippoHandle = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_HANDLE));
+        hippoFolder = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FOLDER));
         hippoFacetSearch = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSEARCH));
         hippoFacetSelect = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSELECT));
     }
@@ -228,7 +234,7 @@ public class HippoAccessManager implements AccessManager {
      * @throws ItemStateException
      * @throws NoSuchItemStateException
      */
-    protected boolean canAccessItem(NodeState nodeState, int permissions) throws RepositoryException, NoSuchItemStateException, ItemStateException {
+    protected boolean canAccessNode(NodeState nodeState, int permissions) throws RepositoryException, NoSuchItemStateException, ItemStateException {
         // system and admin have all permissions
         if (isSystem || isAdmin) {
             return true;
@@ -269,13 +275,13 @@ public class HippoAccessManager implements AccessManager {
      */
     protected boolean canAccessJCRNode(NodeState nodeState, int permissions) throws RepositoryException {
         // allow reading and modifying of structural nodes
-        if (isOfType(nodeState, NameConstants.NT_UNSTRUCTURED)) {
+        if (nodeState.getNodeTypeName().equals(NameConstants.NT_UNSTRUCTURED)) {
             if (log.isDebugEnabled()) {
                 log.debug("Allow structure node read access.");
             }
             return true;
         }
-        if (isOfType(nodeState, NameConstants.NT_FOLDER)) {
+        if (nodeState.getNodeTypeName().equals(NameConstants.NT_FOLDER)) {
             if (log.isDebugEnabled()) {
                 log.debug("Allow struncture node read access.");
             }
@@ -313,19 +319,20 @@ public class HippoAccessManager implements AccessManager {
         }
 
         //----------------------- read & write & remove access -------------------//
-        if (localName.equals(getLocalName(HippoNodeType.NT_FACETSEARCH))) {
+        if (nodeState.getNodeTypeName().equals(hippoFacetSearch)) {
             return true;
         }
-        if (localName.equals(getLocalName(HippoNodeType.NT_FACETSELECT))) {
+        if (nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
             return true;
         }
+        
         // narrow down permissions
         if ((permissions & REMOVE) == REMOVE) {
             return false;
         }
         
         //-----------------------  read & write access -------------------//
-        if (localName.equals(getLocalName(HippoNodeType.NT_HANDLE))) {
+        if (nodeState.getNodeTypeName().equals(hippoHandle)) {
             return true;
         }
         // narrow down permissions
@@ -333,7 +340,7 @@ public class HippoAccessManager implements AccessManager {
             return false;
         }
 
-        //-----------------------  read access -------------------//
+        //-----------------------  read access -------------------//            
         if (localName.equals(getLocalName(HippoNodeType.NT_FACETRESULT))) {
             return true;
         }
@@ -646,7 +653,7 @@ public class HippoAccessManager implements AccessManager {
             //}
 
             // do check
-            isGranted = canAccessItem(nodeState, permissions);
+            isGranted = canAccessNode(nodeState, permissions);
 
             // update read access cache
             if ((permissions & READ) == READ) {
@@ -725,7 +732,7 @@ public class HippoAccessManager implements AccessManager {
 
     /** 
      * Helper function to check if a nodeState is of a node type or a
-     * deriviate of the node type (sub class)
+     * instance of the node type (sub class)
      * 
      * @param nodeState the node to check
      * @param nodeTypeName the node type name
@@ -733,20 +740,22 @@ public class HippoAccessManager implements AccessManager {
      * @throws NoSuchNodeTypeException 
      */
     
-    private boolean isOfType(NodeState nodeState, Name nodeTypeName) throws NoSuchNodeTypeException {
+    private boolean isInstanceOfType(NodeState nodeState, Name nodeTypeName) throws NoSuchNodeTypeException {
         if (nodeState.getNodeTypeName().equals(nodeTypeName)) {
             if (log.isTraceEnabled()) {
                 log.trace("MATCH " + nodeState.getId() + " is of type: " + nodeTypeName);
             }
             return true;
         }
-        
         NodeTypeDef ntd = ntReg.getNodeTypeDef(nodeState.getNodeTypeName());
         Name[] names = ntd.getSupertypes();
         for (Name n : names) {
+            if (log.isTraceEnabled()) {
+                log.trace("CHECK " + nodeState.getId() + " " + n + " -> " + nodeTypeName);
+            }
             if (n.equals(nodeTypeName)) {
                 if (log.isTraceEnabled()) {
-                    log.trace("MATCH " + nodeState.getId() + " is a deriviate of type: " + nodeTypeName);
+                    log.trace("MATCH " + nodeState.getId() + " is a instance of type: " + nodeTypeName);
                 }
                 return true;
             }
@@ -755,7 +764,7 @@ public class HippoAccessManager implements AccessManager {
     }
     
     /**
-     * Helper function to find a hippo:document deriviate node type. This
+     * Helper function to find a hippo:document instance node type. This
      * can be used to check for facet authorization on the root of a
      * document (bonzai tree).
      * @param nodeState the node of which to check the parents
@@ -803,7 +812,7 @@ public class HippoAccessManager implements AccessManager {
                 }
                 return null;
             }
-            if (isOfType(nodeState, hippoDoc)) {
+            if (isInstanceOfType(nodeState, hippoDoc)) {
                 if (log.isDebugEnabled()) {
                     log.debug("MATCH hippoDoc: " + nodeState.getNodeTypeName());
                 }
