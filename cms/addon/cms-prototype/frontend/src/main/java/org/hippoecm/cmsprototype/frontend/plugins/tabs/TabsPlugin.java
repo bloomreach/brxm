@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
 public class TabsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
 
     private Map<JcrNodeModel, Tab> editors;
     private TabbedPanel tabbedPanel;
@@ -109,10 +110,9 @@ public class TabsPlugin extends Plugin {
         if (editPerspective == null || !editPerspective.equals(childDescriptor.getPluginId())) {
             Tab tab = new Tab(childDescriptor, getPluginModel(), false);
             return tab.getPlugin();
-        } else {
-            editDescriptor = childDescriptor;
-            return null;
         }
+        editDescriptor = childDescriptor;
+        return null;
     }
 
     @Override
@@ -246,6 +246,11 @@ public class TabsPlugin extends Plugin {
         }
 
         void destroy() {
+            try {
+                ((UserSession) getSession()).getJcrSession().save();
+            } catch (RepositoryException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage());
+            }
             tabbedPanel.getTabs().remove(this);
 
             // let plugin clean up any resources
