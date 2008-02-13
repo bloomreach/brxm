@@ -171,6 +171,9 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
         super.update();
         edit();
+        FilteredChangeLog tempChangeLog = filteredChangeLog;
+        filteredChangeLog = null;
+        tempChangeLog.repopulate();
     }
 
     @Override
@@ -363,6 +366,19 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             }
         }
         
+        void repopulate() {
+            for(Iterator iter = virtualStates.iterator(); iter.hasNext(); ) {
+                ItemState state = (ItemState) iter.next();
+                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+                    try {
+                        virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
+                    } catch(RepositoryException ex) {
+                        System.err.println(ex.getMessage());
+                        ex.printStackTrace(System.err);
+                    }
+                }
+            }
+        }
 
         @Override public ItemState get(ItemId id) throws NoSuchItemStateException {
             return upstream.get(id);
