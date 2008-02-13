@@ -110,8 +110,8 @@
           maven repository, as required by the maven-jetty-plugin.
         </p>
         <p>
-          Open a web browser and go to <a href="http://localhost:8080">http://localhost:8080</a>
-          to navigate and edit your repository.
+          Open a web browser and go to <a href="http://localhost:8080">http://localhost:8080</a>,
+          login as admin/admin.
         </p>
       </subsection>
 
