@@ -97,9 +97,6 @@
         <sv:property sv:name="hippo:template" sv:type="String">
           <sv:value>hippo:facetselect</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
       </sv:node>
     </sv:node>
     
@@ -129,9 +126,6 @@
         </sv:property>
         <sv:property sv:name="hippo:template" sv:type="String">
           <sv:value>hippo:facetsearch</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

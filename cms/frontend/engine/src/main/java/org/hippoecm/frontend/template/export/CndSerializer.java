@@ -119,6 +119,11 @@ public class CndSerializer implements IClusterable {
                         }
                         String subType = sub.getType();
                         addNamespace(subType.substring(0, subType.indexOf(':')));
+
+                        String superType = sub.getSuperType();
+                        addNamespace(superType.substring(0, superType.indexOf(':')));
+                    } else if (field.getPath().indexOf(':') > 0) {
+                        addNamespace(field.getPath().substring(0, field.getPath().indexOf(':')));
                     }
                 }
                 templates.add(template);
@@ -154,9 +159,6 @@ public class CndSerializer implements IClusterable {
             if (field.isMandatory()) {
                 output.append(" mandatory");
             }
-            if (field.isOrdered()) {
-                output.append(" ordered");
-            }
             output.append("\n");
         } else {
             renderField(output, field.getField());
@@ -169,6 +171,14 @@ public class CndSerializer implements IClusterable {
         if (template.getSuperType() != null) {
             output.append(" > " + template.getSuperType());
         }
+
+        for (FieldDescriptor field : template.getFields()) {
+            if (field.isOrdered()) {
+                output.append(" orderable");
+                break;
+            }
+        }
+
         output.append("\n");
         for (FieldDescriptor field : template.getFields()) {
             renderField(output, field);

@@ -174,7 +174,8 @@ public class FieldDescriptor implements IClusterable, Cloneable {
     }
 
     public boolean isNode() {
-        return getTemplate() == null ? getField().isNode() : getTemplate().isNode();
+        TemplateDescriptor template = getTemplate();
+        return template == null ? getField().isNode() : template.isNode();
     }
 
     public String[] getConstraints() {
