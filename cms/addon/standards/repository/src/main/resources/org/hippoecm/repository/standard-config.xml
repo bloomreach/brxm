@@ -24,13 +24,35 @@
       <sv:value>hippo:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippo:document</sv:value>
+      <sv:value>hippo:namespace</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:display" sv:type="String">
+      <sv:value>Internal workflow</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:types</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="edit-model">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetype" sv:type="String">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow</sv:value>

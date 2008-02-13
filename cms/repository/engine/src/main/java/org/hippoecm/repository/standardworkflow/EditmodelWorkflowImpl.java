@@ -15,12 +15,9 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.io.StringBufferInputStream;
 import java.rmi.RemoteException;
 
-import javax.jcr.NamespaceException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -28,7 +25,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.servicing.Remodeling;
 
 public class EditmodelWorkflowImpl implements EditmodelWorkflow {
     private Session userSession;
@@ -41,16 +37,23 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
         this.node = subject;
     }
 
-    public String edit() throws WorkflowException, MappingException, RepositoryException  {
+    public String edit() throws WorkflowException, MappingException, RepositoryException {
+        if (!node.isNodeType(HippoNodeType.NT_TEMPLATE))
+            throw new MappingException("invalid node type for EditmodelWorkflow");
+
         return node.getPath();
     }
 
     public String copy(String name) throws WorkflowException, MappingException, RepositoryException {
+        if (!node.isNodeType(HippoNodeType.NT_TEMPLATE))
+            throw new MappingException("invalid node type for EditmodelWorkflow");
+
         String path = node.getPath();
-        path = path.substring(0, path.lastIndexOf("/")+1);
+        path = path.substring(0, path.lastIndexOf("/") + 1);
         path += name;
         Node target = (Node) rootSession.getItem(node.getPath());
-        target = ((HippoSession)rootSession).copy(node, path);
+        target = ((HippoSession) rootSession).copy(target, path);
+        target.getParent().save();
         return target.getPath();
     }
 }

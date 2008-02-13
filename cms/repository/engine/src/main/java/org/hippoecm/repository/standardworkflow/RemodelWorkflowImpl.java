@@ -39,12 +39,11 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
     }
 
     public String[] remodel(String cnd) throws WorkflowException, MappingException, RepositoryException {
-        if (!subject.isNodeType(HippoNodeType.NT_DOCUMENT))
-            throw new MappingException("bad workflow invocation");
+        if (!subject.isNodeType(HippoNodeType.NT_NAMESPACE))
+            throw new MappingException("invalid node type for RemodelWorkflow");
 
         try {
-            String typeName = subject.getPrimaryNodeType().getName();
-            String prefix = typeName.substring(0, typeName.indexOf(':'));
+            String prefix = subject.getName();
 
             StringBufferInputStream istream = new StringBufferInputStream(cnd);
             Remodeling remodel = Remodeling.remodel(userSession, prefix, istream);
