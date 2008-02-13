@@ -35,7 +35,7 @@
       <sv:value>sample:webFolder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:supertype" sv:type="String">
-      <sv:value>nt:unstructured</sv:value>
+      <sv:value>hippo:folder</sv:value>
     </sv:property>
   </sv:node>
   

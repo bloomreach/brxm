@@ -21,15 +21,18 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.standardworkflow.dialogs.RemodelDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CopyModelDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.EditModelDialog;
 
-public class RemodelWorkflowPlugin extends Plugin {
+public class EditmodelWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public RemodelWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+    public EditmodelWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        add(new DialogLink("remodelRequest-dialog", "Apply models", RemodelDialog.class,
+        add(new DialogLink("editModelRequest-dialog", "Edit model", EditModelDialog.class,
+                (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
+        add(new DialogLink("copyModelRequest-dialog", "Copy model", CopyModelDialog.class,
                 (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
     }
 

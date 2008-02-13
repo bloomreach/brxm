@@ -20,6 +20,8 @@ import javax.jcr.Node;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.JcrItemModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
@@ -37,7 +39,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     
     public RemodelDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
-        dialogWindow.setTitle("Remodel request");
+        dialogWindow.setTitle("Apply models");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
@@ -48,8 +50,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
 
         Node node = dialogWindow.getNodeModel().getNode();
-        String typeName = node.getPrimaryNodeType().getName();
-        String namespace = typeName.substring(0, typeName.indexOf(':'));
+        String namespace = node.getName();
         TemplateConfig templateConfig = getOwningPlugin().getPluginManager().getTemplateEngine().getConfig();
         CndSerializer serializer = new CndSerializer(sessionModel, templateConfig, namespace);
         serializer.versionNamespace(namespace);
@@ -68,8 +69,9 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 //            }
             sessionModel.getSession().save();
 
+            // flush the root node
             Channel incoming = getIncoming();
-            Request request = incoming.createRequest("logout", null);
+            Request request = incoming.createRequest("flush", new JcrNodeModel(new JcrItemModel("/")));
             incoming.send(request);
         } else {
             log.warn("no remodeling workflow available on selected node");
