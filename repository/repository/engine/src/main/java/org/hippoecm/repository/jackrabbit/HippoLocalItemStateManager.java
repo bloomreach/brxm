@@ -171,9 +171,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
         super.update();
         edit();
-        FilteredChangeLog tempChangeLog = filteredChangeLog;
-        filteredChangeLog = null;
-        tempChangeLog.repopulate();
     }
 
     @Override
@@ -331,7 +328,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     deletedExternals.add(state);
                     ((NodeState)state).removeAllChildNodeEntries();
-                    stateDiscarded((NodeState)state);
+                    stateDestroyed(state);
                 }
             }
             for(Iterator iter = upstream.addedStates(); iter.hasNext(); ) {
@@ -343,44 +340,29 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                             NodeState parentNodeState = (NodeState) get(nodeState.getParentId());
                             if(parentNodeState != null) {
                                 parentNodeState.removeChildNodeEntry(nodeState.getNodeId());
-                                stateDiscarded(nodeState);
+                                stateDestroyed(nodeState);
                             }
                         } catch(NoSuchItemStateException ex) {
                         }
                     } else {
-                        stateDiscarded(state);
+                        stateDestroyed(state);
                     }
                 } else if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     if(!deletedExternals.contains(state)) {
                         ((NodeState)state).removeAllChildNodeEntries();
-                        stateDiscarded((NodeState)state);
-                        virtualStates.add(state);
+                        stateDestroyed((NodeState)state);
                     }
                 }
             }
             for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    stateDiscarded((NodeState)state);
-                    virtualStates.add(state);
+                    stateDestroyed((NodeState)state);
+                    ((NodeState)state).removeAllChildNodeEntries();
                 }
             }
         }
-
-        void repopulate() {
-            for(Iterator iter = virtualStates.iterator(); iter.hasNext(); ) {
-                ItemState state = (ItemState) iter.next();
-                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    try {
-                        virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
-                        stateDiscarded(state);
-                    } catch(RepositoryException ex) {
-                        System.err.println(ex.getMessage());
-                        ex.printStackTrace(System.err);
-                    }
-                }
-            }
-        }
+        
 
         @Override public ItemState get(ItemId id) throws NoSuchItemStateException {
             return upstream.get(id);
