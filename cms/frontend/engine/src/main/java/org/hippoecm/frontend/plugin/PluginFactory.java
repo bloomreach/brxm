@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugin;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.IPluginModel;
@@ -51,6 +52,11 @@ public class PluginFactory {
                 Constructor constructor = clazz.getConstructor(formalArgs);
                 Object[] actualArgs = new Object[] { descriptor, model, parentPlugin };
                 plugin = (Plugin) constructor.newInstance(actualArgs);
+            } catch (InvocationTargetException e) {
+                String message = e.getTargetException().getClass().getName() + ": "
+                        + e.getTargetException().getMessage() + "\n" + "Failed to instantiate plugin '"
+                        + descriptor.getClassName() + "' for id '" + descriptor + "'.";
+                plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
             } catch (Exception e) {
                 String message = e.getClass().getName() + ": " + e.getMessage() + "\n"
                         + "Failed to instantiate plugin '" + descriptor.getClassName() + "' for id '" + descriptor
@@ -60,5 +66,4 @@ public class PluginFactory {
         }
         return plugin;
     }
-
 }
