@@ -56,8 +56,8 @@ public class CanonicalPathTest extends TestCase {
 
     public void tearDown() throws Exception {
         session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
+        if(session.getRootNode().hasNode("content")) {
+            session.getRootNode().getNode("content").remove();
         }
         if(session != null) {
             session.logout();
