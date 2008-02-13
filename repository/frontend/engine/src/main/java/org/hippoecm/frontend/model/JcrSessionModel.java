@@ -73,6 +73,8 @@ public class JcrSessionModel extends LoadableDetachableModel {
             session.logout();
             detach();
         }
+        classLoader = null;
+        workflowManager = null;
     }
 
     public ValueMap getCredentials() {

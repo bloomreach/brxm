@@ -63,7 +63,10 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
             String[] nodes = workflow.remodel(cnd);
-            System.err.print(nodes);
+//            for(int i = 0; i < nodes.length; i++) {
+//                System.err.println("nodes[] " + i + ": " + nodes[i]);
+//            }
+            sessionModel.getSession().save();
 
             Channel incoming = getIncoming();
             Request request = incoming.createRequest("logout", null);

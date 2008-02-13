@@ -43,6 +43,7 @@ import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,16 +146,25 @@ public class Remodeling {
         }
     }
 
+    private boolean isVirtual(Node node) throws RepositoryException {
+        Node canonical = ((HippoNode) node).getCanonicalNode();
+        return (canonical == null || !(canonical.isSame(node)));
+    }
+
     protected void traverse(Set<String> types, Node node, boolean copy, Node target) throws RepositoryException {
         if (node.getPath().equals("/jcr:system")) {
             return;
         }
+
         if (copy) {
             visit(node, target);
         }
         LinkedList<Node> toRename = new LinkedList<Node>();
         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
+            if (isVirtual(child)) {
+                continue;
+            }
             NodeType nodeType = child.getPrimaryNodeType();
             boolean found = false;
             for (Iterator<String> find = types.iterator(); find.hasNext();) {
@@ -169,8 +179,9 @@ public class Remodeling {
                         + nodeType.getName().substring(nodeType.getName().indexOf(":")));
                 changes.add(newChild);
                 traverse(types, child, true, newChild);
-                if (!copy)
+                if (!copy) {
                     child.remove(); // iter.remove();
+                }
             } else if (copy) {
                 Node newChild = target.addNode(getNewName(child.getName()), nodeType.getName());
                 traverse(types, child, true, newChild);
