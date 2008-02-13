@@ -269,13 +269,13 @@ public class HippoAccessManager implements AccessManager {
      */
     protected boolean canAccessJCRNode(NodeState nodeState, int permissions) throws RepositoryException {
         // allow reading and modifying of structural nodes
-        if (nodeState.getNodeTypeName().equals(NameConstants.NT_UNSTRUCTURED)) {
+        if (isOfType(nodeState, NameConstants.NT_UNSTRUCTURED)) {
             if (log.isDebugEnabled()) {
-                log.debug("Allow struncture node read access.");
+                log.debug("Allow structure node read access.");
             }
             return true;
         }
-        if (nodeState.getNodeTypeName().equals(NameConstants.NT_FOLDER)) {
+        if (isOfType(nodeState, NameConstants.NT_FOLDER)) {
             if (log.isDebugEnabled()) {
                 log.debug("Allow struncture node read access.");
             }
@@ -283,7 +283,7 @@ public class HippoAccessManager implements AccessManager {
         }
         // Allow root read
         if ((permissions & WRITE) != WRITE && (permissions & REMOVE) != REMOVE) {
-            if (nodeState.getParentId() == null) {
+            if ((NodeId) nodeState.getId() == rootNodeId) {
                 if (log.isDebugEnabled()) {
                     log.debug("Allow root node read access.");
                 }
@@ -723,8 +723,36 @@ public class HippoAccessManager implements AccessManager {
         return buf.toString();
     }
 
-
+    /** 
+     * Helper function to check if a nodeState is of a node type or a
+     * deriviate of the node type (sub class)
+     * 
+     * @param nodeState the node to check
+     * @param nodeTypeName the node type name
+     * @return boolean
+     * @throws NoSuchNodeTypeException 
+     */
     
+    private boolean isOfType(NodeState nodeState, Name nodeTypeName) throws NoSuchNodeTypeException {
+        if (nodeState.getNodeTypeName().equals(nodeTypeName)) {
+            if (log.isTraceEnabled()) {
+                log.trace("MATCH " + nodeState.getId() + " is of type: " + nodeTypeName);
+            }
+            return true;
+        }
+        
+        NodeTypeDef ntd = ntReg.getNodeTypeDef(nodeState.getNodeTypeName());
+        Name[] names = ntd.getSupertypes();
+        for (Name n : names) {
+            if (n.equals(nodeTypeName)) {
+                if (log.isTraceEnabled()) {
+                    log.trace("MATCH " + nodeState.getId() + " is a deriviate of type: " + nodeTypeName);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
     
     /**
      * Helper function to find a hippo:document deriviate node type. This
@@ -757,12 +785,6 @@ public class HippoAccessManager implements AccessManager {
         while (!rootNodeId.equals((NodeId)nodeState.getId())) {
             // shift one up in hierarchy
             nodeState = (NodeState) hierMgr.getItemState(nodeState.getParentId());
-            if (nodeState.getNodeTypeName().equals(hippoDoc)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("MATCH hippoDoc: " + nodeState.getNodeTypeName());
-                }
-                return nodeState;
-            }
             if (nodeState.getNodeTypeName().equals(hippoHandle)) {
                 if (log.isDebugEnabled()) {
                     log.debug("MATCH hippoHandle: " + nodeState.getNodeTypeName());
@@ -781,15 +803,11 @@ public class HippoAccessManager implements AccessManager {
                 }
                 return null;
             }
-            NodeTypeDef ntd = ntReg.getNodeTypeDef(nodeState.getNodeTypeName());
-            Name[] names = ntd.getSupertypes();
-            for (Name n : names) {
-                if (n.equals(hippoDoc)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("MATCH hippoDoc SUPER: " + n);
-                    }
-                    return nodeState;
+            if (isOfType(nodeState, hippoDoc)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("MATCH hippoDoc: " + nodeState.getNodeTypeName());
                 }
+                return nodeState;
             }
         }
         return null;
