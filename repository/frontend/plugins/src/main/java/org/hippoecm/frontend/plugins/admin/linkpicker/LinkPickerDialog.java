@@ -48,16 +48,7 @@ public class LinkPickerDialog extends LookupDialog {
     @Override
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
         super.update(target, model);
-        try {
-            if (isValidType(model)) {
-                ok.setEnabled(true);
-            } else {
-                ok.setEnabled(false);
-            }
-        } catch (RepositoryException e) {
-            log.error("RepositoryException " + e);
-        }
-        
+        ok.setEnabled(isValidType(model));
         target.addComponent(ok);
         
     }
@@ -84,16 +75,20 @@ public class LinkPickerDialog extends LookupDialog {
         }
     }
 
-    private boolean isValidType(JcrNodeModel targetNodeModel) throws RepositoryException {
+    protected boolean isValidType(JcrNodeModel targetNodeModel){
         Node targetNode = targetNodeModel.getNode();
         boolean validType = false;
         if (nodetypes.size() == 0) {
             return true;
         }
         for(int i = 0 ; i < nodetypes.size() ; i++){
-            if(targetNode.isNodeType(nodetypes.get(i))){
-                validType = true;
-                break;
+            try {
+                if(targetNode.isNodeType(nodetypes.get(i))){
+                    validType = true;
+                    break;
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
             }
         }
         return validType;

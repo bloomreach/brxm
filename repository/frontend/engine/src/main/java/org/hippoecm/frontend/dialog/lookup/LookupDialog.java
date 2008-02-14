@@ -76,19 +76,11 @@ public abstract class LookupDialog extends AbstractDialog {
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
         getInfoPanel().update(target, model);
-        try {
-            if (isValidType(model)) {
-                ok.setEnabled(true);
-            } else {
-                ok.setEnabled(false);
-            }
-        } catch (RepositoryException e) {
-            log.error("RepositoryException " + e);
-        }
+        ok.setEnabled(isValidType(model));
         target.addComponent(ok);
     }
     
-    protected boolean isValidType(JcrNodeModel targetNodeModel) throws RepositoryException {
+    protected boolean isValidType(JcrNodeModel targetNodeModel){
         return true;
     }
 
