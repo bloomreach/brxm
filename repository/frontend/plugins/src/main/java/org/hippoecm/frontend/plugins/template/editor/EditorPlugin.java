@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.template.editor;
 
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -38,7 +39,7 @@ public class EditorPlugin extends Plugin {
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
 
-        DialogLink save = new DialogLink("save-dialog", "Save", SaveDialog.class, jcrModel, incoming, factory);
+        DialogLink save = new DialogLink("save-dialog", new Model("Save"), SaveDialog.class, jcrModel, incoming, factory);
         add(save);
 
         form = new EditorForm("form", (JcrNodeModel) getModel(), this);

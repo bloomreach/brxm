@@ -74,6 +74,23 @@
         <sv:value>hippo:field</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>JSP</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hst:pageFile</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
         <sv:value>Title</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
@@ -87,7 +104,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
+  
   <sv:node sv:name="sample:webNavigation">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:template</sv:value>

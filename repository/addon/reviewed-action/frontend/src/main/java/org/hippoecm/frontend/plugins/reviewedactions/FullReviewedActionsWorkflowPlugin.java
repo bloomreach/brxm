@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -41,21 +42,21 @@ public class FullReviewedActionsWorkflowPlugin extends Plugin {
         JcrNodeModel jcrModel = (JcrNodeModel) getPluginModel();
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
-        add(new DialogLink("obtainEditableInstance-dialog", "Obtain editable copy",
+        add(new DialogLink("obtainEditableInstance-dialog", new Model("Obtain editable copy"),
                 ObtainEditableInstanceDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("disposeEditableInstance-dialog", "Dispose editable copy",
+        add(new DialogLink("disposeEditableInstance-dialog", new Model("Dispose editable copy"),
                 DisposeEditableInstanceDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("requestPublication-dialog", "Request publication",
+        add(new DialogLink("requestPublication-dialog", new Model("Request publication"),
                 RequestPublicationDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("requestDePublication-dialog", "Request unpublication",
+        add(new DialogLink("requestDePublication-dialog", new Model("Request unpublication"),
                 RequestDePublicationDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("requestDeletion-dialog", "Request delete",
+        add(new DialogLink("requestDeletion-dialog", new Model("Request delete"),
                 RequestDeletionDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("publish-dialog", "Publish",
+        add(new DialogLink("publish-dialog", new Model("Publish"),
                 PublishDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("dePublish-dialog", "Unpublish",
+        add(new DialogLink("dePublish-dialog", new Model("Unpublish"),
                 DePublishDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("delete-dialog", "Unpublish and/or delete",
+        add(new DialogLink("delete-dialog", new Model("Unpublish and/or delete"),
                 DeleteDialog.class, jcrModel, incoming, factory));
     }
 

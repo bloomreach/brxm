@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -30,9 +31,9 @@ public class EditmodelWorkflowPlugin extends Plugin {
     public EditmodelWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        add(new DialogLink("editModelRequest-dialog", "Edit model", EditModelDialog.class,
+        add(new DialogLink("editModelRequest-dialog", new Model("Edit model"), EditModelDialog.class,
                 (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
-        add(new DialogLink("copyModelRequest-dialog", "Copy model", CopyModelDialog.class,
+        add(new DialogLink("copyModelRequest-dialog", new Model("Copy model"), CopyModelDialog.class,
                 (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
     }
 

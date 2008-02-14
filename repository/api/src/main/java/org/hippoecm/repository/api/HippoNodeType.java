@@ -68,6 +68,7 @@ public interface HippoNodeType {
     final public static String NT_PARAMETERS = "hippo:parameters";
     final public static String NT_PLUGIN = "hippo:plugin";
     final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
+    final public static String NT_PROTOTYPED = "hippo:prototyped";
     final public static String NT_REFERENCEABLE = "hippo:referenceable";
     final public static String NT_REQUEST = "hippo:request";
     final public static String NT_ROLE = "hippo:role";
@@ -111,6 +112,7 @@ public interface HippoNodeType {
     final public static String HIPPO_PATH = "hippo:path";
     final public static String HIPPO_PATHS = "hippo:paths";
     final public static String HIPPO_PERMISSIONS = "hippo:permissions";
+    final public static String HIPPO_PROTOTYPE = "hippo:prototype";
     final public static String HIPPO_QUERYNAME = "hippo:queryname";
     final public static String HIPPO_RENDERER = "hippo:renderer";
     final public static String HIPPO_RESULTSET = "hippo:resultset";

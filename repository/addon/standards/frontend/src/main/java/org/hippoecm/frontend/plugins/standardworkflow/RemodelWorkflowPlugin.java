@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -29,7 +30,7 @@ public class RemodelWorkflowPlugin extends Plugin {
     public RemodelWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        add(new DialogLink("remodelRequest-dialog", "Apply models", RemodelDialog.class,
+        add(new DialogLink("remodelRequest-dialog", new Model("Apply models"), RemodelDialog.class,
                 (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
     }
 
