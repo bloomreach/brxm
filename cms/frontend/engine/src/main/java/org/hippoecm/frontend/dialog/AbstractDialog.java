@@ -54,6 +54,9 @@ public abstract class AbstractDialog extends WebPage {
                 } catch (Exception e) {
                     String msg = e.getClass().getName() + ": " + e.getMessage();
                     log.error(msg);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Error from repository: ", e);
+                    }
                     setException(msg);
                     target.addComponent(exceptionLabel);
                 }
