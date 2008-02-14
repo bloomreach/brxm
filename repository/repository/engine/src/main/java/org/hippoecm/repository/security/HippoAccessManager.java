@@ -274,6 +274,9 @@ public class HippoAccessManager implements AccessManager {
      * @throws RepositoryException
      */
     protected boolean canAccessJCRNode(NodeState nodeState, int permissions) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Checking [" + pString(permissions) + "] for: " + nodeState.getId());
+        }
         // allow reading and modifying of structural nodes
         if (nodeState.getNodeTypeName().equals(NameConstants.NT_UNSTRUCTURED)) {
             if (log.isDebugEnabled()) {
@@ -310,12 +313,8 @@ public class HippoAccessManager implements AccessManager {
      * @throws NoSuchItemStateException
      */
     protected boolean canAccessHippoNode(NodeState nodeState, int permissions) throws RepositoryException, NoSuchItemStateException, ItemStateException {
-        String namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
-        String localName = nodeState.getNodeTypeName().getLocalName();
-
-        // not a hippo node
-        if (!namespaceURI.equals(NAMESPACE_URI)) {
-            return false;
+        if (log.isTraceEnabled()) {
+            log.trace("Checking [" + pString(permissions) + "] for: " + nodeState.getId());
         }
 
         //----------------------- read & write & remove access -------------------//
@@ -323,6 +322,9 @@ public class HippoAccessManager implements AccessManager {
             return true;
         }
         if (nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
+            return true;
+        }
+        if (isInstanceOfType(nodeState, hippoFolder)) {
             return true;
         }
         
@@ -340,7 +342,13 @@ public class HippoAccessManager implements AccessManager {
             return false;
         }
 
-        //-----------------------  read access -------------------//            
+        //-----------------------  read access -------------------//
+        // check namespace
+        String namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
+        String localName = nodeState.getNodeTypeName().getLocalName();
+        if (!namespaceURI.equals(NAMESPACE_URI)) {
+            return false;
+        }
         if (localName.equals(getLocalName(HippoNodeType.NT_FACETRESULT))) {
             return true;
         }
@@ -406,6 +414,9 @@ public class HippoAccessManager implements AccessManager {
      * @throws RepositoryException
      */
     protected boolean checkFacetAuth(NodeState nodeState, int permissions) throws RepositoryException {
+        if (log.isTraceEnabled()) {
+            log.trace("Checking [" + pString(permissions) + "] for: " + nodeState.getId());
+        }
         /*
          * 1. AND -> (x=a or x=b) AND (y=c)
          * -- first non match return false;
