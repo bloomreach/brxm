@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.tree;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
@@ -38,10 +39,14 @@ public abstract class JcrTree extends Tree {
         JcrTree.class, "icons/virtual_folder_closed.gif");
     /** Reference to the icon of virtual document */
     private static final ResourceReference VIRTUAL_DOCUMENT = new ResourceReference(
-        JcrTree.class, "icons/virtual_document.gif");
+            JcrTree.class, "icons/virtual_document.gif");
+    
+    private static final ResourceReference DELETED_DOCUMENT = new ResourceReference(
+            JcrTree.class, "icons/deleted_document.gif");
 
     private static final int IS_VIRTUAL_FOLDER = 1;
     private static final int IS_VIRTUAL_DOCUMENT = 2;
+    private static final int IS_DELETED_DOCUMENT = 3;
     
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
 
@@ -85,8 +90,20 @@ public abstract class JcrTree extends Tree {
                 }
                 
             }
-        } catch (RepositoryException e) {
+        } catch (ItemNotFoundException e) {
+            /*
+             * This exception happens when you have a virtual tree open below a
+             * facet select, and you delete the physical node, not yet saving it:
+             * Then, the jcrNode.getCanonicalNode() results in a ItemNotFoundException for 
+             * the virtual node.
+             */
+            log.debug(e.getMessage(), e);
+            typeOfNode = IS_DELETED_DOCUMENT;
+            
+        }catch (RepositoryException e) {
+            // should never happen
             log.error(e.getMessage(), e);
+            typeOfNode = IS_DELETED_DOCUMENT;
         }
         
         switch (typeOfNode) {
@@ -101,6 +118,8 @@ public abstract class JcrTree extends Tree {
                 }
             case IS_VIRTUAL_DOCUMENT:
                 return VIRTUAL_DOCUMENT;
+            case IS_DELETED_DOCUMENT:
+                return DELETED_DOCUMENT;
             default:
                 return super.getNodeIcon(node);
         }
