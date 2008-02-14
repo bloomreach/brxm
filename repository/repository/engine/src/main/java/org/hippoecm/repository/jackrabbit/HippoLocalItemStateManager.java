@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.NoSuchElementException; 
 import java.util.Set;
 
 import javax.jcr.ReferentialIntegrityException;
@@ -193,21 +193,17 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
                     int type =  isVirtual(nodeState);
+                    if( (type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0) {
+                        nodeState.removeAllChildNodeEntries();
+                    }
                     try {
-                        /*
-                         * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
-                         * Only populate when a node is either EXTERNAL or VIRTUAL, but not when both
-                         */   
-                        if( !((type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0)) {
-                            state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
-                        }
+                        state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
                     } catch(RepositoryException ex) {
                         System.err.println(ex.getMessage());
                         ex.printStackTrace(System.err);
                         return null;
                     }
                 }
-
                 virtualNodes.put((HippoNodeId)id, nodeState);
                 stateDiscarded(nodeState);
                 store(nodeState);
@@ -219,6 +215,10 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
                     edit();
+                    int type =  isVirtual(nodeState);
+                    if( (type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0) {
+                        nodeState.removeAllChildNodeEntries();
+                    }
                     try {
                         virtualStates.add(state);
                         state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
@@ -264,21 +264,24 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         } else if(state == null && id instanceof HippoNodeId) {
             edit();
             NodeState nodeState = ((HippoNodeId)id).populate();
+            
             virtualNodes.put((HippoNodeId)id, nodeState);
             stateDiscarded(nodeState);
             store(nodeState);
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
-                if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                if(virtualNodeNames.containsKey(nodeTypeName)) {
                     int type =  isVirtual(nodeState);
+                    /*
+                     * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
+                     * Since the parent EXTERNAL node can impose new constaints, like an inherited filter, we
+                     * first need to remove all the childNodeEntries, and then populate it again
+                     */  
+                    if( (type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0) {
+                        nodeState.removeAllChildNodeEntries();
+                    }
                     try {
-                        /*
-                         * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
-                         * Only populate when a node is either EXTERNAL or VIRTUAL, not when both
-                         */   
-                        if( !((type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0)) {
-                            state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
-                        }
+                        state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
                     } catch(RepositoryException ex) {
                         System.err.println(ex.getMessage());
                         ex.printStackTrace(System.err);
@@ -383,7 +386,8 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         void repopulate() {
             for(Iterator iter = virtualStates.iterator(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
-                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+                // only repopulate ITEM_TYPE_EXTERNAL, not state that are ITEM_TYPE_EXTERNAL && ITEM_TYPE_VIRTUAL
+                if(( (isVirtual(state) & ITEM_TYPE_EXTERNAL)) != 0 && ((isVirtual(state) & ITEM_TYPE_VIRTUAL) == 0) ) {
                     try {
                         virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
                     } catch(RepositoryException ex) {
