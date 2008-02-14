@@ -25,6 +25,7 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.jackrabbit.ViewVirtualProvider.ViewNodeId;
 
 public class FacetSelectProvider extends HippoVirtualProvider
 {
@@ -40,6 +41,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
         super();
     }
 
+    
     protected void initialize() throws RepositoryException {
         this.subNodesProvider = (ViewVirtualProvider) lookup("org.hippoecm.repository.jackrabbit.ViewVirtualProvider");
         register(resolveName(HippoNodeType.NT_FACETSELECT), null);
@@ -61,10 +63,22 @@ public class FacetSelectProvider extends HippoVirtualProvider
         }
 
         NodeState dereference = getNodeState(docbase[0]);
-
+        
         if(dereference != null) {
-
             Map<Name,String> view = new HashMap<Name,String>();
+            
+            /*
+             * If state..getParentId() instanceod ViewNodeId, we know for sure we are dealing with
+             * a facetselect below a facetselect. We need to take into account the view of the parent select.
+             * In principle, a state of type HippoNodeId always has a parent. To be sure, check for null
+             */  
+            if (state.getParentId()!=null && state.getParentId() instanceof ViewNodeId) {
+               ViewNodeId viewNodeId = ((ViewNodeId)state.getParentId());
+               if(viewNodeId.view != null) {
+                   view.putAll(viewNodeId.view);
+               }
+            }
+            
             if(newFacets.length != newValues.length || newFacets.length != newModes.length)
                 throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
             for(int i=0; i<newFacets.length; i++) {
@@ -82,7 +96,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
                 }
             }
         }
-
+        
         return state;
     }
 
