@@ -15,10 +15,18 @@
  */
 package org.hippoecm.frontend.tree;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -26,9 +34,13 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTreePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(AbstractTreePlugin.class);
 
     protected JcrTree tree;
     protected AbstractTreeNode rootNode;
@@ -50,17 +62,42 @@ public abstract class AbstractTreePlugin extends Plugin {
         add(tree);
     }
 
-    protected void onSelect(AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
+    protected void onSelect(final AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
         Channel channel = getDescriptor().getIncoming();
         if (channel != null) {
-            // create a "select" request with the node path as a parameter
-            Request request = channel.createRequest("select", treeNodeModel.getNodeModel());
+            // create and send a "select" request with the node path as a parameter
+            Request select = channel.createRequest("select", treeNodeModel.getNodeModel());
+            channel.send(select);
+            
+            // create and send a "relatives" request with the children and parent 
+            // of the selected node as a parameters
+            IPluginModel relativesModel = new PluginModel() {
+                private static final long serialVersionUID = 1L;
 
-            // send the request to the incoming channel
-            channel.send(request);
+                public Map<String, Object> getMapRepresentation() {
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    try {
+                        AbstractTreeNode parent = (AbstractTreeNode) treeNodeModel.getParent();
+                        map.put("parent", parent.getNodeModel().getNode().getPath());
 
-            // add all components that have changed (and are visible!)
-            request.getContext().apply(target);
+                        List<String> children = new ArrayList<String>();
+                        Enumeration<AbstractTreeNode> childNodes = treeNodeModel.children();
+                        while (childNodes.hasMoreElements()) {
+                            children.add(childNodes.nextElement().getNodeModel().getNode().getPath());
+                        }
+                        map.put("children", children);
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                    }
+                    return map;
+                }
+            };
+            Request relatives = channel.createRequest("relatives", relativesModel);
+            channel.send(relatives);
+            
+            //
+            select.getContext().apply(target);
+            relatives.getContext().apply(target);
         }
     }
 
@@ -74,9 +111,8 @@ public abstract class AbstractTreePlugin extends Plugin {
                 if (node != null) {
                     tree.getTreeState().selectNode(node, true);
                     break;
-                } else {
-                    model = model.getParentModel();
                 }
+                model = model.getParentModel();
             }
         } else if ("flush".equals(notification.getOperation())) {
             AbstractTreeNode node = rootNode.getTreeModel().lookup(new JcrNodeModel(notification.getModel()));

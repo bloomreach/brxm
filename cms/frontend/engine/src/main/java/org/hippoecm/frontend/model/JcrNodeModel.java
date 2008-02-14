@@ -40,6 +40,10 @@ public class JcrNodeModel extends ItemModelWrapper implements IPluginModel {
     public JcrNodeModel(Node node) {
         super(node);
     }
+    
+    public JcrNodeModel(String path) {
+        super(path);
+    }
 
     public JcrNodeModel(IPluginModel model) {
         super((String) model.getMapRepresentation().get("node"));

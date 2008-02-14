@@ -41,6 +41,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.AbstractListingPlugin;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -83,14 +84,14 @@ public class SearchPlugin extends AbstractListingPlugin{
     }
     
     @Override
-    protected void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
-        javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession()); 
+    protected ICustomizableDocumentListingDataTable getTable(IPluginModel model) {
+        javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession(); 
         
         dataTable = new CustomizableDocumentListingDataTable("table", columns, 
                 new SortableQueryResultProvider(getQueryResult(session), session), pageSize, false);
         dataTable.addBottomPaging(viewSize);
         dataTable.addTopColumnHeaders();
-        add((Component)dataTable); 
+        return dataTable;
     }
 
     private QueryResult getQueryResult(javax.jcr.Session session){
@@ -167,8 +168,9 @@ public class SearchPlugin extends AbstractListingPlugin{
             query = (String)field.getModelObject();
             field.setModelObject(query);
             searchedFor.setModelObject("You searched for : "  + query);
-            this.getParent().remove((Component)dataTable);
-            ((SearchPlugin)this.getParent()).addTable(model, pageSize, viewSize);
+            SearchPlugin parent = (SearchPlugin)this.getParent(); 
+            parent.remove((Component)dataTable);
+            parent.add((Component)getTable(model));
         }
     }
 }

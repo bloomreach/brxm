@@ -15,15 +15,9 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.list;
 
-import javax.jcr.RepositoryException;
-
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.NodeCell;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.repository.api.HippoNode;
-import org.apache.jackrabbit.JcrConstants;
 
 public class DocumentListingNodeCell extends NodeCell {
     private static final long serialVersionUID = 1L;
@@ -32,32 +26,4 @@ public class DocumentListingNodeCell extends NodeCell {
         super(id, model, channel, nodePropertyName);
     }
 
-    @Override
-    protected void addLabel(NodeModelWrapper model, String nodePropertyName, AjaxLink link) {
-        if (model instanceof DocumentListingParentFolder && nodePropertyName.equals("name")) {
-            addLabel(link, "[..]");
-        }
-        else if (model instanceof Folder) {
-            if (nodePropertyName.equals("name")) {
-                HippoNode n = (HippoNode) model.getObject();
-                try {
-                    addLabel(link, "["+n.getName()+"]");
-                } catch (RepositoryException e) {
-                    addEmptyLabel(link);
-                }
-            }
-            else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
-                addLabel(link, "Folder");
-            }
-            else {
-                addEmptyLabel(link);
-            }
-        }
-        else {
-            super.addLabel(model, nodePropertyName, link);
-        }
-    }
-
-    
-    
 }
