@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.dialog.lookup;
 
+import javax.jcr.RepositoryException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
@@ -75,7 +76,20 @@ public abstract class LookupDialog extends AbstractDialog {
 
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
         getInfoPanel().update(target, model);
+        try {
+            if (isValidType(model)) {
+                ok.setEnabled(true);
+            } else {
+                ok.setEnabled(false);
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException " + e);
+        }
+        target.addComponent(ok);
     }
     
+    protected boolean isValidType(JcrNodeModel targetNodeModel) throws RepositoryException {
+        return true;
+    }
 
 }
