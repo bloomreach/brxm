@@ -136,6 +136,10 @@ class FieldManagerImpl extends AbstractFieldManager {
                 }
                 relPath = relPath.substring(0,relPath.indexOf("["));
             }
+            if(last != null) {
+                last.node = node;
+                last.relPath = relPath;
+            }
             if(conditions == null || conditions.size() == 0) {
                 if(node.hasNode(relPath)) {
                     try {
@@ -144,10 +148,6 @@ class FieldManagerImpl extends AbstractFieldManager {
                         return null;
                     }
                 } else {
-                    if(last != null && pathIdx+1 == pathEltsLength) {
-                        last.node = node;
-                        last.relPath = relPath;
-                    }
                     return null;
                 }
             } else {
@@ -179,10 +179,6 @@ class FieldManagerImpl extends AbstractFieldManager {
                         break;
                 }
                 if(child == null) {
-                    if(last != null && pathIdx+1 == pathEltsLength) {
-                        last.node = node;
-                        last.relPath = relPath;
-                    }
                     return null;
                 } else
                     node = child;
@@ -788,12 +784,13 @@ class FieldManagerImpl extends AbstractFieldManager {
                 if (value instanceof Document && ((Document) value).isCloned() != null) {
                     Entry last = new Entry();
                     child = (Node) getItem(node, field, false, last);
-                    if (child == null) {
-                        Document document = (Document) value;
-                        child = node.getSession().getNodeByUUID(document.isCloned().getIdentity());
-                        child = ((HippoSession)node.getSession()).copy(child, last.node.getPath() + "/" + last.relPath);
-                        document.setIdentity(child.getUUID());
+                    if (child != null) {
+                        child.remove();
                     }
+                    Document document = (Document) value;
+                    child = node.getSession().getNodeByUUID(document.isCloned().getIdentity());
+                    child = ((HippoSession)node.getSession()).copy(child, last.node.getPath() + "/" + last.relPath);
+                    document.setIdentity(child.getUUID());
                 } else
                     child = getNode(node, field, nodetype);
 
