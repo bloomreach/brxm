@@ -26,7 +26,6 @@ public class DocumentListingNodeColumn extends NodeColumn {
 
     public DocumentListingNodeColumn(IModel displayModel, String nodePropertyName, Channel channel) {
         super(displayModel, nodePropertyName, channel);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

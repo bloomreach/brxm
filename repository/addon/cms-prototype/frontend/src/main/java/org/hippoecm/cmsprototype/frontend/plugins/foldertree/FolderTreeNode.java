@@ -16,9 +16,7 @@
 package org.hippoecm.cmsprototype.frontend.plugins.foldertree;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -39,39 +37,30 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
 
-    private static Set<String> restrictedChildTypes = new HashSet<String>();
-    private static Set<String> unrestrictedChildTypes = new HashSet<String>();
-    static {
-        restrictedChildTypes.add(HippoNodeType.NT_HANDLE);
-        restrictedChildTypes.add(HippoNodeType.NT_FACETSEARCH);
-        restrictedChildTypes.add(HippoNodeType.NT_FACETSELECT);
-        unrestrictedChildTypes.add("nt:base");
-    }
-
-    private boolean restricted = false;
+    private boolean onlyHandles = false;
     private FolderTreeNode parent;
 
-    public FolderTreeNode(JcrNodeModel nodeModel) {
-        super(nodeModel);
+    public FolderTreeNode(JcrNodeModel model) {
+        super(model);
     }
 
-    public FolderTreeNode(JcrNodeModel nodeModel, FolderTreeNode parent) {
-        super(nodeModel);
+    public FolderTreeNode(JcrNodeModel model, FolderTreeNode parent) {
+        super(model);
         this.parent = parent;
+        this.onlyHandles = parent.onlyHandles;
         try {
-            this.restricted = parent.restricted;
-            if (restricted) {
-                if (nodeModel.getNode().isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    restricted = false;
+            Node node = nodeModel.getNode();
+            if (onlyHandles) {
+                if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    onlyHandles = false;
                 }
             } else {
-                if (nodeModel.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    restricted = true;
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    onlyHandles = true;
                 }
             }
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         setTreeModel(parent.getTreeModel());
         getTreeModel().register(this);
@@ -86,7 +75,7 @@ public class FolderTreeNode extends AbstractTreeNode {
     protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
         List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
 
-        List<Node> subNodes = filter(nodeModel.getNode());
+        List<Node> subNodes = subNodes(nodeModel.getNode());
         for (Node subNode : subNodes) {
             FolderTreeNode subfolder = new FolderTreeNode(new JcrNodeModel(subNode), this);
             result.add(subfolder);
@@ -128,28 +117,39 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     // privates
 
-    private List<Node> filter(Node node) throws RepositoryException {
+    private List<Node> subNodes(Node node) throws RepositoryException {
         List<Node> result = new ArrayList<Node>();
         NodeIterator subNodes = node.getNodes();
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
-            if (fits(subNode)) {
+            if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 result.add(subNode);
+            } else if (subNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                Node referencedNode = referencedNode(subNode);
+                if (referencedNode != null && referencedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    result.add(referencedNode);
+                } else {
+                    result.add(subNode);
+                }
             } else {
-                result.addAll(filter(subNode));
+                if (onlyHandles) {
+                    result.addAll(subNodes(subNode));
+                } else {
+                    result.add(subNode);
+                }
             }
         }
         return result;
     }
 
-    private boolean fits(Node node) throws RepositoryException {
-        Set<String> types = restricted ? restrictedChildTypes : unrestrictedChildTypes;
-        for (String type : types) {
-            if (node.isNodeType(type)) {
-                return true;
-            }
+    private Node referencedNode(Node facetSelectNode) {
+        Node result;
+        try {
+            HippoNode virtualchild = (HippoNode)facetSelectNode.getNodes().nextNode();
+            result = virtualchild.getCanonicalNode().getParent();
+        } catch (Exception e) {
+            result = null; 
         }
-        return false;
+        return result;
     }
-
 }

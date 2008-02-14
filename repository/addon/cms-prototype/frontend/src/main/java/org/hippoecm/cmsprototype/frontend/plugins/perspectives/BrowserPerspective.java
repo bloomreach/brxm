@@ -59,14 +59,11 @@ public class BrowserPerspective extends Plugin {
 
     @Override
     public void handle(Request request) {
-        if ("select".equals(request.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(request.getModel());
-            Node node = model.getNode();
-            if (node != null) {
-                Channel outgoing = getDescriptor().getOutgoing();
-                if (outgoing != null) {
-                    outgoing.publish(outgoing.createNotification(request));
-                }
+        String operation = request.getOperation();
+        if ("select".equals(operation) || "relatives".equals(operation)) {
+            Channel outgoing = getDescriptor().getOutgoing();
+            if (outgoing != null) {
+                outgoing.publish(outgoing.createNotification(request));
             }
             return;
         }

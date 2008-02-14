@@ -35,6 +35,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColum
 import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.AbstractListingPlugin;
 import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -54,21 +55,14 @@ public class TasklistPlugin extends AbstractListingPlugin{
     }
 
     @Override
-    protected void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize) {
-        javax.jcr.Session session = (javax.jcr.Session)(((UserSession)Session.get()).getJcrSession()); 
+    protected ICustomizableDocumentListingDataTable getTable(IPluginModel model) {
+        javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession(); 
         
         dataTable = new CustomizableDocumentListingDataTable("publish", columns, 
                 new SortableTaskListProvider(getTaskList(session, "//element(*, hippo:request)[@type='publish']"), session), pageSize, false);
         dataTable.addBottomPaging(viewSize);
         dataTable.addTopColumnHeaders();
-        add((Component)dataTable); 
-
-        /*ICustomizableDocumentListingDataTable deleteTable = new CustomizableDocumentListingDataTable("delete", columns, 
-                new SortableTaskListProvider(getTaskList(session, "//element(*, hippo:request)[@type='delete']"), session), pageSize, false);
-        deleteTable.addBottomPaging(viewSize);
-        deleteTable.addTopColumnHeaders();
-        add((Component)deleteTable);*/
-        
+        return dataTable;
 }
 
         private QueryResult getTaskList(javax.jcr.Session session, String xpath) {

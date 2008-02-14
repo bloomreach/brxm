@@ -86,7 +86,7 @@ public abstract class AbstractListingPlugin extends Plugin {
             if (!nodeModel.equals(getModel())) {
                 setModel(nodeModel);
                 remove((Component)dataTable);
-                addTable(nodeModel, pageSize, viewSize);
+                add((Component)getTable(nodeModel));
                 notification.getContext().addRefresh(this);
             }
         }
@@ -155,7 +155,7 @@ public abstract class AbstractListingPlugin extends Plugin {
             logError(e);
             defaultColumns(pluginDescriptor);
         }
-        addTable(model, pageSize, viewSize);
+        add((Component)getTable(model));
     }
 
     private Node createDefaultPrefNodeSetting(Node listingNode, Channel channel) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
@@ -236,7 +236,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     }
 
 
-    protected abstract void addTable(JcrNodeModel nodeModel, int pageSize, int viewSize);
+    protected abstract ICustomizableDocumentListingDataTable getTable(IPluginModel model);
 
     protected abstract String getPluginUserPrefNodeName();
 }
