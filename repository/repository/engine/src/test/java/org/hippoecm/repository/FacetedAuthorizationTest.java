@@ -331,7 +331,7 @@ public class FacetedAuthorizationTest extends TestCase {
     public void testQueryXPath() throws RepositoryException {
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();
         // XPath doesn't like the query from the root
-        Query query = queryManager.createQuery("/jcr:root/documents/element(*,hippo:document)", Query.XPATH);
+        Query query = queryManager.createQuery("//element(*,hippo:document)", Query.XPATH);
         NodeIterator iter = query.execute().getNodes();
         assertEquals((long) (2 * NODE_COUNT), iter.getSize());
     }
