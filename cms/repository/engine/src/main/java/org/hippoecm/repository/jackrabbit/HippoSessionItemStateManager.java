@@ -57,7 +57,7 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
 
     @Override
     public void stateDiscarded(ItemState discarded) {
-        System.out.println("SESSION discarder");
+//        System.out.println("SESSION discarder");
         super.stateDiscarded(discarded);
     }
     

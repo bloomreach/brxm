@@ -44,7 +44,7 @@
         that can be accessed using url rewriting 
       </description>      
       <param-name>urlbasepath</param-name>
-      <param-value>/site/pages</param-value>
+      <param-value>/en/pages</param-value>
     </init-param>
     <init-param>
       <description>
@@ -81,7 +81,7 @@
         The path to bind as context.
       </description>      
       <param-name>location</param-name>
-      <param-value>/site</param-value>
+      <param-value>/en</param-value>
     </init-param>
   </filter>
 

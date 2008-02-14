@@ -182,7 +182,7 @@
 - hippo:mandatory (boolean)
 - hippo:ordered (boolean)
 
-[hippo:template] > hippo:plugin
+[hippo:template] > hippo:plugin orderable
 - hippo:type (string)
 - hippo:supertype (string)
 - hippo:node (boolean)
@@ -209,3 +209,5 @@
 
 [hippo:folder] > nt:unstructured
 
+[hippo:prototyped] mixin
+- hippo:prototype (reference) mandatory

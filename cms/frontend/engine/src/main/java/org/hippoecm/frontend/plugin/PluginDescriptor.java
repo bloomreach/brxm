@@ -56,7 +56,10 @@ public class PluginDescriptor implements IClusterable, Cloneable {
 
     public PluginDescriptor clone() {
         try {
-            return (PluginDescriptor) super.clone();
+            PluginDescriptor copy = (PluginDescriptor) super.clone();
+            copy.parameters = new HashMap<String, List<String>>();
+            copy.parameters.putAll(parameters);
+            return copy;
         } catch (CloneNotSupportedException ex) {
             // cannot occur
         }

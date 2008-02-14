@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -29,7 +30,7 @@ public class BasicRequestWorkflowPlugin extends Plugin {
     public BasicRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
-        add(new DialogLink("cancelRequest-dialog", "Cancel request", CancelRequestDialog.class,
+        add(new DialogLink("cancelRequest-dialog", new Model("Cancel request"), CancelRequestDialog.class,
                 (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
     }
 

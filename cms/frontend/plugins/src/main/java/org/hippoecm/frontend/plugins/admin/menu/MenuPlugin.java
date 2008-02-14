@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu;
 
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -41,15 +42,15 @@ public class MenuPlugin extends Plugin {
         JcrNodeModel jcrModel = (JcrNodeModel) getModel();
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
-        add(new DialogLink("node-dialog", "Add Node", NodeDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("delete-dialog", "Delete Node", DeleteDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("move-dialog", "Move Node", MoveDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("copy-dialog", "Copy Node", CopyDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("rename-dialog", "Rename Node", RenameDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("export-dialog", "Export Node", ExportDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("property-dialog", "Add Property", PropertyDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("save-dialog", "Save", SaveDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("reset-dialog", "Reset", ResetDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("node-dialog", new Model("Add Node"), NodeDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("delete-dialog", new Model("Delete Node"), DeleteDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("move-dialog", new Model("Move Node"), MoveDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("copy-dialog", new Model("Copy Node"), CopyDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("rename-dialog", new Model("Rename Node"), RenameDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("export-dialog", new Model("Export Node"), ExportDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("property-dialog", new Model("Add Property"), PropertyDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("save-dialog", new Model("Save"), SaveDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("reset-dialog", new Model("Reset"), ResetDialog.class, jcrModel, incoming, factory));
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -36,11 +37,11 @@ public class FullRequestWorkflowPlugin extends Plugin {
         JcrNodeModel jcrModel = (JcrNodeModel) getPluginModel();
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
-        add(new DialogLink("acceptRequest-dialog", "Approve and execute request",
+        add(new DialogLink("acceptRequest-dialog", new Model("Approve and execute request"),
                 AcceptRequestDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("rejectRequest-dialog", "Reject request (with reason)",
+        add(new DialogLink("rejectRequest-dialog", new Model("Reject request (with reason)"),
                 RejectRequestDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("cancelRequest-dialog", "Cancel request",
+        add(new DialogLink("cancelRequest-dialog", new Model("Cancel request"),
                 CancelRequestDialog.class, jcrModel, incoming, factory));
     }
 

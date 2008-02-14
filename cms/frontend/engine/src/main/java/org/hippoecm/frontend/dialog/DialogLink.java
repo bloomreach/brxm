@@ -19,6 +19,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
@@ -27,7 +28,7 @@ import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
     
-    public DialogLink(String id, String linktext, Class clazz, JcrNodeModel model, Channel channel, ChannelFactory factory) {
+    public DialogLink(String id, IModel linktext, Class clazz, JcrNodeModel model, Channel channel, ChannelFactory factory) {
         super(id, model);
 
         Channel proxy = factory.createChannel();
@@ -37,13 +38,13 @@ public class DialogLink extends Panel {
     }
 
 
-    public DialogLink(String id, String linktext, LookupDialog lookupDialog, JcrNodeModel model, Channel channel, ChannelFactory factory) {
+    public DialogLink(String id, IModel linktext, LookupDialog lookupDialog, JcrNodeModel model, Channel channel, ChannelFactory factory) {
         super(id, model); 
         lookupDialog.dialogWindow.setPageCreator(new DialogPageCreator(lookupDialog));
         panelAdders(linktext, lookupDialog.dialogWindow);
     }
     
-    private void panelAdders(String linktext, final DialogWindow dialogWindow) {
+    private void panelAdders(IModel linktext, final DialogWindow dialogWindow) {
         add(dialogWindow);
 
         AjaxLink link = new AjaxLink("dialog-link") {

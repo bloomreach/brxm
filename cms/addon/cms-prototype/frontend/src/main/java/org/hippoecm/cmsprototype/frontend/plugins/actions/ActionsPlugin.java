@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.model.Model;
 import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
 import org.hippoecm.cmsprototype.frontend.model.content.Folder;
@@ -74,16 +75,16 @@ public class ActionsPlugin extends Plugin {
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         
-        copy = new DialogLink("copy-dialog", "Copy", CopyDialog.class, jcrModel, incoming, factory);
+        copy = new DialogLink("copy-dialog", new Model("Copy"), CopyDialog.class, jcrModel, incoming, factory);
         add(copy);
         
-        move = new DialogLink("move-dialog", "Move", MoveDialog.class, jcrModel, incoming, factory);
+        move = new DialogLink("move-dialog", new Model("Move"), MoveDialog.class, jcrModel, incoming, factory);
         add(move);
 
-        delete = new DialogLink("delete-dialog", "Delete", DeleteDialog.class, jcrModel, incoming, factory);
+        delete = new DialogLink("delete-dialog", new Model("Delete"), DeleteDialog.class, jcrModel, incoming, factory);
         add(delete);
 
-        rename = new DialogLink("rename-dialog", "Rename", RenameDialog.class, jcrModel, incoming, factory);
+        rename = new DialogLink("rename-dialog", new Model("Rename"), RenameDialog.class, jcrModel, incoming, factory);
         add(rename);
         
         setVisibilities();

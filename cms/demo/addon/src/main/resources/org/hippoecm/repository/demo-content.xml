@@ -22,10 +22,22 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>sample:webFolder</sv:value>
   </sv:property>
-
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hippo:prototyped</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:prototype" sv:type="Reference">
+    <sv:value>d519e2cb-a5fe-4d35-b82d-17cba74640b1</sv:value>
+  </sv:property>
+  
   <sv:node sv:name="pages">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>sample:webFolder</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:prototyped</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:prototype" sv:type="Reference">
+      <sv:value>f55eced6-74a1-4bed-8f99-93f8b2c20d1d</sv:value>
     </sv:property>
 
     <sv:node sv:name="home">

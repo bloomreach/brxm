@@ -16,10 +16,9 @@
 package org.hippoecm.frontend.plugins.template;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
@@ -70,7 +69,7 @@ public class LinkPickerPlugin extends Plugin {
         
         final DialogWindow dialogWindow = new DialogWindow("dialog", tmplModel.getNodeModel(), incoming, proxy);
         LookupDialog lookupDialog = new LinkPickerDialog(dialogWindow,incoming, nodetypes);
-        DialogLink linkPicker = new DialogLink("value", value , lookupDialog, tmplModel.getNodeModel(), incoming, factory);
+        DialogLink linkPicker = new DialogLink("value", new Model(value), lookupDialog, tmplModel.getNodeModel(), incoming, factory);
        
         add(linkPicker);
         setOutputMarkupId(true);
