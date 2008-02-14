@@ -17,30 +17,23 @@ package org.hippoecm.repository;
 
 import java.rmi.RemoteException;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
+
+import junit.framework.TestCase;
 
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
-
-import junit.framework.TestCase;
 
 public class RedefineNodetypeTest extends TestCase {
 
@@ -62,6 +55,10 @@ public class RedefineNodetypeTest extends TestCase {
     public void tearDown() throws Exception {
         if(session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
+            session.save();
+        }
+        if(session.getRootNode().hasNode("hippo:configuration/hippo:namespaces/hippotest2")) {
+            session.getRootNode().getNode("hippo:configuration/hippo:namespaces/hippotest2").remove();
             session.save();
         }
         session.logout();
@@ -176,8 +173,12 @@ public class RedefineNodetypeTest extends TestCase {
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         node = session.getRootNode().getNode("test").getNode("testing");
 
+        Node nsNode = session.getRootNode().getNode("hippo:configuration");
+        nsNode = nsNode.addNode("hippo:namespaces", "hippo:namespacefolder");
+        nsNode = nsNode.addNode("hippotest2", HippoNodeType.NT_NAMESPACE);
+
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
-        Workflow wf = wfmgr.getWorkflow("internal", node);
+        Workflow wf = wfmgr.getWorkflow("internal", nsNode);
         assertNotNull(wf);
         assertTrue(wf instanceof RemodelWorkflow);
         String[] nodes = ((RemodelWorkflow)wf).remodel(cnd2);
