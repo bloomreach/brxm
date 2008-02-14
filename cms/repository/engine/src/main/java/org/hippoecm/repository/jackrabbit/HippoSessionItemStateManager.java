@@ -17,6 +17,7 @@ package org.hippoecm.repository.jackrabbit;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.slf4j.Logger;
@@ -53,4 +54,12 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
     public HierarchyManager getAtticAwareHierarchyMgr() {
         return new HippoHierarchyManager(this, super.getAtticAwareHierarchyMgr());
     }
+
+    @Override
+    public void stateDiscarded(ItemState discarded) {
+        System.out.println("SESSION discarder");
+        super.stateDiscarded(discarded);
+    }
+    
+    
 }
