@@ -39,7 +39,7 @@ public class LinkPickerPlugin extends Plugin {
     
     private JcrPropertyValueModel valueModel;
     
-    private List<String> nodetypes;
+    private List<String> nodetypes = new ArrayList();
     
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
  
@@ -54,7 +54,10 @@ public class LinkPickerPlugin extends Plugin {
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         
-        nodetypes = new ArrayList<String>(pluginDescriptor.getParameter("nodetypes"));
+        if(pluginDescriptor.getParameter("nodetypes")!=null) {
+            nodetypes.addAll(pluginDescriptor.getParameter("nodetypes"));
+        }
+        
         if(nodetypes.size()==0) {
             log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
         }
