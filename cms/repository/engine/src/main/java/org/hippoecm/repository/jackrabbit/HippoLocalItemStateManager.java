@@ -192,8 +192,15 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                    int type =  isVirtual(nodeState);
                     try {
-                        state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
+                        /*
+                         * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
+                         * Only populate when a node is either EXTERNAL or VIRTUAL, but not when both
+                         */   
+                        if( !((type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0)) {
+                            state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
+                        }
                     } catch(RepositoryException ex) {
                         System.err.println(ex.getMessage());
                         ex.printStackTrace(System.err);
@@ -263,8 +270,15 @@ class HippoLocalItemStateManager extends XAItemStateManager {
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
+                    int type =  isVirtual(nodeState);
                     try {
-                        state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
+                        /*
+                         * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
+                         * Only populate when a node is either EXTERNAL or VIRTUAL, not when both
+                         */   
+                        if( !((type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0)) {
+                            state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
+                        }
                     } catch(RepositoryException ex) {
                         System.err.println(ex.getMessage());
                         ex.printStackTrace(System.err);
