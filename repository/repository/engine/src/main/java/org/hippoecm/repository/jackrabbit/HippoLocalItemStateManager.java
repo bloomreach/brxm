@@ -205,7 +205,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     }
                 }
                 virtualNodes.put((HippoNodeId)id, nodeState);
-                stateDiscarded(nodeState);
+                destroy(nodeState);
                 store(nodeState);
                 return nodeState;
             }
@@ -222,7 +222,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     try {
                         virtualStates.add(state);
                         state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
-                        stateDiscarded(nodeState);
+                        destroy(nodeState);
                         store(state);
                         return nodeState;
                     } catch(RepositoryException ex) {
@@ -266,7 +266,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
             NodeState nodeState = ((HippoNodeId)id).populate();
             
             virtualNodes.put((HippoNodeId)id, nodeState);
-            stateDiscarded(nodeState);
+            destroy(nodeState);
             store(nodeState);
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
