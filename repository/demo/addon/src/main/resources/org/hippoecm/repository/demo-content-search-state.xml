@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="search-state" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+    xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
+    xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
+    xmlns:sample="http://www.hippoecm.org/sample/nt/1.0"
+    xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>/site/documents</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippostd:state</sv:value>
+        <sv:value>hippostd:language</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+        <sv:value>content-search</sv:value>
+    </sv:property>
+</sv:node>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="siteuser" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+    xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
+    xmlns:hst="http://www.hippoecm.org/hst/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    xmlns:rep="internal" xmlns:sample="http://www.hippoecm.org/sample/nt/1.0"
+    xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:user</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:password" sv:type="String">
+        <sv:value>siteuser</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String"/>
+    <sv:node sv:name="hippo:facetauths">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:facetauthfolder</sv:value>
+        </sv:property>
+        <sv:node sv:name="english">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetauth</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:facet" sv:type="String">
+                <sv:value>hippostd:state</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:permissions" sv:type="Long">
+                <sv:value>1</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:values" sv:type="String">
+                <sv:value>published</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+</sv:node>

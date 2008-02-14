@@ -13,16 +13,12 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-  xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-  xmlns:jcr="http://www.jcp.org/jcr/1.0"
-  xmlns:rep="internal"   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-  xmlns:hippo="http://www.hippoecm.org/nt/1.0"
-  xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
-  xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  sv:name="site">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+  xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
+  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions" sv:name="site">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>sample:webFolder</sv:value>
   </sv:property>
@@ -34,13 +30,19 @@
 
     <sv:node sv:name="home">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-         <sv:value>hippo:handle</sv:value>
+        <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:discriminator" sv:type="Name">
-         <sv:value>hippostd:language</sv:value>
-         <sv:value>hippostd:state</sv:value>
+        <sv:value>hippostd:language</sv:value>
+        <sv:value>hippostd:state</sv:value>
       </sv:property>
       <sv:node sv:name="home">
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/pages</sv:value>
+          <sv:value>/site/pages/home</sv:value>
+          <sv:value>/site/pages/home/home</sv:value>
+        </sv:property>
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:webPage</sv:value>
         </sv:property>
@@ -70,6 +72,12 @@
         </sv:property>
       </sv:node>
       <sv:node sv:name="home">
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/pages</sv:value>
+          <sv:value>/site/pages/home</sv:value>
+          <sv:value>/site/pages/home/home</sv:value>
+        </sv:property>
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:webPage</sv:value>
         </sv:property>
@@ -99,6 +107,12 @@
         </sv:property>
       </sv:node>
       <sv:node sv:name="home">
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/pages</sv:value>
+          <sv:value>/site/pages/home</sv:value>
+          <sv:value>/site/pages/home/home</sv:value>
+        </sv:property>
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:webPage</sv:value>
         </sv:property>
@@ -128,6 +142,12 @@
         </sv:property>
       </sv:node>
       <sv:node sv:name="home">
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/pages</sv:value>
+          <sv:value>/site/pages/home</sv:value>
+          <sv:value>/site/pages/home/home</sv:value>
+        </sv:property>
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:webPage</sv:value>
         </sv:property>
@@ -164,17 +184,24 @@
 
     <sv:node sv:name="countries">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-         <sv:value>nt:unstructured</sv:value>
+        <sv:value>nt:unstructured</sv:value>
       </sv:property>
 
-      <sv:node sv:name="england">
+      <sv:node sv:name="United Kingdom">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-           <sv:value>hippo:handle</sv:value>
+          <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:discriminator" sv:type="String">
-           <sv:value>hippostd:state</sv:value>
+          <sv:value>hippostd:state</sv:value>
         </sv:property>
-        <sv:node sv:name="england">
+        <sv:node sv:name="United Kingdom">
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>/site</sv:value>
+            <sv:value>/site/documents</sv:value>
+            <sv:value>/site/documents/countries</sv:value>
+            <sv:value>/site/documents/countries/United Kingdom</sv:value>
+            <sv:value>/site/documents/countries/United Kingdom/United Kingdom</sv:value>
+          </sv:property>
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>sample:countryDocument</sv:value>
           </sv:property>
@@ -189,10 +216,10 @@
           </sv:property>
           <sv:node sv:name="sample:translation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-               <sv:value>hippo:handle</sv:value>
+              <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:discriminator" sv:type="String">
-               <sv:value>hippostd:language</sv:value>
+              <sv:value>hippostd:language</sv:value>
             </sv:property>
             <sv:node sv:name="sample:translation">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -202,7 +229,7 @@
                 <sv:value>en</sv:value>
               </sv:property>
               <sv:property sv:name="sample:name" sv:type="String">
-                <sv:value>England</sv:value>
+                <sv:value>United Kingdom</sv:value>
               </sv:property>
             </sv:node>
             <sv:node sv:name="sample:translation">
@@ -218,7 +245,14 @@
             </sv:node>
           </sv:node>
         </sv:node>
-        <sv:node sv:name="england">
+        <sv:node sv:name="United Kingdom">
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>/site</sv:value>
+            <sv:value>/site/documents</sv:value>
+            <sv:value>/site/documents/countries</sv:value>
+            <sv:value>/site/documents/countries/United Kingdom</sv:value>
+            <sv:value>/site/documents/countries/United Kingdom/United Kingdom</sv:value>
+          </sv:property>
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>sample:countryDocument</sv:value>
           </sv:property>
@@ -233,10 +267,10 @@
           </sv:property>
           <sv:node sv:name="sample:translation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-               <sv:value>hippo:handle</sv:value>
+              <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:discriminator" sv:type="String">
-               <sv:value>hippostd:language</sv:value>
+              <sv:value>hippostd:language</sv:value>
             </sv:property>
             <sv:node sv:name="sample:translation">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -246,7 +280,7 @@
                 <sv:value>en</sv:value>
               </sv:property>
               <sv:property sv:name="sample:name" sv:type="String">
-                <sv:value>England</sv:value>
+                <sv:value>United Kingdom</sv:value>
               </sv:property>
             </sv:node>
             <sv:node sv:name="sample:translation">
@@ -263,14 +297,21 @@
           </sv:node>
         </sv:node>
       </sv:node>
-      <sv:node sv:name="netherlands">
+      <sv:node sv:name="Netherlands">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-           <sv:value>hippo:handle</sv:value>
+          <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:discriminator" sv:type="String">
-           <sv:value>hippostd:state</sv:value>
+          <sv:value>hippostd:state</sv:value>
         </sv:property>
-        <sv:node sv:name="netherlands">
+        <sv:node sv:name="Netherlands">
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>/site</sv:value>
+            <sv:value>/site/documents</sv:value>
+            <sv:value>/site/documents/countries</sv:value>
+            <sv:value>/site/documents/countries/Netherlands</sv:value>
+            <sv:value>/site/documents/countries/Netherlands/Netherlands</sv:value>
+          </sv:property>
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>sample:countryDocument</sv:value>
           </sv:property>
@@ -285,10 +326,10 @@
           </sv:property>
           <sv:node sv:name="sample:translation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-               <sv:value>hippo:handle</sv:value>
+              <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:discriminator" sv:type="String">
-               <sv:value>hippostd:language</sv:value>
+              <sv:value>hippostd:language</sv:value>
             </sv:property>
             <sv:node sv:name="sample:translation">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -314,7 +355,14 @@
             </sv:node>
           </sv:node>
         </sv:node>
-        <sv:node sv:name="netherlands">
+        <sv:node sv:name="Netherlands">
+          <sv:property sv:name="hippo:paths" sv:type="String">
+            <sv:value>/site</sv:value>
+            <sv:value>/site/documents</sv:value>
+            <sv:value>/site/documents/countries</sv:value>
+            <sv:value>/site/documents/countries/Netherlands</sv:value>
+            <sv:value>/site/documents/countries/Netherlands/Netherlands</sv:value>
+          </sv:property>
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>sample:countryDocument</sv:value>
           </sv:property>
@@ -329,10 +377,10 @@
           </sv:property>
           <sv:node sv:name="sample:translation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-               <sv:value>hippo:handle</sv:value>
+              <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:discriminator" sv:type="String">
-               <sv:value>hippostd:language</sv:value>
+              <sv:value>hippostd:language</sv:value>
             </sv:property>
             <sv:node sv:name="sample:translation">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -363,13 +411,19 @@
 
     <sv:node sv:name="english">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-         <sv:value>hippo:handle</sv:value>
+        <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:discriminator" sv:type="String">
-         <sv:value>hippostd:state</sv:value>
-         <sv:value>hippostd:language</sv:value>
+        <sv:value>hippostd:state</sv:value>
+        <sv:value>hippostd:language</sv:value>
       </sv:property>
       <sv:node sv:name="english">
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/documents</sv:value>
+          <sv:value>/site/documents/english</sv:value>
+          <sv:value>/site/documents/english/english</sv:value>
+        </sv:property>
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:languageDocument</sv:value>
         </sv:property>
@@ -387,7 +441,7 @@
         </sv:property>
         <sv:node sv:name="sample:paragraphs">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-             <sv:value>sample:paragraphs</sv:value>
+            <sv:value>sample:paragraphs</sv:value>
           </sv:property>
           <sv:node sv:name="sample:paragraph1">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -408,6 +462,12 @@
         </sv:node>
       </sv:node>
       <sv:node sv:name="english">
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/documents</sv:value>
+          <sv:value>/site/documents/english</sv:value>
+          <sv:value>/site/documents/english/english</sv:value>
+        </sv:property>
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:languageDocument</sv:value>
         </sv:property>
@@ -425,14 +485,14 @@
         </sv:property>
         <sv:node sv:name="sample:paragraphs">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-             <sv:value>sample:paragraphs</sv:value>
+            <sv:value>sample:paragraphs</sv:value>
           </sv:property>
           <sv:node sv:name="sample:paragraph1">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>sample:paragraph</sv:value>
             </sv:property>
             <sv:property sv:name="sample:content" sv:type="String">
-              <sv:value>England is een land</sv:value>
+              <sv:value>United Kingdom is een land</sv:value>
             </sv:property>
           </sv:node>
           <sv:node sv:name="sample:paragraph2">
@@ -450,11 +510,11 @@
 
   <sv:node sv:name="navigation">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-       <sv:value>hippo:handle</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:discriminator" sv:type="String">
-       <sv:value>hippostd:state</sv:value>
-       <sv:value>hippostd:language</sv:value>
+      <sv:value>hippostd:state</sv:value>
+      <sv:value>hippostd:language</sv:value>
     </sv:property>
     <sv:node sv:name="navigation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -468,13 +528,13 @@
           <sv:value>/site/pages/home</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:facets" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="hippo:values" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="hippo:modes" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="reference2">
@@ -485,16 +545,16 @@
           <sv:value>/site/pages/contact</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:facets" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="hippo:values" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="hippo:modes" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
-
 </sv:node>
+
