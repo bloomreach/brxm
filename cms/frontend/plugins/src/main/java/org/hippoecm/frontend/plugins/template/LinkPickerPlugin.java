@@ -23,11 +23,13 @@ import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
+import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.admin.linkpicker.LinkPickerDialog;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.slf4j.Logger;
@@ -68,11 +70,19 @@ public class LinkPickerPlugin extends Plugin {
         Channel proxy = factory.createChannel();
         
         final DialogWindow dialogWindow = new DialogWindow("dialog", tmplModel.getNodeModel(), incoming, proxy);
-        LookupDialog lookupDialog = new LinkPickerDialog(dialogWindow,incoming, nodetypes);
-        DialogLink linkPicker = new DialogLink("value", new Model(value), lookupDialog, tmplModel.getNodeModel(), incoming, factory);
-       
+        LookupDialog lookupDialog = new LinkPickerDialog(dialogWindow,valueModel,proxy, nodetypes);
+        DialogLink linkPicker = new DialogLink("value", new Model(value), lookupDialog, tmplModel.getNodeModel());
+        
         add(linkPicker);
         setOutputMarkupId(true);
     }
 
+    @Override
+    public void receive(Notification notification) {
+        if ("select".equals(notification.getOperation())) {
+            setPluginModel(new JcrNodeModel(notification.getModel()));
+            notification.getContext().addRefresh(this);
+        }
+        super.receive(notification);
+    }
 }

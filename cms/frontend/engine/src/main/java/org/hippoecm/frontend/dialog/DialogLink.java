@@ -38,7 +38,7 @@ public class DialogLink extends Panel {
     }
 
 
-    public DialogLink(String id, IModel linktext, LookupDialog lookupDialog, JcrNodeModel model, Channel channel, ChannelFactory factory) {
+    public DialogLink(String id, IModel linktext, LookupDialog lookupDialog, JcrNodeModel model) {
         super(id, model); 
         lookupDialog.dialogWindow.setPageCreator(new DialogPageCreator(lookupDialog));
         panelAdders(linktext, lookupDialog.dialogWindow);
