@@ -36,7 +36,7 @@ public class JCRConnector {
             } else {
                 httpSession.removeAttribute(JCR_SESSION_KEY);
                 wrapper = new SessionWrapper(location);
-                httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
+                //httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;
             }
         } catch (LoginException e) {
