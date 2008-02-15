@@ -144,6 +144,11 @@ public class Remodeling {
                     target.setProperty(getNewName(prop.getName()), prop.getValue());
                 }
             }
+            
+            NodeType[] mixinNodeTypes = source.getMixinNodeTypes();
+            for(int i = 0; i < mixinNodeTypes.length; i++) {
+                target.addMixin(getNewName(mixinNodeTypes[i].getName()));
+            }
         }
     }
 
