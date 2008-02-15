@@ -16,19 +16,19 @@
 package org.hippoecm.frontend.plugins.admin.linkpicker;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.InfoPanel;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +37,14 @@ public class LinkPickerDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
     
+    protected  JcrPropertyValueModel valueModel;
     private List<String> nodetypes;
-    public LinkPickerDialog(DialogWindow dialogWindow, Channel channel, List<String> nodetypes) {
+    
+    public LinkPickerDialog(DialogWindow dialogWindow, JcrPropertyValueModel valueModel, Channel channel, List<String> nodetypes) {
         super("LinkPicker", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()),
               dialogWindow, channel);
         this.nodetypes = nodetypes;
+        this.valueModel = valueModel;
         setOutputMarkupId(true);
     }
     
@@ -70,9 +73,15 @@ public class LinkPickerDialog extends LookupDialog {
             JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
             if(isValidType(targetNodeModel)) {
                 String targetPath = targetNodeModel.getNode().getPath();
-                sourceNodeModel.getNode().setProperty("hippo:docbase", targetPath);
+                valueModel.setObject(targetPath);
             }
         }
+        
+        if (channel != null) {
+            Request request = channel.createRequest("select", sourceNodeModel);
+            channel.send(request);
+        }
+        
     }
 
     protected boolean isValidType(JcrNodeModel targetNodeModel){
