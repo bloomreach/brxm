@@ -46,6 +46,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
@@ -413,8 +414,9 @@ public class SessionDecorator implements XASession, HippoSession {
 
             for(PropertyIterator iter = ServicingNodeImpl.unwrap(srcNode).getProperties(); iter.hasNext(); ) {
                 Property property = iter.nextProperty();
-                if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:mixinTypes") &&  !property.getName().equals("jcr:uuid")) {
-                    if(property.getDefinition().isMultiple())
+                PropertyDefinition definition = property.getDefinition();
+                if (!definition.isProtected()) {
+                    if(definition.isMultiple())
                         destNode.setProperty(property.getName(), property.getValues());
                     else
                         destNode.setProperty(property.getName(), property.getValue());
