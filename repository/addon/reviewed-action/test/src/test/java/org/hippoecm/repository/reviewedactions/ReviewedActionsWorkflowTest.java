@@ -200,7 +200,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
 
         // These steps would be taken by editor:
         {
-            node = Utilities.getNode(root, "documents/myarticle/myarticle[hippostd:state='unpublished']");
+            node = Utilities.getNode(root, "documents/myarticle/myarticle[hippostd:state='draft']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
             session.save();
