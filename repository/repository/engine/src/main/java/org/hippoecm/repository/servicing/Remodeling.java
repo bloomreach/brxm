@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -147,7 +148,17 @@ public class Remodeling {
     }
 
     private boolean isVirtual(Node node) throws RepositoryException {
-        Node canonical = ((HippoNode) node).getCanonicalNode();
+        Node canonical;
+        try {
+            canonical = ((HippoNode) node).getCanonicalNode();
+        } catch (ItemNotFoundException e) {
+            /*
+             * TODO HREPTWO-547 : when a physical node is changed, the virtual equivalence of
+             * the former state is still in the LISM. For this virtual node, the physical node 
+             * cannot be found, throwing a ItemNotFoundException
+             */  
+            return true; 
+        }
         return (canonical == null || !(canonical.isSame(node)));
     }
 
