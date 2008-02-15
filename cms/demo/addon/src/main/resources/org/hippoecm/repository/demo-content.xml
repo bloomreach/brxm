@@ -532,7 +532,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>sample:webNavigation</sv:value>
       </sv:property>
-      <sv:property sv:name="hippostd:state">
+      <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>unpublished</sv:value>
       </sv:property>
       <sv:node sv:name="reference1">
