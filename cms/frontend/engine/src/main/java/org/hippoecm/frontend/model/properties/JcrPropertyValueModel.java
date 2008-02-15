@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.model.properties;
 
+import java.io.Serializable;
+
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -83,16 +85,13 @@ public class JcrPropertyValueModel extends Model {
         }
         return null;
     }
-
+    
     @Override
-    public void setObject(Object object) {
-        if (object == null) {
-            object = "";
-        }
-
+    public void setObject(final Serializable object)
+    {
         load();
         try {
-            String string = object.toString();
+            String string = object == null ? "" : object.toString(); 
             switch (type) {
             case PropertyType.BOOLEAN:
                 value = BooleanValue.valueOf(string);
