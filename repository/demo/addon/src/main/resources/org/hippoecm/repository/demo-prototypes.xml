@@ -36,7 +36,7 @@
       <sv:value>hippostd:language</sv:value>
       <sv:value>hippostd:state</sv:value>
     </sv:property>
-    <sv:node sv:name="sample:webPage">
+    <sv:node sv:name="web page">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>sample:webPage</sv:value>
       </sv:property>

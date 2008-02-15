@@ -77,7 +77,7 @@
           <sv:value>/index.jsp</sv:value>
         </sv:property>
         <sv:property sv:name="sample:pageLabel" sv:type="String">
-          <sv:value>Welcome</sv:value>
+          <sv:value>Welcom</sv:value>
         </sv:property>
         <sv:property sv:name="sample:pageTitle" sv:type="String">
           <sv:value>Home</sv:value>
@@ -112,7 +112,7 @@
           <sv:value>/index.jsp</sv:value>
         </sv:property>
         <sv:property sv:name="sample:pageLabel" sv:type="String">
-          <sv:value>Welcome</sv:value>
+          <sv:value>Welcom</sv:value>
         </sv:property>
         <sv:property sv:name="sample:pageTitle" sv:type="String">
           <sv:value>Home</sv:value>
