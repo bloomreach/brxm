@@ -45,6 +45,7 @@ import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
@@ -412,14 +413,19 @@ public class SessionDecorator implements XASession, HippoSession {
 
             for(PropertyIterator iter = ServicingNodeImpl.unwrap(srcNode).getProperties(); iter.hasNext(); ) {
                 Property property = iter.nextProperty();
-                if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:uuid")) {
+                if(!property.getName().equals("jcr:primaryType") && !property.getName().equals("jcr:mixinTypes") &&  !property.getName().equals("jcr:uuid")) {
                     if(property.getDefinition().isMultiple())
                         destNode.setProperty(property.getName(), property.getValues());
                     else
                         destNode.setProperty(property.getName(), property.getValue());
                 }
             }
-
+            
+            NodeType[] mixinNodeTypes = srcNode.getMixinNodeTypes();
+            for(int i = 0; i < mixinNodeTypes.length; i++) {
+                destNode.addMixin(mixinNodeTypes[i].getName());
+            }
+            
             ServicingNodeImpl.decoratePathProperty(destNode);
 
             /* Do not copy virtual nodes.  Partial virtual nodes like
