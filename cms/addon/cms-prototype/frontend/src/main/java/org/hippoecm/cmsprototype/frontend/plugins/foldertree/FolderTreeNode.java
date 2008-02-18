@@ -51,7 +51,7 @@ public class FolderTreeNode extends AbstractTreeNode {
         try {
             Node node = nodeModel.getNode();
             if (onlyHandles) {
-                if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                if (isFacetSelect(node) && !isReferenceToHandle(node)) {
                     onlyHandles = false;
                 }
             } else {
@@ -122,15 +122,8 @@ public class FolderTreeNode extends AbstractTreeNode {
         NodeIterator subNodes = node.getNodes();
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
-            if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+            if (subNode.isNodeType(HippoNodeType.NT_HANDLE) || isReferenceToHandle(subNode)) {
                 result.add(subNode);
-            } else if (subNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                Node referencedNode = referencedNode(subNode);
-                if (referencedNode != null && referencedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    result.add(referencedNode);
-                } else {
-                    result.add(subNode);
-                }
             } else {
                 if (onlyHandles) {
                     result.addAll(subNodes(subNode));
@@ -142,14 +135,27 @@ public class FolderTreeNode extends AbstractTreeNode {
         return result;
     }
 
-    private Node referencedNode(Node facetSelectNode) {
-        Node result;
+    private boolean isFacetSelect(Node node) {
+        boolean result;
         try {
-            HippoNode virtualchild = (HippoNode)facetSelectNode.getNodes().nextNode();
-            result = virtualchild.getCanonicalNode().getParent();
-        } catch (Exception e) {
-            result = null; 
+            result = node.isNodeType(HippoNodeType.NT_FACETSELECT);
+        } catch (RepositoryException e) {
+            result = false;
         }
         return result;
     }
+
+    private boolean isReferenceToHandle(Node node) {
+        boolean result;
+        try {
+            result = node.isNodeType(HippoNodeType.NT_FACETSELECT);
+            HippoNode virtualchild = (HippoNode) node.getNodes().nextNode();
+            Node referencedNode = virtualchild.getCanonicalNode().getParent();
+            result &= referencedNode.isNodeType(HippoNodeType.NT_HANDLE);
+        } catch (Exception e) {
+            result = false;
+        }
+        return result;
+    }
+
 }
