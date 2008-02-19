@@ -98,6 +98,7 @@ public interface HippoNodeType {
     final public static String HIPPO_INITIALIZE = "hippo:initialize";
     final public static String HIPPO_MEMBERS = "hippo:members";
     final public static String HIPPO_MANDATORY = "hippo:mandatory";
+    final public static String HIPPO_MIXINTYPES = "hippo:mixintypes";
     final public static String HIPPO_MODES = "hippo:modes";
     final public static String HIPPO_MULTIPLE = "hippo:multiple";
     final public static String HIPPO_NAME = "hippo:name";
