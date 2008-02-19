@@ -174,7 +174,7 @@ public class RedefineNodetypeTest extends TestCase {
         node = session.getRootNode().getNode("test").getNode("testing");
 
         Node nsNode = session.getRootNode().getNode("hippo:configuration");
-        nsNode = nsNode.addNode("hippo:namespaces", "hippo:namespacefolder");
+        nsNode = nsNode.getNode("hippo:namespaces");
         nsNode = nsNode.addNode("hippotest2", HippoNodeType.NT_NAMESPACE);
 
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
