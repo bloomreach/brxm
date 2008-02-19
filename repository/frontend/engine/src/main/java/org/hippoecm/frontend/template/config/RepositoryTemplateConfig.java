@@ -26,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -230,6 +231,14 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
                 }
                 if (node.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
                     setSuperType(node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getString());
+                }
+                if (node.hasProperty(HippoNodeType.HIPPO_MIXINTYPES)) {
+                    List<String> mixins = new LinkedList<String>();
+                    Value[] values = node.getProperty(HippoNodeType.HIPPO_MIXINTYPES).getValues();
+                    for(int i = 0; i < values.length; i++) {
+                        mixins.add(values[i].getString());
+                    }
+                    setMixinTypes(mixins);
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());

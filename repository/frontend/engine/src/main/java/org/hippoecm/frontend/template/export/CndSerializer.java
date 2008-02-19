@@ -17,7 +17,9 @@ package org.hippoecm.frontend.template.export;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,11 +42,13 @@ public class CndSerializer implements IClusterable {
     private JcrSessionModel jcrSession;
     private HashMap<String, String> namespaces;
     private LinkedHashSet<TemplateDescriptor> templates;
+    private TemplateConfig templateConfig;
 
     public CndSerializer(JcrSessionModel session, TemplateConfig config, String namespace) {
         this.jcrSession = session;
         namespaces = new HashMap<String, String>();
         templates = new LinkedHashSet<TemplateDescriptor>();
+        templateConfig = config;
 
         List<TemplateDescriptor> list = config.getTemplates(namespace);
         for (TemplateDescriptor template : list) {
@@ -122,6 +126,12 @@ public class CndSerializer implements IClusterable {
 
                         String superType = sub.getSuperType();
                         addNamespace(superType.substring(0, superType.indexOf(':')));
+
+                        Iterator<String> mixins = sub.getMixinTypes().iterator();
+                        while (mixins.hasNext()) {
+                            String mixin = mixins.next();
+                            addNamespace(mixin.substring(0, mixin.indexOf(':')));
+                        }
                     } else if (field.getPath().indexOf(':') > 0) {
                         addNamespace(field.getPath().substring(0, field.getPath().indexOf(':')));
                     }
@@ -168,8 +178,26 @@ public class CndSerializer implements IClusterable {
     private void renderTemplate(StringBuffer output, TemplateDescriptor template) {
         String type = template.getType();
         output.append("[" + type + "]");
+
         if (template.getSuperType() != null) {
             output.append(" > " + template.getSuperType());
+        }
+
+        List<String> mixinFields = new LinkedList<String>();
+        Iterator<String> mixins = template.getMixinTypes().iterator();
+        while (mixins.hasNext()) {
+            String mixin = mixins.next();
+            TemplateDescriptor mixinDescriptor = templateConfig.getTemplate(mixin);
+            if (mixinDescriptor != null) {
+                Iterator<FieldDescriptor> fields = mixinDescriptor.getFields().iterator();
+                while (fields.hasNext()) {
+                    FieldDescriptor field = fields.next();
+                    if (!mixinFields.contains(field.getPath())) {
+                        mixinFields.add(field.getPath());
+                    }
+                }
+            }
+            output.append(", " + mixin);
         }
 
         for (FieldDescriptor field : template.getFields()) {
@@ -181,7 +209,9 @@ public class CndSerializer implements IClusterable {
 
         output.append("\n");
         for (FieldDescriptor field : template.getFields()) {
-            renderField(output, field);
+            if (!mixinFields.contains(field.getPath())) {
+                renderField(output, field);
+            }
         }
         output.append("\n");
     }

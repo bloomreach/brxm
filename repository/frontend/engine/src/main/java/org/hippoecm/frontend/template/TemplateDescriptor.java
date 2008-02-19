@@ -46,15 +46,20 @@ public class TemplateDescriptor implements IClusterable {
     private String name;
     private String type;
     private String superType;
+    private List<String> mixinTypes;
     private boolean node;
+    private boolean mixin;
     private PluginDescriptor plugin;
     private LinkedList<FieldDescriptor> fields;
 
     public TemplateDescriptor(String name, String type, PluginDescriptor plugin) {
         this.name = name;
         this.type = type;
+        this.superType = "";
+        this.mixinTypes = new LinkedList<String>();
         this.plugin = plugin;
         this.node = true;
+        this.mixin = false;
         this.fields = new LinkedList<FieldDescriptor>();
     }
 
@@ -62,7 +67,9 @@ public class TemplateDescriptor implements IClusterable {
         this.name = (String) map.get("name");
         this.type = (String) map.get("type");
         this.superType = (String) map.get("superType");
+        this.mixinTypes = (List<String>) map.get("mixinType");
         this.node = ((Boolean) map.get("isNode")).booleanValue();
+        this.mixin = ((Boolean) map.get("isMixin")).booleanValue();
 
         this.fields = new LinkedList<FieldDescriptor>();
         LinkedList<Map<String, Object>> fieldList = (LinkedList<Map<String, Object>>) map.get("fields");
@@ -80,6 +87,7 @@ public class TemplateDescriptor implements IClusterable {
         map.put("type", type);
         map.put("superType", superType);
         map.put("isNode", new Boolean(node));
+        map.put("isMixin", new Boolean(mixin));
 
         LinkedList<Map<String, Object>> fieldList = new LinkedList<Map<String, Object>>();
         for (FieldDescriptor field : getFields()) {
@@ -107,12 +115,28 @@ public class TemplateDescriptor implements IClusterable {
         this.superType = superType;
     }
 
+    public List<String> getMixinTypes() {
+        return mixinTypes;
+    }
+
+    public void setMixinTypes(List<String> mixins) {
+        this.mixinTypes = mixins;
+    }
+
     public boolean isNode() {
         return node;
     }
 
     public void setIsNode(boolean isNode) {
         this.node = isNode;
+    }
+
+    public boolean isMixin() {
+        return mixin;
+    }
+
+    public void setIsMixin(boolean isMixin) {
+        this.mixin = isMixin;
     }
 
     public PluginDescriptor getPlugin() {
