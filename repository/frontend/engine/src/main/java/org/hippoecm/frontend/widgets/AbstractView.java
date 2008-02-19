@@ -13,45 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.widgets;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
 import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.template.model.AbstractProvider;
 
 public abstract class AbstractView extends DataView {
 
     private Plugin plugin;
 
-    public AbstractView(String wicketId, AbstractProvider provider, Plugin plugin) {
+    public AbstractView(String wicketId, IDataProvider provider, Plugin plugin) {
         super(wicketId, provider);
 
         this.plugin = plugin;
 
-        setItemReuseStrategy(new DefaultItemReuseStrategy() {
+        setItemReuseStrategy(new ReuseIfModelsEqualStrategy() {
             private static final long serialVersionUID = 1L;
 
             public Iterator getItems(final IItemFactory factory, final Iterator newModels, final Iterator existingItems) {
+                List<IModel> models = new LinkedList<IModel>();
+                while (newModels.hasNext()) {
+                    models.add((IModel) newModels.next());
+                }
+
+                List<Item> items = new LinkedList<Item>();
                 while (existingItems.hasNext()) {
-                    final Item item = (Item) existingItems.next();
-                    item.detach();
-                    Component template = item.get("sub");
-                    if (template instanceof Plugin) {
-                        ((Plugin) template).destroy();
+                    Item item = (Item) existingItems.next();
+                    if (!models.contains(item.getModel())) {
+                        destroyItem(item);
+                    } else {
+                        items.add(item);
                     }
                 }
-                return super.getItems(factory, newModels, null);
+                return super.getItems(factory, models.iterator(), items.iterator());
             }
         });
     }
 
+    public void populate() {
+        super.onPopulate();
+    }
+
     public Plugin getPlugin() {
         return plugin;
+    }
+
+    protected void destroyItem(Item item) {
     }
 }

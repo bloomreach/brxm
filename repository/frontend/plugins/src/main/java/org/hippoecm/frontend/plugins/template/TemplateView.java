@@ -24,6 +24,7 @@ import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.model.AbstractProvider;
 import org.hippoecm.frontend.template.model.TemplateModel;
+import org.hippoecm.frontend.widgets.AbstractView;
 
 public class TemplateView extends AbstractView {
     private static final long serialVersionUID = 1L;
@@ -33,10 +34,6 @@ public class TemplateView extends AbstractView {
     public TemplateView(String wicketId, AbstractProvider provider, Plugin template, FieldDescriptor descriptor) {
         super(wicketId, provider, template);
         this.descriptor = descriptor;
-    }
-
-    protected void populate() {
-        super.onPopulate();
     }
 
     @Override
@@ -75,5 +72,11 @@ public class TemplateView extends AbstractView {
             upLink.setEnabled(false);
         }
         item.add(upLink);
+    }
+
+    public void destroyItem(Item item) {
+        Plugin template = (Plugin) item.get("template");
+        template.destroy();
+        super.destroyItem(item);
     }
 }

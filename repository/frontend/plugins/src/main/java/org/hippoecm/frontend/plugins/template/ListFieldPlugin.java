@@ -33,6 +33,7 @@ import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.model.FieldModel;
 import org.hippoecm.frontend.template.model.WildcardFieldProvider;
 import org.hippoecm.frontend.template.model.WildcardModel;
+import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

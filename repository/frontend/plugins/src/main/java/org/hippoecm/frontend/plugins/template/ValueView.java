@@ -18,11 +18,12 @@ package org.hippoecm.frontend.plugins.template;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
 import org.apache.wicket.markup.repeater.Item;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.template.model.ValueTemplateProvider;
+import org.hippoecm.frontend.widgets.AbstractView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +34,6 @@ public class ValueView extends AbstractView {
 
     public ValueView(String id, ValueTemplateProvider dataProvider, PropertyFieldPlugin plugin) {
         super(id, dataProvider, plugin);
-        setItemReuseStrategy(DefaultItemReuseStrategy.getInstance());
-    }
-
-    public void populate() {
-        super.onDetach();
-        super.onPopulate();
     }
 
     // Implement DataView
@@ -52,7 +47,7 @@ public class ValueView extends AbstractView {
         item.add(engine.createTemplate("value", templateModel, plugin));
 
         //Remove value link
-        if (! provider.getDescriptor().isMandatory() || (provider.size() > 0)) {
+        if (!provider.getDescriptor().isMandatory() || (provider.size() > 0)) {
             item.add(new AjaxLink("remove") {
                 private static final long serialVersionUID = 1L;
 
@@ -67,5 +62,12 @@ public class ValueView extends AbstractView {
         } else {
             item.add(new Label("remove", ""));
         }
+    }
+
+    @Override
+    public void destroyItem(Item item) {
+        Plugin template = (Plugin) item.get("value");
+        template.destroy();
+        super.destroyItem(item);
     }
 }
