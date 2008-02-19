@@ -130,7 +130,7 @@ public class JCRConnector {
             HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             try {
-                jcrSession = repository.login("admin", "admin".toCharArray());
+                jcrSession = repository.login("siteuser", "siteuser".toCharArray());
                 logger.debug("logged in as administrative user");
             } catch(LoginException ex) {
                 jcrSession = repository.login();

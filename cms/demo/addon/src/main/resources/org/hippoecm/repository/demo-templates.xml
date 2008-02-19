@@ -52,6 +52,11 @@
     <sv:property sv:name="hippo:supertype" sv:type="String">
       <sv:value>hippo:document</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:mixintypes" sv:type="String">
+      <sv:value>hst:page</sv:value>
+      <sv:value>hippostd:publishable</sv:value>
+      <sv:value>hippostd:languagable</sv:value>
+    </sv:property>
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
@@ -120,6 +125,10 @@
     </sv:property>
     <sv:property sv:name="hippo:supertype" sv:type="String">
       <sv:value>hippo:document</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:mixintypes" sv:type="String">
+      <sv:value>hippostd:publishable</sv:value>
+      <sv:value>hippostd:languagable</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -230,6 +239,27 @@
     <sv:property sv:name="hippo:supertype" sv:type="String">
       <sv:value>hippo:document</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:mixintypes" sv:type="String">
+      <sv:value>hippostd:publishable</sv:value>
+      <sv:value>hippostd:languagable</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>Title</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>sample:title</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
@@ -245,6 +275,23 @@
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hippostd:language</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>Paragraphs</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:value>sample:paragraphs</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>sample:paragraphs</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -264,6 +311,9 @@
     </sv:property>
     <sv:property sv:name="hippo:supertype" sv:type="String">
       <sv:value>hippo:document</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:mixintypes" sv:type="String">
+      <sv:value>hippostd:languagable</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -299,6 +349,9 @@
     </sv:property>
     <sv:property sv:name="hippo:supertype" sv:type="String">
       <sv:value>hippo:document</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:mixintypes" sv:type="String">
+      <sv:value>hippostd:publishable</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

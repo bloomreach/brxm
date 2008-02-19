@@ -24,8 +24,10 @@
 
   <div background="lightblue" width="100%">
     <ul>
-    <c:forEach var="item" items="${global['pages']}">
-      <li><c:url var="url" value="${item._path}"/><a href="${url}"/>${item[item._name]['sample:pageLabel']}</a>
+    <c:forEach var="item" items="${global['navigation/navigation']}">
+      <c:forEach var="doc" items="${item}">
+        <li><c:url var="url" value="${doc._path}"/><a href="${url}"/>${doc['sample:pageLabel']}</a>
+      </c:forEach>
     </c:forEach>
     </ul>
   </div>

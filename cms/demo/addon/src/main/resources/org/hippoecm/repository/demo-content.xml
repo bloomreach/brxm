@@ -533,6 +533,31 @@
         <sv:value>sample:webNavigation</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:node sv:name="reference1">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:facetselect</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>/site/pages/home</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:facets" sv:type="String">
+          <sv:value>hippostd:state</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:values" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:modes" sv:type="String">
+          <sv:value>select</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="navigation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>sample:webNavigation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>unpublished</sv:value>
       </sv:property>
       <sv:node sv:name="reference1">
