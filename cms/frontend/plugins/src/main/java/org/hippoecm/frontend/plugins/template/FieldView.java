@@ -20,6 +20,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.model.FieldModel;
 import org.hippoecm.frontend.template.model.FieldProvider;
+import org.hippoecm.frontend.widgets.AbstractView;
 
 public class FieldView extends AbstractView {
     private static final long serialVersionUID = 1L;
@@ -33,5 +34,12 @@ public class FieldView extends AbstractView {
         FieldModel fieldModel = (FieldModel) item.getModel();
         TemplateEngine engine = getPlugin().getPluginManager().getTemplateEngine();
         item.add(engine.createField("field", fieldModel, getPlugin()));
+    }
+
+    @Override
+    public void destroyItem(Item item) {
+        Plugin field = (Plugin) item.get("field");
+        field.destroy();
+        super.destroyItem(item);
     }
 }

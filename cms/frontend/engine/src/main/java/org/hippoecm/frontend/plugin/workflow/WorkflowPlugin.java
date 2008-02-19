@@ -15,17 +15,11 @@
  */
 package org.hippoecm.frontend.plugin.workflow;
 
-import java.util.Iterator;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
-import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -34,6 +28,7 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
@@ -44,14 +39,15 @@ public class WorkflowPlugin extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
 
+    AbstractView view;
+
     public WorkflowPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parent) {
         super(descriptor, new JcrNodeModel(model), parent);
 
-        // TODO: add item reuse strategy that takes care of disconnecting plugins when
-        // they are replaced.
-        DataView view = new DataView("workflows", new WorkflowProvider()) {
+        view = new AbstractView("workflows", new WorkflowProvider(), this) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void populateItem(Item item) {
                 String category = (String) item.getModelObject();
 
@@ -75,24 +71,15 @@ public class WorkflowPlugin extends Plugin {
                 PluginFactory pluginFactory = new PluginFactory(getPluginManager());
                 item.add(pluginFactory.createPlugin(descriptor, getPluginModel(), WorkflowPlugin.this));
             }
-        };
-        view.setItemReuseStrategy(new DefaultItemReuseStrategy() {
-            private static final long serialVersionUID = 1L;
 
-            public Iterator getItems(final IItemFactory factory, final Iterator newModels, final Iterator existingItems) {
-                while (existingItems.hasNext()) {
-                    final Item item = (Item) existingItems.next();
-                    item.detach();
-                    Component component = item.get("workflow");
-                    if (component instanceof Plugin) {
-                        ((Plugin) component).destroy();
-                    }
-                }
-                return super.getItems(factory, newModels, null);
+            @Override
+            public void destroyItem(Item item) {
+                Plugin plugin = (Plugin) item.get("workflow");
+                plugin.destroy();
+                item.remove("workflow");
+                super.destroyItem(item);
             }
-        }
-
-        );
+        };
         add(view);
     }
 
@@ -103,6 +90,7 @@ public class WorkflowPlugin extends Plugin {
             if (!model.equals(getModel())) {
                 setPluginModel(model);
                 notification.getContext().addRefresh(this);
+                view.populate();
             }
         }
         super.receive(notification);

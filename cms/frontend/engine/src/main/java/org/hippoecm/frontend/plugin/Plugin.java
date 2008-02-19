@@ -53,13 +53,21 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     }
 
     public void destroy() {
+        onDestroy();
+
         // disconnect outgoing and incoming channels
         if (pluginDescriptor.getIncoming() != null) {
             pluginDescriptor.getIncoming().unsubscribe(this);
         }
         if (pluginDescriptor.getOutgoing() != null) {
+            Channel outgoing = pluginDescriptor.getOutgoing();
+            Notification notification = outgoing.createNotification("destroy", null);
+            outgoing.publish(notification);
             pluginDescriptor.getOutgoing().unregister(this);
         }
+    }
+
+    protected void onDestroy() {
     }
 
     public PluginDescriptor getDescriptor() {
@@ -128,6 +136,9 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         Channel outgoing = getDescriptor().getOutgoing();
         if (outgoing != null) {
             outgoing.publish(notification);
+        }
+        if ("destroy".equals(notification.getOperation())) {
+            onDestroy();
         }
     }
 

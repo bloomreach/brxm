@@ -31,7 +31,6 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
     private Page page;
     private Set configurations;
-    private boolean rendered = false;
 
     XinhaEditorBehavior(Page page) {
         configurations = new HashSet();
@@ -62,12 +61,6 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
     }
 
     IHeaderContributor[] getHeaderContributorsPartly() {
-
-        if (rendered) {
-            return null;
-        }
-
-        rendered = true;
 
         return new IHeaderContributor[] {
 

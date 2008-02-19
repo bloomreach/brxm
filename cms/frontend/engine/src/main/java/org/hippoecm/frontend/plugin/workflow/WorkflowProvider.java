@@ -57,16 +57,36 @@ public class WorkflowProvider implements IDataProvider {
     public int size() {
         return workflows.size();
     }
-    
+
     public IModel model(Object object) {
-        return new Model((String) object);
+        return new WorkflowCategoryModel((String) object);
     }
-    
+
     public Iterator iterator(int first, int count) {
         return workflows.subList(first, first + count).iterator();
     }
 
     public void detach() {
         // nada
+    }
+
+    class WorkflowCategoryModel extends Model {
+        private static final long serialVersionUID = 1L;
+
+        WorkflowCategoryModel(String category) {
+            super(category);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof WorkflowCategoryModel) {
+                WorkflowCategoryModel otherModel = (WorkflowCategoryModel) other;
+                if (otherModel.getObject() == null) {
+                    return getObject() == null;
+                }
+                return otherModel.getObject().equals(getObject());
+            }
+            return false;
+        }
     }
 }

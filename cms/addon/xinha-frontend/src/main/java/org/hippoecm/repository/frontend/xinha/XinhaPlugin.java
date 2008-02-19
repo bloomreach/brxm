@@ -92,6 +92,20 @@ public class XinhaPlugin extends Plugin {
         } else {
             configuration.setPlugins(new String[] { "SaveSubmit" });
         }
+
+        Page page = parentPlugin.getPage();
+        for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
+            IBehavior behavior = (IBehavior) iter.next();
+            if (behavior instanceof XinhaEditorBehavior) {
+                sharedBehavior = (XinhaEditorBehavior) behavior;
+                break;
+            }
+        }
+        if (sharedBehavior == null) {
+            sharedBehavior = new XinhaEditorBehavior(page);
+        }
+
+        sharedBehavior.register(configuration);
     }
 
     public String getContent() {
@@ -104,37 +118,20 @@ public class XinhaPlugin extends Plugin {
 
     @Override
     public void onBeforeRender() {
-        if (sharedBehavior == null) {
-            Page page = findPage();
-            for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
-                IBehavior behavior = (IBehavior) iter.next();
-                if (behavior instanceof XinhaEditorBehavior) {
-                    sharedBehavior = (XinhaEditorBehavior) behavior;
-                    break;
-                }
-            }
-            if (sharedBehavior == null) {
-                sharedBehavior = new XinhaEditorBehavior(page);
-            }
-        }
-
         configuration.setName(editor.getMarkupId());
         Map m = new Hashtable();
         m.put("postUrl", postBehavior.getCallbackUrl());
         configuration.setConfiguration(m);
-
-        sharedBehavior.register(configuration);
-
         super.onBeforeRender();
     }
 
     @Override
-    protected void onDetach() {
-        super.onDetach();
+    public void onDestroy() {
         if (sharedBehavior != null) {
             sharedBehavior.unregister(configuration);
             sharedBehavior = null;
         }
+        super.onDestroy();
     }
 
     class XinhaHeaderContributor extends AbstractHeaderContributor {
@@ -197,7 +194,7 @@ public class XinhaPlugin extends Plugin {
         }
 
         public int hashCode() {
-            return name.hashCode();
+            return XinhaPlugin.this.hashCode();
         }
     }
 }
