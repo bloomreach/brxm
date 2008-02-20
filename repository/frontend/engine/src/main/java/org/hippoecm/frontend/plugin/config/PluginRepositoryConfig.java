@@ -40,10 +40,6 @@ public class PluginRepositoryConfig implements PluginConfig {
 
     static final Logger log = LoggerFactory.getLogger(PluginRepositoryConfig.class);
 
-    // FIXME: move these to HippoNodeType
-    protected final static String ROOTPLUGIN = "rootPlugin";
-    protected final static String PLUGIN_RENDERER = "hippo:renderer";
-
     private JcrSessionModel jcrSession;
     private String basePath;
     private ChannelFactory channelFactory;
@@ -54,14 +50,14 @@ public class PluginRepositoryConfig implements PluginConfig {
         channelFactory = new ChannelFactory();
     }
 
-    public PluginDescriptor getRoot() {
+    public PluginDescriptor getPlugin(String pluginId) {
         PluginDescriptor result = null;
         try {
-            Node pluginNode = getJcrSession().getRootNode().getNode(basePath + "/" + ROOTPLUGIN);
+            Node pluginNode = getJcrSession().getRootNode().getNode(basePath + "/" + pluginId);
             if (pluginNode != null) {
                 result = nodeToDescriptor(pluginNode);
             } else {
-                log.error("No plugin node found for " + ROOTPLUGIN);
+                log.error("No plugin node found for " + pluginId);
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -78,7 +74,7 @@ public class PluginRepositoryConfig implements PluginConfig {
     }
 
     protected PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
-        String classname = pluginNode.getProperty(PLUGIN_RENDERER).getString();
+        String classname = pluginNode.getProperty(HippoNodeType.HIPPO_RENDERER).getString();
         String pluginId = pluginNode.getName();
         Channel outgoing = channelFactory.createChannel();
         PluginDescriptor descriptor = createDescriptor(pluginNode, pluginId, classname, outgoing);

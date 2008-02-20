@@ -60,7 +60,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         }
     }
 
-    protected PluginDescriptor getPlugin(String pluginId) {
+    public PluginDescriptor getPlugin(String pluginId) {
         PluginDescriptor result = null;
         try {
             Node pluginNode = lookupConfigNode(pluginId);
@@ -103,12 +103,6 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         return list;
     }
 
-    // overrides
-
-    @Override
-    public PluginDescriptor getRoot() {
-        return null;
-    }
 
     // Privates
 
@@ -129,7 +123,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     @Override
     protected PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
-        if (pluginNode.hasProperty(PluginRepositoryConfig.PLUGIN_RENDERER)) {
+        if (pluginNode.hasProperty(HippoNodeType.HIPPO_RENDERER)) {
             return super.nodeToDescriptor(pluginNode);
         }
         return new Descriptor(pluginNode, pluginNode.getName(), null, null);

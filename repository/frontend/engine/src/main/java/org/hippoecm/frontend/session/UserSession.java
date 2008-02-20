@@ -19,8 +19,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.Request;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -57,6 +59,7 @@ public class UserSession extends WebSession {
 
     public void logout() {
         jcrSessionModel.logout();
+        throw new RestartResponseException(Home.class);
     }
 
     public ValueMap getCredentials() {
