@@ -30,6 +30,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 
 public class JcrTreeNode extends AbstractTreeNode {
     private static final long serialVersionUID = 1L;
@@ -95,7 +96,7 @@ public class JcrTreeNode extends AbstractTreeNode {
         String result = "null";
         if (node != null) {
             try {
-                result = node.getDisplayName();
+                result = ISO9075Helper.decodeLocalName(node.getDisplayName());
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
                 }
