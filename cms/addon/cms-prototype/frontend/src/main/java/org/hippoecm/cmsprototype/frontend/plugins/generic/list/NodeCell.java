@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,6 +185,7 @@ public class NodeCell extends Panel {
     }
 
     protected void addLabel(AjaxLink link, String value) {
+        value = ISO9075Helper.decodeLocalName(value);
         link.add(new Label("label", value));
     }
 
