@@ -37,12 +37,8 @@ public class Home extends WebPage {
     public static final String LOGIN_PLUGIN = "loginPlugin";
 
     public Home() {
-        
-        boolean showLoginPlugin = true;
+
         UserSession session = getValidUserSession();
-        if(!session.getCredentials().equals(ANONYMOUS_CREDENTIALS)) {
-            showLoginPlugin = false;
-        }
         HippoNode rootNode = session.getRootNode();
 
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
@@ -51,7 +47,8 @@ public class Home extends WebPage {
         PluginFactory pluginFactory = new PluginFactory(pluginManager);
 
         PluginDescriptor rootPluginDescriptor;
-        if (showLoginPlugin) {
+        if (session.getCredentials().equals(ANONYMOUS_CREDENTIALS)) {
+            //logged in as anonymous, present user with loginPlugin
             rootPluginDescriptor = pluginConfig.getPlugin(LOGIN_PLUGIN);
             rootPluginDescriptor.setWicketId(ROOT_PLUGIN);
         } else {
