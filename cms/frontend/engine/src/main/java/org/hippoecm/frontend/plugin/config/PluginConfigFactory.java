@@ -18,8 +18,8 @@ package org.hippoecm.frontend.plugin.config;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.Application;
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;

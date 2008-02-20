@@ -20,8 +20,8 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 
 public interface PluginConfig extends IClusterable {
-
-    public PluginDescriptor getRoot();
+    
+    public PluginDescriptor getPlugin(String pluginId);
 
     public ChannelFactory getChannelFactory();
 }

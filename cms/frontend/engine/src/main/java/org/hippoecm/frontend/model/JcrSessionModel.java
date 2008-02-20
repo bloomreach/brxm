@@ -25,7 +25,7 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.LoginPage;
+import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.session.SessionClassLoader;
 import org.hippoecm.frontend.session.WorkflowManagerDecorator;
@@ -64,7 +64,8 @@ public class JcrSessionModel extends LoadableDetachableModel {
             detach();
         }
         credentials = new ValueMap();
-        throw new RestartResponseException(LoginPage.class);
+        //goto home instead of loginpage
+        //throw new RestartResponseException(Home.class);
     }
 
     public void flush() {
@@ -142,7 +143,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
         if (result == null) {
             Main main = (Main) Application.get();
             main.resetConnection();
-            throw new RestartResponseException(LoginPage.class);
+            throw new RestartResponseException(Home.class);
         }
         return result;
     }

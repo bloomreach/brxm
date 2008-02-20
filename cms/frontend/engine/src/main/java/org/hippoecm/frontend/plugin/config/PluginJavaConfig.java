@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
@@ -32,15 +33,22 @@ public class PluginJavaConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 
     private PluginDescriptor root;
+    private PluginDescriptor login;
+    
     private Map<String, PluginDescriptor> childrenOfRoot;
     private ChannelFactory factory;
 
     public PluginJavaConfig() {
         factory = new ChannelFactory();
         Channel outgoing = factory.createChannel();
+        
+        String className = "org.hippoecm.frontend.plugins.admin.login.LoginPlugin";
+        PluginDescriptor descriptor = new PluginDescriptor(Home.LOGIN_PLUGIN, className, outgoing);
+        descriptor.setWicketId(Home.ROOT_PLUGIN);
+        login = descriptor;
 
-        String className = "org.hippoecm.frontend.plugins.admin.RootPlugin";
-        PluginDescriptor descriptor = new PluginDescriptor("rootPlugin", className, outgoing) {
+        className = "org.hippoecm.frontend.plugins.admin.RootPlugin";
+        descriptor = new PluginDescriptor(Home.ROOT_PLUGIN, className, outgoing) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -74,14 +82,12 @@ public class PluginJavaConfig implements PluginConfig {
         descriptor = new PluginDescriptor("breadcrumbPlugin", className, factory.createChannel());
         childrenOfRoot.put("breadcrumbPlugin", descriptor);
     }
-
-    public PluginDescriptor getRoot() {
-        return root;
-    }
-
+    
     public PluginDescriptor getPlugin(String pluginId) {
-        if (pluginId.equals("rootPlugin")) {
+        if (pluginId.equals(Home.ROOT_PLUGIN)) {
             return root;
+        } else if (pluginId.equals(Home.LOGIN_PLUGIN)) {
+            return login;
         }
         return childrenOfRoot.get(pluginId);
     }

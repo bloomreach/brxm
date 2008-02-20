@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend;
 
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -32,26 +32,45 @@ import org.hippoecm.repository.api.HippoNode;
 public class Home extends WebPage {
     private static final long serialVersionUID = 1L;
 
+    public static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=,password=");
+    public static final String ROOT_PLUGIN = "rootPlugin";
+    public static final String LOGIN_PLUGIN = "loginPlugin";
+
+    private boolean showLoginPlugin = false;
+
     public Home() {
-        UserSession session = (UserSession) getSession();
+
+        UserSession session = getValidUserSession();
         HippoNode rootNode = session.getRootNode();
-        if (rootNode == null) {
-            throw new RestartResponseException(LoginPage.class);
-        }
 
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
         TemplateConfig templateConfig = new RepositoryTemplateConfig(session.getJcrSessionModel());
         PluginManager pluginManager = new PluginManager(pluginConfig, templateConfig);
         PluginFactory pluginFactory = new PluginFactory(pluginManager);
 
-        PluginDescriptor rootPluginDescriptor = pluginConfig.getRoot();
+        PluginDescriptor rootPluginDescriptor;
+        if (showLoginPlugin) {
+            rootPluginDescriptor = pluginConfig.getPlugin(LOGIN_PLUGIN);
+            rootPluginDescriptor.setWicketId(ROOT_PLUGIN);
+        } else {
+            rootPluginDescriptor = pluginConfig.getPlugin(ROOT_PLUGIN);
+        }
         JcrNodeModel rootModel = new JcrNodeModel(rootNode);
+
         Plugin rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
         rootPlugin.setPluginManager(pluginManager);
 
         add(rootPlugin);
         rootPlugin.addChildren();
+    }
 
+    private UserSession getValidUserSession() {
+        UserSession session = (UserSession) getSession();
+        if (session.getRootNode() == null || session.getCredentials().size() == 0) {
+            session.setJcrCredentials(ANONYMOUS_CREDENTIALS);
+            showLoginPlugin = true;
+        }
+        return session;
     }
 
 }
