@@ -36,11 +36,13 @@ public class Home extends WebPage {
     public static final String ROOT_PLUGIN = "rootPlugin";
     public static final String LOGIN_PLUGIN = "loginPlugin";
 
-    private boolean showLoginPlugin = false;
-
     public Home() {
-
+        
+        boolean showLoginPlugin = true;
         UserSession session = getValidUserSession();
+        if(!session.getCredentials().equals(ANONYMOUS_CREDENTIALS)) {
+            showLoginPlugin = false;
+        }
         HippoNode rootNode = session.getRootNode();
 
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
@@ -66,9 +68,8 @@ public class Home extends WebPage {
 
     private UserSession getValidUserSession() {
         UserSession session = (UserSession) getSession();
-        if (session.getRootNode() == null || session.getCredentials().size() == 0) {
+        if (session.getRootNode() == null) {
             session.setJcrCredentials(ANONYMOUS_CREDENTIALS);
-            showLoginPlugin = true;
         }
         return session;
     }
