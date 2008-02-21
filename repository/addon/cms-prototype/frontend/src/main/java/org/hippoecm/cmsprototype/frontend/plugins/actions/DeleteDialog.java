@@ -15,18 +15,17 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.cmsprototype.frontend.model.content.Document;
-import org.hippoecm.cmsprototype.frontend.model.content.Folder;
-import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 
 public class DeleteDialog extends AbstractDialog {
@@ -36,15 +35,16 @@ public class DeleteDialog extends AbstractDialog {
         super(dialogWindow, channel);
         String message;
         try {
-            Document document = new Document(dialogWindow.getNodeModel());
-            message = "Delete Document " + document.getName();
-        } catch (ModelWrapException e) {
-            try {
-                Folder folder = new Folder(dialogWindow.getNodeModel());
-                message = "Delete Folder " + folder.getName();
-            } catch (ModelWrapException e1) {
-                message = e.getMessage();
+            Node node = dialogWindow.getNodeModel().getNode();
+            Node source = Utils.findHandle(node);
+            if (source.isNodeType(HippoNodeType.NT_HANDLE)) {
+                message = "Delete document " + node.getName();
+            } else {
+                message = "Delete folder " + node.getName();
             }
+        } catch (RepositoryException e) {
+            message = e.getMessage();
+            ok.setEnabled(false);
         }
         dialogWindow.setTitle("Delete");
         add(new Label("message", message));
@@ -52,43 +52,30 @@ public class DeleteDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        if (dialogWindow.getNodeModel().getParentModel() != null) {
-            JcrNodeModel toBeDeleted = null;
+        Node node = dialogWindow.getNodeModel().getNode();
+        if (node != null) {
+            Node toBeDeleted = null;
             try {
-                toBeDeleted = new Document(dialogWindow.getNodeModel()).getNodeModel();
-            } catch (ModelWrapException e) {
-                try {
-                    toBeDeleted = new Folder(dialogWindow.getNodeModel()).getNodeModel();
-                } catch (ModelWrapException e1) {
-                    //Node to be deleted isn't a Document or a Folder
-                }
-            }
-            
-            if (toBeDeleted != null) {
-                JcrNodeModel parent = toBeDeleted.findRootModel();
-                try {
-                    parent = new Document(toBeDeleted.getParentModel()).getNodeModel();
-                } catch (ModelWrapException e) {
-                    try {
-                        parent = new Folder(toBeDeleted.getParentModel()).getNodeModel();
-                    } catch (ModelWrapException e1) {
-                        //Parent isn't a Document or a Folder,
-                        //fall back to root node
+                toBeDeleted = Utils.findHandle(node);
+
+                if (toBeDeleted != null) {
+                    Node parent = Utils.findHandle(toBeDeleted.getParent());
+
+                    UserSession wicketSession = (UserSession) getSession();
+                    HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
+                    toBeDeleted.remove();
+                    jcrSession.save();
+
+                    if (channel != null) {
+                        Request request = channel.createRequest("select", new JcrNodeModel(parent));
+                        channel.send(request);
+
+                        request = channel.createRequest("flush", new JcrNodeModel("/"));
+                        channel.send(request);
                     }
                 }
-                
-                UserSession wicketSession = (UserSession) getSession();
-                HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
-                toBeDeleted.getNode().remove();
-                jcrSession.save();
-
-                if (channel != null) {
-                    Request request = channel.createRequest("select", parent);
-                    channel.send(request);
-
-                    request = channel.createRequest("flush", parent.findRootModel());
-                    channel.send(request);
-                }
+            } catch (RepositoryException e) {
+                //TODO
             }
         }
     }

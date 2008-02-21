@@ -15,11 +15,9 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.actions;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.cmsprototype.frontend.model.content.Document;
-import org.hippoecm.cmsprototype.frontend.model.content.Folder;
-import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.cmsprototype.frontend.plugins.foldertree.FolderTreeNode;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
@@ -43,45 +41,23 @@ public class CopyDialog extends LookupDialog {
     @Override
     public void ok() throws RepositoryException {
         if (dialogWindow.getNodeModel().getParentModel() != null) {
-            JcrNodeModel source = null;
-            try {
-                source = new Document(dialogWindow.getNodeModel()).getNodeModel();
-            } catch (ModelWrapException e) {
-                try {
-                    source = new Folder(dialogWindow.getNodeModel()).getNodeModel();
-                } catch (ModelWrapException e1) {
-                    //Node isn't a Document or a Folder
-                }
-            }
-            if (source != null) {
-                JcrNodeModel target = null;
-                try {
-                    Folder targetFolder = new Folder(getSelectedNode().getNodeModel()); 
-                    target = targetFolder.getNodeModel();
-                } catch (ModelWrapException e) {
-                    try {
-                        Document targetDocument = new Document(getSelectedNode().getNodeModel());
-                        target = targetDocument.getNodeModel();
-                    } catch (ModelWrapException e1) {
-                        //target isn't a Document or a Folder
-                    }
-                }
-                if (target != null) {
-                    UserSession wicketSession = (UserSession) getSession();
-                    HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
+            Node source = Utils.findHandle(dialogWindow.getNodeModel().getNode());
+            Node target = getSelectedNode().getNodeModel().getNode();
+            if (target != null) {
+                UserSession wicketSession = (UserSession) getSession();
+                HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
 
-                    String targetPath = target.getNode().getPath() + "/" + source.getNode().getName();
-                    
-                    jcrSession.copy(source.getNode(), targetPath);
-                    jcrSession.save();
+                String targetPath = target.getPath() + "/" + source.getName();
 
-                    if (channel != null) {
-                        Request request = channel.createRequest("select", target);
-                        channel.send(request);
+                jcrSession.copy(source, targetPath);
+                jcrSession.save();
 
-                        request = channel.createRequest("flush", target.findRootModel());
-                        channel.send(request);
-                    }
+                if (channel != null) {
+                    Request request = channel.createRequest("select", new JcrNodeModel(target));
+                    channel.send(request);
+
+                    request = channel.createRequest("flush", new JcrNodeModel(target));
+                    channel.send(request);
                 }
             }
         }

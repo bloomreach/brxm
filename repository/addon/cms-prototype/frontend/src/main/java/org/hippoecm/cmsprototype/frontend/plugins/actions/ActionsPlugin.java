@@ -21,9 +21,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.model.Model;
-import org.hippoecm.cmsprototype.frontend.model.content.Document;
 import org.hippoecm.cmsprototype.frontend.model.content.DocumentVariant;
-import org.hippoecm.cmsprototype.frontend.model.content.Folder;
 import org.hippoecm.cmsprototype.frontend.model.exception.ModelWrapException;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
@@ -34,6 +32,9 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple plugin to list the available non-workflow actions for a
@@ -45,6 +46,8 @@ import org.hippoecm.frontend.plugin.channel.Request;
  */
 public class ActionsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(ActionsPlugin.class);
 
     private AjaxLink edit;
     private DialogLink copy;
@@ -61,23 +64,23 @@ public class ActionsPlugin extends Plugin {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 Channel channel = getDescriptor().getIncoming();
-                if(channel != null) {
-                        Request request = channel.createRequest("edit", getPluginModel());
-                        channel.send(request);
-                        request.getContext().apply(target);
+                if (channel != null) {
+                    Request request = channel.createRequest("edit", getPluginModel());
+                    channel.send(request);
+                    request.getContext().apply(target);
                 }
             }
 
         };
         add(edit);
-        
+
         JcrNodeModel jcrModel = (JcrNodeModel) getModel();
         Channel incoming = pluginDescriptor.getIncoming();
         ChannelFactory factory = getPluginManager().getChannelFactory();
-        
+
         copy = new DialogLink("copy-dialog", new Model("Copy"), CopyDialog.class, jcrModel, incoming, factory);
         add(copy);
-        
+
         move = new DialogLink("move-dialog", new Model("Move"), MoveDialog.class, jcrModel, incoming, factory);
         add(move);
 
@@ -86,7 +89,7 @@ public class ActionsPlugin extends Plugin {
 
         rename = new DialogLink("rename-dialog", new Model("Rename"), RenameDialog.class, jcrModel, incoming, factory);
         add(rename);
-        
+
         setVisibilities();
     }
 
@@ -100,51 +103,36 @@ public class ActionsPlugin extends Plugin {
         }
         super.receive(notification);
     }
-    
+
     private void setVisibilities() {
-	/* FIXME: The whole CMS is now riddled with this kind of logic, which should not be there */
         try {
-            DocumentVariant variant = new DocumentVariant((JcrNodeModel) getPluginModel());
-            edit.setVisible(variant.getState().equals("draft") || variant.getState().equals(DocumentVariant.NO_STATE));
+            Node node = new JcrNodeModel(getPluginModel()).getNode();
+            Node canonical = ((HippoNode)node).getCanonicalNode();
+
+            boolean isRoot = node.isNodeType("rep:root");            
+            boolean isVirtual = canonical == null || !canonical.isSame(node);
+            
+            if (isRoot || isVirtual) {
+                toggle(false);
+            } else {
+                toggle(true);
+                /* FIXME: kill the cmsprototype.frontend.model package, it's fundamentally flawed */
+                DocumentVariant variant = new DocumentVariant((JcrNodeModel) getPluginModel());
+                edit.setVisible(variant.getState().equals("draft") || variant.getState().equals(DocumentVariant.NO_STATE));
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+            toggle(false);
         } catch (ModelWrapException e) {
             edit.setVisible(false);
         }
-        
-        JcrNodeModel pluginModel = (JcrNodeModel)getPluginModel();
-        boolean isDocument;
-        try {
-            new Document(pluginModel);
-            isDocument = true;
-        } catch (ModelWrapException e) {
-            isDocument = false;
-        }
-        boolean isFolder;
-        try {
-            new Folder(pluginModel);
-            isFolder = true;
-        } catch (ModelWrapException e) {
-            isFolder = false;
-        }
-        boolean isRoot;
-        try {
-            isRoot = pluginModel.getNode().getPrimaryNodeType().getName().equals("rep:root");
-        } catch (RepositoryException e) {
-            isRoot = true;
-        }
-        boolean isVirtual;
-        try {
-            Node canonical = pluginModel.getNode().getCanonicalNode();
-            isVirtual = canonical == null || !canonical.isSame(pluginModel.getNode());
-        } catch (RepositoryException e) {
-            isVirtual = true;
-        }
-        
-        copy.setVisible((isDocument || isFolder) && !isRoot && !isVirtual);
-        move.setVisible((isDocument || isFolder) && !isRoot && !isVirtual);
-        delete.setVisible((isDocument || isFolder) && !isRoot && !isVirtual);
-        rename.setVisible((isDocument || isFolder) && !isRoot && !isVirtual);
     }
-    
-    
-    
+
+    private void toggle(boolean enabled) {
+        copy.setVisible(enabled);
+        move.setVisible(enabled);
+        delete.setVisible(enabled);
+        rename.setVisible(enabled);
+    }
+
 }
