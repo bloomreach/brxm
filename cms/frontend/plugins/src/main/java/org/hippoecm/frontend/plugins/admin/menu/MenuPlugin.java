@@ -40,17 +40,17 @@ public class MenuPlugin extends Plugin {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         JcrNodeModel jcrModel = (JcrNodeModel) getModel();
-        Channel incoming = pluginDescriptor.getIncoming();
+        Channel channel = getTopChannel();
         ChannelFactory factory = getPluginManager().getChannelFactory();
-        add(new DialogLink("node-dialog", new Model("Add Node"), NodeDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("delete-dialog", new Model("Delete Node"), DeleteDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("move-dialog", new Model("Move Node"), MoveDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("copy-dialog", new Model("Copy Node"), CopyDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("rename-dialog", new Model("Rename Node"), RenameDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("export-dialog", new Model("Export Node"), ExportDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("property-dialog", new Model("Add Property"), PropertyDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("save-dialog", new Model("Save"), SaveDialog.class, jcrModel, incoming, factory));
-        add(new DialogLink("reset-dialog", new Model("Reset"), ResetDialog.class, jcrModel, incoming, factory));
+        add(new DialogLink("node-dialog", new Model("Add Node"), NodeDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("delete-dialog", new Model("Delete Node"), DeleteDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("move-dialog", new Model("Move Node"), MoveDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("copy-dialog", new Model("Copy Node"), CopyDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("rename-dialog", new Model("Rename Node"), RenameDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("export-dialog", new Model("Export Node"), ExportDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("property-dialog", new Model("Add Property"), PropertyDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("save-dialog", new Model("Save"), SaveDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("reset-dialog", new Model("Reset"), ResetDialog.class, jcrModel, channel, factory));
     }
 
 }

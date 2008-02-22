@@ -51,7 +51,7 @@ public class NodeDialog extends AbstractDialog {
         Node node = nodeModel.getNode().addNode(getName(), getType());
         JcrNodeModel newModel = new JcrNodeModel(node);
 
-        Channel channel = getIncoming();
+        Channel channel = getChannel();
         if(channel != null) {
             Request request = channel.createRequest("flush", nodeModel);
             channel.send(request);

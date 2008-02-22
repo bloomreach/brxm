@@ -73,9 +73,9 @@ public class ListFieldPlugin extends Plugin {
 
         JcrNodeModel nodeModel = ((FieldModel) getPluginModel()).getNodeModel();
 
-        Channel incoming = getDescriptor().getIncoming();
-        Request request = incoming.createRequest("flush", nodeModel);
-        incoming.send(request);
+        Channel channel = getTopChannel();
+        Request request = channel.createRequest("flush", nodeModel);
+        channel.send(request);
 
         request.getContext().addRefresh(this);
         request.getContext().apply(target);
@@ -86,9 +86,9 @@ public class ListFieldPlugin extends Plugin {
 
         JcrNodeModel nodeModel = ((FieldModel) getPluginModel()).getNodeModel();
 
-        Channel incoming = getDescriptor().getIncoming();
-        Request request = incoming.createRequest("flush", nodeModel);
-        incoming.send(request);
+        Channel channel = getTopChannel();
+        Request request = channel.createRequest("flush", nodeModel);
+        channel.send(request);
 
         request.getContext().addRefresh(this);
         request.getContext().apply(target);
@@ -101,9 +101,9 @@ public class ListFieldPlugin extends Plugin {
             Node parent = childModel.getNodeModel().getNode();
             nodeModel = new JcrNodeModel(parent.getNode(path));
 
-            Channel incoming = getDescriptor().getIncoming();
-            Request request = incoming.createRequest("edit", nodeModel);
-            incoming.send(request);
+            Channel channel = getTopChannel();
+            Request request = channel.createRequest("edit", nodeModel);
+            channel.send(request);
 
             request.getContext().apply(target);
         } catch (RepositoryException ex) {

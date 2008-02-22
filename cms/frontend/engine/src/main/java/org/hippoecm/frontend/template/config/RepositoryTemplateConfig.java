@@ -33,7 +33,6 @@ import javax.jcr.query.QueryResult;
 
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
@@ -93,7 +92,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             NodeIterator iter = result.getNodes();
             while (iter.hasNext()) {
                 Node pluginNode = iter.nextNode();
-                PluginDescriptor descriptor = createDescriptor(pluginNode, pluginNode.getName(), null, null);
+                PluginDescriptor descriptor = createDescriptor(pluginNode, pluginNode.getName(), null);
                 TemplateDescriptor template = ((Descriptor) descriptor).template;
                 list.add(template);
             }
@@ -126,12 +125,12 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         if (pluginNode.hasProperty(HippoNodeType.HIPPO_RENDERER)) {
             return super.nodeToDescriptor(pluginNode);
         }
-        return new Descriptor(pluginNode, pluginNode.getName(), null, null);
+        return new Descriptor(pluginNode, pluginNode.getName(), null);
     }
 
     @Override
-    protected PluginDescriptor createDescriptor(Node node, String pluginId, String className, Channel outgoing) {
-        return new Descriptor(node, pluginId, className, outgoing);
+    protected PluginDescriptor createDescriptor(Node node, String pluginId, String className) {
+        return new Descriptor(node, pluginId, className);
     }
 
     // IPluginConfigContext implementation
@@ -144,8 +143,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         FieldDescriptor field;
         TemplateDescriptor template;
 
-        Descriptor(Node pluginNode, String pluginId, String className, Channel outgoing) {
-            super(pluginNode, pluginId, className, outgoing);
+        Descriptor(Node pluginNode, String pluginId, String className) {
+            super(pluginNode, pluginId, className);
 
             try {
                 if (pluginNode.isNodeType(HippoNodeType.NT_TEMPLATE)) {

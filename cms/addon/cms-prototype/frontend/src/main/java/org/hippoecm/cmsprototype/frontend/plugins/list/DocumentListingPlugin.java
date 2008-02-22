@@ -83,8 +83,8 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel incoming) {
-        return new DocumentListingNodeColumn(model, propertyName, incoming);
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel channel) {
+        return new DocumentListingNodeColumn(model, propertyName, channel);
     }
 
     private class ListEntry extends NodeModelWrapper {

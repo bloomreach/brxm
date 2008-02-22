@@ -31,7 +31,7 @@ public class RootPlugin extends Plugin {
     @Override
     public void handle(Request request) {
         if ("select".equals(request.getOperation()) || "logout".equals(request.getOperation())) {
-            Channel outgoing = getDescriptor().getOutgoing();
+            Channel outgoing = getBottomChannel();
             if (outgoing != null) {
                 outgoing.publish(outgoing.createNotification(request));
             }

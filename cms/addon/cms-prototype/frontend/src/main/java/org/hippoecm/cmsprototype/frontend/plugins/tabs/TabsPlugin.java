@@ -128,7 +128,6 @@ public class TabsPlugin extends Plugin {
             if (!editors.containsKey(model) && editDescriptor != null) {
                 // create a descriptor for the plugin
                 PluginDescriptor descriptor = editDescriptor.clone();
-                descriptor.setOutgoing(getPluginManager().getChannelFactory().createChannel());
                 try {
                     // set the title to the name of the node
                     List<String> titleParam = new LinkedList<String>();
@@ -153,7 +152,7 @@ public class TabsPlugin extends Plugin {
 
             // notify children; if tabs should be switched,
             // they should send a focus request.
-            Channel channel = getDescriptor().getOutgoing();
+            Channel channel = getBottomChannel();
             if (channel != null) {
                 Notification notification = channel.createNotification(request);
                 channel.publish(notification);
@@ -169,7 +168,7 @@ public class TabsPlugin extends Plugin {
                 request.getContext().addRefresh(this);
 
                 // notify children of focus event
-                Channel channel = getDescriptor().getOutgoing();
+                Channel channel = getBottomChannel();
                 if (channel != null) {
                     Notification notification = channel.createNotification(request);
                     channel.publish(notification);

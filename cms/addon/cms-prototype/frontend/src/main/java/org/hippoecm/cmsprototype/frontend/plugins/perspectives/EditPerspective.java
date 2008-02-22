@@ -39,16 +39,16 @@ public class EditPerspective extends Plugin {
         if ("edit".equals(notification.getOperation())) {
             JcrNodeModel model = new JcrNodeModel(notification.getModel());
             if (model.equals(getPluginModel())) {
-                Channel incoming = getDescriptor().getIncoming();
-                if (incoming != null) {
+                Channel channel = getTopChannel();
+                if (channel != null) {
                     PluginModel pluginModel = new PluginModel();
                     pluginModel.put("plugin", getDescriptor().getPluginId());
-                    Request request = incoming.createRequest("focus", pluginModel);
+                    Request request = channel.createRequest("focus", pluginModel);
                     request.setContext(notification.getContext());
-                    incoming.send(request);
+                    channel.send(request);
                 }
 
-                Channel outgoing = getDescriptor().getOutgoing();
+                Channel outgoing = getBottomChannel();
                 if (outgoing != null) {
                     Notification selectNotice = outgoing.createNotification("select", notification.getModel());
                     selectNotice.setContext(notification.getContext());

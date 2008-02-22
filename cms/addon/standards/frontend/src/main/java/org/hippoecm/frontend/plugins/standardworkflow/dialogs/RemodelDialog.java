@@ -70,9 +70,9 @@ public class RemodelDialog extends AbstractWorkflowDialog {
             sessionModel.getSession().save();
 
             // flush the root node
-            Channel incoming = getIncoming();
-            Request request = incoming.createRequest("flush", new JcrNodeModel(new JcrItemModel("/")));
-            incoming.send(request);
+            Channel channel = getChannel();
+            Request request = channel.createRequest("flush", new JcrNodeModel(new JcrItemModel("/")));
+            channel.send(request);
         } else {
             log.warn("no remodeling workflow available on selected node");
         }

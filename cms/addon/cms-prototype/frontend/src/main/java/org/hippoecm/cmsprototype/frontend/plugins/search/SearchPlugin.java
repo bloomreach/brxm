@@ -129,23 +129,23 @@ public class SearchPlugin extends AbstractListingPlugin{
     }
     
     @Override
-    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel incoming) {
-        return new SearchNodeColumn(model, propertyName, incoming);
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel channel) {
+        return new SearchNodeColumn(model, propertyName, channel);
     }
 
     @Override
-    protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
-        super.modifyDefaultPrefNode(prefNode,incoming);
+    protected void modifyDefaultPrefNode(Node prefNode, Channel channel) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+        super.modifyDefaultPrefNode(prefNode,channel);
         
         Node pref = prefNode.addNode(HIGHLIGHT,LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, HIGHLIGHT);
         pref.setProperty(PROPERTYNAME_PROPERTY, REP_EXCERPT);
-        columns.add(getNodeColumn(new Model(HIGHLIGHT), REP_EXCERPT , incoming));
+        columns.add(getNodeColumn(new Model(HIGHLIGHT), REP_EXCERPT , channel));
         
         pref = prefNode.addNode(SIMILAR,LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, SIMILAR);
         pref.setProperty(PROPERTYNAME_PROPERTY, SIMILAR);
-        columns.add(getNodeColumn(new Model(SIMILAR), SIMILAR , incoming));
+        columns.add(getNodeColumn(new Model(SIMILAR), SIMILAR , channel));
     }
 
 

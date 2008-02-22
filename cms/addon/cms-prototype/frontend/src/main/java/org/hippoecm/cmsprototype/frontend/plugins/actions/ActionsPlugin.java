@@ -63,7 +63,7 @@ public class ActionsPlugin extends Plugin {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                Channel channel = getDescriptor().getIncoming();
+                Channel channel = getTopChannel();
                 if (channel != null) {
                     Request request = channel.createRequest("edit", getPluginModel());
                     channel.send(request);
@@ -75,19 +75,19 @@ public class ActionsPlugin extends Plugin {
         add(edit);
 
         JcrNodeModel jcrModel = (JcrNodeModel) getModel();
-        Channel incoming = pluginDescriptor.getIncoming();
+        Channel channel = getTopChannel();
         ChannelFactory factory = getPluginManager().getChannelFactory();
 
-        copy = new DialogLink("copy-dialog", new Model("Copy"), CopyDialog.class, jcrModel, incoming, factory);
+        copy = new DialogLink("copy-dialog", new Model("Copy"), CopyDialog.class, jcrModel, channel, factory);
         add(copy);
 
-        move = new DialogLink("move-dialog", new Model("Move"), MoveDialog.class, jcrModel, incoming, factory);
+        move = new DialogLink("move-dialog", new Model("Move"), MoveDialog.class, jcrModel, channel, factory);
         add(move);
 
-        delete = new DialogLink("delete-dialog", new Model("Delete"), DeleteDialog.class, jcrModel, incoming, factory);
+        delete = new DialogLink("delete-dialog", new Model("Delete"), DeleteDialog.class, jcrModel, channel, factory);
         add(delete);
 
-        rename = new DialogLink("rename-dialog", new Model("Rename"), RenameDialog.class, jcrModel, incoming, factory);
+        rename = new DialogLink("rename-dialog", new Model("Rename"), RenameDialog.class, jcrModel, channel, factory);
         add(rename);
 
         setVisibilities();

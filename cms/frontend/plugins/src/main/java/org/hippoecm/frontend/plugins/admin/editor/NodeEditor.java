@@ -35,12 +35,12 @@ public class NodeEditor extends Form implements INotificationListener {
     private PropertiesEditor properties;
     private NodeTypesEditor types;
 
-    public NodeEditor(String id, JcrNodeModel model, Channel incoming) {
+    public NodeEditor(String id, JcrNodeModel model, Channel channel) {
         super(id, model);
         setOutputMarkupId(true);
 
-        if (incoming != null) {
-            incoming.subscribe(this);
+        if (channel != null) {
+            channel.subscribe(this);
         }
 
         properties = new PropertiesEditor("properties", new JcrPropertiesProvider(model));

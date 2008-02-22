@@ -66,9 +66,9 @@ public class EditorForm extends Form {
                 TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(),
                         model.getNode().getName(), model.getNode().getIndex());
 
-                return engine.createTemplate("template", templateModel, (Plugin) findParent(Plugin.class));
+                return engine.createTemplate("template", templateModel, plugin);
             } else {
-                PluginDescriptor descriptor = new PluginDescriptor("template", EmptyPlugin.class.getName(), null);
+                PluginDescriptor descriptor = new PluginDescriptor("template", EmptyPlugin.class.getName());
                 return new PluginFactory(plugin.getPluginManager()).createPlugin(descriptor, null, plugin);
             }
         } catch (RepositoryException ex) {

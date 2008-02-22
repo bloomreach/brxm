@@ -110,7 +110,7 @@ public class PropertyDialog extends AbstractDialog {
             nodeModel.getNode().setProperty(name, jcrValue);
         }
 
-        Channel channel = getIncoming();
+        Channel channel = getChannel();
         if (channel != null) {
             Request request = channel.createRequest("select", nodeModel);
             channel.send(request);

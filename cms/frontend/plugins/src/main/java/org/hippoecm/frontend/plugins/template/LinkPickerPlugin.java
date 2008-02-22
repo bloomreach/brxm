@@ -52,7 +52,7 @@ public class LinkPickerPlugin extends Plugin {
         TemplateModel tmplModel = (TemplateModel) getPluginModel();
         valueModel = tmplModel.getJcrPropertyValueModel();
         
-        Channel incoming = pluginDescriptor.getIncoming();
+        Channel channel = getTopChannel();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         
         if(pluginDescriptor.getParameter("nodetypes")!=null) {
@@ -69,7 +69,7 @@ public class LinkPickerPlugin extends Plugin {
         
         Channel proxy = factory.createChannel();
         
-        final DialogWindow dialogWindow = new DialogWindow("dialog", tmplModel.getNodeModel(), incoming, proxy);
+        final DialogWindow dialogWindow = new DialogWindow("dialog", tmplModel.getNodeModel(), channel, proxy);
         LookupDialog lookupDialog = new LinkPickerDialog(dialogWindow,valueModel,proxy, nodetypes);
         DialogLink linkPicker = new DialogLink("value", new Model(value), lookupDialog, tmplModel.getNodeModel());
         
