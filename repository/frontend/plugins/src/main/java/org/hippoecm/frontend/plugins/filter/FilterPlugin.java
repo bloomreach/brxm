@@ -51,7 +51,7 @@ public class FilterPlugin extends Plugin {
     @Override
     public void handle(Request request) {
         if (handle != null && handle.contains(request.getOperation())) {
-            Channel channel = getDescriptor().getOutgoing();
+            Channel channel = getBottomChannel();
             if (channel != null) {
                 Notification notification = channel.createNotification(request);
                 channel.publish(notification);

@@ -59,13 +59,13 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
             String path = workflow.copy(name);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
             if (path != null) {
-                Channel incoming = getIncoming();
-                if (incoming != null) {
-                    Request request = incoming.createRequest("flush", nodeModel.getParentModel());
-                    incoming.send(request);
+                Channel channel = getChannel();
+                if (channel != null) {
+                    Request request = channel.createRequest("flush", nodeModel.getParentModel());
+                    channel.send(request);
 
-                    request = incoming.createRequest("edit", nodeModel);
-                    incoming.send(request);
+                    request = channel.createRequest("edit", nodeModel);
+                    channel.send(request);
                 } else {
                     log.error("could not send edit message");
                 }

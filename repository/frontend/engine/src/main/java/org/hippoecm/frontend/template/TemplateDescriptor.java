@@ -77,8 +77,7 @@ public class TemplateDescriptor implements IClusterable {
             fields.addLast(new FieldDescriptor(fieldMap, engine));
         }
 
-        this.plugin = new PluginDescriptor((Map<String, Object>) map.get("plugin"), engine.getChannelFactory()
-                .createChannel());
+        this.plugin = new PluginDescriptor((Map<String, Object>) map.get("plugin"));
     }
 
     public Map<String, Object> getMapRepresentation() {

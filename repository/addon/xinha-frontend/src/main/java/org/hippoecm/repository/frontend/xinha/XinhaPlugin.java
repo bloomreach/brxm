@@ -48,7 +48,8 @@ public class XinhaPlugin extends Plugin {
     private AbstractDefaultAjaxBehavior postBehavior;
 
     public XinhaPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()), parentPlugin);
+        super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()),
+                parentPlugin);
 
         TemplateModel model = (TemplateModel) getPluginModel();
         valueModel = model.getJcrPropertyValueModel();

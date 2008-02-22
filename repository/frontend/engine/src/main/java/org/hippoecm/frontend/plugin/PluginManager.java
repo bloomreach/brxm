@@ -30,10 +30,12 @@ public class PluginManager implements IClusterable {
 
     private PluginConfig pluginConfig;
     private TemplateEngine templateEngine;
+    private ChannelFactory channelFactory;
 
     public PluginManager(PluginConfig pluginConfig, TemplateConfig templateConfig) {
         this.pluginConfig = pluginConfig;
         this.templateEngine = new TemplateEngine(templateConfig, this);
+        this.channelFactory = new ChannelFactory();
     }
 
     public PluginConfig getPluginConfig() {
@@ -41,7 +43,7 @@ public class PluginManager implements IClusterable {
     }
 
     public ChannelFactory getChannelFactory() {
-        return pluginConfig.getChannelFactory();
+        return channelFactory;
     }
     
     public TemplateEngine getTemplateEngine() {

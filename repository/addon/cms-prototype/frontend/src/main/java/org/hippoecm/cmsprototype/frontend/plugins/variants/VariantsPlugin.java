@@ -104,7 +104,7 @@ public class VariantsPlugin extends Plugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        Channel channel = getDescriptor().getIncoming();
+                        Channel channel = getTopChannel();
                         if (channel != null) {
                             Request request = channel.createRequest("select", variant.getNodeModel());
                             channel.send(request);
@@ -137,7 +137,7 @@ public class VariantsPlugin extends Plugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        Channel channel = getDescriptor().getIncoming();
+                        Channel channel = getTopChannel();
                         if (channel != null) {
                             Request request = channel.createRequest("select", model);
                             channel.send(request);

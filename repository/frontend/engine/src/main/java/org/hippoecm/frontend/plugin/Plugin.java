@@ -36,34 +36,37 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     private PluginManager pluginManager;
     private PluginDescriptor pluginDescriptor;
     private Plugin parentPlugin;
+    private Channel topChannel;
+    private Channel bottomChannel;
 
     public Plugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor.getWicketId(), model);
         setOutputMarkupId(true);
+
         this.parentPlugin = parentPlugin;
         this.pluginDescriptor = pluginDescriptor;
 
-        // connect outgoing and incoming channels
-        if (pluginDescriptor.getIncoming() != null) {
-            pluginDescriptor.getIncoming().subscribe(this);
-        }
-        if (pluginDescriptor.getOutgoing() != null) {
-            pluginDescriptor.getOutgoing().register(this);
+        if(parentPlugin!=null) {
+            topChannel = parentPlugin.getBottomChannel();
+            if(topChannel != null) {
+                topChannel.subscribe(this);
+            }
+            bottomChannel = parentPlugin.getPluginManager().getChannelFactory().createChannel();
+            bottomChannel.register(this);
         }
     }
 
     public void destroy() {
         onDestroy();
 
-        // disconnect outgoing and incoming channels
-        if (pluginDescriptor.getIncoming() != null) {
-            pluginDescriptor.getIncoming().unsubscribe(this);
+        // disconnect bottom and top channels
+        if (topChannel != null) {
+            topChannel.unsubscribe(this);
         }
-        if (pluginDescriptor.getOutgoing() != null) {
-            Channel outgoing = pluginDescriptor.getOutgoing();
-            Notification notification = outgoing.createNotification("destroy", null);
-            outgoing.publish(notification);
-            pluginDescriptor.getOutgoing().unregister(this);
+        if (bottomChannel != null) {
+            Notification notification = bottomChannel.createNotification("destroy", null);
+            bottomChannel.publish(notification);
+            bottomChannel.unregister(this);
         }
     }
 
@@ -124,16 +127,26 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     @Override
     public void remove(Component component) {
         if (component instanceof Plugin) {
-            ((Plugin) component).getDescriptor().disconnect();
+            ((Plugin) component).destroy();
         }
         super.remove(component);
+    }
+
+    // channels
+
+    public Channel getTopChannel() {
+        return topChannel;
+    }
+
+    public Channel getBottomChannel() {
+        return bottomChannel;
     }
 
     // implement INotificationListener
 
     public void receive(Notification notification) {
         // forward the notification to children
-        Channel outgoing = getDescriptor().getOutgoing();
+        Channel outgoing = getBottomChannel();
         if (outgoing != null) {
             outgoing.publish(notification);
         }
@@ -146,9 +159,9 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
 
     public void handle(Request request) {
         // forward the request
-        Channel incoming = getDescriptor().getIncoming();
-        if (incoming != null) {
-            incoming.send(request);
+        Channel channel = getTopChannel();
+        if (channel != null) {
+            channel.send(request);
         }
     }
 }

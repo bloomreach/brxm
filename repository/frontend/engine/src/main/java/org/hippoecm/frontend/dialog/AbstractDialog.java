@@ -59,6 +59,7 @@ public abstract class AbstractDialog extends WebPage {
                     }
                     setException(msg);
                     target.addComponent(exceptionLabel);
+                    e.printStackTrace();
                 }
             }
         };
@@ -87,7 +88,7 @@ public abstract class AbstractDialog extends WebPage {
         return (Plugin)dialogWindow.findParent(Plugin.class);
     }
 
-    protected Channel getIncoming() {
+    protected Channel getChannel() {
         return channel;
     }
 

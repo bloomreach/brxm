@@ -113,7 +113,7 @@ public abstract class AbstractListingPlugin extends Plugin {
                 if(n.hasProperty(COLUMNNAME_PROPERTY) && n.hasProperty(PROPERTYNAME_PROPERTY)) {
                     String columnName = n.getProperty(COLUMNNAME_PROPERTY).getString();
                     String propertyName = n.getProperty(PROPERTYNAME_PROPERTY).getString();
-                    columns.add(getNodeColumn(new Model(columnName), propertyName , pluginDescriptor.getIncoming()));
+                    columns.add(getNodeColumn(new Model(columnName), propertyName , getTopChannel()));
                 }
             }
         } catch (PathNotFoundException e) {
@@ -124,8 +124,8 @@ public abstract class AbstractListingPlugin extends Plugin {
                 if(!jcrSession.itemExists(userPrefListingSettingsLocation)) { 
                     Node userNode = ((Node)jcrSession.getItem(userNodeLocation));
                     // User doesn't have a user folder for this browse perspective yet
-                    Node prefNode = createDefaultPrefNodeSetting(userNode, pluginDescriptor.getIncoming());
-                    modifyDefaultPrefNode(prefNode, pluginDescriptor.getIncoming());
+                    Node prefNode = createDefaultPrefNodeSetting(userNode, getTopChannel());
+                    modifyDefaultPrefNode(prefNode, getTopChannel());
                     userNode.save();
                 }
             } catch (PathNotFoundException e1) {
@@ -188,7 +188,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     /**
      * Override this method in your subclass to change the default listing view
      * @param prefNode
-     * @param incoming
+     * @param channel
      * @throws ItemExistsException
      * @throws PathNotFoundException
      * @throws NoSuchNodeTypeException
@@ -198,7 +198,7 @@ public abstract class AbstractListingPlugin extends Plugin {
      * @throws RepositoryException
      * @throws ValueFormatException
      */
-    protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+    protected void modifyDefaultPrefNode(Node prefNode, Channel channel) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
         // subclasses should override this if they want to change behavior
         
         Node pref = prefNode.addNode("name",LISTINGPROPS_NODETYPE);
@@ -208,16 +208,16 @@ public abstract class AbstractListingPlugin extends Plugin {
         pref = prefNode.addNode("type", LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "Type");
         pref.setProperty(PROPERTYNAME_PROPERTY, JcrConstants.JCR_PRIMARYTYPE);
-        columns.add(getNodeColumn(new Model("Name"), "name" , incoming));
-        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , incoming));
+        columns.add(getNodeColumn(new Model("Name"), "name" , channel));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , channel));
         
     }
 
 
 
     private void defaultColumns(PluginDescriptor pluginDescriptor) {
-        columns.add(getNodeColumn(new Model("Name"), "name" , pluginDescriptor.getIncoming()));
-        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , pluginDescriptor.getIncoming()));
+        columns.add(getNodeColumn(new Model("Name"), "name" , getTopChannel()));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , getTopChannel()));
     }
     private void logError(Exception e1) {
         log.error("error creating user doclisting preference: \n " + e1 + " . \n  default doclisting will be shown");
@@ -228,11 +228,11 @@ public abstract class AbstractListingPlugin extends Plugin {
      * Override this method if you want custom table column / nodecells
      * @param model Model
      * @param propertyName String
-     * @param incoming Channel
+     * @param channel Channel
      * @return IStyledColumn
      */
-    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel incoming) {
-        return new NodeColumn(model, propertyName, incoming);
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel channel) {
+        return new NodeColumn(model, propertyName, channel);
     }
 
 

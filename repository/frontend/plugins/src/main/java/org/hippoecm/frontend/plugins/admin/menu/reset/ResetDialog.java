@@ -55,7 +55,7 @@ public class ResetDialog extends AbstractDialog {
         // The actual JCR refresh
         nodeModel.getNode().getSession().refresh(false);
 
-        Channel channel = getIncoming();
+        Channel channel = getChannel();
         if (channel != null) {
             Request request = channel.createRequest("select", nodeModel);
             channel.send(request);

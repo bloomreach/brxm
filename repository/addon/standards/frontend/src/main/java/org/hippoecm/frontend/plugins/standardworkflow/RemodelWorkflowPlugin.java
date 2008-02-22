@@ -31,7 +31,7 @@ public class RemodelWorkflowPlugin extends Plugin {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         add(new DialogLink("remodelRequest-dialog", new Model("Apply models"), RemodelDialog.class,
-                (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
+                (JcrNodeModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
     }
 
     @Override

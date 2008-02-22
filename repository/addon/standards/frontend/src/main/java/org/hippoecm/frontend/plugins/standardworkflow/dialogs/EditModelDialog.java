@@ -45,10 +45,10 @@ public class EditModelDialog extends AbstractWorkflowDialog {
             String path = workflow.edit();
             JcrItemModel itemModel = new JcrItemModel(path);
             if (path != null) {
-                Channel incoming = getIncoming();
-                if (incoming != null) {
-                    Request request = incoming.createRequest("edit", new JcrNodeModel(itemModel));
-                    incoming.send(request);
+                Channel channel = getChannel();
+                if (channel != null) {
+                    Request request = channel.createRequest("edit", new JcrNodeModel(itemModel));
+                    channel.send(request);
                 } else {
                     log.error("could not send edit message");
                 }

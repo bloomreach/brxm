@@ -33,13 +33,13 @@ public class RootPlugin extends Plugin {
     public void handle(Request request) {
         // update node model
         if ("select".equals(request.getOperation()) || "flush".equals(request.getOperation())) {
-            Channel outgoing = getDescriptor().getOutgoing();
+            Channel outgoing = getBottomChannel();
             if (outgoing != null) {
                 Notification notification = outgoing.createNotification(request);
                 outgoing.publish(notification);
             }
         } else if ("edit".equals(request.getOperation())) {
-            Channel outgoing = getDescriptor().getOutgoing();
+            Channel outgoing = getBottomChannel();
             if (outgoing != null) {
                 Notification notification = outgoing.createNotification("select", request.getModel());
                 notification.setContext(request.getContext());

@@ -44,7 +44,7 @@ public class PrototypeWorkflowPlugin extends Plugin {
         updateLink();
 
         add(new DialogLink("addDocument-dialog", linkText, PrototypeDialog.class, (JcrNodeModel) getPluginModel(),
-                pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
+                getTopChannel(), getPluginManager().getChannelFactory()));
     }
 
     @Override

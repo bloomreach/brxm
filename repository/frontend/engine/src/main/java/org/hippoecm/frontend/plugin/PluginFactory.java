@@ -36,9 +36,6 @@ public class PluginFactory {
     }
 
     public Plugin createPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
-        if (parentPlugin != null) {
-            descriptor.connect(parentPlugin.getDescriptor().getOutgoing());
-        }
         Plugin plugin;
         if (descriptor.getClassName() == null) {
             String message = "Implementation class name for plugin '" + descriptor
@@ -57,11 +54,13 @@ public class PluginFactory {
                         + e.getTargetException().getMessage() + "\n" + "Failed to instantiate plugin '"
                         + descriptor.getClassName() + "' for id '" + descriptor + "'.";
                 plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
+                e.printStackTrace();
             } catch (Exception e) {
                 String message = e.getClass().getName() + ": " + e.getMessage() + "\n"
                         + "Failed to instantiate plugin '" + descriptor.getClassName() + "' for id '" + descriptor
                         + "'.";
                 plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
+                e.printStackTrace();
             }
         }
         return plugin;

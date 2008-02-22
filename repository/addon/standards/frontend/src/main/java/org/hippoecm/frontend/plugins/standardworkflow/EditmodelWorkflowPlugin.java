@@ -32,9 +32,9 @@ public class EditmodelWorkflowPlugin extends Plugin {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         add(new DialogLink("editModelRequest-dialog", new Model("Edit model"), EditModelDialog.class,
-                (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
+                (JcrNodeModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
         add(new DialogLink("copyModelRequest-dialog", new Model("Copy model"), CopyModelDialog.class,
-                (JcrNodeModel) getPluginModel(), pluginDescriptor.getIncoming(), getPluginManager().getChannelFactory()));
+                (JcrNodeModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
     }
 
     @Override

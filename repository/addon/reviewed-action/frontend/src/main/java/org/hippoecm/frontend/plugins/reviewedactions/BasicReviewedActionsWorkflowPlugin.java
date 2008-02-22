@@ -37,18 +37,18 @@ public class BasicReviewedActionsWorkflowPlugin extends Plugin {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         JcrNodeModel jcrModel = (JcrNodeModel) getPluginModel();
-        Channel incoming = pluginDescriptor.getIncoming();
+        Channel channel = getTopChannel();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         add(new DialogLink("obtainEditableInstance-dialog", new Model("Obtain editable copy"),
-                ObtainEditableInstanceDialog.class, jcrModel, incoming, factory));
+                ObtainEditableInstanceDialog.class, jcrModel, channel, factory));
         add(new DialogLink("disposeEditableInstance-dialog", new Model("Dispose editable copy"),
-                DisposeEditableInstanceDialog.class, jcrModel, incoming, factory));
+                DisposeEditableInstanceDialog.class, jcrModel, channel, factory));
         add(new DialogLink("requestPublication-dialog", new Model("Request publication"),
-                RequestPublicationDialog.class, jcrModel, incoming, factory));
+                RequestPublicationDialog.class, jcrModel, channel, factory));
         add(new DialogLink("requestDePublication-dialog", new Model("Request unpublication"),
-                RequestDePublicationDialog.class, jcrModel, incoming, factory));
+                RequestDePublicationDialog.class, jcrModel, channel, factory));
         add(new DialogLink("requestDeletion-dialog", new Model("Request delete"),
-                RequestDeletionDialog.class, jcrModel, incoming, factory));
+                RequestDeletionDialog.class, jcrModel, channel, factory));
     }
 
     @Override

@@ -52,7 +52,7 @@ public class DeleteDialog extends AbstractDialog {
         //The actual JCR remove
         nodeModel.getNode().remove();
 
-        Channel channel = getIncoming();
+        Channel channel = getChannel();
         if (channel != null) {
             Request request = channel.createRequest("flush", parentModel.findRootModel());
             channel.send(request);

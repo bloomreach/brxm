@@ -29,8 +29,6 @@ import javax.jcr.Value;
 
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +40,10 @@ public class PluginRepositoryConfig implements PluginConfig {
 
     private JcrSessionModel jcrSession;
     private String basePath;
-    private ChannelFactory channelFactory;
 
     public PluginRepositoryConfig(JcrSessionModel session, String base) {
         jcrSession = session;
         basePath = base;
-        channelFactory = new ChannelFactory();
     }
 
     public PluginDescriptor getPlugin(String pluginId) {
@@ -65,10 +61,6 @@ public class PluginRepositoryConfig implements PluginConfig {
         return result;
     }
 
-    public ChannelFactory getChannelFactory() {
-        return channelFactory;
-    }
-
     protected Session getJcrSession() {
         return jcrSession.getSession();
     }
@@ -76,8 +68,7 @@ public class PluginRepositoryConfig implements PluginConfig {
     protected PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
         String classname = pluginNode.getProperty(HippoNodeType.HIPPO_RENDERER).getString();
         String pluginId = pluginNode.getName();
-        Channel outgoing = channelFactory.createChannel();
-        PluginDescriptor descriptor = createDescriptor(pluginNode, pluginId, classname, outgoing);
+        PluginDescriptor descriptor = createDescriptor(pluginNode, pluginId, classname);
 
         // parse (optional) parameters
         if (pluginNode.hasNode(HippoNodeType.HIPPO_PARAMETERS)) {
@@ -101,8 +92,8 @@ public class PluginRepositoryConfig implements PluginConfig {
         return descriptor;
     }
 
-    protected PluginDescriptor createDescriptor(Node node, String pluginId, String className, Channel outgoing) {
-        return new Descriptor(node, pluginId, className, outgoing);
+    protected PluginDescriptor createDescriptor(Node node, String pluginId, String className) {
+        return new Descriptor(node, pluginId, className);
     }
 
     protected class Descriptor extends PluginDescriptor {
@@ -110,8 +101,8 @@ public class PluginRepositoryConfig implements PluginConfig {
 
         private String jcrPath;
 
-        protected Descriptor(Node node, String pluginId, String className, Channel outgoing) {
-            super(pluginId, className, outgoing);
+        protected Descriptor(Node node, String pluginId, String className) {
+            super(pluginId, className);
             try {
                 this.jcrPath = node.getPath();
             } catch (RepositoryException ex) {

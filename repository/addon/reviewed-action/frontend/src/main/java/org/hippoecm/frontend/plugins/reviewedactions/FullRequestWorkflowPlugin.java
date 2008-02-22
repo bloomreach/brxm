@@ -35,14 +35,14 @@ public class FullRequestWorkflowPlugin extends Plugin {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         JcrNodeModel jcrModel = (JcrNodeModel) getPluginModel();
-        Channel incoming = pluginDescriptor.getIncoming();
+        Channel channel = getTopChannel();
         ChannelFactory factory = getPluginManager().getChannelFactory();
         add(new DialogLink("acceptRequest-dialog", new Model("Approve and execute request"),
-                AcceptRequestDialog.class, jcrModel, incoming, factory));
+                AcceptRequestDialog.class, jcrModel, channel, factory));
         add(new DialogLink("rejectRequest-dialog", new Model("Reject request (with reason)"),
-                RejectRequestDialog.class, jcrModel, incoming, factory));
+                RejectRequestDialog.class, jcrModel, channel, factory));
         add(new DialogLink("cancelRequest-dialog", new Model("Cancel request"),
-                CancelRequestDialog.class, jcrModel, incoming, factory));
+                CancelRequestDialog.class, jcrModel, channel, factory));
     }
 
     @Override

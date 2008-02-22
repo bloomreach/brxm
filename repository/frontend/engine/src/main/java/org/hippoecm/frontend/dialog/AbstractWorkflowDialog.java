@@ -79,7 +79,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         ((UserSession) Session.get()).getJcrSession().refresh(true);
 
         // enqueue a request to select the handle
-        Channel channel = getIncoming();
+        Channel channel = getChannel();
         if (channel != null) {
             Request request = channel.createRequest("select", dialogWindow.getNodeModel());
             channel.send(request);

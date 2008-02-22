@@ -63,7 +63,7 @@ public class FieldDescriptor implements IClusterable, Cloneable {
             this.template = engine.getConfig().getTemplate((String) map.get("template"));
         if (map.get("field") != null)
             this.field = new FieldDescriptor((Map) map.get("field"), engine);
-        this.plugin = new PluginDescriptor((Map) map.get("plugin"), engine.getChannelFactory().createChannel());
+        this.plugin = new PluginDescriptor((Map) map.get("plugin"));
 
         this.multiple = ((Boolean) map.get("multiple")).booleanValue();
         this.binary = ((Boolean) map.get("binary")).booleanValue();

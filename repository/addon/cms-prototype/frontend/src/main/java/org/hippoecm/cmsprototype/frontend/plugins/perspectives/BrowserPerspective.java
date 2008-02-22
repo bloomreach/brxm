@@ -15,10 +15,7 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.perspectives;
 
-import javax.jcr.Node;
-
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -36,17 +33,17 @@ public class BrowserPerspective extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("browse".equals(notification.getOperation())) {
-            Channel incoming = getDescriptor().getIncoming();
-            if (incoming != null) {
+            Channel channel = getTopChannel();
+            if (channel != null) {
                 // FIXME: should the map be constructed by the PluginDescriptor?
                 PluginModel model = new PluginModel();
                 model.put("plugin", getDescriptor().getPluginId());
-                Request request = incoming.createRequest("focus", model);
+                Request request = channel.createRequest("focus", model);
                 request.setContext(notification.getContext());
-                incoming.send(request);
+                channel.send(request);
             }
 
-            Channel outgoing = getDescriptor().getOutgoing();
+            Channel outgoing = getBottomChannel();
             if (outgoing != null) {
                 Notification selectNotice = outgoing.createNotification("select", notification.getModel());
                 selectNotice.setContext(notification.getContext());
@@ -61,7 +58,7 @@ public class BrowserPerspective extends Plugin {
     public void handle(Request request) {
         String operation = request.getOperation();
         if ("select".equals(operation) || "relatives".equals(operation)) {
-            Channel outgoing = getDescriptor().getOutgoing();
+            Channel outgoing = getBottomChannel();
             if (outgoing != null) {
                 outgoing.publish(outgoing.createNotification(request));
             }

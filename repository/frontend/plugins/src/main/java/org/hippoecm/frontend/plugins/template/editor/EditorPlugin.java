@@ -36,10 +36,10 @@ public class EditorPlugin extends Plugin {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         JcrNodeModel jcrModel = (JcrNodeModel) getModel();
-        Channel incoming = pluginDescriptor.getIncoming();
+        Channel channel = getTopChannel();
         ChannelFactory factory = getPluginManager().getChannelFactory();
 
-        DialogLink save = new DialogLink("save-dialog", new Model("Save"), SaveDialog.class, jcrModel, incoming, factory);
+        DialogLink save = new DialogLink("save-dialog", new Model("Save"), SaveDialog.class, jcrModel, channel, factory);
         add(save);
 
         form = new EditorForm("form", (JcrNodeModel) getModel(), this);

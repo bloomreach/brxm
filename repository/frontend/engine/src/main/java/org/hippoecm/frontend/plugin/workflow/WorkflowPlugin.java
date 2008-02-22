@@ -67,7 +67,7 @@ public class WorkflowPlugin extends Plugin {
                     log.error(ex.getMessage());
                 }
 
-                PluginDescriptor descriptor = new PluginDescriptor("workflow", pluginClass, null);
+                PluginDescriptor descriptor = new PluginDescriptor("workflow", pluginClass);
                 PluginFactory pluginFactory = new PluginFactory(getPluginManager());
                 item.add(pluginFactory.createPlugin(descriptor, getPluginModel(), WorkflowPlugin.this));
             }

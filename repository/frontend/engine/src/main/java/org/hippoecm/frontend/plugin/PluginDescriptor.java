@@ -25,7 +25,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class PluginDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
@@ -35,23 +34,18 @@ public class PluginDescriptor implements IClusterable, Cloneable {
     private String className;
     private Map<String, List<String>> parameters;
 
-    private Channel incoming;
-    private Channel outgoing;
-
-    public PluginDescriptor(String pluginId, String className, Channel outgoing) {
+    public PluginDescriptor(String pluginId, String className) {
         this.pluginId = pluginId;
         this.wicketId = pluginId;
         this.className = className;
-        this.outgoing = outgoing;
         parameters = new HashMap<String, List<String>>();
     }
 
-    public PluginDescriptor(Map<String, Object> map, Channel bottom) {
+    public PluginDescriptor(Map<String, Object> map) {
         this.pluginId = (String) map.get("pluginId");
         this.wicketId = (String) map.get("wicketId");
         this.className = (String) map.get("className");
         this.parameters = (Map<String, List<String>>) map.get("parameters");
-        this.outgoing = bottom;
     }
 
     public PluginDescriptor clone() {
@@ -101,14 +95,6 @@ public class PluginDescriptor implements IClusterable, Cloneable {
         return parameters;
     }
 
-    public void connect(Channel incoming) {
-        this.incoming = incoming;
-    }
-
-    public void disconnect() {
-        incoming = null;
-    }
-
     // getters
 
     public String getPluginId() {
@@ -121,18 +107,6 @@ public class PluginDescriptor implements IClusterable, Cloneable {
 
     public String getClassName() {
         return className;
-    }
-
-    public Channel getIncoming() {
-        return incoming;
-    }
-
-    public Channel getOutgoing() {
-        return outgoing;
-    }
-
-    public void setOutgoing(Channel channel) {
-        outgoing = channel;
     }
 
     public List<PluginDescriptor> getChildren() {

@@ -86,7 +86,7 @@ public class TasklistPlugin extends AbstractListingPlugin{
     }
 
     @Override
-    protected void modifyDefaultPrefNode(Node prefNode, Channel incoming) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+    protected void modifyDefaultPrefNode(Node prefNode, Channel channel) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
         Node pref = prefNode.addNode("name",LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "DocName");
         pref.setProperty(PROPERTYNAME_PROPERTY, "documentname");
@@ -94,13 +94,13 @@ public class TasklistPlugin extends AbstractListingPlugin{
         pref = prefNode.addNode("type",LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "RequestType");
         pref.setProperty(PROPERTYNAME_PROPERTY, "type");
-        columns.add(getNodeColumn(new Model("DocName"), "documentname" , incoming));
-        columns.add(getNodeColumn(new Model("RequestType"), "type" , incoming));
+        columns.add(getNodeColumn(new Model("DocName"), "documentname" , channel));
+        columns.add(getNodeColumn(new Model("RequestType"), "type" , channel));
     }
     
     @Override
-    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel incoming) {
-        return new TasklistNodeColumn(model, propertyName, incoming);
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel channel) {
+        return new TasklistNodeColumn(model, propertyName, channel);
     }
     
 }

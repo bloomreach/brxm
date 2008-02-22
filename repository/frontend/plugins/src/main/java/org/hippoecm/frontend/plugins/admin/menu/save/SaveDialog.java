@@ -53,7 +53,7 @@ public class SaveDialog extends AbstractDialog {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         nodeModel.getNode().getSession().save();
 
-        Channel channel = getIncoming();
+        Channel channel = getChannel();
         if(channel != null) {
             Request request = channel.createRequest("select", nodeModel);
             channel.send(request);

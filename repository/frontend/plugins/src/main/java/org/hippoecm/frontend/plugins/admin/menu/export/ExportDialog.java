@@ -67,7 +67,7 @@ public class ExportDialog extends AbstractDialog {
 
     @Override
     public void ok() {
-        Channel channel = getIncoming();
+        Channel channel = getChannel();
         if (channel != null) {
             Request request = channel.createRequest("select", dialogWindow.getNodeModel());
             channel.send(request);

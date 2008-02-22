@@ -102,7 +102,7 @@ public class AddNewWizard extends Plugin {
                     Node doc = createDocument();
 
                     if (doc != null && target != null) {
-                        Channel channel = getDescriptor().getIncoming();
+                        Channel channel = getTopChannel();
                         if (channel != null) {
 
                             JcrNodeModel model = new JcrNodeModel(doc);

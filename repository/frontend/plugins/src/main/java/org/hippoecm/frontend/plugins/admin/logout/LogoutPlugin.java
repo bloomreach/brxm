@@ -34,8 +34,8 @@ public class LogoutPlugin extends Plugin {
         ValueMap credentials = session.getCredentials();
         String username = credentials.getString("username");
 
-        add(new LogoutLink("logout-link", "Logout", LogoutDialog.class, (JcrNodeModel) getModel(), pluginDescriptor
-                .getIncoming(), getPluginManager().getChannelFactory()));
+        add(new LogoutLink("logout-link", "Logout", LogoutDialog.class, (JcrNodeModel) getModel(), getTopChannel(),
+                getPluginManager().getChannelFactory()));
         add(new Label("username", username));
     }
 
