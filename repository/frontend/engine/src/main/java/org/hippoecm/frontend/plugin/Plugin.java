@@ -46,9 +46,9 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         this.parentPlugin = parentPlugin;
         this.pluginDescriptor = pluginDescriptor;
 
-        if(parentPlugin!=null) {
+        if (parentPlugin != null) {
             topChannel = parentPlugin.getBottomChannel();
-            if(topChannel != null) {
+            if (topChannel != null) {
                 topChannel.subscribe(this);
             }
             bottomChannel = parentPlugin.getPluginManager().getChannelFactory().createChannel();
@@ -86,6 +86,10 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
 
     public void setPluginManager(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
+        if (bottomChannel == null) {
+            bottomChannel = pluginManager.getChannelFactory().createChannel();
+            bottomChannel.register(this);
+        }
     }
 
     public Plugin getParentPlugin() {
