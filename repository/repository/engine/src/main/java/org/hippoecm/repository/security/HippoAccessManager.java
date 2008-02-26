@@ -233,10 +233,6 @@ public class HippoAccessManager implements AccessManager {
         if (isSystem || isAdmin) {
             return true;
         }
-        // special jcr node types
-        if (canAccessJCRNode(nodeState, permissions)) {
-            return true;
-        }
         // special hippo node types
         if (canAccessHippoNode(nodeState, permissions)) {
             return true;
@@ -259,42 +255,6 @@ public class HippoAccessManager implements AccessManager {
         return false;
     }
 
-    /**
-     * Allow access to some JCR nodes based on the node type
-     * TODO: checks shouldn't use manual NodeType parsing
-     * @param nodeState
-     * @param permissions
-     * @return
-     * @throws RepositoryException
-     */
-    protected boolean canAccessJCRNode(NodeState nodeState, int permissions) throws RepositoryException {
-        if (log.isTraceEnabled()) {
-            log.trace("Checking [" + pString(permissions) + "] for: " + nodeState.getId());
-        }
-        // allow reading and modifying of structural nodes
-        if (nodeState.getNodeTypeName().equals(NameConstants.NT_UNSTRUCTURED)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Allow structure node read access.");
-            }
-            return true;
-        }
-        if (nodeState.getNodeTypeName().equals(NameConstants.NT_FOLDER)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Allow struncture node read access.");
-            }
-            return true;
-        }
-        // Allow root read
-        if ((permissions & WRITE) != WRITE && (permissions & REMOVE) != REMOVE) {
-            if ((NodeId) nodeState.getId() == rootNodeId) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Allow root node read access.");
-                }
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Allow access to some HippoNodes based on the node type
@@ -311,64 +271,18 @@ public class HippoAccessManager implements AccessManager {
             log.trace("Checking [" + pString(permissions) + "] for: " + nodeState.getId());
         }
 
-        //----------------------- read & write & remove access -------------------//
-        if (nodeState.getNodeTypeName().equals(hippoFacetSearch)) {
-            return true;
-        }
-        if (nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
-            return true;
-        }
-        
-        // narrow down permissions
-        if ((permissions & REMOVE) == REMOVE) {
-            return false;
-        }
-        
-        //-----------------------  read & write access -------------------//
-        if (nodeState.getNodeTypeName().equals(hippoHandle)) {
-            return true;
-        }
-        // narrow down permissions
-        if ((permissions & WRITE) == WRITE) {
+
+        //-----------------------  read access -------------------//
+        if (permissions != READ) {
             return false;
         }
 
-        //-----------------------  read access -------------------//
+
         // check namespace
         String namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
         String localName = nodeState.getNodeTypeName().getLocalName();
         if (!namespaceURI.equals(NAMESPACE_URI)) {
             return false;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_FACETRESULT))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_FACETSUBSEARCH))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_WORKFLOWFOLDER))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_WORKFLOWCATEGORY))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_FRONTENDPLUGIN))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_PLUGIN))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_PLUGINFOLDER))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_APPLICATION))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_PARAMETERS))) {
-            return true;
-        }
-        if (localName.equals(getLocalName(HippoNodeType.NT_PAGE))) {
-            return true;
         }
 
         // FIXME: make more generic
@@ -487,7 +401,7 @@ public class HippoAccessManager implements AccessManager {
             return false;
         }
         
-        // check if node has the required property
+        // check if node has the required property value
         for (String val : principal.getValues()) {
             if (log.isTraceEnabled()) {
                 log.trace("Checking [" + pString(permissions) + "] facetVal: " + val);

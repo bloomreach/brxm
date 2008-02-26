@@ -107,19 +107,24 @@ public class RepositoryUser implements User {
         this.groupsPath = this.context.getGroupsPath();
         this.userId = userId;
         this.initialized = true;
-        setUser();
-        setPrincipals();
-        setRoles();
-        setMemberships();
+        if (userId == null) {
+            // the anonymous user
+            setMemberships();
+        } else {
+            setUser();
+            setPrincipals();
+            setRoles();
+            setMemberships();
+        }
     }
 
     public Set<Group> getMemberships() throws UserNotFoundException {
         if (!initialized) {
             throw new UserNotFoundException("Not initialized.");
         }
-        if (user == null) {
-            throw new UserNotFoundException("User not set.");
-        }
+//        if (user == null) {
+//            throw new UserNotFoundException("User not set.");
+//        }
         return Collections.unmodifiableSet(memberships);
     }
 
@@ -127,9 +132,9 @@ public class RepositoryUser implements User {
         if (!initialized) {
             throw new UserNotFoundException("Not initialized.");
         }
-        if (user == null) {
-            throw new UserNotFoundException("User not set.");
-        }
+//        if (user == null) {
+//            throw new UserNotFoundException("User not set.");
+//        }
         return Collections.unmodifiableSet(principals);
     }
 
@@ -137,9 +142,9 @@ public class RepositoryUser implements User {
         if (!initialized) {
             throw new UserNotFoundException("Not initialized.");
         }
-        if (user == null) {
-            throw new UserNotFoundException("User not set.");
-        }
+//        if (user == null) {
+//            throw new UserNotFoundException("User not set.");
+//        }
         return Collections.unmodifiableSet(roles);
     }
 
@@ -221,18 +226,21 @@ public class RepositoryUser implements User {
             // TODO: use query to find the correct groups, for now just loop over all
             NodeIterator groupsIter = rootSession.getRootNode().getNode(groupsPath).getNodes();
             while (groupsIter.hasNext()) {
+                boolean isMember = false;
                 Node group = (Node) groupsIter.next();
                 // emptyp group
-                if (!group.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
+                if (group.getName().endsWith("everybody")) {
+                    isMember = true;
+                } else if (!group.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
                     continue;
-                }
-                // check membership
-                boolean isMember = false;
-                Value[] memberValues = group.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
-                for (int i = 0; i < memberValues.length; i++) {
-                    if (memberValues[i].getString().equals(userId)) {
-                        isMember = true;
-                        break;
+                } else {
+                    // check membership
+                    Value[] memberValues = group.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
+                    for (int i = 0; i < memberValues.length; i++) {
+                        if (memberValues[i].getString().equals(userId)) {
+                            isMember = true;
+                            break;
+                        }
                     }
                 }
                 if (!isMember) {
