@@ -101,11 +101,6 @@ public class HippoAccessManager implements AccessManager {
     private final Name hippoHandle;
     
     /**
-     * Name of hippo:folder
-     */
-    private final Name hippoFolder;
-    
-    /**
      * Name of hippo:facetsearch
      */
     private final Name hippoFacetSearch;
@@ -166,7 +161,6 @@ public class HippoAccessManager implements AccessManager {
         // create useful names
         hippoDoc = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_DOCUMENT));
         hippoHandle = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_HANDLE));
-        hippoFolder = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FOLDER));
         hippoFacetSearch = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSEARCH));
         hippoFacetSelect = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSELECT));
     }
@@ -322,9 +316,6 @@ public class HippoAccessManager implements AccessManager {
             return true;
         }
         if (nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
-            return true;
-        }
-        if (isInstanceOfType(nodeState, hippoFolder)) {
             return true;
         }
         

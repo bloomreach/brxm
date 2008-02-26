@@ -207,7 +207,5 @@
 + hippo:namespaces (hippo:namespacefolder) = hippo:namespacefolder
 + hippo:frontend (hippo:application) = hippo:application
 
-[hippo:folder] > nt:unstructured
-
 [hippo:prototyped] mixin
 - hippo:prototype (reference) mandatory
