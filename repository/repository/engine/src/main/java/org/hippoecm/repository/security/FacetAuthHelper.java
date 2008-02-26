@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -52,12 +53,18 @@ public class FacetAuthHelper {
             Node fa = (Node) nodeIter.next();
             Long permissions = fa.getProperty(HippoNodeType.HIPPO_PERMISSIONS).getLong();
             String facet = fa.getProperty(HippoNodeType.HIPPO_FACET).getString();
+            Name facetName = resolveName(facetAuthPath.getSession(), facet);
             Value[] facetValues = fa.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
             String[] values = new String[facetValues.length];
             for (int i = 0; i < facetValues.length; i++) {
-                values[i] = facetValues[i].getString();
+                if (facet.equalsIgnoreCase("nodetype") || facet.equals(JcrConstants.JCR_PRIMARYTYPE) || facet.equals(JcrConstants.JCR_MIXINTYPES)) {
+                    // Convert the values of these type to their string representation of the name
+                    values[i] = resolveName(facetAuthPath.getSession(), facetValues[i].getString()).toString();
+                } else {
+                    values[i] = facetValues[i].getString();
+                }
             }
-            principals.add(new FacetAuthPrincipal(resolveName(facetAuthPath.getSession(), facet), values, permissions));
+            principals.add(new FacetAuthPrincipal(facetName, values, permissions));
         }
         return Collections.unmodifiableSet(principals);
     }
