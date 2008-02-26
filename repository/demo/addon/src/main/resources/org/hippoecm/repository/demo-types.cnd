@@ -23,7 +23,7 @@
 <hst='http://www.hippoecm.org/hst/nt/1.0'>
 <sample='http://www.hippoecm.org/sample/nt/1.0'>
 
-[sample:webFolder] > hippo:folder
+[sample:webFolder] > nt:unstructured
 
 [sample:webPage] > hippo:document, hst:page, hippostd:languagable, hippostd:publishable
 - sample:pageLabel (string)
