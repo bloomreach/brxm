@@ -24,18 +24,22 @@ public class JCRConnector {
     public static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
 
     public static final String REPOSITORY_ADRESS_PARAM = "repository-address";
+    public static final String REPOSITORY_USERNAME_PARAM = "repository-username";
+    public static final String REPOSITORY_PASSWORD_PARAM = "repository-password";
     public static final String JCR_SESSION_KEY = "org.hippoecm.hst.JCRSESSION";
 
     static Session getJCRSession(HttpSession httpSession) {
         Session result = null;
         String location = httpSession.getServletContext().getInitParameter(REPOSITORY_ADRESS_PARAM);
+        String username = httpSession.getServletContext().getInitParameter(REPOSITORY_USERNAME_PARAM);
+        String password = httpSession.getServletContext().getInitParameter(REPOSITORY_PASSWORD_PARAM);
         try {
             SessionWrapper wrapper = (SessionWrapper) httpSession.getAttribute(JCR_SESSION_KEY);
             if (wrapper != null && wrapper.jcrSession.isLive()) {
                 result = wrapper.jcrSession;
             } else {
                 httpSession.removeAttribute(JCR_SESSION_KEY);
-                wrapper = new SessionWrapper(location);
+                wrapper = new SessionWrapper(location, username, password);
                 //httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;
             }
@@ -126,15 +130,16 @@ public class JCRConnector {
     private static class SessionWrapper implements HttpSessionBindingListener {
         Session jcrSession;
 
-        SessionWrapper(String location) throws LoginException, RepositoryException {
+        SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {
             HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             try {
-                jcrSession = repository.login("siteuser", "siteuser".toCharArray());
-                logger.debug("logged in as administrative user");
+                jcrSession = repository.login(username, password.toCharArray());
+                logger.info("logged in as " + username);
             } catch(LoginException ex) {
+                logger.warn("login as " + username + " failed, trying as anonymous.");
                 jcrSession = repository.login();
-                logger.debug("logged in as anonymous user");
+                logger.info("logged in as anonymous");
             }
         }
 
