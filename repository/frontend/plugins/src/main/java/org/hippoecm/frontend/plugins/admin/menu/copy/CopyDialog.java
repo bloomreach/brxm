@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.admin.menu.copy;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.dialog.lookup.InfoPanel;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
@@ -31,23 +32,40 @@ import org.slf4j.LoggerFactory;
 public class CopyDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
 
+    private CopyDialogInfoPanel infoPanel;
+
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
     public CopyDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Copy", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()),
-              dialogWindow, channel);
+        super("Copy", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()), dialogWindow, channel);
+    }
+
+    @Override
+    protected InfoPanel getInfoPanel(DialogWindow dialogWindow) {
+        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        infoPanel = new CopyDialogInfoPanel("info", nodeModel);
+        add(infoPanel);
+        if (nodeModel.getNode() == null) {
+            ok.setVisible(false);
+        }
+        super.setInfoPanel(infoPanel);
+        return infoPanel;
     }
 
     @Override
     public void ok() throws RepositoryException {
         JcrNodeModel sourceNodeModel = dialogWindow.getNodeModel();
-        if (sourceNodeModel.getParentModel() != null) {
+        String name = infoPanel.getName();
+
+        if (sourceNodeModel.getParentModel() != null && getSelectedNode() != null && name != null && !"".equals(name)) {
+
             JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
             String targetPath = targetNodeModel.getNode().getPath();
             if (!targetPath.endsWith("/")) {
                 targetPath += "/";
             }
-            targetPath += sourceNodeModel.getNode().getName();
+            //targetPath += sourceNodeModel.getNode().getName();
+            targetPath += name;
 
             // The actual copy
             UserSession wicketSession = (UserSession) getSession();
