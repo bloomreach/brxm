@@ -31,5 +31,5 @@
 - hst:nodetype (string) mandatory
 + hst:displaypage (hst:pagedef) = hst:pagedef mandatory
 
-[hst:urlmappingfolder] > hippo:folder orderable
+[hst:urlmappingfolder] > nt:unstructured orderable
 + * (hst:urlmapping) = hst:urlmapping
