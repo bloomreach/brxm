@@ -23,7 +23,8 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.PluginManager;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.template.config.TemplateConfig;
-import org.hippoecm.frontend.template.model.FieldModel;
+import org.hippoecm.frontend.template.config.TypeConfig;
+import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,16 +34,22 @@ public class TemplateEngine implements IClusterable {
 
     private static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
-    private TemplateConfig config;
+    private TypeConfig typeConfig;
+    private TemplateConfig templateConfig;
     private PluginManager manager;
 
-    public TemplateEngine(TemplateConfig config, PluginManager manager) {
-        this.config = config;
+    public TemplateEngine(TypeConfig typeConfig, TemplateConfig templateConfig, PluginManager manager) {
+        this.typeConfig = typeConfig;
+        this.templateConfig = templateConfig;
         this.manager = manager;
     }
 
-    public TemplateConfig getConfig() {
-        return config;
+    public TypeConfig getTypeConfig() {
+        return typeConfig;
+    }
+
+    public TemplateConfig getTemplateConfig() {
+        return templateConfig;
     }
 
     public ChannelFactory getChannelFactory() {
@@ -50,13 +57,14 @@ public class TemplateEngine implements IClusterable {
     }
 
     public Plugin createTemplate(String wicketId, TemplateModel model, Plugin parentPlugin) {
-        PluginDescriptor pluginDescriptor = model.getTemplateDescriptor().getPlugin();
+        TemplateDescriptor templateDescriptor = model.getTemplateDescriptor();
+        PluginDescriptor pluginDescriptor = templateDescriptor.getPlugin();
         pluginDescriptor.setWicketId(wicketId);
 
         return createPlugin(pluginDescriptor, model, parentPlugin);
     }
 
-    public Plugin createField(String wicketId, FieldModel model, Plugin parentPlugin) {
+    public Plugin createItem(String wicketId, ItemModel model, Plugin parentPlugin) {
         PluginDescriptor pluginDescriptor = model.getDescriptor().getPlugin();
         pluginDescriptor.setWicketId(wicketId);
 

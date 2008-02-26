@@ -31,19 +31,24 @@ import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
+import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.TypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NodeTemplateProvider extends AbstractProvider<TemplateModel> implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(FieldProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(ItemProvider.class);
 
     private FieldDescriptor descriptor;
+    private TemplateDescriptor template;
 
-    public NodeTemplateProvider(FieldDescriptor descriptor, JcrNodeModel nodeModel) {
+    public NodeTemplateProvider(FieldDescriptor descriptor, TemplateEngine engine, JcrNodeModel nodeModel) {
         super(nodeModel);
         this.descriptor = descriptor;
+        TypeDescriptor type = engine.getTypeConfig().getTypeDescriptor(descriptor.getType());
+        this.template = engine.getTemplateConfig().getTemplate(type);
     }
 
     public FieldDescriptor getDescriptor() {
@@ -55,10 +60,9 @@ public class NodeTemplateProvider extends AbstractProvider<TemplateModel> implem
 
         try {
             Node parent = getNodeModel().getNode();
-            TemplateDescriptor template = descriptor.getTemplate();
-            Node node = parent.addNode(descriptor.getPath(), template.getType());
-            TemplateModel templateModel = new TemplateModel(descriptor.getTemplate(), getNodeModel(), descriptor
-                    .getPath(), node.getIndex());
+            Node node = parent.addNode(descriptor.getPath(), template.getTypeDescriptor().getType());
+            TemplateModel templateModel = new TemplateModel(template, getNodeModel(), descriptor.getPath(), node
+                    .getIndex());
             elements.addLast(templateModel);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -130,7 +134,7 @@ public class NodeTemplateProvider extends AbstractProvider<TemplateModel> implem
         elements = new LinkedList<TemplateModel>();
         try {
             Node node = getNodeModel().getNode();
-            if (descriptor.isNode()) {
+            if (template.getTypeDescriptor().isNode()) {
                 // expand the name-pattern
                 NodeIterator iterator = node.getNodes(descriptor.getPath());
                 while (iterator.hasNext()) {
@@ -154,7 +158,6 @@ public class NodeTemplateProvider extends AbstractProvider<TemplateModel> implem
     private void addTemplate(JcrItemModel model) throws RepositoryException {
         Item item = (Item) model.getObject();
         String name = item.getName();
-        TemplateDescriptor template = descriptor.getTemplate();
         Set<String> excluded = descriptor.getExcluded();
         if (excluded == null || !excluded.contains(name)) {
             int index = ((Node) item).getIndex();

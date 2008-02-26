@@ -19,7 +19,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  xmlns:sample="http://www.hippoecm.org/sample/nt/1.0"
+  xmlns:demo="http://www.hippoecm.org/demo/nt/1.0"
   sv:name="hippo:prototypes">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
@@ -38,7 +38,7 @@
     </sv:property>
     <sv:node sv:name="web page">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>sample:webPage</sv:value>
+        <sv:value>demo:webPage</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hst:page</sv:value>
@@ -58,10 +58,10 @@
       <sv:property sv:name="hst:pageFile" sv:type="String">
         <sv:value>/index.jsp</sv:value>
       </sv:property>
-      <sv:property sv:name="sample:pageLabel" sv:type="String">
+      <sv:property sv:name="demo:pageLabel" sv:type="String">
         <sv:value>Welcome</sv:value>
       </sv:property>
-      <sv:property sv:name="sample:pageTitle" sv:type="String">
+      <sv:property sv:name="demo:pageTitle" sv:type="String">
         <sv:value>Home</sv:value>
       </sv:property>
     </sv:node>
@@ -80,7 +80,7 @@
     </sv:property>
     <sv:node sv:name="navigation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>sample:webNavigation</sv:value>
+        <sv:value>demo:webNavigation</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>unpublished</sv:value>

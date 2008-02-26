@@ -29,8 +29,8 @@ import javax.jcr.Session;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.TemplateDescriptor;
-import org.hippoecm.frontend.template.config.TemplateConfig;
+import org.hippoecm.frontend.template.TypeDescriptor;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,23 +41,23 @@ public class CndSerializer implements IClusterable {
 
     private JcrSessionModel jcrSession;
     private HashMap<String, String> namespaces;
-    private LinkedHashSet<TemplateDescriptor> templates;
-    private TemplateConfig templateConfig;
+    private LinkedHashSet<TypeDescriptor> types;
+    private TypeConfig typeConfig;
 
-    public CndSerializer(JcrSessionModel session, TemplateConfig config, String namespace) {
+    public CndSerializer(JcrSessionModel session, TypeConfig config, String namespace) {
         this.jcrSession = session;
         namespaces = new HashMap<String, String>();
-        templates = new LinkedHashSet<TemplateDescriptor>();
-        templateConfig = config;
+        types = new LinkedHashSet<TypeDescriptor>();
+        typeConfig = config;
 
-        List<TemplateDescriptor> list = config.getTemplates(namespace);
-        for (TemplateDescriptor template : list) {
-            if (template.isNode()) {
-                String type = template.getType();
+        List<TypeDescriptor> list = config.getTypes(namespace);
+        for (TypeDescriptor descriptor : list) {
+            if (descriptor.isNode()) {
+                String type = descriptor.getType();
                 if (type.indexOf(':') > 0) {
                     String prefix = type.substring(0, type.indexOf(':'));
                     if (namespace.equals(prefix)) {
-                        addTemplate(template);
+                        addType(descriptor);
                     }
                 }
             }
@@ -71,10 +71,10 @@ public class CndSerializer implements IClusterable {
         }
         output.append("\n");
 
-        sortTemplates();
+        sortTypes();
 
-        for (TemplateDescriptor template : templates) {
-            renderTemplate(output, template);
+        for (TypeDescriptor descriptor : types) {
+            renderType(output, descriptor);
         }
         return output.toString();
     }
@@ -111,17 +111,14 @@ public class CndSerializer implements IClusterable {
         return namespaces;
     }
 
-    public void addTemplate(TemplateDescriptor template) {
-        String type = template.getType();
+    public void addType(TypeDescriptor typeDescriptor) {
+        String type = typeDescriptor.getType();
         if (type.indexOf(':') > 0) {
-            if (!templates.contains(template)) {
-                for (FieldDescriptor field : template.getFields()) {
-                    if (field.isNode()) {
-                        TemplateDescriptor sub = field.getTemplate();
-                        if (sub == null) {
-                            sub = field.getField().getTemplate();
-                        }
-                        String subType = sub.getType();
+            if (!types.contains(typeDescriptor)) {
+                for (FieldDescriptor field : typeDescriptor.getFields()) {
+                    String subType = field.getType();
+                    TypeDescriptor sub = typeConfig.getTypeDescriptor(subType);
+                    if (sub.isNode()) {
                         addNamespace(subType.substring(0, subType.indexOf(':')));
 
                         String superType = sub.getSuperType();
@@ -136,46 +133,44 @@ public class CndSerializer implements IClusterable {
                         addNamespace(field.getPath().substring(0, field.getPath().indexOf(':')));
                     }
                 }
-                templates.add(template);
+                types.add(typeDescriptor);
                 addNamespace(type.substring(0, type.indexOf(':')));
             }
         }
     }
 
     private void renderField(StringBuffer output, FieldDescriptor field) {
-        if (field.getTemplate() != null) {
-            if (field.getTemplate().isNode()) {
-                output.append("+");
-            } else {
-                output.append("-");
-            }
-
-            if (field.getPath() != null) {
-                output.append(" " + field.getPath());
-            } else {
-                output.append(" *");
-            }
-
-            String type = field.getTemplate().getType();
-            if (type.indexOf(':') > 0) {
-                addNamespace(type.substring(0, type.indexOf(':')));
-            } else {
-                type = type.toLowerCase();
-            }
-            output.append(" (" + type + ")");
-            if (field.isMultiple()) {
-                output.append(" multiple");
-            }
-            if (field.isMandatory()) {
-                output.append(" mandatory");
-            }
-            output.append("\n");
+        String subType = field.getType();
+        TypeDescriptor sub = typeConfig.getTypeDescriptor(subType);
+        if (sub.isNode()) {
+            output.append("+");
         } else {
-            renderField(output, field.getField());
+            output.append("-");
         }
+
+        if (field.getPath() != null) {
+            output.append(" " + field.getPath());
+        } else {
+            output.append(" *");
+        }
+
+        String type = field.getType();
+        if (type.indexOf(':') > 0) {
+            addNamespace(type.substring(0, type.indexOf(':')));
+        } else {
+            type = type.toLowerCase();
+        }
+        output.append(" (" + type + ")");
+        if (field.isMultiple()) {
+            output.append(" multiple");
+        }
+        if (field.isMandatory()) {
+            output.append(" mandatory");
+        }
+        output.append("\n");
     }
 
-    private void renderTemplate(StringBuffer output, TemplateDescriptor template) {
+    private void renderType(StringBuffer output, TypeDescriptor template) {
         String type = template.getType();
         output.append("[" + type + "]");
 
@@ -187,7 +182,7 @@ public class CndSerializer implements IClusterable {
         Iterator<String> mixins = template.getMixinTypes().iterator();
         while (mixins.hasNext()) {
             String mixin = mixins.next();
-            TemplateDescriptor mixinDescriptor = templateConfig.getTemplate(mixin);
+            TypeDescriptor mixinDescriptor = typeConfig.getTypeDescriptor(mixin);
             if (mixinDescriptor != null) {
                 Iterator<FieldDescriptor> fields = mixinDescriptor.getFields().iterator();
                 while (fields.hasNext()) {
@@ -216,42 +211,37 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
     }
 
-    private void sortTemplates() {
-        templates = new SortContext(templates).sort();
+    private void sortTypes() {
+        types = new SortContext(types).sort();
     }
 
     class SortContext {
-        HashSet<TemplateDescriptor> visited;
-        LinkedHashSet<TemplateDescriptor> result;
-        LinkedHashSet<TemplateDescriptor> set;
+        HashSet<TypeDescriptor> visited;
+        LinkedHashSet<TypeDescriptor> result;
+        LinkedHashSet<TypeDescriptor> set;
 
         SortContext(LinkedHashSet set) {
             this.set = set;
-            visited = new HashSet<TemplateDescriptor>();
-            result = new LinkedHashSet<TemplateDescriptor>();
+            visited = new HashSet<TypeDescriptor>();
+            result = new LinkedHashSet<TypeDescriptor>();
         }
 
-        void visit(TemplateDescriptor descriptor) {
-            if (visited.contains(descriptor) || !templates.contains(descriptor)) {
+        void visit(TypeDescriptor descriptor) {
+            if (visited.contains(descriptor) || !types.contains(descriptor)) {
                 return;
             }
 
             visited.add(descriptor);
             List<FieldDescriptor> fields = descriptor.getFields();
             for (FieldDescriptor field : fields) {
-                TemplateDescriptor sub;
-                if (field.getTemplate() != null) {
-                    sub = field.getTemplate();
-                } else {
-                    sub = field.getField().getTemplate();
-                }
-                visit(sub);
+                TypeDescriptor type = typeConfig.getTypeDescriptor(field.getType());
+                visit(type);
             }
             result.add(descriptor);
         }
 
-        LinkedHashSet<TemplateDescriptor> sort() {
-            for (TemplateDescriptor template : set) {
+        LinkedHashSet<TypeDescriptor> sort() {
+            for (TypeDescriptor template : set) {
                 visit(template);
             }
             return result;

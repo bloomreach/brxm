@@ -77,7 +77,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
             Node root = session.getRootNode();
 
             Node node = root.getNode("files/myarticle");
-            assertEquals(node.getProperty("hipposample:authorId").getLong(), SampleWorkflowSetup.oldAuthorId);
+            assertEquals(node.getProperty("sample:authorId").getLong(), SampleWorkflowSetup.oldAuthorId);
 
             WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
 
@@ -99,7 +99,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
 
             session.save();
             session.refresh(false);
-            assertEquals(node.getProperty("hipposample:authorId").getLong(), SampleWorkflowSetup.newAuthorId);
+            assertEquals(node.getProperty("sample:authorId").getLong(), SampleWorkflowSetup.newAuthorId);
 
             session.logout();
         } catch (NotSupportedException ex) {

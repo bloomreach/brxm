@@ -25,7 +25,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.model.FieldModel;
+import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.template.model.ValueTemplateProvider;
 import org.slf4j.Logger;
@@ -40,15 +40,15 @@ public class PropertyFieldPlugin extends Plugin {
     private ValueView view;
 
     public PropertyFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new FieldModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()),
-                parentPlugin);
+        super(pluginDescriptor, new ItemModel(pluginModel), parentPlugin);
 
-        FieldModel model = (FieldModel) getPluginModel();
-        FieldDescriptor descriptor = model.getDescriptor();
+        ItemModel model = (ItemModel) getPluginModel();
+        FieldDescriptor descriptor = (FieldDescriptor) model.getDescriptor();
 
         add(new Label("name", descriptor.getName()));
 
-        provider = new ValueTemplateProvider(descriptor, model.getNodeModel(), descriptor.getPath());
+        provider = new ValueTemplateProvider(descriptor, getPluginManager().getTemplateEngine(), model.getNodeModel(),
+                descriptor.getPath());
         view = new ValueView("values", provider, this);
         add(view);
 
@@ -60,7 +60,7 @@ public class PropertyFieldPlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("flush".equals(notification.getOperation())) {
-            FieldModel fieldModel = (FieldModel) getPluginModel();
+            ItemModel fieldModel = (ItemModel) getPluginModel();
             String currentPath = fieldModel.getNodeModel().getItemModel().getPath();
 
             // refresh the provider if the sent node is a subnode
@@ -77,12 +77,6 @@ public class PropertyFieldPlugin extends Plugin {
             }
         }
         super.receive(notification);
-    }
-
-    @Override
-    public void onDetach() {
-        provider.detach();
-        super.onDetach();
     }
 
     // Called when a new value is added to a multi-valued property
@@ -112,8 +106,8 @@ public class PropertyFieldPlugin extends Plugin {
     // privates
 
     protected Component createAddLink() {
-        FieldModel model = (FieldModel) getModel();
-        FieldDescriptor descriptor = model.getDescriptor();
+        ItemModel model = (ItemModel) getModel();
+        FieldDescriptor descriptor = (FieldDescriptor) model.getDescriptor();
         if (descriptor.isMultiple() || (provider.size() == 0)) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;

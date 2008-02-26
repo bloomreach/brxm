@@ -61,6 +61,7 @@ public interface HippoNodeType {
     final public static String NT_MIRROR = "hippo:mirror";
     final public static String NT_MOUNT = "hippo:mount";
     final public static String NT_NAMESPACE = "hippo:namespace";
+    final public static String NT_NODETYPE = "hippo:nodetype";
     final public static String NT_OCMQUERY = "hippo:ocmquery";
     final public static String NT_OCMQUERYFOLDER = "hippo:ocmqueryfolder";
     final public static String NT_PAGE = "hippo:page";
@@ -95,6 +96,7 @@ public interface HippoNodeType {
     final public static String HIPPO_FACETS = "hippo:facets";
     final public static String HIPPO_FIELD = "hippo:field";
     final public static String HIPPO_INITIALIZE = "hippo:initialize";
+    final public static String HIPPO_ITEM = "hippo:item";
     final public static String HIPPO_MEMBERS = "hippo:members";
     final public static String HIPPO_MANDATORY = "hippo:mandatory";
     final public static String HIPPO_MIXINTYPES = "hippo:mixintypes";

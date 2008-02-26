@@ -30,7 +30,8 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.model.FieldModel;
+import org.hippoecm.frontend.template.config.TypeConfig;
+import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.WildcardFieldProvider;
 import org.hippoecm.frontend.template.model.WildcardModel;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -46,14 +47,15 @@ public class ListFieldPlugin extends Plugin {
     private WildcardFieldProvider provider;
 
     public ListFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel fieldModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new FieldModel(fieldModel, parentPlugin.getPluginManager().getTemplateEngine()), parentPlugin);
+        super(pluginDescriptor, new ItemModel(fieldModel), parentPlugin);
 
-        FieldModel model = (FieldModel) getPluginModel();
-        FieldDescriptor descriptor = model.getDescriptor();
+        ItemModel model = (ItemModel) getPluginModel();
+        FieldDescriptor descriptor = (FieldDescriptor) model.getDescriptor();
+        TypeConfig config = getPluginManager().getTemplateEngine().getTypeConfig();
 
         add(new Label("name", descriptor.getName()));
 
-        provider = new WildcardFieldProvider(descriptor, model.getNodeModel());
+        provider = new WildcardFieldProvider(descriptor, config, model.getNodeModel());
         add(new ListView("items", provider));
 
         add(new AjaxLink("add") {
@@ -71,7 +73,7 @@ public class ListFieldPlugin extends Plugin {
     public void onAddNode(AjaxRequestTarget target) {
         provider.addNew();
 
-        JcrNodeModel nodeModel = ((FieldModel) getPluginModel()).getNodeModel();
+        JcrNodeModel nodeModel = ((ItemModel) getPluginModel()).getNodeModel();
 
         Channel channel = getTopChannel();
         Request request = channel.createRequest("flush", nodeModel);
@@ -84,7 +86,7 @@ public class ListFieldPlugin extends Plugin {
     public void onRemoveNode(WildcardModel childModel, AjaxRequestTarget target) {
         provider.remove(childModel);
 
-        JcrNodeModel nodeModel = ((FieldModel) getPluginModel()).getNodeModel();
+        JcrNodeModel nodeModel = ((ItemModel) getPluginModel()).getNodeModel();
 
         Channel channel = getTopChannel();
         Request request = channel.createRequest("flush", nodeModel);

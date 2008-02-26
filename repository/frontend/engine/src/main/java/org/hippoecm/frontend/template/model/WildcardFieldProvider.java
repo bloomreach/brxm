@@ -29,6 +29,8 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.template.FieldDescriptor;
+import org.hippoecm.frontend.template.TypeDescriptor;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,24 +40,26 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
     private static final Logger log = LoggerFactory.getLogger(WildcardFieldProvider.class);
 
     private FieldDescriptor descriptor;
+    private TypeDescriptor type;
+    private TypeConfig config;
+    private int lastId;
 
     // Constructor
 
-    public WildcardFieldProvider(FieldDescriptor descriptor, JcrNodeModel nodeModel) {
+    public WildcardFieldProvider(FieldDescriptor descriptor, TypeConfig config, JcrNodeModel nodeModel) {
         super(nodeModel);
         this.descriptor = descriptor;
-
-        if (descriptor.getField() == null) {
-            throw new IllegalArgumentException("Invalid descriptor");
-        }
+        this.config = config;
+        this.type = config.getTypeDescriptor(descriptor.getType());
+        this.lastId = 0;
     }
 
     public void addNew() {
         load();
 
-        FieldDescriptor subDescriptor = descriptor.getField().clone();
+        FieldDescriptor subDescriptor = descriptor.clone();
         subDescriptor.setPath(null);
-        elements.addLast(new WildcardModel(subDescriptor, getNodeModel()));
+        elements.addLast(new WildcardModel(subDescriptor, config, getNodeModel(), ++lastId));
     }
 
     public void remove(WildcardModel model) {
@@ -67,7 +71,7 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
                 if (model.getPath() != null) {
                     Node node = getNodeModel().getNode();
                     try {
-                        if (descriptor.getField().isNode()) {
+                        if (type.isNode()) {
                             NodeIterator nodeIterator = node.getNodes(model.getPath());
                             while (nodeIterator.hasNext()) {
                                 JcrItemModel itemModel = new JcrItemModel(nodeIterator.nextNode());
@@ -108,9 +112,9 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
         elements = new LinkedList<WildcardModel>();
         try {
             Node node = getNodeModel().getNode();
-            if (descriptor.isNode()) {
+            if (type.isNode()) {
                 // expand the name-pattern
-                NodeIterator iterator = node.getNodes(descriptor.getPath());
+                NodeIterator iterator = node.getNodes("*");
                 while (iterator.hasNext()) {
                     Node child = iterator.nextNode();
                     // add child if it is not excluded.
@@ -118,7 +122,7 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
                     addItem(new JcrItemModel(child));
                 }
             } else {
-                PropertyIterator iterator = node.getProperties(descriptor.getPath());
+                PropertyIterator iterator = node.getProperties("*");
                 while (iterator.hasNext()) {
                     Property property = iterator.nextProperty();
                     addItem(new JcrItemModel(property));
@@ -134,9 +138,9 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
         String path = item.getName();
         Set<String> excluded = descriptor.getExcluded();
         if (excluded == null || !excluded.contains(path)) {
-            FieldDescriptor subDescriptor = descriptor.getField().clone();
+            FieldDescriptor subDescriptor = descriptor.clone();
             subDescriptor.setPath(path);
-            elements.addLast(new WildcardModel(subDescriptor, getNodeModel()));
+            elements.addLast(new WildcardModel(subDescriptor, config, getNodeModel(), ++lastId));
         }
     }
 }

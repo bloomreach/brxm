@@ -23,12 +23,12 @@
     </class>
     <class name="AuthorDocument" detachable="true" identity-type="datastore" table="files">
       <datastore-identity strategy="native"/>
-      <field name="authorId" column="hipposample:id"/>
+      <field name="authorId" column="sample:id"/>
     </class>
     <class name="ArticleDocument" detachable="true" identity-type="datastore" table="files">
       <datastore-identity strategy="native"/>
-      <field name="articleId" column="hipposample:id"/>
-      <field name="authorId" column="hipposample:authorId"/>
+      <field name="articleId" column="sample:id"/>
+      <field name="authorId" column="sample:authorId"/>
     </class>
   </package>
 </jdo>

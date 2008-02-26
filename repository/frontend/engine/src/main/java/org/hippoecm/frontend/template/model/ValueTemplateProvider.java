@@ -31,21 +31,26 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
+import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.TypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ValueTemplateProvider extends AbstractProvider<TemplateModel> implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(FieldProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(ValueTemplateProvider.class);
 
     private FieldDescriptor descriptor;
+    private TemplateDescriptor template;
     private String path;
 
-    public ValueTemplateProvider(FieldDescriptor descriptor, JcrNodeModel nodeModel, String path) {
+    public ValueTemplateProvider(FieldDescriptor descriptor, TemplateEngine engine, JcrNodeModel nodeModel, String path) {
         super(nodeModel);
         this.descriptor = descriptor;
         this.path = path;
+        TypeDescriptor type = engine.getTypeConfig().getTypeDescriptor(descriptor.getType());
+        this.template = engine.getTemplateConfig().getTemplate(type);
     }
 
     public FieldDescriptor getDescriptor() {
@@ -58,8 +63,7 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
         try {
             int index;
             Node node = getNodeModel().getNode();
-            TemplateDescriptor templateDescriptor = descriptor.getTemplate();
-            Value value = templateDescriptor.createValue("");
+            Value value = template.getTypeDescriptor().createValue("");
             if (!node.hasProperty(path)) {
                 if (descriptor.isMultiple()) {
                     node.setProperty(path, new Value[] { value });
@@ -84,7 +88,7 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
                 index = oldValues.length;
             }
 
-            elements.addLast(new TemplateModel(descriptor.getTemplate(), getNodeModel(), path, index));
+            elements.addLast(new TemplateModel(template, getNodeModel(), path, index));
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -166,7 +170,6 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
     private void addTemplate(JcrItemModel model, int index) throws RepositoryException {
         Item item = (Item) model.getObject();
         String name = item.getName();
-        TemplateDescriptor template = descriptor.getTemplate();
         Set<String> excluded = descriptor.getExcluded();
         if (excluded == null || !excluded.contains(name)) {
             elements.addLast(new TemplateModel(template, getNodeModel(), name, index));

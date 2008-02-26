@@ -34,18 +34,18 @@
         </sv:property>
         <sv:node sv:name="myarticle">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hipposample:simpledocument</sv:value>
+                <sv:value>sample:simpledocument</sv:value>
             </sv:property>
-            <sv:property sv:name="hipposample:title" sv:type="String">
+            <sv:property sv:name="sample:title" sv:type="String">
                 <sv:value>&lt;html&gt;&lt;body&gt;demo titel&lt;/body&gt;&lt;/html&gt;</sv:value>
             </sv:property>
-            <sv:property sv:name="hipposample:body" sv:type="String">
+            <sv:property sv:name="sample:body" sv:type="String">
                 <sv:value>&lt;html&gt;&lt;body&gt;o what a night&lt;/body&gt;&lt;/html&gt;</sv:value>
             </sv:property>
-            <sv:property sv:name="hipposample:subject" sv:type="String">
+            <sv:property sv:name="sample:subject" sv:type="String">
                 <sv:value>onderwerp</sv:value>
             </sv:property>
-            <sv:property sv:name="state" sv:type="String">
+            <sv:property sv:name="hippostd:state" sv:type="String">
                 <sv:value>unpublished</sv:value>
             </sv:property>
         </sv:node>

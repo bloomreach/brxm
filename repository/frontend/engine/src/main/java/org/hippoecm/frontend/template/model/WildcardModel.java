@@ -24,36 +24,43 @@ import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.FieldDescriptor;
+import org.hippoecm.frontend.template.TypeDescriptor;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WildcardModel extends FieldModel {
+public class WildcardModel extends ItemModel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(WildcardModel.class);
 
-    public WildcardModel(FieldDescriptor descriptor, JcrNodeModel parent) {
+    private int id;
+    private TypeDescriptor type;
+
+    public WildcardModel(FieldDescriptor descriptor, TypeConfig config, JcrNodeModel parent, int id) {
         super(descriptor, parent);
+        this.type = config.getTypeDescriptor(descriptor.getType());
+        this.id = id;
     }
 
     public String getPath() {
-        return getDescriptor().getPath();
+        return ((FieldDescriptor) getDescriptor()).getPath();
     }
 
     public void setPath(String path) {
         try {
             Node node = getNodeModel().getNode();
-            FieldDescriptor descriptor = getDescriptor();
-            if (descriptor.isNode()) {
+            FieldDescriptor descriptor = (FieldDescriptor) getDescriptor();
+            if (type.isNode()) {
                 if (descriptor.getPath() == null) {
-                    node.addNode(path, descriptor.getTemplate().getType());
+                    node.addNode(path, type.getType());
                 } else if (descriptor.getPath() != path) {
                     javax.jcr.Session jcrSession = ((UserSession) Session.get()).getJcrSession();
                     jcrSession.move(node.getPath() + "/" + descriptor.getPath(), node.getPath() + "/" + path);
                 }
             } else {
                 if (descriptor.getPath() == null) {
-                    Value value = descriptor.getTemplate().createValue("");
+                    Value value = type.createValue("");
                     if (descriptor.isMultiple()) {
                         node.setProperty(path, new Value[] { value });
                     } else {
@@ -76,5 +83,16 @@ public class WildcardModel extends FieldModel {
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof WildcardModel)) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        return super.equals(object) && ((WildcardModel) object).id == this.id;
     }
 }

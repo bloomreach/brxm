@@ -24,29 +24,28 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.TemplateDescriptor;
+import org.hippoecm.frontend.template.ItemDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This class provides FieldModel instances based on a template descriptor.
  */
-public class FieldProvider extends AbstractProvider<FieldModel> implements IDataProvider {
+public class ItemProvider extends AbstractProvider<ItemModel> implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(FieldProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(ItemProvider.class);
 
-    private TemplateDescriptor descriptor;
+    private ItemDescriptor descriptor;
 
     // Constructor
 
-    public FieldProvider(TemplateDescriptor descriptor, JcrNodeModel nodeModel) {
+    public ItemProvider(ItemDescriptor descriptor, JcrNodeModel nodeModel) {
         super(nodeModel);
         this.descriptor = descriptor;
     }
 
-    public void setDescriptor(TemplateDescriptor descriptor) {
+    public void setDescriptor(ItemDescriptor descriptor) {
         this.descriptor = descriptor;
         detach();
     }
@@ -60,12 +59,12 @@ public class FieldProvider extends AbstractProvider<FieldModel> implements IData
         }
 
         JcrNodeModel model = getNodeModel();
-        elements = new LinkedList<FieldModel>();
+        elements = new LinkedList<ItemModel>();
         if (descriptor != null) {
-            Iterator<FieldDescriptor> iter = descriptor.getFields().iterator();
+            Iterator<ItemDescriptor> iter = descriptor.getItems().iterator();
             while (iter.hasNext()) {
-                FieldDescriptor field = iter.next();
-                elements.addLast(new FieldModel(field, model));
+                ItemDescriptor field = iter.next();
+                elements.addLast(new ItemModel(field, model));
             }
         }
     }
@@ -80,14 +79,14 @@ public class FieldProvider extends AbstractProvider<FieldModel> implements IData
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof FieldProvider == false) {
+        if (object instanceof ItemProvider == false) {
             return false;
         }
         if (this == object) {
             return true;
         }
-        FieldProvider fieldProvider = (FieldProvider) object;
-        return new EqualsBuilder().append(descriptor, fieldProvider.descriptor).isEquals();
+        ItemProvider itemProvider = (ItemProvider) object;
+        return new EqualsBuilder().append(descriptor, itemProvider.descriptor).isEquals();
     }
 
     @Override

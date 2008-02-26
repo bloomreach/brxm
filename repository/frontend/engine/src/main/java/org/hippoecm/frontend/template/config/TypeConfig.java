@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-<rep='internal'>
-<jcr='http://www.jcp.org/jcr/1.0'>
-<nt='http://www.jcp.org/jcr/nt/1.0'>
-<mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.hippoecm.org/nt/1.0'>
-<hst='http://www.hippoecm.org/hst/nt/1.0'>
+package org.hippoecm.frontend.template.config;
 
-[hst:samplePlainNodeType] > hippo:document
+import java.util.List;
 
-[hst:sampleSpecialNodeType] > hippo:document
+import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.template.TypeDescriptor;
+
+public interface TypeConfig extends IClusterable {
+
+    public TypeDescriptor getTypeDescriptor(String name);
+
+    public List<TypeDescriptor> getTypes();
+
+    public List<TypeDescriptor> getTypes(String namespace);
+}
