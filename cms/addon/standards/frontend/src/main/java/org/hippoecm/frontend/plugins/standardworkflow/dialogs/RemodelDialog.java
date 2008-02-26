@@ -26,7 +26,7 @@ import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.template.config.TemplateConfig;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.export.CndSerializer;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
@@ -51,8 +51,8 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
         Node node = dialogWindow.getNodeModel().getNode();
         String namespace = node.getName();
-        TemplateConfig templateConfig = getOwningPlugin().getPluginManager().getTemplateEngine().getConfig();
-        CndSerializer serializer = new CndSerializer(sessionModel, templateConfig, namespace);
+        TypeConfig typeConfig = getOwningPlugin().getPluginManager().getTemplateEngine().getTypeConfig();
+        CndSerializer serializer = new CndSerializer(sessionModel, typeConfig, namespace);
         serializer.versionNamespace(namespace);
         String cnd = serializer.getOutput();
 

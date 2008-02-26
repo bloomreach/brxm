@@ -19,98 +19,99 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
-<hipposample='http://www.hippoecm.org/sample/nt/1.0'>
+<hippostd='http://www.hippoecm.org/hippostd/nt/1.0'>
+<sample='http://www.hippoecm.org/sample/nt/1.0'>
 
 // TODO:
 // - (Unique) contraints on hippo:id's?
 // - verioning rules
 
 // alttext nodetype is usde by illustration so put it _before_ illustration
-[hipposample:altText]
-- hipposample:locale (string)
+[sample:altText]
+- sample:locale (string)
   multiple mandatory
-- hipposample:text (string)
+- sample:text (string)
 
 // link nodetype is used by newsArticle so put it _before_ newsArticle
-[hipposample:link]
-- hipposample:href (String)
-- hipposample:text (string)
+[sample:link]
+- sample:href (String)
+- sample:text (string)
 
 // illustration nodetype is used by newsArticle so put it _before_ newsArticle
-[hipposample:illustration]
-- hipposample:imageSetId
-+ hipposample:altText
+[sample:illustration]
+- sample:imageSetId
++ sample:altText
 
 // body nodetype is used by newsArticle so put it _before_ newsArticle
-[hipposample:body]
-- hipposample:locale (string)
+[sample:body]
+- sample:locale (string)
   multiple mandatory
-- hipposample:title (string)
+- sample:title (string)
   primary
-- hipposample:summary (string)
-- hipposample:page (string)
-- hipposample:review (string)
+- sample:summary (string)
+- sample:page (string)
+- sample:review (string)
 
-[hipposample:newsArticle] > hippo:document
-- hipposample:id (long)
+[sample:newsArticle] > hippo:document
+- sample:id (long)
 //  > [(0,)]
-- hipposample:categoryId (long)
+- sample:categoryId (long)
   multiple
-- hipposample:newsArticleId (long)
+- sample:newsArticleId (long)
   multiple
-- hipposample:magzineId (long)
+- sample:magzineId (long)
   multiple
-- hipposample:sectionId (long)
-- hipposample:authorId (long)
-- hipposample:published (boolean)
+- sample:sectionId (long)
+- sample:authorId (long)
+- sample:published (boolean)
   = false
-- hipposample:publicationDate (date)
-- hipposample:newsDate (date)
-+ hipposample:body (hipposample:body) = hipposample:body
+- sample:publicationDate (date)
+- sample:newsDate (date)
++ sample:body (sample:body) = sample:body
   multiple
-+ hipposample:link (hipposample:link) = hipposample:link
++ sample:link (sample:link) = sample:link
   multiple
-+ hipposample:illustration (hipposample:illustration) = hipposample:illustration
++ sample:illustration (sample:illustration) = sample:illustration
 
-[hipposample:author] > hippo:document
-- hipposample:id (long)
-- hipposample:name (string)
-- hipposample:email (string)
+[sample:author] > hippo:document
+- sample:id (long)
+- sample:name (string)
+- sample:email (string)
 
-[hipposample:section]
-- hipposample:id (long)
-- hipposample:name (string)
+[sample:section]
+- sample:id (long)
+- sample:name (string)
 
-[hipposample:category]
-- hipposample:id (long)
-- hipposample:name (string)
+[sample:category]
+- sample:id (long)
+- sample:name (string)
 
-[hipposample:magazine]
-- hipposample:id (long)
-- hipposample:name (string)
+[sample:magazine]
+- sample:id (long)
+- sample:name (string)
 
 // image nodetype is used by imageSet so put it _before_ imageset
-[hipposample:image]
-- hipposample:src (string)
-- hipposample:size (string)
-- hipposample:contentType (string)
+[sample:image]
+- sample:src (string)
+- sample:size (string)
+- sample:contentType (string)
 
-[hipposample:imageSet]
-- hipposample:id (long)
+[sample:imageSet]
+- sample:id (long)
   mandatory
-- hipposample:description (string)
+- sample:description (string)
   primary
-+ hipposample:altText
-+ * (hipposample:image) = hipposample:image
++ sample:altText
++ * (sample:image) = sample:image
   multiple
 
-[hipposample:simpledocument] > hippo:document
-- hipposample:title (string) mandatory primary
-- hipposample:cdate (date) protected
-- hipposample:owner (string)
-- hipposample:body (string) mandatory
-- hipposample:subject (string) multiple mandatory
-- hipposample:link (reference)
+[sample:simpledocument] > hippo:document, hippostd:publishable
+- sample:title (string) mandatory primary
+- sample:cdate (date) protected
+- sample:owner (string)
+- sample:body (string) mandatory
+- sample:subject (string) multiple mandatory
+- sample:link (reference)
 + * (hippo:facetselect)
 //+ * (hippo:facetsearch)
-// - hipposample:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'
+// - sample:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'

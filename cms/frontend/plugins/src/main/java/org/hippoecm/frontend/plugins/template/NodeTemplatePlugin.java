@@ -21,31 +21,32 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
-import org.hippoecm.frontend.template.model.FieldProvider;
+import org.hippoecm.frontend.template.model.ItemProvider;
 import org.hippoecm.frontend.template.model.TemplateModel;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class NodeTemplatePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    private FieldProvider provider;
-
     public NodeTemplatePlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()), parentPlugin);
+        super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
 
         TemplateModel model = (TemplateModel) getPluginModel();
         TemplateDescriptor descriptor = model.getTemplateDescriptor();
 
         // FIXME: this will fail when model.getPath() is null, i.e. the item has not yet been created.
         JcrItemModel itemModel = new JcrItemModel(model.getNodeModel().getItemModel().getPath() + "/" + model.getPath());
-        provider = new FieldProvider(descriptor, new JcrNodeModel(itemModel));
-        add(new FieldView("fields", provider, this));
+        ItemProvider provider = new ItemProvider(descriptor, new JcrNodeModel(itemModel));
+        add(new ItemView("fields", provider, this));
 
         setOutputMarkupId(true);
     }
 
     @Override
-    public void onDetach() {
-        provider.detach();
-        super.onDetach();
+    public Plugin addChild(PluginDescriptor childDescriptor) {
+        if (!childDescriptor.getPluginId().equals(HippoNodeType.HIPPO_ITEM)) {
+            return super.addChild(childDescriptor);
+        }
+        return null;
     }
 }

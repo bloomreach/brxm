@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,11 @@
  */
 package org.hippoecm.frontend.template.config;
 
-import java.util.List;
-
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.template.TemplateDescriptor;
+import org.hippoecm.frontend.template.TypeDescriptor;
 
 public interface TemplateConfig extends IClusterable {
 
-    public TemplateDescriptor getTemplate(String name);
-
-    public List<TemplateDescriptor> getTemplates();
-
-    public List<TemplateDescriptor> getTemplates(String namespace);
+    public TemplateDescriptor getTemplate(TypeDescriptor type);
 }

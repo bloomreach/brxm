@@ -24,13 +24,10 @@
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
 
-  <!-- "String" template -->
+  <!-- "String" type -->
   <sv:node sv:name="String">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+      <sv:value>hippo:nodetype</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:node" sv:type="Boolean">
       <sv:value>false</sv:value>
@@ -39,15 +36,12 @@
       <sv:value>String</sv:value>
     </sv:property>
   </sv:node>
-  <!-- end "String" template -->
+  <!-- end "String" type -->
   
-  <!-- "Boolean" template -->
+  <!-- "Boolean" type -->
   <sv:node sv:name="Boolean">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+      <sv:value>hippo:nodetype</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:node" sv:type="Boolean">
       <sv:value>false</sv:value>
@@ -56,15 +50,12 @@
       <sv:value>Boolean</sv:value>
     </sv:property>
   </sv:node>
-  <!-- end "Boolean" template -->
-
-  <!-- "Xinha" template -->
-  <sv:node sv:name="Xinha">
+  <!-- end "Boolean" type -->
+  
+  <!-- "Html" type -->
+  <sv:node sv:name="Html">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
+      <sv:value>hippo:nodetype</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:node" sv:type="Boolean">
       <sv:value>false</sv:value>
@@ -73,31 +64,20 @@
       <sv:value>String</sv:value>
     </sv:property>
   </sv:node>
-  <!-- end "Xinha" template -->
+  <!-- end "Html" type -->
 
-  <!--  LinkPicker template -->
-  <sv:node sv:name="LinkPicker">
+  <!--  Link type -->
+  <sv:node sv:name="Link">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
+      <sv:value>hippo:nodetype</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:node" sv:type="Boolean">
       <sv:value>false</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.LinkPickerPlugin</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:type" sv:type="String">
       <sv:value>String</sv:value>
     </sv:property>
-    <!--sv:node sv:name="hippo:parameters">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:parameters</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodetypes" sv:type="String">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-    </sv:node-->
   </sv:node>
-  <!-- end LinkPicker template -->
+  <!-- end Link type -->
   
 </sv:node>

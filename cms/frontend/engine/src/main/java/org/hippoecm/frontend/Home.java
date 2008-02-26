@@ -26,7 +26,9 @@ import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
+import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TemplateConfig;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.repository.api.HippoNode;
 
 public class Home extends WebPage {
@@ -41,9 +43,11 @@ public class Home extends WebPage {
         UserSession session = getValidUserSession();
         HippoNode rootNode = session.getRootNode();
 
-        PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
+        TypeConfig typeConfig = new RepositoryTypeConfig(session.getJcrSessionModel());
         TemplateConfig templateConfig = new RepositoryTemplateConfig(session.getJcrSessionModel());
-        PluginManager pluginManager = new PluginManager(pluginConfig, templateConfig);
+        PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
+
+        PluginManager pluginManager = new PluginManager(pluginConfig, typeConfig, templateConfig);
         PluginFactory pluginFactory = new PluginFactory(pluginManager);
 
         PluginDescriptor rootPluginDescriptor;

@@ -15,188 +15,34 @@
  */
 package org.hippoecm.frontend.template;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import javax.jcr.PropertyType;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.jackrabbit.value.BooleanValue;
-import org.apache.jackrabbit.value.DateValue;
-import org.apache.jackrabbit.value.DoubleValue;
-import org.apache.jackrabbit.value.LongValue;
-import org.apache.jackrabbit.value.NameValue;
-import org.apache.jackrabbit.value.PathValue;
-import org.apache.jackrabbit.value.ReferenceValue;
-import org.apache.jackrabbit.value.StringValue;
-import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
-public class TemplateDescriptor implements IClusterable {
-
+public class TemplateDescriptor extends ItemDescriptor {
     private static final long serialVersionUID = 1L;
 
-    private String name;
-    private String type;
-    private String superType;
-    private List<String> mixinTypes;
-    private boolean node;
-    private boolean mixin;
-    private PluginDescriptor plugin;
-    private LinkedList<FieldDescriptor> fields;
+    private TypeDescriptor type;
 
-    public TemplateDescriptor(String name, String type, PluginDescriptor plugin) {
-        this.name = name;
+    public TemplateDescriptor(TypeDescriptor type, PluginDescriptor plugin) {
+        super(type.getName(), plugin);
+
         this.type = type;
-        this.superType = "";
-        this.mixinTypes = new LinkedList<String>();
-        this.plugin = plugin;
-        this.node = true;
-        this.mixin = false;
-        this.fields = new LinkedList<FieldDescriptor>();
     }
 
-    public TemplateDescriptor(Map<String, Object> map, TemplateEngine engine) {
-        this.name = (String) map.get("name");
-        this.type = (String) map.get("type");
-        this.superType = (String) map.get("superType");
-        this.mixinTypes = (List<String>) map.get("mixinType");
-        this.node = ((Boolean) map.get("isNode")).booleanValue();
-        this.mixin = ((Boolean) map.get("isMixin")).booleanValue();
-
-        this.fields = new LinkedList<FieldDescriptor>();
-        LinkedList<Map<String, Object>> fieldList = (LinkedList<Map<String, Object>>) map.get("fields");
-        for (Map<String, Object> fieldMap : fieldList) {
-            fields.addLast(new FieldDescriptor(fieldMap, engine));
-        }
-
-        this.plugin = new PluginDescriptor((Map<String, Object>) map.get("plugin"));
+    public TemplateDescriptor(Map<String, Object> map) {
+        super(map);
+        this.type = new TypeDescriptor((Map<String, Object>) map.get("type"));
     }
 
+    @Override
     public Map<String, Object> getMapRepresentation() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", name);
-        map.put("type", type);
-        map.put("superType", superType);
-        map.put("isNode", new Boolean(node));
-        map.put("isMixin", new Boolean(mixin));
-
-        LinkedList<Map<String, Object>> fieldList = new LinkedList<Map<String, Object>>();
-        for (FieldDescriptor field : getFields()) {
-            fieldList.addLast(field.getMapRepresentation());
-        }
-        map.put("fields", fieldList);
-
-        map.put("plugin", getPlugin().getMapRepresentation());
+        Map<String, Object> map = super.getMapRepresentation();
+        map.put("type", this.type.getMapRepresentation());
         return map;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getType() {
+    public TypeDescriptor getTypeDescriptor() {
         return type;
-    }
-
-    public String getSuperType() {
-        return superType;
-    }
-
-    public void setSuperType(String superType) {
-        this.superType = superType;
-    }
-
-    public List<String> getMixinTypes() {
-        return mixinTypes;
-    }
-
-    public void setMixinTypes(List<String> mixins) {
-        this.mixinTypes = mixins;
-    }
-
-    public boolean isNode() {
-        return node;
-    }
-
-    public void setIsNode(boolean isNode) {
-        this.node = isNode;
-    }
-
-    public boolean isMixin() {
-        return mixin;
-    }
-
-    public void setIsMixin(boolean isMixin) {
-        this.mixin = isMixin;
-    }
-
-    public PluginDescriptor getPlugin() {
-        return plugin;
-    }
-
-    public List<FieldDescriptor> getFields() {
-        return fields;
-    }
-
-    public Value createValue(Object object) {
-        try {
-            int propertyType = PropertyType.valueFromName(type);
-            String string = object.toString();
-            switch (propertyType) {
-            case PropertyType.BOOLEAN:
-                return BooleanValue.valueOf(string);
-            case PropertyType.DATE:
-                return DateValue.valueOf(string);
-            case PropertyType.DOUBLE:
-                return DoubleValue.valueOf(string);
-            case PropertyType.LONG:
-                return LongValue.valueOf(string);
-            case PropertyType.NAME:
-                return NameValue.valueOf(string);
-            case PropertyType.PATH:
-                return PathValue.valueOf(string);
-            case PropertyType.REFERENCE:
-                return ReferenceValue.valueOf(string);
-            case PropertyType.STRING:
-            case PropertyType.UNDEFINED:
-                return new StringValue(string);
-            default:
-                return null;
-            }
-        } catch (ValueFormatException ex) {
-            return null;
-        }
-    }
-
-    // override Object methods
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("name", name).toString();
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof TemplateDescriptor == false) {
-            return false;
-        }
-        if (this == object) {
-            return true;
-        }
-        TemplateDescriptor templateDescriptor = (TemplateDescriptor) object;
-        return new EqualsBuilder().append(name, templateDescriptor.name).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(113, 419).append(name).toHashCode();
     }
 }

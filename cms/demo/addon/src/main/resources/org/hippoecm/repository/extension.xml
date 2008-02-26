@@ -28,7 +28,7 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="sample">
+  <sv:node sv:name="demo">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -36,7 +36,7 @@
       <sv:value>10000</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/sample/nt/1.0</sv:value>
+      <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>demo-types.cnd</sv:value>
@@ -69,7 +69,7 @@
       <sv:value>demo-prototypes.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-protype</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype</sv:value>
     </sv:property>
   </sv:node>
 

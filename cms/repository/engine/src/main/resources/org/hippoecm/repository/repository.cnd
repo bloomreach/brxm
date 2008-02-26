@@ -174,27 +174,36 @@
 [hippo:pluginfolder] > nt:base
 + * (hippo:plugin) = hippo:plugin
  
-[hippo:field] > hippo:plugin
-- hippo:path (string)
+[hippo:field] > nt:base
 - hippo:name (string)
+- hippo:path (string)
 - hippo:type (string)
 - hippo:multiple (boolean)
 - hippo:mandatory (boolean)
 - hippo:ordered (boolean)
 
-[hippo:template] > hippo:plugin orderable
+[hippo:nodetype] > nt:base orderable
 - hippo:type (string)
 - hippo:supertype (string)
+- hippo:mixintypes (string) multiple
 - hippo:node (boolean)
-- hippo:renderer (string) mandatory
+- hippo:mixin (boolean)
 + hippo:prototype (hippo:document)
 + hippo:field (hippo:field) multiple
 
 [hippo:namespace] > nt:base
-+ * (hippo:template) = hippo:template
++ * (hippo:nodetype) = hippo:nodetype
 
 [hippo:namespacefolder] > nt:base
 + * (hippo:namespace) = hippo:namespace
+
+[hippo:template] > hippo:plugin
+- hippo:renderer (string) mandatory
+- hippo:field (string)
++ hippo:template (hippo:template) multiple
+
+[hippo:templatefolder] > nt:base
++ * (hippo:template) = hippo:template
 
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory

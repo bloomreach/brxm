@@ -57,7 +57,7 @@
       <sv:value>standard-types.cnd</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="hippostd-templates">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -72,5 +72,5 @@
       <sv:value>/hippo:configuration/hippo:namespaces</sv:value>
     </sv:property>
   </sv:node>
-  
+
 </sv:node>

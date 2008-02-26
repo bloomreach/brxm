@@ -26,10 +26,7 @@
   
   <sv:node sv:name="hippostd:languagable">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+      <sv:value>hippo:nodetype</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:type" sv:type="String">
       <sv:value>hippostd:language</sv:value>
@@ -44,10 +41,7 @@
       <sv:property sv:name="hippo:name" sv:type="String">
         <sv:value>Language</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:template" sv:type="String">
+      <sv:property sv:name="hippo:type" sv:type="String">
         <sv:value>String</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
@@ -58,10 +52,7 @@
   
   <sv:node sv:name="hippostd:publishable">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+      <sv:value>hippo:nodetype</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:type" sv:type="String">
       <sv:value>hippostd:publishable</sv:value>
@@ -74,12 +65,9 @@
         <sv:value>hippo:field</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>Publication status</sv:value>
+        <sv:value>PublicationStatus</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:template" sv:type="String">
+      <sv:property sv:name="hippo:type" sv:type="String">
         <sv:value>String</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
@@ -93,10 +81,7 @@
       <sv:property sv:name="hippo:name" sv:type="String">
         <sv:value>Editor</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:template" sv:type="String">
+      <sv:property sv:name="hippo:type" sv:type="String">
         <sv:value>String</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
@@ -106,4 +91,3 @@
   </sv:node>
 
 </sv:node>
-  

@@ -24,37 +24,38 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.ItemDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FieldModel extends NodeModelWrapper implements IPluginModel {
+public class ItemModel extends NodeModelWrapper implements IPluginModel {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(FieldModel.class);
+    private static final Logger log = LoggerFactory.getLogger(ItemModel.class);
 
-    private FieldDescriptor descriptor;
+    private ItemDescriptor descriptor;
 
     //  Constructor
-    public FieldModel(FieldDescriptor descriptor, JcrNodeModel parent) {
+    public ItemModel(ItemDescriptor descriptor, JcrNodeModel parent) {
         super(parent);
         this.descriptor = descriptor;
     }
 
-    public FieldModel(IPluginModel model, TemplateEngine engine) {
+    public ItemModel(IPluginModel model) {
         super(new JcrNodeModel(model));
         Map<String, Object> map = model.getMapRepresentation();
-        this.descriptor = new FieldDescriptor((Map) map.get("field"), engine);
+//        this.descriptor = new ItemDescriptor((Map) map.get("item"));
+        this.descriptor = (ItemDescriptor) map.get("item");
     }
 
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = getNodeModel().getMapRepresentation();
-        map.put("field", descriptor.getMapRepresentation());
+//        map.put("item", descriptor.getMapRepresentation());
+        map.put("item", descriptor);
         return map;
     }
 
-    public FieldDescriptor getDescriptor() {
+    public ItemDescriptor getDescriptor() {
         return descriptor;
     }
 
@@ -68,13 +69,13 @@ public class FieldModel extends NodeModelWrapper implements IPluginModel {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof FieldModel == false) {
+        if (object instanceof ItemModel == false) {
             return false;
         }
         if (this == object) {
             return true;
         }
-        FieldModel fieldModel = (FieldModel) object;
+        ItemModel fieldModel = (ItemModel) object;
         return new EqualsBuilder().append(descriptor, fieldModel.descriptor).
             append(nodeModel.getItemModel(), fieldModel.nodeModel.getItemModel()).isEquals();
     }

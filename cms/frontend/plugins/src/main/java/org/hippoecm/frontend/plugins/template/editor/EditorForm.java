@@ -27,6 +27,7 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,8 @@ public class EditorForm extends Form {
         try {
             String type = model.getNode().getPrimaryNodeType().getName();
             TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
-            TemplateDescriptor templateDescriptor = engine.getConfig().getTemplate(type);
+            TypeDescriptor typeDescriptor = engine.getTypeConfig().getTypeDescriptor(type);
+            TemplateDescriptor templateDescriptor = engine.getTemplateConfig().getTemplate(typeDescriptor);
             if (templateDescriptor != null) {
                 TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(),
                         model.getNode().getName(), model.getNode().getIndex());

@@ -21,29 +21,29 @@
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <hippostd='http://www.hippoecm.org/hippostd/nt/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/1.0'>
-<sample='http://www.hippoecm.org/sample/nt/1.0'>
+<demo='http://www.hippoecm.org/demo/nt/1.0'>
 
-[sample:webFolder] > nt:unstructured
+[demo:webFolder] > nt:unstructured
 
-[sample:webPage] > hippo:document, hst:page, hippostd:languagable, hippostd:publishable
-- sample:pageLabel (string)
-- sample:pageTitle (string)
+[demo:webPage] > hippo:document, hst:page, hippostd:languagable, hippostd:publishable
+- demo:pageLabel (string)
+- demo:pageTitle (string)
 
-[sample:webNavigation] > hippo:document, hippostd:languagable, hippostd:publishable orderable
+[demo:webNavigation] > hippo:document, hippostd:languagable, hippostd:publishable orderable
 + * (hippo:facetselect) = hippo:facetselect
 
-[sample:paragraph] > nt:unstructured
+[demo:paragraph] > nt:unstructured
 
-[sample:paragraphs] > nt:base orderable
-+ * (sample:paragraph) = sample:paragraph
+[demo:paragraphs] > nt:base orderable
++ * (demo:paragraph) = demo:paragraph
 
-[sample:languageDocument] > hippo:document, hippostd:publishable, hippostd:languagable
-- sample:title (string)
-+ sample:paragraphs (sample:paragraphs) = sample:paragraphs
+[demo:languageDocument] > hippo:document, hippostd:publishable, hippostd:languagable
+- demo:title (string)
++ demo:paragraphs (demo:paragraphs) = demo:paragraphs
 
-[sample:countryInfoDocument] > hippo:document, hippostd:languagable
-- sample:name (string)
+[demo:countryInfoDocument] > hippo:document, hippostd:languagable
+- demo:name (string)
 
-[sample:countryDocument] > hippo:document, hippostd:publishable
-- sample:symbol
-+ sample:translation (hippo:handle)
+[demo:countryDocument] > hippo:document, hippostd:publishable
+- demo:symbol
++ demo:translation (hippo:handle)

@@ -32,8 +32,7 @@ public class ValueTemplatePlugin extends Plugin {
     private JcrPropertyValueModel valueModel;
 
     public ValueTemplatePlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()),
-                parentPlugin);
+        super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
 
         TemplateModel model = (TemplateModel) getPluginModel();
         valueModel = model.getJcrPropertyValueModel();

@@ -47,7 +47,7 @@ public class LinkPickerPlugin extends Plugin {
     
     public LinkPickerPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         
-        super(pluginDescriptor, new TemplateModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()), parentPlugin);
+        super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
         
         TemplateModel tmplModel = (TemplateModel) getPluginModel();
         valueModel = tmplModel.getJcrPropertyValueModel();

@@ -25,7 +25,7 @@
   </sv:property>
 
   <!-- "Sample Document" prototype -->
-  <sv:node sv:name="hipposample:simpledocument">
+  <sv:node sv:name="sample:simpledocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
@@ -33,17 +33,17 @@
       <sv:value>a948ad63-792d-4d7c-a9a4-ca256b69a880</sv:value>
     </sv:property>
     
-    <sv:node sv:name="hipposample:simpledocument">
+    <sv:node sv:name="sample:simpledocument">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposample:simpledocument</sv:value>
+        <sv:value>sample:simpledocument</sv:value>
       </sv:property>
-      <sv:property sv:name="hipposample:title" sv:type="String">
+      <sv:property sv:name="sample:title" sv:type="String">
         <sv:value>title</sv:value>
       </sv:property>
-      <sv:property sv:name="hipposample:subject" sv:type="String">
+      <sv:property sv:name="sample:subject" sv:type="String">
         <sv:value>subject</sv:value>
       </sv:property>
-      <sv:property sv:name="hipposample:body" sv:type="String">
+      <sv:property sv:name="sample:body" sv:type="String">
         <sv:value>body</sv:value>
       </sv:property>
       <sv:property sv:name="state" sv:type="String">
@@ -52,8 +52,8 @@
     </sv:node>
   </sv:node>
   
-  <!-- "Template" prototype -->
-  <sv:node sv:name="hippo:template">
+  <!-- "NodeType" prototype -->
+  <sv:node sv:name="hippo:nodetype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
@@ -61,12 +61,9 @@
       <sv:value>73b3cebd-b972-469c-a232-de8d1effacb4</sv:value>
     </sv:property>
     
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:template</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:renderer" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+        <sv:value>hippo:nodetype</sv:value>
       </sv:property>
       
       <!-- content -->
@@ -77,16 +74,13 @@
         <sv:property sv:name="hippo:name" sv:type="String">
           <sv:value>content</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:property sv:name="hippo:type" sv:type="String">
           <sv:value>String</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:path" sv:type="String">
           <sv:value>content</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:mandatory" sv:type="String">
+        <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
       </sv:node>
@@ -99,16 +93,13 @@
         <sv:property sv:name="hippo:name" sv:type="String">
           <sv:value>state</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:property sv:name="hippo:type" sv:type="String">
           <sv:value>String</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:path" sv:type="String">
           <sv:value>state</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:mandatory" sv:type="String">
+        <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
       </sv:node>
@@ -121,10 +112,7 @@
         <sv:property sv:name="hippo:name" sv:type="String">
           <sv:value>language</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.PropertyFieldPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:template" sv:type="String">
+        <sv:property sv:name="hippo:type" sv:type="String">
           <sv:value>String</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:path" sv:type="String">

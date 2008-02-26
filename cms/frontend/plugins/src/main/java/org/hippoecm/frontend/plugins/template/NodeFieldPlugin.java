@@ -25,7 +25,8 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.model.FieldModel;
+import org.hippoecm.frontend.template.config.TypeConfig;
+import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.template.model.NodeTemplateProvider;
 import org.slf4j.Logger;
@@ -40,15 +41,14 @@ public class NodeFieldPlugin extends Plugin {
     private TemplateView view;
 
     public NodeFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new FieldModel(pluginModel, parentPlugin.getPluginManager().getTemplateEngine()),
-                parentPlugin);
+        super(pluginDescriptor, new ItemModel(pluginModel), parentPlugin);
 
-        FieldModel model = (FieldModel) getPluginModel();
-        FieldDescriptor descriptor = model.getDescriptor();
+        ItemModel model = (ItemModel) getPluginModel();
+        FieldDescriptor descriptor = (FieldDescriptor) model.getDescriptor();
 
         add(new Label("name", descriptor.getName()));
 
-        provider = new NodeTemplateProvider(descriptor, model.getNodeModel());
+        provider = new NodeTemplateProvider(descriptor, getPluginManager().getTemplateEngine(), model.getNodeModel());
         view = new TemplateView("field", provider, this, provider.getDescriptor());
         add(view);
 
@@ -60,7 +60,7 @@ public class NodeFieldPlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("flush".equals(notification.getOperation())) {
-            FieldModel fieldModel = (FieldModel) getPluginModel();
+            ItemModel fieldModel = (ItemModel) getPluginModel();
             String currentPath = fieldModel.getNodeModel().getItemModel().getPath();
 
             // refresh the provider if the sent node is a subnode
@@ -77,12 +77,6 @@ public class NodeFieldPlugin extends Plugin {
             }
         }
         super.receive(notification);
-    }
-
-    @Override
-    public void onDetach() {
-        provider.detach();
-        super.onDetach();
     }
 
     public void onAddNode(AjaxRequestTarget target) {
@@ -116,8 +110,8 @@ public class NodeFieldPlugin extends Plugin {
     }
 
     protected Component createAddLink() {
-        FieldModel model = (FieldModel) getModel();
-        FieldDescriptor descriptor = model.getDescriptor();
+        ItemModel model = (ItemModel) getModel();
+        FieldDescriptor descriptor = (FieldDescriptor) model.getDescriptor();
         if (descriptor.isMultiple() || (provider.size() == 0)) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;

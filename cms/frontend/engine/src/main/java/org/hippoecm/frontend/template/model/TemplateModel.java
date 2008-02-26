@@ -34,7 +34,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.TemplateDescriptor;
-import org.hippoecm.frontend.template.TemplateEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,22 +42,23 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateModel.class);
 
-    private TemplateDescriptor templateDescriptor;
+    private TemplateDescriptor template;
     private String name;
     private int index;
 
     //  Constructor
     public TemplateModel(TemplateDescriptor descriptor, JcrNodeModel model, String name, int index) {
         super(model);
-        this.templateDescriptor = descriptor;
+        this.template = descriptor;
         this.name = name;
         this.index = index;
     }
 
-    public TemplateModel(IPluginModel model, TemplateEngine engine) {
+    public TemplateModel(IPluginModel model) {
         super(new JcrNodeModel(model));
         Map<String, Object> map = model.getMapRepresentation();
-        this.templateDescriptor = new TemplateDescriptor((Map) map.get("template"), engine);
+//        this.template = new TemplateDescriptor((Map) map.get("template"));
+        this.template = (TemplateDescriptor) map.get("template");
         this.name = (String) map.get("name");
         this.index = ((Integer) map.get("index")).intValue();
     }
@@ -67,14 +67,15 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
 
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = getNodeModel().getMapRepresentation();
-        map.put("template", templateDescriptor.getMapRepresentation());
+//        map.put("template", template.getMapRepresentation());
+        map.put("template", template);
         map.put("name", name);
         map.put("index", new Integer(index));
         return map;
     }
 
     public TemplateDescriptor getTemplateDescriptor() {
-        return templateDescriptor;
+        return template;
     }
 
     public String getPath() {
@@ -88,7 +89,7 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
     public void setName(String name) {
         try {
             Node parent = getNodeModel().getNode();
-            if (templateDescriptor.isNode()) {
+            if (template.getTypeDescriptor().isNode()) {
                 if (this.name != name) {
                     javax.jcr.Session jcrSession = ((UserSession) Session.get()).getJcrSession();
                     jcrSession.move(parent.getPath() + "/" + getPath(), parent.getPath() + "/" + name);
@@ -143,7 +144,7 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("descriptor", templateDescriptor)
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("descriptor", template)
                 .append("node", getNodeModel()).append("name", name).append("index", index).toString();
     }
 
@@ -156,14 +157,14 @@ public class TemplateModel extends NodeModelWrapper implements IPluginModel {
             return true;
         }
         TemplateModel templateModel = (TemplateModel) object;
-        return new EqualsBuilder().append(templateDescriptor, templateModel.templateDescriptor).append(
+        return new EqualsBuilder().append(template, templateModel.template).append(
                 nodeModel.getItemModel(), templateModel.nodeModel.getItemModel()).append(name, templateModel.name)
                 .append(index, templateModel.index).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(71, 67).append(templateDescriptor).append(nodeModel.getItemModel()).append(name)
+        return new HashCodeBuilder(71, 67).append(template).append(nodeModel.getItemModel()).append(name)
                 .append(index).toHashCode();
     }
 }

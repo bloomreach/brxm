@@ -20,6 +20,7 @@ import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.config.TemplateConfig;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +33,9 @@ public class PluginManager implements IClusterable {
     private TemplateEngine templateEngine;
     private ChannelFactory channelFactory;
 
-    public PluginManager(PluginConfig pluginConfig, TemplateConfig templateConfig) {
+    public PluginManager(PluginConfig pluginConfig, TypeConfig typeConfig, TemplateConfig templateConfig) {
         this.pluginConfig = pluginConfig;
-        this.templateEngine = new TemplateEngine(templateConfig, this);
+        this.templateEngine = new TemplateEngine(typeConfig, templateConfig, this);
         this.channelFactory = new ChannelFactory();
     }
 

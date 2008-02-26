@@ -18,22 +18,22 @@ package org.hippoecm.frontend.plugins.template;
 import org.apache.wicket.markup.repeater.Item;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.template.TemplateEngine;
-import org.hippoecm.frontend.template.model.FieldModel;
-import org.hippoecm.frontend.template.model.FieldProvider;
+import org.hippoecm.frontend.template.model.ItemModel;
+import org.hippoecm.frontend.template.model.ItemProvider;
 import org.hippoecm.frontend.widgets.AbstractView;
 
-public class FieldView extends AbstractView {
+public class ItemView extends AbstractView {
     private static final long serialVersionUID = 1L;
 
-    public FieldView(String wicketId, FieldProvider provider, Plugin plugin) {
+    public ItemView(String wicketId, ItemProvider provider, Plugin plugin) {
         super(wicketId, provider, plugin);
     }
 
     @Override
     protected void populateItem(Item item) {
-        FieldModel fieldModel = (FieldModel) item.getModel();
+        ItemModel itemModel = (ItemModel) item.getModel();
         TemplateEngine engine = getPlugin().getPluginManager().getTemplateEngine();
-        item.add(engine.createField("field", fieldModel, getPlugin()));
+        item.add(engine.createItem("field", itemModel, getPlugin()));
     }
 
     @Override
