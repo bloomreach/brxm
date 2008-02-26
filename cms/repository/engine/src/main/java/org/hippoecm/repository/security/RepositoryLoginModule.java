@@ -121,7 +121,11 @@ public class RepositoryLoginModule implements LoginModule {
             CredentialsCallback ccb = new CredentialsCallback();
             callbackHandler.handle(new Callback[] { ccb });
             SimpleCredentials creds = (SimpleCredentials) ccb.getCredentials();
-
+            Session rootSession = (Session) creds.getAttribute("rootSession");
+            if (rootSession == null) {
+                throw new LoginException("RootSession not set.");
+            }
+            
             // check for anonymous login
             if (creds == null || creds.getUserID() == null) {
                 if (log.isDebugEnabled()) {
@@ -129,13 +133,10 @@ public class RepositoryLoginModule implements LoginModule {
                 }
                 // authenticate as anonymous
                 principals.add(new AnonymousPrincipal());
+                authenticate(rootSession, null, null); // needed to load permissions from group everybody
                 return true;
             }
 
-            Session rootSession = (Session) creds.getAttribute("rootSession");
-            if (rootSession == null) {
-                throw new LoginException("RootSession not set.");
-            }
             if (debug) {
                 log.debug("Trying to authenticate as: " + creds.getUserID());
             }
@@ -213,22 +214,29 @@ public class RepositoryLoginModule implements LoginModule {
      */
     private boolean authenticate(Session rootSession, String userId, char[] password) {
         authenticated = false;
-        if (userId == null || password == null || "".equals(userId) || password.length == 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("Empty username or password not allowed.");
-            }
-            return false;
-        }
-
-
         String usersPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH;
         String groupsPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.GROUPS_PATH;
         String rolesPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.ROLES_PATH;
-
         RepositoryAAContext context = new RepositoryAAContext(rootSession, usersPath, groupsPath, rolesPath);
-
         RepositoryUser user = new RepositoryUser();
+
         try {
+            
+            // check for anonymous user
+            if (userId == null && password == null) {
+                user.init(context, null);
+                principals.addAll(user.getPrincipals());
+                return true;
+            }
+            
+            // basic security check
+            if (userId == null || password == null || "".equals(userId) || password.length == 0) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Empty username or password not allowed.");
+                }
+                return false;
+            }
+
             user.init(context, userId);
             authenticated =  PasswordHelper.checkHash(new String(password), user.getPasswordHash());
             if (authenticated) {

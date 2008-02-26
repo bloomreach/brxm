@@ -190,19 +190,22 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
      */
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
+        char[] empty = {}; 
+        SimpleCredentials sc = new SimpleCredentials(null, empty);
+        Session rootSession = getRootSession(workspaceName);
+        if (rootSession == null) {
+            throw new RepositoryException("Unable to get the roorSession for workspace: " + workspaceName);
+        }
+        
+        // non anonymous logins
         if (credentials != null) {
             if (credentials instanceof SimpleCredentials) {
-                SimpleCredentials sc = (SimpleCredentials) credentials;
-
-                Session rootSession = getRootSession(workspaceName);
-                if (rootSession == null) {
-                    throw new RepositoryException("Unable to get the roorSession for workspace: " + workspaceName);
-                }
-                sc.setAttribute("rootSession", rootSession);
-                return super.login(sc, workspaceName);
+                sc = (SimpleCredentials) credentials;
             }
         }
-        return super.login(credentials, workspaceName);
+
+        sc.setAttribute("rootSession", rootSession);
+        return super.login(sc, workspaceName);
     }
 
     /**
