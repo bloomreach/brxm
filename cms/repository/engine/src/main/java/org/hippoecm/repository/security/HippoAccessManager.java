@@ -196,8 +196,8 @@ public class HippoAccessManager implements AccessManager {
     }
 
     /**
-     * Get the local part of the node type
-     * @param ntName
+     * Get the local part of the node type name string
+     * @param nodeTypeName string with prefix, eg 'hippo:document'
      * @return
      */
     private String getLocalName(String nodeTypeName) {
@@ -451,12 +451,12 @@ public class HippoAccessManager implements AccessManager {
     }
     /**
      * Check permissions on a node for a FacetAuthPricipal
-     * TODO: check for non-String types
+     * TODO: check for non-String, non-Name types
      * @throws RepositoryException
      */
     protected boolean checkFacetAuthForPrincipal(NodeState nodeState, FacetAuthPrincipal principal, int permissions) throws RepositoryException {
         if (log.isDebugEnabled()) {
-            log.debug("Checking : " + nodeState.getId() + " against FacetAuthPrincipal: " + principal);
+            log.debug("Checking [" + pString(permissions) + "] : " + nodeState.getId() + " against FacetAuthPrincipal: " + principal);
         }
         
         // check if a permission is requested that you don't have
@@ -464,48 +464,42 @@ public class HippoAccessManager implements AccessManager {
             return false;
         }
 
-        // check if node has the required property
-        if (nodeState.hasPropertyName(principal.getFacet())) {
-            if (log.isDebugEnabled()) {
-                log.debug("Found [" + pString(permissions) + "] property: " + principal.getFacet());
-            }
-
-            HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), principal.getFacet());
-
-            try {
-                // check if the property has a required value
-                PropertyState state = (PropertyState) hierMgr.getItemState(propertyId);
-                InternalValue[] iVals = state.getValues();
-                for (InternalValue iVal : iVals) {
-                    if (iVal.getType() != PropertyType.STRING) {
-                        continue;
-                    }
-                    for (String val : principal.getValues()) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Checking [" + pString(permissions) + "] nodeVal->facetVal: " + iVal.getString() + "->" + val);
-                        }
-                        if (iVal.getString().equals(val)) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found match [" + pString(permissions) + "] nodeVal->facetVal: " + iVal.getString() + "->" + val);
-                            }
-                            // found a match!
-                            return true;
-                        }
-                    }
+        // is this a 'NodeType' facet?
+        Name valName;
+        if (principal.getFacet().getLocalName().equalsIgnoreCase("nodetype")) {
+            for (String val : principal.getValues()) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Checking [" + pString(permissions) + "] : " + nodeState.getId() + " for nodeType: " + val);
                 }
-                // no valid value found
-                return false;
-            } catch (NoSuchItemStateException e) {
-                //e.printStackTrace();
-                return false;
-            } catch (ItemStateException e) {
-                //e.printStackTrace();
-                return false;
+                valName = FACTORY.create(val);
+                if (isInstanceOfType(nodeState, valName)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Found match [" + pString(permissions) + "] : " + nodeState.getId() + " for nodeType: " + val);
+                        return true;
+                    }
+                } else if (hasPropertyWithValue(nodeState, NameConstants.JCR_MIXINTYPES, val)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Found match [" + pString(permissions) + "] : " + nodeState.getId() + " for mixinType: " + val);
+                    }
+                    return true;
+                }
             }
-        } else {
-            // node doesn't have the required property
             return false;
         }
+        
+        // check if node has the required property
+        for (String val : principal.getValues()) {
+            if (log.isTraceEnabled()) {
+                log.trace("Checking [" + pString(permissions) + "] facetVal: " + val);
+            }
+            if (hasPropertyWithValue(nodeState, principal.getFacet(), val)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found match [" + pString(permissions) + "] facetVal: " + val);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -741,7 +735,6 @@ public class HippoAccessManager implements AccessManager {
      * @return boolean
      * @throws NoSuchNodeTypeException 
      */
-    
     private boolean isInstanceOfType(NodeState nodeState, Name nodeTypeName) throws NoSuchNodeTypeException {
         if (nodeState.getNodeTypeName().equals(nodeTypeName)) {
             if (log.isTraceEnabled()) {
@@ -760,6 +753,34 @@ public class HippoAccessManager implements AccessManager {
                     log.trace("MATCH " + nodeState.getId() + " is a instance of type: " + nodeTypeName);
                 }
                 return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean hasPropertyWithValue(NodeState nodeState, Name propertyName, String value) {
+        if (nodeState.hasPropertyName(propertyName)) {
+            HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), propertyName);
+            try {
+                PropertyState state = (PropertyState) hierMgr.getItemState(propertyId);
+                InternalValue[] iVals = state.getValues();
+                for (InternalValue iVal : iVals) {
+                    if (iVal.getType() == PropertyType.STRING) {
+                        if (iVal.getString().equals(value)) {
+                            return true;
+                        }
+                    } else if (iVal.getType() == PropertyType.NAME) {
+                        if (iVal.getQName().toString().equals(value)) {
+                            return true;
+                        }
+                    }
+                }
+            } catch (NoSuchItemStateException e) {
+                //e.printStackTrace();
+                return false;
+            } catch (ItemStateException e) {
+                //e.printStackTrace();
+                return false;
             }
         }
         return false;
