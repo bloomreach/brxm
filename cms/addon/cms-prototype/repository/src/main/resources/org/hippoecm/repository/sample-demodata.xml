@@ -25,7 +25,13 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
     </sv:property>
-    <sv:node sv:name="myarticle">
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hippo:prototyped</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:prototype" sv:type="Reference">
+    <sv:value>a948ad63-792d-4d7c-a9a4-ca256b69a880</sv:value>
+  </sv:property>
+  <sv:node sv:name="myarticle">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:handle</sv:value>
         </sv:property>

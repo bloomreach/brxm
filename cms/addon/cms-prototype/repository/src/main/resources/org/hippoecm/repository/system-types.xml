@@ -80,4 +80,64 @@
   </sv:node>
   <!-- end Link type -->
   
+  <!--  Resource type -->
+  <sv:node sv:name="nt:resource">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:nodetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>nt:resource</sv:value>
+    </sv:property>
+    
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>mimetype</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>jcr:mimeType</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>modified</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>jcr:lastModified</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Date</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>data</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>jcr:data</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Binary</sv:value>
+      </sv:property>
+    </sv:node>
+    
+  </sv:node>
+  <!-- end Link type -->
+  
 </sv:node>

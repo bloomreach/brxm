@@ -45,7 +45,14 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     public TemplateDescriptor getTemplate(TypeDescriptor type) {
         if (type != null) {
-            PluginDescriptor plugin = getPlugin(type.getName());
+            String typeName = type.getName();
+            PluginDescriptor plugin;
+            if (typeName.indexOf(':') > 0) {
+                String prefix = typeName.substring(0, typeName.indexOf(':'));
+                plugin = getPlugin(prefix + "/" + typeName);
+            } else {
+                plugin = getPlugin("system/" + typeName);
+            }
             return new RepositoryTemplateDescriptor(type, plugin);
         }
         return null;
@@ -54,7 +61,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     private static String getTemplateBasePath() {
         Main main = (Main) Application.get();
         return HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + main.getHippoApplication()
-                + "/templates";
+                + "/hippo:templates";
     }
 
     List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, TemplateDescriptor parent) {

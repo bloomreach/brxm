@@ -20,7 +20,7 @@
   xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:demo="http://www.hippoecm.org/demo/nt/1.0"
-  sv:name="hippo:prototypes">
+  sv:name="demo">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>
