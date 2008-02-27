@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.HippoQuery;
+import org.hippoecm.repository.api.HippoNode;
 
 public class Context extends AbstractMap {
 
@@ -191,6 +192,8 @@ public class Context extends AbstractMap {
                                     result = node.getName();
                                 } else if (field.equals("path")) {
                                     result = node.getPath();
+                                } else if (field.equals("location")) {
+                                    result = ((HippoNode)node).getCanonicalNode().getPath();
                                 } else if (field.equals("size")) {
                                     result = new Long(node.getNodes().getSize());
                                 } else if (field.equals("index")) {

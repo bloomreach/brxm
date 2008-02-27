@@ -18,14 +18,13 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RewriteResponseWrapper extends HttpServletResponseWrapper {
-
-    public static final Logger logger = LoggerFactory.getLogger(RewriteResponseWrapper.class);
+class MappingResponseWrapper extends HttpServletResponseWrapper {
+    private static final Logger logger = LoggerFactory.getLogger(MappingResponseWrapper.class);
 
     private Context context;
     private HttpServletRequest request;
 
-    public RewriteResponseWrapper(Context context, HttpServletRequest req, HttpServletResponse res) {
+    public MappingResponseWrapper(Context context, HttpServletRequest req, HttpServletResponse res) {
         super(res);
         this.context = context;
         this.request = req;
