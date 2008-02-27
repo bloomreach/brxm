@@ -31,13 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RewriteFilter implements Filter {
-    public static final Logger logger = LoggerFactory.getLogger(RewriteFilter.class);
-    static String ATTRIBUTE = RewriteFilter.class.getName() + ".ATTRIBUTE";
+public class ContextFilter implements Filter {
+    public static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
+    static String ATTRIBUTE = ContextFilter.class.getName() + ".ATTRIBUTE";
 
     private String urlbasehome;
     private String urlbasepath;
-    private String urlmapping;
     private String attributename = "context";
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -55,12 +54,6 @@ public class RewriteFilter implements Filter {
         } else
             throw new ServletException("Missing parameter urlbasepath in "+filterConfig.getFilterName());
 
-        param = filterConfig.getInitParameter("urlmapping");
-        if (param != null && !param.trim().equals("")) {
-            urlmapping = param;
-        } else
-            throw new ServletException("Missing parameter urlmapping in "+filterConfig.getFilterName());
-
         param = filterConfig.getInitParameter("attributename");
         if (param != null && !param.trim().equals("")) {
             attributename = param.trim();
@@ -73,16 +66,24 @@ public class RewriteFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException,
             ServletException {
-
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        String pathAfterContext = req.getRequestURI().substring(req.getContextPath().length());
+        String pathAfterContext = req.getRequestURI();
+        /* This next part is better resolved by using filterConfig.getServletContext().getContextPath(), but
+         * this is only available after Servlet API 2.5.
+         */
+        if (pathAfterContext.startsWith(req.getServletPath())) {
+            pathAfterContext = pathAfterContext.substring(req.getServletPath().length());
+        }
+        if (pathAfterContext.startsWith(req.getContextPath())) {
+            pathAfterContext = pathAfterContext.substring(req.getContextPath().length());
+        }
         int semicolonIdx = pathAfterContext.indexOf(';');
         if (semicolonIdx != -1) {
             pathAfterContext = pathAfterContext.substring(0, semicolonIdx);
         }
-        if (pathAfterContext == "" || pathAfterContext.endsWith("/")) {
+        if (pathAfterContext.equals("") || pathAfterContext.endsWith("/")) {
             pathAfterContext += urlbasehome;
         }
       
@@ -95,20 +96,22 @@ public class RewriteFilter implements Filter {
         } else {
             documentPath = documentPath + pathAfterContext;
         }
+        if(logger.isDebugEnabled()) {
+            logger.debug("Using document path "+documentPath);
+        }
 
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = new Context(jcrSession, urlbasepath);
-        context.setPath(documentPath);
         req.setAttribute(attributename, context);
 
-        try {
-            RewriteResponseWrapper responseWrapper = new RewriteResponseWrapper(context, req, res);
-            if (!responseWrapper.redirectRepositoryDocument(urlmapping, documentPath, false)) {
-                filterChain.doFilter(req, res);
-                return; // no action ALLOWED after this point.
-            }
-        } catch (RepositoryException ex) {
-            throw new ServletException(ex);
+        if(!doInternal(context, documentPath, req, res)) {
+            filterChain.doFilter(req, res);
+            return; // no action ALLOWED after this point.
         }
+    }
+
+    public boolean doInternal(Context context, String documentPath, HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+        return false;
     }
 }

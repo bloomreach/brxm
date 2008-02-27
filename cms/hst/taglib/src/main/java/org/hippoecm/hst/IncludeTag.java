@@ -41,14 +41,14 @@ public class IncludeTag extends TagSupport {
     public int doEndTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
-        String contextName = (String) pageContext.findAttribute(RewriteFilter.ATTRIBUTE);
+        String contextName = (String) pageContext.findAttribute(ContextFilter.ATTRIBUTE);
         Context context = (Context) pageContext.findAttribute(contextName);
         try {
             pageContext.getOut().flush();
             Context newContext = new Context(context, page, -1);
 
             request.setAttribute(contextName, newContext);
-            RewriteResponseWrapper responseWrapper = new RewriteResponseWrapper(newContext, request, response);
+            MappingResponseWrapper responseWrapper = new MappingResponseWrapper(newContext, request, response);
 
             if (!responseWrapper.redirectRepositoryDocument(map, page, true)) {
                 throw new JspException("No document or no document mapping found for " + page);

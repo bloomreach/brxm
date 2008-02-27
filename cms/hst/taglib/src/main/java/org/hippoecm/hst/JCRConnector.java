@@ -30,17 +30,16 @@ public class JCRConnector {
 
     static Session getJCRSession(HttpSession httpSession) {
         Session result = null;
-        String location = httpSession.getServletContext().getInitParameter(REPOSITORY_ADRESS_PARAM);
-        String username = httpSession.getServletContext().getInitParameter(REPOSITORY_USERNAME_PARAM);
-        String password = httpSession.getServletContext().getInitParameter(REPOSITORY_PASSWORD_PARAM);
         try {
             SessionWrapper wrapper = (SessionWrapper) httpSession.getAttribute(JCR_SESSION_KEY);
             if (wrapper != null && wrapper.jcrSession.isLive()) {
                 result = wrapper.jcrSession;
             } else {
                 httpSession.removeAttribute(JCR_SESSION_KEY);
-                wrapper = new SessionWrapper(location, username, password);
-                //httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
+                wrapper = new SessionWrapper(httpSession.getServletContext().getInitParameter(REPOSITORY_ADRESS_PARAM),
+                                             httpSession.getServletContext().getInitParameter(REPOSITORY_USERNAME_PARAM),
+                                             httpSession.getServletContext().getInitParameter(REPOSITORY_PASSWORD_PARAM));
+                // FIXME httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;
             }
         } catch (LoginException e) {
