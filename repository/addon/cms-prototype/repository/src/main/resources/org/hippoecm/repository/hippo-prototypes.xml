@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
-
+  Copyright 2008 Hippo
+  
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
+  
   http://www.apache.org/licenses/LICENSE-2.0
-
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,38 +19,10 @@
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  sv:name="hippo:prototypes">
+  sv:name="hippo">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>
-
-  <!-- "Sample Document" prototype -->
-  <sv:node sv:name="sample:simpledocument">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>a948ad63-792d-4d7c-a9a4-ca256b69a880</sv:value>
-    </sv:property>
-    
-    <sv:node sv:name="sample:simpledocument">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>sample:simpledocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="sample:title" sv:type="String">
-        <sv:value>title</sv:value>
-      </sv:property>
-      <sv:property sv:name="sample:subject" sv:type="String">
-        <sv:value>subject</sv:value>
-      </sv:property>
-      <sv:property sv:name="sample:body" sv:type="String">
-        <sv:value>body</sv:value>
-      </sv:property>
-      <sv:property sv:name="state" sv:type="String">
-        <sv:value>unpublished</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
   
   <!-- "NodeType" prototype -->
   <sv:node sv:name="hippo:nodetype">
@@ -122,5 +94,5 @@
       
     </sv:node>
   </sv:node>
-    
-</sv:node>
+  
+</sv:node>  

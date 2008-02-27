@@ -91,10 +91,7 @@
 - sample:name (string)
 
 // image nodetype is used by imageSet so put it _before_ imageset
-[sample:image]
-- sample:src (string)
-- sample:size (string)
-- sample:contentType (string)
+[sample:image] > nt:resource
 
 [sample:imageSet]
 - sample:id (long)

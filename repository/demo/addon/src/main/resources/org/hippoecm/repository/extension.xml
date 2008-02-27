@@ -43,7 +43,7 @@
     </sv:property>
   </sv:node>
   
-  <sv:node sv:name="demo-templates">
+  <sv:node sv:name="demo-types">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -51,7 +51,7 @@
       <sv:value>10001</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>demo-templates.xml</sv:value>
+      <sv:value>demo-types.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:namespaces</sv:value>
@@ -69,7 +69,7 @@
       <sv:value>demo-prototypes.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype/hippo:prototypes</sv:value>
     </sv:property>
   </sv:node>
 
