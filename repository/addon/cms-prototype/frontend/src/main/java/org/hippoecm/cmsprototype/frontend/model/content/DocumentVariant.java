@@ -47,6 +47,9 @@ public class DocumentVariant extends NodeModelWrapper {
     public DocumentVariant(JcrNodeModel nodeModel) throws ModelWrapException {
         super(nodeModel);
         try {
+            if (nodeModel.getNode() == null) {
+                throw new ModelWrapException("Variant has gone away");
+            }
             if (nodeModel.getNode().isNodeType(HippoNodeType.NT_REQUEST)) {
                 // find document variant associated with request object
                 Session session = nodeModel.getNode().getSession();

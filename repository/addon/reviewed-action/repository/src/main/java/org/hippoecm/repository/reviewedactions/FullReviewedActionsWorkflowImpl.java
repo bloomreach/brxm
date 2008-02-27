@@ -44,6 +44,21 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     @Override
+    public void commitEditableInstance() throws WorkflowException {
+        ReviewedActionsWorkflowImpl.log.info("commit editable instance of document ");
+        if(draft != null) {
+            try {
+                unpublished = (PublishableDocument) draft.clone();
+                unpublished.state = PublishableDocument.UNPUBLISHED;
+            } catch(CloneNotSupportedException ex) {
+                throw new WorkflowException("document is not a publishable document");
+            }
+        } else {
+            throw new WorkflowException("no draft version of publication");
+        }
+    }
+
+    @Override
     public void disposeEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("dispose editable instance on document ");
         draft = null;
