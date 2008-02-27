@@ -50,6 +50,20 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
         return draft;
     }
 
+    public void commitEditableInstance() throws WorkflowException {
+        ReviewedActionsWorkflowImpl.log.info("commit editable instance of document ");
+        if(draft != null) {
+            try {
+                unpublished = (PublishableDocument) draft.clone();
+                unpublished.state = PublishableDocument.UNPUBLISHED;
+            } catch(CloneNotSupportedException ex) {
+                throw new WorkflowException("document is not a publishable document");
+            }
+        } else {
+            throw new WorkflowException("no draft version of publication");
+        }
+    }
+
     public void disposeEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("dispose editable instance on document ");
         draft = null;

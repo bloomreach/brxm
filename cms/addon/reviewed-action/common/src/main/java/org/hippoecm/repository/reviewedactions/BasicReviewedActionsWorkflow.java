@@ -33,6 +33,12 @@ public interface BasicReviewedActionsWorkflow extends Workflow {
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
+     * Request this editable copy of the document.
+     */
+    public void commitEditableInstance()
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
      * Do away with the editable copy of the document which was previously
      * obtained.
      */

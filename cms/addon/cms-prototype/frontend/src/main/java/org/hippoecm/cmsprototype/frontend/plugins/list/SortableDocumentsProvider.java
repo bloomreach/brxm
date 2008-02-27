@@ -62,6 +62,15 @@ public class SortableDocumentsProvider extends SortableDataProvider {
 
             public int compare(NodeModelWrapper o1, NodeModelWrapper o2) {
                 try {
+                    if(o1.getNodeModel() == null || o1.getNodeModel().getNode() == null) {
+                      if(o2.getNodeModel() == null || o2.getNodeModel().getNode() == null) {
+                          return 0;
+                      } else {
+                          return 1;
+                      }
+                    } else if(o2.getNodeModel() == null || o2.getNodeModel().getNode() == null) {
+                        return -1;
+                    }
                     String name1 = o1.getNodeModel().getNode().getName();
                     String name2 = o2.getNodeModel().getNode().getName();
                     return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);

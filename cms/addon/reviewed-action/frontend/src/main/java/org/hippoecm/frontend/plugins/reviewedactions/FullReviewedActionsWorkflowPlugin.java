@@ -28,6 +28,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.delete.DeleteDialog
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.depublish.DePublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableinstance.DisposeEditableInstanceDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinstance.ObtainEditableInstanceDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.commiteditableinstance.CommitEditableInstanceDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.publish.PublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion.RequestDeletionDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdepublication.RequestDePublicationDialog;
@@ -44,6 +45,8 @@ public class FullReviewedActionsWorkflowPlugin extends Plugin {
         ChannelFactory factory = getPluginManager().getChannelFactory();
         add(new DialogLink("obtainEditableInstance-dialog", new Model("Obtain editable copy"),
                 ObtainEditableInstanceDialog.class, jcrModel, channel, factory));
+        add(new DialogLink("commitEditableInstance-dialog", new Model("Commit editable copy"),
+                CommitEditableInstanceDialog.class, jcrModel, channel, factory));
         add(new DialogLink("disposeEditableInstance-dialog", new Model("Dispose editable copy"),
                 DisposeEditableInstanceDialog.class, jcrModel, channel, factory));
         add(new DialogLink("requestPublication-dialog", new Model("Request publication"),
