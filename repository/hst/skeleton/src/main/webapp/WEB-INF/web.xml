@@ -29,7 +29,7 @@
 
   <filter>
     <filter-name>Context</filter-name>
-    <filter-class>org.hippoecm.hst.RewriteFilter</filter-class>
+    <filter-class>org.hippoecm.hst.DocumentMapping</filter-class>
     <init-param>
       <description>
         Bind the context using the attribute name as specified by
