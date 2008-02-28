@@ -80,6 +80,17 @@
         <sv:value>hippo:template</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.ListFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:field" sv:type="String">
+        <sv:value>facetsearch</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:item">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.template.NodeFieldPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:field" sv:type="String">

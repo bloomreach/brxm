@@ -111,5 +111,5 @@
 - sample:link (reference)
 + sample:image (sample:image)
 + * (hippo:facetselect)
-//+ * (hippo:facetsearch)
++ * (hippo:facetsearch)
 // - sample:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'
