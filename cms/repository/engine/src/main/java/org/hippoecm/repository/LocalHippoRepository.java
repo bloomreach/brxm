@@ -308,6 +308,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             if(!rootSession.getRootNode().hasNode("hippo:configuration/hippo:initialize/" +
                                                                   n.getName())) {
                                 rootSession.move(n.getPath(), "/hippo:configuration/hippo:initialize/" + n.getName());
+                            } else {
+                                log.warn("Node " + n.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
                             }
                         }
                         mergeInitializationNode.remove();
@@ -373,24 +375,38 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
                     Node node = iter.nextNode();
                     if (node.hasProperty(HippoNodeType.HIPPO_SEQUENCE)) {
-                        highest = node.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble();
+                        double value = node.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble();
+                        if(value > highest) {
+                            highest = value;
+                        }
                     }
                 }
-                SortedMap<Double,String> ordered = new TreeMap<Double,String>();
+                SortedMap<Double,List<String>> ordered = new TreeMap<Double,List<String>>();
                 for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
                     Node node = iter.nextNode();
+                    Double value;
                     if (node.hasProperty(HippoNodeType.HIPPO_SEQUENCE)) {
-                        ordered.put(new Double(- node.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble()), node.getName());
+                        value = new Double(- node.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble());
                     } else {
-                        ordered.put(new Double(- highest), node.getName());
+                        value = new Double(- highest);
                         highest += 1.0;
                     }
+                    
+                    List<String> siblings;
+                    if(ordered.containsKey(value)) {
+                        siblings = ordered.get(value);
+                    } else {
+                        siblings = new LinkedList<String>();
+                        ordered.put(value, siblings);
+                    }
+                    siblings.add(node.getName());
                 }
                 String previous = null;
-                for (Iterator<String> iter = ordered.values().iterator(); iter.hasNext(); ) {
-                    String current = iter.next();
-                    initializationNode.orderBefore(current, previous);
-                    previous = current;
+                for (Iterator<List<String>> iter = ordered.values().iterator(); iter.hasNext(); ) {
+                    for (String current : iter.next()) {
+                        initializationNode.orderBefore(current, previous);
+                        previous = current;
+                    }
                 }
                 initializationNode.save();
 
