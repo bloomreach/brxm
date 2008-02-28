@@ -109,6 +109,7 @@
 - sample:body (string) mandatory
 - sample:subject (string) multiple mandatory
 - sample:link (reference)
++ sample:image (sample:image)
 + * (hippo:facetselect)
 //+ * (hippo:facetsearch)
 // - sample:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'

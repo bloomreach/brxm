@@ -23,7 +23,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:templatefolder</sv:value>
   </sv:property>
-
+  
   <sv:node sv:name="sample:simpledocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:template</sv:value>
@@ -73,6 +73,42 @@
       </sv:property>
       <sv:property sv:name="hippo:field" sv:type="String">
         <sv:value>facetselect</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:item">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.NodeFieldPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:field" sv:type="String">
+        <sv:value>image</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="sample:image">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:item">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.resource.ImageDisplayPlugin</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:item">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.resource.ResourceUploadPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

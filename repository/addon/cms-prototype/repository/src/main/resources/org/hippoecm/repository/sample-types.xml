@@ -24,19 +24,68 @@
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
 
-  <!-- "SimpleReference" template -->
-  <sv:node sv:name="Reference">
+  <!-- "image" template -->
+  <sv:node sv:name="sample:image">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:nodetype</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:node" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>Reference</sv:value>
+      <sv:value>sample:image</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:supertype" sv:type="String">
+      <sv:value>nt:resource</sv:value>
+    </sv:property>
+    
+    <!-- data -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>data</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>jcr:data</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Binary</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!-- last modified -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>last modified</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>jcr:lastModified</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Date</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!-- mime type -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>mime type</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>jcr:mimeType</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+    </sv:node>
+    
   </sv:node>
-  <!-- end "SimpleReference" template -->
+  <!-- end "image" template -->
   
   
   <!-- "Document" template -->
@@ -53,6 +102,22 @@
     <sv:property sv:name="hippo:supertype" sv:type="String">
       <sv:value>hippo:document</sv:value>
     </sv:property>
+    
+    <!-- image -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>image</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>sample:image</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>sample:image</sv:value>
+      </sv:property>
+    </sv:node>
     
     <!-- facetselect -->
     <sv:node sv:name="hippo:field">
