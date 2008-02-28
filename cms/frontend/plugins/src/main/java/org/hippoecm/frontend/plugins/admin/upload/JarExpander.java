@@ -44,9 +44,6 @@ public class JarExpander {
 
     public static final String PROP_EXPAND_DATE = "rep:jarExpanded";
 
-    /** The node of the unpacked JAR contents */
-    private Node jarContents;
-
     private Node node;
     private Property prop;
     private String path;

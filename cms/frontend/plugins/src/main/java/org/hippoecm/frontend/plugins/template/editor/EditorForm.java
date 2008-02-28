@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -43,6 +44,10 @@ public class EditorForm extends Form {
         super(wicketId, model);
 
         this.plugin = plugin;
+
+        setMultiPart(true);
+        // FIXME: make this configurable
+        setMaxSize(Bytes.megabytes(5));
 
         add(createTemplate());
     }

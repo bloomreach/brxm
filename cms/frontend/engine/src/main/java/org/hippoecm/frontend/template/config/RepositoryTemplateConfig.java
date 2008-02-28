@@ -68,7 +68,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         List<ItemDescriptor> items = new LinkedList<ItemDescriptor>();
         for (PluginDescriptor child : plugin.getChildren()) {
             String name = ((Descriptor) child).field;
-            if (name != "") {
+            if (name != null) {
                 boolean found = false;
                 List<FieldDescriptor> fields = parent.getTypeDescriptor().getFields();
                 for (FieldDescriptor field : fields) {

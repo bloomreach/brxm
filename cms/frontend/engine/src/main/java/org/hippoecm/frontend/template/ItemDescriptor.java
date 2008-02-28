@@ -107,7 +107,7 @@ public class ItemDescriptor implements IClusterable, Cloneable {
             return true;
         }
         ItemDescriptor itemDescriptor = (ItemDescriptor) object;
-        return new EqualsBuilder().append(getName(), itemDescriptor.getName()).isEquals();
+        return new EqualsBuilder().append(getName(), itemDescriptor.getName()).append(getPlugin(), itemDescriptor.getPlugin()).isEquals();
     }
 
     @Override
