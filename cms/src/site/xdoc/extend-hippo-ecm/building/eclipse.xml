@@ -77,16 +77,6 @@
                     </li>
                 </ol>
             </subsection>
-            <subsection name="RMI">
-                <ol>
-                    <li>
-                        <p>Name='RMI plugin'</p>
-                    </li>
-                    <li>
-                        <p>URL='http://www.genady.net/rmi/v20/update/'</p>
-                    </li>
-                </ol>
-            </subsection>
             <subsection name="JPOX">
                 <ol>
                     <li>
@@ -225,17 +215,6 @@
             </subsection>
         </section>
         <section name="Create eclipse projects, part three">
-            <subsection name="RMI enhanced projects">
-                <p> For projects that provide objects that can be accessed remotely,
-                    (hippo-ecm-repository-engine, hippo-ecm-repository-connector and all repository
-                    addons like hippo-ecm-addon-reviewed-action-repository) stubs must be created by
-                    rmic.</p>
-                <ol>
-                    <li>
-                        <p>right-click project -&gt; RMI -&gt; Enable Stubs generation</p>
-                    </li>
-                </ol>
-            </subsection>
             <subsection name="JPOX enhanced projects">
                 <p> Projects that provide document types (hippoecm-repository-engine,
                     hippo-ecm-repository-connector, hippo-ecm-api and all repository addons like
@@ -288,9 +267,6 @@
                     <p>Add to 'VM Arguments':</p>
                     <source> 
 -Dorg.mortbay.util.FileResource.checkAliases=False
--Djava.rmi.server.codebase="file:///${m2_loc}/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4/jackrabbit-jcr-rmi-1.4.jar
-                            file:///${m2_loc}/javax/jcr/jcr/1.0/jcr-1.0.jar
-                            file:///${ecm_loc}/addon/reviewed-action/repository/target/classes/"
                     </source>
                 </li>
             </ul>
