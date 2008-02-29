@@ -73,6 +73,40 @@ public class JcrPropertyValueModel extends Model {
         return propertyModel;
     }
     
+    public Value getValue() {
+    	load();
+    	return value;
+    }
+    
+    public void setValue(Value value)
+    {
+        load();
+
+        this.value = value;
+        
+        try {
+            Property prop = propertyModel.getProperty();
+            if (prop.getDefinition().isMultiple()) {
+                Value[] oldValues = prop.getValues();
+                Value[] newValues = new Value[oldValues.length];
+                for (int i = 0; i < oldValues.length; i++) {
+                    if (i == index) {
+                        newValues[i] = value;
+                    } else {
+                        newValues[i] = oldValues[i];
+                    }
+                }
+                prop.setValue(newValues);
+            } else {
+                prop.setValue(value);
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    
+
     @Override
     public Object getObject() {
         try {
@@ -127,25 +161,7 @@ public class JcrPropertyValueModel extends Model {
             return;
         }
 
-        try {
-            Property prop = propertyModel.getProperty();
-            if (prop.getDefinition().isMultiple()) {
-                Value[] oldValues = prop.getValues();
-                Value[] newValues = new Value[oldValues.length];
-                for (int i = 0; i < oldValues.length; i++) {
-                    if (i == index) {
-                        newValues[i] = value;
-                    } else {
-                        newValues[i] = oldValues[i];
-                    }
-                }
-                prop.setValue(newValues);
-            } else {
-                prop.setValue(value);
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
+        setValue(value);
     }
 
     @Override
