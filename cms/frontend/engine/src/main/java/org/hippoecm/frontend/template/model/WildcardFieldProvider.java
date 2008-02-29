@@ -110,6 +110,7 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
         }
 
         elements = new LinkedList<WildcardModel>();
+        Set<String> excluded = descriptor.getExcluded();
         try {
             Node node = getNodeModel().getNode();
             if (type.isNode()) {
@@ -117,15 +118,17 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
                 NodeIterator iterator = node.getNodes("*");
                 while (iterator.hasNext()) {
                     Node child = iterator.nextNode();
-                    // add child if it is not excluded.
-                    // TODO: filter on node type
-                    addItem(new JcrItemModel(child));
+                    if (!excluded.contains(child.getName()) && child.isNodeType(type.getType())) {
+                        addItem(new JcrItemModel(child));
+                    }
                 }
             } else {
                 PropertyIterator iterator = node.getProperties("*");
                 while (iterator.hasNext()) {
                     Property property = iterator.nextProperty();
-                    addItem(new JcrItemModel(property));
+                    if (!excluded.contains(property.getName())) {
+                        addItem(new JcrItemModel(property));
+                    }
                 }
             }
         } catch (RepositoryException ex) {
