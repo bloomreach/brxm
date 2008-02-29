@@ -30,8 +30,10 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -96,7 +98,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     }
 
     @Override
-    public NodeState populate(NodeState state) {
+    public NodeState populate(NodeState state) throws IllegalNameException, NamespaceException {
         FacetResultSetNodeId nodeId = (FacetResultSetNodeId) state.getNodeId();
         String queryname = nodeId.queryname;
         String docbase = nodeId.docbase;
@@ -154,9 +156,9 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         count = facetedResult.length();
 
         PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
-        propState.setType(PropertyType.STRING);
+        propState.setType(PropertyType.NAME);
         propState.setDefinitionId(primaryTypePropDef.getId());
-        propState.setValues(new InternalValue[] { InternalValue.create(HippoNodeType.NT_FACETRESULT) });
+        propState.setValues(new InternalValue[] { InternalValue.create(resolveName(HippoNodeType.NT_FACETRESULT))} );
         propState.setMultiValued(false);
         state.addPropertyName(NameConstants.JCR_PRIMARYTYPE);
 

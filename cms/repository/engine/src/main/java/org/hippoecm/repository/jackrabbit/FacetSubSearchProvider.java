@@ -50,9 +50,9 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
         super.populate(state);
 
         PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
-        propState.setType(PropertyType.STRING);
+        propState.setType(PropertyType.NAME);
         propState.setDefinitionId(primaryTypePropDef.getId());
-        propState.setValues(new InternalValue[] { InternalValue.create(HippoNodeType.NT_FACETSUBSEARCH) });
+        propState.setValues(new InternalValue[] { InternalValue.create(resolveName(HippoNodeType.NT_FACETSUBSEARCH)) });
         propState.setMultiValued(false);
         state.addPropertyName(NameConstants.JCR_PRIMARYTYPE);
 

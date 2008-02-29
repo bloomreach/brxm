@@ -59,6 +59,7 @@
                     <sv:property sv:name="hippo:values" sv:type="String">
                         <sv:value>rep:root</sv:value>
                         <sv:value>hippo:facetsubsearch</sv:value>
+                        <sv:value>hippo:facetresult</sv:value>
                         <sv:value>hippo:workflowfolder</sv:value>
                         <sv:value>hippo:workflowcategory</sv:value>
                         <sv:value>hippo:frontendplugin</sv:value>
