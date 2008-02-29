@@ -680,10 +680,16 @@ public class HippoAccessManager implements AccessManager {
                 InternalValue[] iVals = state.getValues();
                 for (InternalValue iVal : iVals) {
                     if (iVal.getType() == PropertyType.STRING) {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Checking facetVal: " + value + " (string) -> " + iVal.getString());
+                        }
                         if (iVal.getString().equals(value)) {
                             return true;
                         }
                     } else if (iVal.getType() == PropertyType.NAME) {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Checking facetVal: " + value + " (name) -> " + iVal.getQName().toString());
+                        }
                         if (iVal.getQName().toString().equals(value)) {
                             return true;
                         }
