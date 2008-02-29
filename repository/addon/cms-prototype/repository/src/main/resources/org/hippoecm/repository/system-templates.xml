@@ -38,7 +38,7 @@
       <sv:value>hippo:template</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.template.DatePickerPlugin</sv:value>
     </sv:property>
   </sv:node>
 
