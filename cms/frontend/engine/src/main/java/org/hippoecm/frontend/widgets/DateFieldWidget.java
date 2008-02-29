@@ -22,7 +22,6 @@ import java.util.GregorianCalendar;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.value.DateValue;
-import org.apache.wicket.extensions.yui.calendar.DateTimeField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -30,8 +29,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 public class DateFieldWidget extends AjaxUpdatingWidget {
     private static final long serialVersionUID = 1L;
 
-    private DateTimeField dtfield;
-    
     public DateFieldWidget(String id, IModel model) {
         super(id, model);
         
@@ -44,15 +41,13 @@ public class DateFieldWidget extends AjaxUpdatingWidget {
         	date = null;
         }
         
-        addFormField(dtfield = new DateTimeField("widget", new Model(date) { 
+        addFormField(new AjaxDateTimeField("widget", new Model(date) { 
 			private static final long serialVersionUID = 1L;
 
 			@Override
         	public void setObject(Object object) {
-        		
-				
 				Calendar calendar = new GregorianCalendar();
-	    		calendar.setTime(dtfield.getDate());
+	    		calendar.setTime((Date) object);
 	    		valueModel.setValue(new DateValue(calendar));
 
         		super.setObject(object);
