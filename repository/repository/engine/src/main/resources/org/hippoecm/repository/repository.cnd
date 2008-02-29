@@ -205,6 +205,15 @@
 [hippo:templatefolder] > nt:base
 + * (hippo:template) = hippo:template
 
+[hippo:prototypefolder] > nt:base
++ * (nt:base)
+
+[hippo:prototypenamespace] > nt:base
++ * (hippo:prototypefolder)
+
+[hippo:prototyped] mixin
+- hippo:prototype (reference) mandatory
+
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:ocmqueryfolder) = hippo:ocmqueryfolder mandatory
@@ -214,7 +223,5 @@
 + hippo:roles (hippo:rolefolder) = hippo:rolefolder
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:namespaces (hippo:namespacefolder) = hippo:namespacefolder
++ hippo:prototypes (hippo:prototypenamespace) = hippo:prototypenamespace
 + hippo:frontend (hippo:application) = hippo:application
-
-[hippo:prototyped] mixin
-- hippo:prototype (reference) mandatory
