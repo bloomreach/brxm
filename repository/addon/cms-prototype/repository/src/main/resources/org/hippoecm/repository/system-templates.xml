@@ -33,6 +33,15 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="Date">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="Html">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:template</sv:value>
