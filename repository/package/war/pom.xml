@@ -137,12 +137,12 @@
       <version>1.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-demo-addon</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
-    </dependency>
+    </dependency>-->
 
   </dependencies>
 
