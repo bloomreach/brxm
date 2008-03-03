@@ -39,7 +39,7 @@ public class JCRConnector {
                 wrapper = new SessionWrapper(httpSession.getServletContext().getInitParameter(REPOSITORY_ADRESS_PARAM),
                                              httpSession.getServletContext().getInitParameter(REPOSITORY_USERNAME_PARAM),
                                              httpSession.getServletContext().getInitParameter(REPOSITORY_PASSWORD_PARAM));
-                // FIXME httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
+                httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;
             }
         } catch (LoginException e) {
@@ -133,7 +133,7 @@ public class JCRConnector {
             HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             try {
-                jcrSession = repository.login(username, password.toCharArray());
+                jcrSession = repository.login(username, (password != null ? password.toCharArray() : null));
                 logger.info("logged in as " + username);
             } catch(LoginException ex) {
                 logger.warn("login as " + username + " failed, trying as anonymous.");
