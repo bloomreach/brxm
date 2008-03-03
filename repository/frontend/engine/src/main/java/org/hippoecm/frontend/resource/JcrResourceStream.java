@@ -66,12 +66,15 @@ public class JcrResourceStream extends JcrNodeModel implements IResourceStream {
     }
 
     public InputStream getInputStream() throws ResourceStreamNotFoundException {
-        if (stream == null) {
-            try {
-                stream = getNode().getProperty("jcr:data").getStream();
-            } catch (RepositoryException ex) {
-                throw new ResourceStreamNotFoundException(ex);
+        try {
+            if (stream != null) {
+                stream.close();
             }
+            stream = getNode().getProperty("jcr:data").getStream();
+        } catch (RepositoryException ex) {
+            throw new ResourceStreamNotFoundException(ex);
+        } catch(IOException ex) {
+            throw new ResourceStreamNotFoundException(ex);
         }
         return stream;
     }
