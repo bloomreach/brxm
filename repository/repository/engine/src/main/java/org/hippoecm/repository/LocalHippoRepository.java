@@ -347,7 +347,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 }
             };
             obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/hippo:configuration/hippo:initialize",
-                    true, null, null, false);
+                    true, null, null, true);
 
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);

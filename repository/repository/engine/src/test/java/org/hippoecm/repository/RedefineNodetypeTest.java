@@ -82,7 +82,7 @@ public class RedefineNodetypeTest extends TestCase {
         //Temporary test method to avoid 'no tests found' failure
     }
 
-    public void _testRedefine() throws RepositoryException {
+    public void testRedefine() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test");
         try {
             root.addNode("node", "hippotest1:test");
@@ -137,7 +137,7 @@ public class RedefineNodetypeTest extends TestCase {
         // 'return nodes list'
     }
 
-    public void _testWorkflow() throws RepositoryException, WorkflowException, RemoteException {
+    public void testWorkflow() throws RepositoryException, WorkflowException, RemoteException {
 
         String cnd1 =
             "<rep='internal'>\n" +
