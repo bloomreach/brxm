@@ -78,10 +78,6 @@ public class RedefineNodetypeTest extends TestCase {
         }
     }
     
-    public void testRemoveMeWhenFixed() {
-        //Temporary test method to avoid 'no tests found' failure
-    }
-
     public void testRedefine() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test");
         try {
