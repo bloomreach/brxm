@@ -41,7 +41,6 @@ public class EditorPlugin extends Plugin {
 
         DialogLink save = new DialogLink("save-dialog", new Model("Save"), SaveDialog.class, jcrModel, channel, factory);
         add(save);
-
         form = new EditorForm("form", (JcrNodeModel) getModel(), this);
         add(form);
 
@@ -50,11 +49,6 @@ public class EditorPlugin extends Plugin {
 
     @Override
     public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(notification.getModel());
-            form.setModel(model);
-            notification.getContext().addRefresh(this);
-        }
         super.receive(notification);
     }
 }

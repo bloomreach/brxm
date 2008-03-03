@@ -55,11 +55,8 @@ public class SaveDialog extends AbstractDialog {
 
         Channel channel = getChannel();
         if(channel != null) {
-            Request request = channel.createRequest("select", nodeModel);
-            channel.send(request);
-
             if (hasPendingChanges) {
-                request = channel.createRequest("flush", nodeModel.findRootModel());
+            	Request request = channel.createRequest("flush", nodeModel.findRootModel());
                 channel.send(request);
             }
         }

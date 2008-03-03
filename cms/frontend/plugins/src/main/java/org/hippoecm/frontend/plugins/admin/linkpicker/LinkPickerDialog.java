@@ -78,7 +78,7 @@ public class LinkPickerDialog extends LookupDialog {
         }
         
         if (channel != null) {
-            Request request = channel.createRequest("select", sourceNodeModel);
+            Request request = channel.createRequest("flush", sourceNodeModel);
             channel.send(request);
         }
         
