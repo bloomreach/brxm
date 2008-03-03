@@ -26,22 +26,6 @@
     Hippo Site Toolkit tag library
   </info>
 
-  <tag>
-    <name>include</name>
-    <tagclass>org.hippoecm.hst.IncludeTag</tagclass>
-    <body-content>empty</body-content>
-    <attribute>
-      <name>page</name>
-      <required>true</required>
-      <rtexprvalue>true</rtexprvalue>
-    </attribute>
-    <attribute>
-      <name>map</name>
-      <required>false</required>
-      <rtexprvalue>true</rtexprvalue>
-    </attribute>
-  </tag>
-
   <function>
     <name>concat</name>
     <function-class>org.hippoecm.hst.Helper</function-class>
