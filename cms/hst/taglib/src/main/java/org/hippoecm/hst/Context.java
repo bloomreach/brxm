@@ -58,7 +58,7 @@ public class Context extends AbstractMap {
     }
 
     Context(Context parent, String path, int index) {
-        this(parent.session, parent.urlbasepath);       
+    	this(parent.session, parent.urlbasepath);       
         this.index = index;
         if (path.startsWith("/")) {
             this.path = path;
@@ -89,7 +89,7 @@ public class Context extends AbstractMap {
             try {
                 if (query != null) {
                     QueryResult result;
-                    if (arguments.size() > 0) {
+                    if ((arguments != null) && arguments.size() > 0) {
                         result = query.execute(arguments.toArray(new String[arguments.size()]));
                     } else {
                         result = query.execute();
@@ -100,7 +100,6 @@ public class Context extends AbstractMap {
                     }
                 } else {
                     Item item = JCRConnector.getItem(session, path);
-                    logger.debug("Item has disappeared " + path);
                     if (item == null) {
                         logger.debug("Item has disappeared " + path);
                     } else if (item.isNode()) {
@@ -126,7 +125,7 @@ public class Context extends AbstractMap {
             try {
                 if (query != null) {
                     QueryResult result;
-                    if (arguments.size() > 0) {
+                    if ((arguments != null) && arguments.size() > 0) {
                         result = query.execute(arguments.toArray(new String[arguments.size()]));
                     } else {
                         result = query.execute();
@@ -162,9 +161,9 @@ public class Context extends AbstractMap {
         synchronized (this) {
             try {
                 if (path == null && !field.startsWith("/")) {
-                    List newArguments = new LinkedList(arguments);
+                    List newArguments = (arguments == null) ? new LinkedList() : new LinkedList(arguments);
                     newArguments.add(key);
-                    result = new Context(this, query, arguments);
+                    result = new Context(this, query, newArguments);
                 } else {
                     String requestedPath = this.path;
                     if (!field.startsWith("_")) {
