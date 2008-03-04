@@ -30,8 +30,8 @@
   <h1>${webpage['demo:pageTitle']}</h1>
 
   <p>
-    <c:forEach var="message" items="${context['/messages']}">
-      <li>${message._path}
+    <c:forEach var="message" items="${context['/sitemessages']}">
+      <li><a href="message.jsp?message=${message._name}">${message.title}</a></li>
     </c:forEach>
   </p>
 
