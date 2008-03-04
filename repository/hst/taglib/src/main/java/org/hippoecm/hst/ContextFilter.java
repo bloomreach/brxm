@@ -46,7 +46,7 @@ public class ContextFilter implements Filter {
         if (param != null && !param.trim().equals("")) {
             urlbasehome = param;
         } else
-            throw new ServletException("Missing parameter urlbasehome in "+filterConfig.getFilterName());
+            urlbasehome = null;
 
         param = filterConfig.getInitParameter("urlbasepath");
         if (param != null && !param.trim().equals("")) {
@@ -84,7 +84,10 @@ public class ContextFilter implements Filter {
             pathAfterContext = pathAfterContext.substring(0, semicolonIdx);
         }
         if (pathAfterContext.equals("") || pathAfterContext.endsWith("/")) {
-            pathAfterContext += urlbasehome;
+            if (urlbasehome != null)
+                pathAfterContext += urlbasehome;
+            else if (pathAfterContext.endsWith("/"))
+                pathAfterContext = pathAfterContext.substring(0,pathAfterContext.length()-1);
         }
       
         String documentPath = urlbasepath;
