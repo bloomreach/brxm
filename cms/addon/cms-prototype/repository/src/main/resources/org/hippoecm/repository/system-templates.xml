@@ -51,6 +51,15 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="Docbase">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.template.LinkPickerPlugin</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <sv:node sv:name="Link">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:template</sv:value>
@@ -58,6 +67,14 @@
     <sv:property sv:name="hippo:renderer" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.template.LinkPickerPlugin</sv:value>
     </sv:property>
+    <sv:node sv:name="hippo:parameters">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:parameters</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodetypes" sv:type="String">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 
 </sv:node>

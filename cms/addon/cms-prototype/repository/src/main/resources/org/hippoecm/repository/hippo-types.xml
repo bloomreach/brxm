@@ -389,6 +389,43 @@
   </sv:node>
   <!-- end "Plugin" type -->
 
+  <!-- hippo:facetlink type -->
+  <sv:node sv:name="hippo:facetlink">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:nodetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>hippo:facetlink</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:supertype" sv:type="String">
+      <sv:value>nt:unstructured</sv:value>
+    </sv:property>
+    
+    <!-- Link -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>location</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>hippo:docbase</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Link</sv:value>
+      </sv:property>
+    </sv:node>
+    
+  </sv:node>
+  <!-- end "hippo:facetlink" type -->
+  
   <!-- hippo:facetselect type -->
   <sv:node sv:name="hippo:facetselect">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -419,10 +456,10 @@
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>Link</sv:value>
+        <sv:value>Docbase</sv:value>
       </sv:property>
     </sv:node>
-
+    
     <!-- hippo:facets-->
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -444,7 +481,7 @@
         <sv:value>true</sv:value>
       </sv:property>
     </sv:node>
-
+    
     <!-- hippo:values-->
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -466,7 +503,7 @@
         <sv:value>true</sv:value>
       </sv:property>
     </sv:node>
-
+    
     <!-- hippo:modes-->
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -534,7 +571,7 @@
         <sv:value>hippo:docbase</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>Link</sv:value>
+        <sv:value>Docbase</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
         <sv:value>true</sv:value>
