@@ -19,18 +19,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>
-<div background="lightblue" align="left" width="20%" id="menu">
-X${webpage._path}X
-  <c:if test="${webpage._name == 'home'}"><a href="/index.jsp"><b>Home</b></a><br/></c:if>
-  <c:if test="${webpage._name != 'home'}"><a href="/index.jsp">Home</a><br/></c:if>
+<div id="bar" width="100%"><img src="hippoecm.gif"></div><br/>
+<div id="menu">
+  <c:if test="${webpage._name == 'index'}"><a href="index.jsp"><b>Home</b></a><br/></c:if>
+  <c:if test="${webpage._name != 'index'}"><a href="index.jsp">Home</a><br/></c:if>
 
-  <c:if test="${webpage._name == 'news' || webpage._name == 'message'}">
-    <a href="/news.jsp"><b>News</b></a><br/>
+  <c:if test="${webpage._name == 'news'}"><a href="news.jsp">
+    <b>News</b></a><br/>
+    <c:forEach var="iterator" items="${context['/site/messages']}">
+      <c:set var="message" value="${iterator[iterator._name]}"/>
+      &nbsp;&nbsp;<small><a href="message.jsp?message=${message._name}">${message['demo:title']}</a></small><br/>
+    </c:forEach>
   </c:if>
-  <c:if test="${webpage._name != 'news'}">
-    <a href="/news.jsp">News</a><br/>
-  </c:if>
+  <c:if test="${webpage._name != 'news'}"><a href="news.jsp">News</a><br/></c:if>
 
-  <c:if test="${webpage._name == 'contact'}"><a href="/contact.jsp"><b>Contact</b></a><br/></c:if>
-  <c:if test="${webpage._name != 'contact'}"><a href="/contact.jsp">Contact</a><br/></c:if>
+  <c:if test="${webpage._name == 'contact'}"><a href="contact.jsp"><b>Contact</b></a><br/></c:if>
+  <c:if test="${webpage._name != 'contact'}"><a href="contact.jsp">Contact</a><br/></c:if>
 </div>

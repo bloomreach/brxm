@@ -20,9 +20,10 @@
     limitations under the License.
 --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<c:set var="webpage" value="${context['/site/pages/contact/contact']}" scope="request"/>
+<c:set var="webpage" value="${context['news/news']}" scope="request"/>
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="style.css" rel="stylesheet" type="text/css"/>
 </head><body>
 
   <jsp:include page="navigation.jsp"/>
@@ -30,8 +31,14 @@
   <h1>${webpage['demo:pageTitle']}</h1>
 
   <p>
-    <c:forEach var="message" items="${context['/sitemessages']}">
-      <li><a href="message.jsp?message=${message._name}">${message.title}</a></li>
+    <% int i=0; %>
+    <c:forEach var="iterator" items="${global['messages']}">
+      <c:set var="message" value="${iterator[iterator._name]}"/>
+      <a href="message.jsp?message=${message._name}">${message['demo:title']}</a>
+        <% if(i++<3) { %>
+          <br/><img src="/images${message._path}/demo:image" align="left"/>${message['demo:description']}
+        <% } %>
+      <br clear="all"/><br/>
     </c:forEach>
   </p>
 
