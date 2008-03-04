@@ -20,19 +20,17 @@
     limitations under the License.
 --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<c:set var="webpage" value="${context['/site/pages/message/message']}" scope="request"/>
+<c:set var="webpage" value="${context['/site/messages'][param['message']}" scope="request"/>
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head><body>
 
   <jsp:include page="navigation.jsp"/>
 
-  <h1>${webpage['demo:pageTitle']}</h1>
+  <h1>${webpage['demo:title']}</h1>
 
-  <p>
-    <c:forEach var="message" items="${context['/messages']}">
-      <li>${message._path}
-    </c:forEach>
-  </p>
+  <img src="images/${webpage['demo:image']}">
+
+  ${webpage['demo:description']}
 
 </body></html>
