@@ -105,6 +105,7 @@ public class ContextFilter implements Filter {
 
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = new Context(jcrSession, urlbasepath);
+        context.setPath(documentPath);
         req.setAttribute(attributename, context);
 
         if(!doInternal(context, documentPath, req, res)) {
