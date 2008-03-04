@@ -66,6 +66,9 @@
 - hippo:discriminator (string) multiple // should be mandatory
 + * (hippo:document) = hippo:document multiple
 
+[hippo:facetlink] 
+- hippo:docbase (string) mandatory
+
 [hippo:reference] > hippo:handle
 - hippo:docbase (string) mandatory
 + * (hippo:document) multiple

@@ -81,6 +81,20 @@
   </sv:node>
   <!-- end "Html" type -->
 
+  <!--  Docbase type -->
+  <sv:node sv:name="Docbase">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:nodetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:node" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>String</sv:value>
+    </sv:property>
+  </sv:node>
+  <!-- end Docbase type -->
+  
   <!--  Link type -->
   <sv:node sv:name="Link">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
