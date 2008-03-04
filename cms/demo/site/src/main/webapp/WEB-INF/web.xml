@@ -24,22 +24,22 @@
   <context-param>
     <description>The address of the repository</description>
     <param-name>repository-address</param-name>
-    <param-value>rmi://localhost:1099/hipporepository</param-value>
+    <param-value>rmi://10.0.0.2:1099/hipporepository</param-value>
   </context-param>
   <context-param>
     <description>The username to use for the repository login</description>
     <param-name>repository-username</param-name>
-    <param-value>siteuser</param-value>
+    <param-value>admin</param-value>
   </context-param>
   <context-param>
     <description>The password to use for the repository login</description>
     <param-name>repository-password</param-name>
-    <param-value>siteuser</param-value>
+    <param-value>admin</param-value>
   </context-param>
 
   <filter>
-    <filter-name>Context</filter-name>
-    <filter-class>org.hippoecm.hst.RewriteFilter</filter-class>
+    <filter-name>ContextPreview</filter-name>
+    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
     <init-param>
       <description>
         Bind the context using the attribute name as specified by
@@ -55,29 +55,34 @@
         that can be accessed using url rewriting 
       </description>      
       <param-name>urlbasepath</param-name>
-      <param-value>/en/pages</param-value>
-    </init-param>
-    <init-param>
-      <description>
-        This parameter describes which document is responsible for
-        requests send to the bare context root.   In effect a
-        welcome page, but for the context root itself only.
-      </description>
-      <param-name>urlbasehome</param-name>
-      <param-value>home</param-value>
-    </init-param>
-    <init-param>
-      <description>
-        Where to find the default 'node type -> jsp file' mapping,
-        must be of type hst:urlmappingfolder
-      </description>
-      <param-name>urlmapping</param-name>
-      <param-value>/defaultmapping</param-value>
+      <param-value>/preview/pages</param-value>
     </init-param>
   </filter>
 
   <filter>
-    <filter-name>GlobalContext</filter-name>
+    <filter-name>ContextLive</filter-name>
+    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <init-param>
+      <description>
+        Bind the context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+        Defaults to context.
+      </description>
+      <param-name>attributename</param-name>
+      <param-value>context</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        Where to find the nodes of type hippo:document
+        that can be accessed using url rewriting 
+      </description>      
+      <param-name>urlbasepath</param-name>
+      <param-value>/live/pages</param-value>
+    </init-param>
+  </filter>
+
+  <filter>
+    <filter-name>GlobalContextPreview</filter-name>
     <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
     <init-param>
       <description>
@@ -92,19 +97,52 @@
         The path to bind as context.
       </description>      
       <param-name>location</param-name>
-      <param-value>/en</param-value>
+      <param-value>/preview</param-value>
+    </init-param>
+  </filter>
+
+  <filter>
+    <filter-name>GlobalContextLive</filter-name>
+    <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
+    <init-param>
+      <description>
+        Bind an additional context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+      </description>
+      <param-name>attributename</param-name>
+      <param-value>global</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        The path to bind as context.
+      </description>      
+      <param-name>location</param-name>
+      <param-value>/live</param-value>
     </init-param>
   </filter>
 
   <filter-mapping>
-    <filter-name>Context</filter-name>
-    <url-pattern>/*</url-pattern>
+    <filter-name>ContextPreview</filter-name>
+    <url-pattern>preview/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
   <filter-mapping>
-    <filter-name>GlobalContext</filter-name>
-    <url-pattern>/*</url-pattern>
+    <filter-name>ContextLive</filter-name>
+    <url-pattern>live/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>GlobalContextPreview</filter-name>
+    <url-pattern>preview/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>INCLUDE</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>GlobalContextLive</filter-name>
+    <url-pattern>live/*</url-pattern>
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
   </filter-mapping>
@@ -116,7 +154,7 @@
 
   <servlet-mapping>
     <servlet-name>DirectAccessServlet</servlet-name>
-    <url-pattern>/static/*</url-pattern>
+    <url-pattern>/images/*</url-pattern>
   </servlet-mapping>
   
   <!-- Timeout in minutes -->

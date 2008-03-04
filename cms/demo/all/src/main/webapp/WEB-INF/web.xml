@@ -23,7 +23,7 @@
 
   <context-param>
     <param-name>repository-address</param-name>
-    <param-value>rmi://localhost:1099/hipporepository</param-value>
+    <param-value>rmi://10.0.0.2:1099/hipporepository</param-value>
     <description>The address of the repository</description>
   </context-param>
     <context-param>
@@ -205,6 +205,11 @@
   </filter-mapping>
 
   <servlet>
+    <servlet-name>DirectAccessServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.DirectAccessServlet</servlet-class>
+  </servlet>
+
+  <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
     <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
     <init-param>
@@ -224,6 +229,11 @@
   <servlet-mapping>
     <servlet-name>RepositoryServlet</servlet-name>
     <url-pattern>/repository/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>DirectAccessServlet</servlet-name>
+    <url-pattern>/images/*</url-pattern>
   </servlet-mapping>
 
   <!-- Timeout in minutes -->
