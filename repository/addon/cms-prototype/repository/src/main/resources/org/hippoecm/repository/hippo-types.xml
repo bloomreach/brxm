@@ -509,7 +509,7 @@
         <sv:value>hippo:field</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>querybase</sv:value>
+        <sv:value>queryname</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hippo:queryname</sv:value>
