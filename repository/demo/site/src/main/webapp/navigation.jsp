@@ -19,17 +19,18 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>
+<div background="lightblue" align="left" width="20%" id="menu">
+X${webpage._path}X
+  <c:if test="${webpage._name == 'home'}"><a href="/index.jsp"><b>Home</b></a><br/></c:if>
+  <c:if test="${webpage._name != 'home'}"><a href="/index.jsp">Home</a><br/></c:if>
 
-<div id="block">
+  <c:if test="${webpage._name == 'news' || webpage._name == 'message'}">
+    <a href="/news.jsp"><b>News</b></a><br/>
+  </c:if>
+  <c:if test="${webpage._name != 'news'}">
+    <a href="/news.jsp">News</a><br/>
+  </c:if>
 
-  <div background="lightblue" width="100%">
-    <ul>
-    <c:forEach var="item" items="${global['navigation/navigation']}">
-      <c:forEach var="doc" items="${item}">
-        <li><c:url var="url" value="${doc._path}"/><a href="${url}"/>${doc['sample:pageLabel']}</a>
-      </c:forEach>
-    </c:forEach>
-    </ul>
-  </div>
-
+  <c:if test="${webpage._name == 'contact'}"><a href="/contact.jsp"><b>Contact</b></a><br/></c:if>
+  <c:if test="${webpage._name != 'contact'}"><a href="/contact.jsp">Contact</a><br/></c:if>
 </div>
