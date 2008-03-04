@@ -88,7 +88,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="demo-data-en">
+  <sv:node sv:name="demo-data-live">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -96,14 +96,14 @@
       <sv:value>10004</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>demo-content-en.xml</sv:value>
+      <sv:value>demo-content-live.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="demo-data-nl">
+  <sv:node sv:name="demo-data-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -111,7 +111,7 @@
       <sv:value>10005</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>demo-content-nl.xml</sv:value>
+      <sv:value>demo-content-preview.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>

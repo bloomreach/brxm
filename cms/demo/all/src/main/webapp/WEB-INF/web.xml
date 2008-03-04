@@ -26,7 +26,17 @@
     <param-value>rmi://localhost:1099/hipporepository</param-value>
     <description>The address of the repository</description>
   </context-param>
-  
+    <context-param>
+    <description>The username to use for the repository login</description>
+    <param-name>repository-username</param-name>
+    <param-value>admin</param-value>
+  </context-param>
+  <context-param>
+    <description>The password to use for the repository login</description>
+    <param-name>repository-password</param-name>
+    <param-value>admin</param-value>
+  </context-param>
+
   <!--builtin console-->
   <filter>
     <filter-name>BuiltinConsole</filter-name>
