@@ -75,7 +75,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 }
             },
 
-            HeaderContributor.forJavaScript("/xinha/xinha/XinhaCore.js"),
+            HeaderContributor.forJavaScript("/xinha/xinha/XinhaLoader.js"),
 
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
@@ -122,6 +122,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                     sb.append("  ];\n");
                     sb.append("  if(!Xinha.loadPlugins(xinha_plugins, xinha_init)) return;\n");
                     sb.append("  xinha_config = xinha_config ? xinha_config() : new Xinha.Config();\n");
+                    sb.append("  xinha_config.width = '500px';\n");
+                    sb.append("  xinha_config.height = '300px';\n");
+                    sb.append("  xinha_config.toolbar = [['popupeditor','formatblock', 'bold','italic','underline']];\n");
                     sb.append("  xinha_config.pageStyleSheets = [ _editor_url + \"examples/full_example.css\" ];\n");
                     sb.append("  xinha_editors   = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);\n");
                     sb.append("  Xinha.startEditors(xinha_editors);\n");

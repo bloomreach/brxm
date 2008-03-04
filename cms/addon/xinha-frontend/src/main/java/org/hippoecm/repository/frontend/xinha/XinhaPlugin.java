@@ -61,9 +61,8 @@ public class XinhaPlugin extends Plugin {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                final String saveCall = "{wicketAjaxGet('" + getCallbackUrl()
-                        + "&save=true&'+this.name+'='+wicketEncode(this.value)); return false;}";
-                tag.put("onblur", saveCall);
+                final String saveCall = getCallbackUrl() + "&save=true";
+                tag.put("callbackUrl", saveCall);
             }
 
             @Override
@@ -85,14 +84,14 @@ public class XinhaPlugin extends Plugin {
         configuration = this.new Configuration();
         List<String> plugins = pluginDescriptor.getParameter("plugins");
         if (plugins != null) {
-            if (!plugins.contains("SaveSubmit")) {
-                plugins.add("SaveSubmit");
+            if (!plugins.contains("AutoSave")) {
+                plugins.add("AutoSave");
             }
             configuration.setPlugins((String[]) plugins.toArray());
         } else {
-            configuration.setPlugins(new String[] { "SaveSubmit" });
+            configuration.setPlugins(new String[] { "AutoSave" });
         }
-
+        
         Page page = parentPlugin.getPage();
         for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
             IBehavior behavior = (IBehavior) iter.next();
