@@ -29,6 +29,10 @@
 
   <h1>${webpage['demo:pageTitle']}</h1>
 
-  ${context['demo:content']}
+  <p>
+    <c:forEach var="message" items="${context['/messages']}">
+      <li>${message._path}
+    </c:forEach>
+  </p>
 
 </body></html>

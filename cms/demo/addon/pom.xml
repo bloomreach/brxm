@@ -27,7 +27,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Demo addon</name>
+  <name>Hippo ECM demo addon</name>
   <description>Hippo ECM demo addon</description>
   <artifactId>hippo-ecm-demo-addon</artifactId>
   <groupId>org.hippoecm</groupId>

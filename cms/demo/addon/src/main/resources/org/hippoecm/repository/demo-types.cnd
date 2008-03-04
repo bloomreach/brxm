@@ -25,25 +25,9 @@
 
 [demo:webFolder] > nt:unstructured
 
-[demo:webPage] > hippo:document, hst:page, hippostd:languagable, hippostd:publishable
+[demo:webPage] > hippo:document, hippostd:publishable
 - demo:pageLabel (string)
 - demo:pageTitle (string)
 
-[demo:webNavigation] > hippo:document, hippostd:languagable, hippostd:publishable orderable
+[demo:webNavigation] > hippo:document, hippostd:publishable orderable
 + * (hippo:facetselect) = hippo:facetselect
-
-[demo:paragraph] > nt:unstructured
-
-[demo:paragraphs] > nt:base orderable
-+ * (demo:paragraph) = demo:paragraph
-
-[demo:languageDocument] > hippo:document, hippostd:publishable, hippostd:languagable
-- demo:title (string)
-+ demo:paragraphs (demo:paragraphs) = demo:paragraphs
-
-[demo:countryInfoDocument] > hippo:document, hippostd:languagable
-- demo:name (string)
-
-[demo:countryDocument] > hippo:document, hippostd:publishable
-- demo:symbol
-+ demo:translation (hippo:handle)
