@@ -38,14 +38,14 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
     }
 
     public String edit() throws WorkflowException, MappingException, RepositoryException {
-        if (!node.isNodeType(HippoNodeType.NT_TEMPLATE))
+        if (!node.isNodeType(HippoNodeType.NT_NODETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
         return node.getPath();
     }
 
     public String copy(String name) throws WorkflowException, MappingException, RepositoryException {
-        if (!node.isNodeType(HippoNodeType.NT_TEMPLATE))
+        if (!node.isNodeType(HippoNodeType.NT_NODETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
         String path = node.getPath();
