@@ -22,7 +22,7 @@
 
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm</artifactId>
-  <version>2.01.00-dev</version>
+  <version>2.01.00-SNAPSHOT</version>
 
   <name>Hippo ECM</name>
   <description>Hippo ECM suite</description>
@@ -103,6 +103,10 @@
       <id>repodocs.hippocms.org</id>
       <url>scp://repo2site@repodocs.hippocms.org/home/repo2site/www</url>
     </site>
+    <snapshotRepository>
+      <id>repository.hippocms.org</id>
+      <url>ftp://repository.hippocms.org/maven2</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <ciManagement>
@@ -268,7 +272,19 @@
   </pluginRepositories>
 
   <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ftp</artifactId>
+        <!-- version>1.0-beta-2</version -->
+      </extension>
+    </extensions>
     <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
       <plugin>
         <inherited>false</inherited>
         <artifactId>maven-clean-plugin</artifactId>

@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm</artifactId>
-    <version>2.01.00-dev</version>
+    <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <artifactId>hippo-ecm-maven-skin</artifactId>
-  <version>2.01.00-dev</version>
+  <version>2.01.00-SNAPSHOT</version>
   <name>Hippo ECM Maven Site Skin</name>
   <description>Maven site skin for Hippo ECM documentation</description>
 
