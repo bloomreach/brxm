@@ -183,6 +183,10 @@
                                 <p>Copy all files in addon/xinha/src/main/webapp to
                                     package/war/src/main/webapp/xinha.</p>
                             </li>
+                            <li>
+                                <p>Copy all files in addon/xinha/webResources to addon/xinha/src/main/webapp/xinha/plugins</p>
+                            </li>
+
                         </ol>
                         <p> These steps have to be repeated after each change in
                             hippo-ecm-addon-skin or hippo-ecm-addon-xinha. </p>
@@ -195,6 +199,9 @@
  ~/> cd hippo-ecm/package/war/src/main/webapp
  ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/skin/src/main/webapp/ skin
  ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/xinha/src/main/webapp/ xinha
+ ~/hippo-ecm/package/war/src/main/webapp> cd -
+ ~/> cd hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins
+ ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/AutoSave ./
                          </source>
                     </li>
                 </ul>
