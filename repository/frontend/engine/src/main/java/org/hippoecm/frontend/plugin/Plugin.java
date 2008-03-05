@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
@@ -38,6 +39,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     private Plugin parentPlugin;
     private Channel topChannel;
     private Channel bottomChannel;
+    private String cssClasses;
 
     public Plugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor.getWicketId(), model);
@@ -53,6 +55,20 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
             }
             bottomChannel = parentPlugin.getPluginManager().getChannelFactory().createChannel();
             bottomChannel.register(this);
+        }
+
+        cssClasses = null;
+        List<String> classes = pluginDescriptor.getParameter("css");
+        if (classes != null) {
+            cssClasses = "";
+            for (String cssClass : classes) {
+                cssClasses = cssClasses + " " + cssClass;
+            }
+        }
+
+        List<String> markupIds = pluginDescriptor.getParameter("id");
+        if (markupIds != null && markupIds.size() == 1) {
+            setMarkupId(markupIds.get(0));
         }
     }
 
@@ -134,6 +150,15 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
             ((Plugin) component).destroy();
         }
         super.remove(component);
+    }
+
+    @Override
+    public void onComponentTag(final ComponentTag tag) {
+        super.onComponentTag(tag);
+
+        if (cssClasses != null) {
+            tag.put("class", cssClasses);
+        }
     }
 
     // channels
