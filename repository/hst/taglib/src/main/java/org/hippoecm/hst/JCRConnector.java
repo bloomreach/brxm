@@ -130,6 +130,7 @@ public class JCRConnector {
         Session jcrSession;
 
         SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {
+            logger.info("connecting to repository at " + location + " as " + username);
             HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             try {
