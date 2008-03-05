@@ -28,7 +28,8 @@
 
   <jsp:include page="navigation.jsp"/>
 
-  <c:set var="message" value="${context['../messages'][param['message']][param['message']]}"/>
+  <c:set var="message" value="${global['messages'][param['message']][param['message']]}" scope="request"/>
+
   <h1>${message['demo:title']}</h1>
 
   <img src="/images${message._path}/demo:image"/><p/>
