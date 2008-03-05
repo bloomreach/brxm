@@ -213,6 +213,22 @@
                     </li>
                 </ol>
             </subsection>
+            <subsection name="Test resource folders">
+                <p>
+                    The maven-eclipse-plugin creates source folders for test resources.  These
+                    can interfere with the initialization of the repository, so they should be removed
+                    from the classpath.  This applies to the projects hippo-ecm-frontend-plugin and
+                    hippo-ecm-repository-engine:
+                </p>
+                <ol>
+                    <li>
+                        <p>Select the "Source" tab under the project properties</p>
+                    </li>
+                    <li>
+                      <p>Remove the &lt;project&gt;/src/test/resources folder</p>
+                    </li>
+                </ol>
+            </subsection>
         </section>
         <section name="Create eclipse projects, part three">
             <subsection name="JPOX enhanced projects">
