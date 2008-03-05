@@ -24,7 +24,7 @@
   <context-param>
     <description>The address of the repository</description>
     <param-name>repository-address</param-name>
-    <param-value>rmi://10.0.0.2:1099/hipporepository</param-value>
+    <param-value>rmi://localhost:1099/hipporepository</param-value>
   </context-param>
   <context-param>
     <description>The username to use for the repository login</description>

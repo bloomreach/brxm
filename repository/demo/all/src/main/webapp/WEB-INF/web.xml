@@ -23,7 +23,7 @@
 
   <context-param>
     <param-name>repository-address</param-name>
-    <param-value>rmi://10.0.0.2:1099/hipporepository</param-value>
+    <param-value>rmi://localhost:1099/hipporepository</param-value>
     <description>The address of the repository</description>
   </context-param>
     <context-param>
