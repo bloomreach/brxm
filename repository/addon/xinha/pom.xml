@@ -76,7 +76,7 @@
         <configuration>
           <webResources>
             <resource>
-              <directory>webResources</directory>
+              <directory>${basedir}/webResources</directory>
             </resource>
           </webResources>
         </configuration>
