@@ -60,6 +60,19 @@
     <appender-ref ref="console"/>
   </category>
 
+  <category additivity="false" name="org.hippoecm.repository.ocm.FieldManagerImpl">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.ocm.StoreManagerImpl">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.ocm">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+
   <root>
     <level value="info"/>
     <appender-ref ref="console"/>
