@@ -85,11 +85,12 @@ public class XinhaPlugin extends Plugin {
         List<String> plugins = pluginDescriptor.getParameter("plugins");
         if (plugins != null) {
             if (!plugins.contains("AutoSave")) {
-                plugins.add("AutoSave");
+            	plugins.add("AutoSave");
+            	plugins.add("Linker");
             }
             configuration.setPlugins((String[]) plugins.toArray());
         } else {
-            configuration.setPlugins(new String[] { "AutoSave" });
+            configuration.setPlugins(new String[] { "AutoSave", "Linker" });
         }
         
         Page page = parentPlugin.getPage();
