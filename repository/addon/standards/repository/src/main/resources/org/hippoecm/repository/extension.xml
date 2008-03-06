@@ -66,7 +66,7 @@
       <sv:value>16</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hippostd-templates.xml</sv:value>
+      <sv:value>hippostd-types.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:namespaces</sv:value>
