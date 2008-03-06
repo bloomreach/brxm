@@ -46,7 +46,7 @@ public class ExceptionPlugin extends Plugin {
             ExceptionModel repositoryExceptionModel = null;
             if (notification.getModel() instanceof ExceptionModel) {
                 repositoryExceptionModel = (ExceptionModel) notification.getModel();
-                exceptionDialog.setExceptionMessage(repositoryExceptionModel.getException());
+                exceptionDialog.setExceptionMessage(repositoryExceptionModel);
                 notification.getContext().addRefresh(dialogWindow, "show");
             }
 
