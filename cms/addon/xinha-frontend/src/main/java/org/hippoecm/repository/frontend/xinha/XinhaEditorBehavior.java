@@ -61,7 +61,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
     }
 
     IHeaderContributor[] getHeaderContributorsPartly() {
-
+         
         return new IHeaderContributor[] {
 
             new IHeaderContributor() {
@@ -69,13 +69,13 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
                 public void renderHead(IHeaderResponse response) {
                     StringBuffer sb = new StringBuffer();
-                    sb.append("_editor_url = '/xinha/xinha/';\n");
+                    sb.append("_editor_url = 'xinha/xinha/';\n");
                     sb.append("_editor_lang = 'en';\n");
                     response.renderJavascript(sb, null);
                 }
             },
 
-            HeaderContributor.forJavaScript("/xinha/xinha/XinhaLoader.js"),
+            HeaderContributor.forJavaScript("xinha/xinha/XinhaLoader.js"),
 
             new IHeaderContributor() {
                 private static final long serialVersionUID = 1L;
