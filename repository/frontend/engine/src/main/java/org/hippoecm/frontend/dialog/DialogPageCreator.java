@@ -22,14 +22,14 @@ import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 public class DialogPageCreator implements PageCreator {
 
     private static final long serialVersionUID = 1L;
-    private LookupDialog lookupDialog;
+    private AbstractDialog abstractDialog;
 
-    public DialogPageCreator(LookupDialog lookupDialog) {
-        this.lookupDialog = lookupDialog;
+    public DialogPageCreator(AbstractDialog abstractDialog) {
+        this.abstractDialog = abstractDialog;
     }
 
     public Page createPage() {
-        return lookupDialog;
+        return abstractDialog;
     }
 
 }
