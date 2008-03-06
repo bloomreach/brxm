@@ -19,7 +19,7 @@
   <skin>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-maven-skin</artifactId>
-    <version>2.01.00-dev</version>
+    <version>2.01.00-SNAPSHOT</version>
   </skin>
 
   <bannerLeft>
