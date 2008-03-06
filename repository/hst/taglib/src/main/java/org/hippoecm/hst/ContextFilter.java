@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo.
+ * Copyright 2007-2008 Hippo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,8 +73,10 @@ public class ContextFilter implements Filter {
         /* This next part is better resolved by using filterConfig.getServletContext().getContextPath(), but
          * this is only available after Servlet API 2.5.
          */
-        if (pathAfterContext.startsWith(req.getServletPath())) {
-            pathAfterContext = pathAfterContext.substring(req.getServletPath().length());
+        String servletPath = req.getServletPath();
+        if (pathAfterContext.startsWith(servletPath)
+        	&& !pathAfterContext.equals(servletPath)) {
+            pathAfterContext = pathAfterContext.substring(servletPath.length());
         }
         if (pathAfterContext.startsWith(req.getContextPath())) {
             pathAfterContext = pathAfterContext.substring(req.getContextPath().length());
@@ -89,7 +91,7 @@ public class ContextFilter implements Filter {
             else if (pathAfterContext.endsWith("/"))
                 pathAfterContext = pathAfterContext.substring(0,pathAfterContext.length()-1);
         }
-      
+
         String documentPath = urlbasepath;
         if (documentPath == null) {
             documentPath = "/";
@@ -99,6 +101,7 @@ public class ContextFilter implements Filter {
         } else {
             documentPath = documentPath + pathAfterContext;
         }
+
         if(logger.isDebugEnabled()) {
             logger.debug("Using document path "+documentPath);
         }
