@@ -22,18 +22,33 @@ public class ExceptionModel implements IPluginModel {
 
     private static final long serialVersionUID = 1L;
     private Exception exception;
+    private String displayMessage;
 
     public ExceptionModel(Exception e) {
         this.exception = e;
     }
 
+    public ExceptionModel(String displayMessage) {
+        this.displayMessage = displayMessage;
+    }
+    
+    public ExceptionModel(Exception e,String displayMessage) {
+        this.exception = e;
+        this.displayMessage = displayMessage;
+    }
+    
     public Exception getException() {
         return exception;
+    }
+    
+    public String getDisplayMessage() {
+        return displayMessage;
     }
 
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("exception", exception);
+        map.put("displayMessage", displayMessage);
         return map;
     }
 

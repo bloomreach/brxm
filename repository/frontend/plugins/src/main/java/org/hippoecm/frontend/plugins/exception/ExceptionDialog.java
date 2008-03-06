@@ -21,20 +21,26 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.ExceptionModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class ExceptionDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     private String exception_message = "";
+    @SuppressWarnings("unused")
+    private String display_message = "";
 
     public ExceptionDialog(DialogWindow dialogWindow, Channel channel) {
         super(dialogWindow, channel);
         dialogWindow.setTitle("Exception");
 
         final Label exceptionMessageLabel = new Label("exception-message", new PropertyModel(this, "exception_message"));
+        final Label displayMessageLabel = new Label("display-message", new PropertyModel(this, "display_message"));
         exceptionMessageLabel.setOutputMarkupId(true);
         add(exceptionMessageLabel);
+        add(displayMessageLabel);
 
         cancel.setVisible(false);
 
@@ -54,8 +60,13 @@ public class ExceptionDialog extends AbstractDialog {
     protected void cancel() {
     }
 
-    public void setExceptionMessage(Exception exception) {
-        this.exception_message = exception.getMessage();
+    public void setExceptionMessage(ExceptionModel repositoryExceptionModel) {
+        if(repositoryExceptionModel.getException() != null ) {
+            this.exception_message = repositoryExceptionModel.getException().getMessage();
+        }
+        if(repositoryExceptionModel.getDisplayMessage() != null ) {
+            this.display_message = repositoryExceptionModel.getDisplayMessage();
+        }
     }
 
 }
