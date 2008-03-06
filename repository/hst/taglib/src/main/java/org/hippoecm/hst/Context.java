@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo.
+ * Copyright 2007-2008 Hippo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,8 +177,8 @@ public class Context extends AbstractMap {
                     }
                     Item item = JCRConnector.getItem(session, requestedPath);
                     if (item == null) {
-                        logger.info("Path not found on "+requestedPath);
-                        result = "PathNotFound " + requestedPath;
+                        logger.debug("Path not found on "+requestedPath);
+                        result = null;
                     } else if (item.isNode()) {
                         Node node = (Node) item;
                         if (node.isNodeType("jcr:statement")) {
