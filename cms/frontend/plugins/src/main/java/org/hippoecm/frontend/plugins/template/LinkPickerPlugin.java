@@ -40,7 +40,7 @@ public class LinkPickerPlugin extends Plugin {
     
     private JcrPropertyValueModel valueModel;
     
-    private List<String> nodetypes = new ArrayList();
+    private List<String> nodetypes = new ArrayList<String>();
     
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
  
