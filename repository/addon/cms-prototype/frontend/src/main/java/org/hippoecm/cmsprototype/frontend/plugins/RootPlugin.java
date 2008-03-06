@@ -37,6 +37,16 @@ public class RootPlugin extends Plugin {
             }
             return;
         }
+
+        if ("exception".equals(request.getOperation())) {
+            request.getContext().addRefresh(this);
+            Channel outgoing = getBottomChannel();
+            if (outgoing != null) {
+                outgoing.publish(outgoing.createNotification(request));
+            }
+            return;
+        }
+
         super.handle(request);
     }
 }
