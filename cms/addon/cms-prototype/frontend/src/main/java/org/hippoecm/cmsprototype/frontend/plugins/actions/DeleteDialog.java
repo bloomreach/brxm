@@ -54,7 +54,7 @@ public class DeleteDialog extends AbstractDialog {
             Node toBeDeleted = node;
             Node parent = node.getParent();
             Node parentHandle = Utils.findHandle(node);
-            toBeDeleted.save();
+            toBeDeleted.remove();
             parent.save();
             if (channel != null) {
                 Request request = channel.createRequest("select", new JcrNodeModel(parentHandle));
