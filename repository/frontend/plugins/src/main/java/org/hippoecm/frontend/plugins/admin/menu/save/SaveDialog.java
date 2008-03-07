@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.admin.menu.save;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -51,8 +52,13 @@ public class SaveDialog extends AbstractDialog {
     @Override
     public void ok() throws RepositoryException {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-        nodeModel.getNode().getSession().save();
-
+        Node saveNode = nodeModel.getNode();
+        if (hasPendingChanges) {
+            while(saveNode.isNew()){
+                saveNode = saveNode.getParent();
+            }
+            saveNode.save();
+        }
         Channel channel = getChannel();
         if(channel != null) {
             if (hasPendingChanges) {
