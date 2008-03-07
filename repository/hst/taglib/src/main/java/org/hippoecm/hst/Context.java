@@ -86,7 +86,6 @@ public class Context extends AbstractMap {
 
     boolean exists() {
         try {
-System.err.println("BERRY "+path);
             Item item = JCRConnector.getItem(session, path);
             return item != null;
         } catch (RepositoryException ex) {
