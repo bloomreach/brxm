@@ -37,17 +37,14 @@ public class AccessContextTag extends ConditionalTagSupport {
 
     public void setVar(String variable) {
         this.variable = variable;
-        System.err.println("BERRY#1");
     }
 
     public void setValue(String location) {
-        System.err.println("BERRY#2");
         this.location = location;
     }
 
     @Override
     protected boolean condition() throws JspTagException {
-        System.err.println("BERRY#3");
         HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = new Context(jcrSession, null);

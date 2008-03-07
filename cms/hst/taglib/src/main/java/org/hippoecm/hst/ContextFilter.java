@@ -74,7 +74,7 @@ public class ContextFilter implements Filter {
          * this is only available after Servlet API 2.5.
          */
         String servletPath = req.getServletPath();
-        if (pathAfterContext.startsWith(servletPath) && !pathAfterContext.equals(servletPath)) { // BERRY ik denk niet dat dit klopt
+        if (pathAfterContext.startsWith(servletPath) && !pathAfterContext.equals(servletPath)) {
             pathAfterContext = pathAfterContext.substring(servletPath.length());
         }
         if (pathAfterContext.startsWith(req.getContextPath())) {
