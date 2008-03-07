@@ -93,7 +93,6 @@ public class NodeTemplateProvider extends AbstractProvider<TemplateModel> implem
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
-                log.info("removed " + model);
             } else {
                 currentModel.setIndex(newIndex++);
             }
