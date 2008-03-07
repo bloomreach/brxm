@@ -46,11 +46,15 @@ public class CopyDialog extends LookupDialog {
             if (target != null) {
                 UserSession wicketSession = (UserSession) getSession();
                 HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
-
                 String targetPath = target.getPath() + "/" + source.getName();
-
                 jcrSession.copy(source, targetPath);
-                jcrSession.save();
+                
+                Node saveNode = target; 
+                while(saveNode.isNew()) {
+                    // you can only save non-new nodes;
+                    saveNode = saveNode.getParent();
+                }
+                saveNode.save();
 
                 if (channel != null) {
                     Request request = channel.createRequest("select", new JcrNodeModel(target));
