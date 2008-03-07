@@ -96,7 +96,6 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
                         log.error(ex.getMessage());
                     }
                 }
-                log.info("removed " + model);
                 return;
             }
         }
