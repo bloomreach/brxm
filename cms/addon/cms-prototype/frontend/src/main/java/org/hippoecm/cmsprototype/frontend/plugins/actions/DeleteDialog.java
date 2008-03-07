@@ -51,20 +51,16 @@ public class DeleteDialog extends AbstractDialog {
     public void ok() throws RepositoryException {
         Node node = dialogWindow.getNodeModel().getNode();
         if (node != null) {
-           try {
-                Node toBeDeleted = node;
-                Node parent = node.getParent();
-                Node parentHandle = Utils.findHandle(node);
-                toBeDeleted.remove();
-                parent.save();
-                if (channel != null) {
-                    Request request = channel.createRequest("select", new JcrNodeModel(parentHandle));
-                    channel.send(request);
-                    request = channel.createRequest("flush", new JcrNodeModel(parentHandle));
-                    channel.send(request);
-                }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+            Node toBeDeleted = node;
+            Node parent = node.getParent();
+            Node parentHandle = Utils.findHandle(node);
+            toBeDeleted.save();
+            parent.save();
+            if (channel != null) {
+                Request request = channel.createRequest("select", new JcrNodeModel(parentHandle));
+                channel.send(request);
+                request = channel.createRequest("flush", new JcrNodeModel(parentHandle));
+                channel.send(request);
             }
         }
     }
