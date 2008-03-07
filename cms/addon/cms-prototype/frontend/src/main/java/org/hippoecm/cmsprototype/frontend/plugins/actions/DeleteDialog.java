@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.model.ExceptionModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
@@ -50,17 +51,16 @@ public class DeleteDialog extends AbstractDialog {
     public void ok() throws RepositoryException {
         Node node = dialogWindow.getNodeModel().getNode();
         if (node != null) {
-            Node toBeDeleted = null;
-            try {
-                toBeDeleted = node;
+           try {
+                Node toBeDeleted = node;
                 Node parent = node.getParent();
+                Node parentHandle = Utils.findHandle(node);
                 toBeDeleted.remove();
                 parent.save();
                 if (channel != null) {
-                    Request request = channel.createRequest("select", new JcrNodeModel(parent));
+                    Request request = channel.createRequest("select", new JcrNodeModel(parentHandle));
                     channel.send(request);
-
-                    request = channel.createRequest("flush", new JcrNodeModel("/"));
+                    request = channel.createRequest("flush", new JcrNodeModel(parentHandle));
                     channel.send(request);
                 }
             } catch (RepositoryException e) {
