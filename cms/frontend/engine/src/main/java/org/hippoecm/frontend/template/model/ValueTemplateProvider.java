@@ -128,7 +128,6 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
                             property.remove();
                         }
                     }
-                    log.info("removed " + model);
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
