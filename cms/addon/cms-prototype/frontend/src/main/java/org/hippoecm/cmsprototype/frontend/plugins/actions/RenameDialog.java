@@ -74,7 +74,7 @@ public class RenameDialog extends AbstractDialog {
                 }
             }
             renamedNode = rename(node);
-
+            renamedNode.getParent().save();
             if (channel != null && renamedNode != null) {
                 Request request = channel.createRequest("flush", new JcrNodeModel("/"));
                 channel.send(request);
@@ -85,20 +85,14 @@ public class RenameDialog extends AbstractDialog {
         }
     }
 
-    private Node rename(Node node) {
+    private Node rename(Node node) throws RepositoryException{
         Node result;
-        try {
-            UserSession wicketSession = (UserSession) getSession();
-            HippoSession session = (HippoSession) wicketSession.getJcrSession();
-            String srcAbsPath = node.getPath();
-            String destAbsPath = srcAbsPath.substring(0, srcAbsPath.lastIndexOf("/") + 1) + name;
-            session.move(srcAbsPath, destAbsPath);
-            session.save();
-            result = (Node) session.getItem(destAbsPath);
-        } catch (RepositoryException e) {
-            log.error("Rename node failed", e);
-            result = null;
-        }
+        UserSession wicketSession = (UserSession) getSession();
+        HippoSession session = (HippoSession) wicketSession.getJcrSession();
+        String srcAbsPath = node.getPath();
+        String destAbsPath = srcAbsPath.substring(0, srcAbsPath.lastIndexOf("/") + 1) + name;
+        session.move(srcAbsPath, destAbsPath);
+        result = (Node) session.getItem(destAbsPath);
         return result;
     }
 
