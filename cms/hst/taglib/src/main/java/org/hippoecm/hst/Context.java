@@ -29,6 +29,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
@@ -81,6 +82,17 @@ public class Context extends AbstractMap {
 
     void setPath(String path) {
         this.path = path;
+    }
+
+    boolean exists() {
+        try {
+System.err.println("BERRY "+path);
+            Item item = JCRConnector.getItem(session, path);
+            return item != null;
+        } catch (RepositoryException ex) {
+            logger.error("exists", ex);
+            return false;
+        }
     }
 
     public Collection values() {
@@ -205,7 +217,13 @@ public class Context extends AbstractMap {
                         }
                     } else {
                         Property property = (Property) item;
-                        result = property.getString();
+                        switch(property.getType()) {
+                        case PropertyType.DATE:
+                            result = property.getDate().getTime();
+                            break;
+                        default:
+                            result = property.getString();
+                        }
                     }
                 }
             } catch (PathNotFoundException ex) {

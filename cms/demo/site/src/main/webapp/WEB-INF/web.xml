@@ -22,9 +22,9 @@
 
   <!-- Repository configurtation -->
   <context-param>
-    <description>The address of the repository</description>
     <param-name>repository-address</param-name>
     <param-value>rmi://localhost:1099/hipporepository</param-value>
+    <description>The address of the repository</description>
   </context-param>
   <context-param>
     <description>The username to use for the repository login</description>
@@ -55,7 +55,7 @@
         that can be accessed using url rewriting 
       </description>      
       <param-name>urlbasepath</param-name>
-      <param-value>/preview/pages</param-value>
+      <param-value>/preview/site/pages</param-value>
     </init-param>
   </filter>
 
@@ -77,7 +77,7 @@
         that can be accessed using url rewriting 
       </description>      
       <param-name>urlbasepath</param-name>
-      <param-value>/live/pages</param-value>
+      <param-value>/live/site/pages</param-value>
     </init-param>
   </filter>
 
@@ -97,7 +97,7 @@
         The path to bind as context.
       </description>      
       <param-name>location</param-name>
-      <param-value>/preview</param-value>
+      <param-value>/preview/site</param-value>
     </init-param>
   </filter>
 
@@ -117,7 +117,7 @@
         The path to bind as context.
       </description>      
       <param-name>location</param-name>
-      <param-value>/live</param-value>
+      <param-value>/live/site</param-value>
     </init-param>
   </filter>
 
@@ -136,6 +136,7 @@
   <filter-mapping>
     <filter-name>GlobalContextPreview</filter-name>
     <url-pattern>preview/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
   </filter-mapping>
@@ -143,6 +144,7 @@
   <filter-mapping>
     <filter-name>GlobalContextLive</filter-name>
     <url-pattern>live/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
   </filter-mapping>
