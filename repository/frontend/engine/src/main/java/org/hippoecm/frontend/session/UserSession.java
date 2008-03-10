@@ -17,6 +17,7 @@ package org.hippoecm.frontend.session;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Request;
 import org.apache.wicket.RestartResponseException;
@@ -35,7 +36,6 @@ public class UserSession extends WebSession {
     static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
     private JcrSessionModel jcrSessionModel;
-    private String hippo;
 
     public UserSession(Request request) {
         super(request);
@@ -72,6 +72,15 @@ public class UserSession extends WebSession {
 
     public WorkflowManager getWorkflowManager() {
         return jcrSessionModel.getWorkflowManager();
+    }
+    
+    public QueryManager getQueryManager() {
+        try {
+            return jcrSessionModel.getSession().getWorkspace().getQueryManager();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
 
     public HippoNode getRootNode() {
