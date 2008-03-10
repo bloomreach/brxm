@@ -16,7 +16,13 @@
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
         <form wicket:id="editor">
-            <h3 style="text-decoration: underline">Properties</h3>
+            <h3>Primary Type</h3>
+            <ul>
+                <li>
+                    <b><span wicket:id="primarytype"/></b>
+                </li>
+            </ul>
+            <h3>Properties</h3>
             <ul>
                 <li wicket:id="properties">
                     <b><span wicket:id="name">Property name</span></b>
@@ -39,8 +45,8 @@
                     <br/>
                 </li>
             </ul>
-            <h3 style="text-decoration: underline">Types</h3>
-            <div wicket:id="types">
+            <h3>Mixin Types</h3>
+            <div wicket:id="mixintypes">
                 <ul style="list-style: none;">
                     <li wicket:id="type">
                         <input type="checkbox" wicket:id="check">
