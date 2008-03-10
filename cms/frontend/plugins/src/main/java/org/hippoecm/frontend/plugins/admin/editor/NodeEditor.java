@@ -16,8 +16,11 @@
 package org.hippoecm.frontend.plugins.admin.editor;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
@@ -32,6 +35,8 @@ public class NodeEditor extends Form implements INotificationListener {
 
     static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
 
+    @SuppressWarnings("unused")
+    private String primaryType;
     private PropertiesEditor properties;
     private NodeTypesEditor types;
 
@@ -42,11 +47,18 @@ public class NodeEditor extends Form implements INotificationListener {
         if (channel != null) {
             channel.subscribe(this);
         }
+        try {
+            primaryType = model.getNode().getPrimaryNodeType().getName();
+            add(new Label("primarytype", new PropertyModel(this, "primaryType")));
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+            add(new Label("primarytype", e.getMessage()));
+        }
 
         properties = new PropertiesEditor("properties", new JcrPropertiesProvider(model));
         add(properties);
 
-        types = new NodeTypesEditor("types", new JcrNodeTypesProvider(model)) {
+        types = new NodeTypesEditor("mixintypes", new JcrNodeTypesProvider(model)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -79,6 +91,11 @@ public class NodeEditor extends Form implements INotificationListener {
             JcrNodeModel newModel = new JcrNodeModel(notification.getModel());
             properties.setProvider(new JcrPropertiesProvider(newModel));
             types.setProvider(new JcrNodeTypesProvider(newModel));
+            try {
+                primaryType = newModel.getNode().getPrimaryNodeType().getName();
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
             setModel(newModel);
             notification.getContext().addRefresh(this);
         }

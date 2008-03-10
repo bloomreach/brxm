@@ -47,24 +47,17 @@ public class PropertiesEditor extends DataView {
     @Override
     protected void populateItem(Item item) {
         JcrPropertyModel model = (JcrPropertyModel) item.getModel();
-        if (model.getProperty() != null) {
-            try {
-                item.add(deleteLink("delete", model));
-                item.add(new Label("name", model.getProperty().getName()));
-                item.add(new PropertyValueEditor("values", model));
-                if (model.getProperty().getDefinition().isMultiple()) {
-                    item.add(addLink("add", model));
-                } else {
-                    item.add(new Label("add", ""));
-                }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+        try {
+            item.add(deleteLink("delete", model));
+            item.add(new Label("name", model.getProperty().getName()));
+            item.add(new PropertyValueEditor("values", model));
+            if (model.getProperty().getDefinition().isMultiple()) {
+                item.add(addLink("add", model));
+            } else {
+                item.add(new Label("add", ""));
             }
-        } else {
-            item.add(new Label("delete", "null"));
-            item.add(new Label("name", "null"));
-            item.add(new Label("values", "null"));
-            item.add(new Label("add", "null"));
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
         }
     }
 
