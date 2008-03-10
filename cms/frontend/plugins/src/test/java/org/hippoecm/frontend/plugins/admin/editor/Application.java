@@ -122,6 +122,9 @@ public class Application extends WicketTester.DummyWebApplication {
             node.getProperties();
             nodeControl.setReturnValue(propertyIterator, MockControl.ONE_OR_MORE);
 
+            node.getPrimaryNodeType();
+            nodeControl.setReturnValue(nodeType, MockControl.ONE_OR_MORE);
+            
             node.getSession();
             nodeControl.setReturnValue(session, MockControl.ONE_OR_MORE);
 
