@@ -21,8 +21,8 @@
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <reporting='http://www.hippoecm.org/reporting/nt/1.0'>
 
-[reporting:report] mixin
-+ * (hippo:query) = hippo:query mandatory
+[reporting:report] > hippo:document
++ hippo:query (hippo:query) = hippo:query mandatory
 - reporting:parameternames (string) multiple
 - reporting:parametervalues (string) multiple
-+ * (hippo:plugin) = hippo:plugin mandatory
++ hippo:frontendplugin (hippo:frontendplugin) = hippo:frontendplugin mandatory

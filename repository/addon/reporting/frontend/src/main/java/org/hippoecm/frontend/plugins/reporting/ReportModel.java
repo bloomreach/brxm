@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -42,39 +43,47 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
         try {
             Node reportNode = nodeModel.getNode();
             if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
-                NodeIterator it = reportNode.getNodes();
                 Node queryNode = null;
-                while (it.hasNext()) {
-                    queryNode = it.nextNode();
-                    if (queryNode.isNodeType(ReportingNodeTypes.NT_QUERY)) {
-                        break;
-                    }
+                try {
+                    queryNode = reportNode.getNode(ReportingNodeTypes.QUERY);
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
                 }
 
                 if (queryNode != null) {
                     QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
                     HippoQuery query = (HippoQuery) queryManager.getQuery(queryNode);
-
-                    QueryResult result;
-                    if (reportNode.hasProperty(ReportingNodeTypes.PARAMETER_VALUES)) {
-                        Value[] parameterValues = reportNode.getProperty(ReportingNodeTypes.PARAMETER_VALUES)
-                                .getValues();
-                        String[] values = new String[parameterValues.length];
-                        for (int i = 0; i < values.length; i++) {
-                            values[i] = parameterValues[i].getString();
+                    
+                    Map <String,String> arguments = new HashMap<String, String>();
+                    if (reportNode.hasProperty(ReportingNodeTypes.PARAMETER_NAMES)) {
+                        Value[] parameterNames = reportNode.getProperty(ReportingNodeTypes.PARAMETER_NAMES).getValues();
+                        Value[] parameterValues = reportNode.getProperty(ReportingNodeTypes.PARAMETER_VALUES).getValues();
+                        if (parameterNames.length == parameterValues.length) {
+                            for (int i = 0; i < parameterNames.length; i++) {
+                                arguments.put(parameterNames[i].getString(), parameterValues[i].getString());
+                            }
                         }
-                        result = query.execute(values);
-                    } else {
+                    }
+                    
+                    QueryResult result;
+                    if (arguments.isEmpty()) {
                         result = query.execute();
+                    } else {
+                        result = query.execute(arguments);
                     }
 
-                    it = result.getNodes();
+                    NodeIterator it = result.getNodes();
                     while (it.hasNext()) {
                         resultSet.add(new JcrNodeModel(it.nextNode()));
                     }
                 }
             }
         } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        } catch (PatternSyntaxException e) {
+            //TODO: This occurs if there is a mismatch between 
+            //supplied parameters and number of parameter placeholders in statement
+            //Should probably be a RepositoryException
             log.error(e.getMessage());
         }
     }
@@ -86,15 +95,11 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
     // IDataProvider
 
     public Iterator iterator(int first, int count) {
-        List<Node> result = new ArrayList<Node>();
-        for (JcrNodeModel model : resultSet) {
-            result.add(model.getNode());
-        }
-        return result.iterator();
+        return resultSet.iterator();
     }
 
     public IModel model(Object object) {
-        return new JcrNodeModel((Node) object);
+        return (JcrNodeModel) object;
     }
 
     public int size() {
@@ -124,15 +129,13 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
     public void detach() {
         // nope
     }
-    
+
     // Object
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("reportNode", nodeModel.toString())
-            .append("resultSet", resultSet.toString())
-            .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("reportNode", nodeModel.toString())
+                .append("resultSet", resultSet.toString()).toString();
     }
 
     @Override
@@ -144,17 +147,13 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
             return true;
         }
         ReportModel reportModel = (ReportModel) object;
-        return new EqualsBuilder()
-            .append(nodeModel, reportModel.nodeModel)
-            .isEquals();
+        return new EqualsBuilder().append(nodeModel, reportModel.nodeModel).isEquals();
 
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(37, 131)
-            .append(nodeModel)
-            .toHashCode();
+        return new HashCodeBuilder(37, 131).append(nodeModel).toHashCode();
     }
 
 }

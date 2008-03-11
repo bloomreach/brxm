@@ -24,6 +24,9 @@ public class SimpleReportPlugin extends Plugin {
             }
         }
         
+        message += "\n\n";
+        message += getDescriptor().getParameters();
+        
         add(new MultiLineLabel("result", new Model(message)));
     }
 

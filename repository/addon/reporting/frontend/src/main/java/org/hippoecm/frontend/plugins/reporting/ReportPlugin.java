@@ -1,18 +1,19 @@
 package org.hippoecm.frontend.plugins.reporting;
 
-import java.util.List;
-
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.config.PluginConfig;
+import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
 import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class ReportPlugin extends Plugin {
     public ReportPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
         Node node = new JcrNodeModel(model).getNode();
-        add(createPlugin("report", pluginDescriptor, node));
+        add(createReport("report", node));
     }
 
     @Override
@@ -33,7 +34,7 @@ public class ReportPlugin extends Plugin {
             JcrNodeModel model = new JcrNodeModel(notification.getModel());
             if (!model.equals(getModel())) {
                 setPluginModel(model);
-                replace(createPlugin("report", getDescriptor(), model.getNode()));
+                replace(createReport("report", model.getNode()));
                 notification.getContext().addRefresh(this);
             }
         }
@@ -42,54 +43,27 @@ public class ReportPlugin extends Plugin {
 
     // privates
 
-    private Plugin createPlugin(String id, PluginDescriptor pluginDescriptor, Node node) {
-        Plugin result;
-        try {
-            if (node.isNodeType(ReportingNodeTypes.NT_REPORT)) {
-                result = createReport(id, node);
-            } else {
-                result = createDefault(id, pluginDescriptor, node);
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-            result = createDefault(id, pluginDescriptor, node);
-        }
-        return result;
-    }
-
     private Plugin createReport(String id, Node reportNode) {
-        String rendererClass = EmptyPlugin.class.getName();
+        PluginDescriptor pluginDescriptor = null;
         try {
-            NodeIterator it = reportNode.getNodes();
-            while (it.hasNext()) {
-                Node node = it.nextNode();
-                if (node.isNodeType(ReportingNodeTypes.NT_PLUGIN)) {
-                    rendererClass = node.getProperty(ReportingNodeTypes.RENDERER).getString();
-                    break;
-                }
+            if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
+                UserSession session = (UserSession) Session.get();
+                String basePath = reportNode.getPath().substring(1);
+                PluginConfig pluginConfig = new PluginRepositoryConfig(session.getJcrSessionModel(), basePath);
+                pluginDescriptor = pluginConfig.getPlugin(ReportingNodeTypes.PLUGIN);
+                pluginDescriptor.setWicketId(id);
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        PluginDescriptor reportRenderer = new PluginDescriptor(id, rendererClass);
+                
+        if (pluginDescriptor == null) {
+            pluginDescriptor = new PluginDescriptor(id, EmptyPlugin.class.getName());
+        }
         ReportModel reportModel = new ReportModel(new JcrNodeModel(reportNode));
 
         PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-        return pluginFactory.createPlugin(reportRenderer, reportModel, this);
-    }
-
-    private Plugin createDefault(String id, PluginDescriptor pluginDescriptor, Node node) {
-        String rendererClass = EmptyPlugin.class.getName();
-        List<String> parameter = pluginDescriptor.getParameter(ReportingNodeTypes.RENDERER);
-        if (parameter != null && parameter.size() > 0) {
-            rendererClass = parameter.get(0);
-        } else {
-            rendererClass = null;
-        }
-
-        PluginDescriptor reportRenderer = new PluginDescriptor(id, rendererClass);
-        PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-        return pluginFactory.createPlugin(reportRenderer, new JcrNodeModel(node), this);
+        return pluginFactory.createPlugin(pluginDescriptor, reportModel, this);
     }
 
 }

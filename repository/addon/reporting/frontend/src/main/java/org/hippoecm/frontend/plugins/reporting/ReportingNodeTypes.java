@@ -4,11 +4,13 @@ public interface ReportingNodeTypes {
 
     // NodeTypes
     public static final String NT_REPORT = "reporting:report";
-    public static final String NT_QUERY = "nt:query";
-    public static final String NT_PLUGIN = "hippo:frontendplugin";
     
     // Paths
-    public static final String PARAMETER_NAMES = "reporting:parameter-names";
-    public static final String PARAMETER_VALUES = "reporting:parameter-values";
-    public static final String RENDERER = "hippo:renderer";
+    public static final String QUERY = "hippo:query";
+    public static final String QUERY_STATEMENT = "hippo:query/jcr:statement";
+    public static final String QUERY_LANGUAGE = "hippo:query/jcr:language";
+    public static final String PARAMETER_NAMES = "reporting:parameternames";
+    public static final String PARAMETER_VALUES = "reporting:parametervalues";
+    public static final String PLUGIN = "hippo:frontendplugin";
+    public static final String RENDERER = "hippo:frontendplugin/hippo:renderer";
 }

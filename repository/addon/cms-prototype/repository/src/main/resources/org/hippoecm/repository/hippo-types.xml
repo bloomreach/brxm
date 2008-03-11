@@ -388,7 +388,54 @@
 
   </sv:node>
   <!-- end "Plugin" type -->
-
+  
+  <!--  "Query" type -->
+  <sv:node sv:name="hippo:query">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:nodetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:type" sv:type="String">
+      <sv:value>hippo:query</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:supertype" sv:type="String">
+      <sv:value>nt:query</sv:value>
+    </sv:property>
+    
+    <!-- language -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>jcr:language</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <!-- statement -->
+    <sv:node sv:name="hippo:field">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:value>jcr:statement</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+    </sv:node>
+        
+  </sv:node>
+  <!-- end "Query" type -->
+  
   <!-- hippo:facetlink type -->
   <sv:node sv:name="hippo:facetlink">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
