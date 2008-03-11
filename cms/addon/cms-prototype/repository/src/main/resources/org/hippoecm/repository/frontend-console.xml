@@ -79,7 +79,7 @@
                 <sv:value>hippo:frontendplugin</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.reporting.ReportPlugin</sv:value>
+                <sv:value>org.hippoecm.frontend.plugins.admin.editor.EditorPlugin</sv:value>                
             </sv:property>
         </sv:node> 
     </sv:node>
