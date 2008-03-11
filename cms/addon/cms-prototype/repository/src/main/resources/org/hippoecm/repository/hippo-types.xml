@@ -349,6 +349,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>renderer</sv:value>
+      </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hippo:renderer</sv:value>
       </sv:property>
@@ -406,6 +409,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>language</sv:value>
+      </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>jcr:language</sv:value>
       </sv:property>
@@ -421,6 +427,9 @@
     <sv:node sv:name="hippo:field">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:field</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:value>statement</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>jcr:statement</sv:value>
