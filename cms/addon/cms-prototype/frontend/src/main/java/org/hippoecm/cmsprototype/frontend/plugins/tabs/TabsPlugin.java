@@ -22,13 +22,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.dialog.DialogPageCreator;
+import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.ExceptionModel;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -61,6 +63,9 @@ public class TabsPlugin extends Plugin {
 
     private String editPerspective;
     private PluginDescriptor editDescriptor;
+    private DialogWindow dialogWindow;
+    private OnCloseDialog onCloseDialog;
+    private Channel channel;
 
     public TabsPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
@@ -68,8 +73,12 @@ public class TabsPlugin extends Plugin {
         editors = new HashMap<JcrNodeModel, Tab>();
         List<Tab> tabs = new ArrayList<Tab>();
         tabbedPanel = new TabbedPanel("tabs", tabs, this);
+
         add(tabbedPanel);
 
+        // a place holder for the onclose dialog
+        channel = getTopChannel();
+        add(new Label("onclose", ""));
         List<String> parameter = pluginDescriptor.getParameter("editor");
         if (parameter != null && parameter.size() > 0) {
             editPerspective = parameter.get(0);
@@ -89,18 +98,43 @@ public class TabsPlugin extends Plugin {
         }
     }
 
-    // invoked when a tab is closed
     protected void onClose(AjaxRequestTarget target, Tab tabbie) {
         JcrNodeModel closedJcrNodeModel = null;
+        ArrayList<JcrNodeModel> jcrNewNodeModelList = new ArrayList<JcrNodeModel>();
         if (editors.containsValue(tabbie)) {
             for (Map.Entry<JcrNodeModel, Tab> entry : editors.entrySet()) {
                 if (entry.getValue().equals(tabbie)) {
                     closedJcrNodeModel = entry.getKey();
-                    break;
+                } else if (((JcrNodeModel) entry.getKey()).getNode().isNew()) {
+                    // keep track of new added nodes, because if child of the closed tab
+                    // they need to be closed as well if the parent is *not* saved
+                    jcrNewNodeModelList.add(entry.getKey());
                 }
             }
         }
-        tabbie.destroy(closedJcrNodeModel, target);
+        if (closedJcrNodeModel != null) {
+            try {
+                if (closedJcrNodeModel.getNode().getSession().hasPendingChanges()) {
+                    // if there are any changes, inform whether the user wants to save or discard changes
+                    dialogWindow = new DialogWindow("onclose", new JcrNodeModel(closedJcrNodeModel), null, null);
+                    onCloseDialog = new OnCloseDialog(dialogWindow, channel, this, tabbie, closedJcrNodeModel,
+                            jcrNewNodeModelList, editors);
+                    dialogWindow.setPageCreator(new DialogPageCreator(onCloseDialog));
+                    this.replace(dialogWindow);
+                    dialogWindow.show(target);
+                } else {
+                    // save to close without informing and without saving
+                    tabbie.destroy();
+                }
+            } catch (RepositoryException e) {
+                if (target != null) {
+                    Request request = channel.createRequest("exception", new ExceptionModel(e));
+                    channel.send(request);
+                    request.getContext().apply(target);
+                }
+                log.info(e.getClass().getName() + ": " + e.getMessage());
+            }
+        }
         if (target != null) {
             target.addComponent(this);
         }
@@ -246,46 +280,44 @@ public class TabsPlugin extends Plugin {
         }
 
         void destroy() {
-            destroy(null, null);
-        }
-
-        void destroy(JcrNodeModel closedJcrNodeModel, AjaxRequestTarget target) {
-            if (closedJcrNodeModel != null) {
-                try {
-                    Node n = closedJcrNodeModel.getNode();
-                    while (n.isNew()) {
-                        n = n.getParent();
+            if (editors.containsValue(this)) {
+                for (Map.Entry<JcrNodeModel, Tab> entry : editors.entrySet()) {
+                    if (entry.getValue().equals(this)) {
+                        editors.remove(entry.getKey());
+                        break;
                     }
-                    n.save();
-                    editors.remove(closedJcrNodeModel);
-                    tabbedPanel.getTabs().remove(this);
-
-                    // let plugin clean up any resources
-                    plugin.destroy();
-
-                    // look for previously selected tab
-                    int lastCount = 0;
-                    Tab lastTab = null;
-                    Iterator<Tab> tabs = tabbedPanel.getTabs().iterator();
-                    while (tabs.hasNext()) {
-                        Tab tabbie = tabs.next();
-                        if (tabbie.lastSelected > lastCount) {
-                            lastCount = tabbie.lastSelected;
-                            lastTab = tabbie;
-                        }
-                    }
-                    if (lastTab != null) {
-                        lastTab.select();
-                    }
-                } catch (RepositoryException e) {
-                    if (target != null) {
-                        Request request = this.plugin.getTopChannel().createRequest("exception", new ExceptionModel(e));
-                        this.plugin.getTopChannel().send(request);
-                        request.getContext().apply(target);
-                    }
-                    log.info(e.getClass().getName() + ": " + e.getMessage());
                 }
             }
+            tabbedPanel.getTabs().remove(this);
+
+            // let plugin clean up any resources
+            plugin.destroy();
+
+            // look for previously selected tab
+            int lastCount = 0;
+            Tab lastTab = null;
+            Iterator<Tab> tabs = tabbedPanel.getTabs().iterator();
+            while (tabs.hasNext()) {
+                Tab tabbie = tabs.next();
+                if (tabbie.lastSelected > lastCount) {
+                    lastCount = tabbie.lastSelected;
+                    lastTab = tabbie;
+                }
+            }
+            if (lastTab != null) {
+                lastTab.select();
+            }
+
+        }
+
+        public void popup(AjaxRequestTarget target, RepositoryException e) {
+            if (target != null) {
+                Request request = channel.createRequest("exception", new ExceptionModel(e));
+                channel.send(request);
+                request.getContext().apply(target);
+            }
+            log.info(e.getClass().getName() + ": " + e.getMessage());
         }
     }
+
 }
