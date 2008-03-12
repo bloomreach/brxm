@@ -20,15 +20,20 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.Workspace;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
+import org.apache.jackrabbit.rmi.remote.RemoteQueryManager;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
+import org.apache.jackrabbit.rmi.remote.RemoteQuery;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.servicing.remote.RemoteDocumentManager;
@@ -67,5 +72,14 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
 
     public RemoteWorkflowManager getRemoteWorkflowManager(WorkflowManager workflowManager) throws RemoteException {
         return new ServerWorkflowManager(workflowManager, this);
+    }
+
+    public RemoteQueryManager getRemoteQueryManager(QueryManager manager, Session session) throws RemoteException {
+        return new ServerQueryManager(manager, this, session);
+    }
+
+    @Override
+    public RemoteQuery getRemoteQuery(Query query) throws RemoteException {
+        return new ServerQuery((HippoQuery)query, this);
     }
 }

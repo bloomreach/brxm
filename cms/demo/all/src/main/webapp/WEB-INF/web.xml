@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <!--
   * Copyright 2007 Hippo
   *
@@ -14,28 +13,29 @@
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
+web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 -->
-<web-app id="hippo-ecm-demo">
 
-  <!-- General configuration -->
-  <display-name>Hippo ECM all-in-one Demo</display-name>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
   <description>Hippo ECM Sample site all-in-one</description>
+  <display-name>Hippo ECM all-in-one Demo</display-name>
 
-  <!-- Repository configurtation -->
+  <!-- Repository configuration -->
   <context-param>
     <param-name>repository-address</param-name>
     <param-value>rmi://localhost:1099/hipporepository</param-value>
-    <description>The address of the repository</description>
-  </context-param>
-    <context-param>
-    <description>The username to use for the repository login</description>
-    <param-name>repository-username</param-name>
-    <param-value>admin</param-value>
+    <!-- description>The address of the repository</description -->
   </context-param>
   <context-param>
-    <description>The password to use for the repository login</description>
+    <param-name>repository-username</param-name>
+    <param-value>admin</param-value>
+    <!-- description>The username to use for the repository login</description -->
+  </context-param>
+  <context-param>
     <param-name>repository-password</param-name>
     <param-value>admin</param-value>
+    <!-- description>The password to use for the repository login</description -->
   </context-param>
 
   <!--builtin console-->
@@ -84,21 +84,21 @@
     <filter-name>ContextPreview</filter-name>
     <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
     <init-param>
-      <description>
+      <param-name>attributename</param-name>
+      <param-value>context</param-value>
+      <!-- description>
         Bind the context using the attribute name as specified by
         this parameter in the request scope for JSP/JSF pages.
         Defaults to context.
-      </description>
-      <param-name>attributename</param-name>
-      <param-value>context</param-value>
+      </description -->
     </init-param>
     <init-param>
-      <description>
-        Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting 
-      </description>      
       <param-name>urlbasepath</param-name>
       <param-value>/preview/site/pages</param-value>
+      <!-- description>
+        Where to find the nodes of type hippo:document
+        that can be accessed using url rewriting 
+      </description -->
     </init-param>
   </filter>
 
@@ -106,21 +106,21 @@
     <filter-name>ContextLive</filter-name>
     <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
     <init-param>
-      <description>
+      <param-name>attributename</param-name>
+      <param-value>context</param-value>
+      <!-- description>
         Bind the context using the attribute name as specified by
         this parameter in the request scope for JSP/JSF pages.
         Defaults to context.
-      </description>
-      <param-name>attributename</param-name>
-      <param-value>context</param-value>
+      </description -->
     </init-param>
     <init-param>
-      <description>
-        Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting 
-      </description>      
       <param-name>urlbasepath</param-name>
       <param-value>/live/site/pages</param-value>
+      <!-- description>
+        Where to find the nodes of type hippo:document
+        that can be accessed using url rewriting 
+      </description -->
     </init-param>
   </filter>
 
@@ -128,19 +128,19 @@
     <filter-name>GlobalContextPreview</filter-name>
     <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
     <init-param>
-      <description>
-        Bind an additional context using the attribute name as specified by
-        this parameter in the request scope for JSP/JSF pages.
-      </description>
       <param-name>attributename</param-name>
       <param-value>global</param-value>
+      <!-- description>
+        Bind an additional context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+      </description -->
     </init-param>
     <init-param>
-      <description>
-        The path to bind as context.
-      </description>      
       <param-name>location</param-name>
-      <param-value>/preview/site</param-value>
+      <param-value>/preview</param-value>
+      <!-- description>
+        The path to bind as context.
+      </description -->
     </init-param>
   </filter>
 
@@ -148,19 +148,19 @@
     <filter-name>GlobalContextLive</filter-name>
     <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
     <init-param>
-      <description>
-        Bind an additional context using the attribute name as specified by
-        this parameter in the request scope for JSP/JSF pages.
-      </description>
       <param-name>attributename</param-name>
       <param-value>global</param-value>
+      <!-- description>
+        Bind an additional context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+      </description -->
     </init-param>
     <init-param>
-      <description>
-        The path to bind as context.
-      </description>      
       <param-name>location</param-name>
-      <param-value>/live/site</param-value>
+      <param-value>/live</param-value>
+      <!-- description>
+        The path to bind as context.
+      </description -->
     </init-param>
   </filter>
 
@@ -181,19 +181,19 @@
 
   <filter-mapping>
     <filter-name>ContextPreview</filter-name>
-    <url-pattern>preview/*</url-pattern>
+    <url-pattern>/preview/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
   <filter-mapping>
     <filter-name>ContextLive</filter-name>
-    <url-pattern>live/*</url-pattern>
+    <url-pattern>/live/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
   <filter-mapping>
     <filter-name>GlobalContextPreview</filter-name>
-    <url-pattern>preview/*</url-pattern>
+    <url-pattern>/preview/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
@@ -201,7 +201,7 @@
 
   <filter-mapping>
     <filter-name>GlobalContextLive</filter-name>
-    <url-pattern>live/*</url-pattern>
+    <url-pattern>/live/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
@@ -218,13 +218,17 @@
     <init-param>
       <param-name>repository-directory</param-name>
       <param-value>WEB-INF/storage</param-value>
-      <description>The (relative) location where to store files</description>
+      <!-- description>
+        The (relative) location where to store files
+      </description -->
     </init-param>
     <init-param>
       <param-name>repository-config</param-name>
       <param-value>repository.xml</param-value>
-      <description>The location of the repository configuration file. Unless the location
-      starts with file://, the location is retreived with getResourceAsStream().</description>
+      <!-- description>
+        The location of the repository configuration file. Unless the location
+        starts with file://, the location is retreived with getResourceAsStream()
+      </description -->
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

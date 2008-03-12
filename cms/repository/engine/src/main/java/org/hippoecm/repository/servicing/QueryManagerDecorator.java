@@ -37,6 +37,7 @@ public class QueryManagerDecorator extends AbstractDecorator implements QueryMan
      * @inheritDoc
      */
     public Query createQuery(String statement, String language) throws InvalidQueryException, RepositoryException {
+        statement = QueryDecorator.mangleArguments(statement);
         return factory.getQueryDecorator(session, manager.createQuery(statement, language));
     }
 

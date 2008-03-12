@@ -32,6 +32,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.slf4j.Logger;
@@ -192,7 +193,7 @@ public class Context extends AbstractMap {
                         result = null;
                     } else if (item.isNode()) {
                         Node node = (Node) item;
-                        if (node.isNodeType("jcr:statement")) {
+                        if (node.isNodeType("nt:query")) {
                             HippoQuery requestedQuery = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(node);
                             result = new Context(this, requestedQuery, new LinkedList());
                         } else {
