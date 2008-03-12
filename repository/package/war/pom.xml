@@ -95,21 +95,23 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-
-    <!-- cms prototype add-on -->
+    
+    <!-- reporting add-on -->
+    <!--
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-repository</artifactId>
+      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
+      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-
+    -->
+    
     <!-- reviewed actions add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -130,20 +132,49 @@
       <type>jar</type>
     </dependency>
 
-    <!-- demo add-ons -->
+    <!-- cms prototype add-on -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-prototype-repository</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    
+    <!-- hst add-on -->
+    <!--
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-addon-repository</artifactId>
       <version>1.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-    <!--<dependency>
+    -->
+
+    <!-- demo add-on -->
+    <!--
+    <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-demo-addon</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
-    </dependency>-->
+    </dependency>
+    -->
 
+    <!-- sample add-on -->
+    <!--
+      <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-sample-version</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+      </dependency>
+    -->   
   </dependencies>
 
   <build>
