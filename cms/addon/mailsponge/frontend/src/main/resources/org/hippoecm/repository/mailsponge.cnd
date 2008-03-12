@@ -19,7 +19,7 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
-<mailsponge='http://www.hippoecm.org/nt/mailsponge/1.0'>
+<mailsponge='http://www.hippoecm.org/mailsponge/nt/1.0'>
 
 [mailsponge:part]
 - mailsponge:type (string)

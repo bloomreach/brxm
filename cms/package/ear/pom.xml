@@ -40,7 +40,7 @@
   </scm>
 
   <dependencies>
-    <!-- xhina add-on -->
+    <!-- xhina add-on (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha</artifactId>
@@ -53,15 +53,15 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-
-    <!-- skin add-on -->
+    
+    <!-- skin add-on (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-skin</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-
+    
     <!-- end-applications -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -75,7 +75,7 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-
+    
     <!-- standard workflow add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -95,21 +95,23 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-
-    <!-- cms prototype add-on -->
-    <dependency>
+    
+    <!-- reporting add-on -->
+    <!--
+      <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-repository</artifactId>
+      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
-    </dependency>
-    <dependency>
+      </dependency>
+      <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
+      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
-    </dependency>
-
+      </dependency>
+    -->
+    
     <!-- reviewed actions add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -129,7 +131,50 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-
+    
+    <!-- cms prototype add-on -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-prototype-repository</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    
+    <!-- hst add-on -->
+    <!--
+      <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-addon-repository</artifactId>
+      <version>1.01.00-SNAPSHOT</version>
+      <type>jar</type>
+      </dependency>
+    -->
+    
+    <!-- demo add-on -->
+    <!--
+      <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-demo-addon</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+      </dependency>
+    -->
+    
+    <!-- sample add-on -->
+    <!--
+      <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-sample-version</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+      </dependency>
+    -->    
   </dependencies>
 
   <build>
