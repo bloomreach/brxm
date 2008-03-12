@@ -27,6 +27,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.query.Query;
@@ -40,24 +41,38 @@ import org.hippoecm.repository.api.HippoQuery;
 public class QueryDecorator extends AbstractDecorator implements HippoQuery {
 
     protected final Query query;
+    protected Map<String,Value> arguments;
+
+    private final static String MAGIC_ANONYMOUS = "ENCHANTED";
+    private final static String MAGIC_NAMED_START = "MAGIC";
+    private final static String MAGIC_NAMED_END = "CIGAM";
 
     public QueryDecorator(DecoratorFactory factory, Session session, Query query) {
         super(factory, session);
         this.query = query;
+        this.arguments = null;
     }
 
     /**
      * @inheritDoc
      */
     public QueryResult execute() throws RepositoryException {
-        return factory.getQueryResultDecorator(session, query.execute());
+        if (arguments != null)
+            return execute((Map<String,String>)null);
+        else
+            return factory.getQueryResultDecorator(session, query.execute());
     }
 
     /**
      * @inheritDoc
      */
     public String getStatement() {
-        return query.getStatement();
+        String queryString = query.getStatement();
+        String[] argumentNames = getArguments();
+        for (int i=0; i<argumentNames.length; i++) {
+            queryString.replaceAll(MAGIC_NAMED_START+argumentNames[i]+MAGIC_NAMED_END, "$"+argumentNames[i]);
+        }
+        return queryString;
     }
 
     /**
@@ -87,24 +102,29 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
      * @inheritDoc
      */
     public String[] getArguments() {
-        String queryString = getStatement();
-        if(queryString.contains("?")) {
+        String queryString = query.getStatement();
+        if (queryString.contains(MAGIC_ANONYMOUS)) {
             int argumentCount = getArgumentCount();
             String[] arguments = new String[argumentCount];
             for (int i=0; i<argumentCount; i++) {
-                arguments[i] = "?";
+                arguments[i] = MAGIC_ANONYMOUS;
             }
             return arguments;
         } else {
             Set<String> arguments = new HashSet<String>();
-            for (int position=0; position>=0; position=queryString.indexOf("$", position)) {
-                int endPosition = position + 1;
-                if(Character.isJavaIdentifierStart(queryString.charAt(endPosition))) {
+            for (int position=queryString.indexOf(MAGIC_NAMED_START); position >=0; position=queryString.indexOf(MAGIC_NAMED_START, position)) {
+                position += MAGIC_NAMED_START.length();
+                int endPosition = position;
+                if (Character.isJavaIdentifierStart(queryString.charAt(endPosition))) {
                     do {
                         ++endPosition;
-                    } while(Character.isJavaIdentifierPart(queryString.charAt(endPosition)));
+                    } while (endPosition<queryString.length() && Character.isJavaIdentifierPart(queryString.charAt(endPosition)) &&
+                            !queryString.substring(endPosition).startsWith(MAGIC_NAMED_END));
                 }
-                arguments.add(queryString.substring(position,endPosition));
+                if (queryString.substring(endPosition).startsWith(MAGIC_NAMED_END)) {
+                    arguments.add(queryString.substring(position,endPosition));
+                    position = endPosition + MAGIC_NAMED_END.length();
+                }
             }
             return arguments.toArray(new String[arguments.size()]);
         }
@@ -114,34 +134,23 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
      * @inheritDoc
      */
     public int getArgumentCount() {
-        String queryString = getStatement();
-        int count = -1;
-        if(queryString.contains("?")) {
-            for (int position=0; position>=0; position=queryString.indexOf("?", position)) {
-                ++count;
-            }
-        } else {
-            Set<String> arguments = new HashSet<String>();
-            for (int position=0; position>=0; position=queryString.indexOf("$", position)) {
-                ++count;
-            }
-        }
-        return count;
+        String[] arguments = getArguments();
+        return arguments != null ? arguments.length : 0;
     }
 
     public QueryResult execute(String argument) throws RepositoryException {
-        String queryString = getStatement();
-        if(queryString.contains("?")) {
+        String queryString = query.getStatement();
+        if (queryString.contains(MAGIC_ANONYMOUS)) {
             int count = getArgumentCount();
             String[] arguments = new String[count];
-            for(int i=0; i<count; i++) {
+            for (int i=0; i<count; i++) {
                 arguments[i] = argument;
             }
             return execute(arguments);
         } else {
             String[] argumentNames = getArguments();
             Map<String,String> arguments = new TreeMap<String,String>();
-            for(int i=0; i<argumentNames.length; i++) {
+            for (int i=0; i<argumentNames.length; i++) {
                 arguments.put(argumentNames[i], argument);
             }
             return execute(arguments);
@@ -152,9 +161,9 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
      * @inheritDoc
      */
     public QueryResult execute(String[] arguments) throws RepositoryException {
-        String queryString = getStatement();
+        String queryString = query.getStatement();
         for (int i=0; i<arguments.length; i++) {
-            queryString = queryString.replaceFirst("?", arguments[i]);
+            queryString = queryString.replaceFirst(MAGIC_ANONYMOUS, arguments[i]);
         }
         Query q = session.getWorkspace().getQueryManager().createQuery(queryString, getLanguage());
         return factory.getQueryResultDecorator(session, q.execute());
@@ -164,12 +173,41 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
      * @inheritDoc
      */
     public QueryResult execute(Map<String,String> arguments) throws RepositoryException {
-        String queryString = getStatement();
+        String queryString = query.getStatement();
         String[] argumentNames = getArguments();
-        for (int i=0; i<argumentNames.length; i++) {
-            queryString = queryString.replace("$"+argumentNames[i], arguments.get(argumentNames[i]));
+        if (arguments != null) {
+            for (int i=0; i<argumentNames.length; i++) {
+                if (arguments.containsKey(argumentNames[i]))
+                    queryString = queryString.replace(MAGIC_NAMED_START+argumentNames[i]+MAGIC_NAMED_END,
+                                                      arguments.get(argumentNames[i]));
+            }
+        }
+        if (this.arguments != null) {
+            for (Map.Entry<String,Value> entry : this.arguments.entrySet()) {
+                queryString = queryString.replace(MAGIC_NAMED_START+entry.getKey()+MAGIC_NAMED_END,
+                                                  entry.getValue().getString());
+            }
         }
         Query q = session.getWorkspace().getQueryManager().createQuery(queryString, getLanguage());
         return factory.getQueryResultDecorator(session, q.execute());
+    }
+
+    public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException {
+        arguments.put(varName, value);
+    }
+
+    static String mangleArguments(String statement) {
+        for (int position = statement.indexOf("$"); position >= 0; position = statement.indexOf("$", position)) {
+            int endPosition = position + 1;
+            if (Character.isJavaIdentifierStart(statement.charAt(endPosition))) {
+                do {
+                    ++endPosition;
+                } while (endPosition<statement.length() && Character.isJavaIdentifierPart(statement.charAt(endPosition)));
+                statement = statement.substring(0,position) + MAGIC_NAMED_START + statement.substring(position+1,endPosition) + MAGIC_NAMED_END + statement.substring(endPosition);
+                endPosition += MAGIC_NAMED_START.length() + MAGIC_NAMED_END.length() - 1;
+            }
+            position = endPosition;
+        }
+        return statement;
     }
 }

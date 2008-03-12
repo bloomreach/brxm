@@ -58,6 +58,8 @@ public class JCRConnector {
         String[] pathElts = path.split("/");
         for (int pathIdx = 0; pathIdx < pathElts.length && node != null; pathIdx++) {
             String relPath = pathElts[pathIdx];
+            if(relPath.equals(""))
+                continue;
             Map<String, String> conditions = null;
             if (relPath.contains("[") && relPath.endsWith("]")) {
                 conditions = new TreeMap<String, String>();

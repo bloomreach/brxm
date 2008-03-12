@@ -20,7 +20,7 @@
   <display-name>sample website</display-name>
   <description>Hippo ECM Sample site</description>
 
-  <!-- Repository configurtation -->
+  <!-- Repository configuration -->
   <context-param>
     <param-name>repository-address</param-name>
     <param-value>rmi://localhost:1099/hipporepository</param-value>
@@ -97,7 +97,7 @@
         The path to bind as context.
       </description>      
       <param-name>location</param-name>
-      <param-value>/preview/site</param-value>
+      <param-value>/preview</param-value>
     </init-param>
   </filter>
 
@@ -117,25 +117,25 @@
         The path to bind as context.
       </description>      
       <param-name>location</param-name>
-      <param-value>/live/site</param-value>
+      <param-value>/live</param-value>
     </init-param>
   </filter>
 
   <filter-mapping>
     <filter-name>ContextPreview</filter-name>
-    <url-pattern>preview/*</url-pattern>
+    <url-pattern>/preview/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
   <filter-mapping>
     <filter-name>ContextLive</filter-name>
-    <url-pattern>live/*</url-pattern>
+    <url-pattern>/live/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
   <filter-mapping>
     <filter-name>GlobalContextPreview</filter-name>
-    <url-pattern>preview/*</url-pattern>
+    <url-pattern>/preview/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
@@ -143,7 +143,7 @@
 
   <filter-mapping>
     <filter-name>GlobalContextLive</filter-name>
-    <url-pattern>live/*</url-pattern>
+    <url-pattern>/live/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>

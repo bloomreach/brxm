@@ -26,10 +26,12 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.RowIterator;
+import javax.jcr.NodeIterator;
 
 import junit.framework.TestCase;
 
 import org.hippoecm.repository.api.HippoQuery;
+import org.hippoecm.repository.Utilities;
 
 public class HippoQuerySample extends TestCase {
 
@@ -39,12 +41,20 @@ public class HippoQuerySample extends TestCase {
 
     private HippoRepository server;
     private Session session;
+    private QueryManager qmgr;
 
     public void setUp() throws Exception {
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node root = session.getRootNode();
+        Node doc, node = root.addNode("test");
+        node = node.addNode("docs");
+        doc = node.addNode("test1");
+        doc.setProperty("p","x");
+        doc = node.addNode("test2");
+        doc.setProperty("p","y");
         session.save();
+        qmgr = session.getWorkspace().getQueryManager();
     }
 
     public void tearDown() throws Exception {
@@ -52,9 +62,8 @@ public class HippoQuerySample extends TestCase {
         session.logout();
         server.close();
     }
-
+    /*
     public void plainExample() throws RepositoryException {
-        QueryManager qmgr = session.getWorkspace().getQueryManager();
         {
             Query query = qmgr.createQuery("//zoekiets", Query.XPATH);
             Node node = query.storeAsNode("/query");
@@ -70,7 +79,6 @@ public class HippoQuerySample extends TestCase {
     }
 
     public void example1() throws RepositoryException {
-        QueryManager qmgr = session.getWorkspace().getQueryManager();
         {
             Query query = qmgr.createQuery("//zoekiets[@x='?',@y='?']", Query.XPATH);
             Node node = query.storeAsNode("/query");
@@ -82,21 +90,44 @@ public class HippoQuerySample extends TestCase {
             QueryResult rs = query.execute(new String[] { "hier", "daar" });
         }
     }
+    */
 
-    public void example2() throws RepositoryException {
-        QueryManager qmgr = session.getWorkspace().getQueryManager();
-        {
-            Query query = qmgr.createQuery("//zoekiets[@x='$x',@y='$y',@z='$y']", Query.XPATH);
-            Node node = query.storeAsNode("/query");
+    public void testMangle() throws RepositoryException {
+        Query query;
+        Node node;
+
+        query = qmgr.createQuery("foo//bar$x/qux", Query.XPATH);
+        node = query.storeAsNode("/test/query");
+        assertEquals("foo//barMAGICxCIGAM/qux",node.getProperty("jcr:statement").getString());
+        node.remove();
+
+        query = qmgr.createQuery("foo//bar[@x='$']/qux", Query.XPATH);
+        node = query.storeAsNode("/test/query");
+        assertEquals("foo//bar[@x='$']/qux",node.getProperty("jcr:statement").getString());
+        node.remove();
+    }
+
+    public  void testSimple() throws RepositoryException {
+        Query query = qmgr.createQuery("test//$which[p='x']", Query.XPATH);
+        query.storeAsNode("/test/query");
+        Node queryNode = session.getRootNode().getNode("test/query");
+        query = qmgr.getQuery(queryNode);
+        HippoQuery advancedQuery = (HippoQuery) query;
+
+        assertEquals(1, advancedQuery.getArgumentCount());
+        String[] queryArguments = advancedQuery.getArguments();
+        assertNotNull(queryArguments);
+        assertEquals(1, queryArguments.length);
+        assertEquals("which", queryArguments[0]);
+        Map<String,String> arguments = new TreeMap<String,String>();
+        arguments.put("which","test1");
+        QueryResult result = advancedQuery.execute(arguments);
+        int count = 0;
+        for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
+            ++count;
+            Node node = iter.nextNode();
+            assertEquals("/test/docs/test1", node.getPath());
         }
-        {
-            Node node = session.getRootNode().getNode("/query");
-            Query q = qmgr.getQuery(node);
-            HippoQuery query = (HippoQuery) q;
-            Map<String,String> arguments = new TreeMap<String,String>();
-            arguments.put("y","daar");
-            arguments.put("x","hier");
-            QueryResult rs = query.execute(arguments);
-        }
+        assertEquals(1, count);
     }
 }

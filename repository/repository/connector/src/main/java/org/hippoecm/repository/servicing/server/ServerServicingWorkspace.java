@@ -18,8 +18,11 @@ package org.hippoecm.repository.servicing.server;
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.query.QueryManager;
 
+import org.apache.jackrabbit.rmi.remote.RemoteQueryManager;
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
+
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -50,6 +53,15 @@ public class ServerServicingWorkspace extends ServerWorkspace implements RemoteS
         try {
             WorkflowManager workflowManager = workspace.getWorkflowManager();
             return ((RemoteServicingAdapterFactory) getFactory()).getRemoteWorkflowManager(workflowManager);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
+    public RemoteQueryManager getQueryManager() throws RepositoryException, RemoteException {
+        try {
+            QueryManager queryManager = workspace.getQueryManager();
+            return ((RemoteServicingAdapterFactory)getFactory()).getRemoteQueryManager(queryManager, workspace.getSession());
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }

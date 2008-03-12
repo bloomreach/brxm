@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
+import javax.jcr.query.Query;
 
 import org.apache.jackrabbit.rmi.client.ClientAdapterFactory;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
@@ -68,5 +69,10 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
 
     public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote) {
         return new ClientWorkflowManager(session, remote, this);
+    }
+
+    @Override
+    public Query getQuery(Session session, org.apache.jackrabbit.rmi.remote.RemoteQuery remote) {
+        return new ClientQuery(session, (org.hippoecm.repository.servicing.remote.RemoteQuery) remote, this);
     }
 }

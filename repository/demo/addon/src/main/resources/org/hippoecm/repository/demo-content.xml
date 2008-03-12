@@ -138,10 +138,10 @@
         <sv:value>hippo:query</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
-        <sv:value>/site/messages/message1</sv:value>
+        <sv:value>site/messages/message2/message2[demo:keywords='MAGICkeywordCIGAM']</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:language" sv:type="String">
-        <sv:value>XPATH</sv:value>
+        <sv:value>xpath</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -176,6 +176,9 @@
         </sv:property>
         <sv:property sv:name="demo:date" sv:type="Date">
           <sv:value>2008-02-27T16:00:00.000+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:keywords" sv:type="String">
+          <sv:value>technical</sv:value>
         </sv:property>
         <sv:node sv:name="demo:image">
           <sv:property sv:name="jcr:mimeType" sv:type="String">
@@ -214,6 +217,9 @@
         <sv:property sv:name="demo:date" sv:type="Date">
           <sv:value>2008-02-27T16:00:00.000+01:00</sv:value>
         </sv:property>
+        <sv:property sv:name="demo:keywords" sv:type="String">
+          <sv:value>hot</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
 
@@ -242,6 +248,9 @@
         </sv:property>
         <sv:property sv:name="demo:date" sv:type="Date">
           <sv:value>2008-02-27T16:00:00.000+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:keywords" sv:type="String">
+          <sv:value>marketing</sv:value>
         </sv:property>
         <sv:node sv:name="demo:image">
           <sv:property sv:name="jcr:mimeType" sv:type="String">
@@ -280,6 +289,10 @@
         <sv:property sv:name="demo:date" sv:type="Date">
           <sv:value>2008-02-27T16:00:00.000+01:00</sv:value>
         </sv:property>
+        <sv:property sv:name="demo:keywords" sv:type="String">
+          <sv:value>technical</sv:value>
+          <sv:value>hot</sv:value>
+        </sv:property>
         <sv:node sv:name="demo:image">
           <sv:property sv:name="jcr:mimeType" sv:type="String">
             <sv:value>image/gif</sv:value>
@@ -316,6 +329,8 @@
         </sv:property>
         <sv:property sv:name="demo:date" sv:type="Date">
           <sv:value>2008-02-27T16:00:00.000+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:keywords" sv:type="String">
         </sv:property>
         <sv:node sv:name="demo:image">
           <sv:property sv:name="jcr:mimeType" sv:type="String">
