@@ -59,9 +59,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     }
 
     private static String getTemplateBasePath() {
-        Main main = (Main) Application.get();
-        return HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + main.getHippoApplication()
-                + "/hippo:templates";
+        return HippoNodeType.CONFIGURATION_PATH + "/hippo:templates";
     }
 
     List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, TemplateDescriptor parent) {

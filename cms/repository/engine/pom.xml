@@ -106,12 +106,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-repository</artifactId>
-      <version>${parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>

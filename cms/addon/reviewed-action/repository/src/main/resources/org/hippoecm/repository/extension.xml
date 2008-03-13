@@ -37,7 +37,7 @@
       <sv:value>500</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>workflow-config.xml</sv:value>
+      <sv:value>reviewedactions-workflows.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:workflows</sv:value>

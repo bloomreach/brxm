@@ -69,7 +69,7 @@
       <sv:value>demo-prototypes.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype/hippo:prototypes</sv:value>
+      <sv:value>/hippo:configuration/hippo:prototypes</sv:value>
     </sv:property>
   </sv:node>
 

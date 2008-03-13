@@ -208,6 +208,9 @@
 [hippo:templatefolder] > nt:base
 + * (hippo:template) = hippo:template
 
+[hippo:templatenamespace] > nt:base
++ * (hippo:templatefolder)
+
 [hippo:prototypefolder] > nt:base
 + * (nt:base)
 
@@ -226,5 +229,6 @@
 + hippo:roles (hippo:rolefolder) = hippo:rolefolder
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:namespaces (hippo:namespacefolder) = hippo:namespacefolder
++ hippo:templates (hippo:templatenamespace) = hippo:templatenamespace
 + hippo:prototypes (hippo:prototypenamespace) = hippo:prototypenamespace
 + hippo:frontend (hippo:application) = hippo:application
