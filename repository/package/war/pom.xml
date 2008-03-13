@@ -112,7 +112,7 @@
     </dependency>
     -->
     
-    <!-- reviewed actions add-on -->
+    <!-- reviewed actions workflow add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
@@ -147,34 +147,34 @@
     </dependency>
     
     <!-- hst add-on -->
-    <!--
+<!--
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-addon-repository</artifactId>
       <version>1.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-    -->
+-->
 
     <!-- demo add-on -->
-    <!--
+<!--
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-demo-addon</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    -->
+-->
 
     <!-- sample add-on -->
-    <!--
-      <dependency>
+<!--    
+    <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-sample-version</artifactId>
+      <artifactId>hippo-ecm-addon-sample-repository</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
-      </dependency>
-    -->   
+    </dependency>
+-->       
   </dependencies>
 
   <build>

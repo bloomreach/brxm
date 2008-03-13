@@ -21,7 +21,7 @@
 
         <!-- General configuration -->
         <display-name>Hippo ECM frontend</display-name>
-        <description>A repository-configurable frontend that connects to a remote repository with default configuration.</description>
+        <description>A hard coded frontend that connects to a remote repository.</description>
 
         <context-param>
                 <param-name>repository-directory</param-name>
@@ -37,9 +37,9 @@
         </resource-ref>
         -->
 
-        <!--CMS application-->
+        <!--builtin console-->
         <filter>
-                <filter-name>CMSPrototype</filter-name>
+                <filter-name>BuiltinConsole</filter-name>
                 <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
                 <init-param>
                         <param-name>applicationClassName</param-name>
@@ -47,17 +47,15 @@
                 </init-param>
                 <init-param>
                         <param-name>hippoApplication</param-name>
-                        <param-value>hippo:cms-prototype</param-value>
+                        <param-value>hippo:console (builtin)</param-value>
                 </init-param>
         </filter>
 
         <filter-mapping>
-                <filter-name>CMSPrototype</filter-name>
-                <url-pattern>/*</url-pattern>
-                <dispatcher>REQUEST</dispatcher>
-                <dispatcher>INCLUDE</dispatcher>
+                <filter-name>BuiltinConsole</filter-name>
+                <url-pattern>/builtin/*</url-pattern>
         </filter-mapping>
-
+        
         <!-- Timeout in minutes -->
         <session-config>
                 <session-timeout>60</session-timeout>

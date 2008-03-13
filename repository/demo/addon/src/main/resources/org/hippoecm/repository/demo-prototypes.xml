@@ -22,7 +22,7 @@
   xmlns:demo="http://www.hippoecm.org/demo/nt/1.0"
   sv:name="demo">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>nt:unstructured</sv:value>
+    <sv:value>hippo:prototypefolder</sv:value>
   </sv:property>
 
   <sv:node sv:name="web page">

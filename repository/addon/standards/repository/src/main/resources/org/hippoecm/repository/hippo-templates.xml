@@ -19,7 +19,7 @@
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  xmlns:sample="http://www.hippoecm.org/sample/nt/1.0" sv:name="hippo">
+  sv:name="hippo">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:templatefolder</sv:value>
   </sv:property>

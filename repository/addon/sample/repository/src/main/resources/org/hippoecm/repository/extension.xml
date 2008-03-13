@@ -68,7 +68,7 @@
       <sv:value>sample-templates.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/hippo:cms-prototype/hippo:templates</sv:value>
+      <sv:value>/hippo:configuration/hippo:templates</sv:value>
     </sv:property>
   </sv:node>
 
