@@ -56,8 +56,8 @@ public class PropertyDialog extends AbstractDialog {
     private Boolean isMultiple = Boolean.FALSE;
     private String type;
 
-    public PropertyDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public PropertyDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Add a new Property");
 
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
@@ -98,7 +98,7 @@ public class PropertyDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
 
         Value jcrValue = getJcrValue();
         if (isMultiple.booleanValue()) {

@@ -25,7 +25,7 @@ public class ErrorDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     public ErrorDialog(DialogWindow dialogWindow, String message) {
-        super(dialogWindow, null);
+        super(dialogWindow);
         add(new Label("message", message));
         dialogWindow.setTitle("Error");
     }

@@ -17,7 +17,6 @@ package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
-import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 
 public class DialogPageCreator implements PageCreator {
 

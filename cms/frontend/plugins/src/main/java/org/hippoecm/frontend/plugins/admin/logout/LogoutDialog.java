@@ -20,7 +20,6 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutDialog extends AbstractDialog {
@@ -28,8 +27,8 @@ public class LogoutDialog extends AbstractDialog {
 
     private boolean logout = false;
 
-    public LogoutDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public LogoutDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Logout");
         add(new Label("logout-message", "There are pending changes. Do you want to logout?"));
 

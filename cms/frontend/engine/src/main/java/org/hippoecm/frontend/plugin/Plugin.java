@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.plugin;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
@@ -37,18 +39,23 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
     private PluginManager pluginManager;
     private PluginDescriptor pluginDescriptor;
     private Plugin parentPlugin;
+    private Map<Integer, Plugin> childPlugins;
     private Channel topChannel;
     private Channel bottomChannel;
     private String cssClasses;
+    private int childCount = 0;
 
     public Plugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor.getWicketId(), model);
         setOutputMarkupId(true);
 
         this.parentPlugin = parentPlugin;
+        this.childPlugins = new HashMap<Integer, Plugin>();
         this.pluginDescriptor = pluginDescriptor;
 
         if (parentPlugin != null) {
+            parentPlugin.addChildPlugin(this);
+
             topChannel = parentPlugin.getBottomChannel();
             if (topChannel != null) {
                 topChannel.subscribe(this);
@@ -84,6 +91,10 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
             bottomChannel.publish(notification);
             bottomChannel.unregister(this);
         }
+
+        if (parentPlugin != null) {
+            parentPlugin.removeChildPlugin(this);
+        }
     }
 
     protected void onDestroy() {
@@ -112,6 +123,50 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         return parentPlugin;
     }
 
+    protected void addChildPlugin(Plugin child) {
+        childPlugins.put(new Integer(childCount++), child);
+    }
+
+    protected void removeChildPlugin(Plugin child) {
+        Integer id = findChildPlugin(child);
+        childPlugins.remove(id);
+    }
+
+    public PluginReference getReference() {
+        return new PluginReference(this);
+    }
+
+    public Plugin getChildPlugin(String pluginPath) {
+        int idx = pluginPath.indexOf(':');
+        Integer id;
+        if (idx > 0) {
+            id = Integer.parseInt(pluginPath.substring(0, idx));
+        } else {
+            id = Integer.parseInt(pluginPath);
+        }
+
+        Plugin child = childPlugins.get(id);
+        if (idx > 0) {
+            return child.getChildPlugin(pluginPath.substring(idx + 1));
+        } else {
+            return child;
+        }
+    }
+
+    public String getPluginPath() {
+        if (parentPlugin != null) {
+            Integer id = parentPlugin.findChildPlugin(this);
+            String path = parentPlugin.getPluginPath();
+            if (path != null) {
+                return path + ":" + id;
+            } else {
+                return id.toString();
+            }
+        } else {
+            return null;
+        }
+    }
+
     public IPluginModel getPluginModel() {
         return (IPluginModel) getModel();
     }
@@ -138,10 +193,6 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
 
         add(child);
         return child;
-    }
-
-    public void removeChild(PluginDescriptor childDescriptor) {
-        remove(childDescriptor.getWicketId());
     }
 
     @Override
@@ -192,5 +243,14 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         if (channel != null) {
             channel.send(request);
         }
+    }
+
+    private Integer findChildPlugin(Plugin child) {
+        for (Integer id : childPlugins.keySet()) {
+            if (childPlugins.get(id).equals(child)) {
+                return id;
+            }
+        }
+        return null;
     }
 }

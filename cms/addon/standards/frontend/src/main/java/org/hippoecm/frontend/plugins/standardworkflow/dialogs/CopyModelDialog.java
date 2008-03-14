@@ -36,8 +36,8 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
 
     private String name;
 
-    public CopyModelDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public CopyModelDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Copy model");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setEnabled(false);

@@ -22,7 +22,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.ExceptionModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class ExceptionDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
@@ -32,8 +31,8 @@ public class ExceptionDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private String display_message = "";
 
-    public ExceptionDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public ExceptionDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Exception");
 
         final Label exceptionMessageLabel = new Label("exception-message", new PropertyModel(this, "exception_message"));

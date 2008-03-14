@@ -37,7 +37,7 @@ public class BrowserPerspective extends Plugin {
             if (channel != null) {
                 // FIXME: should the map be constructed by the PluginDescriptor?
                 PluginModel model = new PluginModel();
-                model.put("plugin", getDescriptor().getPluginId());
+                model.put("plugin", getPluginPath());
                 Request request = channel.createRequest("focus", model);
                 request.setContext(notification.getContext());
                 channel.send(request);

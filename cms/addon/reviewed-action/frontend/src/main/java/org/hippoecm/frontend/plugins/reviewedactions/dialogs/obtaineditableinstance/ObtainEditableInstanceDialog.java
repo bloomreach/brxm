@@ -17,15 +17,13 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinst
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class ObtainEditableInstanceDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    public ObtainEditableInstanceDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public ObtainEditableInstanceDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Obtain editable instance");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

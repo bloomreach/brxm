@@ -36,8 +36,8 @@ public class CopyDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
-    public CopyDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Copy", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()), dialogWindow, channel);
+    public CopyDialog(DialogWindow dialogWindow) {
+        super("Copy", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()), dialogWindow);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class CopyDialog extends LookupDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel sourceNodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel sourceNodeModel = getDialogWindow().getNodeModel();
         String name = infoPanel.getName();
 
         if (sourceNodeModel.getParentModel() != null && getSelectedNode() != null && name != null && !"".equals(name)) {
@@ -72,6 +72,7 @@ public class CopyDialog extends LookupDialog {
             HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
             jcrSession.copy(sourceNodeModel.getNode(), targetPath);
 
+            Channel channel = getChannel();
             if (channel != null) {
                 Request request = channel.createRequest("select", targetNodeModel);
                 channel.send(request);

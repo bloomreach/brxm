@@ -30,8 +30,8 @@ public class EditModelDialog extends AbstractWorkflowDialog {
 
     private static final Logger log = LoggerFactory.getLogger(EditModelDialog.class);
 
-    public EditModelDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public EditModelDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Edit model");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

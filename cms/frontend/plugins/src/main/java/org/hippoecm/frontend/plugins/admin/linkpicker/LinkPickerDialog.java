@@ -36,26 +36,25 @@ public class LinkPickerDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
-    
-    protected  JcrPropertyValueModel valueModel;
+
+    protected JcrPropertyValueModel valueModel;
     private List<String> nodetypes;
-    
-    public LinkPickerDialog(DialogWindow dialogWindow, JcrPropertyValueModel valueModel, Channel channel, List<String> nodetypes) {
-        super("LinkPicker", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()),
-              dialogWindow, channel);
+
+    public LinkPickerDialog(DialogWindow dialogWindow, JcrPropertyValueModel valueModel, List<String> nodetypes) {
+        super("LinkPicker", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()), dialogWindow);
         this.nodetypes = nodetypes;
         this.valueModel = valueModel;
         setOutputMarkupId(true);
     }
-    
+
     @Override
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
         super.update(target, model);
         ok.setEnabled(isValidType(model));
         target.addComponent(ok);
-        
+
     }
-    
+
     @Override
     protected InfoPanel getInfoPanel(DialogWindow dialogWindow) {
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
@@ -65,34 +64,34 @@ public class LinkPickerDialog extends LookupDialog {
         ok.setEnabled(false);
         return infoPanel;
     }
-    
+
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel sourceNodeModel = this.dialogWindow.getNodeModel();
+        JcrNodeModel sourceNodeModel = getDialogWindow().getNodeModel();
         if (sourceNodeModel.getParentModel() != null) {
             JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
-            if(isValidType(targetNodeModel)) {
+            if (isValidType(targetNodeModel)) {
                 String targetPath = targetNodeModel.getNode().getPath();
                 valueModel.setObject(targetPath);
             }
         }
-        
+        Channel channel = getChannel();
         if (channel != null) {
             Request request = channel.createRequest("flush", sourceNodeModel);
             channel.send(request);
         }
-        
+
     }
 
-    protected boolean isValidType(JcrNodeModel targetNodeModel){
+    protected boolean isValidType(JcrNodeModel targetNodeModel) {
         Node targetNode = targetNodeModel.getNode();
         boolean validType = false;
         if (nodetypes.size() == 0) {
             return true;
         }
-        for(int i = 0 ; i < nodetypes.size() ; i++){
+        for (int i = 0; i < nodetypes.size(); i++) {
             try {
-                if(targetNode.isNodeType(nodetypes.get(i))){
+                if (targetNode.isNodeType(nodetypes.get(i))) {
                     validType = true;
                     break;
                 }
@@ -107,7 +106,4 @@ public class LinkPickerDialog extends LookupDialog {
     public void cancel() {
     }
 
-    
-
-    
 }

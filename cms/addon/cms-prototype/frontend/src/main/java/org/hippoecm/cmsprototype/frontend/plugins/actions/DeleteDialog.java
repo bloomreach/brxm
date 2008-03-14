@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.ExceptionModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
@@ -33,8 +32,8 @@ public class DeleteDialog extends AbstractDialog {
 
     static final Logger log = LoggerFactory.getLogger(DeleteDialog.class);
     
-    public DeleteDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public DeleteDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         String message;
         try {
             Node node = dialogWindow.getNodeModel().getNode();
@@ -49,7 +48,7 @@ public class DeleteDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        Node node = dialogWindow.getNodeModel().getNode();
+        Node node = getDialogWindow().getNodeModel().getNode();
         if (node != null) {
             Node toBeDeleted = node;
             Node parent = node.getParent();
@@ -63,6 +62,8 @@ public class DeleteDialog extends AbstractDialog {
             if(needsSave) {
                 parent.save();
             }
+
+            Channel channel = getChannel();
             if (channel != null) {
                 Request request = channel.createRequest("select", new JcrNodeModel(parentHandle));
                 channel.send(request);

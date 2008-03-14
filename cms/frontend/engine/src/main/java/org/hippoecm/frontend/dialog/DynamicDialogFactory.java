@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 import org.hippoecm.frontend.dialog.error.ErrorDialog;
-import org.hippoecm.frontend.plugin.channel.Channel;
 
 /**
  * Class for on-the-fly dialog creation based on a dynamic dialogClass attribute.
@@ -30,12 +29,10 @@ public class DynamicDialogFactory implements PageCreator {
 
     private DialogWindow window;
     private Class dialogClass;
-    private Channel channel;
 
-    public DynamicDialogFactory(DialogWindow window, Class dialogClass, Channel channel) {
+    public DynamicDialogFactory(DialogWindow window, Class dialogClass) {
         this.window = window;
         this.dialogClass = dialogClass;
-        this.channel = channel;
     }
 
     public Page createPage() {
@@ -45,9 +42,9 @@ public class DynamicDialogFactory implements PageCreator {
             result = new ErrorDialog(window, msg);
         } else {
             try {
-                Class[] formalArgs = new Class[] { DialogWindow.class, Channel.class };
+                Class[] formalArgs = new Class[] { DialogWindow.class };
                 Constructor constructor = dialogClass.getConstructor(formalArgs);
-                Object[] actualArgs = new Object[] { window, channel };
+                Object[] actualArgs = new Object[] { window };
                 result = (AbstractDialog) constructor.newInstance(actualArgs);
             } catch (Exception e) {
                 String msg = e.getClass().getName() + ": " + e.getMessage();

@@ -30,8 +30,8 @@ public class SaveDialog extends AbstractDialog {
 
     private boolean hasPendingChanges;
 
-    public SaveDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public SaveDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Save Session");
 
         Label label;
@@ -51,7 +51,7 @@ public class SaveDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
         Node saveNode = nodeModel.getNode();
         if (hasPendingChanges) {
             while(saveNode.isNew()){

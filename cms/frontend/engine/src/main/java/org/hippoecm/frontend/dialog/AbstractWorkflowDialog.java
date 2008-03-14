@@ -40,12 +40,12 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     static final Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
 
-    public AbstractWorkflowDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public AbstractWorkflowDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
     }
 
     protected Workflow getWorkflow(String category) {
-        Plugin owningPlugin = getOwningPlugin();
+        Plugin owningPlugin = getPlugin();
         Workflow workflow = null;
         try {
             // cast the plugin model to a jcr model
@@ -67,7 +67,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     @Override
     protected void ok() throws Exception {
         // before saving (which possibly means deleting), find the handle
-        JcrNodeModel handle = dialogWindow.getNodeModel();
+        JcrNodeModel handle = getDialogWindow().getNodeModel();
         while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
             handle = handle.getParentModel();
         }
@@ -81,7 +81,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         // enqueue a request to select the handle
         Channel channel = getChannel();
         if (channel != null) {
-            Request request = channel.createRequest("select", dialogWindow.getNodeModel());
+            Request request = channel.createRequest("select", getDialogWindow().getNodeModel());
             channel.send(request);
         }
     }

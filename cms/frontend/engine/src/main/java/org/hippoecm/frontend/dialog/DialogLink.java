@@ -20,30 +20,29 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
-    
-    public DialogLink(String id, IModel linktext, Class clazz, JcrNodeModel model, Channel channel, ChannelFactory factory) {
+
+    public DialogLink(String id, IModel linktext, Class clazz, JcrNodeModel model, Channel channel,
+            ChannelFactory factory) {
         super(id, model);
 
         Channel proxy = factory.createChannel();
         final DialogWindow dialogWindow = new DialogWindow("dialog", model, channel, proxy);
-        dialogWindow.setPageCreator(new DynamicDialogFactory(dialogWindow, clazz, proxy));
+        dialogWindow.setPageCreator(new DynamicDialogFactory(dialogWindow, clazz));
         panelAdders(linktext, dialogWindow);
     }
 
+    public DialogLink(String id, IModel linktext, DialogWindow window, JcrNodeModel model) {
+        super(id, model);
 
-    public DialogLink(String id, IModel linktext, LookupDialog lookupDialog, JcrNodeModel model) {
-        super(id, model); 
-        lookupDialog.dialogWindow.setPageCreator(new DialogPageCreator(lookupDialog));
-        panelAdders(linktext, lookupDialog.dialogWindow);
+        panelAdders(linktext, window);
     }
-    
+
     private void panelAdders(IModel linktext, final DialogWindow dialogWindow) {
         add(dialogWindow);
 
@@ -59,5 +58,5 @@ public class DialogLink extends Panel {
 
         link.add(new Label("dialog-link-text", linktext));
     }
-    
+
 }

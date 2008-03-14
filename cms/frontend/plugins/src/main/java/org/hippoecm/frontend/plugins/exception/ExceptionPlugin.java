@@ -33,10 +33,10 @@ public class ExceptionPlugin extends Plugin {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         dialogWindow = new DialogWindow("exception", new JcrNodeModel(model), null, null);
-        exceptionDialog = new ExceptionDialog(dialogWindow, null);
-        dialogWindow.setPageCreator(new DialogPageCreator(exceptionDialog));
-
         add(dialogWindow);
+
+        exceptionDialog = new ExceptionDialog(dialogWindow);
+        dialogWindow.setPageCreator(new DialogPageCreator(exceptionDialog));
     }
 
     @Override
