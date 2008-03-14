@@ -15,17 +15,23 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div>
-      <span wicket:id="feedback">Feedback message</span>
-      <form wicket:id="addNewForm">
-        Name:
-        <input wicket:id="name" type="text" value="name"/>
-        <br/>
-        Template:
-        <select wicket:id="prototype" />
-        <br/>
-        <input wicket:id="submit" type="submit" value="Add"/>
-      </form>
-    </div>
+    <table width="100%" border="1" cellspacing="0" cellpadding="0">
+	    <tr>
+    		<td>
+			    <div>
+			      <span wicket:id="feedback">Feedback message</span>
+			      <form wicket:id="addNewForm">
+			        Name:
+			        <input wicket:id="name" type="text" value="name"/>
+			        <br/>
+			        Template:
+			        <select wicket:id="prototype" />
+			        <br/>
+			        <input wicket:id="submit" type="submit" value="Add"/>
+			      </form>
+			    </div>
+    		</td>
+    	</tr>
+    </table>
   </wicket:panel>
 </html>
