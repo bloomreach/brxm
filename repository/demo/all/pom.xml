@@ -62,6 +62,14 @@
       <type>war</type>
     </dependency>
 
+    <!-- custom skin add-on (must be included before actual front-end application) -->    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-demo-skin</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+
     <!-- end-applications -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -130,7 +138,7 @@
       <type>jar</type>
     </dependency>
 
-    <!-- demo add-ons -->
+    <!-- HST add-on -->
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-taglib</artifactId>
@@ -142,6 +150,8 @@
       <version>1.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
+    
+    <!-- Demo addons -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-demo-addon</artifactId>
@@ -154,6 +164,8 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
+    
+    <!-- Runtime logging dependency -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -172,7 +184,7 @@
         <version>2.1-alpha-1</version>
         <configuration>
           <overlays>
-            <!-- repeat this overlay for all applications that use the skin -->
+            <!-- Generic skin for CMS-->
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-skin</artifactId>
@@ -181,6 +193,16 @@
                 <exclude>WEB-INF/web.xml</exclude>
               </excludes>
             </overlay>
+            <!-- Project specific skin for CMS-->
+            <overlay>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-demo-skin</artifactId>
+              <targetPath>skin</targetPath>
+              <excludes>
+                <exclude>WEB-INF/web.xml</exclude>
+              </excludes>
+            </overlay>
+            <!-- Html editor for CMS-->
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-xinha</artifactId>
@@ -189,6 +211,7 @@
                 <exclude>WEB-INF/web.xml</exclude>
               </excludes>
             </overlay>
+            <!-- The site -->
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-demo-site</artifactId>

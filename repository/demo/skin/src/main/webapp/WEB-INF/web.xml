@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <!--
   * Copyright 2007 Hippo
   *
@@ -13,24 +15,10 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">
-  <body>
-    <wicket:head>
-      <link rel="stylesheet" type="text/css" href="skin/style.css"/>
-      <link rel="stylesheet" type="text/css" href="skin/blank.css"/>
-    </wicket:head>
-    <wicket:child />
-    <b><span wicket:id="exception"></span></b>
-    <hr/>
-    <table width="50%" class="abstract-dialog">
-      <tr>
-        <td>
-          <a wicket:id="ok">OK</a>
-        </td>
-        <td>
-          <a wicket:id="cancel">Cancel</a>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
+<web-app id="hippo-ecm-demo-skin">
+
+  <!-- General configuration -->
+  <display-name>Demo CMS skin add-on</display-name>
+  <description>Static content to be deployed along or merged with front-end as skin customization.</description>
+
+</web-app>

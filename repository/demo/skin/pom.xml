@@ -13,41 +13,35 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
--->
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm</artifactId>
+    <artifactId>hippo-ecm-demo</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo ECM demo</name>
-  <description>Hippo ECM demo</description>
+  <name>Hippo ECM demo skin</name>
+  <description>Hippo ECM demo skin</description>
+  <artifactId>hippo-ecm-demo-skin</artifactId>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-demo</artifactId>
-  <version>2.01.00-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <packaging>war</packaging>
 
-  <scm>
-    <connection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo</developerConnection>
-    <url>https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo</url>
-  </scm>
-
-  <modules>
-    <module>addon</module>
-    <module>site</module>
-    <module>all</module>
-    <module>skin</module>
-  </modules>
-  
   <build>
     <defaultGoal>package</defaultGoal>
   </build>
+
+  <scm>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo/skin</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo/skin</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo/skin</url>
+  </scm>
 
 </project>
