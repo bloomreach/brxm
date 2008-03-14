@@ -47,7 +47,7 @@ public class LogoutLink extends Panel {
 
         Channel proxy = factory.createChannel();
         final DialogWindow dialogWindow = new DialogWindow("dialog", model, channel, proxy);
-        dialogWindow.setPageCreator(new DynamicDialogFactory(dialogWindow, clazz, proxy));
+        dialogWindow.setPageCreator(new DynamicDialogFactory(dialogWindow, clazz));
         add(dialogWindow);
 
         AjaxLink logoutLink = new AjaxLink("logout-link") {

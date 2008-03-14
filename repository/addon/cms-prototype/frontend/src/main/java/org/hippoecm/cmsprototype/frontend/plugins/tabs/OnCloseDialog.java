@@ -15,26 +15,23 @@
  */
 package org.hippoecm.cmsprototype.frontend.plugins.tabs;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.cmsprototype.frontend.plugins.tabs.TabsPlugin.Tab;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,57 +45,31 @@ public class OnCloseDialog extends AbstractDialog {
     protected AjaxLink donothing;
     protected AjaxLink discard;
     protected AjaxLink save;
-    private TabsPlugin tabsPlugin;
-    private Tab tabbie;
-    private JcrNodeModel closedJcrNodeModel;
     private ArrayList<JcrNodeModel> jcrNewNodeModelList;
-    private Map<JcrNodeModel, Tab> editors;
-    /* 
-     * meta data keys to store object in session: this is a temporary for because of 
-     * HREPTWO-615. When this issue is solved, objects should be correctly serialized
-     * and deserialized.
-     */
-    private static final MetaDataKey DIALOGWINDOW_KEY = new MetaDataKey(DialogWindow.class) {
-        private static final long serialVersionUID = 1L;
-    };
-    private static final MetaDataKey CHANNEL_KEY = new MetaDataKey(Channel.class) {
-        private static final long serialVersionUID = 1L;
-    };
-    private static final MetaDataKey TABSPLUGIN_KEY = new MetaDataKey(TabsPlugin.class) {
-        private static final long serialVersionUID = 1L;
-    };
-    private static final MetaDataKey TAB_KEY = new MetaDataKey(Tab.class) {
-        private static final long serialVersionUID = 1L;
-    };
-    private static final MetaDataKey JCRNODEMODEL_KEY = new MetaDataKey(JcrNodeModel.class) {
-        private static final long serialVersionUID = 1L;
-    };
-    private static final MetaDataKey JCRNODEMODELLIST_KEY = new MetaDataKey(ArrayList.class) {
-        private static final long serialVersionUID = 1L;
-    };
-    private static final MetaDataKey EDITORS_KEY = new MetaDataKey(Map.class) {
-        private static final long serialVersionUID = 1L;
-    };
+    private Map<JcrNodeModel, String> editors;
 
-    public OnCloseDialog(final DialogWindow dialogWindow, Channel channel, final TabsPlugin tabsPlugin,
-            final Tab tabbie, final JcrNodeModel closedJcrNodeModel, final ArrayList<JcrNodeModel> jcrNewNodeModelList,
+    public OnCloseDialog(DialogWindow dialogWindow, final ArrayList<JcrNodeModel> jcrNewNodeModelList,
             Map<JcrNodeModel, Tab> editors) {
-
-        super(dialogWindow, channel);
+        super(dialogWindow);
 
         this.ok.setVisible(false);
         this.cancel.setVisible(false);
 
-        setSessionMetaDate(dialogWindow, channel, tabsPlugin, tabbie, closedJcrNodeModel, jcrNewNodeModelList, editors);
-
         setOutputMarkupId(true);
 
-        this.tabsPlugin = tabsPlugin;
-        this.tabbie = tabbie;
-        this.closedJcrNodeModel = closedJcrNodeModel;
         this.jcrNewNodeModelList = jcrNewNodeModelList;
-        this.editors = editors;
+
+        // convert editors; we cannot keep references to Tab instances, as these are serialized as
+        // part of a different page.
+        this.editors = new HashMap<JcrNodeModel, String>();
+        for (Map.Entry<JcrNodeModel, Tab> entry : editors.entrySet()) {
+            Tab tabbie = entry.getValue();
+            String pluginPath = tabbie.getPlugin().getPluginPath();
+            this.editors.put(entry.getKey(), pluginPath);
+        }
+
         try {
+            JcrNodeModel closedJcrNodeModel = dialogWindow.getNodeModel();
             dialogWindow.setTitle("Close " + closedJcrNodeModel.getNode().getName());
         } catch (RepositoryException e) {
             dialogWindow.setTitle("Close ");
@@ -118,14 +89,8 @@ public class OnCloseDialog extends AbstractDialog {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                Result result = save();
-                if (result.getRepositoryException() == null) {
-                    dialogWindow.close(target);
-                } else {
-                    // TODO return the exception to the popup, something like below. 
-                    //final Label exceptionLabel = new Label("onCloseDialogException" , result.getRepositoryException().getMessage());
-                    //target.addComponent(exceptionLabel);
-                }
+                save();
+                getDialogWindow().close(target);
             }
         };
         add(save);
@@ -135,14 +100,8 @@ public class OnCloseDialog extends AbstractDialog {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                Result result = discard();
-                if (result.getRepositoryException() == null) {
-                    dialogWindow.close(target);
-                } else {
-                    // TODO return the exception to the popup, something like below. 
-                    //final Label exceptionLabel = new Label("onCloseDialogException" , result.getRepositoryException().getMessage());
-                    //target.addComponent(exceptionLabel);
-                }
+                discard();
+                getDialogWindow().close(target);
             }
         };
         add(discard);
@@ -153,85 +112,53 @@ public class OnCloseDialog extends AbstractDialog {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 donothing();
-                dialogWindow.close(target);
+                getDialogWindow().close(target);
             }
         };
         add(donothing);
+    }
 
-        dialogWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
-            private static final long serialVersionUID = 1L;
+    protected void save() {
+        try {
+            JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
+            Node n = nodeModel.getNode();
 
-            public void onClose(AjaxRequestTarget target) {
-                // while HREPTWO-615 we need to fetch objects from the session
-                refillInstanceVariables();
-                target.addComponent(OnCloseDialog.this.tabsPlugin);
+            while (n.isNew()) {
+                n = n.getParent();
             }
-        });
+            n.save();
 
+            sendClose(nodeModel);
+        } catch (RepositoryException e) {
+            log.info(e.getClass().getName() + ": " + e.getMessage());
+        }
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException {
-        // TODO serialization problem wicket
-        //System.out.println(this + "readObject");
-    }
+    protected void discard() {
+        try {
+            Node n = getDialogWindow().getNodeModel().getNode();
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        // TODO serialization problem wicket
-        //System.out.println(this + "writeObject");
+            if (n.isNew()) {
+                n.remove();
+            } else {
+                String parentPath;
+                parentPath = getDialogWindow().getNodeModel().getNode().getPath();
+                for (int i = 0; i < jcrNewNodeModelList.size(); i++) {
+                    JcrNodeModel model = jcrNewNodeModelList.get(i);
+                    if (model.getNode().getPath().startsWith(parentPath)) {
+                        sendClose(model);
+                    }
+                }
+                n.refresh(false);
+            }
+
+            sendClose(getDialogWindow().getNodeModel());
+        } catch (RepositoryException e) {
+            log.info(e.getClass().getName() + ": " + e.getMessage());
+        }
     }
 
     protected void donothing() {
-    }
-
-    protected Result save() {
-        // while HREPTWO-615 we need to fetch objects from the session
-        refillInstanceVariables();
-        Result result = new Result();
-        if (closedJcrNodeModel != null) {
-            try {
-                Node n = closedJcrNodeModel.getNode();
-
-                while (n.isNew()) {
-                    n = n.getParent();
-                }
-                n.save();
-                tabbie.destroy();
-            } catch (RepositoryException e) {
-                result.setRepositoryException(e);
-                log.info(e.getClass().getName() + ": " + e.getMessage());
-            }
-        }
-        return result;
-    }
-
-    protected Result discard() {
-        refillInstanceVariables();
-        Result result = new Result();
-        if (closedJcrNodeModel != null) {
-            try {
-                Node n = closedJcrNodeModel.getNode();
-
-                if (n.isNew()) {
-                    n.remove();
-                } else {
-                    String parentPath;
-                    parentPath = closedJcrNodeModel.getNode().getPath();
-                    for (int i = 0; i < jcrNewNodeModelList.size(); i++) {
-                        if (jcrNewNodeModelList.get(i).getNode().getPath().startsWith(parentPath)) {
-                            editors.get(jcrNewNodeModelList.get(i)).destroy();
-                        }
-                    }
-                    n.refresh(false);
-                }
-                tabbie.destroy();
-
-            } catch (RepositoryException e) {
-                result.setRepositoryException(e);
-                log.info(e.getClass().getName() + ": " + e.getMessage());
-            }
-
-        }
-        return result;
     }
 
     @Override
@@ -242,67 +169,13 @@ public class OnCloseDialog extends AbstractDialog {
     protected void cancel() {
     }
 
-    /*
-     * TODO below temporary fix while HREPTWO-615
-     */
-
-    class Result {
-        private RepositoryException repositoryException;
-
-        public RepositoryException getRepositoryException() {
-            return repositoryException;
-        }
-
-        public void setRepositoryException(RepositoryException repositoryException) {
-            this.repositoryException = repositoryException;
+    private void sendClose(JcrNodeModel nodeModel) {
+        Channel channel = getChannel();
+        if (channel != null) {
+            PluginModel requestModel = new PluginModel();
+            requestModel.put("plugin", editors.get(nodeModel));
+            Request request = channel.createRequest("close", requestModel);
+            channel.send(request);
         }
     }
-
-    private void setSessionMetaDate(DialogWindow dialogWindow2, Channel channel2, TabsPlugin tabsPlugin2, Tab tabbie2,
-            JcrNodeModel closedJcrNodeModel2, ArrayList<JcrNodeModel> jcrNewNodeModelList2,
-            Map<JcrNodeModel, Tab> editors2) {
-
-        this.getSession().setMetaData(DIALOGWINDOW_KEY, (Serializable) dialogWindow2);
-        this.getSession().setMetaData(CHANNEL_KEY, (Serializable) channel2);
-        this.getSession().setMetaData(TABSPLUGIN_KEY, (Serializable) tabsPlugin2);
-        this.getSession().setMetaData(TAB_KEY, (Serializable) tabbie2);
-        this.getSession().setMetaData(JCRNODEMODEL_KEY, (Serializable) closedJcrNodeModel2);
-        this.getSession().setMetaData(JCRNODEMODELLIST_KEY, (Serializable) jcrNewNodeModelList2);
-        this.getSession().setMetaData(EDITORS_KEY, (Serializable) editors2);
-    }
-
-    private void refillInstanceVariables() {
-
-        Serializable s = this.getSession().getMetaData(DIALOGWINDOW_KEY);
-        if (s != null && s instanceof DialogWindow) {
-            this.dialogWindow = (DialogWindow) s;
-        }
-        s = this.getSession().getMetaData(CHANNEL_KEY);
-        if (s != null && s instanceof Channel) {
-            this.channel = (Channel) s;
-        }
-        s = this.getSession().getMetaData(TABSPLUGIN_KEY);
-        if (s != null && s instanceof TabsPlugin) {
-            this.tabsPlugin = (TabsPlugin) s;
-        }
-        s = this.getSession().getMetaData(TAB_KEY);
-        if (s != null && s instanceof Tab) {
-            this.tabbie = (Tab) s;
-        }
-        s = this.getSession().getMetaData(JCRNODEMODEL_KEY);
-        if (s != null && s instanceof JcrNodeModel) {
-            this.closedJcrNodeModel = (JcrNodeModel) s;
-        }
-        s = this.getSession().getMetaData(JCRNODEMODELLIST_KEY);
-        if (s != null && s instanceof ArrayList) {
-            this.jcrNewNodeModelList = (ArrayList<JcrNodeModel>) s;
-        }
-        s = this.getSession().getMetaData(EDITORS_KEY);
-        if (s != null && s instanceof Map) {
-            this.editors = (Map<JcrNodeModel, Tab>) s;
-        }
-    }
-    /*
-     * end temporary fix while HREPTWO-615 
-     */
 }

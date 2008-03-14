@@ -34,16 +34,13 @@ public class MoveDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
-
-    public MoveDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Move", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()),
-                dialogWindow, channel);
+    public MoveDialog(DialogWindow dialogWindow) {
+        super("Move", new JcrTreeNode(dialogWindow.getNodeModel().findRootModel()), dialogWindow);
     }
-
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel sourceNodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel sourceNodeModel = getDialogWindow().getNodeModel();
         if (sourceNodeModel.getParentModel() != null) {
             String nodeName = sourceNodeModel.getNode().getName();
             String sourcePath = sourceNodeModel.getNode().getPath();
@@ -59,6 +56,7 @@ public class MoveDialog extends LookupDialog {
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(sourcePath, targetPath);
 
+            Channel channel = getChannel();
             if (channel != null) {
                 Request request = channel.createRequest("select", targetNodeModel.getNodeModel());
                 channel.send(request);
@@ -73,6 +71,5 @@ public class MoveDialog extends LookupDialog {
     @Override
     public void cancel() {
     }
-
 
 }

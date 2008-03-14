@@ -39,8 +39,8 @@ import org.w3c.dom.Document;
 public class ExportDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public ExportDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public ExportDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
 
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         String path;
@@ -69,7 +69,7 @@ public class ExportDialog extends AbstractDialog {
     public void ok() {
         Channel channel = getChannel();
         if (channel != null) {
-            Request request = channel.createRequest("select", dialogWindow.getNodeModel());
+            Request request = channel.createRequest("select", getDialogWindow().getNodeModel());
             channel.send(request);
         }
     }

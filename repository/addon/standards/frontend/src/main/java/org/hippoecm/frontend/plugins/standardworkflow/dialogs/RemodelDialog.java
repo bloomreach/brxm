@@ -37,8 +37,8 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
     
-    public RemodelDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public RemodelDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Apply models");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
@@ -49,9 +49,9 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     protected void doOk() throws Exception {
         JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
 
-        Node node = dialogWindow.getNodeModel().getNode();
+        Node node = getDialogWindow().getNodeModel().getNode();
         String namespace = node.getName();
-        TypeConfig typeConfig = getOwningPlugin().getPluginManager().getTemplateEngine().getTypeConfig();
+        TypeConfig typeConfig = getPlugin().getPluginManager().getTemplateEngine().getTypeConfig();
         CndSerializer serializer = new CndSerializer(sessionModel, typeConfig, namespace);
         serializer.versionNamespace(namespace);
         String cnd = serializer.getOutput();

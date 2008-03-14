@@ -26,13 +26,13 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogPageCreator;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.ExceptionModel;
 import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -59,13 +59,11 @@ public class TabsPlugin extends Plugin {
     private Map<JcrNodeModel, Tab> editors;
     private TabbedPanel tabbedPanel;
     private int selectCount;
-    private int editCount;
 
     private String editPerspective;
     private PluginDescriptor editDescriptor;
     private DialogWindow dialogWindow;
     private OnCloseDialog onCloseDialog;
-    private Channel channel;
 
     public TabsPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
@@ -76,9 +74,10 @@ public class TabsPlugin extends Plugin {
 
         add(tabbedPanel);
 
-        // a place holder for the onclose dialog
-        channel = getTopChannel();
-        add(new Label("onclose", ""));
+        Channel proxy = getPluginManager().getChannelFactory().createChannel();
+        dialogWindow = new DialogWindow("onclose", null, getBottomChannel(), proxy);
+        add(dialogWindow);
+
         List<String> parameter = pluginDescriptor.getParameter("editor");
         if (parameter != null && parameter.size() > 0) {
             editPerspective = parameter.get(0);
@@ -87,7 +86,6 @@ public class TabsPlugin extends Plugin {
         }
 
         selectCount = 0;
-        editCount = 0;
     }
 
     // invoked by the TabbedPanel when a tab is selected    
@@ -115,19 +113,17 @@ public class TabsPlugin extends Plugin {
         if (closedJcrNodeModel != null) {
             try {
                 if (closedJcrNodeModel.getNode().getSession().hasPendingChanges()) {
-                    // if there are any changes, inform whether the user wants to save or discard changes
-                    dialogWindow = new DialogWindow("onclose", new JcrNodeModel(closedJcrNodeModel), null, null);
-                    onCloseDialog = new OnCloseDialog(dialogWindow, channel, this, tabbie, closedJcrNodeModel,
-                            jcrNewNodeModelList, editors);
+                    dialogWindow.setModel(closedJcrNodeModel);
+                    onCloseDialog = new OnCloseDialog(dialogWindow, jcrNewNodeModelList, editors);
                     dialogWindow.setPageCreator(new DialogPageCreator(onCloseDialog));
-                    this.replace(dialogWindow);
                     dialogWindow.show(target);
                 } else {
-                    // save to close without informing and without saving
+                    // safe to close without informing and without saving
                     tabbie.destroy();
                 }
             } catch (RepositoryException e) {
                 if (target != null) {
+                    Channel channel = getTopChannel();
                     Request request = channel.createRequest("exception", new ExceptionModel(e));
                     channel.send(request);
                     request.getContext().apply(target);
@@ -142,18 +138,12 @@ public class TabsPlugin extends Plugin {
 
     @Override
     public Plugin addChild(final PluginDescriptor childDescriptor) {
-        if (editPerspective == null || !editPerspective.equals(childDescriptor.getPluginId())) {
+        if (editPerspective == null || !editPerspective.equals(childDescriptor.getWicketId())) {
             Tab tab = new Tab(childDescriptor, getPluginModel(), false);
             return tab.getPlugin();
         }
         editDescriptor = childDescriptor;
         return null;
-    }
-
-    @Override
-    public void removeChild(PluginDescriptor childDescriptor) {
-        Tab tabbie = getPluginTab(childDescriptor.getPluginId());
-        tabbie.destroy();
     }
 
     @Override
@@ -177,12 +167,7 @@ public class TabsPlugin extends Plugin {
                 editors.put(model, tabbie);
                 request.getContext().addRefresh(this);
 
-                // HACK: add children before setting the final pluginId.
-                // Each perspective needs to have a unique Id to be able to fulfill
-                // focus requests.  The plugin configuration uses the pluginId to
-                // find any children.
                 tabbie.getPlugin().addChildren();
-                descriptor.setPluginId((++editCount) + ":" + editPerspective);
             }
 
             // notify children; if tabs should be switched,
@@ -196,8 +181,8 @@ public class TabsPlugin extends Plugin {
             // don't send request to parent
             return;
         } else if ("focus".equals(request.getOperation())) {
-            String pluginId = (String) request.getModel().getMapRepresentation().get("plugin");
-            Tab tab = getPluginTab(pluginId);
+            String pluginPath = (String) request.getModel().getMapRepresentation().get("plugin");
+            Tab tab = getPluginTab(pluginPath);
             if (tab != null) {
                 tab.select();
                 request.getContext().addRefresh(this);
@@ -210,16 +195,39 @@ public class TabsPlugin extends Plugin {
                 }
                 return;
             }
+        } else if ("close".equals(request.getOperation())) {
+            String pluginPath = (String) request.getModel().getMapRepresentation().get("plugin");
+            Tab tab = getPluginTab(pluginPath);
+            if (tab != null) {
+                tab.destroy();
+                request.getContext().addRefresh(this);
+                return;
+            }
+        } else if ("flush".equals(request.getOperation())) {
+            JcrNodeModel model = new JcrNodeModel(request.getModel());
+            for (Map.Entry<JcrNodeModel, Tab> entry : editors.entrySet()) {
+                JcrItemModel itemModel = entry.getKey().getItemModel();
+                if (itemModel.getPath().startsWith(model.getItemModel().getPath())) {
+                    if (!itemModel.exists()) {
+                        entry.getValue().destroy();
+                    }
+                }
+            }
         }
-        // TODO: handle close tab request
         super.handle(request);
     }
 
-    Tab getPluginTab(String pluginId) {
+    Tab getPluginTab(String pluginPath) {
+        Plugin parent = this;
+        while (parent.getParentPlugin() != null) {
+            parent = parent.getParentPlugin();
+        }
+        Plugin plugin = parent.getChildPlugin(pluginPath);
+
         Iterator<Tab> tabIter = tabbedPanel.getTabs().iterator();
         while (tabIter.hasNext()) {
             Tab tabbie = tabIter.next();
-            if (tabbie.getPlugin().getDescriptor().getPluginId() == pluginId) {
+            if (tabbie.getPlugin().equals(plugin)) {
                 return tabbie;
             }
         }
@@ -250,8 +258,8 @@ public class TabsPlugin extends Plugin {
         // implement ITab interface
 
         public Model getTitle() {
-            PluginDescriptor descriptor = plugin.getDescriptor();
-            String title = descriptor.getPluginId();
+            PluginDescriptor descriptor = getPlugin().getDescriptor();
+            String title = descriptor.getWicketId();
             if (descriptor.getParameter("title") != null) {
                 title = descriptor.getParameter("title").get(0);
             }
@@ -261,7 +269,7 @@ public class TabsPlugin extends Plugin {
         public Panel getPanel(String panelId) {
             assert (panelId.equals(TabbedPanel.TAB_PANEL_ID));
 
-            return plugin;
+            return getPlugin();
         }
 
         // package internals
@@ -291,7 +299,7 @@ public class TabsPlugin extends Plugin {
             tabbedPanel.getTabs().remove(this);
 
             // let plugin clean up any resources
-            plugin.destroy();
+            getPlugin().destroy();
 
             // look for previously selected tab
             int lastCount = 0;
@@ -312,6 +320,7 @@ public class TabsPlugin extends Plugin {
 
         public void popup(AjaxRequestTarget target, RepositoryException e) {
             if (target != null) {
+                Channel channel = getTopChannel();
                 Request request = channel.createRequest("exception", new ExceptionModel(e));
                 channel.send(request);
                 request.getContext().apply(target);

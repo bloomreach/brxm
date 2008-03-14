@@ -39,8 +39,8 @@ public class RenameDialog extends AbstractDialog {
 
     private String name;
 
-    public RenameDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public RenameDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         String title;
         try {
             Node node = dialogWindow.getNodeModel().getNode();
@@ -60,7 +60,7 @@ public class RenameDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        Node node = dialogWindow.getNodeModel().getNode();
+        Node node = getDialogWindow().getNodeModel().getNode();
         if (node != null) {
             node = Utils.findHandle(node);
             Node renamedNode;
@@ -75,6 +75,8 @@ public class RenameDialog extends AbstractDialog {
             }
             renamedNode = rename(node);
             renamedNode.getParent().save();
+
+            Channel channel = getChannel();
             if (channel != null && renamedNode != null) {
                 Request request = channel.createRequest("flush", new JcrNodeModel("/"));
                 channel.send(request);
@@ -85,7 +87,7 @@ public class RenameDialog extends AbstractDialog {
         }
     }
 
-    private Node rename(Node node) throws RepositoryException{
+    private Node rename(Node node) throws RepositoryException {
         Node result;
         UserSession wicketSession = (UserSession) getSession();
         HippoSession session = (HippoSession) wicketSession.getJcrSession();

@@ -39,8 +39,8 @@ public class RenameDialog extends AbstractDialog {
      */
     private String name;
 
-    public RenameDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public RenameDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Rename Node");
 
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
@@ -59,7 +59,7 @@ public class RenameDialog extends AbstractDialog {
 
     @Override
     protected void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
 
         if (nodeModel.getParentModel() != null) {
             JcrNodeModel parentModel = nodeModel.getParentModel();

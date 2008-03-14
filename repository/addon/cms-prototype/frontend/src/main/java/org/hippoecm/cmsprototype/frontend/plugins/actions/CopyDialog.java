@@ -34,12 +34,13 @@ public class CopyDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
-    public CopyDialog(DialogWindow dialogWindow, Channel channel) {
-        super("Copy", new FolderTreeNode(dialogWindow.getNodeModel().findRootModel()), dialogWindow, channel);
+    public CopyDialog(DialogWindow dialogWindow) {
+        super("Copy", new FolderTreeNode(dialogWindow.getNodeModel().findRootModel()), dialogWindow);
     }
 
     @Override
     public void ok() throws RepositoryException {
+        DialogWindow dialogWindow = getDialogWindow();
         if (dialogWindow.getNodeModel().getParentModel() != null) {
             Node source = Utils.findHandle(dialogWindow.getNodeModel().getNode());
             Node target = getSelectedNode().getNodeModel().getNode();
@@ -56,6 +57,7 @@ public class CopyDialog extends LookupDialog {
                 }
                 saveNode.save();
 
+                Channel channel = getChannel();
                 if (channel != null) {
                     Request request = channel.createRequest("select", new JcrNodeModel(target));
                     channel.send(request);

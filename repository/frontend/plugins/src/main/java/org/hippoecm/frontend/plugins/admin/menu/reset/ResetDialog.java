@@ -29,8 +29,8 @@ public class ResetDialog extends AbstractDialog {
 
     private boolean hasPendingChanges;
 
-    public ResetDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public ResetDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Refresh Session (undo changes)");
 
         Label label;
@@ -50,7 +50,7 @@ public class ResetDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
 
         // The actual JCR refresh
         nodeModel.getNode().getSession().refresh(false);

@@ -38,6 +38,8 @@ public class Home extends WebPage {
     public static final String ROOT_PLUGIN = "rootPlugin";
     public static final String LOGIN_PLUGIN = "loginPlugin";
 
+    private Plugin rootPlugin;
+
     public Home() {
 
         UserSession session = getValidUserSession();
@@ -60,11 +62,15 @@ public class Home extends WebPage {
         }
         JcrNodeModel rootModel = new JcrNodeModel(rootNode);
 
-        Plugin rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
+        rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
         rootPlugin.setPluginManager(pluginManager);
 
         add(rootPlugin);
         rootPlugin.addChildren();
+    }
+
+    public Plugin getRootPlugin() {
+        return rootPlugin;
     }
 
     private UserSession getValidUserSession() {

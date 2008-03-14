@@ -30,14 +30,15 @@ import org.hippoecm.frontend.plugin.channel.Request;
 public class DialogWindow extends ModalWindow implements INotificationListener, IRequestHandler {
     private static final long serialVersionUID = 1L;
 
-    private JcrNodeModel nodeModel;
+    private Channel proxy;
     private LinkedList<Request> queue;
 
     public DialogWindow(String id, JcrNodeModel nodeModel, final Channel channel, Channel proxy) {
         super(id);
         setCookieName(id);
-        this.nodeModel = nodeModel;
+        setModel(nodeModel);
         this.queue = new LinkedList<Request>();
+        this.proxy = proxy;
 
         if (channel != null) {
             channel.subscribe(this);
@@ -71,7 +72,11 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
     }
 
     public JcrNodeModel getNodeModel() {
-        return nodeModel;
+        return (JcrNodeModel) getModel();
+    }
+
+    public Channel getProxyChannel() {
+        return proxy;
     }
 
     // implement IRequestHandler
@@ -87,7 +92,7 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
 
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            nodeModel = new JcrNodeModel(notification.getModel());
+            setModel(new JcrNodeModel(notification.getModel()));
         }
     }
 }

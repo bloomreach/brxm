@@ -40,7 +40,7 @@ public class ItemRowPlugin extends Plugin {
 
     @Override
     public Plugin addChild(PluginDescriptor childDescriptor) {
-        if (!childDescriptor.getPluginId().equals(HippoNodeType.HIPPO_ITEM)) {
+        if (!childDescriptor.getWicketId().equals(HippoNodeType.HIPPO_ITEM)) {
             return super.addChild(childDescriptor);
         }
         return null;

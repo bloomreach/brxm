@@ -34,8 +34,8 @@ public abstract class LookupDialog extends AbstractDialog {
     private LookupTargetTreeView tree;
     private InfoPanel infoPanel;
  
-    protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow) {
+        super(dialogWindow);
         
         dialogWindow.setTitle(title);
         

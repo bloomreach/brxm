@@ -16,10 +16,8 @@
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest;
 
 import org.apache.wicket.model.PropertyModel;
-
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
@@ -28,8 +26,8 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
 
     private String reason;
 
-    public RejectRequestDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public RejectRequestDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Reject request");
 
         add(new TextFieldWidget("reason", new PropertyModel(this, "reason")));

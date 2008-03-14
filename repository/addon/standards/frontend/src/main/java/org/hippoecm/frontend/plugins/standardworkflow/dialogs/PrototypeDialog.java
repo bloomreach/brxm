@@ -34,8 +34,8 @@ public class PrototypeDialog extends AbstractWorkflowDialog {
 
     private String name;
 
-    public PrototypeDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public PrototypeDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
 
         name = "New document";
 

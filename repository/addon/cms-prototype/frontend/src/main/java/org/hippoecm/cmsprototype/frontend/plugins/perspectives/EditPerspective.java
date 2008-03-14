@@ -42,7 +42,7 @@ public class EditPerspective extends Plugin {
                 Channel channel = getTopChannel();
                 if (channel != null) {
                     PluginModel pluginModel = new PluginModel();
-                    pluginModel.put("plugin", getDescriptor().getPluginId());
+                    pluginModel.put("plugin", getPluginPath());
                     Request request = channel.createRequest("focus", pluginModel);
                     request.setContext(notification.getContext());
                     channel.send(request);

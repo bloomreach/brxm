@@ -17,14 +17,13 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class RequestDeletionDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    public RequestDeletionDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public RequestDeletionDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Request delete");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);

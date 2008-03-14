@@ -20,25 +20,24 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.plugin.ComponentReference;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractDialog extends WebPage {
-    
+
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
     protected AjaxLink ok;
     protected AjaxLink cancel;
-    protected DialogWindow dialogWindow;
-    protected Channel channel;
+    private ComponentReference windowRef;
 
     private String exception = "";
 
-    public AbstractDialog(final DialogWindow dialogWindow, Channel channel) {
-        this.dialogWindow = dialogWindow;
-        this.channel = channel;
+    public AbstractDialog(DialogWindow dialogWindow) {
+        this.windowRef = new ComponentReference(dialogWindow);
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
@@ -46,11 +45,12 @@ public abstract class AbstractDialog extends WebPage {
 
         ok = new AjaxLink("ok") {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 try {
                     ok();
-                    dialogWindow.close(target);
+                    getDialogWindow().close(target);
                 } catch (Exception e) {
                     String msg = e.getClass().getName() + ": " + e.getMessage();
                     log.error(msg);
@@ -67,10 +67,11 @@ public abstract class AbstractDialog extends WebPage {
 
         cancel = new AjaxLink("cancel") {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 cancel();
-                dialogWindow.close(target);
+                getDialogWindow().close(target);
             }
         };
         add(cancel);
@@ -84,12 +85,16 @@ public abstract class AbstractDialog extends WebPage {
         return exception;
     }
 
-    protected Plugin getOwningPlugin() {
-        return (Plugin)dialogWindow.findParent(Plugin.class);
+    protected DialogWindow getDialogWindow() {
+        return (DialogWindow) windowRef.getObject();
     }
 
+    protected Plugin getPlugin() {
+        return (Plugin) getDialogWindow().findParent(Plugin.class);
+    }
+    
     protected Channel getChannel() {
-        return channel;
+        return getDialogWindow().getProxyChannel();
     }
 
     protected abstract void ok() throws Exception;

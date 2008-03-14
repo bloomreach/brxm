@@ -27,8 +27,8 @@ import org.hippoecm.frontend.plugin.channel.Request;
 public class DeleteDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public DeleteDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public DeleteDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
 
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         String message;
@@ -46,7 +46,7 @@ public class DeleteDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
         JcrNodeModel parentModel = nodeModel.getParentModel();
 
         //The actual JCR remove

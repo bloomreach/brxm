@@ -21,8 +21,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Application;
-import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
@@ -80,7 +78,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
                     log.warn("Field " + name + " specified in plugin does not exist");
                 }
             } else {
-                items.add(new RepositoryItemDescriptor(child.getPluginId(), child, parent));
+                items.add(new RepositoryItemDescriptor(child.getWicketId(), child, parent));
             }
         }
         return items;

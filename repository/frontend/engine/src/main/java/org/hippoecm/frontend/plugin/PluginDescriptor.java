@@ -29,20 +29,17 @@ import org.apache.wicket.IClusterable;
 public class PluginDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
 
-    private String pluginId;
     private String wicketId;
     private String className;
     private Map<String, List<String>> parameters;
 
-    public PluginDescriptor(String pluginId, String className) {
-        this.pluginId = pluginId;
-        this.wicketId = pluginId;
+    public PluginDescriptor(String wicketId, String className) {
+        this.wicketId = wicketId;
         this.className = className;
         parameters = new HashMap<String, List<String>>();
     }
 
     public PluginDescriptor(Map<String, Object> map) {
-        this.pluginId = (String) map.get("pluginId");
         this.wicketId = (String) map.get("wicketId");
         this.className = (String) map.get("className");
         this.parameters = (Map<String, List<String>>) map.get("parameters");
@@ -62,7 +59,6 @@ public class PluginDescriptor implements IClusterable, Cloneable {
 
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("pluginId", pluginId);
         map.put("wicketId", wicketId);
         map.put("className", className);
         map.put("parameters", parameters);
@@ -70,10 +66,6 @@ public class PluginDescriptor implements IClusterable, Cloneable {
     }
 
     // setters
-
-    public void setPluginId(String pluginId) {
-        this.pluginId = pluginId;
-    }
 
     public void setWicketId(String wicketId) {
         this.wicketId = wicketId;
@@ -97,10 +89,6 @@ public class PluginDescriptor implements IClusterable, Cloneable {
 
     // getters
 
-    public String getPluginId() {
-        return pluginId;
-    }
-
     public String getWicketId() {
         return wicketId;
     }
@@ -117,8 +105,8 @@ public class PluginDescriptor implements IClusterable, Cloneable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("pluginId", pluginId).append(
-                "wicketId", wicketId).append("className", className).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("wicketId", wicketId).append(
+                "className", className).toString();
     }
 
     @Override
@@ -130,13 +118,13 @@ public class PluginDescriptor implements IClusterable, Cloneable {
             return true;
         }
         PluginDescriptor pluginDescriptor = (PluginDescriptor) object;
-        return new EqualsBuilder().append(pluginId, pluginDescriptor.pluginId).append(wicketId,
-                pluginDescriptor.wicketId).append(className, pluginDescriptor.className).isEquals();
+        return new EqualsBuilder().append(wicketId, pluginDescriptor.wicketId).append(className,
+                pluginDescriptor.className).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 313).append(pluginId).append(wicketId).append(className).toHashCode();
+        return new HashCodeBuilder(17, 313).append(wicketId).append(className).toHashCode();
     }
 
 }

@@ -32,8 +32,8 @@ public class NodeDialog extends AbstractDialog {
     private String name;
     private String type = "nt:unstructured";
 
-    public NodeDialog(DialogWindow dialogWindow, Channel channel) {
-        super(dialogWindow, channel);
+    public NodeDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
         dialogWindow.setTitle("Add a new Node");
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
@@ -45,7 +45,7 @@ public class NodeDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
 
         //The actual JCR add node
         Node node = nodeModel.getNode().addNode(getName(), getType());
