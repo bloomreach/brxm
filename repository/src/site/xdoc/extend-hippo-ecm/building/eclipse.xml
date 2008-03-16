@@ -170,18 +170,18 @@
                         </p>
                         <ol>
                             <li>
-                                <p>Inside package/war/src/main/webapp, create a directory skin.</p>
+                                <p>Inside cms/package/war/src/main/webapp, create a directory skin.</p>
                             </li>
                             <li>
-                                <p>Copy all files in addon/skin/src/main/webapp to
-                                    package/war/src/main/webapp/skin.</p>
+                                <p>Copy all files in cms/skin/src/main/webapp to
+                                    cms/package/war/src/main/webapp/skin.</p>
                             </li>
                             <li>
-                                <p>Inside package/war/src/main/webapp, create a directory xinha.</p>
+                                <p>Inside cms/package/war/src/main/webapp, create a directory xinha.</p>
                             </li>
                             <li>
                                 <p>Copy all files in addon/xinha/src/main/webapp to
-                                    package/war/src/main/webapp/xinha.</p>
+                                    cms/package/war/src/main/webapp/xinha.</p>
                             </li>
                             <li>
                                 <p>Copy all files in addon/xinha/webResources to addon/xinha/src/main/webapp/xinha/plugins</p>
@@ -189,17 +189,17 @@
 
                         </ol>
                         <p> These steps have to be repeated after each change in
-                            hippo-ecm-addon-skin or hippo-ecm-addon-xinha. </p>
+                            hippo-ecm-cms-skin or hippo-ecm-addon-xinha. </p>
                     </li>
                     <li>
                         <p>
                             <b>Unix</b>
                         </p>
                         <source> 
- ~/> cd hippo-ecm/package/war/src/main/webapp
- ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/skin/src/main/webapp/ skin
- ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/xinha/src/main/webapp/ xinha
- ~/hippo-ecm/package/war/src/main/webapp> cd -
+ ~/> cd hippo-ecm/cms/package/war/src/main/webapp
+ ~/hippo-ecm/cms/package/war/src/main/webapp> ln -s ../../../../../skin/src/main/webapp/ skin
+ ~/hippo-ecm/cms/package/war/src/main/webapp> ln -s ../../../../../../addon/xinha/src/main/webapp/ xinha
+ ~/hippo-ecm/cms/package/war/src/main/webapp> cd -
  ~/> cd hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/AutoSave ./
                          </source>
@@ -209,7 +209,7 @@
             <subsection name="Dependencies">
                 <ol>
                     <li>
-                        <p>Select project hippo-ecm-package-war</p>
+                        <p>Select project hippo-ecm-cms-package-war</p>
                     </li>
                     <li>
                         <p>In the configuration panel (Project -&gt; Properties), select 'Java
@@ -239,10 +239,9 @@
         </section>
         <section name="Create eclipse projects, part three">
             <subsection name="JPOX enhanced projects">
-                <p> Projects that provide document types (hippoecm-repository-engine,
-                    hippo-ecm-repository-connector, hippo-ecm-api and all repository addons like
+                <p> Projects that provide document types (currently hippoecm-repository-engine and
                     hippo-ecm-addon-reviewed-action-repository) must be enhanced by the JPOX plugin.
-                    Open the 'Package explorer' view and: </p>
+                    Open the 'Package explorer' view and for each of these projects: </p>
                 <ol>
                     <li>
                         <p>Right-click the project -&gt; JPOX -&gt; Add JPOX Support</p>
@@ -261,10 +260,10 @@
             </p>
             <ul>
                 <li>
-                    <p>Name is 'hippo-ecm-package-war'</p>
+                    <p>Name is 'hippo-ecm-cms-package-war'</p>
                 </li>
                 <li>
-                    <p>Project is 'hippo-ecm-package-war'</p>
+                    <p>Project is 'hippo-ecm-cms-package-war'</p>
                 </li>
                 <li>
                     <p>Webapp dir is 'src/main/webapp'</p>
@@ -276,23 +275,10 @@
                     <p>Port is '8080'</p>
                 </li>
             </ul>
-            <p>Select the 'Arguments' tab:</p>            
-            <ul>
-                <li>
-                    <p>Define a variable <code>m2_loc</code> as the path to your local maven repository (e.g.
-                        /home/user/.m2/repository)</p>
-                </li>
-                <li>
-                    <p>Define a variable <code>ecm_loc</code> as the path of your toplevel
-                        project directory (e.g. /home/user/hippo-ecm)</p>
-                </li>
-                <li>
-                    <p>Add to 'VM Arguments':</p>
-                    <source> 
+            <p>Select the 'Arguments' tab and add to 'VM Arguments':</p>
+            <source> 
 -Dorg.mortbay.util.FileResource.checkAliases=False
-                    </source>
-                </li>
-            </ul>
+            </source>
             <p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug' under
                 'display in favorites menu'</p>            
             <p> You can now run and debug the application within Eclipse: Run the Jetty launcher,

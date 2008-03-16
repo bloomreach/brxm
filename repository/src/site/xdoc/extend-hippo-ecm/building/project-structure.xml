@@ -65,10 +65,9 @@ hippo-ecm                    Pom       hippo-ecm
 |   |   |-- frontend         Jar       hippo-ecm-addon-reviewed-action-frontend
 |   |   |-- repository       Jar       hippo-ecm-addon-reviewed-action-repository
 |   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test
-|   |-- cms-prototype        Pom       hippo-ecm-addon-cms-prototype
-|   |   |-- frontend         Jar       hippo-ecm-addon-cms-prototype-frontend
-|   |   `-- test             Jar       hippo-ecm-addon-cms-prototype-test
-|   |-- skin                 War       hippo-ecm-addon-skin
+|   |-- standards            Pom       hippo-ecm-addon-standards
+|   |   |-- frontend         Jar       hippo-ecm-addon-standards-frontend
+|   |   `-- test             Jar       hippo-ecm-addon-standards-test
 |   |-- xinha                War       hippo-ecm-addon-xinha
 |   `-- xinha-frontend       War       hippo-ecm-addon-xinha-frontend
 |-- api                      Jar       hippo-ecm-api
@@ -76,10 +75,14 @@ hippo-ecm                    Pom       hippo-ecm
 |   |-- engine               Jar       hippo-ecm-frontend-engine
 |   |-- application          War       hippo-ecm-frontend-application
 |   `-- plugins              Jar       hippo-ecm-frontend-plugins
-|-- package                  Pom       hippo-ecm-package
-|   |-- ear                  Ear       hippo-ecm-package-ear
-|   |-- test                 jar       hippo-ecm-package-test
-|   `-- war                  War       hippo-ecm-package-war
+|-- cms                      Pom       hippo-ecm-cms
+|   |-- config               Jar       hippo-ecm-cms-config
+|   |-- skin                 War       hippo-ecm-cms-skin
+|   |-- site                 War       hippo-ecm-cms-site
+|   |-- test                 Jar       hippo-ecm-cms-test        
+|   `-- package              Pom       hippo-ecm-cms-package
+|       |-- ear              Ear       hippo-ecm-cms-package-ear
+|       `-- war              War       hippo-ecm-cms-package-war
 |-- repository               Pom       hippo-ecm-repository
 |   |-- engine               Jar       hippo-ecm-repository-engine
 |   `-- application          War       hippo-ecm-repository-application
@@ -141,9 +144,8 @@ hippo-ecm                    Pom       hippo-ecm
         and/or frontend server)
       </p>
       <p>
-        Even Hippo CMS is implemented as an add-on. The frontend plugins that
-        together make up the CMS GUI can be found under the add-on
-        'cms-prototype'.
+        Hippo CMS 7 is implemented as an assembly of add-ons. The frontend plugins that
+        together make up the CMS GUI are the 'frontend' projects under the add-on directory.
       </p>
       <source>
 |-- addon                    Pom       hippo-ecm-addon
@@ -152,24 +154,26 @@ hippo-ecm                    Pom       hippo-ecm
 |   |   |-- frontend         Jar       hippo-ecm-addon-reviewed-action-frontend
 |   |   |-- repository       Jar       hippo-ecm-addon-reviewed-action-repository
 |   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test
-|   |-- cms-prototype        Pom       hippo-ecm-addon-cms-prototype
-|   |   |-- frontend         Jar       hippo-ecm-addon-cms-prototype-frontend
-|   |   `-- test             Jar       hippo-ecm-addon-cms-prototype-test
-|   |-- skin                 War       hippo-ecm-addon-skin
+|   |-- standards            Pom       hippo-ecm-addon-standards
+|   |   |-- frontend         Jar       hippo-ecm-addon-standards-frontend
+|   |   |-- common           Jar       hippo-ecm-addon-standards-common
+|   |   |-- repository       Jar       hippo-ecm-addon-standards-repository
 |   |-- xinha                War       hippo-ecm-addon-xinha
-|   `-- xinha-frontend       War       hippo-ecm-addon-xinha-frontend
       </source>
     </section>
 
-    <section name="Packages">
+    <section name="CMS">
       <p>
-        Hippo ECM WAR and EAR packages to deploy in an application server.
+        Application project assembling Hippo CMS 7.
       </p>
       <source>
-|-- package                  Pom       hippo-ecm-package
-|   |-- ear                  Ear       hippo-ecm-package-ear
-|   |-- test                 jar       hippo-ecm-package-test
-|   `-- war                  War       hippo-ecm-package-war
+|-- cms                  Pom       hippo-ecm-cms
+|   |-- config           Jar       hippo-ecm-cms-config
+|   |-- package          Pom       hippo-ecm-cms-package
+|   |   |-- ear          Ear       hippo-ecm-cms-package-ear
+|   |   `-- war          War       hippo-ecm-cms-package-war
+|   |-- skin             War       hippo-ecm-cms-skin
+|   |-- test             Jar       hippo-ecm-cms-test
       </source>
     </section>
 
