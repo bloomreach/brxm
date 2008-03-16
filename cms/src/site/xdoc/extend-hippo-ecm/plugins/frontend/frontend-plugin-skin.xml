@@ -44,18 +44,18 @@
       </p>
 
       <p>
-        There always needs to be a skin with the CSS file and icons to be used.  A
-        default skin is supplied in the project <code>hippo-ecm-addon-skin</code>.
-        A skin itself is an Add-on plugin like others and can be combined with the
-        end-application.
+        There always needs to be a skin with the CSS file and icons to be used,  a
+        packaging project like the CMS needs to supply it. The default
+        CMS skin is supplied in the project <code>hippo-ecm-cms-skin</code>. A skin
+        itself is an add-on like others and can be combined with other skin plugins.
       </p>
 
     <subsection name="Create your own skin">
 
       <p>
         You can create your own skin by creating a project with the same structure and
-        content as the hippo-ecm-addon-skin project as supplied in
-        <code>addon/skin</code>.  You can also take the hippo-ecm-addon-skin WAR,
+        content as the hippo-ecm-cms-skin project as supplied in
+        <code>cms/skin</code>.  You can also take the hippo-ecm-cms-skin WAR,
         rename it and modify it to your needs.  This works because this add-on is just
         a collection of files, and building the WAR is just a packaging of the files.
         No actual compilation of sources is required.
@@ -123,7 +123,7 @@
       </p>
 
       <p>
-        Suppose an add-on in use defines an item which is a TasklistPlugin.  Next to the
+        Suppose an add-on in use defines an item which is a BreadCrumbPlugin.  Next to the
         Java class implementing this item, there is an HTML fragment file:
       </p>
 
@@ -133,25 +133,25 @@
         `-- java
             `-- org
                 `-- hippoecm
-                    `-- cmsprototype
-                        `-- frontend
-                            `-- plugins
-                                `-- tasklist
-                                    |-- TasklistPlugin.java
-                                    `-- TasklistPlugin.html
+                    `-- frontend
+                        `-- plugins
+                            `-- admin
+                                `-- breadcrumb
+                                    |-- BreadCrumbPlugin.java
+                                    `-- BreadCrumbPlugin.html
 </source>
 
       <p>
         This is in the original add-on that supplies the item on the web-page.  If you
         want to provide an override for this HTML fragment in your skin, then put this
-        alternate TasklistPlugin.html file in your skin project.
+        alternate BreadCrumbPlugin.html file in your skin project.
       </p>
 
       <p>
         Within the skin project, the location of this HTML fragment should be 
-        <code>src/main/webapp/org/hippoecm/cmsprototype/frontend/plugins/tasklist/TasklistPlugin.html</code>
+        <code>src/main/webapp/org/hippoecm/frontend/plugins/admin/breadcrumb/BreadCrumbPlugin.html</code>
         resulting in the final WAR project as file
-        <code>org/hippoecm/cmsprototype/frontend/plugins/tasklist/TasklistPlugin.html</code>.
+        <code>org/hippoecm/frontend/plugins/admin/breadcrumb/BreadCrumbPlugin.html</code>.
       </p>
 
       <p>
@@ -194,18 +194,17 @@
       </p>
 
       <p>
-        The default skin in use is defined by the project that produces the
-        hippo-ecm-addon-skin artifact.  If you want to apply a different skin, replace
+        The default skin of Hippo CMS 7 is defined by the project that produces the
+        hippo-ecm-cms-skin artifact.  If you want to apply a different skin, replace
         this artifact with your own.
       </p>
 
       <p>
         If you use an EAR target, this means simply replacing the
-        <code>hippo-ecm-addon-skin.war</code> by another skin WAR target.  If you use
+        <code>hippo-ecm-cms-skin.war</code> by another skin WAR target.  If you use
         a merged WAR target, then you need to rebuild the end WAR with a different
         artifact dependency in the pom.xml.  Replace the dependency to the 
-        <code>hippo-ecm-addon-skin</code>
-        artifact by your own skin artifact.
+        <code>hippo-ecm-cms-skin</code> artifact by your own skin artifact.
       </p>
 
     </subsection>

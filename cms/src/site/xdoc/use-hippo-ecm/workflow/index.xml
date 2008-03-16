@@ -139,37 +139,11 @@ expected.
 -->
 
 <subsection name="Reviewed actions workflow">
-
 <p>
 A default available add-on for the Hippo OCM repository is the reviewed
-actions workflow.
+actions workflow. It is implemented by the project at hippo-ecm/addon/reviewed-action
+and included in the default CMS 7 distribution project at hippo-ecm/cms
 </p>
-
-<p>
-At this time a sample application that comes in the SVN source in the
-directory <code>application/cms-prototype</code> is pre-configured with the
-add-on.
-<a href="../../extend-hippo-ecm/building/maven.html">Building using Maven</a>
-with goal 'package' in the directories
-<code>application/cms-prototype/repository</code> and
-<code>application/cms-prototype/frontend</code> results in two WAR packages
-which can be
-<a href="../../run-hippo-ecm/deploying-the-wars.html">deployed in your application</a>
-or can be <a href="../../run-hippo-ecm/index.html">run using Jetty</a>.
-<!-- FIXME
-In the Maven repository at FIXME is a pre-built WAR of both front-end and
-repository which include the pre-configured reviewed actions workflow.
--->
-</p>
-
-<!-- FIXME
-<p>
-By M3, you can use the generic downloadable WAR, and upload the JAR package at
-a special location in the repository.  The repository will auto-configure the
-workflow.
-</p>
--->
-
 </subsection>
 
 </section>

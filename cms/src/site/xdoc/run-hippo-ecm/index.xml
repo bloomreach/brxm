@@ -76,8 +76,8 @@
 
           <p>Run Hippo ECM:</p>
 <source>
-~/hippo-ecm> cd package/war
-~/hippo-ecm/package/war> mvn clean jetty:run-war
+~/hippo-ecm> cd cms/package/war
+~/hippo-ecm/cms/package/war> mvn clean jetty:run-war
 </source>
           <p>
             Finally, direct your browser to <a href="http://localhost:8080/">http://localhost:8080/</a>.
