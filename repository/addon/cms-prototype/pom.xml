@@ -41,7 +41,6 @@
   </scm>
 
   <modules>
-    <module>repository</module>
     <module>frontend</module>
   </modules>
 

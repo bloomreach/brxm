@@ -16,8 +16,8 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -40,102 +40,37 @@
   </scm>
 
   <dependencies>
-    <!-- xhina add-on (must be included before actual front-end application) -->
+
+    <!-- Default CMS -->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-xinha</artifactId>
+      <artifactId>hippo-ecm-cms-package-war</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- skin add-on (must be included before actual front-end application) -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-skin</artifactId>
-      <version>${parent.version}</version>
-      <type>war</type>
-    </dependency>
-
-    <!-- custom skin add-on (must be included before actual front-end application) -->    
+    
+    <!-- Custom CMS skin add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-demo-skin</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-
-    <!-- end-applications -->
+    
+    <!-- Custom CMS configuration add-on-->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-application</artifactId>
+      <artifactId>hippo-ecm-demo-addon</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    
+    <!-- Site add-on-->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-demo-site</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-frontend-application</artifactId>
-      <version>${parent.version}</version>
-      <type>war</type>
-    </dependency>
-
-    <!-- standard workflow add-on -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-common</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-repository</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- cms prototype add-on -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-repository</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- reviewed actions add-on -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
     </dependency>
 
     <!-- HST add-on -->
@@ -150,33 +85,32 @@
       <version>1.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-    
-    <!-- Demo addons -->
+
+    <!-- Reporting add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-demo-addon</artifactId>
+      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-demo-site</artifactId>
+      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
       <version>${parent.version}</version>
-      <type>war</type>
-    </dependency>
-    
-    <!-- Runtime logging dependency -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.0</version>
-      <scope>runtime</scope>
+      <type>jar</type>
     </dependency>
 
+    <!-- Sample add-on -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-sample-repository</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
   </dependencies>
 
   <build>
-    <!-- defaultGoal>package</defaultGoal -->
+    <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -184,16 +118,7 @@
         <version>2.1-alpha-1</version>
         <configuration>
           <overlays>
-            <!-- Generic skin for CMS-->
-            <overlay>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-addon-skin</artifactId>
-              <targetPath>skin</targetPath>
-              <excludes>
-                <exclude>WEB-INF/web.xml</exclude>
-              </excludes>
-            </overlay>
-            <!-- Project specific skin for CMS-->
+            <!-- Custom skin for CMS-->
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-demo-skin</artifactId>
@@ -202,20 +127,11 @@
                 <exclude>WEB-INF/web.xml</exclude>
               </excludes>
             </overlay>
-            <!-- Html editor for CMS-->
-            <overlay>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-addon-xinha</artifactId>
-              <targetPath>xinha</targetPath>
-              <excludes>
-                <exclude>WEB-INF/web.xml</exclude>
-              </excludes>
-            </overlay>
             <!-- The site -->
             <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-demo-site</artifactId>
-              <targetPath></targetPath>
+              <targetPath/>
               <excludes>
                 <exclude>WEB-INF/web.xml</exclude>
               </excludes>

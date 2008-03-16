@@ -16,28 +16,33 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/maven-v4_0_0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-addon-cms-prototype</artifactId>
+    <artifactId>hippo-ecm-cms</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>CMS Prototype add-on repository plugin</name>
-  <description>Hippo ECM CMS Prototype add-on repository plugin</description>
+  <name>Hippo CMS 7 package</name>
+  <description>Hippo CMS 7 package</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon-cms-prototype-repository</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>hippo-ecm-cms-package</artifactId>
+  <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/cms-prototype/repository</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/cms-prototype/repository</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/cms-prototype/repository</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package</url>
   </scm>
+
+  <modules>
+    <module>ear</module>
+    <module>war</module>
+  </modules>
 
 </project>
