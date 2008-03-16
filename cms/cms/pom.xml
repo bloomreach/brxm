@@ -14,11 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-  http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -28,21 +26,27 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Packaging</name>
-  <description>Hippo ECM packaging</description>
+  <name>Hippo ECM CMS 7</name>
+  <description>Hippo ECM CMS 7</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-package</artifactId>
+  <artifactId>hippo-ecm-cms</artifactId>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package</url>
+    <connection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms</developerConnection>
+    <url>https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms</url>
   </scm>
 
   <modules>
-    <module>ear</module>
-    <module>war</module>
+    <module>config</module>
+    <module>package</module>
+    <module>skin</module>
+    <!--<module>test</module>-->
   </modules>
+  
+  <build>
+    <defaultGoal>package</defaultGoal>
+  </build>
 
 </project>

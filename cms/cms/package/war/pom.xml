@@ -22,21 +22,21 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-package</artifactId>
+    <artifactId>hippo-ecm-cms-package</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>EAR packaging</name>
-  <description>Hippo ECM application EAR package</description>
+  <name>Hippo CMS 7 EAR package</name>
+  <description>Hippo CMS 7 EAR package</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-package-ear</artifactId>
-  <packaging>ear</packaging>
+  <artifactId>hippo-ecm-cms-package-war</artifactId>
+  <packaging>war</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/ear</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/ear</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/application/package/ear</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package/war</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package/war</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package/war</url>
   </scm>
 
   <dependencies>
@@ -53,15 +53,15 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- skin add-on (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-skin</artifactId>
+      <artifactId>hippo-ecm-cms-skin</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    
+
     <!-- end-applications -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -74,6 +74,14 @@
       <artifactId>hippo-ecm-frontend-application</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
+    </dependency>
+    
+    <!-- Hippo CMS 7 configuration add-on -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-cms-config</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
     </dependency>
     
     <!-- standard workflow add-on -->
@@ -96,23 +104,7 @@
       <type>jar</type>
     </dependency>
     
-    <!-- reporting add-on -->
-    <!--
-      <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-      </dependency>
-      <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-      </dependency>
-    -->
-    
-    <!-- reviewed actions add-on -->
+    <!-- reviewed actions workflow add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
@@ -131,14 +123,8 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- cms prototype add-on -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-repository</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
@@ -147,34 +133,30 @@
     </dependency>
     
     <!-- hst add-on -->
-    <!--
-      <dependency>
+<!--
+    <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-addon-repository</artifactId>
       <version>1.01.00-SNAPSHOT</version>
       <type>jar</type>
-      </dependency>
-    -->
-    
-    <!-- demo add-on -->
-    <!--
+    </dependency>
+-->
+
+    <!-- reporting add-on -->
+<!--
       <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-demo-addon</artifactId>
+      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
       </dependency>
-    -->
-    
-    <!-- sample add-on -->
-    <!--
       <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-sample-version</artifactId>
+      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
       </dependency>
-    -->    
+-->      
   </dependencies>
 
   <build>
@@ -182,64 +164,79 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ear-plugin</artifactId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-alpha-1</version>
         <configuration>
-          <encoding>UTF-8</encoding>
-          <version>5</version>
-          <modules>
-            <webModule>
+          <overlays>
+            <!-- repeat this overlay for all applications that use the skin -->
+            <overlay>
               <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-addon-skin</artifactId>
-              <contextRoot>/skin</contextRoot>
-            </webModule>
-            <webModule>
+              <artifactId>hippo-ecm-cms-skin</artifactId>
+              <targetPath>skin</targetPath>
+              <excludes>
+                <exclude>WEB-INF/web.xml</exclude>
+              </excludes>
+            </overlay>
+            <overlay>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-xinha</artifactId>
-              <contextRoot>/xinha</contextRoot>
-            </webModule>
-            <webModule>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-repository-application</artifactId>
-              <contextRoot>/repository</contextRoot>
-            </webModule>
-            <webModule>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-frontend-application</artifactId>
-              <contextRoot>/</contextRoot>
-            </webModule>
-
-            <!-- jarModule>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-api</artifactId>
-              <excluded>true</excluded>
-            </jarModule>
-
-            <jarModule>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-              <includeInApplicationXml>false</includeInApplicationXml>
-            </jarModule>
-            jarModule>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
-              <includeInApplicationXml>false</includeInApplicationXml>
-            </jarModule>
-            <jarModule>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
-              <includeInApplicationXml>false</includeInApplicationXml>
-            </jarModule -->
-
-          </modules>
+              <targetPath>xinha</targetPath>
+              <excludes>
+                <exclude>WEB-INF/web.xml</exclude>
+              </excludes>
+            </overlay>
+          </overlays>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.3</version>
+        <configuration>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8080</port>
+            </connector>
+          </connectors>
+          <contextPath>/</contextPath>
+        </configuration>
+        <dependencies>
+          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <!-- plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <dependentWarExcludes>WEB-INF/classes/org/hippoecm/repository/**</dependentWarExcludes>
+        </configuration>
+      </plugin -->
     </plugins>
   </build>
-
-  <properties>
-    <netbeans.hint.useExternalMaven>true</netbeans.hint.useExternalMaven>
-    <netbeans.hint.deploy.server>J2EE</netbeans.hint.deploy.server>
-    <netbeans.hint.packaging>ear</netbeans.hint.packaging>
-  </properties>
 
 </project>
