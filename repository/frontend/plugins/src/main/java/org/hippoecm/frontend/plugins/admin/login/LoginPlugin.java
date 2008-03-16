@@ -2,7 +2,6 @@ package org.hippoecm.frontend.plugins.admin.login;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -40,28 +39,28 @@ public class LoginPlugin extends Plugin {
 
         private ValueMap credentials = new ValueMap();
 
-        private CheckBox rememberMe;
+        //private CheckBox rememberMe;
         private TextField username, password;
 
         public SignInForm(final String id) {
             super(id);
 
             add(username = new RequiredTextField("username", new PropertyModel(credentials, "username")));
-            username.setLabel(new ResourceModel("org.hippoecm.cmsprototype.panels.login.username", "Username"));
+            username.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.admin.login.username", "Username"));
             add(new SimpleFormComponentLabel("username-label", username));
 
             add(password = new PasswordTextField("password", new PropertyModel(credentials, "password")));
             //add(password = new RSAPasswordTextField("password", new Model(), this));
-            password.setLabel(new ResourceModel("org.hippoecm.cmsprototype.panels.login.password", "Password"));
+            password.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.admin.login.password", "Password"));
             add(new SimpleFormComponentLabel("password-label", password));
 
             add(new FeedbackPanel("feedback"));
 
             //add(rememberMe = new CheckBox("rememberMe", new Model(Boolean.FALSE)));
-            //rememberMe.setLabel(new ResourceModel("org.hippoecm.cmsprototype.panels.login.rememberMe", "rememberMe"));
+            //rememberMe.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.admin.login.rememberMe", "rememberMe"));
             //add(new SimpleFormComponentLabel("rememberMe-label", rememberMe));
 
-            Button submit = new Button("submit", new ResourceModel("org.hippoecm.cmsprototype.panels.login.submit",
+            Button submit = new Button("submit", new ResourceModel("org.hippoecm.frontend.plugins.admin.login.submit",
                     "Sign In"));
             add(submit);
 
