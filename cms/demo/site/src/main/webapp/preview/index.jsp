@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="h" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%--
     Copyright 2007 Hippo
     
@@ -30,11 +31,16 @@
 
   <h1>${webpage['demo:pageTitle']}</h1>
 
-Hottest news items:
+Hottest news items:<p/>
   <c:set var="selectedNewsItems" value="${global['/site/navigation/navigation']}"/>
   <c:forEach var="message" items="${selectedNewsItems.keyword['hot']}">
-  X${message._path}X
-  <a href="message.jsp?message=${message._name}"><fmt:formatDate pattern="dd-MM-yy" value="${message['demo:date']}"/>&nbsp;${message['demo:title']}</a><br/>
+    <a href="message.jsp?message=${message._name}"><fmt:formatDate pattern="dd-MM-yy" value="${message['demo:date']}"/>&nbsp;${message['demo:title']}</a>
+    <br/>
+    <h:access var="image" value="${message._path}/demo:image">
+      <img src="/images${image._path}" align="left"/>
+    </h:access>
+    ${message['demo:description']}
+    <br clear="all"/><br/>
   </c:forEach>
 
 </body></html>

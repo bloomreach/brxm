@@ -47,8 +47,4 @@
     </c:forEach>
   </p>
 
-<c:forEach var="iterator" items="${global['/site/navigation/navigation']['1']}">
-Display the following ${iterator._path}<br/>
-</c:forEach>
-
 </body></html>
