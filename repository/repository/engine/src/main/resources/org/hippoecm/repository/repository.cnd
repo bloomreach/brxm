@@ -205,7 +205,7 @@
 - hippo:field (string)
 + hippo:item (hippo:templateitem) multiple
 
-[hippo:template] > hippo:templateitem orderable
+[hippo:template] > hippo:templateitem, hippo:document orderable
 
 [hippo:templatefolder] > nt:base
 + * (hippo:handle) = hippo:handle
