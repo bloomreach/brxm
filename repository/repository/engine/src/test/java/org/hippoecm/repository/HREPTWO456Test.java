@@ -67,21 +67,11 @@ public class HREPTWO456Test extends TestCase {
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { });
         session.save();
         session.refresh(false);
-        
-        /*
-         * session.getRootNode().getNode("test").getNode("n").getNodes().getSize() should equal 1
-         * session.getRootNode().getNode("test").getNode("n").getNode("n").getNodes().getSize() should equal 1
-         * session.getRootNode().getNode("test").getNode("n").getNode("n").getNode("n").getNodes().getSize() should equal 1
-         * etc...
-         * Currently, there is an undesired behavior (programmatically correct), where each facet select in facet select adds the childs of the previous  the child nodes, see asserts:
-         */
-        assertTrue( session.getRootNode().getNode("test").getNode("n").getNodes().getSize() == 1 );
-        
-        assertFalse(session.getRootNode().getNode("test").getNode("n").getNode("n").getNodes().getSize() == 1 );
-        assertTrue( session.getRootNode().getNode("test").getNode("n").getNode("n").getNodes().getSize() == 2 );
 
-        assertFalse(session.getRootNode().getNode("test").getNode("n").getNode("n").getNode("n").getNodes().getSize() == 1);
-        assertTrue( session.getRootNode().getNode("test").getNode("n").getNode("n").getNode("n").getNodes().getSize() == 3);
-        
+        assertTrue(session.getRootNode().getNode("test").getNode("n").getNodes().getSize() == 1 );
+        assertTrue(session.getRootNode().getNode("test").getNode("n").getNode("n").getNodes().getSize() == 1 );
+        assertTrue(session.getRootNode().getNode("test").getNode("n").getNode("n").getNodes().getSize() == 1 );
+        assertTrue(session.getRootNode().getNode("test").getNode("n").getNode("n").getNode("n").getNodes().getSize() == 1);
+        assertTrue(session.getRootNode().getNode("test").getNode("n").getNode("n").getNode("n").getNodes().getSize() == 1);
     }
 }
