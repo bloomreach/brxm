@@ -78,7 +78,7 @@
 - hippo:docbase (string) mandatory
 - hippo:facets (string) mandatory multiple
 - hippo:values (string) mandatory multiple
-- hippo:modes (string) mandatory multiple // < 'select', 'stick', 'clear'
+- hippo:modes (string) mandatory multiple // < 'select', 'stick', 'clear', 'single'
 + * multiple
 
 [hippo:type] > nt:base
