@@ -44,14 +44,12 @@ public class ItemModel extends NodeModelWrapper implements IPluginModel {
     public ItemModel(IPluginModel model) {
         super(new JcrNodeModel(model));
         Map<String, Object> map = model.getMapRepresentation();
-//        this.descriptor = new ItemDescriptor((Map) map.get("item"));
-        this.descriptor = (ItemDescriptor) map.get("item");
+        this.descriptor = new ItemDescriptor((Map) map.get("item"));
     }
 
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = getNodeModel().getMapRepresentation();
-//        map.put("item", descriptor.getMapRepresentation());
-        map.put("item", descriptor);
+        map.put("item", descriptor.getMapRepresentation());
         return map;
     }
 
@@ -75,9 +73,9 @@ public class ItemModel extends NodeModelWrapper implements IPluginModel {
         if (this == object) {
             return true;
         }
-        ItemModel fieldModel = (ItemModel) object;
-        return new EqualsBuilder().append(descriptor, fieldModel.descriptor).
-            append(nodeModel.getItemModel(), fieldModel.nodeModel.getItemModel()).isEquals();
+        ItemModel itemModel = (ItemModel) object;
+        return new EqualsBuilder().append(descriptor, itemModel.descriptor).
+            append(nodeModel.getItemModel(), itemModel.nodeModel.getItemModel()).isEquals();
     }
 
     @Override

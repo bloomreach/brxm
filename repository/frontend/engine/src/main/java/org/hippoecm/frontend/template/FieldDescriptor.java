@@ -15,12 +15,13 @@
  */
 package org.hippoecm.frontend.template;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.apache.wicket.IClusterable;
 
-public class FieldDescriptor extends ItemDescriptor {
+public class FieldDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     private String type;
@@ -34,9 +35,7 @@ public class FieldDescriptor extends ItemDescriptor {
     private boolean mandatory;
     private boolean ordered;
 
-    public FieldDescriptor(String name, String path, PluginDescriptor plugin) {
-        super(name, plugin);
-
+    public FieldDescriptor(String path) {
         this.type = null;
         this.path = path;
         this.excluded = null;
@@ -45,8 +44,6 @@ public class FieldDescriptor extends ItemDescriptor {
     }
 
     public FieldDescriptor(Map<String, Object> map) {
-        super(map);
-
         this.excluded = (Set<String>) map.get("excluded");
         this.type = (String) map.get("type");
         this.path = (String) map.get("path");
@@ -59,7 +56,7 @@ public class FieldDescriptor extends ItemDescriptor {
     }
 
     public Map<String, Object> getMapRepresentation() {
-        Map<String, Object> map = super.getMapRepresentation();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("path", getPath());
         map.put("excluded", getExcluded());
         map.put("type", getType());

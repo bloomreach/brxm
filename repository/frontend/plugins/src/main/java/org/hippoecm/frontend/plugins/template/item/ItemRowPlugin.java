@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template.item;
 
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugins.template.ItemView;
 import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.ItemProvider;

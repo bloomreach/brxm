@@ -41,7 +41,7 @@ public class PluginConfigFactory {
             boolean builtIn = application.contains("(builtin)");
 
             if (!builtIn && hipposAvailable) {
-                pluginConfig = new PluginRepositoryConfig(session.getJcrSessionModel(), path + "/" + application);
+                pluginConfig = new PluginRepositoryConfig(path + "/" + application);
             } else {
                 pluginConfig = new PluginJavaConfig();
             }

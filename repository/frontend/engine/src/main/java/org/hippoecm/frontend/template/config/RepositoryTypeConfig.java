@@ -16,10 +16,12 @@
 package org.hippoecm.frontend.template.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -32,7 +34,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -45,10 +47,7 @@ public class RepositoryTypeConfig implements TypeConfig {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryTypeConfig.class);
 
-    private JcrSessionModel sessionModel;
-
-    public RepositoryTypeConfig(JcrSessionModel sessionModel) {
-        this.sessionModel = sessionModel;
+    public RepositoryTypeConfig() {
     }
 
     public TypeDescriptor getTypeDescriptor(String name) {
@@ -61,6 +60,15 @@ public class RepositoryTypeConfig implements TypeConfig {
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public Node getTypeNode(String name) {
+        try {
+            return lookupConfigNode(name);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
         return null;
     }
@@ -83,7 +91,7 @@ public class RepositoryTypeConfig implements TypeConfig {
             NodeIterator iter = result.getNodes();
             while (iter.hasNext()) {
                 Node pluginNode = iter.nextNode();
-                Descriptor descriptor = createDescriptor(pluginNode);
+                Descriptor descriptor = createDescriptor(pluginNode.getNode(pluginNode.getName()));
                 TypeDescriptor template = descriptor.type;
                 list.add(template);
             }
@@ -96,22 +104,25 @@ public class RepositoryTypeConfig implements TypeConfig {
     // Privates
 
     private Session getJcrSession() {
-        return sessionModel.getSession();
+        return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }
 
-    private Node lookupConfigNode(String template) throws RepositoryException {
+    private Node lookupConfigNode(String type) throws RepositoryException {
         Session session = getJcrSession();
 
-        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.NAMESPACES_PATH + "/*/" + template;
+        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.NAMESPACES_PATH + "/*/" + type;
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);
         QueryResult result = query.execute();
         NodeIterator iter = result.getNodes();
         if (iter.getSize() > 1) {
-            throw new IllegalStateException("Multiple templates defined for type " + template);
+            throw new IllegalStateException("Multiple type descriptions found for type " + type);
+        } else if (iter.getSize() == 0) {
+            return null;
+        } else {
+            return iter.nextNode().getNode(type);
         }
-        return iter.hasNext() ? iter.nextNode() : null;
     }
 
     protected Descriptor createDescriptor(Node pluginNode) throws RepositoryException {
@@ -123,7 +134,7 @@ public class RepositoryTypeConfig implements TypeConfig {
 
         private String jcrPath;
 
-        FieldDescriptor field;
+        RepositoryFieldDescriptor field;
         TypeDescriptor type;
 
         Descriptor(Node typeNode) {
@@ -172,7 +183,7 @@ public class RepositoryTypeConfig implements TypeConfig {
             return result;
         }
 
-        public List<TypeDescriptor> getTypes() {
+        List<TypeDescriptor> getTypes() {
             List<TypeDescriptor> list = new LinkedList<TypeDescriptor>();
             Iterator<Descriptor> iterator = getNodeChildren().iterator();
             while (iterator.hasNext()) {
@@ -184,16 +195,16 @@ public class RepositoryTypeConfig implements TypeConfig {
             return list;
         }
 
-        public List<FieldDescriptor> getFields() {
-            List<FieldDescriptor> list = new LinkedList<FieldDescriptor>();
+        Map<String, FieldDescriptor> getFields() {
+            Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>();
             Iterator<Descriptor> iterator = getNodeChildren().iterator();
             while (iterator.hasNext()) {
                 Descriptor plugin = iterator.next();
                 if (plugin.field != null) {
-                    list.add(plugin.field);
+                    map.put(plugin.field.name, plugin.field);
                 }
             }
-            return list;
+            return map;
         }
 
         protected Node getNode() throws RepositoryException {
@@ -204,7 +215,7 @@ public class RepositoryTypeConfig implements TypeConfig {
     protected class RepositoryTypeDescriptor extends TypeDescriptor {
         private static final long serialVersionUID = 1L;
 
-        private Descriptor nodeDescriptor;
+        Descriptor nodeDescriptor;
 
         public RepositoryTypeDescriptor(Node node, String name, String type, Descriptor nodeDescriptor) {
             super(name, type, null);
@@ -232,15 +243,15 @@ public class RepositoryTypeConfig implements TypeConfig {
         }
 
         @Override
-        public List<FieldDescriptor> getFields() {
-            List<FieldDescriptor> fields = nodeDescriptor.getFields();
+        public Map<String, FieldDescriptor> getFields() {
+            Map<String, FieldDescriptor> fields = nodeDescriptor.getFields();
             Set<String> explicit = new HashSet<String>();
-            for (FieldDescriptor field : fields) {
+            for (FieldDescriptor field : fields.values()) {
                 if (!field.getPath().equals("*")) {
                     explicit.add(field.getPath());
                 }
             }
-            for (FieldDescriptor field : fields) {
+            for (FieldDescriptor field : fields.values()) {
                 if (field.getPath().equals("*")) {
                     field.setExcluded(explicit);
                 }
@@ -253,11 +264,13 @@ public class RepositoryTypeConfig implements TypeConfig {
     protected class RepositoryFieldDescriptor extends FieldDescriptor {
         private static final long serialVersionUID = 1L;
 
-        private Descriptor nodeDescriptor;
+        String name;
+        Descriptor nodeDescriptor;
 
         public RepositoryFieldDescriptor(Node node, String name, String path, Descriptor nodeDescriptor) {
-            super(name, path, null);
+            super(path);
 
+            this.name = name;
             this.nodeDescriptor = nodeDescriptor;
 
             try {

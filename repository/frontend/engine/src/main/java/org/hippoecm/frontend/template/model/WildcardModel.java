@@ -24,6 +24,7 @@ import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.FieldDescriptor;
+import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.frontend.template.config.TypeConfig;
 import org.slf4j.Logger;
@@ -36,39 +37,43 @@ public class WildcardModel extends ItemModel {
 
     private int id;
     private TypeDescriptor type;
+    private FieldDescriptor field;
 
-    public WildcardModel(FieldDescriptor descriptor, TypeConfig config, JcrNodeModel parent, int id) {
+    public WildcardModel(ItemDescriptor descriptor, TypeConfig config, JcrNodeModel parent, String path, int id) {
         super(descriptor, parent);
-        this.type = config.getTypeDescriptor(descriptor.getType());
+
+        field = config.getTypeDescriptor(descriptor.getType()).getField(descriptor.getField()).clone();
+        field.setPath(path);
+
+        this.type = config.getTypeDescriptor(field.getType());
         this.id = id;
     }
 
     public String getPath() {
-        return ((FieldDescriptor) getDescriptor()).getPath();
+        return field.getPath();
     }
 
     public void setPath(String path) {
         try {
             Node node = getNodeModel().getNode();
-            FieldDescriptor descriptor = (FieldDescriptor) getDescriptor();
             if (type.isNode()) {
-                if (descriptor.getPath() == null) {
+                if (field.getPath() == null) {
                     node.addNode(path, type.getType());
-                } else if (descriptor.getPath() != path) {
+                } else if (field.getPath() != path) {
                     javax.jcr.Session jcrSession = ((UserSession) Session.get()).getJcrSession();
-                    jcrSession.move(node.getPath() + "/" + descriptor.getPath(), node.getPath() + "/" + path);
+                    jcrSession.move(node.getPath() + "/" + field.getPath(), node.getPath() + "/" + path);
                 }
             } else {
-                if (descriptor.getPath() == null) {
-                    Value value = type.createValue("");
-                    if (descriptor.isMultiple()) {
+                if (field.getPath() == null) {
+                    Value value = type.createValue();
+                    if (field.isMultiple()) {
                         node.setProperty(path, new Value[] { value });
                     } else {
                         node.setProperty(path, value);
                     }
-                } else if (descriptor.getPath() != path) {
-                    Property prop = node.getProperty(descriptor.getPath());
-                    if (descriptor.isMultiple()) {
+                } else if (field.getPath() != path) {
+                    Property prop = node.getProperty(field.getPath());
+                    if (field.isMultiple()) {
                         Value[] values = prop.getValues();
                         node.setProperty(path, values);
                         prop.remove();
@@ -79,7 +84,7 @@ public class WildcardModel extends ItemModel {
                     }
                 }
             }
-            descriptor.setPath(path);
+            field.setPath(path);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }

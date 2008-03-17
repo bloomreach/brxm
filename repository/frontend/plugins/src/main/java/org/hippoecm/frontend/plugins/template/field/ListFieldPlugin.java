@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template.field;
+
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -29,7 +31,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.template.FieldDescriptor;
+import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.WildcardFieldProvider;
@@ -49,11 +51,16 @@ public class ListFieldPlugin extends Plugin {
     public ListFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel fieldModel, Plugin parentPlugin) {
         super(pluginDescriptor, new ItemModel(fieldModel), parentPlugin);
 
-        ItemModel model = (ItemModel) getPluginModel();
-        FieldDescriptor descriptor = (FieldDescriptor) model.getDescriptor();
-        TypeConfig config = getPluginManager().getTemplateEngine().getTypeConfig();
+        List<String> captions = pluginDescriptor.getParameter("caption");
+        if(captions != null && captions.size() > 0) {
+            add(new Label("name", captions.get(0)));
+        } else {
+            add(new Label("name", ""));
+        }
 
-        add(new Label("name", descriptor.getName()));
+        ItemModel model = (ItemModel) getPluginModel();
+        ItemDescriptor descriptor = model.getDescriptor();
+        TypeConfig config = getPluginManager().getTemplateEngine().getTypeConfig();
 
         provider = new WildcardFieldProvider(descriptor, config, model.getNodeModel());
         add(new ListView("items", provider));

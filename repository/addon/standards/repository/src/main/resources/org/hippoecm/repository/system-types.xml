@@ -15,11 +15,11 @@
   limitations under the License.
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-    xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
-    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-    xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-    sv:name="system">
+  xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
+  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  sv:name="system">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
@@ -27,146 +27,180 @@
   <!-- "String" type -->
   <sv:node sv:name="String">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:node" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>String</sv:value>
-    </sv:property>
+    <sv:node sv:name="String">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:nodetype</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <!-- end "String" type -->
-  
+
   <!-- "Boolean" type -->
   <sv:node sv:name="Boolean">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:node" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>Boolean</sv:value>
-    </sv:property>
+    <sv:node sv:name="Boolean">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:nodetype</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Boolean</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <!-- end "Boolean" type -->
 
   <!-- "Date" type -->
   <sv:node sv:name="Date">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:node" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>Date</sv:value>
-    </sv:property>
+    <sv:node sv:name="Date">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:nodetype</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>Date</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <!-- end "Boolean" type -->
-  
 
   <!-- "Html" type -->
   <sv:node sv:name="Html">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:node" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>String</sv:value>
-    </sv:property>
+    <sv:node sv:name="Html">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:nodetype</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <!-- end "Html" type -->
 
   <!--  Docbase type -->
   <sv:node sv:name="Docbase">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:node" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>String</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- end Docbase type -->
-  
-  <!--  Link type -->
-  <sv:node sv:name="Link">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:node" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>String</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- end Link type -->
-  
-  <!--  Resource type -->
-  <sv:node sv:name="nt:resource">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:node" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>nt:resource</sv:value>
-    </sv:property>
-    
-    <sv:node sv:name="hippo:field">
+    <sv:node sv:name="Docbase">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
+        <sv:value>hippo:nodetype</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>mimetype</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>jcr:mimeType</sv:value>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:type" sv:type="String">
         <sv:value>String</sv:value>
       </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="hippo:field">
+  </sv:node>
+  <!-- end Docbase type -->
+
+  <!--  Link type -->
+  <sv:node sv:name="Link">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="Link">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
+        <sv:value>hippo:nodetype</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>modified</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>jcr:lastModified</sv:value>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>Date</sv:value>
+        <sv:value>String</sv:value>
       </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="hippo:field">
+  </sv:node>
+  <!-- end Link type -->
+
+  <!--  Resource type -->
+  <sv:node sv:name="nt:resource">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="nt:resource">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
+        <sv:value>hippo:nodetype</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>data</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>jcr:data</sv:value>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>Binary</sv:value>
+        <sv:value>nt:resource</sv:value>
       </sv:property>
+
+      <sv:node sv:name="hippo:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:name" sv:type="String">
+          <sv:value>mimetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:path" sv:type="String">
+          <sv:value>jcr:mimeType</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>String</sv:value>
+        </sv:property>
+      </sv:node>
+
+      <sv:node sv:name="hippo:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:name" sv:type="String">
+          <sv:value>modified</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:path" sv:type="String">
+          <sv:value>jcr:lastModified</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>Date</sv:value>
+        </sv:property>
+      </sv:node>
+
+      <sv:node sv:name="hippo:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:name" sv:type="String">
+          <sv:value>data</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:path" sv:type="String">
+          <sv:value>jcr:data</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>Binary</sv:value>
+        </sv:property>
+      </sv:node>
+
     </sv:node>
-    
   </sv:node>
   <!-- end Resource type -->
-  
+
 </sv:node>

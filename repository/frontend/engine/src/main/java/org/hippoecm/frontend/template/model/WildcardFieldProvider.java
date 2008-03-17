@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.template.FieldDescriptor;
+import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.frontend.template.config.TypeConfig;
 import org.slf4j.Logger;
@@ -39,27 +40,28 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
 
     private static final Logger log = LoggerFactory.getLogger(WildcardFieldProvider.class);
 
-    private FieldDescriptor descriptor;
+    private ItemDescriptor descriptor;
+    private FieldDescriptor field;
     private TypeDescriptor type;
     private TypeConfig config;
     private int lastId;
 
     // Constructor
 
-    public WildcardFieldProvider(FieldDescriptor descriptor, TypeConfig config, JcrNodeModel nodeModel) {
+    public WildcardFieldProvider(ItemDescriptor item, TypeConfig config, JcrNodeModel nodeModel) {
         super(nodeModel);
-        this.descriptor = descriptor;
+        this.descriptor = item;
         this.config = config;
-        this.type = config.getTypeDescriptor(descriptor.getType());
+        TypeDescriptor parent = config.getTypeDescriptor(item.getType());
+        this.field = parent.getField(item.getField());
+        this.type = config.getTypeDescriptor(this.field.getType());
         this.lastId = 0;
     }
 
     public void addNew() {
         load();
 
-        FieldDescriptor subDescriptor = descriptor.clone();
-        subDescriptor.setPath(null);
-        elements.addLast(new WildcardModel(subDescriptor, config, getNodeModel(), ++lastId));
+        elements.addLast(new WildcardModel(descriptor, config, getNodeModel(), null, ++lastId));
     }
 
     public void remove(WildcardModel model) {
@@ -102,6 +104,14 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
         log.warn("could not find " + model);
     }
 
+    private boolean isExcluded(String name) {
+        Set<String> excluded = field.getExcluded();
+        if (excluded == null || !excluded.contains(name)) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     protected void load() {
         if (elements != null) {
@@ -109,7 +119,6 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
         }
 
         elements = new LinkedList<WildcardModel>();
-        Set<String> excluded = descriptor.getExcluded();
         try {
             Node node = getNodeModel().getNode();
             if (type.isNode()) {
@@ -117,7 +126,7 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
                 NodeIterator iterator = node.getNodes("*");
                 while (iterator.hasNext()) {
                     Node child = iterator.nextNode();
-                    if (!excluded.contains(child.getName()) && child.isNodeType(type.getType())) {
+                    if (!isExcluded(child.getName()) && child.isNodeType(type.getType())) {
                         addItem(new JcrItemModel(child));
                     }
                 }
@@ -125,7 +134,7 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
                 PropertyIterator iterator = node.getProperties("*");
                 while (iterator.hasNext()) {
                     Property property = iterator.nextProperty();
-                    if (!excluded.contains(property.getName())) {
+                    if (!isExcluded(property.getName())) {
                         addItem(new JcrItemModel(property));
                     }
                 }
@@ -138,11 +147,9 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
     private void addItem(JcrItemModel model) throws RepositoryException {
         Item item = (Item) model.getObject();
         String path = item.getName();
-        Set<String> excluded = descriptor.getExcluded();
+        Set<String> excluded = field.getExcluded();
         if (excluded == null || !excluded.contains(path)) {
-            FieldDescriptor subDescriptor = descriptor.clone();
-            subDescriptor.setPath(path);
-            elements.addLast(new WildcardModel(subDescriptor, config, getNodeModel(), ++lastId));
+            elements.addLast(new WildcardModel(descriptor, config, getNodeModel(), path, ++lastId));
         }
     }
 }

@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.plugins.template.field;
+
+import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -25,6 +27,8 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.template.FieldDescriptor;
+import org.hippoecm.frontend.template.ItemDescriptor;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.template.model.ValueTemplateProvider;
@@ -36,6 +40,7 @@ public class PropertyFieldPlugin extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(PropertyFieldPlugin.class);
 
+    private FieldDescriptor field;
     private ValueTemplateProvider provider;
     private ValueView view;
 
@@ -43,12 +48,20 @@ public class PropertyFieldPlugin extends Plugin {
         super(pluginDescriptor, new ItemModel(pluginModel), parentPlugin);
 
         ItemModel model = (ItemModel) getPluginModel();
-        FieldDescriptor descriptor = (FieldDescriptor) model.getDescriptor();
+        ItemDescriptor descriptor = (ItemDescriptor) model.getDescriptor();
 
-        add(new Label("name", descriptor.getName()));
+        TypeConfig config = parentPlugin.getPluginManager().getTemplateEngine().getTypeConfig(); 
+        field = config.getTypeDescriptor(descriptor.getType()).getField(descriptor.getField());
 
-        provider = new ValueTemplateProvider(descriptor, getPluginManager().getTemplateEngine(), model.getNodeModel(),
-                descriptor.getPath());
+        List<String> captions = pluginDescriptor.getParameter("caption");
+        if(captions != null && captions.size() > 0) {
+            add(new Label("name", captions.get(0)));
+        } else {
+            add(new Label("name", ""));
+        }
+
+        provider = new ValueTemplateProvider(field, getPluginManager().getTemplateEngine(), model.getNodeModel(),
+                field.getPath());
         view = new ValueView("values", provider, this);
         add(view);
 
@@ -106,9 +119,7 @@ public class PropertyFieldPlugin extends Plugin {
     // privates
 
     protected Component createAddLink() {
-        ItemModel model = (ItemModel) getModel();
-        FieldDescriptor descriptor = (FieldDescriptor) model.getDescriptor();
-        if (descriptor.isMultiple() || (provider.size() == 0)) {
+        if (field.isMultiple() || (provider.size() == 0)) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 

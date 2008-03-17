@@ -23,70 +23,80 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
-  
+
   <sv:node sv:name="hippostd:languagable">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>hippostd:language</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:mixin" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippo:field">
+    <sv:node sv:name="hippostd:languagable">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>Language</sv:value>
+        <sv:value>hippo:nodetype</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>String</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
         <sv:value>hippostd:language</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:mixin" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:name" sv:type="String">
+          <sv:value>Language</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>String</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:path" sv:type="String">
+          <sv:value>hippostd:language</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
-  
+
   <sv:node sv:name="hippostd:publishable">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:nodetype</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:type" sv:type="String">
-      <sv:value>hippostd:publishable</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:mixin" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippo:field">
+    <sv:node sv:name="hippostd:publishable">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>PublicationStatus</sv:value>
+        <sv:value>hippo:nodetype</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>String</sv:value>
+        <sv:value>hippostd:publishable</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>hippostd:state</sv:value>
+      <sv:property sv:name="hippo:mixin" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:field">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:field</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>Editor</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:type" sv:type="String">
-        <sv:value>String</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:path" sv:type="String">
-        <sv:value>hippostd:username</sv:value>
-      </sv:property>
+      <sv:node sv:name="hippo:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:name" sv:type="String">
+          <sv:value>PublicationStatus</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>String</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:path" sv:type="String">
+          <sv:value>hippostd:state</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="hippo:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:name" sv:type="String">
+          <sv:value>Editor</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>String</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:path" sv:type="String">
+          <sv:value>hippostd:username</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
 
