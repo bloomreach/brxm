@@ -3,7 +3,6 @@ package org.hippoecm.frontend.plugins.reporting;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -13,7 +12,6 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
 import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +45,8 @@ public class ReportPlugin extends Plugin {
         PluginDescriptor pluginDescriptor = null;
         try {
             if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
-                UserSession session = (UserSession) Session.get();
                 String basePath = reportNode.getPath().substring(1);
-                PluginConfig pluginConfig = new PluginRepositoryConfig(session.getJcrSessionModel(), basePath);
+                PluginConfig pluginConfig = new PluginRepositoryConfig(basePath);
                 pluginDescriptor = pluginConfig.getPlugin(ReportingNodeTypes.PLUGIN);
                 pluginDescriptor.setWicketId(id);
             }

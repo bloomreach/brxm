@@ -39,6 +39,7 @@ public interface HippoNodeType {
     final public static String PLUGIN_PATH = "hippo:plugins";
     final public static String PROTOTYPES_PATH = "hippo:prototypes";
     final public static String NAMESPACES_PATH = "hippo:namespaces";
+    final public static String TEMPLATES_PATH = "hippo:templates";
 
     //--- Hippo NodeTypes ---//
     final public static String NT_APPLICATION = "hippo:application";
@@ -74,6 +75,7 @@ public interface HippoNodeType {
     final public static String NT_ROLE = "hippo:role";
     final public static String NT_ROLEFOLDER = "hippo:rolefolder";
     final public static String NT_TEMPLATE = "hippo:template";
+    final public static String NT_TEMPLATEITEM = "hippo:templateitem";
     final public static String NT_TYPE = "hippo:type";
     final public static String NT_TYPES = "hippo:types";
     final public static String NT_USER = "hippo:user";

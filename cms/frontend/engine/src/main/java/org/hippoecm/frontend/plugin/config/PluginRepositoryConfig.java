@@ -27,8 +27,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +38,9 @@ public class PluginRepositoryConfig implements PluginConfig {
 
     static final Logger log = LoggerFactory.getLogger(PluginRepositoryConfig.class);
 
-    private JcrSessionModel jcrSession;
     private String basePath;
 
-    public PluginRepositoryConfig(JcrSessionModel session, String base) {
-        jcrSession = session;
+    public PluginRepositoryConfig(String base) {
         basePath = base;
     }
 
@@ -62,7 +60,11 @@ public class PluginRepositoryConfig implements PluginConfig {
     }
 
     protected Session getJcrSession() {
-        return jcrSession.getSession();
+        return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+    }
+
+    protected String getBasePath() {
+        return basePath;
     }
 
     protected PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {

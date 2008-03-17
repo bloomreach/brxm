@@ -115,7 +115,7 @@ public class CndSerializer implements IClusterable {
         String type = typeDescriptor.getType();
         if (type.indexOf(':') > 0) {
             if (!types.contains(typeDescriptor)) {
-                for (FieldDescriptor field : typeDescriptor.getFields()) {
+                for (FieldDescriptor field : typeDescriptor.getFields().values()) {
                     String subType = field.getType();
                     TypeDescriptor sub = typeConfig.getTypeDescriptor(subType);
                     if (sub.isNode()) {
@@ -184,7 +184,7 @@ public class CndSerializer implements IClusterable {
             String mixin = mixins.next();
             TypeDescriptor mixinDescriptor = typeConfig.getTypeDescriptor(mixin);
             if (mixinDescriptor != null) {
-                Iterator<FieldDescriptor> fields = mixinDescriptor.getFields().iterator();
+                Iterator<FieldDescriptor> fields = mixinDescriptor.getFields().values().iterator();
                 while (fields.hasNext()) {
                     FieldDescriptor field = fields.next();
                     if (!mixinFields.contains(field.getPath())) {
@@ -195,7 +195,7 @@ public class CndSerializer implements IClusterable {
             output.append(", " + mixin);
         }
 
-        for (FieldDescriptor field : template.getFields()) {
+        for (FieldDescriptor field : template.getFields().values()) {
             if (field.isOrdered()) {
                 output.append(" orderable");
                 break;
@@ -203,7 +203,7 @@ public class CndSerializer implements IClusterable {
         }
 
         output.append("\n");
-        for (FieldDescriptor field : template.getFields()) {
+        for (FieldDescriptor field : template.getFields().values()) {
             if (!mixinFields.contains(field.getPath())) {
                 renderField(output, field);
             }
@@ -232,8 +232,7 @@ public class CndSerializer implements IClusterable {
             }
 
             visited.add(descriptor);
-            List<FieldDescriptor> fields = descriptor.getFields();
-            for (FieldDescriptor field : fields) {
+            for (FieldDescriptor field : descriptor.getFields().values()) {
                 TypeDescriptor type = typeConfig.getTypeDescriptor(field.getType());
                 visit(type);
             }

@@ -15,10 +15,12 @@
  */
 package org.hippoecm.frontend.template;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.PropertyType;
 import javax.jcr.Value;
@@ -34,16 +36,20 @@ import org.apache.jackrabbit.value.ReferenceValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TypeDescriptor implements IClusterable {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger log = LoggerFactory.getLogger(TypeDescriptor.class);
+
     private String name;
     private String type;
     private String superType;
     private List<String> mixinTypes;
-    private List<FieldDescriptor> fields;
+    private Map<String, FieldDescriptor> fields;
     private boolean node;
     private boolean mixin;
 
@@ -52,7 +58,7 @@ public class TypeDescriptor implements IClusterable {
         this.type = type;
         this.superType = "";
         this.mixinTypes = new LinkedList<String>();
-        this.fields = new LinkedList<FieldDescriptor>();
+        this.fields = new HashMap<String, FieldDescriptor>();
         this.node = true;
         this.mixin = false;
     }
@@ -63,11 +69,11 @@ public class TypeDescriptor implements IClusterable {
         this.superType = (String) map.get("superType");
         this.mixinTypes = (List<String>) map.get("mixinType");
 
-        this.fields = new LinkedList<FieldDescriptor>();
-        if(map.get("fields") != null) {
-            List<Map<String, Object>> fieldList = (List<Map<String, Object>>) map.get("fields");
-            for(Map<String, Object> subMap : fieldList) {
-                fields.add(new FieldDescriptor(subMap));
+        this.fields = new HashMap<String, FieldDescriptor>();
+        if (map.get("fields") != null) {
+            Map<String, Map<String, Object>> fieldMap = (Map<String, Map<String, Object>>) map.get("fields");
+            for (Map.Entry<String, Map<String, Object>> entry : fieldMap.entrySet()) {
+                fields.put(entry.getKey(), new FieldDescriptor(entry.getValue()));
             }
         }
 
@@ -83,9 +89,9 @@ public class TypeDescriptor implements IClusterable {
         map.put("isNode", new Boolean(node));
         map.put("isMixin", new Boolean(mixin));
         map.put("mixinType", getMixinTypes());
-        List<Map<String, Object>> fieldList = new LinkedList<Map<String, Object>>();
-        for(FieldDescriptor field : getFields()) {
-            fieldList.add(field.getMapRepresentation());
+        Map<String, Map<String, Object>> fieldMap = new HashMap<String, Map<String, Object>>();
+        for (Map.Entry<String, FieldDescriptor> entry : getFields().entrySet()) {
+            fieldMap.put(entry.getKey(), entry.getValue().getMapRepresentation());
         }
         return map;
     }
@@ -114,8 +120,12 @@ public class TypeDescriptor implements IClusterable {
         this.mixinTypes = mixins;
     }
 
-    public List<FieldDescriptor> getFields() {
+    public Map<String, FieldDescriptor> getFields() {
         return fields;
+    }
+
+    public FieldDescriptor getField(String key) {
+        return getFields().get(key);
     }
 
     public boolean isNode() {
@@ -134,32 +144,32 @@ public class TypeDescriptor implements IClusterable {
         this.mixin = isMixin;
     }
 
-    public Value createValue(Object object) {
+    public Value createValue() {
         try {
             int propertyType = PropertyType.valueFromName(type);
-            String string = object.toString();
             switch (propertyType) {
             case PropertyType.BOOLEAN:
-                return BooleanValue.valueOf(string);
+                return BooleanValue.valueOf("false");
             case PropertyType.DATE:
-                return DateValue.valueOf(string);
+                return new DateValue(Calendar.getInstance());
             case PropertyType.DOUBLE:
-                return DoubleValue.valueOf(string);
+                return DoubleValue.valueOf("0.0");
             case PropertyType.LONG:
-                return LongValue.valueOf(string);
+                return LongValue.valueOf("0");
             case PropertyType.NAME:
-                return NameValue.valueOf(string);
+                return NameValue.valueOf("");
             case PropertyType.PATH:
-                return PathValue.valueOf(string);
+                return PathValue.valueOf("/");
             case PropertyType.REFERENCE:
-                return ReferenceValue.valueOf(string);
+                return ReferenceValue.valueOf(UUID.randomUUID().toString());
             case PropertyType.STRING:
             case PropertyType.UNDEFINED:
-                return new StringValue(string);
+                return new StringValue("");
             default:
                 return null;
             }
         } catch (ValueFormatException ex) {
+            log.error(ex.getMessage());
             return null;
         }
     }

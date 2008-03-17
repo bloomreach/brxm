@@ -27,22 +27,28 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
-public class ItemDescriptor implements IClusterable, Cloneable {
+public class ItemDescriptor implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    private String name;
     private PluginDescriptor plugin;
+
+    private int id;
+    private String type;
+    private String field;
 
     private LinkedList<ItemDescriptor> items;
 
-    public ItemDescriptor(String name, PluginDescriptor plugin) {
-        this.name = name;
+    public ItemDescriptor(int id, PluginDescriptor plugin) {
+        this.id = id;
         this.plugin = plugin;
+        this.type = this.field = null;
         this.items = new LinkedList<ItemDescriptor>();
     }
 
     public ItemDescriptor(Map<String, Object> map) {
-        this.name = (String) map.get("name");
+        this.id = ((Integer) map.get("id")).intValue();
+        this.type = (String) map.get("type");
+        this.field = (String) map.get("field");
 
         this.items = new LinkedList<ItemDescriptor>();
         LinkedList<Map<String, Object>> itemList = (LinkedList<Map<String, Object>>) map.get("items");
@@ -58,7 +64,9 @@ public class ItemDescriptor implements IClusterable, Cloneable {
 
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", name);
+        map.put("id", new Integer(getId()));
+        map.put("type", getType());
+        map.put("field", getField());
 
         LinkedList<Map<String, Object>> itemList = new LinkedList<Map<String, Object>>();
         for (ItemDescriptor item : getItems()) {
@@ -73,12 +81,24 @@ public class ItemDescriptor implements IClusterable, Cloneable {
         return map;
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
     }
 
     public List<ItemDescriptor> getItems() {
@@ -95,7 +115,8 @@ public class ItemDescriptor implements IClusterable, Cloneable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("name", name).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("type", getType()).append("field",
+                getField()).toString();
     }
 
     @Override
@@ -107,11 +128,12 @@ public class ItemDescriptor implements IClusterable, Cloneable {
             return true;
         }
         ItemDescriptor itemDescriptor = (ItemDescriptor) object;
-        return new EqualsBuilder().append(getName(), itemDescriptor.getName()).append(getPlugin(), itemDescriptor.getPlugin()).isEquals();
+        return new EqualsBuilder().append(getType(), itemDescriptor.getType()).append(getField(),
+                itemDescriptor.getField()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(421, 23).append(name).toHashCode();
+        return new HashCodeBuilder(421, 23).append(getType()).append(getField()).toHashCode();
     }
 }

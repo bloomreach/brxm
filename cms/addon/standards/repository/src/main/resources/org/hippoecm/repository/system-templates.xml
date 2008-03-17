@@ -26,63 +26,93 @@
 
   <sv:node sv:name="String">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="String">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
-  
+
   <sv:node sv:name="Boolean">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="Boolean">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
-  
+
   <sv:node sv:name="Date">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.DatePickerPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="Date">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.DatePickerPlugin</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 
   <sv:node sv:name="Html">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="Html">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 
   <sv:node sv:name="Docbase">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.LinkPickerPlugin</sv:value>
-    </sv:property>
+    <sv:node sv:name="Docbase">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.LinkPickerPlugin</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
-  
+
   <sv:node sv:name="Link">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:template</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.template.LinkPickerPlugin</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippo:parameters">
+    <sv:node sv:name="Link">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:parameters</sv:value>
+        <sv:value>hippo:template</sv:value>
       </sv:property>
-      <sv:property sv:name="nodetypes" sv:type="String">
-        <sv:value>hippo:handle</sv:value>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.LinkPickerPlugin</sv:value>
       </sv:property>
+      <sv:node sv:name="hippo:parameters">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:parameters</sv:value>
+        </sv:property>
+        <sv:property sv:name="nodetypes" sv:type="String">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
 

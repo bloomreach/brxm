@@ -185,7 +185,7 @@
 - hippo:mandatory (boolean)
 - hippo:ordered (boolean)
 
-[hippo:nodetype] > nt:base orderable
+[hippo:nodetype] > hippo:document orderable
 - hippo:type (string)
 - hippo:supertype (string)
 - hippo:mixintypes (string) multiple
@@ -195,18 +195,20 @@
 + hippo:field (hippo:field) multiple
 
 [hippo:namespace] > nt:base
-+ * (hippo:nodetype) = hippo:nodetype
++ * (hippo:handle) = hippo:handle
 
 [hippo:namespacefolder] > nt:base
 + * (hippo:namespace) = hippo:namespace
 
-[hippo:template] > hippo:plugin
+[hippo:templateitem] > hippo:plugin orderable
 - hippo:renderer (string) mandatory
 - hippo:field (string)
-+ hippo:template (hippo:template) multiple
++ hippo:item (hippo:templateitem) multiple
+
+[hippo:template] > hippo:templateitem orderable
 
 [hippo:templatefolder] > nt:base
-+ * (hippo:template) = hippo:template
++ * (hippo:handle) = hippo:handle
 
 [hippo:templatenamespace] > nt:base
 + * (hippo:templatefolder)

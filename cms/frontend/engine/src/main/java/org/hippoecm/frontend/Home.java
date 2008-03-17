@@ -45,8 +45,8 @@ public class Home extends WebPage {
         UserSession session = getValidUserSession();
         HippoNode rootNode = session.getRootNode();
 
-        TypeConfig typeConfig = new RepositoryTypeConfig(session.getJcrSessionModel());
-        TemplateConfig templateConfig = new RepositoryTemplateConfig(session.getJcrSessionModel());
+        TypeConfig typeConfig = new RepositoryTypeConfig();
+        TemplateConfig templateConfig = new RepositoryTemplateConfig();
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
 
         PluginManager pluginManager = new PluginManager(pluginConfig, typeConfig, templateConfig);

@@ -21,10 +21,8 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
-import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
@@ -37,8 +35,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryTemplateConfig.class);
 
-    public RepositoryTemplateConfig(JcrSessionModel session) {
-        super(session, getTemplateBasePath());
+    public RepositoryTemplateConfig() {
+        super(getTemplateBasePath());
     }
 
     public TemplateDescriptor getTemplate(TypeDescriptor type) {
@@ -47,39 +45,65 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             PluginDescriptor plugin;
             if (typeName.indexOf(':') > 0) {
                 String prefix = typeName.substring(0, typeName.indexOf(':'));
-                plugin = getPlugin(prefix + "/" + typeName);
+                plugin = getPlugin(prefix + "/" + typeName + "/" + typeName);
             } else {
-                plugin = getPlugin("system/" + typeName);
+                plugin = getPlugin("system/" + typeName + "/" + typeName);
             }
-            return new RepositoryTemplateDescriptor(type, plugin);
+            if (plugin != null) {
+                return new RepositoryTemplateDescriptor(type, plugin);
+            }
         }
         return null;
     }
 
-    private static String getTemplateBasePath() {
-        return HippoNodeType.CONFIGURATION_PATH + "/hippo:templates";
+    public Node getTemplateNode(TypeDescriptor type) {
+        try {
+            String typeName = type.getName();
+            String prefix;
+            if (typeName.indexOf(':') > 0) {
+                prefix = typeName.substring(0, typeName.indexOf(':'));
+            } else {
+                prefix = "system";
+            }
+            return getJcrSession().getRootNode().getNode(getBasePath() + "/" + prefix + "/" + typeName + "/" + typeName);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
     }
 
-    List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, TemplateDescriptor parent) {
+    @Override
+    public PluginDescriptor getPlugin(String pluginId) {
+        try {
+            Node pluginNode = getJcrSession().getRootNode().getNode(getBasePath() + "/" + pluginId);
+            if (pluginNode != null) {
+                return nodeToDescriptor(pluginNode);
+            }
+            log.error("No plugin node found for " + pluginId);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public TemplateDescriptor createTemplate(Node node, TypeDescriptor type) throws RepositoryException {
+        return new RepositoryTemplateDescriptor(type, nodeToDescriptor(node));
+    }
+
+    private static String getTemplateBasePath() {
+        return HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.TEMPLATES_PATH;
+    }
+
+    static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, TemplateDescriptor parent) {
         List<ItemDescriptor> items = new LinkedList<ItemDescriptor>();
+        int itemId = 0;
         for (PluginDescriptor child : plugin.getChildren()) {
+            RepositoryItemDescriptor item = new RepositoryItemDescriptor(itemId++, child, parent);
             String name = ((Descriptor) child).field;
             if (name != null) {
-                boolean found = false;
-                List<FieldDescriptor> fields = parent.getTypeDescriptor().getFields();
-                for (FieldDescriptor field : fields) {
-                    if (field.getName().equals(name)) {
-                        items.add(new RepositoryFieldDescriptor(field, child));
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    log.warn("Field " + name + " specified in plugin does not exist");
-                }
-            } else {
-                items.add(new RepositoryItemDescriptor(child.getWicketId(), child, parent));
+                item.field = name;
             }
+            items.add(item);
         }
         return items;
     }
@@ -108,14 +132,26 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         }
     }
 
-    private class RepositoryItemDescriptor extends ItemDescriptor {
+    private static class RepositoryItemDescriptor extends ItemDescriptor {
         private static final long serialVersionUID = 1L;
 
         TemplateDescriptor template;
+        String field;
 
-        RepositoryItemDescriptor(String name, PluginDescriptor plugin, TemplateDescriptor template) {
-            super(name, plugin);
+        RepositoryItemDescriptor(int id, PluginDescriptor plugin, TemplateDescriptor template) {
+            super(id, plugin);
             this.template = template;
+            this.field = null;
+        }
+
+        @Override
+        public String getField() {
+            return field;
+        }
+
+        @Override
+        public String getType() {
+            return template.getType();
         }
 
         @Override
@@ -124,7 +160,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         }
     }
 
-    private class RepositoryTemplateDescriptor extends TemplateDescriptor {
+    private static class RepositoryTemplateDescriptor extends TemplateDescriptor {
         private static final long serialVersionUID = 1L;
 
         RepositoryTemplateDescriptor(TypeDescriptor type, PluginDescriptor plugin) {
@@ -134,15 +170,6 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         @Override
         public List<ItemDescriptor> getItems() {
             return getTemplateItems(getPlugin(), this);
-        }
-    }
-
-    private class RepositoryFieldDescriptor extends FieldDescriptor {
-        private static final long serialVersionUID = 1L;
-
-        RepositoryFieldDescriptor(FieldDescriptor original, PluginDescriptor plugin) {
-            super(original.getMapRepresentation());
-            setPlugin(plugin);
         }
     }
 }

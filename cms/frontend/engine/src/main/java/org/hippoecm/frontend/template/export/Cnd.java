@@ -66,7 +66,7 @@ public class Cnd {
         credentials.put("password", SYSTEMUSER_PASSWORD);
         JcrSessionModel jcrSession = new JcrSessionModel(credentials);
 
-        RepositoryTypeConfig templateConfig = new RepositoryTypeConfig(jcrSession);
+        RepositoryTypeConfig templateConfig = new RepositoryTypeConfig();
         List<TypeDescriptor> list = templateConfig.getTypes();
 
         CndSerializer serializer = new CndSerializer(jcrSession, templateConfig, args[0]);
@@ -75,7 +75,7 @@ public class Cnd {
                 serializer.addType(template);
             }
         }
-        System.out.println(serializer.getOutput());
+        log.debug(serializer.getOutput());
     }
 
 }

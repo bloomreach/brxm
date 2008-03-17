@@ -63,7 +63,7 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
         try {
             int index;
             Node node = getNodeModel().getNode();
-            Value value = template.getTypeDescriptor().createValue("");
+            Value value = template.getTypeDescriptor().createValue();
             if (!node.hasProperty(path)) {
                 if (descriptor.isMultiple()) {
                     node.setProperty(path, new Value[] { value });

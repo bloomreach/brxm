@@ -25,24 +25,29 @@ public class TemplateDescriptor extends ItemDescriptor {
     private TypeDescriptor type;
 
     public TemplateDescriptor(TypeDescriptor type, PluginDescriptor plugin) {
-        super(type.getName(), plugin);
+        super(0, plugin);
 
         this.type = type;
     }
 
     public TemplateDescriptor(Map<String, Object> map) {
         super(map);
-        this.type = new TypeDescriptor((Map<String, Object>) map.get("type"));
+        this.type = new TypeDescriptor((Map<String, Object>) map.get("typeDescriptor"));
     }
 
     @Override
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = super.getMapRepresentation();
-        map.put("type", this.type.getMapRepresentation());
+        map.put("typeDescriptor", this.type.getMapRepresentation());
         return map;
     }
 
     public TypeDescriptor getTypeDescriptor() {
         return type;
+    }
+
+    @Override
+    public String getType() {
+        return type.getType();
     }
 }
