@@ -22,7 +22,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -138,7 +140,11 @@ public class Context extends AbstractMap {
                 if (query != null) {
                     QueryResult result;
                     if ((arguments != null) && arguments.size() > 0) {
-                        result = query.execute(arguments.toArray(new String[arguments.size()]));
+                        Map<String,String> queryArguments = new TreeMap<String,String>();
+                        String[] workingArguments = arguments.toArray(new String[arguments.size()]);
+                        for(int i=0; i+1<workingArguments.length; i+=2)
+                            queryArguments.put(workingArguments[i], workingArguments[i+1]);
+                        result = query.execute(queryArguments);
                     } else {
                         result = query.execute();
                     }

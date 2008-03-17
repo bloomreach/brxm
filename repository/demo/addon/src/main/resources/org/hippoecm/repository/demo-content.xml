@@ -138,7 +138,7 @@
         <sv:value>hippo:query</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
-        <sv:value>site/messages/message2/message2[demo:keywords='MAGICkeywordCIGAM']</sv:value>
+        <sv:value>site/messages//node()[demo:keywords='MAGICkeywordCIGAM']</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:language" sv:type="String">
         <sv:value>xpath</sv:value>
