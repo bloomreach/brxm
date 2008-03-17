@@ -229,7 +229,7 @@
                 </p>
                 <ol>
                     <li>
-                        <p>Select the "Source" tab under the project properties</p>
+                        <p>Select the "Source" tab under "Java build path" in the project properties</p>
                     </li>
                     <li>
                       <p>Remove the &lt;project&gt;/src/test/resources folder</p>
