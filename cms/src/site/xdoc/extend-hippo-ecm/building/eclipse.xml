@@ -239,7 +239,7 @@
         </section>
         <section name="Create eclipse projects, part three">
             <subsection name="JPOX enhanced projects">
-                <p> Projects that provide document types (currently hippoecm-repository-engine and
+                <p> Projects that provide document types (currently hippoecm-api, hippoecm-repository-engine and
                     hippo-ecm-addon-reviewed-action-repository) must be enhanced by the JPOX plugin.
                     Open the 'Package explorer' view and for each of these projects: </p>
                 <ol>
