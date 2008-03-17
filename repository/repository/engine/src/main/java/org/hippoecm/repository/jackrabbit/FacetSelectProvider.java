@@ -29,14 +29,13 @@ import org.hippoecm.repository.jackrabbit.ViewVirtualProvider.ViewNodeId;
 
 public class FacetSelectProvider extends HippoVirtualProvider
 {
-    final static private String SVN_ID = "$Id$";
-
     ViewVirtualProvider subNodesProvider;
     Name docbaseName;
     Name facetsName;
     Name valuesName;
     Name modesName;
-
+    Name handleName;
+    
     FacetSelectProvider() {
         super();
     }
@@ -49,6 +48,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
         facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
         valuesName = resolveName(HippoNodeType.HIPPO_VALUES);
         modesName = resolveName(HippoNodeType.HIPPO_MODES);
+        handleName = resolveName(HippoNodeType.NT_HANDLE);
     }
 
     @Override
@@ -63,12 +63,12 @@ public class FacetSelectProvider extends HippoVirtualProvider
         }
 
         NodeState dereference = getNodeState(docbase[0]);
-        
         if(dereference != null) {
+            boolean singledView = false;
             Map<Name,String> view = new HashMap<Name,String>();
             
             /*
-             * If state..getParentId() instanceod ViewNodeId, we know for sure we are dealing with
+             * If state.getParentId() instanceof ViewNodeId, we know for sure we are dealing with
              * a facetselect below a facetselect. We need to take into account the view of the parent select.
              * In principle, a state of type HippoNodeId always has a parent. To be sure, check for null
              */  
@@ -77,22 +77,33 @@ public class FacetSelectProvider extends HippoVirtualProvider
                if(viewNodeId.view != null) {
                    view.putAll(viewNodeId.view);
                }
+               singledView = viewNodeId.singledView;
             }
             
-            if(newFacets.length != newValues.length || newFacets.length != newModes.length)
+            if(newFacets.length != newValues.length || newFacets.length != newModes.length) {
                 throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
+            }
             for(int i=0; i<newFacets.length; i++) {
-                if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select")) {
+                if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select") || newModes[i].equalsIgnoreCase("single")) {
                     view.put(resolveName(newFacets[i]), newValues[i]);
+                    if(newModes[i].equalsIgnoreCase("single")) {
+                        singledView = true;
+                    }
                 } else if(newModes[i].equalsIgnoreCase("clear")) {
                     view.remove(resolveName(newFacets[i]));
                 }
             }
+            
+            boolean isHandle =  dereference.getNodeTypeName().equals(handleName);
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                 NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
                 if(subNodesProvider.match(view, entry.getId())) {
-                    NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view);
+                    NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view, singledView);
                     state.addChildNodeEntry(entry.getName(), childNodeId);
+                    if(isHandle && singledView) {    
+                       // stop after first match because single hippo document view
+                       break;
+                    }
                 }
             }
         }

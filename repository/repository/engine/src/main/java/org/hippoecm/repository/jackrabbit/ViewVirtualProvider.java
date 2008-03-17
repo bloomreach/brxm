@@ -28,14 +28,17 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class ViewVirtualProvider extends MirrorVirtualProvider
 {
-    final static private String SVN_ID = "$Id$";
-
+    
     protected class ViewNodeId extends MirrorNodeId {
+        private static final long serialVersionUID = 1L;
+        
+        boolean singledView;
         Map<Name,String> view; // must be immutable
-
-        ViewNodeId(NodeId parent, NodeId upstream, Name name, Map view) {
+        
+        ViewNodeId(NodeId parent, NodeId upstream, Name name, Map<Name,String> view, boolean singledView) {
             super(ViewVirtualProvider.this, parent, name, upstream);
             this.view = view;
+            this.singledView = singledView;
         }
     }
 
@@ -60,7 +63,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                 NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
                 if(this.match(view, entry.getId())) {
-                    NodeId childNodeId = this . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view);
+                    NodeId childNodeId = this . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view, false);
                     state.addChildNodeEntry(entry.getName(), childNodeId);
                 }
             }
@@ -93,8 +96,12 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
             if(!isHandle || match(viewId.view, entry.getId())) {
-                ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view);
+                ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.singledView);
                 state.addChildNodeEntry(entry.getName(), childNodeId);
+                if(isHandle && viewId.singledView) {
+                    // stop after first match because single hippo document view
+                    break;
+                }
             }
         }
     }
