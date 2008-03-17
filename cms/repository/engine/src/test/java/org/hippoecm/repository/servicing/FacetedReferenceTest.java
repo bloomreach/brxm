@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.servicing;
 
-import java.io.PrintStream;
-
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,18 +23,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.jcr.nodetype.PropertyDefinition;
 
 import junit.framework.TestCase;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.Utilities;
 
 public class FacetedReferenceTest extends TestCase {
-    private final static String SVN_ID = "$$";
 
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
@@ -82,44 +76,6 @@ public class FacetedReferenceTest extends TestCase {
         "hippo:modes",   "stick",
         "hippo:modes",   "clear"
     };
-
-    private void build(Session session, String[] contents) throws RepositoryException {
-        Node node = null;
-        for (int i=0; i<contents.length; i+=2) {
-            if (contents[i].startsWith("/")) {
-                String path = contents[i].substring(1);
-                node = session.getRootNode();
-                if (path.contains("/")) {
-                    node = node.getNode(path.substring(0,path.lastIndexOf("/")));
-                    path = path.substring(path.lastIndexOf("/")+1);
-                }
-                node = node.addNode(path, contents[i+1]);
-            } else {
-                PropertyDefinition propDef = null;
-                PropertyDefinition[] propDefs = node.getPrimaryNodeType().getPropertyDefinitions();
-                for (int propidx=0; propidx<propDefs.length; propidx++)
-                    if(propDefs[propidx].getName().equals(contents[i])) {
-                        propDef = propDefs[propidx];
-                        break;
-                    }
-                if (propDef != null && propDef.isMultiple()) {
-                    Value[] values;
-                    if (node.hasProperty(contents[i])) {
-                        values = node.getProperty(contents[i]).getValues();
-                        Value[] newValues = new Value[values.length+1];
-                        System.arraycopy(values,0,newValues,0,values.length);
-                        values = newValues;
-                    } else {
-                        values = new Value[1];
-                    }
-                    values[values.length-1] = session.getValueFactory().createValue(contents[i+1]);
-                    node.setProperty(contents[i], values);
-                } else {
-                    node.setProperty(contents[i], contents[i+1]);
-                }
-            }
-        }
-    }
 
     private Node traverse(Session session, String path) throws RepositoryException {
         if(path.startsWith("/"))
@@ -191,8 +147,6 @@ public class FacetedReferenceTest extends TestCase {
 
     public void testFacetedReference() throws Exception {
         Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        //PrintStream ostream = new PrintStream("dump.txt");
-        //Utilities.dump(ostream, session.getRootNode());
         assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds"));
         assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
         assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
@@ -208,7 +162,7 @@ public class FacetedReferenceTest extends TestCase {
         repository = null;
         repository = HippoRepositoryFactory.getHippoRepository();
         session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        build(session, contents);
+        FacetContentUtilities.build(session, contents);
         session.save();
         session.logout();
     }
