@@ -28,8 +28,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteQueryResult;
 public interface RemoteQuery extends org.apache.jackrabbit.rmi.remote.RemoteQuery, Remote, Serializable {
     public String[] getArguments() throws RepositoryException, RemoteException;
     public int getArgumentCount() throws RepositoryException, RemoteException;
-    public RemoteQueryResult execute(String argument) throws RepositoryException, RemoteException;
-    public RemoteQueryResult execute(String[] arguments) throws RepositoryException, RemoteException;
     public RemoteQueryResult execute(Map<String,String> arguments) throws RepositoryException, RemoteException;
     public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException, RemoteException;
 }
