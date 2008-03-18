@@ -121,12 +121,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 indexFacet(doc,fieldName,value.toString());
                 break;
             case PropertyType.DATE:
-                if((Object)value instanceof Calendar){
-                    indexFacet(doc,fieldName,DateField.timeToString(((Calendar)((Object)value)).getTimeInMillis()));
-                } else {
-                    log.warn("PropertyType.DATE contains internalValue for "+name.getLocalName()+" which is not instance of Calendar. Won't index this date");
-                }
-                break;
+               indexFacet(doc,fieldName,DateField.timeToString(((Calendar)((Object)value)).getTimeInMillis()));
+               break;
             case PropertyType.DOUBLE:
                 indexFacet(doc,fieldName,DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
                 break;
