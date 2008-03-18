@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.exception;
+package org.hippoecm.frontend.plugins.standards.exception;
 
 import org.hippoecm.frontend.dialog.DialogPageCreator;
 import org.hippoecm.frontend.dialog.DialogWindow;

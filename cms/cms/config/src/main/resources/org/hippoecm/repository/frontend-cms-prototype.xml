@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="hippo:cms"
+<sv:node sv:name="hippo:cms-prototype"
   xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
   xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
@@ -37,7 +37,7 @@
       <sv:value>hippo:frontendplugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.root.RootPlugin</sv:value>
+      <sv:value>org.hippoecm.cmsprototype.frontend.plugins.RootPlugin</sv:value>
     </sv:property>
 
     <sv:node sv:name="logoutPlugin">
@@ -54,7 +54,7 @@
           <sv:value>hippo:frontendplugin</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.standards.exception.ExceptionPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.plugins.standards.exception.ExceptionPlugin</sv:value>
       </sv:property>
     </sv:node>
 
@@ -65,6 +65,7 @@
       <sv:property sv:name="hippo:renderer" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standards.filter.FilterPlugin</sv:value>
       </sv:property>
+
       <sv:node sv:name="hippo:parameters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:parameters</sv:value>
@@ -81,7 +82,7 @@
           <sv:value>hippo:frontendplugin</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin</sv:value>
+          <sv:value>org.hippoecm.cmsprototype.frontend.plugins.tabs.TabsPlugin</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:parameters">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -97,7 +98,7 @@
             <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.DashboardPerspective</sv:value>
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.DashboardPerspective</sv:value>
           </sv:property>
           <sv:node sv:name="hippo:parameters">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -107,14 +108,33 @@
               <sv:value>Dashboard</sv:value>
             </sv:property>
           </sv:node>
+
+          <sv:node sv:name="tasklistPlugin">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:frontendplugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.tasklist.TasklistPlugin</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="addNewWizardPlugin">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:frontendplugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.addnew.AddNewWizard</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
+
+
 
         <sv:node sv:name="browsePerspective">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective</sv:value>
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.BrowserPerspective</sv:value>
           </sv:property>
           <sv:node sv:name="hippo:parameters">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -139,7 +159,7 @@
               <sv:value>hippo:frontendplugin</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-              <sv:value>org.hippoecm.frontend.plugins.cms.browse.FolderTreePlugin</sv:value>
+              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.foldertree.FolderTreePlugin</sv:value>
             </sv:property>
           </sv:node>
 
@@ -148,7 +168,16 @@
               <sv:value>hippo:frontendplugin</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
-              <sv:value>org.hippoecm.frontend.plugins.standards.list.DocumentListingPlugin</sv:value>
+              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.list.DocumentListingPlugin</sv:value>
+            </sv:property>
+          </sv:node>
+
+          <sv:node sv:name="actionsPlugin">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:frontendplugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.actions.ActionsPlugin</sv:value>
             </sv:property>
           </sv:node>
 
@@ -160,6 +189,15 @@
               <sv:value>org.hippoecm.frontend.plugin.workflow.WorkflowPlugin</sv:value>
             </sv:property>
           </sv:node>
+
+          <sv:node sv:name="variantsPlugin">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:frontendplugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.variants.VariantsPlugin</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="editPerspective">
@@ -167,7 +205,7 @@
             <sv:value>hippo:frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.edit.EditPerspective</sv:value>
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.EditPerspective</sv:value>
           </sv:property>
 
           <sv:node sv:name="editingBreadcrumbPlugin">
@@ -189,7 +227,36 @@
           </sv:node>
 
         </sv:node>
+
+        <sv:node sv:name="searchPerspective">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:frontendplugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.cmsprototype.frontend.plugins.perspectives.SearchPerspective</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:parameters">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:parameters</sv:value>
+            </sv:property>
+            <sv:property sv:name="title" sv:type="String">
+              <sv:value>Search</sv:value>
+            </sv:property>
+          </sv:node>
+
+          <sv:node sv:name="searchPlugin">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:frontendplugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+              <sv:value>org.hippoecm.cmsprototype.frontend.plugins.search.SearchPlugin</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
       </sv:node>
+
     </sv:node>
+
   </sv:node>
+
 </sv:node>
