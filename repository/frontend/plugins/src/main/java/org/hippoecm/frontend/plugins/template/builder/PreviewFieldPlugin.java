@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -38,6 +39,7 @@ import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
+import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -49,12 +51,13 @@ public class PreviewFieldPlugin extends Plugin {
 
     private static final Logger log = LoggerFactory.getLogger(PreviewFieldPlugin.class);
 
-    private JcrNodeModel nodeModel;
+    private JcrNodeModel templateNodeModel;
+    private Plugin child;
 
     public PreviewFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, pluginModel, parentPlugin);
 
-        Plugin child = createChild();
+        child = createChild();
         add(child);
     }
 
@@ -66,8 +69,8 @@ public class PreviewFieldPlugin extends Plugin {
         RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig();
         try {
             ItemModel model = (ItemModel) getPluginModel();
-            nodeModel = model.getNodeModel();
-            Node templateNode = nodeModel.getNode();
+            templateNodeModel = model.getNodeModel();
+            Node templateNode = templateNodeModel.getNode();
             String typeName = templateNode.getName();
 
             TypeDescriptor type = engine.getTypeConfig().getTypeDescriptor(typeName);
@@ -103,15 +106,28 @@ public class PreviewFieldPlugin extends Plugin {
 
     @Override
     public void receive(Notification notification) {
+        ItemModel model = (ItemModel) getPluginModel();
+        JcrNodeModel nodeModel = model.getNodeModel();
         if ("flush".equals(notification.getOperation())) {
-            ItemModel model = (ItemModel) getPluginModel();
-            JcrNodeModel nodeModel = model.getNodeModel();
             if (notification.getModel().equals(nodeModel)) {
-                replace(createChild());
+                child.destroy();
+                replace(child = createChild());
                 notification.getContext().addRefresh(this);
                 // only child has been replaced, so there is no
                 // need to update.
                 return;
+            }
+        } else if ("save".equals(notification.getOperation())) {
+            if (notification.getModel().equals(nodeModel)) {
+                try {
+                    Node typeNode = getTypeNode();
+                    while (typeNode.isNew()) {
+                        typeNode = typeNode.getParent();
+                    }
+                    typeNode.save();
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
             }
         }
         super.receive(notification);
@@ -123,7 +139,8 @@ public class PreviewFieldPlugin extends Plugin {
             String path = (String) request.getModel().getMapRepresentation().get("plugin");
             if (moveUp(path)) {
                 // TODO: minimize the AJAX update
-                replace(createChild());
+                child.destroy();
+                replace(child = createChild());
 
                 request.getContext().addRefresh(this);
             }
@@ -132,7 +149,8 @@ public class PreviewFieldPlugin extends Plugin {
             String path = (String) request.getModel().getMapRepresentation().get("plugin");
             if (moveDown(path)) {
                 // TODO: minimize the AJAX update
-                replace(createChild());
+                child.destroy();
+                replace(child = createChild());
 
                 request.getContext().addRefresh(this);
             }
@@ -141,7 +159,8 @@ public class PreviewFieldPlugin extends Plugin {
             String path = (String) request.getModel().getMapRepresentation().get("plugin");
             if (removeItem(path)) {
                 // TODO: minimize the AJAX update
-                replace(createChild());
+                child.destroy();
+                replace(child = createChild());
 
                 request.getContext().addRefresh(this);
             }
@@ -152,7 +171,7 @@ public class PreviewFieldPlugin extends Plugin {
 
     @Override
     public void onDetach() {
-        nodeModel.detach();
+        templateNodeModel.detach();
         super.onDetach();
     }
 
@@ -190,7 +209,7 @@ public class PreviewFieldPlugin extends Plugin {
         Node itemNode = resolvePath(path);
         if (itemNode != null) {
             try {
-                itemNode.remove();
+                deleteItemNode(itemNode, getTypeNode());
                 return true;
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -199,11 +218,39 @@ public class PreviewFieldPlugin extends Plugin {
         return false;
     }
 
+    private Node getTypeNode() throws RepositoryException {
+        RepositoryTypeConfig typeConfig = new RepositoryTypeConfig();
+        return typeConfig.getTypeNode(templateNodeModel.getNode().getName());
+    }
+
+    private void deleteItemNode(Node item, Node typeNode) throws RepositoryException {
+        if (item.hasProperty(HippoNodeType.HIPPO_FIELD)) {
+            String field = item.getProperty(HippoNodeType.HIPPO_FIELD).getString();
+            NodeIterator fieldIter = typeNode.getNodes(HippoNodeType.HIPPO_FIELD);
+            while (fieldIter.hasNext()) {
+                Node fieldNode = fieldIter.nextNode();
+                if (fieldNode.hasProperty(HippoNodeType.HIPPO_NAME)) {
+                    String name = fieldNode.getProperty(HippoNodeType.HIPPO_NAME).getString();
+                    if (name.equals(field)) {
+                        fieldNode.remove();
+                        break;
+                    }
+                }
+            }
+        } else {
+            NodeIterator itemIter = item.getNodes(HippoNodeType.HIPPO_ITEM);
+            while (itemIter.hasNext()) {
+                deleteItemNode(itemIter.nextNode(), typeNode);
+            }
+        }
+        item.remove();
+    }
+
     private Node resolvePath(String path) {
         try {
             if (path.startsWith(getPluginPath())) {
                 String subPath = path.substring(getPluginPath().length() + 1);
-                Node itemNode = nodeModel.getNode();
+                Node itemNode = templateNodeModel.getNode();
                 while (subPath.indexOf(':') > 0) {
                     int idx = subPath.indexOf(':');
                     subPath = subPath.substring(idx + 1);

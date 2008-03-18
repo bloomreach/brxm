@@ -74,6 +74,7 @@
           <sv:value>browse</sv:value>
           <sv:value>edit</sv:value>
           <sv:value>flush</sv:value>
+          <sv:value>save</sv:value>
         </sv:property>
       </sv:node>
 

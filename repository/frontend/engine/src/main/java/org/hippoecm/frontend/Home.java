@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -25,6 +30,8 @@ import org.hippoecm.frontend.plugin.PluginManager;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.template.config.JcrTypeConfig;
+import org.hippoecm.frontend.template.config.MixedTypeConfig;
 import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TemplateConfig;
@@ -45,7 +52,13 @@ public class Home extends WebPage {
         UserSession session = getValidUserSession();
         HippoNode rootNode = session.getRootNode();
 
-        TypeConfig typeConfig = new RepositoryTypeConfig();
+        TypeConfig repoTypeConfig = new RepositoryTypeConfig();
+        TypeConfig jcrTypeConfig = new JcrTypeConfig();
+        List<TypeConfig> configs = new LinkedList<TypeConfig>();
+        configs.add(repoTypeConfig);
+        configs.add(jcrTypeConfig);
+        TypeConfig typeConfig = new MixedTypeConfig(configs);
+
         TemplateConfig templateConfig = new RepositoryTemplateConfig();
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
 

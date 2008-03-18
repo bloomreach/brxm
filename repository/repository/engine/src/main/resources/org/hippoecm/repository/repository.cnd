@@ -187,8 +187,7 @@
 
 [hippo:nodetype] > hippo:document orderable
 - hippo:type (string)
-- hippo:supertype (string)
-- hippo:mixintypes (string) multiple
+- hippo:supertype (string) multiple
 - hippo:node (boolean)
 - hippo:mixin (boolean)
 + hippo:prototype (hippo:document)

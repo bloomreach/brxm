@@ -128,6 +128,8 @@ public class OnCloseDialog extends AbstractDialog {
             }
             n.save();
 
+            sendSave(new JcrNodeModel(n));
+
             sendClose(nodeModel);
         } catch (RepositoryException e) {
             log.info(e.getClass().getName() + ": " + e.getMessage());
@@ -169,6 +171,14 @@ public class OnCloseDialog extends AbstractDialog {
     protected void cancel() {
     }
 
+    private void sendSave(JcrNodeModel nodeModel) {
+        Channel channel = getChannel();
+        if (channel != null) {
+            Request request = channel.createRequest("save", nodeModel);
+            channel.send(request);
+        }
+    }
+    
     private void sendClose(JcrNodeModel nodeModel) {
         Channel channel = getChannel();
         if (channel != null) {

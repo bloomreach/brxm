@@ -109,6 +109,7 @@
       </sv:property>
       <sv:property sv:name="hippo:supertype" sv:type="String">
         <sv:value>hippo:document</sv:value>
+        <sv:value>hippostd:publishable</sv:value>
       </sv:property>
 
       <!-- image -->

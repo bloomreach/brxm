@@ -100,9 +100,7 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     @Override
     public String toString() {
-       return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-           .append("path", path)
-           .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", path).toString();
     }
 
     @Override
@@ -114,16 +112,21 @@ public class JcrItemModel extends LoadableDetachableModel {
             return true;
         }
         JcrItemModel itemModel = (JcrItemModel) object;
-        return new EqualsBuilder()
-            .append(path, itemModel.path)
-            .isEquals();
+        return new EqualsBuilder().append(normalizePath(path), normalizePath(itemModel.path)).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(177, 3)
-            .append(path)
-            .toHashCode();
+        return new HashCodeBuilder(177, 3).append(path).toHashCode();
     }
 
+    private static String normalizePath(String path) {
+        if (path.length() > 0) {
+            if (path.charAt(path.length() - 1) == ']') {
+                return path;
+            }
+            return path + "[1]";
+        }
+        return path;
+    }
 }

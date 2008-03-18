@@ -32,7 +32,8 @@ public class RootPlugin extends Plugin {
     @Override
     public void handle(Request request) {
         // update node model
-        if ("select".equals(request.getOperation()) || "flush".equals(request.getOperation())) {
+        if ("select".equals(request.getOperation()) || "flush".equals(request.getOperation())
+                || "save".equals(request.getOperation())) {
             Channel outgoing = getBottomChannel();
             if (outgoing != null) {
                 Notification notification = outgoing.createNotification(request);
