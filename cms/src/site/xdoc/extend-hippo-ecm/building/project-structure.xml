@@ -75,14 +75,12 @@ hippo-ecm                    Pom       hippo-ecm
 |   |-- engine               Jar       hippo-ecm-frontend-engine
 |   |-- application          War       hippo-ecm-frontend-application
 |   `-- plugins              Jar       hippo-ecm-frontend-plugins
-|-- cms                      Pom       hippo-ecm-cms
-|   |-- config               Jar       hippo-ecm-cms-config
-|   |-- skin                 War       hippo-ecm-cms-skin
-|   |-- site                 War       hippo-ecm-cms-site
-|   |-- test                 Jar       hippo-ecm-cms-test        
-|   `-- package              Pom       hippo-ecm-cms-package
-|       |-- ear              Ear       hippo-ecm-cms-package-ear
-|       `-- war              War       hippo-ecm-cms-package-war
+|-- package                  Pom       hippo-ecm-package
+|   |-- config               Jar       hippo-ecm-package-config
+|   |-- skin                 War       hippo-ecm-package-skin
+|   |-- test                 Jar       hippo-ecm-package-test        
+|   |-- ear                  Ear       hippo-ecm-package-ear
+|   `-- war                  War       hippo-ecm-package-war
 |-- repository               Pom       hippo-ecm-repository
 |   |-- engine               Jar       hippo-ecm-repository-engine
 |   `-- application          War       hippo-ecm-repository-application
@@ -144,8 +142,8 @@ hippo-ecm                    Pom       hippo-ecm
         and/or frontend server)
       </p>
       <p>
-        Hippo CMS 7 is implemented as an assembly of add-ons. The frontend plugins that
-        together make up the CMS GUI are the 'frontend' projects under the add-on directory.
+        Hippo CMS 7 is implemented as an assembly of add-ons, the addon projects can be found
+        under the 'addon' directory.
       </p>
       <source>
 |-- addon                    Pom       hippo-ecm-addon
@@ -162,18 +160,17 @@ hippo-ecm                    Pom       hippo-ecm
       </source>
     </section>
 
-    <section name="CMS">
+    <section name="Package">
       <p>
         Application project assembling Hippo CMS 7.
       </p>
       <source>
-|-- cms                  Pom       hippo-ecm-cms
-|   |-- config           Jar       hippo-ecm-cms-config
-|   |-- package          Pom       hippo-ecm-cms-package
-|   |   |-- ear          Ear       hippo-ecm-cms-package-ear
-|   |   `-- war          War       hippo-ecm-cms-package-war
-|   |-- skin             War       hippo-ecm-cms-skin
-|   |-- test             Jar       hippo-ecm-cms-test
+|-- package                  Pom       hippo-ecm-package
+|   |-- config               Jar       hippo-ecm-package-config
+|   |-- skin                 War       hippo-ecm-package-skin
+|   |-- test                 Jar       hippo-ecm-package-test        
+|   |-- ear                  Ear       hippo-ecm-package-ear
+|   `-- war                  War       hippo-ecm-package-war
       </source>
     </section>
 
