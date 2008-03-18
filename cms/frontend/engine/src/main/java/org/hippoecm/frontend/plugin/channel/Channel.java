@@ -106,6 +106,7 @@ public class Channel implements IClusterable {
                 } else {
                     listeners.remove(change.object);
                 }
+                changeIter.remove();
             }
         }
     }
@@ -126,6 +127,7 @@ public class Channel implements IClusterable {
                 } else {
                     handlers.remove(change.object);
                 }
+                changeIter.remove();
             }
         }
     }
