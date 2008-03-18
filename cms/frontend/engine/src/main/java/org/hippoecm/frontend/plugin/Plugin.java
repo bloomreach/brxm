@@ -231,7 +231,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
             outgoing.publish(notification);
         }
         if ("destroy".equals(notification.getOperation())) {
-            onDestroy();
+            destroy();
         }
     }
 

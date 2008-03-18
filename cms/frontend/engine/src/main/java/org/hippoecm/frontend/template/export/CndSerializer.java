@@ -115,19 +115,19 @@ public class CndSerializer implements IClusterable {
         String type = typeDescriptor.getType();
         if (type.indexOf(':') > 0) {
             if (!types.contains(typeDescriptor)) {
+                for (String superType : typeDescriptor.getSuperTypes()) {
+                    addNamespace(superType.substring(0, superType.indexOf(':')));
+                }
+
                 for (FieldDescriptor field : typeDescriptor.getFields().values()) {
                     String subType = field.getType();
                     TypeDescriptor sub = typeConfig.getTypeDescriptor(subType);
                     if (sub.isNode()) {
                         addNamespace(subType.substring(0, subType.indexOf(':')));
 
-                        String superType = sub.getSuperType();
-                        addNamespace(superType.substring(0, superType.indexOf(':')));
-
-                        Iterator<String> mixins = sub.getMixinTypes().iterator();
-                        while (mixins.hasNext()) {
-                            String mixin = mixins.next();
-                            addNamespace(mixin.substring(0, mixin.indexOf(':')));
+                        List<String> superTypes = sub.getSuperTypes();
+                        for (String superType : superTypes) {
+                            addNamespace(superType.substring(0, superType.indexOf(':')));
                         }
                     } else if (field.getPath().indexOf(':') > 0) {
                         addNamespace(field.getPath().substring(0, field.getPath().indexOf(':')));
@@ -154,7 +154,7 @@ public class CndSerializer implements IClusterable {
             output.append(" *");
         }
 
-        String type = field.getType();
+        String type = sub.getType();
         if (type.indexOf(':') > 0) {
             addNamespace(type.substring(0, type.indexOf(':')));
         } else {
@@ -170,32 +170,34 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
     }
 
-    private void renderType(StringBuffer output, TypeDescriptor template) {
-        String type = template.getType();
+    private void renderType(StringBuffer output, TypeDescriptor typeDescriptor) {
+        String type = typeDescriptor.getType();
         output.append("[" + type + "]");
 
-        if (template.getSuperType() != null) {
-            output.append(" > " + template.getSuperType());
-        }
-
-        List<String> mixinFields = new LinkedList<String>();
-        Iterator<String> mixins = template.getMixinTypes().iterator();
-        while (mixins.hasNext()) {
-            String mixin = mixins.next();
-            TypeDescriptor mixinDescriptor = typeConfig.getTypeDescriptor(mixin);
-            if (mixinDescriptor != null) {
-                Iterator<FieldDescriptor> fields = mixinDescriptor.getFields().values().iterator();
+        List<String> superFields = new LinkedList<String>();
+        Iterator<String> superTypes = typeDescriptor.getSuperTypes().iterator();
+        boolean first = true;
+        while (superTypes.hasNext()) {
+            String superType = superTypes.next();
+            TypeDescriptor superDescriptor = typeConfig.getTypeDescriptor(superType);
+            if (superDescriptor != null) {
+                Iterator<FieldDescriptor> fields = superDescriptor.getFields().values().iterator();
                 while (fields.hasNext()) {
                     FieldDescriptor field = fields.next();
-                    if (!mixinFields.contains(field.getPath())) {
-                        mixinFields.add(field.getPath());
+                    if (!superFields.contains(field.getPath())) {
+                        superFields.add(field.getPath());
                     }
                 }
             }
-            output.append(", " + mixin);
+            if (first) {
+                first = false;
+                output.append(" > " + superType);
+            } else {
+                output.append(", " + superType);
+            }
         }
 
-        for (FieldDescriptor field : template.getFields().values()) {
+        for (FieldDescriptor field : typeDescriptor.getFields().values()) {
             if (field.isOrdered()) {
                 output.append(" orderable");
                 break;
@@ -203,8 +205,8 @@ public class CndSerializer implements IClusterable {
         }
 
         output.append("\n");
-        for (FieldDescriptor field : template.getFields().values()) {
-            if (!mixinFields.contains(field.getPath())) {
+        for (FieldDescriptor field : typeDescriptor.getFields().values()) {
+            if (!superFields.contains(field.getPath())) {
                 renderField(output, field);
             }
         }
@@ -232,6 +234,10 @@ public class CndSerializer implements IClusterable {
             }
 
             visited.add(descriptor);
+            for (String superType : descriptor.getSuperTypes()) {
+                TypeDescriptor type = typeConfig.getTypeDescriptor(superType);
+                visit(type);
+            }
             for (FieldDescriptor field : descriptor.getFields().values()) {
                 TypeDescriptor type = typeConfig.getTypeDescriptor(field.getType());
                 visit(type);
@@ -240,8 +246,8 @@ public class CndSerializer implements IClusterable {
         }
 
         LinkedHashSet<TypeDescriptor> sort() {
-            for (TypeDescriptor template : set) {
-                visit(template);
+            for (TypeDescriptor type : set) {
+                visit(type);
             }
             return result;
         }

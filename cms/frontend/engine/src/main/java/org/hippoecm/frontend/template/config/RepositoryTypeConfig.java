@@ -218,7 +218,7 @@ public class RepositoryTypeConfig implements TypeConfig {
         Descriptor nodeDescriptor;
 
         public RepositoryTypeDescriptor(Node node, String name, String type, Descriptor nodeDescriptor) {
-            super(name, type, null);
+            super(name, type);
 
             this.nodeDescriptor = nodeDescriptor;
 
@@ -227,15 +227,12 @@ public class RepositoryTypeConfig implements TypeConfig {
                     setIsNode(node.getProperty(HippoNodeType.HIPPO_NODE).getBoolean());
                 }
                 if (node.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
-                    setSuperType(node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getString());
-                }
-                if (node.hasProperty(HippoNodeType.HIPPO_MIXINTYPES)) {
-                    List<String> mixins = new LinkedList<String>();
-                    Value[] values = node.getProperty(HippoNodeType.HIPPO_MIXINTYPES).getValues();
+                    List<String> superTypes = new LinkedList<String>();
+                    Value[] values = node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
                     for (int i = 0; i < values.length; i++) {
-                        mixins.add(values[i].getString());
+                        superTypes.add(values[i].getString());
                     }
-                    setMixinTypes(mixins);
+                    setSuperTypes(superTypes);
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());

@@ -108,6 +108,13 @@ public class TemplateListPlugin extends Plugin {
         });
     }
 
+    @Override
+    public void onDetach() {
+        typeNodeModel.detach();
+        templateNodeModel.detach();
+        super.onDetach();
+    }
+
     protected void addField(TemplateDescriptor template) {
         try {
             // add field to the node type
@@ -116,7 +123,9 @@ public class TemplateListPlugin extends Plugin {
             field.setProperty(HippoNodeType.HIPPO_TYPE, template.getTypeDescriptor().getName());
             UUID uuid = java.util.UUID.randomUUID();
             field.setProperty(HippoNodeType.HIPPO_NAME, uuid.toString());
-            field.setProperty(HippoNodeType.HIPPO_PATH, template.getTypeDescriptor().getName());
+            String path = typeNode.getName().substring(0, typeNode.getName().indexOf(':')) + ":"
+                    + template.getTypeDescriptor().getName().toLowerCase();
+            field.setProperty(HippoNodeType.HIPPO_PATH, path);
 
             // add item to template
             Node templateNode = templateNodeModel.getNode();

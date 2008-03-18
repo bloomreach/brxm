@@ -39,6 +39,7 @@ public class EditorForm extends Form {
     private static Logger log = LoggerFactory.getLogger(EditorForm.class);
 
     private Plugin plugin;
+    private Plugin template;
 
     public EditorForm(String wicketId, JcrNodeModel model, EditorPlugin plugin) {
         super(wicketId, model);
@@ -49,20 +50,18 @@ public class EditorForm extends Form {
         // FIXME: make this configurable
         setMaxSize(Bytes.megabytes(5));
 
-        add(createTemplate());
+        add(template = createTemplate());
     }
 
     @Override
     public Component setModel(IModel model) {
         super.setModel(model);
-        Component template = createTemplate();
-        if (template != null) {
-            replace(template);
-        }
+        template.destroy();
+        replace(template = createTemplate());
         return this;
     }
 
-    protected Component createTemplate() {
+    protected Plugin createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
         try {
             String type = model.getNode().getPrimaryNodeType().getName();

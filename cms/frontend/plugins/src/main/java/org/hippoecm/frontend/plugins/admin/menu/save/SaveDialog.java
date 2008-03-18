@@ -54,15 +54,17 @@ public class SaveDialog extends AbstractDialog {
         JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
         Node saveNode = nodeModel.getNode();
         if (hasPendingChanges) {
-            while(saveNode.isNew()){
+            while (saveNode.isNew()) {
                 saveNode = saveNode.getParent();
             }
             saveNode.save();
-        }
-        Channel channel = getChannel();
-        if(channel != null) {
-            if (hasPendingChanges) {
-            	Request request = channel.createRequest("flush", nodeModel.findRootModel());
+
+            Channel channel = getChannel();
+            if (channel != null) {
+                Request request = channel.createRequest("save", new JcrNodeModel(saveNode));
+                channel.send(request);
+
+                request = channel.createRequest("flush", new JcrNodeModel(saveNode));
                 channel.send(request);
             }
         }
@@ -71,6 +73,5 @@ public class SaveDialog extends AbstractDialog {
     @Override
     public void cancel() {
     }
-
 
 }

@@ -35,7 +35,6 @@ import org.apache.jackrabbit.value.PathValue;
 import org.apache.jackrabbit.value.ReferenceValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,17 +46,15 @@ public class TypeDescriptor implements IClusterable {
 
     private String name;
     private String type;
-    private String superType;
-    private List<String> mixinTypes;
+    private List<String> superTypes;
     private Map<String, FieldDescriptor> fields;
     private boolean node;
     private boolean mixin;
 
-    public TypeDescriptor(String name, String type, PluginDescriptor plugin) {
+    public TypeDescriptor(String name, String type) {
         this.name = name;
         this.type = type;
-        this.superType = "";
-        this.mixinTypes = new LinkedList<String>();
+        this.superTypes = new LinkedList<String>();;
         this.fields = new HashMap<String, FieldDescriptor>();
         this.node = true;
         this.mixin = false;
@@ -66,8 +63,7 @@ public class TypeDescriptor implements IClusterable {
     public TypeDescriptor(Map<String, Object> map) {
         this.name = (String) map.get("name");
         this.type = (String) map.get("type");
-        this.superType = (String) map.get("superType");
-        this.mixinTypes = (List<String>) map.get("mixinType");
+        this.superTypes = (List<String>) map.get("superTypes");
 
         this.fields = new HashMap<String, FieldDescriptor>();
         if (map.get("fields") != null) {
@@ -85,10 +81,9 @@ public class TypeDescriptor implements IClusterable {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", name);
         map.put("type", type);
-        map.put("superType", superType);
+        map.put("superTypes", superTypes);
         map.put("isNode", new Boolean(node));
         map.put("isMixin", new Boolean(mixin));
-        map.put("mixinType", getMixinTypes());
         Map<String, Map<String, Object>> fieldMap = new HashMap<String, Map<String, Object>>();
         for (Map.Entry<String, FieldDescriptor> entry : getFields().entrySet()) {
             fieldMap.put(entry.getKey(), entry.getValue().getMapRepresentation());
@@ -104,20 +99,12 @@ public class TypeDescriptor implements IClusterable {
         return type;
     }
 
-    public String getSuperType() {
-        return superType;
+    public List<String> getSuperTypes() {
+        return superTypes;
     }
 
-    public void setSuperType(String superType) {
-        this.superType = superType;
-    }
-
-    public List<String> getMixinTypes() {
-        return mixinTypes;
-    }
-
-    public void setMixinTypes(List<String> mixins) {
-        this.mixinTypes = mixins;
+    public void setSuperTypes(List<String> superTypes) {
+        this.superTypes = superTypes;
     }
 
     public Map<String, FieldDescriptor> getFields() {

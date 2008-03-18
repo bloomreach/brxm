@@ -184,26 +184,10 @@
           <sv:value>hippo:field</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:name" sv:type="String">
-          <sv:value>supertype</sv:value>
+          <sv:value>supertypes</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:path" sv:type="String">
           <sv:value>hippo:supertype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>String</sv:value>
-        </sv:property>
-      </sv:node>
-
-      <!-- mixin Type -->
-      <sv:node sv:name="hippo:field">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:name" sv:type="String">
-          <sv:value>mixintypes</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:path" sv:type="String">
-          <sv:value>hippo:mixintypes</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:type" sv:type="String">
           <sv:value>String</sv:value>

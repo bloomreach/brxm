@@ -27,32 +27,63 @@ import org.slf4j.LoggerFactory;
 public class Channel implements IClusterable {
     private static final long serialVersionUID = 1L;
 
+    private static int ADDED = 1;
+    private static int REMOVED = 2;
+
     static final Logger log = LoggerFactory.getLogger(Channel.class);
 
-    private List<INotificationListener> listeners;
-    private List<IRequestHandler> handlers;
     private ChannelFactory factory;
+
+    private List<INotificationListener> listeners;
+    private List<ListChange<INotificationListener>> listenerChanges;
+    private int listenersInUse;
+    
+    private List<ListChange<IRequestHandler>> handlerChanges;
+    private List<IRequestHandler> handlers;
+    private int handlersInUse;
 
     public Channel(ChannelFactory factory) {
         this.factory = factory;
-        handlers = new LinkedList<IRequestHandler>();
+
         listeners = new LinkedList<INotificationListener>();
+        listenerChanges = new LinkedList<ListChange<INotificationListener>>();
+        listenersInUse = 0;
+        
+        handlers = new LinkedList<IRequestHandler>();
+        handlerChanges = new LinkedList<ListChange<IRequestHandler>>();
+        handlersInUse = 0;
     }
 
     public void subscribe(INotificationListener listener) {
-        listeners.add(listener);
+        if (listenersInUse > 0) {
+            listenerChanges.add(new ListChange<INotificationListener>(listener, ADDED));
+        } else {
+            listeners.add(listener);
+        }
     }
 
     public void unsubscribe(INotificationListener listener) {
-        listeners.remove(listener);
+        if (listenersInUse > 0) {
+            listenerChanges.add(new ListChange<INotificationListener>(listener, REMOVED));
+        } else {
+            listeners.remove(listener);
+        }
     }
 
     public void register(IRequestHandler handler) {
-        handlers.add(handler);
+        if (handlersInUse > 0) {
+            handlerChanges.add(new ListChange<IRequestHandler>(handler, ADDED));
+        } else {
+            handlers.add(handler);
+        }
     }
 
     public void unregister(IRequestHandler handler) {
-        handlers.remove(handler);
+        if (handlersInUse > 0) {
+            handlerChanges.add(new ListChange<IRequestHandler>(handler, REMOVED));
+        } else {
+            handlers.remove(handler);
+        }
     }
 
     public ChannelFactory getMessageFactory() {
@@ -60,18 +91,42 @@ public class Channel implements IClusterable {
     }
 
     public void publish(Notification notification) {
+        listenersInUse++;
         Iterator<INotificationListener> iter = listeners.iterator();
         while (iter.hasNext()) {
             INotificationListener listener = iter.next();
             listener.receive(notification);
         }
+        if (--listenersInUse == 0) {
+            Iterator<ListChange<INotificationListener>> changeIter = listenerChanges.iterator();
+            while (changeIter.hasNext()) {
+                ListChange<INotificationListener> change = changeIter.next();
+                if (change.operation == ADDED) {
+                    listeners.add(change.object);
+                } else {
+                    listeners.remove(change.object);
+                }
+            }
+        }
     }
 
     public void send(Request request) {
+        handlersInUse++;
         Iterator<IRequestHandler> iter = handlers.iterator();
         while (iter.hasNext()) {
             IRequestHandler handler = iter.next();
             handler.handle(request);
+        }
+        if (--handlersInUse == 0) {
+            Iterator<ListChange<IRequestHandler>> changeIter = handlerChanges.iterator();
+            while (changeIter.hasNext()) {
+                ListChange<IRequestHandler> change = changeIter.next();
+                if (change.operation == ADDED) {
+                    handlers.add(change.object);
+                } else {
+                    handlers.remove(change.object);
+                }
+            }
         }
     }
 
@@ -85,5 +140,15 @@ public class Channel implements IClusterable {
 
     public Notification createNotification(Request request) {
         return new Notification(request);
+    }
+
+    class ListChange<E> {
+        int operation;
+        E object;
+
+        ListChange(E object, int operation) {
+            this.object = object;
+            this.operation = operation;
+        }
     }
 }

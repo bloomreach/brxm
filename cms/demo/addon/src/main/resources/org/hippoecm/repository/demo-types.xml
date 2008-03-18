@@ -54,8 +54,6 @@
       </sv:property>
       <sv:property sv:name="hippo:supertype" sv:type="String">
         <sv:value>hippo:document</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:mixintypes" sv:type="String">
         <sv:value>hst:page</sv:value>
         <sv:value>hippostd:publishable</sv:value>
         <sv:value>hippostd:languagable</sv:value>
@@ -121,8 +119,6 @@
       </sv:property>
       <sv:property sv:name="hippo:supertype" sv:type="String">
         <sv:value>hippo:document</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:mixintypes" sv:type="String">
         <sv:value>hippostd:publishable</sv:value>
         <sv:value>hippostd:languagable</sv:value>
       </sv:property>
@@ -216,8 +212,6 @@
       </sv:property>
       <sv:property sv:name="hippo:supertype" sv:type="String">
         <sv:value>hippo:document</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:mixintypes" sv:type="String">
         <sv:value>hippostd:publishable</sv:value>
         <sv:value>hippostd:languagable</sv:value>
       </sv:property>

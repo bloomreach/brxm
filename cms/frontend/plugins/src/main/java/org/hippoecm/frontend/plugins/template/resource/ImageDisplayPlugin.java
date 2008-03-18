@@ -26,7 +26,6 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.template.model.ItemModel;
-import org.hippoecm.frontend.template.model.TemplateModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
