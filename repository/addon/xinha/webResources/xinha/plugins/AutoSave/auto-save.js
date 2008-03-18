@@ -1,18 +1,3 @@
-function AutoSave(editor) {
-    this.editor = editor;
-    this.changed = false;
-    this.timeoutId = null;
-    this.timeoutLength = 2000;
-    var self = this;
-    var cfg = editor.config;
-    this.textarea = this.editor._textArea;
-    this.initial_html = null;
-}
-
-AutoSave.prototype._lc = function(string) {
-    return Xinha._lc(string, 'SaveSubmit');
-}
-
 AutoSave._pluginInfo = {
   name          : "AutoSave",
   version       : "1.0",
@@ -22,6 +7,30 @@ AutoSave._pluginInfo = {
   sponsor       : "",
   sponsor_url   : "",
   license       : "htmlArea"
+}
+
+Xinha.Config.prototype.AutoSave =
+{
+  'timeoutLength' : 2000,
+  'callbackUrl' : '?save=true',
+  'saveSuccessFlag' : 'XINHA_SAVED_FLAG'
+}
+
+function AutoSave(editor) {
+    this.editor = editor;
+    this.lConfig = editor.config.AutoSave;
+    this.autoSave = this;
+    
+    this.changed = false;
+    this.timeoutId = null;
+
+    this.textarea = this.editor._textArea;
+    this.initial_html = null;
+    
+}
+
+AutoSave.prototype._lc = function(string) {
+    return Xinha._lc(string, 'AutoSave');
 }
 
 AutoSave.prototype.onGenerateOnce = function() {
@@ -79,7 +88,7 @@ AutoSave.prototype.setTimer = function() {
     window.clearTimeout(this.timeoutId); 
     var self = this;
     saveContent = function() { self.save() } ;
-    this.timeoutId = window.setTimeout("saveContent()", this.timeoutLength);
+    this.timeoutId = window.setTimeout("saveContent()", this.lConfig.timeoutLength);
 }
 
 AutoSave.prototype.setUnChanged = function() {
@@ -87,17 +96,19 @@ AutoSave.prototype.setUnChanged = function() {
 }
 
 AutoSave.prototype.save =  function() {
-    var editor = this.editor;
     var self = this;
-    var form = editor._textArea.form;
+    var form = this.editor._textArea.form;
     form.onsubmit();
-    var callbackUrl = editor._textArea.getAttribute('callbackUrl');
-    var myId = editor._textArea.getAttribute("id");
+    var callbackUrl = this.editor.config.callbackUrl + "&save=true";
+    var myId = this.editor._textArea.getAttribute("id");
     
-    var postSuccesFunc = function() {
-      self.initial_html = self.editor.getInnerHTML();
-      self.changed = false;
-    };
-    var acall = wicketAjaxPost(callbackUrl, wicketSerialize(Wicket.$(myId)), postSuccesFunc, null);
+    var postFunc = function(responseText) {
+      if(responseText.indexOf(self.lConfig.saveSuccessFlag) > -1) {
+        self.initial_html = self.editor.getInnerHTML();
+        self.changed = false;
+      }  
+    }
+    //TODO: use Xinha form serialize method instead of Wicket's
+    var doCall = Xinha._postback(callbackUrl, wicketSerialize(Wicket.$(myId)), postFunc);
 }
 
