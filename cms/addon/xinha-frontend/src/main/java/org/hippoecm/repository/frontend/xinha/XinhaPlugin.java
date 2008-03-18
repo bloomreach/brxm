@@ -16,10 +16,12 @@
 package org.hippoecm.repository.frontend.xinha;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
@@ -27,7 +29,6 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.hippoecm.frontend.model.IPluginModel;
@@ -38,7 +39,9 @@ import org.hippoecm.frontend.template.model.TemplateModel;
 
 public class XinhaPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-
+    
+    public final static String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
+    
     private JcrPropertyValueModel valueModel;
 
     private String content;
@@ -59,42 +62,36 @@ public class XinhaPlugin extends Plugin {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                final String saveCall = getCallbackUrl() + "&save=true";
-                tag.put("callbackUrl", saveCall);
-            }
-
-            @Override
             protected void respond(AjaxRequestTarget target) {
                 RequestCycle requestCycle = RequestCycle.get();
                 boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
-                if (save) {
+                if (save) {                    
                     editor.processInput();
+                    target.appendJavascript(XINHA_SAVED_FLAG);
                 }
             }
         };
 
+        //        try {
+        //            ((UserSession)Session.get()).getJcrSession().getItem("/");
+        //            Node root = ((UserSession)Session.get()).getJcrSession().getRootNode();
+        //            //root.getN
+        //        } catch (RepositoryException e) {
+        //            // TODO Auto-generated catch block
+        //            e.printStackTrace();
+        //        } 
+
         editor.setOutputMarkupId(true);
         editor.setVisible(true);
         editor.add(postBehavior);
+
         add(this.new XinhaHeaderContributor());
         add(editor);
 
-        configuration = this.new Configuration();
-        List<String> plugins = pluginDescriptor.getParameter("plugins");
-        if (plugins != null) {
-        	if (!plugins.contains("AutoSave")) {
-            	plugins.add("AutoSave");
-            }
-        	if (!plugins.contains("Linker")) {
-            	plugins.add("Linker");
-            }
-            configuration.setPlugins((String[]) plugins.toArray());
-        } else {
-            configuration.setPlugins(new String[] { "AutoSave", "Linker" });
-        }
-        
+        //on tab-switch a new configuration is created while an existing on is in the sharedBehaviour
+        //does provide a way to change configurations dynamically without implementing cache
+        configuration = new Configuration(pluginDescriptor.getParameters());
+
         Page page = parentPlugin.getPage();
         for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
             IBehavior behavior = (IBehavior) iter.next();
@@ -106,7 +103,6 @@ public class XinhaPlugin extends Plugin {
         if (sharedBehavior == null) {
             sharedBehavior = new XinhaEditorBehavior(page);
         }
-
         sharedBehavior.register(configuration);
     }
 
@@ -121,9 +117,8 @@ public class XinhaPlugin extends Plugin {
     @Override
     public void onBeforeRender() {
         configuration.setName(editor.getMarkupId());
-        Map m = new Hashtable();
-        m.put("postUrl", postBehavior.getCallbackUrl());
-        configuration.setConfiguration(m);
+        configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
+        configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
         super.onBeforeRender();
     }
 
@@ -136,6 +131,7 @@ public class XinhaPlugin extends Plugin {
         super.onDestroy();
     }
 
+    //Move this to editorBehaviour?
     class XinhaHeaderContributor extends AbstractHeaderContributor {
         private static final long serialVersionUID = 1L;
 
@@ -149,31 +145,113 @@ public class XinhaPlugin extends Plugin {
         }
     }
 
-    class Configuration implements Serializable {
+    class Configuration extends BaseConfiguration {
         private static final long serialVersionUID = 1L;
 
-        private String name = null;
-        private String[] plugins = null;
-        private Map configuration = null;
+        private static final String XINHA_PREFIX = "Xinha.";
+        private static final String XINHA_CONFIG_PREFIX = "Xinha.config.";
+        private static final String XINHA_PLUGINS = "Xinha.plugins";
+        private static final String XINHA_TOOLBAR = "Xinha.config.toolbar";
+
+        private Map<String, PluginConfiguration> pluginConfigurations = new HashMap<String, PluginConfiguration>();
+        private List<String> toolbarItems;
+
+        public List<String> getToolbarItems() {
+            return toolbarItems;
+        }
 
         public Configuration() {
         }
 
-        public void setPlugins(String[] plugins) {
-            this.plugins = plugins;
+        public Configuration(Map<String, List<String>> parameters) {
+            
+            for (String paramKey : parameters.keySet()) {
+                if (paramKey.startsWith(XINHA_PREFIX)) {
+                    List<String> values = parameters.get(paramKey);
+                    if (paramKey.equals(XINHA_TOOLBAR)) {
+                        toolbarItems = values;
+                    } else if (paramKey.equals(XINHA_PLUGINS)) {
+                        for (String pluginName : values) {
+                            PluginConfiguration pluginConfig = new PluginConfiguration(pluginName);
+                            List<String> pluginProperties = parameters.get(pluginName);
+                            if (pluginProperties != null) {
+                                for (String pluginProperty : pluginProperties) {
+                                    pluginConfig.addProperty(pluginProperty);
+                                }
+                            }
+                            addPluginConfiguration(pluginConfig);
+                        }
+                    } else {
+                        for (String propertyValue : values) {
+                            int equalsIndex = propertyValue.indexOf("=");
+                            if (equalsIndex > -1) {
+                                addProperty(propertyValue.substring(0, equalsIndex), propertyValue
+                                        .substring(equalsIndex + 1));
+                            } else {
+                                String propertyKey = paramKey.substring(XINHA_CONFIG_PREFIX.length());
+                                if (getProperties().containsKey(propertyKey)) {
+                                    addProperty(propertyKey, getProperty(propertyKey) + "," + propertyValue);
+                                } else {
+                                    addProperty(propertyKey, propertyValue);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        public String[] getPlugins() {
-            return plugins;
+        public void setPluginConfigurations(Set<PluginConfiguration> plugins) {
+            for (PluginConfiguration conf : plugins) {
+                addPluginConfiguration(conf);
+            }
         }
 
-        public void setConfiguration(Map configuration) {
-            this.configuration = configuration;
+        public void addPluginConfiguration(PluginConfiguration config) {
+            if (!pluginConfigurations.containsKey(config.getName())) {
+                pluginConfigurations.put(config.getName(), config);
+            } else {
+                pluginConfigurations.get(config.getName()).addProperties(config.getProperties());
+            }
         }
 
-        public Map getConfiguration() {
-            return configuration;
+        public PluginConfiguration getPluginConfiguration(String name) {
+            return pluginConfigurations.get(name);
         }
+
+        public Set<PluginConfiguration> getPluginConfigurations() {
+            Set<PluginConfiguration> returnSet = new HashSet<PluginConfiguration>();
+            returnSet.addAll(pluginConfigurations.values());
+            return returnSet;
+        }
+
+    }
+
+    class PluginConfiguration extends BaseConfiguration {
+
+        private static final long serialVersionUID = 1L;
+
+        public PluginConfiguration(String name) {
+            setName(name);
+        }
+
+        public void addProperty(String keyValue) {
+            int equalsIndex = keyValue.indexOf("=");
+            if (equalsIndex == -1) {
+                throw new IllegalArgumentException("Invalid key/value argument, no seperator found: " + keyValue);
+            }
+            addProperty(keyValue.substring(0, equalsIndex), keyValue.substring(equalsIndex + 1));
+        }
+    }
+
+    class BaseConfiguration implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        //id
+        private String name = null;
+
+        //properties
+        private Map<String, String> properties = new HashMap<String, String>();
 
         public void setName(String name) {
             this.name = name;
@@ -183,6 +261,31 @@ public class XinhaPlugin extends Plugin {
             return name;
         }
 
+        //override all properties
+        public void setProperties(Map<String, String> properties) {
+            this.properties = properties;
+        }
+
+        public Map<String, String> getProperties() {
+            return properties;
+        }
+
+        //merge properties
+        public void addProperties(Map<String, String> properties) {
+            for (String key : properties.keySet()) {
+                addProperty(key, properties.get(key));
+            }
+        }
+
+        public void addProperty(String name, String value) {
+            properties.put(name, value);
+        }
+
+        public String getProperty(String name) {
+            return properties.get(name);
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (o instanceof Configuration) {
                 if (name != null) {
@@ -195,6 +298,7 @@ public class XinhaPlugin extends Plugin {
             }
         }
 
+        @Override
         public int hashCode() {
             return XinhaPlugin.this.hashCode();
         }
