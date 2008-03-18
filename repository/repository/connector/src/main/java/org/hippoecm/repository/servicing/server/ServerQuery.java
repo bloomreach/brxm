@@ -45,14 +45,6 @@ public class ServerQuery extends org.apache.jackrabbit.rmi.server.ServerQuery im
         return query.getArgumentCount();
     }
 
-    public RemoteQueryResult execute(String argument) throws RepositoryException, RemoteException {
-        return new ServerQueryResult(query.execute(argument), getFactory());
-    }
-
-    public RemoteQueryResult execute(String[] arguments) throws RepositoryException, RemoteException {
-        return new ServerQueryResult(query.execute(arguments), getFactory());
-    }
-
     public RemoteQueryResult execute(Map<String,String> arguments) throws RepositoryException, RemoteException {
         return new ServerQueryResult(query.execute(arguments), getFactory());
     }

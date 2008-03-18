@@ -33,7 +33,7 @@ import junit.framework.TestCase;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.Utilities;
 
-public class HippoQuerySample extends TestCase {
+public class HippoQueryTest extends TestCase {
 
     private final static String SVN_ID = "$Id$";
     private static final String SYSTEMUSER_ID = "admin";
@@ -62,35 +62,6 @@ public class HippoQuerySample extends TestCase {
         session.logout();
         server.close();
     }
-    /*
-    public void plainExample() throws RepositoryException {
-        {
-            Query query = qmgr.createQuery("//zoekiets", Query.XPATH);
-            Node node = query.storeAsNode("/query");
-        }
-        {
-            Node node = session.getRootNode().getNode("/query");
-            Query q = qmgr.getQuery(node);
-            QueryResult rs = q.execute();
-            for(RowIterator iter = rs.getRows(); iter.hasNext(); ) {
-                Value value = iter.nextRow().getValue("propertyName");
-            }
-        }
-    }
-
-    public void example1() throws RepositoryException {
-        {
-            Query query = qmgr.createQuery("//zoekiets[@x='?',@y='?']", Query.XPATH);
-            Node node = query.storeAsNode("/query");
-        }
-        {
-            Node node = session.getRootNode().getNode("/query");
-            Query q = qmgr.getQuery(node);
-            HippoQuery query = (HippoQuery) q;
-            QueryResult rs = query.execute(new String[] { "hier", "daar" });
-        }
-    }
-    */
 
     public void testMangle() throws RepositoryException {
         Query query;
@@ -107,7 +78,7 @@ public class HippoQuerySample extends TestCase {
         node.remove();
     }
 
-    public  void testSimple() throws RepositoryException {
+    public void testSimple() throws RepositoryException {
         Query query = qmgr.createQuery("test//$which[p='x']", Query.XPATH);
         query.storeAsNode("/test/query");
         Node queryNode = session.getRootNode().getNode("test/query");

@@ -56,22 +56,6 @@ public class ClientQuery extends org.apache.jackrabbit.rmi.client.ClientQuery im
         }
     }
 
-    public QueryResult execute(String argument) throws RepositoryException {
-        try {
-            return getFactory().getQueryResult(session, remote.execute(argument));
-        } catch(RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
-    }
-
-    public QueryResult execute(String[] arguments) throws RepositoryException {
-        try {
-            return getFactory().getQueryResult(session, remote.execute(arguments));
-        } catch(RemoteException ex) {
-            throw new RemoteRepositoryException(ex);
-        }
-    }
-
     public QueryResult execute(Map<String,String> arguments) throws RepositoryException {
         try {
             return getFactory().getQueryResult(session, remote.execute(arguments));
