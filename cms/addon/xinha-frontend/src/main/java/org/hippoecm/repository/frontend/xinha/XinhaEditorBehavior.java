@@ -17,6 +17,7 @@ package org.hippoecm.repository.frontend.xinha;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,42 +101,72 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             private static final long serialVersionUID = 1L;
 
             public void renderHead(IHeaderResponse response) {
+                StringBuffer sb = new StringBuffer();
+                
+                //Declare/reset Xinha global variables 
+                sb.append("xinha_editors = null;\n");
+                sb.append("xinha_init    = null;\n");
+                sb.append("xinha_config  = null;\n");
+                sb.append("xinha_plugins = null;\n");
+                
+                //Create Xinha initialize function
+                sb.append("xinha_init = xinha_init ? xinha_init : function()\n");
+                sb.append("{\n");
+                
+                //Declare Xinha editors
+                sb.append("  xinha_editors = xinha_editors ? xinha_editors :\n");
+                appendAsJSArray(sb, configurations);
+                sb.append(";\n");
+                
+                //Declare and load Xinha plugins
                 Set<XinhaPlugin.PluginConfiguration> plugins = new HashSet<XinhaPlugin.PluginConfiguration>();
                 for (XinhaPlugin.Configuration config : configurations) {
                     for (XinhaPlugin.PluginConfiguration pluginConfig : config.getPluginConfigurations()) {
                         plugins.add(pluginConfig);
                     }
                 }
-                
-                System.out.println("NU BEN IK ER WEL EEN BEETJE KLAAR MEE!! -------------------------------");
-                
-                StringBuffer sb = new StringBuffer();
-                sb.append("xinha_editors = null;\n");
-                sb.append("xinha_init    = null;\n");
-                sb.append("xinha_config  = null;\n");
-                sb.append("xinha_plugins = null;\n");
-                sb.append("xinha_init = xinha_init ? xinha_init : function()\n");
-                sb.append("{\n");
-                sb.append("  xinha_editors = xinha_editors ? xinha_editors :\n");
-                appendAsJSArray(sb, configurations);
-                sb.append(";\n");
                 sb.append("  xinha_plugins = xinha_plugins ? xinha_plugins :\n");
                 appendAsJSArray(sb, plugins);
                 sb.append(";\n");
                 sb.append("  if(!Xinha.loadPlugins(xinha_plugins, xinha_init)) return;\n");
+
+                //Create global Xinha configuration
                 sb.append("  xinha_config = xinha_config ? xinha_config() : new Xinha.Config();\n");
-                sb.append("  xinha_config.pageStyleSheets = [ _editor_url + \"examples/full_example.css\" ];\n");
+
+                //collect all stylesheets and add to global Xinha configuration
+                boolean hasCss = false;
+                for (XinhaPlugin.Configuration config : configurations) {
+                    if (config.getStyleSheets() != null && config.getStyleSheets().size() > 0) {
+                        if(!hasCss) {
+                            sb.append("  xinha_config.pageStyleSheets = [");
+                            hasCss = true;
+                        }
+                        for(String css : config.getStyleSheets()) {
+                            //respect absolute urls
+                            if(!css.startsWith("/") && !css.startsWith("http://"))
+                                sb.append(" _editor_url + ");
+                            sb.append("'" + css + "'");
+                            sb.append(",");
+                        }
+                    }
+                }
+                if(hasCss) {
+                    sb.deleteCharAt(sb.length()-1);//remove last comma
+                    sb.append("];\n");
+                }
+                
+                //Instantiate Xinha editors and override editor specific (plugin)configuration values
                 sb.append("  xinha_editors   = Xinha.makeEditors(xinha_editors, xinha_config);\n");
                 for (XinhaPlugin.Configuration config : configurations) {
                     sb.append("  if(xinha_editors.").append(config.getName()).append(" != undefined) {\n");
                     sb.append("    xinha_editors.").append(config.getName()).append(".registerPlugins(");
                     appendAsJSArray(sb, config.getPluginConfigurations());
                     sb.append(");\n");
-                    
+
                     String prefix = "    xinha_editors." + config.getName() + ".config.";
                     appendProperties(sb, prefix, config.getProperties());
-                    
-                    if(config.getToolbarItems() != null && config.getToolbarItems().size() > 0) {
+
+                    if (config.getToolbarItems() != null && config.getToolbarItems().size() > 0) {
                         sb.append(prefix).append("toolbar = [[");
                         for (Iterator<String> it = config.getToolbarItems().iterator(); it.hasNext();) {
                             sb.append(serialize2JS(it.next()));
@@ -145,12 +176,16 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                         sb.append("]];\n");
                     }
                     for (XinhaPlugin.PluginConfiguration pluginConfig : config.getPluginConfigurations()) {
-                        appendProperties(sb, prefix  + pluginConfig.getName() + ".", pluginConfig.getProperties());
+                        appendProperties(sb, prefix + pluginConfig.getName() + ".", pluginConfig.getProperties());
                     }
                     sb.append("  }\n");
                 }
+                
+                //Start editors
                 sb.append("  Xinha.startEditors(xinha_editors);\n");
                 sb.append("}\n");
+                
+                //add Xinha initialize function to window.onLoad event
                 sb.append("Xinha._addEvent(window,'load', xinha_init);\n");
                 response.renderJavascript(sb, null);
             }
