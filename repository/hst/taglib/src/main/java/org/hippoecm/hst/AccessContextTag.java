@@ -43,15 +43,23 @@ public class AccessContextTag extends ConditionalTagSupport {
         this.location = location;
     }
 
+    public void setValue(Context location) {
+        this.location = (location == null ? null : location.path);
+    }
+
     @Override
     protected boolean condition() throws JspTagException {
-        HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
-        Session jcrSession = JCRConnector.getJCRSession(req.getSession());
-        Context context = new Context(jcrSession, null);
-        context.setPath(location);
-        if (context.exists()) {
-            req.setAttribute(variable, context);
-            return true;
+        if (location != null) {
+            HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
+            Session jcrSession = JCRConnector.getJCRSession(req.getSession());
+            Context context = new Context(jcrSession, null);
+            context.setPath(location);
+            if (context.exists()) {
+                req.setAttribute(variable, context);
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

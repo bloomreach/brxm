@@ -29,5 +29,8 @@
 - demo:pageLabel (string)
 - demo:pageTitle (string)
 
+[demo:queryDocument] > hippo:document, hippostd:publishable
++ demo:query (hippo:query) = hippo:query
+
 [demo:webNavigation] > hippo:document, hippostd:publishable orderable
 + * (hippo:facetselect) = hippo:facetselect

@@ -58,6 +58,29 @@
           <sv:value>Home</sv:value>
         </sv:property>
       </sv:node>
+      <sv:node sv:name="index">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>demo:webPage</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/pages</sv:value>
+          <sv:value>/site/pages/index</sv:value>
+          <sv:value>/site/pages/index/index[2]</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:username" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:pageLabel" sv:type="String">
+          <sv:value>Index</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:pageTitle" sv:type="String">
+          <sv:value>Home</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
 
     <sv:node sv:name="news">
@@ -79,6 +102,29 @@
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:username" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:pageLabel" sv:type="String">
+          <sv:value>News</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:pageTitle" sv:type="String">
+          <sv:value>News</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="news">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>demo:webPage</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/pages</sv:value>
+          <sv:value>/site/pages/news</sv:value>
+          <sv:value>/site/pages/news/news[2]</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>published</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:username" sv:type="String">
           <sv:value>admin</sv:value>
@@ -125,24 +171,93 @@
           <sv:value>&lt;html&gt;&lt;body&gt;Hippo B.V.&lt;br/&gt;Oosteinde 11&lt;br/&gt;1017 WT Amsterdam&lt;br/&gt;</sv:value>
         </sv:property>
       </sv:node>
+      <sv:node sv:name="contact">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>demo:webPage</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/pages</sv:value>
+          <sv:value>/site/pages/contact</sv:value>
+          <sv:value>/site/pages/contact/contact[2]</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:username" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:pageLabel" sv:type="String">
+          <sv:value>Contact</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:pageTitle" sv:type="String">
+          <sv:value>Contacting information</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:content" sv:type="String">
+          <sv:value>&lt;html&gt;&lt;body&gt;Hippo B.V.&lt;br/&gt;Oosteinde 11&lt;br/&gt;1017 WT Amsterdam&lt;br/&gt;</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
 
   </sv:node>
 
-  <sv:node sv:name="navigation">
+  <sv:node sv:name="shortlist">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>nt:unstructured</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
-    <sv:node sv:name="navigation">
+    <sv:node sv:name="shortlist">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:query</sv:value>
+        <sv:value>demo:queryDocument</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:statement" sv:type="String">
-        <sv:value>site/messages//node()[demo:keywords='MAGICkeywordCIGAM']</sv:value>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>/site/shortlist</sv:value>
+        <sv:value>/site/shortlist</sv:value>
+        <sv:value>/site/shortlist/shortlist</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:language" sv:type="String">
-        <sv:value>xpath</sv:value>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
       </sv:property>
+      <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:node sv:name="demo:query">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:query</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:statement" sv:type="String">
+          <sv:value>site/messages//node()[hippostd:state='unpublished' and demo:keywords='MAGICkeywordCIGAM']</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:language" sv:type="String">
+          <sv:value>xpath</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="shortlist">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>demo:queryDocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>/site/shortlist</sv:value>
+        <sv:value>/site/shortlist</sv:value>
+        <sv:value>/site/shortlist/shortlist[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:node sv:name="demo:query">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:query</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:statement" sv:type="String">
+          <sv:value>site/messages//node()[hippostd:state='published' and demo:keywords='MAGICkeywordCIGAM']</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:language" sv:type="String">
+          <sv:value>xpath</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
 
@@ -216,6 +331,32 @@
         </sv:property>
         <sv:property sv:name="demo:date" sv:type="Date">
           <sv:value>2008-02-27T16:00:00.000+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:keywords" sv:type="String">
+          <sv:value>hot</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="message2">
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>/site</sv:value>
+          <sv:value>/site/messages</sv:value>
+          <sv:value>/site/messages/message2</sv:value>
+          <sv:value>/site/messages/message2/message2[2]</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:username" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:title" sv:type="String">
+          <sv:value>Wij zijn open</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:description" sv:type="String">
+          <sv:value>Wij zijn open!</sv:value>
+        </sv:property>
+        <sv:property sv:name="demo:date" sv:type="Date">
+          <sv:value>2008-02-27T15:00:00.000+01:00</sv:value>
         </sv:property>
         <sv:property sv:name="demo:keywords" sv:type="String">
           <sv:value>hot</sv:value>
