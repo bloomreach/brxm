@@ -121,13 +121,13 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 indexFacet(doc,fieldName,value.toString());
                 break;
             case PropertyType.DATE:
-               indexFacet(doc,fieldName,DateField.timeToString(((Calendar)((Object)value)).getTimeInMillis()));
+               indexFacet(doc,fieldName,DateField.timeToString(value.getDate().getTimeInMillis()));
                break;
             case PropertyType.DOUBLE:
                 indexFacet(doc,fieldName,DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
                 break;
             case PropertyType.LONG:
-               indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));
+                indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));
                 break;
             case PropertyType.REFERENCE:
                 // never facet;
@@ -151,7 +151,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     private void indexFacet(Document doc, String fieldName, String value) {
         doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET,fieldName,Field.Store.NO,Field.Index.NO_NORMS));
-
         int idx = fieldName.indexOf(':');
         fieldName = fieldName.substring(0, idx + 1)
                 + ServicingFieldNames.HIPPO_FACET + fieldName.substring(idx + 1);
