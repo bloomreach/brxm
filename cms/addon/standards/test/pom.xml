@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Sample addon tests</name>
+  <name>Standards addon tests</name>
   <description>Hippo ECM standards addon tests</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-standards-test</artifactId>

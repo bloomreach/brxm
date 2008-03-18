@@ -28,7 +28,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Standard frontend addon</name>
+  <name>Standards frontend addon</name>
   <description>Hippo ECM standards frontend addons</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-standards-frontend</artifactId>

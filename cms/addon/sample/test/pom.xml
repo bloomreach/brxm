@@ -50,6 +50,12 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-sample-common</artifactId>
       <version>${parent.version}</version>
       <scope>test</scope>

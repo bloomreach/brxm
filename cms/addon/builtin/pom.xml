@@ -28,16 +28,16 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Standards addon</name>
-  <description>Hippo ECM standards addon</description>
-  <artifactId>hippo-ecm-addon-standards</artifactId>
+  <name>Builtin addon</name>
+  <description>Hippo ECM builtin addon</description>
+  <artifactId>hippo-ecm-addon-builtin</artifactId>
   <groupId>org.hippoecm</groupId>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/standards</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/standards</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/standards</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin</url>
   </scm>
 
   <modules>

@@ -47,7 +47,7 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-repository</artifactId>
+      <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
       <version>${parent.version}</version>
     </dependency>
 

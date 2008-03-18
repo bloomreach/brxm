@@ -84,7 +84,27 @@
       <type>jar</type>
     </dependency>
     
-    <!-- standard workflow add-on -->
+    <!-- builtin workflow add-on -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-frontend</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    
+    <!-- standards add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-common</artifactId>
