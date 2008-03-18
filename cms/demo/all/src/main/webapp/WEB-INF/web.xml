@@ -65,7 +65,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
       <param-value>hippo:console</param-value>
     </init-param>
   </filter>
-  
+
   <!--CMS application-->
   <filter>
     <filter-name>CMS</filter-name>
@@ -77,20 +77,6 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
     <init-param>
       <param-name>hippoApplication</param-name>
       <param-value>hippo:cms</param-value>
-    </init-param>
-  </filter>
-  
-  <!--CMS prototype application (DEPRECATED)-->
-  <filter>
-    <filter-name>CMSPrototype</filter-name>
-    <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-    <init-param>
-      <param-name>applicationClassName</param-name>
-      <param-value>org.hippoecm.frontend.Main</param-value>
-    </init-param>
-    <init-param>
-      <param-name>hippoApplication</param-name>
-      <param-value>hippo:cms-prototype</param-value>
     </init-param>
   </filter>
 
@@ -111,7 +97,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
       <param-value>/preview/site/pages</param-value>
       <!-- description>
         Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting 
+        that can be accessed using url rewriting
       </description -->
     </init-param>
   </filter>
@@ -133,7 +119,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
       <param-value>/live/site/pages</param-value>
       <!-- description>
         Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting 
+        that can be accessed using url rewriting
       </description -->
     </init-param>
   </filter>
@@ -191,12 +177,6 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
   <filter-mapping>
     <filter-name>CMS</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>  
-  
-  <!--CMS prototype application (DEPRECATED)-->  
-  <filter-mapping>
-    <filter-name>CMSPrototype</filter-name>
-    <url-pattern>/prototype/*</url-pattern>
   </filter-mapping>
 
   <filter-mapping>
@@ -271,7 +251,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-  
+
   <error-page>
     <exception-type>javax.servlet.ServletException</exception-type>
     <location>/error.jsp</location>
