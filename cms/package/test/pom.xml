@@ -23,29 +23,29 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-cms</artifactId>
+    <artifactId>hippo-ecm-package</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo CMS 7 test</name>
-  <description>Hippo CMS 7 test</description>
+  <name>Hippo ECM package test</name>
+  <description>Hippo ECM package test</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-cms-test</artifactId>
+  <artifactId>hippo-ecm-package-test</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/test</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/test</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/test</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/test</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/test</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/test</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-cms-package-ear</artifactId>
+      <artifactId>hippo-ecm-package-package-war</artifactId>
       <version>${parent.version}</version>
-      <type>ear</type>
+      <type>war</type>
     </dependency>
   </dependencies>
 

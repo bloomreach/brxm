@@ -43,7 +43,7 @@
     <module>frontend</module>
     <module>repository</module>
     <module>addon</module>
-    <module>cms</module>
+    <module>package</module>
     <module>tools</module>
     <module>maven-skin</module>
     <module>hst</module>
@@ -596,7 +596,7 @@
         <artifactId>maven-changelog-plugin</artifactId>
         <configuration>
           <type>range</type>
-          <range>365</range>
+          <range>31</range>
         </configuration>
       </plugin>
       <plugin>

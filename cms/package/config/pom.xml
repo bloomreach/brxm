@@ -13,35 +13,31 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+-->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd">
+         http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-cms</artifactId>
+    <artifactId>hippo-ecm-package</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo CMS 7 skin</name>
-  <description>Hippo CMS 7 skin</description>
+  <name>Hippo ECM package configuration</name>
+  <description>Hippo ECM package configuration</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-cms-skin</artifactId>
-  <packaging>war</packaging>
+  <artifactId>hippo-ecm-package-config</artifactId>
+  <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/skin</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/skin</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/skin</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/config</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/config</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/config</url>
   </scm>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
 
 </project>
