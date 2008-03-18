@@ -23,34 +23,28 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm</artifactId>
+    <artifactId>hippo-ecm-addon</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Addons</name>
-  <description>Hippo ECM addons</description>
+  <name>CMS addon</name>
+  <description>Hippo ECM CMS addon</description>
+  <artifactId>hippo-ecm-addon-cms</artifactId>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon</artifactId>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/cms</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/cms</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/cms</url>
   </scm>
 
   <modules>
-    <module>builtin</module>
-    <module>standards</module>
-    <module>reporting</module>
-    <module>reviewed-action</module>
-    <module>sample</module>
-    <module>xinha</module>
-    <module>xinha-frontend</module>
-    <module>mailsponge</module>
-    <module>cms</module>
-    <module>cms-prototype</module>
+    <module>root</module>
+    <module>dashboard</module>
+    <module>browse</module>
+    <module>edit</module>
   </modules>
 
 </project>

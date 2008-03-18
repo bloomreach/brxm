@@ -143,8 +143,34 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
+
+    <!-- CMS addons-->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-root</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-browse</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-dashboard</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-edit</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
     
-    <!-- cms prototype add-on -->
+    <!-- cms-prototype add-on (DEPRECATED)-->    
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>

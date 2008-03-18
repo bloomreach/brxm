@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.filter;
+package org.hippoecm.frontend.plugins.standards.filter;
 
 import java.util.HashSet;
 import java.util.List;
