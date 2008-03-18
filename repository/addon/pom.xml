@@ -41,6 +41,7 @@
   </scm>
 
   <modules>
+    <module>builtin</module>
     <module>standards</module>
     <module>reporting</module>
     <module>reviewed-action</module>

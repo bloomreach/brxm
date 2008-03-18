@@ -87,7 +87,7 @@
 
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-common</artifactId>
+      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
       <version>${parent.version}</version>
     </dependency>
 

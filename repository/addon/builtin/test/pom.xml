@@ -23,25 +23,24 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-addon-reviewed-action</artifactId>
+    <artifactId>hippo-ecm-addon-builtin</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Reviewed action addon tests</name>
-  <description>Hippo ECM reviewed action addon tests</description>
+  <name>Builtin addon tests</name>
+  <description>Hippo ECM builtin addon tests</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon-reviewed-action-test</artifactId>
+  <artifactId>hippo-ecm-addon-builtin-test</artifactId>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action/test</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action/test</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action/test</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin/test</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin/test</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/builtin/test</url>
   </scm>
 
   <dependencies>
-
     <!-- test -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -51,25 +50,19 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-frontend</artifactId>
       <version>${parent.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>${parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
-      <version>${parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
       <version>${parent.version}</version>
       <scope>test</scope>
     </dependency>
@@ -100,8 +93,6 @@
       <artifactId>atomikos-util</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <!-- provided -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
