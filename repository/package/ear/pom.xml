@@ -22,21 +22,21 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-cms-package</artifactId>
+    <artifactId>hippo-ecm-package</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo CMS 7 EAR packaging</name>
-  <description>Hippo CMS 7 EAR package</description>
+  <name>Hippo ECM EAR package</name>
+  <description>Hippo ECM EAR package</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-cms-package-ear</artifactId>
+  <artifactId>hippo-ecm-package-ear</artifactId>
   <packaging>ear</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package/ear</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package/ear</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/cms/package/ear</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/ear</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/ear</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/ear</url>
   </scm>
 
   <dependencies>
@@ -54,10 +54,10 @@
       <type>jar</type>
     </dependency>
     
-    <!-- Hippo CMS 7 skin add-on (must be included before actual front-end application) -->
+    <!-- Hippo ECM skin add-on (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-cms-skin</artifactId>
+      <artifactId>hippo-ecm-package-skin</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
@@ -76,10 +76,10 @@
       <type>war</type>
     </dependency>
     
-    <!-- Hippo CMS 7 configuration add-on -->
+    <!-- Hippo ECM configuration add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-cms-config</artifactId>
+      <artifactId>hippo-ecm-package-config</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
@@ -237,7 +237,7 @@
           <modules>
             <webModule>
               <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-cms-skin</artifactId>
+              <artifactId>hippo-ecm-package-skin</artifactId>
               <contextRoot>/skin</contextRoot>
             </webModule>
             <webModule>

@@ -44,7 +44,7 @@
     <!-- Default CMS -->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-cms-package-war</artifactId>
+      <artifactId>hippo-ecm-package-war</artifactId>
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
