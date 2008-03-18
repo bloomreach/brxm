@@ -16,6 +16,7 @@
 package org.hippoecm.repository.frontend.xinha;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -152,26 +153,23 @@ public class XinhaPlugin extends Plugin {
         private static final String XINHA_CONFIG_PREFIX = "Xinha.config.";
         private static final String XINHA_PLUGINS = "Xinha.plugins";
         private static final String XINHA_TOOLBAR = "Xinha.config.toolbar";
+        private static final String XINHA_CSS = "Xinha.config.css";
 
         private Map<String, PluginConfiguration> pluginConfigurations = new HashMap<String, PluginConfiguration>();
         private List<String> toolbarItems;
-
-        public List<String> getToolbarItems() {
-            return toolbarItems;
-        }
-
-        public Configuration() {
-        }
+        private List<String> styleSheets;
 
         public Configuration(Map<String, List<String>> parameters) {
             
             for (String paramKey : parameters.keySet()) {
                 if (paramKey.startsWith(XINHA_PREFIX)) {
-                    List<String> values = parameters.get(paramKey);
+                    List<String> paramValues = parameters.get(paramKey);
                     if (paramKey.equals(XINHA_TOOLBAR)) {
-                        toolbarItems = values;
-                    } else if (paramKey.equals(XINHA_PLUGINS)) {
-                        for (String pluginName : values) {
+                        toolbarItems = paramValues;
+                    } else if(paramKey.equals(XINHA_CSS)) {
+                        styleSheets = paramValues;
+                    }else if (paramKey.equals(XINHA_PLUGINS)) {
+                        for (String pluginName : paramValues) {
                             PluginConfiguration pluginConfig = new PluginConfiguration(pluginName);
                             List<String> pluginProperties = parameters.get(pluginName);
                             if (pluginProperties != null) {
@@ -182,7 +180,7 @@ public class XinhaPlugin extends Plugin {
                             addPluginConfiguration(pluginConfig);
                         }
                     } else {
-                        for (String propertyValue : values) {
+                        for (String propertyValue : paramValues) {
                             int equalsIndex = propertyValue.indexOf("=");
                             if (equalsIndex > -1) {
                                 addProperty(propertyValue.substring(0, equalsIndex), propertyValue
@@ -199,6 +197,14 @@ public class XinhaPlugin extends Plugin {
                     }
                 }
             }
+        }
+        
+        public List<String> getToolbarItems() {
+            return toolbarItems;
+        }
+        
+        public List<String> getStyleSheets() {
+            return styleSheets;
         }
 
         public void setPluginConfigurations(Set<PluginConfiguration> plugins) {
