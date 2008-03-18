@@ -61,7 +61,7 @@ public class JCRConnector {
             if(relPath.equals(""))
                 continue;
             Map<String, String> conditions = null;
-            if (relPath.contains("[") && relPath.endsWith("]")) {
+            if (relPath.contains("[") && relPath.endsWith("]") && !Character.isDigit(relPath.charAt(relPath.indexOf("[")+1))) {
                 conditions = new TreeMap<String, String>();
                 int beginIndex = relPath.indexOf("[") + 1;
                 int endIndex = relPath.lastIndexOf("]");
@@ -82,7 +82,7 @@ public class JCRConnector {
                 relPath = relPath.substring(0, relPath.indexOf("["));
             }
             if (conditions == null || conditions.size() == 0) {
-                if (pathIdx + 1 == pathElts.length && node.hasProperty(relPath)) {
+                if (pathIdx + 1 == pathElts.length && !relPath.contains("[") && node.hasProperty(relPath)) {
                     try {
                         return node.getProperty(relPath);
                     } catch (PathNotFoundException ex) {

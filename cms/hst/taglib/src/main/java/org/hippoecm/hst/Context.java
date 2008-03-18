@@ -50,8 +50,8 @@ public class Context extends AbstractMap {
     private Session session;
     private String urlbasepath;
 
-    private int index = -1;
-    private String path;
+    String path;
+    int index = -1;
     private HippoQuery query;
     private List<String> arguments;
 
@@ -104,13 +104,18 @@ public class Context extends AbstractMap {
                 if (query != null) {
                     QueryResult result;
                     if ((arguments != null) && arguments.size() > 0) {
-                        result = query.execute(arguments.toArray(new String[arguments.size()]));
+                        Map<String,String> queryArguments = new TreeMap<String,String>();
+                        String[] workingArguments = arguments.toArray(new String[arguments.size()]);
+                        for (int i=0; i+1<workingArguments.length; i+=2)
+                            queryArguments.put(workingArguments[i], workingArguments[i+1]);
+                        result = query.execute(queryArguments);
                     } else {
                         result = query.execute();
                     }
                     for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
-                        rtvalue.add(child);
+                        if (child != null)
+                            rtvalue.add(child);
                     }
                 } else {
                     Item item = JCRConnector.getItem(session, path);
@@ -120,7 +125,8 @@ public class Context extends AbstractMap {
                         Node node = (Node) item;
                         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                             Node child = iter.nextNode();
-                            rtvalue.add(child);
+                            if (child != null)
+                                rtvalue.add(child);
                         }
                     }
                 }
@@ -142,7 +148,7 @@ public class Context extends AbstractMap {
                     if ((arguments != null) && arguments.size() > 0) {
                         Map<String,String> queryArguments = new TreeMap<String,String>();
                         String[] workingArguments = arguments.toArray(new String[arguments.size()]);
-                        for(int i=0; i+1<workingArguments.length; i+=2)
+                        for (int i=0; i+1<workingArguments.length; i+=2)
                             queryArguments.put(workingArguments[i], workingArguments[i+1]);
                         result = query.execute(queryArguments);
                     } else {
@@ -150,7 +156,9 @@ public class Context extends AbstractMap {
                     }
                     for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
-                        rtvalue.add(child.getPath());
+                        if (child != null) {
+                            rtvalue.add(child.getPath());
+                        }
                     }
                 } else {
                     Item item = JCRConnector.getItem(session, path);
@@ -160,7 +168,9 @@ public class Context extends AbstractMap {
                         Node node = (Node) item;
                         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                             Node child = iter.nextNode();
-                            rtvalue.add(child.getPath());
+                            if (child != null) {
+                                rtvalue.add(child.getPath());
+                            }
                         }
                     }
                 }
