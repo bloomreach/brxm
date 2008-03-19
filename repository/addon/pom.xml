@@ -43,13 +43,15 @@
   <modules>
     <module>builtin</module>
     <module>standards</module>
+    <module>template</module>
     <module>reporting</module>
     <module>reviewed-action</module>
-    <module>sample</module>
     <module>xinha</module>
     <module>xinha-frontend</module>
-    <module>mailsponge</module>
     <module>cms</module>
+    
+    <module>mailsponge</module>
+    <module>sample</module>    
     <module>cms-prototype</module>
   </modules>
 

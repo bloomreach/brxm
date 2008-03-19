@@ -40,7 +40,8 @@
   </scm>
 
   <dependencies>
-    <!-- xhina add-on (must be included before actual front-end application) -->
+    <!-- Xinha html editor
+    (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha</artifactId>
@@ -54,7 +55,8 @@
       <type>jar</type>
     </dependency>
 
-    <!-- skin add-on (must be included before actual front-end application) -->
+    <!-- Default application skin 
+    (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-skin</artifactId>
@@ -62,7 +64,7 @@
       <type>war</type>
     </dependency>
 
-    <!-- end-applications -->
+    <!-- End applications -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-application</artifactId>
@@ -76,7 +78,7 @@
       <type>war</type>
     </dependency>
     
-    <!-- Hippo ECM configuration add-on -->
+    <!-- Hippo ECM application configuration -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-config</artifactId>
@@ -84,7 +86,7 @@
       <type>jar</type>
     </dependency>
     
-    <!-- builtin workflow add-on -->
+    <!-- Builtin workflow plugins -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
@@ -104,7 +106,7 @@
       <type>jar</type>
     </dependency>
     
-    <!-- standards add-on -->
+    <!-- Reusable components -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-common</artifactId>
@@ -124,7 +126,7 @@
       <type>jar</type>
     </dependency>
     
-    <!-- reviewed actions workflow add-on -->
+    <!-- Reviewed actions workflow -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
@@ -143,8 +145,16 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
+    
+    <!-- Template editor -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-template</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
 
-    <!-- CMS addons-->
+    <!-- CMS 7 addons-->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-root</artifactId>
@@ -190,23 +200,23 @@
 
     <!-- reporting add-on -->
 <!--
-      <dependency>
+    <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
-      </dependency>
+    </dependency>
       <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
-      </dependency>
+    </dependency>
 -->      
   </dependencies>
 
   <build>
-    <!-- defaultGoal>package</defaultGoal -->
+    <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
