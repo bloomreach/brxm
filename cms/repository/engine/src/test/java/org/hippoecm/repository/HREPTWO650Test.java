@@ -20,7 +20,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -34,19 +33,6 @@ public class HREPTWO650Test extends FacetedNavigationAbstractTest {
         addFacetDateSearch(session.getRootNode());
         session.save();
         assertTrue(session.getRootNode().getNode("facetdatesearch").getNodes().getSize() > 1 );
-    }
-
-    protected void traverse(Node node) throws RepositoryException {
-        
-        if(node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
-            System.out.println(node.getPath() + "\t" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        }
-       
-        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            //if (!child.getPath().equals("/jcr:system"))
-                traverse(child);
-        }
     }
     
     private void addFacetDateSearch(Node rootNode) throws RepositoryException {
