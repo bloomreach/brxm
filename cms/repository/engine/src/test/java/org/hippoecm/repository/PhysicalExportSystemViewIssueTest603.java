@@ -48,10 +48,12 @@ public class PhysicalExportSystemViewIssueTest603 extends FacetedNavigationAbstr
     @Override
     protected Node commonStart() throws RepositoryException {
         numDocs = 10;
-        super.commonStart();
+        fill();
+        session.save();
         addFacetSelect();
         addFacetSearch();
         session.save();
+        session.refresh(false);
         return null;
     }
 
