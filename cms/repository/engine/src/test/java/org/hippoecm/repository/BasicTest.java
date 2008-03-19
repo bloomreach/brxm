@@ -22,7 +22,6 @@ import javax.jcr.Session;
 import junit.framework.TestCase;
 
 public class BasicTest extends TestCase {
-    private final static String SVN_ID = "$Id$";
 
     public void testBasics() throws Exception {
         Exception firstException = null;

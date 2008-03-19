@@ -34,7 +34,9 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
+import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
@@ -45,6 +47,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
 
     class FacetSearchNodeId extends HippoNodeId {
+        private static final long serialVersionUID = 1L;
         String queryname;
         String docbase;
         String[] facets;
@@ -64,7 +67,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     protected FacetSubSearchProvider subSearchProvider = null;
     protected FacetResultSetProvider subNodesProvider = null;
 
-    FacetedNavigationEngine facetedEngine;
+    FacetedNavigationEngine<Query, Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
 
     Name querynameName;

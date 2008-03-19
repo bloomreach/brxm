@@ -28,7 +28,6 @@ import com.atomikos.icatch.jta.UserTransactionManager; // FIXME
 
 public class TransactionTest extends TestCase {
 
-    private final static String SVN_ID = "$Id$";
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 

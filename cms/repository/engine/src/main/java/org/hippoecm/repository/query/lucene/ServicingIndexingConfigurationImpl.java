@@ -49,7 +49,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     /**
      * Set of properties that are configured to be facets
      */
-    private Set facetProperties = new HashSet();
+    private Set<Name> facetProperties = new HashSet<Name>();
 
     /**
      * QName Hippo Path qualified name

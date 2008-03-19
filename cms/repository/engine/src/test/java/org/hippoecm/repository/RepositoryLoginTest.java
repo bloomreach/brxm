@@ -28,8 +28,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import junit.framework.TestCase;
 
 public class RepositoryLoginTest extends TestCase {
-    private final static String SVN_ID = "$Id:RepositoryLoginTest.java 8167 2007-09-14 13:37:17Z wgrevink $";
-
+    
     private HippoRepository server;
     private Session serverSession;
     private Node users;

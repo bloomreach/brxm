@@ -21,7 +21,6 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 

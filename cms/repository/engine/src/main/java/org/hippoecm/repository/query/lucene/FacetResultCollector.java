@@ -56,7 +56,7 @@ public class FacetResultCollector extends HitCollector {
 
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add(FieldNames.UUID);
-        this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet());
+        this.fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet<String>());
         if(hitsRequested.isResultRequested()) {
             this.hits = new HashSet<NodeId>();
             this.offset = hitsRequested.getOffset();
