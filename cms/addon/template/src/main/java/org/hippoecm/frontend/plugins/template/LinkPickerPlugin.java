@@ -31,7 +31,6 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.admin.linkpicker.LinkPickerDialog;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
