@@ -245,10 +245,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
 
     public void testPerformance() throws RepositoryException, IOException {
         Node node = commonStart();
-        long count, tBefore, tAfter;
-        tBefore = System.currentTimeMillis();
-        count = node.getNode("x1").getNode("y2").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET).getProperty(HippoNodeType.HIPPO_COUNT).getLong();
-        tAfter = System.currentTimeMillis();
+        node.getNode("x1").getNode("y2").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET).getProperty(HippoNodeType.HIPPO_COUNT).getLong();
         commonEnd();
     }
 

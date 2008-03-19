@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 public class ConfigurationTest extends TestCase {
 
-    private final static String SVN_ID = "$Id$";
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 

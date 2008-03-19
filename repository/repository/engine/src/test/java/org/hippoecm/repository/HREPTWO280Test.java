@@ -17,23 +17,15 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class HREPTWO280Test extends FacetedNavigationAbstractTest {
-
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     public void testIssue() throws RepositoryException {
         commonStart();
 
-        Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+        Node node, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
         traverse(session.getRootNode().getNode("navigation"));
 
         node = session.getRootNode().getNode("documents").addNode("aap");
@@ -44,7 +36,6 @@ public class HREPTWO280Test extends FacetedNavigationAbstractTest {
         traverse(searchNode);
 
         session.getRootNode().getNode("navigation").remove();
-        // System.gc();  // reproducability of correct result
         session.save();
         session.refresh(false);
         session.getRootNode().getNode("documents").remove();

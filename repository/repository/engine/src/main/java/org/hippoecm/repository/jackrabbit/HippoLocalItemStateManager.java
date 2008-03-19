@@ -47,6 +47,8 @@ import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.FacetedNavigationEngine.Context;
+import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +72,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     NodeTypeRegistry ntReg;
     NamespaceResolver nsResolver;
     protected HierarchyManager hierMgr;
-    FacetedNavigationEngine facetedEngine;
+    FacetedNavigationEngine<Query, Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
     protected FilteredChangeLog filteredChangeLog = null;
     protected Map<String,HippoVirtualProvider> virtualProviders;
@@ -105,7 +107,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     }
 
     void initialize(NamespaceResolver nsResolver, HierarchyManager hierMgr,
-                    FacetedNavigationEngine facetedEngine,
+                    FacetedNavigationEngine<Query, Context> facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) {
 
         this.nsResolver = nsResolver;

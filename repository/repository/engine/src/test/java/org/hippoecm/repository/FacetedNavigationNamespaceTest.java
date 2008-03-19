@@ -4,7 +4,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.spi.NodeId;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTest {

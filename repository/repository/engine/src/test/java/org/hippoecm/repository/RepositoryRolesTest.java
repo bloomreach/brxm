@@ -14,7 +14,6 @@ import junit.framework.TestCase;
 
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
 import org.hippoecm.repository.security.principals.RolePrincipal;
 import org.hippoecm.repository.servicing.SessionDecorator;

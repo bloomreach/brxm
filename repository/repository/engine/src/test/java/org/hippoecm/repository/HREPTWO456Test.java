@@ -15,18 +15,13 @@
  */
 package org.hippoecm.repository;
 
-import java.io.IOException;
-
-import javax.jcr.Item;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.Utilities;
-
 import junit.framework.TestCase;
+
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class HREPTWO456Test extends TestCase {
 

@@ -19,23 +19,19 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.jcr.query.RowIterator;
-import javax.jcr.NodeIterator;
 
 import junit.framework.TestCase;
 
 import org.hippoecm.repository.api.HippoQuery;
-import org.hippoecm.repository.Utilities;
 
 public class HippoQueryTest extends TestCase {
 
-    private final static String SVN_ID = "$Id$";
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
