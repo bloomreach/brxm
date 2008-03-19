@@ -24,6 +24,7 @@ import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,24 +41,30 @@ public class FacetsQuery {
      */
     private BooleanQuery query;
 
-    public FacetsQuery(Map<String, String> facetsQuery, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig) {
+    public FacetsQuery(Map<String, String> facetsQuery, NamespaceMappings nsMappings,
+            ServicingIndexingConfiguration indexingConfig) {
         this.query = new BooleanQuery(true);
 
-        if(facetsQuery != null){
-            for(Map.Entry<String,String> entry : facetsQuery.entrySet()) {
+        if (facetsQuery != null) {
+            for (Map.Entry<String, String> entry : facetsQuery.entrySet()) {
 
                 Name nodeName;
                 String internalName = "";
                 try {
                     nodeName = NameFactoryImpl.getInstance().create(entry.getKey());
-                    if(indexingConfig.isFacet(nodeName)){
-                        internalName = ServicingNameFormat.getInternalFacetName(nodeName,nsMappings);
-                        Query q = new FixedScoreTermQuery(new Term(internalName,entry.getValue()));
-                        this.query.add(q, Occur.MUST);
-                    }
- else {
-                        log.warn("Property " + nodeName.getNamespaceURI()+":"+nodeName.getLocalName()+" not allowed for facetted search. " +
-                                 "Add the property to the indexing configuration to be defined as FACET");
+                    if (indexingConfig.isFacet(nodeName)) {
+                        internalName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
+                        /*
+                         * TODO HREPTWO-652 : when lucene 2.3.x or higher is used, replace wildcardquery 
+                         * below with FixedScoreTermQuery without wildcard, and use payload to get the type
+                         */  
+                        Query wq = new WildcardQuery(new Term(internalName, entry.getValue() + "?"));
+                        //Query q = new FixedScoreTermQuery(new Term(internalName, entry.getValue() + "?"));
+                        this.query.add(wq, Occur.MUST);
+                    } else {
+                        log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName()
+                                + " not allowed for facetted search. "
+                                + "Add the property to the indexing configuration to be defined as FACET");
                     }
                 } catch (IllegalNameException e) {
                     log.error(e.toString());
@@ -69,6 +76,5 @@ public class FacetsQuery {
     public BooleanQuery getQuery() {
         return query;
     }
-
 
 }
