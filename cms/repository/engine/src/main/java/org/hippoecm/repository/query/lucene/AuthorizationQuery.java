@@ -27,6 +27,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,8 +88,13 @@ public class AuthorizationQuery {
 //                            }
                             // add to tmp set to check wether already added. Multiplicity slows queries down
                             if (orQuery != null && tmpContainsSet.add(facetValues[i])) {
-                                Query q = new FixedScoreTermQuery(new Term(internalName, facetValues[i]));
-                                orQuery.add(q, Occur.SHOULD);
+                                Query wq = new WildcardQuery(new Term(internalName, facetValues[i] + "?"));
+                                /*
+                                 * TODO HREPTWO-652 : when lucene 2.3.x or higher is used, replace wildcardquery 
+                                 * below with FixedScoreTermQuery without wildcard, and use payload to get the type
+                                 */  
+                                //Query q = new FixedScoreTermQuery(new Term(internalName, facetValues[i]));
+                                orQuery.add(wq, Occur.SHOULD);
                             }
                         }
                         if (orQuery != null && facetsORed) {

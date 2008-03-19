@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -24,7 +23,6 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.PropertyId;
-import org.apache.jackrabbit.core.query.lucene.DateField;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
@@ -39,8 +37,10 @@ import org.apache.jackrabbit.extractor.TextExtractor;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hippoecm.repository.jackrabbit.FacetTypeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,16 +118,18 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 // never facet;
                 break;
             case PropertyType.BOOLEAN:
-                indexFacet(doc,fieldName,value.toString());
+                indexFacet(doc,fieldName,value.toString()+FacetTypeConstants.BOOLEAN_POSTFIX);
                 break;
             case PropertyType.DATE:
-               indexFacet(doc,fieldName,DateField.timeToString(value.getDate().getTimeInMillis()));
+               // TODO : configurable resolution for dates: currently SECONDS
+               String dateToString = DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.SECOND);
+               indexFacet(doc,fieldName,dateToString+FacetTypeConstants.DATE_POSTFIX);
                break;
             case PropertyType.DOUBLE:
-                indexFacet(doc,fieldName,DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
+                indexFacet(doc,fieldName,DoubleField.doubleToString(new Double(value.getDouble()).doubleValue())+FacetTypeConstants.DOUBLE_POSTFIX);
                 break;
             case PropertyType.LONG:
-                indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong())));
+                indexFacet(doc,fieldName,LongField.longToString(new Long(value.getLong()))+FacetTypeConstants.LONG_POSTFIX);
                 break;
             case PropertyType.REFERENCE:
                 // never facet;
@@ -138,7 +140,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
             case PropertyType.STRING:
                 // never index uuid as facet
                 if (!name.equals(NameConstants.JCR_UUID)) {
-                    indexFacet(doc,fieldName,value.toString());
+                    indexFacet(doc,fieldName,value.toString()+FacetTypeConstants.STRING_POSTFIX);
                 }
                 break;
             case PropertyType.NAME:
