@@ -15,10 +15,12 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.util.Map;
+
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public abstract class NodeModelWrapper implements IChainingModel {
+public abstract class NodeModelWrapper implements IChainingModel, IPluginModel {
 
     protected JcrNodeModel nodeModel;
 
@@ -55,4 +57,11 @@ public abstract class NodeModelWrapper implements IChainingModel {
             nodeModel.detach();
         }
     }
+    
+    // implement IPluginModel
+    
+    public Map<String, Object> getMapRepresentation() {
+        return nodeModel.getMapRepresentation();
+    }
+
 }
