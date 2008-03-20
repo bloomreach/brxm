@@ -40,7 +40,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-public class PhysicalExportSystemViewIssueTest603 extends FacetedNavigationAbstractTest {
+public class PhysicalExportSystemView extends FacetedNavigationAbstractTest {
 
     private static final String FACETSELECTNODE = "facetselect";
     private static final String FACETSEARCHNODE = "facetsearch";
@@ -71,7 +71,7 @@ public class PhysicalExportSystemViewIssueTest603 extends FacetedNavigationAbstr
             printSystemView("/"+FACETSEARCHNODE);
         }
         // if issue solved, assertTrue
-        assertFalse(result.isSucces());
+        assertTrue(result.isSucces());
     }
 
     
@@ -84,7 +84,7 @@ public class PhysicalExportSystemViewIssueTest603 extends FacetedNavigationAbstr
             printSystemView("/"+FACETSELECTNODE);
         }
         // if issue solved, assertTrue
-        assertFalse(result.isSucces());
+        assertTrue(result.isSucces());
     }
 
     public void testTotalExport() throws RepositoryException, Exception {
@@ -96,7 +96,7 @@ public class PhysicalExportSystemViewIssueTest603 extends FacetedNavigationAbstr
         printSystemView("/");
         }
         // if issue solved, assertTrue
-        assertFalse(result.isSucces());
+        assertTrue(result.isSucces());
     }
 
     private void addFacetSearch() throws RepositoryException {

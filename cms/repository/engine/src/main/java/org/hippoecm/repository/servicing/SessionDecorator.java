@@ -50,19 +50,27 @@ import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Path;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 /**
  */
 public class SessionDecorator implements XASession, HippoSession {
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -89,7 +97,7 @@ public class SessionDecorator implements XASession, HippoSession {
             return null;
         }
         if (session instanceof SessionDecorator) {
-            session = ((SessionDecorator)session).session;
+            session = ((SessionDecorator) session).session;
         }
         return session;
     }
@@ -103,19 +111,18 @@ public class SessionDecorator implements XASession, HippoSession {
         */
     }
 
-    String[] getQPath(String absPath) throws  NamespaceException, RepositoryException {
+    String[] getQPath(String absPath) throws NamespaceException, RepositoryException {
         NamespaceRegistry nsreg = session.getWorkspace().getNamespaceRegistry();
-        Path.Element[] elements = ((SessionImpl) session).getQPath(absPath.startsWith("/") ? absPath.substring(1)
-                                                                                           : absPath).getElements();
+        Path.Element[] elements = ((SessionImpl) session).getQPath(
+                absPath.startsWith("/") ? absPath.substring(1) : absPath).getElements();
         String[] rtelements = new String[elements.length];
-        for(int i=0; i<elements.length; i++) {
-                if(nsreg.getPrefix(elements[i].getName().getNamespaceURI()).equals("")){
-                        rtelements[i] = elements[i].getName().getLocalName();
-                }
-                else {
-                        rtelements[i] = nsreg.getPrefix(elements[i].getName().getNamespaceURI()) + ":"
-                          + elements[i].getName().getLocalName();
-                }
+        for (int i = 0; i < elements.length; i++) {
+            if (nsreg.getPrefix(elements[i].getName().getNamespaceURI()).equals("")) {
+                rtelements[i] = elements[i].getName().getLocalName();
+            } else {
+                rtelements[i] = nsreg.getPrefix(elements[i].getName().getNamespaceURI()) + ":"
+                        + elements[i].getName().getLocalName();
+            }
         }
         return rtelements;
     }
@@ -222,10 +229,10 @@ public class SessionDecorator implements XASession, HippoSession {
         session.move(srcAbsPath, destAbsPath);
         Node movedNode = getRootNode().getNode(destAbsPath.startsWith("/") ? destAbsPath.substring(1) : destAbsPath);
         movedNode.accept(new TraversingItemVisitor.Default() {
-                public void leaving(Node node, int level) throws RepositoryException {
-                    ServicingNodeImpl.decoratePathProperty(node);
-                }
-            });
+            public void leaving(Node node, int level) throws RepositoryException {
+                ServicingNodeImpl.decoratePathProperty(node);
+            }
+        });
     }
 
     /**
@@ -280,15 +287,33 @@ public class SessionDecorator implements XASession, HippoSession {
      */
     public void exportSystemView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
-        session.exportSystemView(absPath, contentHandler, binaryAsLink, noRecurse);
+
+        // check sanity of this session
+        session.isLive();
+
+        Item item = getItem(absPath);
+        if (!item.isNode()) {
+            // there's a property, though not a node at the specified path
+            throw new PathNotFoundException(absPath);
+        }
+        new PhysicalSysViewSAXEventGenerator((Node) item, noRecurse, binaryAsLink, contentHandler).serialize();
     }
 
-    /**
-     * Forwards the method call to the underlying session.
-     */
     public void exportSystemView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException {
-        session.exportSystemView(absPath, out, binaryAsLink, noRecurse);
+        try {
+            ContentHandler handler = getExportContentHandler(out);
+            this.exportSystemView(absPath, handler, binaryAsLink, noRecurse);
+        } catch (SAXException e) {
+            Exception exception = e.getException();
+            if (exception instanceof RepositoryException) {
+                throw (RepositoryException) exception;
+            } else if (exception instanceof IOException) {
+                throw (IOException) exception;
+            } else {
+                throw new RepositoryException("Error serializing system view XML", e);
+            }
+        }
     }
 
     /**
@@ -380,8 +405,8 @@ public class SessionDecorator implements XASession, HippoSession {
      * @returns the resulting copy
      */
     public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
-      LockException, VersionException, RepositoryException {
-        
+            LockException, VersionException, RepositoryException {
+
         if (destAbsNodePath.startsWith(srcNode.getPath()) && !destAbsNodePath.equals(srcNode.getPath())) {
             String msg = srcNode.getPath() + ": Invalid destination path (cannot be descendant of source path)";
             throw new RepositoryException(msg);
@@ -392,42 +417,42 @@ public class SessionDecorator implements XASession, HippoSession {
         }
         Node destNode = getRootNode();
         int p = destAbsNodePath.lastIndexOf("/");
-        if(p > 0) {
-            destNode = destNode.getNode(destAbsNodePath.substring(0,p));
-            destAbsNodePath = destAbsNodePath.substring(p+1);
+        if (p > 0) {
+            destNode = destNode.getNode(destAbsNodePath.substring(0, p));
+            destAbsNodePath = destAbsNodePath.substring(p + 1);
         }
         try {
             destNode = destNode.addNode(destAbsNodePath, srcNode.getPrimaryNodeType().getName());
             copy(srcNode, destNode);
             return destNode;
-        } catch(ConstraintViolationException ex) {
+        } catch (ConstraintViolationException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
-        } catch(NoSuchNodeTypeException ex) {
+        } catch (NoSuchNodeTypeException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
         }
     }
 
     static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
-            Node canonical = ((HippoNode)srcNode).getCanonicalNode();
+            Node canonical = ((HippoNode) srcNode).getCanonicalNode();
             boolean copyChildren = (canonical != null && canonical.isSame(srcNode));
 
-            for(PropertyIterator iter = ServicingNodeImpl.unwrap(srcNode).getProperties(); iter.hasNext(); ) {
+            for (PropertyIterator iter = ServicingNodeImpl.unwrap(srcNode).getProperties(); iter.hasNext();) {
                 Property property = iter.nextProperty();
                 PropertyDefinition definition = property.getDefinition();
                 if (!definition.isProtected()) {
-                    if(definition.isMultiple())
+                    if (definition.isMultiple())
                         destNode.setProperty(property.getName(), property.getValues());
                     else
                         destNode.setProperty(property.getName(), property.getValue());
                 }
             }
-            
+
             NodeType[] mixinNodeTypes = srcNode.getMixinNodeTypes();
-            for(int i = 0; i < mixinNodeTypes.length; i++) {
+            for (int i = 0; i < mixinNodeTypes.length; i++) {
                 destNode.addMixin(mixinNodeTypes[i].getName());
             }
-            
+
             ServicingNodeImpl.decoratePathProperty(destNode);
 
             /* Do not copy virtual nodes.  Partial virtual nodes like
@@ -436,26 +461,45 @@ public class SessionDecorator implements XASession, HippoSession {
              * are half virtual. On save(), the virtual part will be
              * ignored.
              */
-            if(copyChildren) {
-                for(NodeIterator iter = srcNode.getNodes(); iter.hasNext(); ) {
+            if (copyChildren) {
+                for (NodeIterator iter = srcNode.getNodes(); iter.hasNext();) {
                     Node node = iter.nextNode();
-                    canonical = ((HippoNode)node).getCanonicalNode();
-                    if(canonical != null && canonical.isSame(node)) {
+                    canonical = ((HippoNode) node).getCanonicalNode();
+                    if (canonical != null && canonical.isSame(node)) {
                         Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
                         copy(node, child);
                     }
                 }
             }
-        } catch(PathNotFoundException ex) {
+        } catch (PathNotFoundException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
-        } catch(VersionException ex) {
+        } catch (VersionException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
-        } catch(ValueFormatException ex) {
+        } catch (ValueFormatException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
-        } catch(ConstraintViolationException ex) {
+        } catch (ConstraintViolationException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
-        } catch(NoSuchNodeTypeException ex) {
+        } catch (NoSuchNodeTypeException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
+        }
+    }
+
+    private ContentHandler getExportContentHandler(OutputStream stream) throws RepositoryException {
+        try {
+            SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+            TransformerHandler handler = stf.newTransformerHandler();
+
+            Transformer transformer = handler.getTransformer();
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.INDENT, "no");
+
+            handler.setResult(new StreamResult(stream));
+            return handler;
+        } catch (TransformerFactoryConfigurationError e) {
+            throw new RepositoryException("SAX transformer implementation not available", e);
+        } catch (TransformerException e) {
+            throw new RepositoryException("Error creating an XML export content handler", e);
         }
     }
 }
