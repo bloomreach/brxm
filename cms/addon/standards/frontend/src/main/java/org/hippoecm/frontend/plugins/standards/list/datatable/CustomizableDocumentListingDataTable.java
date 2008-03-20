@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.generic.datatable;
+package org.hippoecm.frontend.plugins.standards.list.datatable;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.plugins.standards.list.generic.datatable.paging.CustomizableNavigationToolBar;
+import org.hippoecm.frontend.plugins.standards.list.datatable.paging.CustomizableNavigationToolBar;
 
 public class CustomizableDocumentListingDataTable extends DataTable implements ICustomizableDocumentListingDataTable {
 

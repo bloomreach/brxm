@@ -18,8 +18,8 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugins.standards.list.generic.NodeCell;
-import org.hippoecm.frontend.plugins.standards.list.generic.NodeColumn;
+import org.hippoecm.frontend.plugins.standards.list.NodeCell;
+import org.hippoecm.frontend.plugins.standards.list.NodeColumn;
 
 public class DocumentListingNodeColumn extends NodeColumn {
     private static final long serialVersionUID = 1L;

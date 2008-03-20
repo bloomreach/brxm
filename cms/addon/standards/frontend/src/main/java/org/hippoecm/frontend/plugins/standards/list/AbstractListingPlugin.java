@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.generic;
+package org.hippoecm.frontend.plugins.standards.list;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.standards.list.generic.datatable.ICustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ICustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
