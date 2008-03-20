@@ -48,7 +48,7 @@ public class DownloadExportLink extends Link implements INotificationListener {
 
     public DownloadExportLink(String id, IModel linktext, JcrNodeModel model, Channel channel) {
         super(id, model);
-        add(new Label("download-export=label", linktext));
+        add(new Label("download-export-label", linktext));
         if (channel != null) {
             channel.subscribe(this);
         }
