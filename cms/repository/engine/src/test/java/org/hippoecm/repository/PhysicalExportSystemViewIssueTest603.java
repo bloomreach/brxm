@@ -193,14 +193,14 @@ public class PhysicalExportSystemViewIssueTest603 extends FacetedNavigationAbstr
                  * a hippo uuid indicates virtual node: the export did export virtual nodes,
                  * hence the physical export is not correct
                  */
-                //result.setSucces(false);
+                result.setSucces(false);
             }
             if (HippoNodeType.HIPPO_COUNT.equals(atts.getValue(ns, "name"))) {
                 /*
                  * a hippo count indicates virtual node: the export did export virtual nodes,
                  * hence the physical export is not correct
                  */
-                //result.setSucces(false);
+                result.setSucces(false);
             }
         }
 
