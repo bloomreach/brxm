@@ -28,9 +28,9 @@ import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugins.standards.list.generic.AbstractListingPlugin;
-import org.hippoecm.frontend.plugins.standards.list.generic.datatable.CustomizableDocumentListingDataTable;
-import org.hippoecm.frontend.plugins.standards.list.generic.datatable.ICustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ICustomizableDocumentListingDataTable;
 
 public class DocumentListingPlugin extends AbstractListingPlugin {
 
