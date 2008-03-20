@@ -105,7 +105,7 @@
                         </ul>
                     </li>
                     <li>
-                        <p>Select JPOX Eclipse Plugin -&gt; Enhancer and make sure the 'Class Enhancer' is set to BECL</p>
+                        <p>Select JPOX Eclipse Plugin -&gt; Enhancer and make sure the 'Class Enhancer' is set to BCEL</p>
                     </li>
                 </ol>
             </subsection>
