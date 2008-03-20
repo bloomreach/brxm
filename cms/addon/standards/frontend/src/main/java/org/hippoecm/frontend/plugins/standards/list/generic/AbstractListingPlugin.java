@@ -82,7 +82,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation()) || "flush".equals(notification.getOperation())) {
-            JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
+            IPluginModel nodeModel = notification.getModel();
             if (!nodeModel.equals(getModel())) {
                 setModel(nodeModel);
                 remove((Component)dataTable);
@@ -124,7 +124,7 @@ public abstract class AbstractListingPlugin extends Plugin {
                 if(!jcrSession.itemExists(userPrefListingSettingsLocation)) { 
                     Node userNode = ((Node)jcrSession.getItem(userNodeLocation));
                     // User doesn't have a user folder for this browse perspective yet
-                    Node prefNode = createDefaultPrefNodeSetting(userNode, getTopChannel());
+                    Node prefNode = createDefaultPrefNodeSetting(userNode);
                     modifyDefaultPrefNode(prefNode, getTopChannel());
                     userNode.save();
                 }
@@ -158,7 +158,7 @@ public abstract class AbstractListingPlugin extends Plugin {
         add((Component)getTable(model));
     }
 
-    private Node createDefaultPrefNodeSetting(Node listingNode, Channel channel) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+    private Node createDefaultPrefNodeSetting(Node listingNode) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
         Node prefNode = listingNode.addNode(getPluginUserPrefNodeName(), LISTING_NODETYPE);
         prefNode.setProperty(PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
         prefNode.setProperty(VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);

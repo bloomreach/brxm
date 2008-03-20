@@ -34,13 +34,10 @@ public class SortableDocumentsProvider extends SortableDataProvider {
     static final Logger log = LoggerFactory.getLogger(SortableDocumentsProvider.class);
 
     private List<NodeModelWrapper> resources;
-    //FIXME: restore parent link
-    private NodeModelWrapper parent;
 
-    public SortableDocumentsProvider(NodeModelWrapper parent, List<NodeModelWrapper> resources) {
+    public SortableDocumentsProvider(List<NodeModelWrapper> resources) {
         setSort("name", true);
         this.resources = resources;
-        this.parent = parent;
     }
 
     public Iterator<NodeModelWrapper> iterator(int first, int count) {

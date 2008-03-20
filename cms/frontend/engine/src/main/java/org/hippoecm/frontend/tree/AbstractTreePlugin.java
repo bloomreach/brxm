@@ -15,18 +15,10 @@
  */
 package org.hippoecm.frontend.tree;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -66,38 +58,9 @@ public abstract class AbstractTreePlugin extends Plugin {
         Channel channel = getTopChannel();
         if (channel != null) {
             // create and send a "select" request with the node path as a parameter
-            Request select = channel.createRequest("select", treeNodeModel.getNodeModel());
-            channel.send(select);
-            
-            // create and send a "relatives" request with the children and parent 
-            // of the selected node as a parameters
-            IPluginModel relativesModel = new PluginModel() {
-                private static final long serialVersionUID = 1L;
-
-                public Map<String, Object> getMapRepresentation() {
-                    Map<String, Object> map = new HashMap<String, Object>();
-                    try {
-                        AbstractTreeNode parent = (AbstractTreeNode) treeNodeModel.getParent();
-                        map.put("parent", parent.getNodeModel().getNode().getPath());
-
-                        List<String> children = new ArrayList<String>();
-                        Enumeration<AbstractTreeNode> childNodes = treeNodeModel.children();
-                        while (childNodes.hasMoreElements()) {
-                            children.add(childNodes.nextElement().getNodeModel().getNode().getPath());
-                        }
-                        map.put("children", children);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                    }
-                    return map;
-                }
-            };
-            Request relatives = channel.createRequest("relatives", relativesModel);
-            channel.send(relatives);
-            
-            //
+            Request select = channel.createRequest("select", treeNodeModel);
+            channel.send(select);            
             select.getContext().apply(target);
-            relatives.getContext().apply(target);
         }
     }
 

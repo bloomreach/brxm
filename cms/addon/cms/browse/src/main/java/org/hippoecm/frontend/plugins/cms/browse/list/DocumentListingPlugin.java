@@ -16,19 +16,18 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.standards.list.generic.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.generic.datatable.CustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.plugins.standards.list.generic.datatable.ICustomizableDocumentListingDataTable;
@@ -45,36 +44,20 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     @Override
     protected ICustomizableDocumentListingDataTable getTable(IPluginModel model) {
-        Map map = model.getMapRepresentation();
-        
-        List<String> children = (List<String>) map.get("children");
         List<NodeModelWrapper> listEntries = new ArrayList<NodeModelWrapper>();
-        if (children != null) {
-            for (String child : children) {
-                listEntries.add(new ListEntry(new JcrNodeModel(child)));
+        if (model instanceof AbstractTreeNode) {
+            AbstractTreeNode treeNode = (AbstractTreeNode) model;
+            Enumeration<AbstractTreeNode> children = treeNode.children();
+            while (children.hasMoreElements()) {
+                AbstractTreeNode child = children.nextElement();
+                listEntries.add(child);
             }
         }
-
-        String parentPath = (String) map.get("parent");
-        ListEntry parent = new ListEntry(new JcrNodeModel(parentPath));
-
-        SortableDocumentsProvider documentsProvider = new SortableDocumentsProvider(parent, listEntries); 
+        SortableDocumentsProvider documentsProvider = new SortableDocumentsProvider(listEntries);
         dataTable = new CustomizableDocumentListingDataTable("table", columns, documentsProvider, pageSize, false);
         dataTable.addBottomPaging(viewSize);
         dataTable.addTopColumnHeaders();
         return dataTable;
-    }
-
-    @Override
-    public void receive(Notification notification) {
-        if ("relatives".equals(notification.getOperation())) {
-            IPluginModel pluginModel = notification.getModel();
-            
-            remove((Component) dataTable);
-            add((Component) getTable(pluginModel));
-            
-            notification.getContext().addRefresh(this);
-        }
     }
 
     @Override
@@ -85,14 +68,6 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     @Override
     protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel channel) {
         return new DocumentListingNodeColumn(model, propertyName, channel);
-    }
-
-    private class ListEntry extends NodeModelWrapper {
-        private static final long serialVersionUID = 1L;
-
-        public ListEntry(JcrNodeModel nodeModel) {
-            super(nodeModel);
-        }
     }
 
 }
