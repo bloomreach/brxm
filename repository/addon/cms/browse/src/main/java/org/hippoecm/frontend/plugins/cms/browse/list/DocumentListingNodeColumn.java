@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list;
+package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugins.standards.list.generic.NodeCell;
+import org.hippoecm.frontend.plugins.standards.list.generic.NodeColumn;
 
-public class DocumentListingNodeCell extends NodeCell {
+public class DocumentListingNodeColumn extends NodeColumn {
     private static final long serialVersionUID = 1L;
 
-    public DocumentListingNodeCell(String id, NodeModelWrapper model, Channel channel, String nodePropertyName) {
-        super(id, model, channel, nodePropertyName);
+    public DocumentListingNodeColumn(IModel displayModel, String nodePropertyName, Channel channel) {
+        super(displayModel, nodePropertyName, channel);
+    }
+
+    @Override
+    protected NodeCell getNodeCell(String componentId, IModel model, String nodePropertyName) {
+        return new DocumentListingNodeCell(componentId, (NodeModelWrapper) model, channel, nodePropertyName);
     }
 
 }
