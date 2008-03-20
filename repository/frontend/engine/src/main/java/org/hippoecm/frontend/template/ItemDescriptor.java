@@ -128,7 +128,7 @@ public class ItemDescriptor implements IClusterable {
             return true;
         }
         ItemDescriptor itemDescriptor = (ItemDescriptor) object;
-        return new EqualsBuilder().append(getType(), itemDescriptor.getType()).append(getField(),
+        return new EqualsBuilder().append(id, itemDescriptor.id).append(getType(), itemDescriptor.getType()).append(getField(),
                 itemDescriptor.getField()).isEquals();
     }
 
