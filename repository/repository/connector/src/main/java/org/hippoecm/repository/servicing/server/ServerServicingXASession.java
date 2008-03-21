@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.api.XASession;
+import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.server.ServerXASession;
@@ -45,4 +46,12 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
         }
     }
 
+    public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws RepositoryException,
+                                                                                                RemoteException {
+        try {
+            return getFactory().getRemoteNodeIterator(session.pendingChanges(session.getRootNode().getNode(absPath), nodeType, prune));
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
 }

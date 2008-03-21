@@ -19,11 +19,16 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 
+import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 
 public interface RemoteServicingSession extends RemoteSession, Remote, Serializable {
     public RemoteNode copy(String originalPath, String absPath) throws RepositoryException, RemoteException;
+    public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws NamespaceException,
+                                       NoSuchNodeTypeException, RepositoryException, RemoteException;
 }

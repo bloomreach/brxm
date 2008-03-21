@@ -50,19 +50,21 @@ import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 
 import org.apache.jackrabbit.core.NodeImpl;
+
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 
 public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     final static private String SVN_ID = "$Id$";
 
     protected Node node;
-    protected Session session;
+    protected HippoSession session;
 
     protected ServicingNodeImpl(DecoratorFactory factory, Session session, Node node) {
         super(factory, session, node);
-        this.session = session;
+        this.session = (HippoSession) session;
         this.node = node;
     }
 
@@ -622,5 +624,26 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
                ReferentialIntegrityException, VersionException, LockException, RepositoryException
     {
         super.save();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public NodeIterator pendingChanges(String nodeType, boolean prune) throws RepositoryException {
+        return session.pendingChanges(this, nodeType, prune);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public NodeIterator pendingChanges(String nodeType) throws RepositoryException {
+        return session.pendingChanges(this, nodeType);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public NodeIterator pendingChanges() throws RepositoryException {
+        return session.pendingChanges(this, null);
     }
 }

@@ -17,13 +17,18 @@ package org.hippoecm.repository.servicing.client;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.rmi.client.ClientNode;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
+
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.servicing.remote.RemoteServicingNode;
 
 public class ClientServicingNode extends ClientNode implements HippoNode {
@@ -47,5 +52,18 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
+    }
+
+    public NodeIterator pendingChanges(String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException,
+                                                                              RepositoryException {
+        return ((HippoSession)getSession()).pendingChanges(this, nodeType, prune);
+    }
+
+    public NodeIterator pendingChanges(String nodeType) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
+        return pendingChanges(nodeType, false);
+    }
+
+    public NodeIterator pendingChanges() throws RepositoryException {
+        return pendingChanges(null, false);
     }
 }
