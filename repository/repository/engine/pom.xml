@@ -190,6 +190,9 @@
               <value>${history.points}</value>
             </property>
           </systemProperties>
+          <excludes>
+            <exclude>**/FacetedAuthorizationTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
