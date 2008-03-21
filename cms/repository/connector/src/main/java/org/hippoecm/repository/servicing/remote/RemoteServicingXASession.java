@@ -21,9 +21,12 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteXASession;
 
 public interface RemoteServicingXASession extends RemoteXASession, Remote, Serializable {
     public RemoteNode copy(String originalPath, String absPath) throws RepositoryException, RemoteException;
+    public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws RepositoryException,
+                                                                                                RemoteException;
 }

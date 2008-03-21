@@ -35,7 +35,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
         this.category = category;
         nodeAbsPath = item.getPath();
         try {
-            serviceName = node.getProperty(HippoNodeType.HIPPO_SERVICE).getString();
+            serviceName = node.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
             displayName = node.getProperty(HippoNodeType.HIPPO_DISPLAY).getString();
             rendererName = node.getProperty(HippoNodeType.HIPPO_RENDERER).getString();
         } catch (PathNotFoundException ex) {

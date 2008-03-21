@@ -151,7 +151,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         Node workflowNode = getWorkflowNode(category, item);
         if(workflowNode != null) {
             try {
-                String classname = workflowNode.getProperty(HippoNodeType.HIPPO_SERVICE).getString();
+                String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
                 String uuid = null;

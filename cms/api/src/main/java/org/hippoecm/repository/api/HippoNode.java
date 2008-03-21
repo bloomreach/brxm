@@ -15,8 +15,11 @@
  */
 package org.hippoecm.repository.api;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 public interface HippoNode extends Node {
 
@@ -62,4 +65,42 @@ public interface HippoNode extends Node {
      */
     public String getDisplayName() throws RepositoryException;
 
+    /**
+     * Obtains an iterator over the set of nodes that potentially contain
+     * changes, starting (and not including) this node.
+     * Only nodes for which <code>Node.isNodeType(nodeType)</code> returns
+     * true are included in the resulting set.  If the prune boolean value is
+     * true, then the nodes matching in the hierarchy first are returned.  If
+     * matching modified node exists beneath the nodes, these are not
+     * included.
+     *
+     * @param nodeType Only nodes that are (derived) of this nodeType are
+     *                 included in the result
+     * @param prune Wheter only to return the first matching modified node in
+     *              a subtree (true), or provide a depth search for all modified
+     *              nodes (false)
+     * @returns A NodeIterator instance which iterates over all modified
+     *          nodes, not including this node
+     * @see Session.pendingChanges(Node,String,boolean)
+     */
+    public NodeIterator pendingChanges(String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException,
+                                                                              RepositoryException;
+
+    /** Conveniance method for <code>pendingChanges(nodeType,false)</code>
+     *
+     * @param nodeType Only nodes that are (derived) of this nodeType are
+     *                 included in the result
+     * @returns A NodeIterator instance which iterates over all modified
+     *          nodes, not including the passed node
+     * @see pendingChanges(String,boolean)
+     */
+    public NodeIterator pendingChanges(String nodeType) throws NamespaceException, NoSuchNodeTypeException, RepositoryException;
+
+    /** Conveniance method for <code>pendingChanges("nt:base", false)</code>
+     *
+     * @returns A NodeIterator instance which iterates over all modified
+     *          nodes, not including the passed node
+     * @see pendingChanges(String,boolean)
+     */
+    public NodeIterator pendingChanges() throws RepositoryException;
 }

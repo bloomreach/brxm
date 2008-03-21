@@ -18,6 +18,7 @@ package org.hippoecm.repository.servicing.client;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 
@@ -40,5 +41,21 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
+    }
+
+    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException {
+        try {
+            return getFactory().getNodeIterator(this, remote.pendingChanges(node.getPath(), nodeType, prune));
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+
+    public NodeIterator pendingChanges(Node node, String nodeType) throws RepositoryException {
+        return pendingChanges(node, nodeType, false);
+    }
+
+    public NodeIterator pendingChanges() throws RepositoryException {
+        return pendingChanges(null, null, false);
     }
 }

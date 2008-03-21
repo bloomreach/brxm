@@ -49,6 +49,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
+
 import javax.transaction.xa.XAResource;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -59,13 +60,18 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.jackrabbit.api.XASession;
-import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.spi.Path;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoSession;
+
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoSession;
+
+import org.hippoecm.repository.jackrabbit.SessionImpl;
+import org.hippoecm.repository.jackrabbit.XASessionImpl;
 
 /**
  */
@@ -95,11 +101,11 @@ public class SessionDecorator implements XASession, HippoSession {
     public static Session unwrap(Session session) {
         if (session == null) {
             return null;
+        } else if (session instanceof SessionDecorator) {
+            return session = ((SessionDecorator)session).session;
+        } else {
+            return session;
         }
-        if (session instanceof SessionDecorator) {
-            session = ((SessionDecorator) session).session;
-        }
-        return session;
     }
 
     protected void finalize() {
@@ -113,8 +119,8 @@ public class SessionDecorator implements XASession, HippoSession {
 
     String[] getQPath(String absPath) throws NamespaceException, RepositoryException {
         NamespaceRegistry nsreg = session.getWorkspace().getNamespaceRegistry();
-        Path.Element[] elements = ((SessionImpl) session).getQPath(
-                absPath.startsWith("/") ? absPath.substring(1) : absPath).getElements();
+        Path.Element[] elements = (session instanceof XASession ? (XASessionImpl)session : (SessionImpl)session) .
+            getQPath(absPath.startsWith("/") ? absPath.substring(1) : absPath).getElements();
         String[] rtelements = new String[elements.length];
         for (int i = 0; i < elements.length; i++) {
             if (nsreg.getPrefix(elements[i].getName().getNamespaceURI()).equals("")) {
@@ -482,6 +488,35 @@ public class SessionDecorator implements XASession, HippoSession {
         } catch (NoSuchNodeTypeException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
         }
+    }
+
+    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
+                                                                            NoSuchNodeTypeException, RepositoryException {
+        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(node, nodeType, prune)
+                                                  : ((SessionImpl)session).pendingChanges(node, nodeType, prune);
+    }
+
+    public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
+                                                                          RepositoryException {
+        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(node, nodeType, false)
+                                                  : ((SessionImpl)session).pendingChanges(node, nodeType, false);
+    }
+
+    public NodeIterator pendingChanges(String nodeType, boolean prune) throws NamespaceException,
+                                                                            NoSuchNodeTypeException, RepositoryException {
+        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, nodeType, prune)
+                                                  : ((SessionImpl)session).pendingChanges(null, nodeType, prune);
+    }
+
+    public NodeIterator pendingChanges(String nodeType) throws NamespaceException, NoSuchNodeTypeException,
+                                                                          RepositoryException {
+        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, nodeType, false)
+                                                  : ((SessionImpl)session).pendingChanges(null, nodeType, false);
+    }
+
+    public NodeIterator pendingChanges() throws RepositoryException {
+        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, null, false)
+                                                  : ((SessionImpl)session).pendingChanges(null, null, false);
     }
 
     private ContentHandler getExportContentHandler(OutputStream stream) throws RepositoryException {

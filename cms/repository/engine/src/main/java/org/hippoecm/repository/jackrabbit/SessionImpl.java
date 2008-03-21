@@ -18,28 +18,43 @@ package org.hippoecm.repository.jackrabbit;
 import java.io.File;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.NamespaceException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
+import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
@@ -86,14 +101,13 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     protected AccessManager createAccessManager(Subject subject, HierarchyManager hierMgr) throws AccessDeniedException, RepositoryException {
         AccessManagerConfig amConfig = rep.getConfig().getAccessManagerConfig();
         try {
-            HippoAMContext ctx = new HippoAMContext( new File(((RepositoryImpl)rep).getConfig().getHomeDir()), 
-                                                    ((RepositoryImpl)rep).getFileSystem(), 
-                                                    subject, 
-                                                    getItemStateManager().getAtticAwareHierarchyMgr(), 
-                                                    ((RepositoryImpl)rep).getNamespaceRegistry(), 
-                                                    wsp.getName(), 
-                                                    ((RepositoryImpl)rep).getNodeTypeRegistry() 
-                                                  );
+            HippoAMContext ctx = new HippoAMContext( new File(((RepositoryImpl)rep).getConfig().getHomeDir()),
+                                                    ((RepositoryImpl)rep).getFileSystem(),
+                                                    subject,
+                                                    getItemStateManager().getAtticAwareHierarchyMgr(),
+                                                    ((RepositoryImpl)rep).getNamespaceRegistry(),
+                                                    wsp.getName(),
+                                                    ((RepositoryImpl)rep).getNodeTypeRegistry());
             AccessManager accessMgr = (AccessManager) amConfig.newInstance();
             accessMgr.init(ctx);
             return accessMgr;
@@ -138,8 +152,114 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     /**
      * Method to expose the authenticated users' principals
      * @return Set An unmodifialble set containing the principals
-      */
+     */
     public Set<Principal> getUserPrincipals() {
         return Collections.unmodifiableSet(subject.getPrincipals());
+    }
+
+    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
+                                                                              NoSuchNodeTypeException, RepositoryException {
+        Name ntName;
+        try {
+            ntName = getQName(nodeType);
+        } catch(IllegalNameException ex) {
+            throw new NoSuchNodeTypeException(nodeType);
+        }
+        final Set<NodeId> filteredResults = new HashSet<NodeId>();
+        if(node == null) {
+            node = getRootNode();
+            if(node.isModified() && (nodeType == null || node.isNodeType(nodeType))) {
+                filteredResults.add(((NodeImpl)node).getNodeId());
+            }
+        }
+        NodeId nodeId = ((NodeImpl)node).getNodeId();
+
+        Iterator iter = itemStateMgr.getDescendantTransientItemStates(nodeId);
+        while(iter.hasNext()) {
+            NodeState state = (NodeState) iter.next();
+
+            /* if the node type of the current node state is not of required
+             * type (if set), continue with next.
+             */
+            if(nodeType != null) {
+                if(!ntName.equals(state.getNodeTypeName())) {
+                    Set mixins = state.getMixinTypeNames();
+                    if(!mixins.contains(ntName)) {
+                        // build effective node type of mixins & primary type
+                        NodeTypeRegistry ntReg = getNodeTypeManager().getNodeTypeRegistry();
+                        Name[] types = new Name[mixins.size() + 1];
+                        mixins.toArray(types);
+                        types[types.length - 1] = state.getNodeTypeName();
+                        try {
+                            if(!ntReg.getEffectiveNodeType(types).includesNodeType(ntName))
+                                continue;
+                        } catch(NodeTypeConflictException ntce) {
+                            String msg = "internal error: failed to build effective node type";
+                            log.debug(msg);
+                            throw new RepositoryException(msg, ntce);
+                        }
+                    }
+                }
+            }
+
+            /* if pruning, check that there are already children in the
+             * current list.  If so, remove them.
+             */
+            if(prune) {
+                HierarchyManager hierMgr = getHierarchyManager();
+                for(Iterator<NodeId> i = filteredResults.iterator(); i.hasNext(); ) {
+                    if(hierMgr.isAncestor(state.getNodeId(), i.next()))
+                        i.remove();
+                }
+            }
+
+            filteredResults.add(state.getNodeId());
+        }
+
+        return new NodeIterator() {
+                private final org.apache.jackrabbit.core.ItemManager itemMgr = getItemManager();
+                private Iterator<NodeId> iterator = filteredResults.iterator();
+                private int pos = 0;
+                public Node nextNode() {
+                    return (Node) next();
+                }
+                public long getPosition() {
+                    return pos;
+                }
+                public long getSize() {
+                    return -1;
+                }
+                public void skip(long skipNum) {
+                    if(skipNum < 0) {
+                        throw new IllegalArgumentException("skipNum must not be negative");
+                    } else if(skipNum == 0) {
+                        return;
+                    } else {
+                        do {
+                            NodeId id = iterator.next();
+                            ++pos;
+                        } while(--skipNum > 0);
+                    }
+                }
+                public boolean hasNext() {
+                    return iterator.hasNext();
+                }
+                public Object next() {
+                    try {
+                        NodeId id = iterator.next();
+                        ++pos;
+                        return itemMgr.getItem(id);
+                    } catch(AccessDeniedException ex) {
+                        return null;
+                    } catch(ItemNotFoundException ex) {
+                        return null;
+                    } catch(RepositoryException ex) {
+                        return null;
+                    }
+                }
+                public void remove() {
+                    throw new UnsupportedOperationException("remove");
+                }
+            };
     }
 }
