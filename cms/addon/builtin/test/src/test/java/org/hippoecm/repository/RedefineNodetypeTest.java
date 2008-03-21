@@ -144,7 +144,8 @@ public class RedefineNodetypeTest extends TestCase {
             "<hippotest2='http://www.hippoecm.org/test2/1.0'>\n" +
             "\n" +
             "[hippotest2:test] > hippo:document\n" +
-            "- hippotest2:first (string) mandatory\n";
+            "- hippotest2:first (string) mandatory\n" +
+            "- *\n";
         String cnd2 =
             "<rep='internal'>\n" +
             "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
@@ -154,7 +155,8 @@ public class RedefineNodetypeTest extends TestCase {
             "<hippotest2='http://www.hippoecm.org/test2/1.1'>\n" +
             "\n" +
             "[hippotest2:test] > hippo:document\n" +
-            "- hippotest2:second (string)\n";
+            "- hippotest2:second (string)\n" +
+            "- *\n";
 
         session.getRootNode().addNode("test");
 

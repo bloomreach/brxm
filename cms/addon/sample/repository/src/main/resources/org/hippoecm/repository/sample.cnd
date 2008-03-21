@@ -52,7 +52,7 @@
 - sample:page (string)
 - sample:review (string)
 
-[sample:newsArticle] > hippo:document
+[sample:newsArticle] > hippo:document, mix:referenceable
 - sample:id (long)
 //  > [(0,)]
 - sample:categoryId (long)
@@ -73,7 +73,7 @@
   multiple
 + sample:illustration (sample:illustration) = sample:illustration
 
-[sample:author] > hippo:document
+[sample:author] > hippo:document, mix:referenceable
 - sample:id (long)
 - sample:name (string)
 - sample:email (string)
@@ -102,7 +102,7 @@
 + * (sample:image) = sample:image
   multiple
 
-[sample:simpledocument] > hippo:document, hippostd:publishable
+[sample:simpledocument] > hippo:document, hippostd:publishable, mix:referenceable
 - sample:title (string) mandatory primary
 - sample:cdate (date) protected
 - sample:owner (string)
