@@ -30,13 +30,13 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
         for (int j = 0; j < PROP_COUNT; j++) {
             for (int i = 0; i < NODE_COUNT; i++) {
-                node = normalNode.addNode("docNormal" + i, HippoNodeType.NT_DOCUMENT);
+                node = normalNode.addNode("docNormal" + i, "hippo:realdocument");
                 node.setProperty("facettest", "val" + j); 
 
-                node = namespaceNode.addNode("docNamespace" + i, HippoNodeType.NT_DOCUMENT);
+                node = namespaceNode.addNode("docNamespace" + i, "hippo:realdocument");
                 node.setProperty("hippo:facettest", "val" + j);
 
-                node = bothNode.addNode("docBoth" + i, HippoNodeType.NT_DOCUMENT);
+                node = bothNode.addNode("docBoth" + i, "hippo:realdocument");
                 node.setProperty("hippo:facettest", "val" + j);
                 node.setProperty("facettest", "val" + j); 
             }

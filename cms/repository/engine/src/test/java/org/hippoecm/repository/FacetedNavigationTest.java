@@ -123,7 +123,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         session.save();
 
         node = session.getRootNode().getNode("documents");
-        child = node.addNode("test", HippoNodeType.NT_DOCUMENT);
+        child = node.addNode("test", "hippo:realdocument");
         child.setProperty("x", "x1");
         child.setProperty("y", "yy");
         node.save();
@@ -135,7 +135,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         assertFalse(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test[2]"));
 
         node = session.getRootNode().getNode("documents");
-        child = node.addNode("test", HippoNodeType.NT_DOCUMENT);
+        child = node.addNode("test", "hippo:realdocument");
         child.setProperty("x", "x1");
         child.setProperty("y", "yy");
         session.save();

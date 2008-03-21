@@ -43,11 +43,11 @@ public class HREPTWO650Test extends FacetedNavigationAbstractTest {
     }
 
     private void addNodeWithDate(Node node) throws RepositoryException {
-        Node datenode = node.addNode("datenode", HippoNodeType.NT_DOCUMENT);
+        Node datenode = node.addNode("datenode", "hippo:realdocument");
         Calendar cal = new GregorianCalendar();
         datenode.setProperty("date", cal);
         
-        datenode = node.addNode("datenode2", HippoNodeType.NT_DOCUMENT);
+        datenode = node.addNode("datenode2", "hippo:realdocument");
         cal = new GregorianCalendar();
         datenode.setProperty("date", cal);
     }

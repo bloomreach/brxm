@@ -38,9 +38,9 @@ public class FacetedNavigationHippoCountTest extends TestCase
 
     private static String[] contents = new String[] {
         "/documents", "nt:unstructured",
-        "/documents/document", "hippo:document",
+        "/documents/document", "hippo:realdocument",
         "type", "text",
-        "/documents/document1", "hippo:document",
+        "/documents/document1", "hippo:realdocument",
         "type", "html",
         "/docsearch", "nt:unstructured",
         "/docsearch/byType", "hippo:facetsearch",

@@ -37,7 +37,7 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
                 session.getRootNode().addNode("documents");
             node = session.getRootNode().getNode("documents");
             //String encodeMe = "yadida";
-            Node docNode = node.addNode(simple, HippoNodeType.NT_DOCUMENT);
+            Node docNode = node.addNode(simple, "hippo:realdocument");
             docNode.setProperty("x", "success");
             docNode.setProperty("y", encodeMe);
             session.save();
