@@ -66,7 +66,7 @@ public class PersistanceInheritanceTest extends TestCase
         if(root.hasNode("documents"))
             root.getNode("documents").remove();
         node = root.addNode("documents");
-        node = node.addNode("mydocument", "hippo:document");
+        node = node.addNode("mydocument", "hippo:realdocument");
         node.setProperty("a", "1");
         node.setProperty("b", "2");
 

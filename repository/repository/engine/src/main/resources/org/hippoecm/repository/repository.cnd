@@ -59,10 +59,10 @@
 
 [hippo:request] > nt:unstructured, mix:referenceable
 
-[hippo:document] > nt:unstructured, mix:referenceable
+[hippo:document] > nt:base
 - hippo:paths (string) multiple
 
-[hippo:handle] > nt:unstructured, mix:referenceable
+[hippo:handle] > nt:unstructured
 - hippo:discriminator (string) multiple // should be mandatory
 + * (hippo:document) = hippo:document multiple
 
@@ -78,7 +78,7 @@
 - hippo:docbase (string) mandatory
 - hippo:facets (string) mandatory multiple
 - hippo:values (string) mandatory multiple
-- hippo:modes (string) mandatory multiple // < 'select', 'stick', 'clear', 'single'
+- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single'
 + * multiple
 
 [hippo:type] > nt:base
@@ -94,7 +94,7 @@
 - hippo:roles (string) multiple
 + hippo:types (hippo:types) = hippo:types mandatory autocreated
 
-[hippo:workflowcategory] > nt:base
+[hippo:workflowcategory] > nt:base orderable
 + * (hippo:workflow) = hippo:workflow
 
 [hippo:workflowfolder] > nt:base, mix:referenceable
@@ -221,6 +221,40 @@
 [hippo:prototyped] mixin
 - hippo:prototype (reference) mandatory
 
+
+
+
+[hippo:propertyreference] > nt:base
+- hippo:name (String) mandatory
+
+[hippo:relativepropertyreference] > hippo:propertyreference
+- hippo:relPath (String) mandatory
+
+[hippo:builtinpropertyreference] > hippo:propertyreference
+- hippo:method (String) mandatory < 'ancestor'
+
+[hippo:deriveddefinition] > nt:base
+- hippo:nodetype (String) mandatory
+- hippo:classname (String) mandatory
+- hippo:serialver (Long)
++ hippo:accessed (hippo:propertyreference) multiple
++ hippo:derived (hippo:relativepropertyreference) multiple
+
+[hippo:derivationfolder] > nt:base orderable
++ * (hippo:deriveddefinition) = hippo:deriveddefinition multiple
+
+[hippo:derived] mixin
+- hippo:compute (Reference)
+  // Indicates the method that is used to compute the derived properties
+  // defined by any subtypes that extend this type.
+  // should point to a node of type hippo:deriveddefinition
+- hippo:related (Reference) multiple
+  // A multivalue property that links to all the nodes that where used to
+  // compute derived proper
+
+
+
+
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:ocmqueryfolder) = hippo:ocmqueryfolder mandatory
@@ -230,6 +264,14 @@
 + hippo:roles (hippo:rolefolder) = hippo:rolefolder
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:namespaces (hippo:namespacefolder) = hippo:namespacefolder
++ hippo:derivation (hippo:derivationfolder) = hippo:derivationfolder
 + hippo:templates (hippo:templatenamespace) = hippo:templatenamespace
 + hippo:prototypes (hippo:prototypenamespace) = hippo:prototypenamespace
 + hippo:frontend (hippo:application) = hippo:application
+
+
+
+
+
+[hippo:test] > hippo:document, mix:referenceable, hippo:derived
+- hippo:fuck (String)

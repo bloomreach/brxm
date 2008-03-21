@@ -57,7 +57,7 @@ public class CopyNodeTest extends TestCase {
     public void testVirtualTreeCopy() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test");
         node = root.addNode("documents");
-        node = node.addNode("document",HippoNodeType.NT_DOCUMENT);
+        node = node.addNode("document","hippo:realdocument");
         node.setProperty("aap", "noot");
         node = root.addNode("navigation");
         node = node.addNode("search",HippoNodeType.NT_FACETSELECT);
