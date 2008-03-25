@@ -1,0 +1,116 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.hippoecm.org/nt/1.0'>
+<hippostd='http://www.hippoecm.org/hippostd/nt/1.0'>
+<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.0'>
+
+// TODO:
+// - (Unique) contraints on hippo:id's?
+// - verioning rules
+
+// alttext nodetype is usde by illustration so put it _before_ illustration
+[defaultcontent:altText]
+- defaultcontent:locale (string)
+  multiple mandatory
+- defaultcontent:text (string)
+
+// link nodetype is used by newsArticle so put it _before_ newsArticle
+[defaultcontent:link]
+- defaultcontent:href (String)
+- defaultcontent:text (string)
+
+// illustration nodetype is used by newsArticle so put it _before_ newsArticle
+[defaultcontent:illustration]
+- defaultcontent:imageSetId
++ defaultcontent:altText
+
+// body nodetype is used by newsArticle so put it _before_ newsArticle
+[defaultcontent:body]
+- defaultcontent:locale (string)
+  multiple mandatory
+- defaultcontent:title (string)
+  primary
+- defaultcontent:summary (string)
+- defaultcontent:page (string)
+- defaultcontent:review (string)
+
+[defaultcontent:newsArticle] > hippo:document
+- defaultcontent:id (long)
+//  > [(0,)]
+- defaultcontent:categoryId (long)
+  multiple
+- defaultcontent:newsArticleId (long)
+  multiple
+- defaultcontent:magzineId (long)
+  multiple
+- defaultcontent:sectionId (long)
+- defaultcontent:authorId (long)
+- defaultcontent:published (boolean)
+  = false
+- defaultcontent:publicationDate (date)
+- defaultcontent:newsDate (date)
++ defaultcontent:body (defaultcontent:body) = defaultcontent:body
+  multiple
++ defaultcontent:link (defaultcontent:link) = defaultcontent:link
+  multiple
++ defaultcontent:illustration (defaultcontent:illustration) = defaultcontent:illustration
+
+[defaultcontent:author] > hippo:document
+- defaultcontent:id (long)
+- defaultcontent:name (string)
+- defaultcontent:email (string)
+
+[defaultcontent:section]
+- defaultcontent:id (long)
+- defaultcontent:name (string)
+
+[defaultcontent:category]
+- defaultcontent:id (long)
+- defaultcontent:name (string)
+
+[defaultcontent:magazine]
+- defaultcontent:id (long)
+- defaultcontent:name (string)
+
+// image nodetype is used by imageSet so put it _before_ imageset
+[defaultcontent:image] > nt:resource
+
+[defaultcontent:imageSet]
+- defaultcontent:id (long)
+  mandatory
+- defaultcontent:description (string)
+  primary
++ defaultcontent:altText
++ * (defaultcontent:image) = defaultcontent:image
+  multiple
+
+[defaultcontent:simpledocument] > hippo:document, hippostd:publishable
+- defaultcontent:title (string) mandatory primary
+- defaultcontent:cdate (date) protected
+- defaultcontent:owner (string)
+- defaultcontent:body (string) mandatory
+- defaultcontent:subject (string) multiple mandatory
+- defaultcontent:link (reference)
++ defaultcontent:image (defaultcontent:image)
++ * (hippo:facetselect)
++ * (hippo:facetsearch)
++ * (hippo:facetlink)
+// - defaultcontent:state (string) = 'unpublished' mandatory autocreated < 'draft', 'published', 'unpublished', 'stale'
