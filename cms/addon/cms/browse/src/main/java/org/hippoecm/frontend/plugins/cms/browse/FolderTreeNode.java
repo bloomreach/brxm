@@ -16,11 +16,16 @@
 package org.hippoecm.frontend.plugins.cms.browse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -40,6 +45,16 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     private boolean onlyHandles = false;
     private FolderTreeNode parent;
+
+    // hardcoded ignore path set
+    private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
+            "/hippo:configuration" }));
+
+    // ignore nodes below these types
+    private final static String[] ignoreNodesBelowType = new String[] {HippoNodeType.NT_DOCUMENT};
+    
+    //  shortcut paths shown as root folders
+    private final static String[] shortCutPaths = new String[] { "hippo:configuration/hippo:templates" };
 
     public FolderTreeNode(JcrNodeModel model) {
         super(model);
@@ -75,11 +90,11 @@ public class FolderTreeNode extends AbstractTreeNode {
     @Override
     protected List<AbstractTreeNode> loadChildren() throws RepositoryException {
         List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
-
         List<Node> subNodes = subNodes(nodeModel.getNode());
         for (Node subNode : subNodes) {
             FolderTreeNode subfolder = new FolderTreeNode(new JcrNodeModel(subNode), this);
             result.add(subfolder);
+
         }
         return result;
     }
@@ -103,6 +118,8 @@ public class FolderTreeNode extends AbstractTreeNode {
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
                 }
+            } catch (ValueFormatException e) {
+                // ignore the hippo count if not of type long
             } catch (RepositoryException e) {
                 result = e.getMessage();
             }
@@ -120,16 +137,34 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     private List<Node> subNodes(Node node) throws RepositoryException {
         List<Node> result = new ArrayList<Node>();
+        for(String type : ignoreNodesBelowType) {
+           if(node.isNodeType(type)){
+               return result;
+           }
+        }
+        if (node.isSame(node.getAncestor(0))) {
+            // node is rootNode, so add shortcut paths
+            for(String path : shortCutPaths) {
+                try {
+                    result.add(node.getNode(path));
+                } catch (PathNotFoundException e) {
+                    log.error("shortcut path not found: " + e.getMessage());
+                }
+            }
+        }
+        
         NodeIterator subNodes = node.getNodes();
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
-            if (subNode.isNodeType(HippoNodeType.NT_HANDLE) || isReferenceToHandle(subNode)) {
-                result.add(subNode);
-            } else {
-                if (onlyHandles) {
-                    result.addAll(subNodes(subNode));
-                } else {
+            if (!ignorePaths.contains(subNode.getPath())) {
+                if (subNode.isNodeType(HippoNodeType.NT_HANDLE) || isReferenceToHandle(subNode)) {
                     result.add(subNode);
+                } else {
+                    if (onlyHandles) {
+                        result.addAll(subNodes(subNode));
+                    } else {
+                        result.add(subNode);
+                    }
                 }
             }
         }
