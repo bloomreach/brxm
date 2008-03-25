@@ -16,18 +16,16 @@
 package org.hippoecm.frontend.plugin.config;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
+import org.hippoecm.frontend.plugin.parameters.RepositoryParameterValue;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -74,22 +72,8 @@ public class PluginRepositoryConfig implements PluginConfig {
 
         // parse (optional) parameters
         if (pluginNode.hasNode(HippoNodeType.HIPPO_PARAMETERS)) {
-            PropertyIterator iter = pluginNode.getNode(HippoNodeType.HIPPO_PARAMETERS).getProperties();
-            while (iter.hasNext()) {
-                Property property = iter.nextProperty();
-                if (property.getName().equals("jcr:primaryType"))
-                    continue;
-
-                List<String> list = new LinkedList<String>();
-                if (property.getDefinition().isMultiple()) {
-                    for (Value value : property.getValues()) {
-                        list.add(value.getString());
-                    }
-                } else {
-                    list.add(property.getValue().getString());
-                }
-                descriptor.addParameter(property.getName(), list);
-            }
+            ParameterValue parameters = new RepositoryParameterValue(pluginNode.getNode(HippoNodeType.HIPPO_PARAMETERS));
+            descriptor.setParameters(parameters.getMap());
         }
         return descriptor;
     }

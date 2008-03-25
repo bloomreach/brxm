@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.template.field;
 
+import java.util.Map;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.model.AbstractProvider;
@@ -30,10 +33,14 @@ public class TemplateView extends AbstractView {
     private static final long serialVersionUID = 1L;
 
     private FieldDescriptor descriptor;
+    private Map<String, ParameterValue> config;
 
-    public TemplateView(String wicketId, AbstractProvider provider, Plugin template, FieldDescriptor descriptor) {
+    public TemplateView(String wicketId, AbstractProvider provider, Plugin template, FieldDescriptor descriptor,
+            Map<String, ParameterValue> config) {
         super(wicketId, provider, template);
         this.descriptor = descriptor;
+        this.config = config;
+        populate();
     }
 
     @Override
@@ -42,7 +49,7 @@ public class TemplateView extends AbstractView {
         final NodeFieldPlugin plugin = (NodeFieldPlugin) getPlugin();
 
         TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
-        item.add(engine.createTemplate("template", model, plugin));
+        item.add(engine.createTemplate("template", model, plugin, config));
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;

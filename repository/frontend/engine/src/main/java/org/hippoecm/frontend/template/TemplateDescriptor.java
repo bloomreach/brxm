@@ -22,6 +22,8 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 public class TemplateDescriptor extends ItemDescriptor {
     private static final long serialVersionUID = 1L;
 
+    private static ThreadLocal<TemplateDescriptor> serializer = new ThreadLocal<TemplateDescriptor>();
+
     private TypeDescriptor type;
 
     public TemplateDescriptor(TypeDescriptor type, PluginDescriptor plugin) {
@@ -33,20 +35,29 @@ public class TemplateDescriptor extends ItemDescriptor {
     public TemplateDescriptor(Map<String, Object> map) {
         super(map);
         this.type = new TypeDescriptor((Map<String, Object>) map.get("typeDescriptor"));
+        for (ItemDescriptor item : getItems()) {
+            item.setTemplate(this);
+        }
     }
 
     @Override
     public Map<String, Object> getMapRepresentation() {
-        Map<String, Object> map = super.getMapRepresentation();
-        map.put("typeDescriptor", this.type.getMapRepresentation());
-        return map;
+        TemplateDescriptor current = serializer.get();
+        if (!equals(current)) {
+            serializer.set(this);
+            Map<String, Object> map = super.getMapRepresentation();
+            map.put("typeDescriptor", this.type.getMapRepresentation());
+            serializer.set(current);
+            return map;
+        }
+        serializer.set(current);
+        return null;
     }
 
     public TypeDescriptor getTypeDescriptor() {
         return type;
     }
 
-    @Override
     public String getType() {
         return type.getType();
     }

@@ -56,9 +56,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         return null;
     }
 
-    public Node getTemplateNode(TypeDescriptor type) {
+    public Node getTemplateNode(String typeName) {
         try {
-            String typeName = type.getName();
             String prefix;
             if (typeName.indexOf(':') > 0) {
                 prefix = typeName.substring(0, typeName.indexOf(':'));
@@ -94,7 +93,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         return HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.TEMPLATES_PATH;
     }
 
-    static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, TemplateDescriptor parent) {
+    static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, RepositoryTemplateDescriptor parent) {
         List<ItemDescriptor> items = new LinkedList<ItemDescriptor>();
         int itemId = 0;
         for (PluginDescriptor child : plugin.getChildren()) {
@@ -135,11 +134,12 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     private static class RepositoryItemDescriptor extends ItemDescriptor {
         private static final long serialVersionUID = 1L;
 
-        TemplateDescriptor template;
+        RepositoryTemplateDescriptor template;
         String field;
 
-        RepositoryItemDescriptor(int id, PluginDescriptor plugin, TemplateDescriptor template) {
+        RepositoryItemDescriptor(int id, PluginDescriptor plugin, RepositoryTemplateDescriptor template) {
             super(id, plugin);
+            setTemplate(template);
             this.template = template;
             this.field = null;
         }
@@ -147,11 +147,6 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         @Override
         public String getField() {
             return field;
-        }
-
-        @Override
-        public String getType() {
-            return template.getType();
         }
 
         @Override

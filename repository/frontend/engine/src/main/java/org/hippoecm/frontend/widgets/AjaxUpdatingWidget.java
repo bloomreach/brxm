@@ -32,6 +32,7 @@ public abstract class AjaxUpdatingWidget extends Panel {
      */
     protected void addFormField(FormComponent component) {
         add(component);
+        component.setOutputMarkupId(true);
         component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
             private static final long serialVersionUID = 1L;
 

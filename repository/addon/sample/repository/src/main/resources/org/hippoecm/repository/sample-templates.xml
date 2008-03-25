@@ -52,6 +52,9 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>title</sv:value>
           </sv:property>
+          <sv:property sv:name="template.size" sv:type="String">
+            <sv:value>40</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
       <sv:node sv:name="hippo:item">
@@ -71,6 +74,12 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>body</sv:value>
           </sv:property>
+          <sv:property sv:name="template.width" sv:type="String">
+            <sv:value>500px</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.height" sv:type="String">
+            <sv:value>300px</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
       <sv:node sv:name="hippo:item">
@@ -89,6 +98,9 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>subject</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.size" sv:type="String">
+            <sv:value>40</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -186,9 +198,6 @@
     <sv:node sv:name="sample:image">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:template</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:application" sv:type="String">
-        <sv:value>hippo:cms-prototype</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:renderer" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>

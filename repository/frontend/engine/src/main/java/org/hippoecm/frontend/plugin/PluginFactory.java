@@ -23,8 +23,12 @@ import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.error.ErrorPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(PluginFactory.class);
 
     public PluginFactory(PluginManager pluginManager) {
     }
@@ -54,13 +58,13 @@ public class PluginFactory {
                         + e.getTargetException().getMessage() + "\n" + "Failed to instantiate plugin '"
                         + descriptor.getClassName() + "' for id '" + descriptor + "'.";
                 plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
-                e.printStackTrace();
+                log.error(e.getMessage());
             } catch (Exception e) {
                 String message = e.getClass().getName() + ": " + e.getMessage() + "\n"
                         + "Failed to instantiate plugin '" + descriptor.getClassName() + "' for id '" + descriptor
                         + "'.";
                 plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         }
         return plugin;

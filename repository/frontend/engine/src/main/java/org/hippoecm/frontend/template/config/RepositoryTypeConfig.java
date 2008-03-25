@@ -129,6 +129,10 @@ public class RepositoryTypeConfig implements TypeConfig {
         return new Descriptor(pluginNode);
     }
 
+    public TypeDescriptor createTypeDescriptor(Node node) throws RepositoryException {
+        return createDescriptor(node).type;
+    }
+
     protected class Descriptor implements IClusterable {
         private static final long serialVersionUID = 1L;
 

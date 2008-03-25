@@ -279,11 +279,32 @@
           <sv:value>true</sv:value>
         </sv:property>
       </sv:node>
-
+      
+      <!-- options -->
+      <sv:node sv:name="hippo:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:name" sv:type="String">
+          <sv:value>options</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:path" sv:type="String">
+          <sv:value>hippo:options</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+      </sv:node>
+      
     </sv:node>
-    <!-- end "Template" type -->
+  </sv:node>
+  <!-- end "Template" type -->
 
-    <!-- "TemplateItem" type -->
+  <!-- "TemplateItem" type -->
+  <sv:node sv:name="hippo:templateitem">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
     <sv:node sv:name="hippo:templateitem">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:nodetype</sv:value>
@@ -349,6 +370,22 @@
         </sv:property>
         <sv:property sv:name="hippo:multiple" sv:type="Boolean">
           <sv:value>true</sv:value>
+        </sv:property>
+      </sv:node>
+      
+      <!-- parameters -->
+      <sv:node sv:name="hippo:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:name" sv:type="String">
+          <sv:value>parameters</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:path" sv:type="String">
+          <sv:value>hippo:parameters</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>hippo:parameters</sv:value>
         </sv:property>
       </sv:node>
 

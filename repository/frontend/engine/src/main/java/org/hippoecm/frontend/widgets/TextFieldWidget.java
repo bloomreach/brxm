@@ -15,15 +15,35 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
 public class TextFieldWidget extends AjaxUpdatingWidget {
     private static final long serialVersionUID = 1L;
 
+    private String size;
+
     public TextFieldWidget(String id, IModel model) {
         super(id, model);
-        addFormField(new TextField("widget", this.getModel()));
+        addFormField(new TextField("widget", this.getModel()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onComponentTag(final ComponentTag tag) {
+                if (getSize() != null) {
+                    tag.put("size", getSize());
+                }
+                super.onComponentTag(tag);
+            }
+        });
     }
 
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getSize() {
+        return size;
+    }
 }

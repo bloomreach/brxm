@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugins.template.field.NodeFieldPlugin;
 import org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.template.TemplateDescriptor;
@@ -43,6 +44,7 @@ import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TemplateConfig;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -70,17 +72,22 @@ public class TemplateListPlugin extends Plugin {
             log.error(ex.getMessage());
         }
 
-        TemplateEngine engine = parentPlugin.getPluginManager().getTemplateEngine();
-        TemplateConfig config = engine.getTemplateConfig();
         List<TemplateDescriptor> templateList = new LinkedList<TemplateDescriptor>();
-        for (TypeDescriptor type : engine.getTypeConfig().getTypes("system")) {
-            TemplateDescriptor template = config.getTemplate(type);
-            if (template != null) {
-                templateList.add(template);
+        ParameterValue templateValue = pluginDescriptor.getParameter("templates");
+        if (templateValue != null) {
+            TemplateEngine engine = parentPlugin.getPluginManager().getTemplateEngine();
+            TemplateConfig templateConfig = engine.getTemplateConfig();
+            TypeConfig defaultTypeConfig = engine.getTypeConfig();
+            for (String type : templateValue.getStrings()) {
+                TypeDescriptor typeDescriptor = defaultTypeConfig.getTypeDescriptor(type);
+                TemplateDescriptor template = templateConfig.getTemplate(typeDescriptor);
+                if (template != null) {
+                    templateList.add(template);
+                }
             }
         }
 
-        add(new AbstractView("templates", new ListDataProvider(templateList), this) {
+        AbstractView templates = new AbstractView("templates", new ListDataProvider(templateList), this) {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(Item item) {
@@ -105,7 +112,9 @@ public class TemplateListPlugin extends Plugin {
             public void destroyItem(Item item) {
                 // nothing
             }
-        });
+        };
+        templates.populate();
+        add(templates);
     }
 
     @Override

@@ -40,6 +40,7 @@ import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public class TabsPlugin extends Plugin {
         dialogWindow = new DialogWindow("onclose", null, getBottomChannel(), proxy);
         add(dialogWindow);
 
-        List<String> parameter = pluginDescriptor.getParameter("editor");
+        List<String> parameter = pluginDescriptor.getParameter("editor").getStrings();
         if (parameter != null && parameter.size() > 0) {
             editPerspective = parameter.get(0);
         } else {
@@ -157,7 +158,7 @@ public class TabsPlugin extends Plugin {
                     // set the title to the name of the node
                     List<String> titleParam = new LinkedList<String>();
                     titleParam.add(model.getNode().getName());
-                    descriptor.addParameter("title", titleParam);
+                    descriptor.addParameter("title", new ParameterValue(titleParam));
                 } catch (RepositoryException ex) {
                     log.error("Couldn't obtain name of item " + ex.getMessage());
                 }
@@ -217,6 +218,16 @@ public class TabsPlugin extends Plugin {
         super.handle(request);
     }
 
+    @Override
+    public void onDetach() {
+        Iterator<Tab> tabIter = tabbedPanel.getTabs().iterator();
+        while (tabIter.hasNext()) {
+            Tab tabbie = tabIter.next();
+            tabbie.detach();
+        }
+        super.onDetach();
+    }
+
     Tab getPluginTab(String pluginPath) {
         Plugin parent = this;
         while (parent.getParentPlugin() != null) {
@@ -261,7 +272,7 @@ public class TabsPlugin extends Plugin {
             PluginDescriptor descriptor = getPlugin().getDescriptor();
             String title = descriptor.getWicketId();
             if (descriptor.getParameter("title") != null) {
-                title = descriptor.getParameter("title").get(0);
+                title = descriptor.getParameter("title").getStrings().get(0);
             }
             return new Model(title);
         }
@@ -316,6 +327,10 @@ public class TabsPlugin extends Plugin {
                 lastTab.select();
             }
 
+        }
+
+        public void detach() {
+            plugin.detach();
         }
 
         public void popup(AjaxRequestTarget target, RepositoryException e) {

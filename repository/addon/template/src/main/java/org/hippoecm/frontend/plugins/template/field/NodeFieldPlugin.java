@@ -28,7 +28,6 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.ItemDescriptor;
-import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.NodeTemplateProvider;
 import org.hippoecm.frontend.template.model.TemplateModel;
@@ -50,10 +49,9 @@ public class NodeFieldPlugin extends Plugin {
         ItemModel model = (ItemModel) getPluginModel();
         ItemDescriptor descriptor = (ItemDescriptor) model.getDescriptor();
 
-        TypeConfig config = parentPlugin.getPluginManager().getTemplateEngine().getTypeConfig(); 
-        field = config.getTypeDescriptor(descriptor.getType()).getField(descriptor.getField());
+        field = descriptor.getTemplate().getTypeDescriptor().getField(descriptor.getField());
 
-        List<String> captions = pluginDescriptor.getParameter("caption");
+        List<String> captions = pluginDescriptor.getParameter("caption").getStrings();
         if(captions != null && captions.size() > 0) {
             add(new Label("name", captions.get(0)));
         } else {
@@ -61,7 +59,7 @@ public class NodeFieldPlugin extends Plugin {
         }
 
         provider = new NodeTemplateProvider(field, getPluginManager().getTemplateEngine(), model.getNodeModel());
-        view = new TemplateView("field", provider, this, provider.getDescriptor());
+        view = new TemplateView("field", provider, this, provider.getDescriptor(), pluginDescriptor.getParameters());
         add(view);
 
         add(createAddLink());

@@ -23,12 +23,14 @@ import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.INotificationListener;
 import org.hippoecm.frontend.plugin.channel.IRequestHandler;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,17 +67,20 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         }
 
         cssClasses = null;
-        List<String> classes = pluginDescriptor.getParameter("css");
+        ParameterValue classes = pluginDescriptor.getParameter("css");
         if (classes != null) {
             cssClasses = "";
-            for (String cssClass : classes) {
+            for (String cssClass : classes.getStrings()) {
                 cssClasses = cssClasses + " " + cssClass;
             }
         }
 
-        List<String> markupIds = pluginDescriptor.getParameter("id");
-        if (markupIds != null && markupIds.size() == 1) {
-            setMarkupId(markupIds.get(0));
+        ParameterValue markupValue = pluginDescriptor.getParameter("id");
+        if (markupValue != null) {
+            List<String> markupIds = markupValue.getStrings();
+            if (markupIds.size() == 1) {
+                setMarkupId(markupIds.get(0));
+            }
         }
     }
 
@@ -150,6 +155,14 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
             return child.getChildPlugin(pluginPath.substring(idx + 1));
         } else {
             return child;
+        }
+    }
+
+    public Home getPluginPage() {
+        if (parentPlugin != null) {
+            return parentPlugin.getPluginPage();
+        } else {
+            return (Home) findParent(Home.class);
         }
     }
 

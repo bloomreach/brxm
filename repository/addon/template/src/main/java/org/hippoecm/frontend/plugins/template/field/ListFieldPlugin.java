@@ -51,7 +51,7 @@ public class ListFieldPlugin extends Plugin {
     public ListFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel fieldModel, Plugin parentPlugin) {
         super(pluginDescriptor, new ItemModel(fieldModel), parentPlugin);
 
-        List<String> captions = pluginDescriptor.getParameter("caption");
+        List<String> captions = pluginDescriptor.getParameter("caption").getStrings();
         if(captions != null && captions.size() > 0) {
             add(new Label("name", captions.get(0)));
         } else {
@@ -125,6 +125,7 @@ public class ListFieldPlugin extends Plugin {
 
         public ListView(String wicketId, WildcardFieldProvider provider) {
             super(wicketId, provider, ListFieldPlugin.this);
+            populate();
         }
 
         @Override

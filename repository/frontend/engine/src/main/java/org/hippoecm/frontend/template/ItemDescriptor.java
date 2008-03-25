@@ -33,21 +33,21 @@ public class ItemDescriptor implements IClusterable {
     private PluginDescriptor plugin;
 
     private int id;
-    private String type;
     private String field;
 
+    private TemplateDescriptor template;
     private LinkedList<ItemDescriptor> items;
 
     public ItemDescriptor(int id, PluginDescriptor plugin) {
         this.id = id;
         this.plugin = plugin;
-        this.type = this.field = null;
+        this.field = null;
+        this.template = null;
         this.items = new LinkedList<ItemDescriptor>();
     }
 
     public ItemDescriptor(Map<String, Object> map) {
         this.id = ((Integer) map.get("id")).intValue();
-        this.type = (String) map.get("type");
         this.field = (String) map.get("field");
 
         this.items = new LinkedList<ItemDescriptor>();
@@ -60,12 +60,16 @@ public class ItemDescriptor implements IClusterable {
         if (pluginMap != null) {
             this.plugin = new PluginDescriptor(pluginMap);
         }
+
+        Map<String, Object> templateMap = (Map<String, Object>) map.get("template");
+        if (templateMap != null) {
+            this.template = new TemplateDescriptor(templateMap);
+        }
     }
 
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", new Integer(getId()));
-        map.put("type", getType());
         map.put("field", getField());
 
         LinkedList<Map<String, Object>> itemList = new LinkedList<Map<String, Object>>();
@@ -78,19 +82,16 @@ public class ItemDescriptor implements IClusterable {
         if (plugin != null) {
             map.put("plugin", plugin.getMapRepresentation());
         }
+
+        TemplateDescriptor template = getTemplate();
+        if (template != null) {
+            map.put("template", template.getMapRepresentation());
+        }
         return map;
     }
 
     public int getId() {
         return id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getField() {
@@ -113,10 +114,21 @@ public class ItemDescriptor implements IClusterable {
         this.plugin = plugin;
     }
 
+    public TemplateDescriptor getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(TemplateDescriptor descriptor) {
+        template = descriptor;
+        for (ItemDescriptor item : getItems()) {
+            item.setTemplate(descriptor);
+        }
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("type", getType()).append("field",
-                getField()).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("template", getTemplate()).append(
+                "field", getField()).toString();
     }
 
     @Override
@@ -128,12 +140,12 @@ public class ItemDescriptor implements IClusterable {
             return true;
         }
         ItemDescriptor itemDescriptor = (ItemDescriptor) object;
-        return new EqualsBuilder().append(id, itemDescriptor.id).append(getType(), itemDescriptor.getType()).append(getField(),
-                itemDescriptor.getField()).isEquals();
+        return new EqualsBuilder().append(id, itemDescriptor.id).append(getTemplate(), itemDescriptor.getTemplate())
+                .append(getField(), itemDescriptor.getField()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(421, 23).append(getType()).append(getField()).toHashCode();
+        return new HashCodeBuilder(421, 23).append(getTemplate()).append(getField()).toHashCode();
     }
 }

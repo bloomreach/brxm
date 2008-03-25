@@ -45,7 +45,7 @@ public class PreviewItemPlugin extends Plugin {
         assert (children.size() == 1);
 
         ItemDescriptor child = new ItemChildrenFilter(children.get(0));
-        ItemModel itemModel = new ItemModel(child, model.getNodeModel());
+        final ItemModel itemModel = new ItemModel(child, model.getNodeModel());
         TemplateEngine engine = parentPlugin.getPluginManager().getTemplateEngine();
         add(item = engine.createItem("item", itemModel, this));
 
@@ -63,6 +63,14 @@ public class PreviewItemPlugin extends Plugin {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 sendRequest("down", target);
+            }
+        });
+        add(new AjaxLink("edit") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                sendRequest("focus", target);
             }
         });
         add(new AjaxLink("remove") {

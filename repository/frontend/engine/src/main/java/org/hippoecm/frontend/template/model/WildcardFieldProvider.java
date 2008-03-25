@@ -52,8 +52,7 @@ public class WildcardFieldProvider extends AbstractProvider<WildcardModel> {
         super(nodeModel);
         this.descriptor = item;
         this.config = config;
-        TypeDescriptor parent = config.getTypeDescriptor(item.getType());
-        this.field = parent.getField(item.getField());
+        this.field = item.getTemplate().getTypeDescriptor().getField(item.getField());
         this.type = config.getTypeDescriptor(this.field.getType());
         this.lastId = 0;
     }
