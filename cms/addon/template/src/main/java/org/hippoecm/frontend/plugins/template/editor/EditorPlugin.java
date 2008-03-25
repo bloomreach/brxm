@@ -24,6 +24,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 
 public class EditorPlugin extends Plugin {
@@ -51,9 +52,20 @@ public class EditorPlugin extends Plugin {
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
+            form.destroy();
             replace(form = new EditorForm("form", nodeModel, this));
             notification.getContext().addRefresh(this);
         }
         super.receive(notification);
+    }
+
+    @Override
+    public void handle(Request request) {
+        if ("template.select".equals(request.getOperation())) {
+            Channel bottom = getBottomChannel();
+            bottom.publish(bottom.createNotification(request));
+            return;
+        }
+        super.handle(request);
     }
 }

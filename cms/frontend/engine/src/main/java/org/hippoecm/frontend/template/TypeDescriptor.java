@@ -88,6 +88,7 @@ public class TypeDescriptor implements IClusterable {
         for (Map.Entry<String, FieldDescriptor> entry : getFields().entrySet()) {
             fieldMap.put(entry.getKey(), entry.getValue().getMapRepresentation());
         }
+        map.put("fields", fieldMap);
         return map;
     }
 

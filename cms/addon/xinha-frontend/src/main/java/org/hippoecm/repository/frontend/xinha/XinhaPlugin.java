@@ -16,7 +16,6 @@
 package org.hippoecm.repository.frontend.xinha;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,19 +29,21 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.model.TemplateModel;
 
 public class XinhaPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-    
+
     public final static String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
-    
+
     private JcrPropertyValueModel valueModel;
 
     private String content;
@@ -57,7 +58,27 @@ public class XinhaPlugin extends Plugin {
         TemplateModel model = (TemplateModel) getPluginModel();
         valueModel = model.getJcrPropertyValueModel();
 
-        editor = new TextArea("value", valueModel);
+        editor = new TextArea("value", valueModel) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onComponentTag(final ComponentTag tag) {
+                PluginDescriptor descriptor = getDescriptor();
+                StringBuilder sb = new StringBuilder();
+                ParameterValue value = descriptor.getParameter("width");
+                if (value != null) {
+                    sb.append("width: ").append(value.getStrings().get(0)).append(";");
+                }
+                value = descriptor.getParameter("height");
+                if (value != null) {
+                    sb.append("height: ").append(value.getStrings().get(0)).append(";");
+                }
+                if (sb.length() > 0) {
+                    tag.put("style", sb.toString());
+                }
+                super.onComponentTag(tag);
+            }
+        };
 
         postBehavior = new AbstractDefaultAjaxBehavior() {
             private static final long serialVersionUID = 1L;
@@ -66,7 +87,7 @@ public class XinhaPlugin extends Plugin {
             protected void respond(AjaxRequestTarget target) {
                 RequestCycle requestCycle = RequestCycle.get();
                 boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
-                if (save) {                    
+                if (save) {
                     editor.processInput();
                     target.appendJavascript(XINHA_SAVED_FLAG);
                 }
@@ -93,7 +114,7 @@ public class XinhaPlugin extends Plugin {
         //does provide a way to change configurations dynamically without implementing cache
         configuration = new Configuration(pluginDescriptor.getParameters());
 
-        Page page = parentPlugin.getPage();
+        Page page = getPluginPage();
         for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
             IBehavior behavior = (IBehavior) iter.next();
             if (behavior instanceof XinhaEditorBehavior) {
@@ -159,22 +180,25 @@ public class XinhaPlugin extends Plugin {
         private List<String> toolbarItems;
         private List<String> styleSheets;
 
-        public Configuration(Map<String, List<String>> parameters) {
-            
+        public Configuration(Map<String, ParameterValue> parameters) {
+
             for (String paramKey : parameters.keySet()) {
                 if (paramKey.startsWith(XINHA_PREFIX)) {
-                    List<String> paramValues = parameters.get(paramKey);
+                    List<String> paramValues = parameters.get(paramKey).getStrings();
                     if (paramKey.equals(XINHA_TOOLBAR)) {
                         toolbarItems = paramValues;
-                    } else if(paramKey.equals(XINHA_CSS)) {
+                    } else if (paramKey.equals(XINHA_CSS)) {
                         styleSheets = paramValues;
-                    }else if (paramKey.equals(XINHA_PLUGINS)) {
+                    } else if (paramKey.equals(XINHA_PLUGINS)) {
                         for (String pluginName : paramValues) {
                             PluginConfiguration pluginConfig = new PluginConfiguration(pluginName);
-                            List<String> pluginProperties = parameters.get(pluginName);
-                            if (pluginProperties != null) {
-                                for (String pluginProperty : pluginProperties) {
-                                    pluginConfig.addProperty(pluginProperty);
+                            ParameterValue pluginParameter = parameters.get(pluginName);
+                            if (pluginParameter != null) {
+                                List<String> pluginProperties = pluginParameter.getStrings();
+                                if (pluginProperties != null) {
+                                    for (String pluginProperty : pluginProperties) {
+                                        pluginConfig.addProperty(pluginProperty);
+                                    }
                                 }
                             }
                             addPluginConfiguration(pluginConfig);
@@ -198,11 +222,11 @@ public class XinhaPlugin extends Plugin {
                 }
             }
         }
-        
+
         public List<String> getToolbarItems() {
             return toolbarItems;
         }
-        
+
         public List<String> getStyleSheets() {
             return styleSheets;
         }

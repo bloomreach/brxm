@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.template;
 
+import java.util.Map;
+
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -22,6 +24,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.PluginManager;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
@@ -56,11 +59,21 @@ public class TemplateEngine implements IClusterable {
         return manager.getChannelFactory();
     }
 
-    public Plugin createTemplate(String wicketId, TemplateModel model, Plugin parentPlugin) {
+    public Plugin createTemplate(String wicketId, TemplateModel model, Plugin parentPlugin,
+            Map<String, ParameterValue> config) {
         TemplateDescriptor templateDescriptor = model.getTemplateDescriptor();
         PluginDescriptor pluginDescriptor = templateDescriptor.getPlugin();
         pluginDescriptor.setWicketId(wicketId);
 
+        if (config != null) {
+            Map<String, ParameterValue> parameters = pluginDescriptor.getParameters();
+            for (Map.Entry<String, ParameterValue> entry : config.entrySet()) {
+                if (entry.getKey().startsWith("template.")) {
+                    String key = entry.getKey().substring("template.".length());
+                    parameters.put(key, entry.getValue());
+                }
+            }
+        }
         return createPlugin(pluginDescriptor, model, parentPlugin);
     }
 

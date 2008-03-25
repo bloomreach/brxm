@@ -27,6 +27,7 @@ public class ItemView extends AbstractView {
 
     public ItemView(String wicketId, ItemProvider provider, Plugin plugin) {
         super(wicketId, provider, plugin);
+        populate();
     }
 
     @Override

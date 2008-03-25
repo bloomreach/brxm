@@ -56,7 +56,7 @@ public class LinkPickerPlugin extends Plugin {
         ChannelFactory factory = getPluginManager().getChannelFactory();
 
         if (pluginDescriptor.getParameter("nodetypes") != null) {
-            nodetypes.addAll(pluginDescriptor.getParameter("nodetypes"));
+            nodetypes.addAll(pluginDescriptor.getParameter("nodetypes").getStrings());
         }
 
         if (nodetypes.size() == 0) {

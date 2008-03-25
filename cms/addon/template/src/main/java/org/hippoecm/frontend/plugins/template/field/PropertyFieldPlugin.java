@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.template.field;
 
-import java.util.List;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -26,9 +24,9 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.ItemDescriptor;
-import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.template.model.ValueTemplateProvider;
@@ -50,19 +48,18 @@ public class PropertyFieldPlugin extends Plugin {
         ItemModel model = (ItemModel) getPluginModel();
         ItemDescriptor descriptor = (ItemDescriptor) model.getDescriptor();
 
-        TypeConfig config = parentPlugin.getPluginManager().getTemplateEngine().getTypeConfig(); 
-        field = config.getTypeDescriptor(descriptor.getType()).getField(descriptor.getField());
+        field = descriptor.getTemplate().getTypeDescriptor().getField(descriptor.getField());
 
-        List<String> captions = pluginDescriptor.getParameter("caption");
-        if(captions != null && captions.size() > 0) {
-            add(new Label("name", captions.get(0)));
+        ParameterValue captionValue = pluginDescriptor.getParameter("caption");
+        if(captionValue != null && captionValue.getStrings() != null && captionValue.getStrings().size() > 0) {
+            add(new Label("name", captionValue.getStrings().get(0)));
         } else {
             add(new Label("name", ""));
         }
 
-        provider = new ValueTemplateProvider(field, getPluginManager().getTemplateEngine(), model.getNodeModel(),
-                field.getPath());
-        view = new ValueView("values", provider, this);
+        provider = new ValueTemplateProvider(field, getPluginManager().getTemplateEngine(), model.getNodeModel(), field
+                .getPath());
+        view = new ValueView("values", provider, this, pluginDescriptor.getParameters());
         add(view);
 
         add(createAddLink());

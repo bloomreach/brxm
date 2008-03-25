@@ -35,6 +35,31 @@
       <sv:property sv:name="hippo:renderer" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
       </sv:property>
+      <sv:node sv:name="hippo:options">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>hippo:parameters</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>size</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>template.size</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
     </sv:node>
   </sv:node>
 
@@ -66,6 +91,34 @@
     </sv:node>
   </sv:node>
 
+  <sv:node sv:name="Long">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="Long">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="Binary">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="Binary">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
   <sv:node sv:name="Html">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
@@ -77,13 +130,12 @@
       <sv:property sv:name="hippo:renderer" sv:type="String">
         <sv:value>org.hippoecm.repository.frontend.xinha.XinhaPlugin</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
       <sv:node sv:name="hippo:parameters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:parameters</sv:value>
-        </sv:property>
-        <sv:property sv:name="Xinha.config" sv:type="String">
-          <sv:value>width=500px</sv:value>
-          <sv:value>height=300px</sv:value>
         </sv:property>
         <sv:property sv:name="Xinha.config.toolbar" sv:type="String">
           <sv:value>popupeditor</sv:value>
@@ -92,7 +144,7 @@
           <sv:value>bold</sv:value>
           <sv:value>italic</sv:value>
           <sv:value>underline</sv:value>
-        </sv:property>  
+        </sv:property>
         <sv:property sv:name="Xinha.plugins" sv:type="String">
           <sv:value>AutoSave</sv:value>
           <sv:value>Linker</sv:value>
@@ -100,6 +152,48 @@
         <sv:property sv:name="AutoSave" sv:type="String">
           <sv:value>timeoutLength=1500</sv:value>
         </sv:property>
+      </sv:node>
+      <sv:node sv:name="hippo:options">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>hippo:parameters</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>width</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>template.width</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>CssSize</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>height</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>template.height</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>CssSize</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
     </sv:node>
   </sv:node>
@@ -135,6 +229,31 @@
         </sv:property>
         <sv:property sv:name="nodetypes" sv:type="String">
           <sv:value>hippo:handle</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="CssSize">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="CssSize">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:template</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:parameters">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:parameters</sv:value>
+        </sv:property>
+        <sv:property sv:name="size" sv:type="String">
+          <sv:value>10</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

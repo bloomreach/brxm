@@ -27,11 +27,7 @@ public class PluginReference extends LoadableDetachableModel {
     public PluginReference(Plugin plugin) {
         super(plugin);
 
-        Plugin root = plugin;
-        while (root.getParentPlugin() != null) {
-            root = root.getParentPlugin();
-        }
-        page = (Home) root.findParent(Home.class);
+        page = plugin.getPluginPage();
         pluginPath = plugin.getPluginPath();
     }
 

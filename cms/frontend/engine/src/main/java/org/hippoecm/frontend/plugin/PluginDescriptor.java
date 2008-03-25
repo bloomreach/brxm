@@ -25,32 +25,35 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 
 public class PluginDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     private String wicketId;
     private String className;
-    private Map<String, List<String>> parameters;
+    private Map<String, ParameterValue> parameters;
 
     public PluginDescriptor(String wicketId, String className) {
         this.wicketId = wicketId;
         this.className = className;
-        parameters = new HashMap<String, List<String>>();
+        parameters = new HashMap<String, ParameterValue>();
     }
 
     public PluginDescriptor(Map<String, Object> map) {
         this.wicketId = (String) map.get("wicketId");
         this.className = (String) map.get("className");
-        this.parameters = (Map<String, List<String>>) map.get("parameters");
+        this.parameters = (Map<String, ParameterValue>) map.get("parameters");
     }
 
     public PluginDescriptor clone() {
         try {
-            PluginDescriptor copy = (PluginDescriptor) super.clone();
-            copy.parameters = new HashMap<String, List<String>>();
-            copy.parameters.putAll(parameters);
-            return copy;
+            PluginDescriptor clone = (PluginDescriptor) super.clone();
+            clone.parameters = new HashMap<String, ParameterValue>();
+            for (Map.Entry<String, ParameterValue> entry : parameters.entrySet()) {
+                clone.parameters.put(entry.getKey(), entry.getValue().clone());
+            }
+            return clone;
         } catch (CloneNotSupportedException ex) {
             // cannot occur
         }
@@ -75,16 +78,20 @@ public class PluginDescriptor implements IClusterable, Cloneable {
         this.className = className;
     }
 
-    public void addParameter(String key, List<String> value) {
+    public void addParameter(String key, ParameterValue value) {
         parameters.put(key, value);
     }
 
-    public List<String> getParameter(String key) {
+    public ParameterValue getParameter(String key) {
         return parameters.get(key);
     }
 
-    public Map<String, List<String>> getParameters() {
+    public Map<String, ParameterValue> getParameters() {
         return parameters;
+    }
+
+    public void setParameters(Map<String, ParameterValue> map) {
+        parameters = map;
     }
 
     // getters
@@ -126,5 +133,4 @@ public class PluginDescriptor implements IClusterable, Cloneable {
     public int hashCode() {
         return new HashCodeBuilder(17, 313).append(wicketId).append(className).toHashCode();
     }
-
 }

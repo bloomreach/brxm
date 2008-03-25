@@ -40,7 +40,7 @@ public class FilterPlugin extends Plugin {
         super(descriptor, new JcrNodeModel(model), parentPlugin);
 
         handle = null;
-        List<String> ops = descriptor.getParameter("handle");
+        List<String> ops = descriptor.getParameter("handle").getStrings();
         if (ops != null) {
             handle = new HashSet<String>(ops);
         } else {

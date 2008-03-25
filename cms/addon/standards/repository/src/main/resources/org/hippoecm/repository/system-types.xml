@@ -156,5 +156,24 @@
     </sv:node>
   </sv:node>
   <!-- end Link type -->
-
+  
+  <!--  CssSize type -->
+  <sv:node sv:name="CssSize">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="CssSize">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:nodetype</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:type" sv:type="String">
+        <sv:value>String</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <!-- end Link type -->
+  
 </sv:node>

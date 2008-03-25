@@ -19,6 +19,7 @@ import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -37,7 +38,14 @@ public class ValueTemplatePlugin extends Plugin {
         TemplateModel model = (TemplateModel) getPluginModel();
         valueModel = model.getJcrPropertyValueModel();
 
-        add(new TextFieldWidget("value", valueModel));
+        TextFieldWidget widget = new TextFieldWidget("value", valueModel);
+        if (pluginDescriptor.getParameter("size") != null) {
+            ParameterValue parameter = pluginDescriptor.getParameter("size");
+            if (parameter.getStrings().size() == 1) {
+                widget.setSize(parameter.getStrings().get(0));
+            }
+        }
+        add(widget);
 
         setOutputMarkupId(true);
     }

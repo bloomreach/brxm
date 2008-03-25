@@ -53,6 +53,10 @@ public class EditorForm extends Form {
         add(template = createTemplate());
     }
 
+    public void destroy() {
+        template.destroy();
+    }
+
     @Override
     public Component setModel(IModel model) {
         super.setModel(model);
@@ -72,7 +76,7 @@ public class EditorForm extends Form {
                 TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(),
                         model.getNode().getName(), model.getNode().getIndex());
 
-                return engine.createTemplate("template", templateModel, plugin);
+                return engine.createTemplate("template", templateModel, plugin, null);
             } else {
                 PluginDescriptor descriptor = new PluginDescriptor("template", EmptyPlugin.class.getName());
                 return new PluginFactory(plugin.getPluginManager()).createPlugin(descriptor, null, plugin);

@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.template.field;
 
+import java.util.Map;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.template.model.ValueTemplateProvider;
@@ -32,8 +35,12 @@ public class ValueView extends AbstractView {
 
     static final Logger log = LoggerFactory.getLogger(ValueView.class);
 
-    public ValueView(String id, ValueTemplateProvider dataProvider, PropertyFieldPlugin plugin) {
+    private Map<String, ParameterValue> config;
+
+    public ValueView(String id, ValueTemplateProvider dataProvider, PropertyFieldPlugin plugin, Map<String, ParameterValue> config) {
         super(id, dataProvider, plugin);
+        this.config = config;
+        populate();
     }
 
     // Implement DataView
@@ -44,7 +51,7 @@ public class ValueView extends AbstractView {
 
         PropertyFieldPlugin plugin = (PropertyFieldPlugin) getPlugin();
         TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
-        item.add(engine.createTemplate("value", templateModel, plugin));
+        item.add(engine.createTemplate("value", templateModel, plugin, config));
 
         //Remove value link
         if (!provider.getDescriptor().isMandatory() || (provider.size() > 0)) {

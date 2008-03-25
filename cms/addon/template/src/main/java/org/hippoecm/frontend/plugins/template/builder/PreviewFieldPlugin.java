@@ -30,6 +30,7 @@ import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.error.ErrorPlugin;
@@ -55,7 +56,7 @@ public class PreviewFieldPlugin extends Plugin {
     private Plugin child;
 
     public PreviewFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, pluginModel, parentPlugin);
+        super(pluginDescriptor, new ItemModel(pluginModel), parentPlugin);
 
         child = createChild();
         add(child);
@@ -92,7 +93,7 @@ public class PreviewFieldPlugin extends Plugin {
             TemplateModel templateModel = new TemplateModel(proxy, prototypeModel.getParentModel(),
                     prototype.getName(), prototype.getIndex());
 
-            child = engine.createTemplate("template", templateModel, this);
+            child = engine.createTemplate("template", templateModel, this, null);
 
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -154,6 +155,15 @@ public class PreviewFieldPlugin extends Plugin {
 
                 request.getContext().addRefresh(this);
             }
+            return;
+        } else if ("focus".equals(request.getOperation())) {
+            String path = (String) request.getModel().getMapRepresentation().get("plugin");
+            JcrNodeModel itemNodeModel = new JcrNodeModel(resolvePath(path));
+
+            Channel top = getTopChannel();
+            Request select = top.createRequest("template.select", itemNodeModel);
+            select.setContext(request.getContext());
+            top.send(select);
             return;
         } else if ("remove".equals(request.getOperation())) {
             String path = (String) request.getModel().getMapRepresentation().get("plugin");
@@ -286,10 +296,17 @@ public class PreviewFieldPlugin extends Plugin {
 
         @Override
         public List<ItemDescriptor> getItems() {
+            // during construction of TemplateDescriptor, delegate is not available
+            if (delegate == null) {
+                return new ArrayList<ItemDescriptor>(0);
+            }
+
             List<ItemDescriptor> children = delegate.getItems();
             List<ItemDescriptor> filtered = new ArrayList<ItemDescriptor>(children.size());
             for (ItemDescriptor child : children) {
-                filtered.add(new PreviewItemPlugin.ItemFilter(child));
+                ItemDescriptor filter = new PreviewItemPlugin.ItemFilter(child);
+                filter.setTemplate(this);
+                filtered.add(filter);
             }
             return filtered;
         }

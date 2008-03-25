@@ -42,7 +42,7 @@ public class WildcardModel extends ItemModel {
     public WildcardModel(ItemDescriptor descriptor, TypeConfig config, JcrNodeModel parent, String path, int id) {
         super(descriptor, parent);
 
-        field = config.getTypeDescriptor(descriptor.getType()).getField(descriptor.getField()).clone();
+        field = descriptor.getTemplate().getTypeDescriptor().getField(descriptor.getField()).clone();
         field.setPath(path);
 
         this.type = config.getTypeDescriptor(field.getType());

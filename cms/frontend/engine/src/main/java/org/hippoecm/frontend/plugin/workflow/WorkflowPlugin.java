@@ -80,6 +80,7 @@ public class WorkflowPlugin extends Plugin {
                 super.destroyItem(item);
             }
         };
+        view.populate();
         add(view);
     }
 
