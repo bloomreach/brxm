@@ -39,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FolderTreeNode extends AbstractTreeNode {
+    private static final String ROOT_NODE_DISPLAYNAME = "CMS space";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
@@ -114,6 +116,9 @@ public class FolderTreeNode extends AbstractTreeNode {
         String result = "null";
         if (node != null) {
             try {
+                if(node.isSame(node.getAncestor(0))) {
+                    return ROOT_NODE_DISPLAYNAME;
+                }
                 result = ISO9075Helper.decodeLocalName(node.getDisplayName());
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
