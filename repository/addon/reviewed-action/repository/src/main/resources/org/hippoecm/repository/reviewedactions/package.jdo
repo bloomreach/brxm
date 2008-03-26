@@ -26,7 +26,7 @@
       <field name="draft" column="../{.}[hippostd:state='draft']"/>
       <field name="unpublished" column="../{.}[hippostd:state='unpublished']"/>
       <field name="published" column="../{.}[hippostd:state='published']"/>
-      <field name="current" column="../request[hippostd:state='current']"/>
+      <field name="current" column="../request[type='publish']"/>
     </class>
     <class name="FullRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
