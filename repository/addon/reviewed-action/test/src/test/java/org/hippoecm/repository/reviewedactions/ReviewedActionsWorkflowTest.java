@@ -217,7 +217,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
         {
             node = Utilities.getNode(root, "documents/myarticle/myarticle[hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            workflow.requestDeletion();
+            //workflow.requestDeletion();
             session.save();
             session.refresh(true);
             //Utilities.dump(root.getNode("documents"));
