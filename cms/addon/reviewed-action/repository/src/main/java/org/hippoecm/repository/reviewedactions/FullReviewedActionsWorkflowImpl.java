@@ -72,7 +72,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUsername());
         } else {
-            throw new WorkflowException("publication request already pending");
+            throw new WorkflowException("request deletion failure");
         }
     }
 
