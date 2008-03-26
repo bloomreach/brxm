@@ -178,6 +178,8 @@ public class RedefineNodetypeTest extends TestCase {
         Node nsNode = session.getRootNode().getNode("hippo:configuration");
         nsNode = nsNode.getNode("hippo:namespaces");
         nsNode = nsNode.addNode("hippotest2", HippoNodeType.NT_NAMESPACE);
+        nsNode.addMixin("mix:referenceable");
+        nsNode.getParent().save();
 
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         Workflow wf = wfmgr.getWorkflow("internal", nsNode);
