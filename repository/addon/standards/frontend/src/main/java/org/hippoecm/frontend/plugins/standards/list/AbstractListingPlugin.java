@@ -74,23 +74,23 @@ public abstract class AbstractListingPlugin extends Plugin {
     protected List<IStyledColumn> columns;
 
     public AbstractListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        super(pluginDescriptor, model, parentPlugin);
         this.createTableColumns(pluginDescriptor, (JcrNodeModel) getPluginModel());
     }
 
 
     @Override
     public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation()) || "flush".equals(notification.getOperation())) {
-            IPluginModel nodeModel = notification.getModel();
-            if (!nodeModel.equals(getModel())) {
-                setModel(nodeModel);
-                remove((Component)dataTable);
-                add((Component)getTable(nodeModel));
-                notification.getContext().addRefresh(this);
-            }
+        if ("list".equals(notification.getOperation())) {
+          Object newEntries = notification.getModel().getMapRepresentation().get("entries");
+          Object oldEntries = ((IPluginModel)getModel()).getMapRepresentation().get("entries");
+          if (!newEntries.equals(oldEntries)) {
+              setModel(notification.getModel());
+              remove((Component)dataTable);
+              add((Component)getTable(notification.getModel()));
+              notification.getContext().addRefresh(this);
+          }            
         }
-        // don't propagate the notification to children
     }
 
     public void createTableColumns(PluginDescriptor pluginDescriptor, JcrNodeModel model) {

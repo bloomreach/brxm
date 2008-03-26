@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.standards.list;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 
 public class NodeColumn extends AbstractColumn {
@@ -26,8 +26,6 @@ public class NodeColumn extends AbstractColumn {
 
     protected Channel channel;
     private String nodePropertyName;
-
-
 
     public NodeColumn(IModel displayModel, String nodePropertyName ,Channel channel) {
         super(displayModel, nodePropertyName);
@@ -46,7 +44,7 @@ public class NodeColumn extends AbstractColumn {
      * @return NodeCell
      */
     protected NodeCell getNodeCell(String componentId, IModel model, String nodePropertyName) {
-        return new NodeCell(componentId, (NodeModelWrapper) model, channel, nodePropertyName);
+        return new NodeCell(componentId, (JcrNodeModel)model, channel, nodePropertyName);
     }
 
     public Channel getChannel() {

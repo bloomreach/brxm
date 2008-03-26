@@ -57,7 +57,7 @@ public class BrowserPerspective extends Plugin {
     @Override
     public void handle(Request request) {
         String operation = request.getOperation();
-        if ("select".equals(operation) || "relatives".equals(operation)) {
+        if ("select".equals(operation) || "list".equals(operation)) {
             Channel outgoing = getBottomChannel();
             if (outgoing != null) {
                 outgoing.publish(outgoing.createNotification(request));

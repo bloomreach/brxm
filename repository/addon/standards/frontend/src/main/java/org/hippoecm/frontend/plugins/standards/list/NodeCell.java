@@ -29,7 +29,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNode;
@@ -44,7 +43,7 @@ public class NodeCell extends Panel {
     static final Logger log = LoggerFactory.getLogger(NodeCell.class);
 
 
-    public NodeCell(String id, final NodeModelWrapper model, final Channel channel, String nodePropertyName) {
+    public NodeCell(String id, final JcrNodeModel model, final Channel channel, String nodePropertyName) {
         super(id, model);
         AjaxLink link = new AjaxLink("link", model) {
             private static final long serialVersionUID = 1L;
@@ -63,10 +62,9 @@ public class NodeCell extends Panel {
     /**
      * Override this method if you want to send a different request
      */
-    protected void sendChannelRequest(NodeModelWrapper model, AjaxRequestTarget target, Channel channel) {
+    protected void sendChannelRequest(JcrNodeModel model, AjaxRequestTarget target, Channel channel) {
         // create a "select" request with the node path as a parameter
-        JcrNodeModel nodeModel = ((NodeModelWrapper) this.getModel()).getNodeModel();
-        Request request = channel.createRequest("select", nodeModel);
+        Request request = channel.createRequest("select", model);
         channel.send(request);
         request.getContext().apply(target);
     }
@@ -76,7 +74,7 @@ public class NodeCell extends Panel {
      * jcrNodeModel (like rep:excerpt(.) for a search node cell)
      * @param model
      */
-    protected void addLabel(NodeModelWrapper model, String nodePropertyName, AjaxLink link) {
+    protected void addLabel(JcrNodeModel model, String nodePropertyName, AjaxLink link) {
         if(hasDefaultCustomizedLabels(nodePropertyName)) {
             addDefaultCustomizedLabel(model, nodePropertyName, link);
         }
@@ -137,7 +135,7 @@ public class NodeCell extends Panel {
      * @param nodePropertyName
      * @param link
      */
-    protected void addDefaultCustomizedLabel(NodeModelWrapper model, String nodePropertyName, AjaxLink link) {
+    protected void addDefaultCustomizedLabel(JcrNodeModel model, String nodePropertyName, AjaxLink link) {
         addEmptyLabel(link);
     }
 
