@@ -143,8 +143,6 @@
           <sv:value>date</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>mix:referenceable</sv:value>
-
           <sv:value>Date</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:path" sv:type="String">
