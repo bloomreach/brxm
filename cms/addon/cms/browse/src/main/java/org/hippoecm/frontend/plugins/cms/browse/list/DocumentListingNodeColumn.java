@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugins.standards.list.NodeCell;
 import org.hippoecm.frontend.plugins.standards.list.NodeColumn;
@@ -30,7 +30,7 @@ public class DocumentListingNodeColumn extends NodeColumn {
 
     @Override
     protected NodeCell getNodeCell(String componentId, IModel model, String nodePropertyName) {
-        return new DocumentListingNodeCell(componentId, (NodeModelWrapper) model, channel, nodePropertyName);
+        return new DocumentListingNodeCell(componentId, (JcrNodeModel) model, channel, nodePropertyName);
     }
 
 }
