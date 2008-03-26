@@ -23,6 +23,8 @@ import org.hippoecm.repository.api.WorkflowException;
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
+    private static final long serialVersionUID = 1L;
+
     public FullReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
@@ -78,7 +80,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void requestPublication() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("publication request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.PUBLISH, draft, getWorkflowContext().getUsername());
+            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUsername());
         } else {
             throw new WorkflowException("publication request already pending");
         }
@@ -88,7 +90,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void requestPublication(Date publicationDate) throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("publication request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.PUBLISH, draft, getWorkflowContext().getUsername());
+            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUsername());
         } else {
             throw new WorkflowException("publication request already pending");
         }
