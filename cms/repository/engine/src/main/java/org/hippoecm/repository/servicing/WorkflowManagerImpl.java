@@ -33,6 +33,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -86,6 +87,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             // if the user session has not yet been saved, no workflow is possible
             // as the root session will not be able to find it.  (ItemNotFoundException)
+            
+            if(!item.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+                log.debug("no workflow for node because node is not mix:referenceable");
+                return null;
+            }
+            
             documentManager.getSession().getNodeByUUID(item.getUUID());
 
             log.debug("looking for workflow in category " + category + " for node " + (item == null ? "<none>" : item.getPath()));
