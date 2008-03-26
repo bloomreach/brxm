@@ -30,6 +30,7 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:prototyped</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:prototype" sv:type="Reference">
       <sv:value>94b08333-f530-4124-9484-3bc4b6ed025e</sv:value>
@@ -71,6 +72,7 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:prototyped</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:prototype" sv:type="Reference">
       <sv:value>a7073311-86be-4586-9e12-1a2326151bca</sv:value>
@@ -83,6 +85,7 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:prototyped</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:prototype" sv:type="Reference">
       <sv:value>27477ccb-9c58-48f7-abf1-8950bf1fe380</sv:value>
