@@ -23,25 +23,25 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:prototypefolder</sv:value>
   </sv:property>
-  
-  <!-- "Defaultcontent Document" prototype -->
-  <sv:node sv:name="defaultcontent:simpledocument">
+
+  <!-- "Article" prototype -->
+  <sv:node sv:name="defaultcontent:article">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>a948ad63-792d-4d7c-a9a4-ca256b69a880</sv:value>
+      <sv:value>94b08333-f530-4124-9484-3bc4b6ed025e</sv:value>
     </sv:property>
     
-    <sv:node sv:name="defaultcontent:simpledocument">
+    <sv:node sv:name="defaultcontent:article">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>defaultcontent:simpledocument</sv:value>
+        <sv:value>defaultcontent:article</sv:value>
       </sv:property>
       <sv:property sv:name="defaultcontent:title" sv:type="String">
         <sv:value>title</sv:value>
       </sv:property>
-      <sv:property sv:name="defaultcontent:subject" sv:type="String">
-        <sv:value>subject</sv:value>
+      <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+        <sv:value>introduction</sv:value>
       </sv:property>
       <sv:property sv:name="defaultcontent:body" sv:type="String">
         <sv:value>body</sv:value>
@@ -50,6 +50,71 @@
         <sv:value>unpublished</sv:value>
       </sv:property>
     </sv:node>
+
+  </sv:node>
+
+  <!-- "News" prototype -->
+  <sv:node sv:name="defaultcontent:news">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>a7073311-86be-4586-9e12-1a2326151bca</sv:value>
+    </sv:property>
+    
+    <sv:node sv:name="defaultcontent:news">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>defaultcontent:news</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:title" sv:type="String">
+        <sv:value>title</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:date" sv:type="Date">
+        <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+        <sv:value>introduction</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:body" sv:type="String">
+        <sv:value>body</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+    </sv:node>
+
+  </sv:node>
+
+  <!-- "Event" prototype -->
+  <sv:node sv:name="defaultcontent:event">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>27477ccb-9c58-48f7-abf1-8950bf1fe380</sv:value>
+    </sv:property>
+    
+    <sv:node sv:name="defaultcontent:event">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>defaultcontent:event</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:title" sv:type="String">
+        <sv:value>title</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:date" sv:type="Date">
+        <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+        <sv:value>introduction</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:body" sv:type="String">
+        <sv:value>body</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+    </sv:node>
+
   </sv:node>
 
 </sv:node>
