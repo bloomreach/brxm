@@ -176,9 +176,7 @@ public class FolderTreeNode extends AbstractTreeNode {
                 if (subNode.isNodeType(HippoNodeType.NT_HANDLE) || isReferenceToHandle(subNode)) {
                     result.add(subNode);
                 } else {
-                    if (onlyHandles) {
-                        result.addAll(subNodes(subNode));
-                    } else {
+                    if (!onlyHandles) {
                         result.add(subNode);
                     }
                 }
