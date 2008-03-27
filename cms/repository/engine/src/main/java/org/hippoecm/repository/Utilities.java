@@ -114,27 +114,4 @@ public class Utilities {
     public static void dump(PrintStream ps, Node node) throws RepositoryException {
         dump(ps, node, 0);
     }
-
-    /**
-     * Deprecated from the start, this convenience method is used to look up
-     * a node from a starting ancestor with a relative path, which may contain
-     * an XPATH expression.
-     *
-     * @param parent the ancestor relative to which the path is expressed
-     * @param relPath the relative XPATH
-     * @returns the first node matching the expression or <code>null</code> if
-     *          no match was found
-     * @deprecated
-     */
-    public static Node getNode(Node parent, String relPath) throws RepositoryException {
-        String statement = parent.getPath() + "/" + relPath;
-        while(statement.startsWith("/"))
-            statement = statement.substring(1);
-        if(log.isDebugEnabled())
-            log.debug("getNode "+statement);
-        Query query = parent.getSession().getWorkspace().getQueryManager().createQuery(statement, Query.XPATH);
-        QueryResult result = query.execute();
-        NodeIterator iter = result.getNodes();
-        return iter.hasNext() ? iter.nextNode() : null;
-    }
 }

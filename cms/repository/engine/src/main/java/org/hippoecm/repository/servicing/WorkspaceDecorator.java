@@ -39,18 +39,25 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.jackrabbit.core.SessionImpl;
+import org.xml.sax.ContentHandler;
+
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.apache.jackrabbit.core.SessionImpl;
-import org.xml.sax.ContentHandler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple workspace decorator.
  */
 public class WorkspaceDecorator extends AbstractDecorator implements HippoWorkspace {
     final static String SVN_ID = "$Id$";
+
+    protected final static Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
 
     /** The underlying workspace instance. */
     protected final Workspace workspace;
@@ -81,7 +88,7 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
 		                      sessionImpl.impersonate(new SimpleCredentials("", new char[] { })));
             }
         } catch(RepositoryException ex) {
-            // We could log something, but having rootSession == null here also suffices
+	    logger.warn("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
         }
     }
 
