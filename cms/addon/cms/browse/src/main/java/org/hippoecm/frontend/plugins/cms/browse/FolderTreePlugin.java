@@ -15,11 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
+import javax.swing.tree.TreeNode;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.tree.AbstractTreePlugin;
+import org.hippoecm.frontend.tree.JcrTree;
 
 /**
  * A tree containing nodes of type FolderTreeNode
@@ -32,4 +39,16 @@ public class FolderTreePlugin extends AbstractTreePlugin {
         super(pluginDescriptor, new FolderTreeNode(new JcrNodeModel(model)), parentPlugin);
     }
     
+    @Override
+    protected Tree newTree(JcrTreeModel treeModel) {
+        return new CmsJcrTree("tree", treeModel) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
+                AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
+                FolderTreePlugin.this.onSelect(treeNodeModel, target);
+            }
+        };
+    }
 }

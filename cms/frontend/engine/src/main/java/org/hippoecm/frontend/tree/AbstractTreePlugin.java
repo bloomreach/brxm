@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PluginModel;
@@ -42,7 +43,7 @@ public abstract class AbstractTreePlugin extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(AbstractTreePlugin.class);
 
-    protected JcrTree tree;
+    protected Tree tree;
     protected AbstractTreeNode rootNode;
 
     public AbstractTreePlugin(PluginDescriptor pluginDescriptor, AbstractTreeNode rootNode, Plugin parentPlugin) {
@@ -50,7 +51,16 @@ public abstract class AbstractTreePlugin extends Plugin {
 
         this.rootNode = rootNode;
         JcrTreeModel treeModel = new JcrTreeModel(rootNode);
-        tree = new JcrTree("tree", treeModel) {
+        add(newTree(treeModel));
+    }
+
+    /**
+     * factory method which tree implementation to use. Override to use your own
+     * @param treeModel
+     * @return org.apache.wicket.extensions.markup.html.tree.Tree 
+     */
+    protected Tree newTree(JcrTreeModel treeModel) {
+        return new JcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -59,7 +69,6 @@ public abstract class AbstractTreePlugin extends Plugin {
                 AbstractTreePlugin.this.onSelect(treeNodeModel, target);
             }
         };
-        add(tree);
     }
 
     protected void onSelect(final AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
