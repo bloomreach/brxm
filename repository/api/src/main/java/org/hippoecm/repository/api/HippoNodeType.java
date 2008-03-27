@@ -126,7 +126,6 @@ public interface HippoNodeType {
     final public static String HIPPO_SEQUENCE = "hippo:sequence";
     final public static String HIPPO_SUPERTYPE = "hippo:supertype";
     final public static String HIPPO_TEMPLATE = "hippo:template";
-    final public static String HIPPO_TEMPLATES = "hippo:templates";
     final public static String HIPPO_TYPE = "hippo:type";
     final public static String HIPPO_TYPES = "hippo:types";
     final public static String HIPPO_UUID = "hippo:uuid";
