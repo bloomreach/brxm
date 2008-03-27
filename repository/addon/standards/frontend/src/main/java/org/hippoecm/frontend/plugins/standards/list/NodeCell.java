@@ -42,7 +42,6 @@ public class NodeCell extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(NodeCell.class);
 
-
     public NodeCell(String id, final JcrNodeModel model, final Channel channel, String nodePropertyName) {
         super(id, model);
         AjaxLink link = new AjaxLink("link", model) {
@@ -75,13 +74,12 @@ public class NodeCell extends Panel {
      * @param model
      */
     protected void addLabel(JcrNodeModel model, String nodePropertyName, AjaxLink link) {
-        if(hasDefaultCustomizedLabels(nodePropertyName)) {
+        if (hasDefaultCustomizedLabels(nodePropertyName)) {
             addDefaultCustomizedLabel(model, nodePropertyName, link);
-        }
-        else if (model.getObject() instanceof HippoNode) {
+        } else if (model.getObject() instanceof HippoNode) {
             try {
                 HippoNode n = (HippoNode) model.getObject();
-               
+
                 // hardcoded non-jcrnode properties
                 if (nodePropertyName.equals("name")) {
                     addLabel(link, n.getName());
@@ -91,42 +89,66 @@ public class NodeCell extends Panel {
                     addLabel(link, String.valueOf(n.isLocked()));
                 } else if (nodePropertyName.equals("path")) {
                     addLabel(link, n.getPath());
+                } else if (nodePropertyName.equals("state")) {
+                    Node canonicalNode = n.getCanonicalNode();
+                    String state = "unknown";
+                    for (NodeIterator variantsIterator = canonicalNode.getNodes(); variantsIterator.hasNext();) {
+                        Node variant = variantsIterator.nextNode();
+                        if (variant.getName().equals(canonicalNode.getName())) {
+                            if (variant.hasProperty("hippostd:state")) {
+                                if (variant.getProperty("hippostd:state").equals("published")) {
+                                    if (state.equals("new"))
+                                        state = "live";
+                                    if (state.equals("unknown"))
+                                        state = "live";
+                                } else if (variant.getProperty("hippostd:state").equals("unpublished")) {
+                                    if (state.equals("unknown"))
+                                        state = "new";
+                                } else if (variant.getProperty("hippostd:state").equals("draft")) {
+                                    state = "changed";
+                                }
+                            }
+                        }
+                        addLabel(link, state);
+                    }
                 } else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
-                     if(n.getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE)) {
+                    if (n.getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE)) {
                         NodeIterator nodeIt = n.getNodes();
                         boolean notFound = true;
-                        while(nodeIt.hasNext()) {
+                        while (nodeIt.hasNext()) {
                             Node childNode = nodeIt.nextNode();
-                            if(childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                            if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                                 addLabel(link, childNode.getPrimaryNodeType().getName());
                                 notFound = false;
                                 break;
                             }
                         }
-                        if(notFound) {
+                        if (notFound) {
                             addEmptyLabel(link);
                         }
-                     } else {
-                         addLabel(link, n.getPrimaryNodeType().getName());
-                     }
-                }
-                else {
+                    } else {
+                        addLabel(link, n.getPrimaryNodeType().getName());
+                    }
+                } else {
                     getLabel4Property(n.getProperty(nodePropertyName), link);
                 }
             } catch (ValueFormatException e) {
-                log.debug("Unable to find property for column " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for column " + nodePropertyName
+                        + ". Creating empty label. Reason : " + e.getMessage());
                 addEmptyLabel(link);
             } catch (PathNotFoundException e) {
-                log.debug("Unable to find property for column " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for column " + nodePropertyName
+                        + ". Creating empty label. Reason : " + e.getMessage());
                 addEmptyLabel(link);
             } catch (RepositoryException e) {
-                log.debug("Unable to find property for column " + nodePropertyName + ". Creating empty label. Reason : " + e.getMessage());
+                log.debug("Unable to find property for column " + nodePropertyName
+                        + ". Creating empty label. Reason : " + e.getMessage());
                 addEmptyLabel(link);
             }
         } else {
             addEmptyLabel(link);
         }
-        
+
     }
 
     /**
