@@ -185,7 +185,7 @@
 - hippo:ordered (boolean)
 
 [hippo:nodetype] > hippo:document orderable
-- hippo:type (string) mandatory
+- hippo:type (string)
 - hippo:supertype (string) multiple
 - hippo:node (boolean)
 - hippo:mixin (boolean)
@@ -206,7 +206,7 @@
 [hippo:templatetype]
 + hippo:nodetype (hippo:handle) mandatory
 + hippo:template (hippo:handle)
-+ hippo:prototype (hippo:handle)
++ hippo:prototype (nt:base)
 
 [hippo:namespace] > nt:base
 + * (hippo:templatetype) = hippo:templatetype

@@ -157,7 +157,12 @@ public class RepositoryTypeConfig implements TypeConfig {
                         templateTypeNode = templateTypeNode.getParent();
                     }
 
-                    String typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
+                    String typeName;
+                    if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
+                        typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
+                    } else {
+                        typeName = templateTypeNode.getName();
+                    }
                     type = new RepositoryTypeDescriptor(typeNode, templateTypeNode.getName(), typeName, this);
                 } else if (typeNode.isNodeType(HippoNodeType.NT_FIELD)) {
                     String path = null;

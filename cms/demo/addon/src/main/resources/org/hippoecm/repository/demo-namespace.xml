@@ -37,9 +37,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>demo:webFolder</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:folder</sv:value>
         </sv:property>
@@ -60,9 +57,6 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>demo:webPage</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
@@ -167,9 +161,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>demo:webNavigation</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
@@ -254,9 +245,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>demo:paragraph</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>nt:unstructured</sv:value>
         </sv:property>
@@ -277,9 +265,6 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>demo:paragraphs</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>nt:base</sv:value>
@@ -320,9 +305,6 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>demo:languageDocument</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -376,9 +358,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>demo:countryInfoDocument</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
@@ -415,9 +394,6 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>demo:countryDocument</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
