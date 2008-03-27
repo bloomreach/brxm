@@ -219,7 +219,7 @@ public class ReviewedActionsIssueTest extends TestCase {
 
         // These steps would be taken by author
         {
-            node = Utilities.getNode(root, "documents/myarticle/myarticle[@hippostd:state='published']");
+            node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             // cannot delete published document when request is present
             try {
@@ -227,18 +227,17 @@ public class ReviewedActionsIssueTest extends TestCase {
             } catch (WorkflowException e) {
                 assertTrue("cannot request deletion when there is already a request", true );
             }
-
         }
         
         {  
-            Node node2 = Utilities.getNode(root, "documents/myarticle/request[@type='publish']");
+            Node node2 = HierarchyResolver.getNode(root, "documents/myarticle/request[@type='publish']");
             FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node2, "default");
             requestWorkflow.cancelRequest();
             session.save();
             session.refresh(false);
              
             // now it should be possible
-            node = Utilities.getNode(root, "documents/myarticle/myarticle[@hippostd:state='published']");
+            node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
 
             try {
@@ -251,6 +250,5 @@ public class ReviewedActionsIssueTest extends TestCase {
             session.refresh(true);
             //Utilities.dump(root.getNode("documents"));
         }
-        
     }
 }
