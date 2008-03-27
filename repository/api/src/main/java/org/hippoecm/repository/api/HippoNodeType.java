@@ -38,6 +38,7 @@ public interface HippoNodeType {
     final public static String FACETAUTH_PATH = "hippo:facetauths";
     final public static String PLUGIN_PATH = "hippo:plugins";
     final public static String NAMESPACES_PATH = "hippo:namespaces";
+    final public static String LOGGING_PATH = "hippo:logging";
 
     //--- Hippo NodeTypes ---//
     final public static String NT_APPLICATION = "hippo:application";
