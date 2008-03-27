@@ -175,8 +175,7 @@ public class RedefineNodetypeTest extends TestCase {
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         node = session.getRootNode().getNode("test").getNode("testing");
 
-        Node nsNode = session.getRootNode().getNode("hippo:configuration");
-        nsNode = nsNode.getNode("hippo:namespaces");
+        Node nsNode = session.getRootNode().getNode("hippo:namespaces");
         nsNode = nsNode.addNode("hippotest2", HippoNodeType.NT_NAMESPACE);
         nsNode.addMixin("mix:referenceable");
         nsNode.getParent().save();

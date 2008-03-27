@@ -37,9 +37,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>hst:page</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:mixin" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>

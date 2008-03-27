@@ -43,9 +43,6 @@
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>reporting:report</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
         </sv:property>

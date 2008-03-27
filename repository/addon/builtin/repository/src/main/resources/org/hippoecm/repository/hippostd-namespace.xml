@@ -37,9 +37,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>hippostd:language</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:mixin" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
@@ -74,9 +71,6 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>hippostd:publishable</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:mixin" sv:type="Boolean">
           <sv:value>true</sv:value>
