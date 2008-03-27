@@ -34,10 +34,14 @@ import javax.security.auth.spi.LoginModule;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.CredentialsCallback;
+import org.apache.jackrabbit.core.security.SecurityConstants;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.PasswordHelper;
 import org.hippoecm.repository.security.user.RepositoryUser;
 import org.hippoecm.repository.security.user.UserNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +129,17 @@ public class RepositoryLoginModule implements LoginModule {
             if (rootSession == null) {
                 throw new LoginException("RootSession not set.");
             }
-            
+
+            // check for impersonation
+            Object attr = creds.getAttribute(SecurityConstants.IMPERSONATOR_ATTRIBUTE);
+            if(attr != null && attr instanceof Subject) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Impersonated as"+creds.getUserID());
+                }
+                principals.add(new SystemPrincipal());
+                return true;
+            }
+
             // check for anonymous login
             if (creds == null || creds.getUserID() == null) {
                 if (log.isDebugEnabled()) {
@@ -230,7 +244,7 @@ public class RepositoryLoginModule implements LoginModule {
             }
             
             // basic security check
-            if (userId == null || password == null || "".equals(userId) || password.length == 0) {
+            if (userId == null ||"".equals(userId) ||  password == null || password.length == 0) {
                 if (log.isDebugEnabled()) {
                     log.debug("Empty username or password not allowed.");
                 }
