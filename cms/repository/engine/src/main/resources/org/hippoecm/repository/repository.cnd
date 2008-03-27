@@ -252,6 +252,23 @@
 // The following type is DEPRECATED from start
 [hippo:folder] > nt:unstructured, mix:referenceable
 
+[hippo:loggingconfiguration] > nt:base
+- hippo:logEnabled (boolean) = 'false' mandatory autocreated
+- hippo:logPath (String) = '/log'  mandatory autocreated
+
+[hippo:logitem] > nt:base
+- hippo:who (String) mandatory
+- hippo:workflowClass (String) mandatory
+- hippo:workflowMethod (String) mandatory
+- hippo:workflowArguments (String) multiple
+- hippo:workflowReturnType (String)
+- hippo:workflowReturnValue (String)
+
+[hippo:logfolder] > nt:base
++ * (hippo:logfolder) = hippo:logfolder
++ * (hippo:logitem) = hippo:logitem
+
+
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:ocmqueryfolder) = hippo:ocmqueryfolder mandatory
@@ -262,3 +279,5 @@
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
 + hippo:frontend (hippo:application) = hippo:application
++ hippo:logging (hippo:loggingconfiguration) = hippo:loggingconfiguration
+

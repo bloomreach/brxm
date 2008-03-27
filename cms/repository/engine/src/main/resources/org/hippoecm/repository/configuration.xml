@@ -33,6 +33,7 @@
       <sv:value>hippo:ocmqueryfolder</sv:value>
     </sv:property>
   </sv:node>
+  
   <sv:node sv:name="hippo:workflows">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:workflowfolder</sv:value>
@@ -44,7 +45,13 @@
       <sv:value>hippo:application</sv:value>
     </sv:property>
   </sv:node>
-
+  
+  <sv:node sv:name="hippo:logging">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:loggingconfiguration</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <sv:node sv:name="hippo:initialize">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializefolder</sv:value>
