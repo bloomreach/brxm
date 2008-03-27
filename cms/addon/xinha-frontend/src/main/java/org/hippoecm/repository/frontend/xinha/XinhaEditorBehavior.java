@@ -17,11 +17,11 @@ package org.hippoecm.repository.frontend.xinha;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
@@ -88,9 +88,11 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             private static final long serialVersionUID = 1L;
 
             public void renderHead(IHeaderResponse response) {
+                String xinhaEditorUrl = RequestCycle.get().getRequest().getRelativePathPrefixToContextRoot() + "xinha/xinha/";
+                
                 StringBuffer sb = new StringBuffer();
-                sb.append("_editor_url = 'xinha/xinha/';\n");
-                sb.append("_editor_lang = 'en';\n");
+                sb.append("_editor_url = '" + xinhaEditorUrl + "';\n");
+                sb.append("_editor_lang = '" + page.getLocale().getLanguage() + "';\n");
                 response.renderJavascript(sb, null);
             }
         },
