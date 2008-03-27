@@ -24,7 +24,7 @@ import javax.jcr.version.VersionHistory;
 
 /**
  */
-public class VersionDecorator extends ServicingNodeImpl implements Version {
+public class VersionDecorator extends NodeDecorator implements Version {
 
     protected final Version version;
 

@@ -56,9 +56,9 @@ public class PathsTest extends TestCase {
             Node sub1 = root.addNode("sub");
             Node sub2 = sub1.addNode("subsub");
 
-            assertTrue(root instanceof ServicingNodeImpl);
-            assertTrue(sub1 instanceof ServicingNodeImpl);
-            assertTrue(sub2 instanceof ServicingNodeImpl);
+            assertTrue(root instanceof NodeDecorator);
+            assertTrue(sub1 instanceof NodeDecorator);
+            assertTrue(sub2 instanceof NodeDecorator);
 
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
@@ -75,7 +75,10 @@ public class PathsTest extends TestCase {
             Node root = session.getRootNode();
             Node sub1 = root.addNode("test");
             Node sub2 = sub1.addNode("sub");
-            Node sub3 = sub2.addNode("node", HippoNodeType.NT_DOCUMENT);
+            Node sub3 = sub2.addNode("node", "hippo:testdocument");
+            sub1.addMixin("mix:referenceable");
+            sub2.addMixin("mix:referenceable");
+            sub3.addMixin("hippo:harddocument");
             session.save();
             Node node = session.getRootNode().getNode("test/sub/node");
 
@@ -85,17 +88,16 @@ public class PathsTest extends TestCase {
             for (int i = 0; i < values.length; i++) {
                 valuesSet.add(values[i].getString());
             }
-            assertTrue(values.length == 3);
-            assertTrue(valuesSet.contains("/test"));
-            assertTrue(valuesSet.contains("/test/sub"));
-            assertTrue(valuesSet.contains("/test/sub/node"));
+            assertTrue(values.length == 2);
+            assertTrue(valuesSet.contains(sub1.getUUID()));
+            assertTrue(valuesSet.contains(sub2.getUUID()));
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
             firstException = ex;
         }
     }
 
-public void tearDown() throws Exception {
+    public void tearDown() throws Exception {
 
         if(needCleanUp){
             Node node = session.getRootNode();

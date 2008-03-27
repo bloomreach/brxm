@@ -63,13 +63,13 @@ public class ReviewedActionsWorkflowTest extends TestCase {
         Node wfs = node.addNode("default", "hippo:workflowcategory");
 
         node = wfs.addNode("reviewedactions", "hippo:workflow");
-        node.setProperty("hippo:nodetype", "hippo:realdocument");
+        node.setProperty("hippo:nodetype", "hippo:testdocument");
         node.setProperty("hippo:display", "Reviewed actions workflow");
         node.setProperty("hippo:renderer", "org.hippoecm.frontend.reviewedactions.ReviewedActionsRenderer");
         node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl");
         Node types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:realdocument");
+        node.setProperty("hippo:nodetype", "hippo:testdocument");
         node.setProperty("hippo:display", "PublishableDocument");
         node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hippo:type");
@@ -84,7 +84,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
         node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl");
         types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:realdocument");
+        node.setProperty("hippo:nodetype", "hippo:testdocument");
         node.setProperty("hippo:display", "PublishableDocument");
         node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hippo:type");
@@ -98,7 +98,9 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             root.getNode("documents").remove();
         node = root.addNode("documents");
         node = node.addNode("myarticle", "hippo:handle");
-        node = node.addNode("myarticle", "hippo:realdocument");
+        node.addMixin("mix:referenceable");
+        node = node.addNode("myarticle", "hippo:testdocument");
+        node.addMixin("hippo:harddocument");
         node.setProperty("content", LOREM);
         node.setProperty("hippostd:username", LOREM);
         node.setProperty("hippostd:state", "unpublished");

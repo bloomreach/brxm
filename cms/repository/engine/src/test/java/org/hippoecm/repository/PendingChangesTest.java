@@ -84,10 +84,11 @@ public class PendingChangesTest extends TestCase {
         root.addNode("test0","nt:unstructured");
         node = root.addNode("test1","nt:unstructured");
         root.addNode("test2","nt:unstructured");
-        node.addNode("aap", "hippo:realdocument");
-        node.addNode("noot", "hippo:realdocument");
-        node = node.addNode("mies", "hippo:realdocument");
-        node.addNode("zus", "hippo:document");
+        node.addNode("aap", "hippo:testdocument").addMixin("hippo:harddocument");
+        node.addNode("noot", "hippo:testdocument").addMixin("hippo:harddocument");
+        node = node.addNode("mies", "hippo:testdocument");
+        node.addMixin("hippo:harddocument");
+        node.addNode("zus", "hippo:document").addMixin("hippo:harddocument");
 
         assertTrue(session.hasPendingChanges());
 
@@ -127,7 +128,7 @@ public class PendingChangesTest extends TestCase {
         assertTrue(paths.contains("/test/test1/mies"));
         assertTrue(paths.contains("/test/test1/mies/zus"));
 
-        changes = session.pendingChanges(null, "hippo:realdocument");
+        changes = session.pendingChanges(null, "hippo:testdocument");
         for(paths.clear(); changes.hasNext(); )
             paths.add(changes.nextNode().getPath());
         assertEquals(3, paths.size());

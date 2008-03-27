@@ -32,7 +32,7 @@ import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.servicing.ServicingNodeImpl;
+import org.hippoecm.repository.servicing.NodeDecorator;
 
 public class CanonicalPathTest extends TestCase {
 
@@ -67,7 +67,7 @@ public class CanonicalPathTest extends TestCase {
     public Node commonFacetSelectSetup() throws RepositoryException {
         createContent();
         Node selectnode = session.getRootNode().addNode("selectnode", HippoNodeType.NT_FACETSELECT);
-        selectnode.setProperty(HippoNodeType.HIPPO_DOCBASE, "/content");
+        selectnode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("content").getUUID());
         selectnode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { });
         selectnode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { });
         selectnode.setProperty(HippoNodeType.HIPPO_MODES, new String[] { });
@@ -79,7 +79,7 @@ public class CanonicalPathTest extends TestCase {
     public Node commonFacetSearchSetup() throws RepositoryException {
         createContent();
         Node searchnode = session.getRootNode().addNode("searchnode", HippoNodeType.NT_FACETSEARCH);
-        searchnode.setProperty(HippoNodeType.HIPPO_DOCBASE, "/content");
+        searchnode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("content").getUUID());
         searchnode.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
         searchnode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x"});
         session.save();
@@ -88,8 +88,9 @@ public class CanonicalPathTest extends TestCase {
     }
 
     private void createContent() throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException, NoSuchNodeTypeException, ValueFormatException {
-        Node node = session.getRootNode().addNode("content");
-        Node mynode = node.addNode("nodes").addNode("mynode","hippo:realdocument");
+        Node node = session.getRootNode().addNode("content","hippo:folder");
+        Node mynode = node.addNode("nodes").addNode("mynode","hippo:testdocument");
+        mynode.addMixin("hippo:harddocument");
         mynode.setProperty("x", "foo");
     }
     
@@ -127,9 +128,9 @@ public class CanonicalPathTest extends TestCase {
     public void testFacetSearchCanonicalNodeHasOtherIdTest() throws RepositoryException{ 
         Node facetSearchNode = commonFacetSearchSetup();
         Node mirroredHippoDoc = facetSearchNode.getNode("foo").getNode(HippoNodeType.HIPPO_RESULTSET).getNode("mynode");
-        ItemId mirroredId = ((NodeImpl)ServicingNodeImpl.unwrap(mirroredHippoDoc)).getId();
+        ItemId mirroredId = ((NodeImpl)NodeDecorator.unwrap(mirroredHippoDoc)).getId();
         Node canonical = ((HippoNode)mirroredHippoDoc).getCanonicalNode();
-        ItemId canonicalId = ((NodeImpl)ServicingNodeImpl.unwrap(canonical)).getId();
+        ItemId canonicalId = ((NodeImpl)NodeDecorator.unwrap(canonical)).getId();
         assertFalse(canonicalId.equals(mirroredId));
     }
     
@@ -168,9 +169,9 @@ public class CanonicalPathTest extends TestCase {
     public void testFacetSelectCanonicalNodeHasOtherIdTest() throws RepositoryException{ 
         Node facetSelectNode = commonFacetSelectSetup();
         Node mirroredHippoDoc = facetSelectNode.getNode("nodes").getNode("mynode");
-        ItemId mirroredId = ((NodeImpl)ServicingNodeImpl.unwrap(mirroredHippoDoc)).getId();
+        ItemId mirroredId = ((NodeImpl)NodeDecorator.unwrap(mirroredHippoDoc)).getId();
         Node canonical = ((HippoNode)mirroredHippoDoc).getCanonicalNode();
-        ItemId canonicalId = ((NodeImpl)ServicingNodeImpl.unwrap(canonical)).getId();
+        ItemId canonicalId = ((NodeImpl)NodeDecorator.unwrap(canonical)).getId();
         assertFalse(canonicalId.equals(mirroredId));
     }
     
@@ -180,9 +181,9 @@ public class CanonicalPathTest extends TestCase {
     public void testPhysicalCanonicalNodeHasSameIdTest() throws RepositoryException{ 
         commonFacetSelectSetup();
         Node physicalHippoDoc = session.getRootNode().getNode("content");
-        ItemId physicalId = ((NodeImpl)ServicingNodeImpl.unwrap(physicalHippoDoc)).getId();
+        ItemId physicalId = ((NodeImpl)NodeDecorator.unwrap(physicalHippoDoc)).getId();
         Node canonical = ((HippoNode)physicalHippoDoc).getCanonicalNode();
-        ItemId canonicalId = ((NodeImpl)ServicingNodeImpl.unwrap(canonical)).getId();
+        ItemId canonicalId = ((NodeImpl)NodeDecorator.unwrap(canonical)).getId();
         assertTrue(canonicalId.equals(physicalId));
     }
     

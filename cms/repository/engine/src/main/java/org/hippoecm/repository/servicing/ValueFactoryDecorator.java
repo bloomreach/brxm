@@ -89,6 +89,6 @@ public class ValueFactoryDecorator extends AbstractDecorator implements ValueFac
      * @inheritDoc
      */
     public Value createValue(Node value) throws RepositoryException {
-        return valueFactory.createValue(ServicingNodeImpl.unwrap(value));
+        return valueFactory.createValue(NodeDecorator.unwrap(value));
     }
 }

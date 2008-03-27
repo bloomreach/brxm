@@ -32,9 +32,9 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
+
 import javax.jdo.spi.PersistenceCapable;
 
-import org.hippoecm.repository.api.HippoNodeType;
 import org.jpox.ClassLoaderResolver;
 import org.jpox.ConnectionFactory;
 import org.jpox.ConnectionManager;
@@ -65,8 +65,11 @@ import org.jpox.store.scostore.CollectionStore;
 import org.jpox.store.scostore.MapStore;
 import org.jpox.util.ClassUtils;
 import org.jpox.util.MacroString.IdentifierMacro;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class StoreManagerImpl extends StoreManager {
     protected final Logger log = LoggerFactory.getLogger(StoreManagerImpl.class);
@@ -180,6 +183,9 @@ public class StoreManagerImpl extends StoreManager {
                 nodeName = cmd.getEntityName();
             Node nodetypeNode = types.getNode(cmd.getFullClassName());
             node = node.addNode(nodeName, nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
+            if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                node.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+            }
             sm.provideFields(cmd.getAllFieldNumbers(), new FieldManagerImpl(sm, session, types, node));
         } catch (PathNotFoundException ex) {
             System.err.println("PathNotFoundException: " + ex.getMessage());

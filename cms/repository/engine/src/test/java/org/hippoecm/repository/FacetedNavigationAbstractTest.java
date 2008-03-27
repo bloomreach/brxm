@@ -73,7 +73,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         for (int i=0; i<alphabet.length(); i++) {
             if(verbose)
                 System.out.println(("          ".substring(0,level))+nodeNames[i]);
-            Node child = node.addNode(nodeNames[i],"hippo:realdocument");
+            Node child = node.addNode(nodeNames[i],"hippo:testdocument");
+            child.addMixin("hippo:harddocument");
             if (level-1 > 0) {
                 createStructure(child, level-1);
             }
@@ -87,7 +88,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         Node node = session.getRootNode();
 
         if (!node.hasNode("documents")) {
-            node.addNode("documents");
+            node.addNode("documents", "hippo:folder");
         }
         if (!node.hasNode("navigation")) {
             node.addNode("navigation");
@@ -103,7 +104,8 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
             Node child = node;
             for (int depth=0; depth<hierDepth; depth++)
                 child = child.getNode(nodeNames[rnd.nextInt(alphabet.length())]);
-            child = child.addNode(Integer.toString(docid),"hippo:realdocument");
+            child = child.addNode(Integer.toString(docid),"hippo:testdocument");
+            child.addMixin("hippo:harddocument");
             child.setProperty("docid",docid);
             if ((document.x = rnd.nextInt(3)) > 0) {
                 child.setProperty("x","x"+document.x);
@@ -232,7 +234,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         Node node = session.getRootNode().getNode("navigation");
         node = node.addNode("xyz", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/documents");
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
         session.save();
         session.refresh(false);

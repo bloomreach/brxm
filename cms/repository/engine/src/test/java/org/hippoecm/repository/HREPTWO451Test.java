@@ -55,14 +55,15 @@ public class HREPTWO451Test extends TestCase {
 
     public void testIssue() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test");
-        node = root.addNode("documents");
-        node = node.addNode("document","hippo:realdocument");
+        node = root.addNode("documents","hippo:folder");
+        node = node.addNode("document","hippo:testdocument");
+        node.addMixin("hippo:harddocument");
         node.setProperty("hippo:testfacet", "aap");
         session.save();
         node = root.addNode("navigation");
         node = node.addNode("search",HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "search");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/test/documents");
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:testfacet" });
         session.save();
         assertTrue(root.getNode("navigation").getNode("search").hasNode("aap"));

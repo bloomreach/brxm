@@ -37,11 +37,13 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.apache.jackrabbit.core.SessionImpl;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -74,8 +76,9 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
         rootSession = null;
         try {
             if(repository instanceof RepositoryImpl) {
+                SessionImpl sessionImpl = (SessionImpl) ((RepositoryImpl)repository).getRootSession(null);
                 rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(),
-                                                                             ((RepositoryImpl)repository).getRootSession(null));
+		                      sessionImpl.impersonate(new SimpleCredentials("", new char[] { })));
             }
         } catch(RepositoryException ex) {
             // We could log something, but having rootSession == null here also suffices

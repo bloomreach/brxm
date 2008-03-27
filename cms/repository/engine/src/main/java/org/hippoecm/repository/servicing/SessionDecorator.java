@@ -70,6 +70,7 @@ import org.xml.sax.SAXException;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 
+import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
 
@@ -86,16 +87,20 @@ public class SessionDecorator implements XASession, HippoSession {
 
     protected final Session session;
 
+    protected DerivedDataEngine derivedEngine;
+
     SessionDecorator(DecoratorFactory factory, Repository repository, Session session) {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
+        derivedEngine = new DerivedDataEngine(this);
     }
 
     SessionDecorator(DecoratorFactory factory, Repository repository, XASession session) throws RepositoryException {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
+        derivedEngine = new DerivedDataEngine(this);
     }
 
     public static Session unwrap(Session session) {
@@ -233,12 +238,6 @@ public class SessionDecorator implements XASession, HippoSession {
     public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException,
             VersionException, RepositoryException {
         session.move(srcAbsPath, destAbsPath);
-        Node movedNode = getRootNode().getNode(destAbsPath.startsWith("/") ? destAbsPath.substring(1) : destAbsPath);
-        movedNode.accept(new TraversingItemVisitor.Default() {
-            public void leaving(Node node, int level) throws RepositoryException {
-                ServicingNodeImpl.decoratePathProperty(node);
-            }
-        });
     }
 
     /**
@@ -246,6 +245,25 @@ public class SessionDecorator implements XASession, HippoSession {
      */
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
+        try {
+            derivedEngine.save();
+        } catch(VersionException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            throw ex;
+        } catch(LockException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            throw ex;
+        } catch(ConstraintViolationException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            throw ex;
+        } catch(RepositoryException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            throw ex;
+        }
         session.save();
     }
 
@@ -443,7 +461,12 @@ public class SessionDecorator implements XASession, HippoSession {
             Node canonical = ((HippoNode) srcNode).getCanonicalNode();
             boolean copyChildren = (canonical != null && canonical.isSame(srcNode));
 
-            for (PropertyIterator iter = ServicingNodeImpl.unwrap(srcNode).getProperties(); iter.hasNext();) {
+            NodeType[] mixinNodeTypes = srcNode.getMixinNodeTypes();
+            for (int i = 0; i < mixinNodeTypes.length; i++) {
+                destNode.addMixin(mixinNodeTypes[i].getName());
+            }
+
+            for (PropertyIterator iter = NodeDecorator.unwrap(srcNode).getProperties(); iter.hasNext();) {
                 Property property = iter.nextProperty();
                 PropertyDefinition definition = property.getDefinition();
                 if (!definition.isProtected()) {
@@ -453,13 +476,6 @@ public class SessionDecorator implements XASession, HippoSession {
                         destNode.setProperty(property.getName(), property.getValue());
                 }
             }
-
-            NodeType[] mixinNodeTypes = srcNode.getMixinNodeTypes();
-            for (int i = 0; i < mixinNodeTypes.length; i++) {
-                destNode.addMixin(mixinNodeTypes[i].getName());
-            }
-
-            ServicingNodeImpl.decoratePathProperty(destNode);
 
             /* Do not copy virtual nodes.  Partial virtual nodes like
              * HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH

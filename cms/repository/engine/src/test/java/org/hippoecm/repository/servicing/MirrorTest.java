@@ -42,7 +42,7 @@ public class MirrorTest extends TestCase {
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     private static String[] contents = new String[] {
-        "/documents", "nt:unstructured",
+        "/documents", "hippo:folder",
         "niet", "hier",
         "/navigation", "nt:unstructured",
         "/navigation/mirror", "hippo:mirror",

@@ -28,6 +28,8 @@ import org.apache.jackrabbit.core.nodetype.PropDefId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.uuid.UUID;
+
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class MirrorVirtualProvider extends HippoVirtualProvider
@@ -76,7 +78,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     public NodeState populate(NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         String docbase = getProperty(nodeId, docbaseName)[0];
-        NodeState upstream = getNodeState(docbase);
+        NodeState upstream = getNodeState(new NodeId(new UUID(docbase)));
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
             NodeId childNodeId = new MirrorNodeId(nodeId, entry.getId(), entry.getName());

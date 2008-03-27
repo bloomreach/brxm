@@ -31,16 +31,16 @@ import junit.framework.TestCase;
 
 public class FacetedNavigationHippoCountTest extends TestCase
 {
-        private Session session;
+    private Session session;
 
-        private static final String SYSTEMUSER_ID = "admin";
+    private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     private static String[] contents = new String[] {
         "/documents", "nt:unstructured",
-        "/documents/document", "hippo:realdocument",
+        "/documents/document", "hippo:testdocument",
         "type", "text",
-        "/documents/document1", "hippo:realdocument",
+        "/documents/document1", "hippo:testdocument",
         "type", "html",
         "/docsearch", "nt:unstructured",
         "/docsearch/byType", "hippo:facetsearch",

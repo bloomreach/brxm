@@ -60,10 +60,9 @@
 [hippo:request] > nt:unstructured, mix:referenceable
 
 [hippo:document] > nt:base
-- hippo:paths (string) multiple
 
 [hippo:handle] > nt:unstructured
-- hippo:discriminator (string) multiple // should be mandatory
+- hippo:discriminator (string) multiple
 + * (hippo:document) = hippo:document multiple
 
 [hippo:facetlink] 
@@ -221,26 +220,25 @@
 [hippo:prototyped] mixin
 - hippo:prototype (reference) mandatory
 
-
-
-
 [hippo:propertyreference] > nt:base
-- hippo:name (String) mandatory
 
 [hippo:relativepropertyreference] > hippo:propertyreference
 - hippo:relPath (String) mandatory
 
 [hippo:builtinpropertyreference] > hippo:propertyreference
-- hippo:method (String) mandatory < 'ancestor'
+- hippo:method (String) mandatory < 'ancestors'
+
+[hippo:propertyreferences] orderable
++ * (hippo:propertyreference)
 
 [hippo:deriveddefinition] > nt:base
 - hippo:nodetype (String) mandatory
 - hippo:classname (String) mandatory
 - hippo:serialver (Long)
-+ hippo:accessed (hippo:propertyreference) multiple
-+ hippo:derived (hippo:relativepropertyreference) multiple
++ hippo:accessed (hippo:propertyreferences) = hippo:propertyreferences autocreated
++ hippo:derived (hippo:propertyreferences) = hippo:propertyreferences autocreated
 
-[hippo:derivationfolder] > nt:base orderable
+[hippo:derivativesfolder] > nt:base orderable
 + * (hippo:deriveddefinition) = hippo:deriveddefinition multiple
 
 [hippo:derived] mixin
@@ -252,8 +250,14 @@
   // A multivalue property that links to all the nodes that where used to
   // compute derived proper
 
+[hippo:harddocument] > hippo:derived, mix:referenceable mixin
+- hippo:paths (String) multiple mandatory
 
+[hippo:softdocument] > hippo:referenceable mixin
+- hippo:paths (String) multiple mandatory
 
+// The following type is DEPRECATED from start
+[hippo:folder] > nt:unstructured, mix:referenceable
 
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
@@ -264,14 +268,7 @@
 + hippo:roles (hippo:rolefolder) = hippo:rolefolder
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:namespaces (hippo:namespacefolder) = hippo:namespacefolder
-+ hippo:derivation (hippo:derivationfolder) = hippo:derivationfolder
++ hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
 + hippo:templates (hippo:templatenamespace) = hippo:templatenamespace
 + hippo:prototypes (hippo:prototypenamespace) = hippo:prototypenamespace
 + hippo:frontend (hippo:application) = hippo:application
-
-
-
-
-
-[hippo:test] > hippo:document, mix:referenceable, hippo:derived
-- hippo:fuck (String)

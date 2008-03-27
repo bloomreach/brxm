@@ -37,7 +37,7 @@ public class RangeIteratorDecorator extends AbstractDecorator implements RangeIt
     /** The underlying iterator. */
     protected final RangeIterator iterator;
 
-    protected final ServicingNodeImpl parent;
+    protected final NodeDecorator parent;
 
     /**
      * Creates a decorating iterator.
@@ -53,7 +53,7 @@ public class RangeIteratorDecorator extends AbstractDecorator implements RangeIt
     }
 
     public RangeIteratorDecorator(DecoratorFactory factory, Session session, RangeIterator iterator,
-            ServicingNodeImpl parent) {
+            NodeDecorator parent) {
         super(factory, session);
         this.iterator = iterator;
         this.parent = parent;

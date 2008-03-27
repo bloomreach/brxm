@@ -56,50 +56,62 @@ public class HREPTWO475Test extends TestCase {
     public void testIssue() throws RepositoryException {
         Node node, child, root = session.getRootNode().addNode("test");
 
-        node = root.addNode("docs");
+        node = root.addNode("docs","hippo:folder");
         node = node.addNode("doc1",HippoNodeType.NT_HANDLE);
-        child = node.addNode("doc1","hippo:realdocument");
+        child = node.addNode("doc1","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","en");
-        child = node.addNode("doc1","hippo:realdocument");
+        child = node.addNode("doc1","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","nl");
 
         node = root.getNode("docs");
         node = node.addNode("doc2",HippoNodeType.NT_HANDLE);
-        child = node.addNode("doc2","hippo:realdocument");
+        child = node.addNode("doc2","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","nl");
-        child = node.addNode("doc2","hippo:realdocument");
+        child = node.addNode("doc2","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","en");
 
         node = root.getNode("docs");
         node = node.addNode("doc3","nt:unstructured");
-        child = node.addNode("doc3","hippo:realdocument");
+        child = node.addNode("doc3","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","nl");
-        child = node.addNode("doc3","hippo:realdocument");
+        child = node.addNode("doc3","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","en");
 
         node = root.getNode("docs").addNode("sub");
         node = node.addNode("doc4",HippoNodeType.NT_HANDLE);
-        child = node.addNode("doc4","hippo:realdocument");
+        child = node.addNode("doc4","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","en");
-        child = node.addNode("doc4","hippo:realdocument");
+        child = node.addNode("doc4","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","nl");
 
         node = root.getNode("docs").getNode("sub");
         node = node.addNode("doc5",HippoNodeType.NT_HANDLE);
-        child = node.addNode("doc5","hippo:realdocument");
+        child = node.addNode("doc5","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","nl");
-        child = node.addNode("doc5","hippo:realdocument");
+        child = node.addNode("doc5","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","en");
 
         node = root.getNode("docs").getNode("sub");
         node = node.addNode("doc6","nt:unstructured");
-        child = node.addNode("doc6","hippo:realdocument");
+        child = node.addNode("doc6","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","nl");
-        child = node.addNode("doc6","hippo:realdocument");
+        child = node.addNode("doc6","hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("lang","en");
 
         node = root.addNode("nav","hippo:facetselect");
-        node.setProperty("hippo:docbase","/test/docs");
+        node.setProperty("hippo:docbase",session.getRootNode().getNode("test/docs").getUUID());
         node.setProperty("hippo:facets",new String[] { "lang" });
         node.setProperty("hippo:values",new String[] { "nl" });
         node.setProperty("hippo:modes",new String[] { "select" });

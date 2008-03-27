@@ -27,6 +27,7 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jdo.JDOHelper;
+import javax.jdo.JDODataStoreException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
@@ -105,7 +106,7 @@ public class DocumentManagerImpl
         return obj;
     }
 
-    public void putObject(String uuid, Node types, Object object) {
+    public void putObject(String uuid, Node types, Object object) throws RepositoryException {
         if(pm == null) {
             pm = pmf.getPersistenceManager();
         }
@@ -121,6 +122,15 @@ public class DocumentManagerImpl
                 tx.begin();
                 pm.makePersistent(object);
                 tx.commit();
+            } catch(JDODataStoreException ex) {
+                Throwable e = ex.getCause();
+                if(e instanceof RepositoryException) {
+                    RepositoryException exception = (RepositoryException) e;
+                    System.err.println(exception.getClass().getName()+": "+exception.getMessage());
+                    exception.printStackTrace(System.err);
+                } else {
+                    throw ex;
+                }
             } finally {
                 if(tx.isActive())
                     tx.rollback();

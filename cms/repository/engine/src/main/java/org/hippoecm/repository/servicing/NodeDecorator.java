@@ -56,13 +56,13 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 
-public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
+public class NodeDecorator extends ItemDecorator implements HippoNode {
     final static private String SVN_ID = "$Id$";
 
     protected Node node;
     protected HippoSession session;
 
-    protected ServicingNodeImpl(DecoratorFactory factory, Session session, Node node) {
+    protected NodeDecorator(DecoratorFactory factory, Session session, Node node) {
         super(factory, session, node);
         this.session = (HippoSession) session;
         this.node = node;
@@ -124,39 +124,10 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
     }
 
     public static Node unwrap(Node node) {
-        if (node instanceof ServicingNodeImpl) {
-            node = (Node) ((ServicingNodeImpl) node).unwrap();
+        if (node instanceof NodeDecorator) {
+            node = (Node) ((NodeDecorator) node).unwrap();
         }
         return node;
-    }
-
-    static void decoratePathProperty(Node node) throws RepositoryException {
-        if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            try {
-                String path = node.getPath();
-                if(path.startsWith("/")) {
-                    path = path.substring(1);
-                }
-                String[] pathElements = path.split("/");
-                pathElements[0] = "/"+pathElements[0];
-                for(int i=1; i<pathElements.length; i++) {
-                        pathElements[i] = pathElements[i-1] + "/" + pathElements[i];
-                }
-                node.setProperty(HippoNodeType.HIPPO_PATHS, pathElements);
-            } catch(ValueFormatException ex) {
-                // FIXME: log some serious error
-                throw ex;
-            } catch(VersionException ex) {
-                // FIXME: log some serious error
-                throw ex;
-            } catch(LockException ex) {
-                // FIXME: log some serious error
-                throw ex;
-            } catch(ConstraintViolationException ex) {
-                // FIXME: log some serious error
-                throw ex;
-            }
-        }
     }
 
     /**
@@ -164,9 +135,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
      */
     public Node addNode(String name) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, RepositoryException {
-        Node child = node.addNode(name);
-        decoratePathProperty(child);
-        return factory.getNodeDecorator(session, child);
+        return factory.getNodeDecorator(session, node.addNode(name));
     }
 
     /**
@@ -174,9 +143,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
      */
     public Node addNode(String name, String type) throws ItemExistsException, PathNotFoundException,
             NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
-        Node child = node.addNode(name, type);
-        decoratePathProperty(child);
-        return factory.getNodeDecorator(session, child);
+        return factory.getNodeDecorator(session, node.addNode(name, type));
     }
 
     /**
@@ -310,7 +277,7 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
      */
     public Property setProperty(String name, Node value) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, ServicingNodeImpl.unwrap(value));
+        Property prop = node.setProperty(name, NodeDecorator.unwrap(value));
         return factory.getPropertyDecorator(session, prop);
     }
 
@@ -617,13 +584,6 @@ public class ServicingNodeImpl extends ItemDecorator implements HippoNode {
      */
     public boolean isLocked() throws RepositoryException {
         return node.isLocked();
-    }
-
-    public void save()
-        throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
-               ReferentialIntegrityException, VersionException, LockException, RepositoryException
-    {
-        super.save();
     }
 
     /**

@@ -55,8 +55,9 @@ public class HREPTWO425Test extends TestCase {
 
     public void testIssue() throws RepositoryException {
         Node node = session.getRootNode().addNode("test");
+        node.addMixin("hippo:harddocument");
         node = node.addNode("n", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/test");
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { });
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { });

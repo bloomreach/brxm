@@ -32,6 +32,9 @@ import javax.jcr.version.VersionException;
  */
 public class ItemDecorator extends AbstractDecorator implements Item {
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     /**
      * The underlying item to decorate.
      */
@@ -138,6 +141,9 @@ public class ItemDecorator extends AbstractDecorator implements Item {
     /** {@inheritDoc} */
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             ReferentialIntegrityException, VersionException, LockException, RepositoryException {
+        if(item.isNode()) {
+            ((SessionDecorator)getSession()).derivedEngine.save((Node)item);
+        }
         item.save();
     }
 
