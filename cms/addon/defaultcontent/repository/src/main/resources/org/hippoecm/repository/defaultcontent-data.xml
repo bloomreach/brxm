@@ -47,6 +47,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
       <sv:node sv:name="myarticle2">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>defaultcontent:article</sv:value>
@@ -79,6 +82,9 @@
     <sv:node sv:name="myarticle1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:node sv:name="myarticle1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -127,6 +133,9 @@
     <sv:node sv:name="mynews1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:node sv:name="mynews1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -178,6 +187,9 @@
     <sv:node sv:name="myevent1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:node sv:name="myevent1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
