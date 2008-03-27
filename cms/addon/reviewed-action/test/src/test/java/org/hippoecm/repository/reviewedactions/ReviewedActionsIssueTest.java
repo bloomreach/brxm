@@ -35,7 +35,9 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 
-public class ReviewedActionsIssueTest688 extends TestCase {
+// Regarding issue HREPTWO-688
+
+public class ReviewedActionsIssueTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
