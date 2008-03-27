@@ -208,17 +208,23 @@ public abstract class AbstractListingPlugin extends Plugin {
         pref = prefNode.addNode("type", LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "Type");
         pref.setProperty(PROPERTYNAME_PROPERTY, JcrConstants.JCR_PRIMARYTYPE);
+        
+        pref = prefNode.addNode("state", LISTINGPROPS_NODETYPE);
+        pref.setProperty(COLUMNNAME_PROPERTY, "State");
+        pref.setProperty(PROPERTYNAME_PROPERTY, "state");
+        
         columns.add(getNodeColumn(new Model("Name"), "name" , channel));
         columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , channel));
+        columns.add(getNodeColumn(new Model("State"), "state" , channel));
         
     }
-
-
 
     private void defaultColumns(PluginDescriptor pluginDescriptor) {
         columns.add(getNodeColumn(new Model("Name"), "name" , getTopChannel()));
         columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , getTopChannel()));
+        columns.add(getNodeColumn(new Model("State"), "state" , getTopChannel()));
     }
+    
     private void logError(Exception e1) {
         log.error("error creating user doclisting preference: \n " + e1 + " . \n  default doclisting will be shown");
     }
