@@ -42,7 +42,6 @@ import org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
@@ -56,18 +55,24 @@ public class TemplateListPlugin extends Plugin {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateListPlugin.class);
 
+    private String typeName;
     private JcrNodeModel typeNodeModel;
     private JcrNodeModel templateNodeModel;
 
     public TemplateListPlugin(PluginDescriptor pluginDescriptor, final IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new ItemModel(pluginModel), parentPlugin);
 
-        RepositoryTypeConfig typeConfig = new RepositoryTypeConfig();
-
         ItemModel itemModel = (ItemModel) getPluginModel();
         templateNodeModel = itemModel.getNodeModel();
         try {
-            typeNodeModel = new JcrNodeModel(typeConfig.getTypeNode(templateNodeModel.getNode().getName()));
+            Node typeNode = templateNodeModel.getNode();
+            while (!typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                typeNode = typeNode.getParent();
+            }
+            typeName = typeNode.getName();
+
+            typeNodeModel = new JcrNodeModel(typeNode.getNode(HippoNodeType.HIPPO_NODETYPE + "/"
+                    + HippoNodeType.HIPPO_NODETYPE));
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -132,7 +137,7 @@ public class TemplateListPlugin extends Plugin {
             field.setProperty(HippoNodeType.HIPPO_TYPE, template.getTypeDescriptor().getName());
             UUID uuid = java.util.UUID.randomUUID();
             field.setProperty(HippoNodeType.HIPPO_NAME, uuid.toString());
-            String path = typeNode.getName().substring(0, typeNode.getName().indexOf(':')) + ":"
+            String path = typeName.substring(0, typeName.indexOf(':')) + ":"
                     + template.getTypeDescriptor().getName().toLowerCase();
             field.setProperty(HippoNodeType.HIPPO_PATH, path);
 

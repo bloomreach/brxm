@@ -67,8 +67,9 @@ public class AddNewWizard extends Plugin {
         super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
 
         Main main = (Main) Application.get();
-        prototypePath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
-                + main.getHippoApplication() + "/" + HippoNodeType.PROTOTYPES_PATH;
+//  yes, this doesn't work.  The project is deprecated
+//        prototypePath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/"
+//                + main.getHippoApplication() + "/" + HippoNodeType.PROTOTYPES_PATH;
 
         final AddNewForm form = new AddNewForm("addNewForm");
         add(new FeedbackPanel("feedback"));

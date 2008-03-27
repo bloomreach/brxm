@@ -36,7 +36,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     private static final Logger log = LoggerFactory.getLogger(RepositoryTemplateConfig.class);
 
     public RepositoryTemplateConfig() {
-        super(getTemplateBasePath());
+        super(HippoNodeType.NAMESPACES_PATH);
     }
 
     public TemplateDescriptor getTemplate(TypeDescriptor type) {
@@ -45,9 +45,9 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             PluginDescriptor plugin;
             if (typeName.indexOf(':') > 0) {
                 String prefix = typeName.substring(0, typeName.indexOf(':'));
-                plugin = getPlugin(prefix + "/" + typeName + "/" + typeName);
+                plugin = getPlugin(prefix + "/" + typeName);
             } else {
-                plugin = getPlugin("system/" + typeName + "/" + typeName);
+                plugin = getPlugin("system/" + typeName);
             }
             if (plugin != null) {
                 return new RepositoryTemplateDescriptor(type, plugin);
@@ -64,7 +64,9 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             } else {
                 prefix = "system";
             }
-            return getJcrSession().getRootNode().getNode(getBasePath() + "/" + prefix + "/" + typeName + "/" + typeName);
+            return getJcrSession().getRootNode().getNode(
+                    getBasePath() + "/" + prefix + "/" + typeName + "/" + HippoNodeType.HIPPO_TEMPLATE + "/"
+                            + HippoNodeType.HIPPO_TEMPLATE);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -74,7 +76,9 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     @Override
     public PluginDescriptor getPlugin(String pluginId) {
         try {
-            Node pluginNode = getJcrSession().getRootNode().getNode(getBasePath() + "/" + pluginId);
+            Node pluginNode = getJcrSession().getRootNode().getNode(
+                    getBasePath() + "/" + pluginId + "/" + HippoNodeType.HIPPO_TEMPLATE + "/"
+                            + HippoNodeType.HIPPO_TEMPLATE);
             if (pluginNode != null) {
                 return nodeToDescriptor(pluginNode);
             }
@@ -87,10 +91,6 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     public TemplateDescriptor createTemplate(Node node, TypeDescriptor type) throws RepositoryException {
         return new RepositoryTemplateDescriptor(type, nodeToDescriptor(node));
-    }
-
-    private static String getTemplateBasePath() {
-        return HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.TEMPLATES_PATH;
     }
 
     static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, RepositoryTemplateDescriptor parent) {

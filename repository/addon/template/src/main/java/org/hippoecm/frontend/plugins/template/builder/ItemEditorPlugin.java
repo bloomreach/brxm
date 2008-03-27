@@ -115,7 +115,7 @@ public class ItemEditorPlugin extends Plugin {
         try {
             JcrNodeModel itemNodeModel = (JcrNodeModel) getModel();
             Node itemNode = itemNodeModel.getNode();
-            if (itemNode != null) {
+            if (itemNode != null && getFieldNode() != null) {
                 TypeDescriptor typeDescriptor = new TypeDescriptor("internal", HippoNodeType.NT_PARAMETERS) {
                     private static final long serialVersionUID = 1L;
 
@@ -190,7 +190,7 @@ public class ItemEditorPlugin extends Plugin {
         JcrNodeModel itemNodeModel = (JcrNodeModel) getModel();
         Node itemNode = itemNodeModel.getNode();
         Node templateNode = itemNode;
-        while (!templateNode.isNodeType(HippoNodeType.NT_TEMPLATE)) {
+        while (!templateNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
             templateNode = templateNode.getParent();
         }
         String typeName = templateNode.getName();
