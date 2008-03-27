@@ -53,10 +53,10 @@
       <sv:value>13</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hippostd-types.xml</sv:value>
+      <sv:value>hippostd-namespace.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:namespaces</sv:value>
+      <sv:value>/hippo:namespaces</sv:value>
     </sv:property>
   </sv:node>
 

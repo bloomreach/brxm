@@ -82,8 +82,8 @@ public class RepositoryTypeConfig implements TypeConfig {
 
         List<TypeDescriptor> list = new LinkedList<TypeDescriptor>();
         try {
-            String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.NAMESPACES_PATH + "/" + namespace
-                    + "/*";
+            String xpath = HippoNodeType.NAMESPACES_PATH + "/" + namespace + "/*/" + HippoNodeType.HIPPO_NODETYPE + "/"
+                    + HippoNodeType.HIPPO_NODETYPE;
 
             QueryManager queryManager = session.getWorkspace().getQueryManager();
             Query query = queryManager.createQuery(xpath, Query.XPATH);
@@ -91,7 +91,7 @@ public class RepositoryTypeConfig implements TypeConfig {
             NodeIterator iter = result.getNodes();
             while (iter.hasNext()) {
                 Node pluginNode = iter.nextNode();
-                Descriptor descriptor = createDescriptor(pluginNode.getNode(pluginNode.getName()));
+                Descriptor descriptor = createDescriptor(pluginNode);
                 TypeDescriptor template = descriptor.type;
                 list.add(template);
             }
@@ -110,7 +110,13 @@ public class RepositoryTypeConfig implements TypeConfig {
     private Node lookupConfigNode(String type) throws RepositoryException {
         Session session = getJcrSession();
 
-        String xpath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.NAMESPACES_PATH + "/*/" + type;
+        String prefix = "system";
+        if (type.indexOf(':') > 0) {
+            prefix = type.substring(0, type.indexOf(':'));
+        }
+
+        String xpath = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/" + HippoNodeType.HIPPO_NODETYPE
+                + "/" + HippoNodeType.HIPPO_NODETYPE;
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         Query query = queryManager.createQuery(xpath, Query.XPATH);
@@ -121,7 +127,7 @@ public class RepositoryTypeConfig implements TypeConfig {
         } else if (iter.getSize() == 0) {
             return null;
         } else {
-            return iter.nextNode().getNode(type);
+            return iter.nextNode();
         }
     }
 
@@ -146,8 +152,13 @@ public class RepositoryTypeConfig implements TypeConfig {
                 this.jcrPath = typeNode.getPath();
 
                 if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
+                    Node templateTypeNode = typeNode;
+                    while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                        templateTypeNode = templateTypeNode.getParent();
+                    }
+
                     String typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
-                    type = new RepositoryTypeDescriptor(typeNode, typeNode.getName(), typeName, this);
+                    type = new RepositoryTypeDescriptor(typeNode, templateTypeNode.getName(), typeName, this);
                 } else if (typeNode.isNodeType(HippoNodeType.NT_FIELD)) {
                     String path = null;
                     if (typeNode.hasProperty(HippoNodeType.HIPPO_PATH)) {

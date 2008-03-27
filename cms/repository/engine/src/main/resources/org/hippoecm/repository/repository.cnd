@@ -185,18 +185,12 @@
 - hippo:ordered (boolean)
 
 [hippo:nodetype] > hippo:document orderable
-- hippo:type (string)
+- hippo:type (string) mandatory
 - hippo:supertype (string) multiple
 - hippo:node (boolean)
 - hippo:mixin (boolean)
 + hippo:prototype (hippo:document)
 + hippo:field (hippo:field) multiple
-
-[hippo:namespace] > nt:base
-+ * (hippo:handle) = hippo:handle
-
-[hippo:namespacefolder] > nt:base
-+ * (hippo:namespace) = hippo:namespace
 
 [hippo:templateitem] > hippo:plugin orderable
 - hippo:renderer (string) mandatory
@@ -204,21 +198,20 @@
 + hippo:item (hippo:templateitem) multiple
 
 [hippo:template] > hippo:templateitem, hippo:document orderable
-
-[hippo:templatefolder] > nt:base
-+ * (hippo:handle) = hippo:handle
-
-[hippo:templatenamespace] > nt:base
-+ * (hippo:templatefolder)
-
-[hippo:prototypefolder] > nt:base
-+ * (nt:base)
-
-[hippo:prototypenamespace] > nt:base
-+ * (hippo:prototypefolder)
+- hippo:prototype (reference)
 
 [hippo:prototyped] mixin
 - hippo:prototype (reference) mandatory
+
+[hippo:templatetype]
++ hippo:nodetype (hippo:handle) mandatory
++ hippo:template (hippo:handle)
++ hippo:prototype (hippo:handle)
+
+[hippo:namespace] > nt:base
++ * (hippo:templatetype) = hippo:templatetype
+
+
 
 [hippo:propertyreference] > nt:base
 
@@ -267,8 +260,5 @@
 + hippo:users (hippo:userfolder) = hippo:userfolder
 + hippo:roles (hippo:rolefolder) = hippo:rolefolder
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
-+ hippo:namespaces (hippo:namespacefolder) = hippo:namespacefolder
 + hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
-+ hippo:templates (hippo:templatenamespace) = hippo:templatenamespace
-+ hippo:prototypes (hippo:prototypenamespace) = hippo:prototypenamespace
 + hippo:frontend (hippo:application) = hippo:application

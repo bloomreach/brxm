@@ -22,10 +22,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -34,7 +32,6 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.error.ErrorPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
@@ -66,29 +63,23 @@ public class PreviewFieldPlugin extends Plugin {
         Plugin child;
         TemplateEngine engine = getPluginManager().getTemplateEngine();
 
-        JcrSessionModel session = ((UserSession) Session.get()).getJcrSessionModel();
         RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig();
         try {
             ItemModel model = (ItemModel) getPluginModel();
             templateNodeModel = model.getNodeModel();
             Node templateNode = templateNodeModel.getNode();
-            String typeName = templateNode.getName();
+            Node templateTypeNode = templateNode;
+            while(!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                templateTypeNode = templateTypeNode.getParent();
+            }
+            String typeName = templateTypeNode.getName();
 
             TypeDescriptor type = engine.getTypeConfig().getTypeDescriptor(typeName);
             TemplateDescriptor template = templateConfig.createTemplate(templateNode, type);
             TemplateDescriptor proxy = new PreviewTemplateDescriptor(template);
 
-            String folder;
-            if (typeName.indexOf(':') > 0) {
-                folder = typeName.substring(0, typeName.indexOf(':'));
-            } else {
-                folder = "system";
-            }
-
-            javax.jcr.Session jcrSession = (javax.jcr.Session) session.getObject();
-            Node prototype = jcrSession.getRootNode().getNode(
-                    HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.PROTOTYPES_PATH + "/" + folder + "/"
-                            + typeName + "/" + typeName);
+            Node prototype = templateNode.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getNode().getNode(
+                    HippoNodeType.HIPPO_PROTOTYPE);
             JcrNodeModel prototypeModel = new JcrNodeModel(prototype);
             TemplateModel templateModel = new TemplateModel(proxy, prototypeModel.getParentModel(),
                     prototype.getName(), prototype.getIndex());
