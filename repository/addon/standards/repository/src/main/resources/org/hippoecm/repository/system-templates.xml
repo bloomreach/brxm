@@ -147,7 +147,7 @@
         </sv:property>
         <sv:property sv:name="Xinha.plugins" sv:type="String">
           <sv:value>AutoSave</sv:value>
-          <sv:value>Linker</sv:value>
+          <sv:value>CustomLinker</sv:value>
         </sv:property>
         <sv:property sv:name="AutoSave" sv:type="String">
           <sv:value>timeoutLength=1500</sv:value>
