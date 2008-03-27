@@ -25,7 +25,7 @@ import java.rmi.registry.Registry;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory;
+import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 
 public class HippoRepositoryServer extends LocalHippoRepository {
     public final static int RMI_PORT = 1099;

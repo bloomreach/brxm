@@ -44,7 +44,7 @@ import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.ParallelMultiSearcher;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.hippoecm.repository.servicing.RepositoryDecorator;
+import org.hippoecm.repository.decorating.RepositoryDecorator;
 
 public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
   implements FacetedNavigationEngine<FacetedNavigationEngineFourthImpl.QueryImpl, FacetedNavigationEngineFourthImpl.ContextImpl>

@@ -45,7 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.servicing.server.ServerServicingAdapterFactory;
+import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -27,7 +27,7 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.servicing.Remodeling;
+import org.hippoecm.repository.decorating.Remodeling;
 
 public class RemodelWorkflowImpl implements RemodelWorkflow {
     private Session userSession;

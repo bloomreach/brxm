@@ -69,7 +69,7 @@ import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.servicing.HippoDecoratorFactory;
+import org.hippoecm.repository.decorating.HippoDecoratorFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
