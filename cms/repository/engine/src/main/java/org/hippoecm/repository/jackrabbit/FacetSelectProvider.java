@@ -37,6 +37,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
     Name valuesName;
     Name modesName;
     Name handleName;
+    Name requestName;    
     
     FacetSelectProvider() {
         super();
@@ -50,7 +51,8 @@ public class FacetSelectProvider extends HippoVirtualProvider
         facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
         valuesName = resolveName(HippoNodeType.HIPPO_VALUES);
         modesName = resolveName(HippoNodeType.HIPPO_MODES);
-        handleName = resolveName(HippoNodeType.NT_HANDLE);
+        handleName = resolveName(HippoNodeType.NT_HANDLE);        
+        requestName = resolveName(HippoNodeType.NT_REQUEST);
     }
 
     @Override
@@ -100,11 +102,22 @@ public class FacetSelectProvider extends HippoVirtualProvider
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                 NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
                 if(subNodesProvider.match(view, entry.getId())) {
-                    NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view, singledView);
-                    state.addChildNodeEntry(entry.getName(), childNodeId);
-                    if(isHandle && singledView) {    
-                       // stop after first match because single hippo document view
-                       break;
+                    /*
+                     * below we check on the entry's nodestate wether the node type is hippo:request, 
+                     * because we do not show these nodes in the facetselects in mode single.
+                     * Since match() already populates the nodestates of the child entries, this won't impose
+                     * extra performance hit
+                     */ 
+                    if(isHandle && singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
+                        continue;
+                    } else {
+                        NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view, singledView);
+                        state.addChildNodeEntry(entry.getName(), childNodeId);
+    
+                        if(isHandle && singledView) {    
+                           // stop after first match because single hippo document view
+                           break;
+                        }
                     }
                 }
             }
