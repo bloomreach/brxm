@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
@@ -35,6 +36,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
     private Page page;
     private Set<XinhaPlugin.Configuration> configurations;
+    
+    Pattern numbers = Pattern.compile("\\d*");
+    Pattern functions = Pattern.compile("(\\w+)\\.(\\w+)"); 
 
     XinhaEditorBehavior(Page page) {
         configurations = new HashSet<XinhaPlugin.Configuration>();
@@ -71,9 +75,10 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             return "true";
         else if (value.equalsIgnoreCase("false"))
             return "false";
-        else if (!value.matches("\\d*") && !value.matches("(\\w+)\\.(\\w+)"))
-            return SINGLE_QUOTE + value.replaceAll(SINGLE_QUOTE, "\\\\" + SINGLE_QUOTE) + SINGLE_QUOTE;
-        return value;
+        else if (numbers.matcher(value).matches() || functions.matcher(value).find())
+            return value;
+
+        return SINGLE_QUOTE + value.replaceAll(SINGLE_QUOTE, "\\\\" + SINGLE_QUOTE) + SINGLE_QUOTE;
     }
 
     public final IHeaderContributor[] getHeaderContributors() {
