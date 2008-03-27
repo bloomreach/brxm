@@ -46,6 +46,7 @@ public class FolderTreeNode extends AbstractTreeNode {
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
 
     private boolean onlyHandles = false;
+    private boolean belowFacetSelectSingleMode = false;
     private FolderTreeNode parent;
 
     // hardcoded ignore path set
@@ -66,14 +67,24 @@ public class FolderTreeNode extends AbstractTreeNode {
         super(model);
         this.parent = parent;
         this.onlyHandles = parent.onlyHandles;
+        this.belowFacetSelectSingleMode = parent.belowFacetSelectSingleMode;
         try {
             Node node = nodeModel.getNode();
+            if(isFacetSelect(node)) {
+                try {
+                    if(node.getProperty(HippoNodeType.HIPPO_MODES).getValues().length > 0 && "single".equals(node.getProperty(HippoNodeType.HIPPO_MODES).getValues()[0].getString().toString())) {
+                        belowFacetSelectSingleMode = true;
+                    }
+                } catch (PathNotFoundException e) {
+                    // no single mode
+                }
+            }
             if (onlyHandles) {
                 if (isFacetSelect(node) && !isReferenceToHandle(node)) {
                     onlyHandles = false;
                 }
             } else {
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (!belowFacetSelectSingleMode && node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     onlyHandles = true;
                 }
             }
