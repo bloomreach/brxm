@@ -23,6 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -38,9 +44,13 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.model.TemplateModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XinhaPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
+    
+    static final Logger log = LoggerFactory.getLogger(XinhaPlugin.class);
 
     public final static String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
 
@@ -52,7 +62,7 @@ public class XinhaPlugin extends Plugin {
     private XinhaEditorBehavior sharedBehavior;
     private AbstractDefaultAjaxBehavior postBehavior;
 
-    public XinhaPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
+    public XinhaPlugin(PluginDescriptor pluginDescriptor, final IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
 
         TemplateModel model = (TemplateModel) getPluginModel();
@@ -91,17 +101,42 @@ public class XinhaPlugin extends Plugin {
                     editor.processInput();
                     target.appendJavascript(XINHA_SAVED_FLAG);
                 }
+
+                String browse = requestCycle.getRequest().getParameter("browse");
+                if (browse != null) {
+                    StringBuilder sb = new StringBuilder();
+                    if ("".equals(browse)) {
+                        browse = "/";
+                    }
+                    Node pluginNode = (Node) pluginModel.getObject();
+                    try {
+                        Session session = pluginNode.getSession();
+                        Item item = session.getItem(browse);
+                        if (item.isNode()) {
+                            Node itemNode = (Node) item;
+                            NodeIterator iterator = itemNode.getNodes();
+                            while (iterator.hasNext()) {
+                                sb.append("{");
+                                Node childNode = iterator.nextNode();
+                                sb.append("title: '").append(childNode.getName()).append("'");
+                                sb.append(", url: '").append(childNode.getPath()).append("'");
+                                if (childNode.getNodes().hasNext()) {
+                                    sb.append(", children: []");
+                                }
+                                sb.append("}");
+                                if (iterator.hasNext()) {
+                                    sb.append(",");
+                                }
+                            }
+                        }
+                    } catch (RepositoryException e) {
+                        log.error(e.getMessage());
+                    }
+                    //implement browsing
+                    target.appendJavascript("[" + sb.toString() + "]");
+                }
             }
         };
-
-        //        try {
-        //            ((UserSession)Session.get()).getJcrSession().getItem("/");
-        //            Node root = ((UserSession)Session.get()).getJcrSession().getRootNode();
-        //            //root.getN
-        //        } catch (RepositoryException e) {
-        //            // TODO Auto-generated catch block
-        //            e.printStackTrace();
-        //        } 
 
         editor.setOutputMarkupId(true);
         editor.setVisible(true);
