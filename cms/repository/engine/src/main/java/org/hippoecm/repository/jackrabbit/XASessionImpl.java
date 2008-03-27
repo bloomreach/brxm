@@ -53,7 +53,7 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
-import org.hippoecm.repository.servicing.NodeDecorator;
+import org.hippoecm.repository.decorating.NodeDecorator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

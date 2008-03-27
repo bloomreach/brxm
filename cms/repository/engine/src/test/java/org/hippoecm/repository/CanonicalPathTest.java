@@ -32,7 +32,7 @@ import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.servicing.NodeDecorator;
+import org.hippoecm.repository.decorating.NodeDecorator;
 
 public class CanonicalPathTest extends TestCase {
 

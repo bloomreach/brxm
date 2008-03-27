@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
-import org.hippoecm.repository.servicing.client.ClientServicesAdapterFactory;
+import org.hippoecm.repository.decorating.client.ClientServicesAdapterFactory;
 
 class RemoteHippoRepository extends HippoRepositoryImpl {
     private final static String SVN_ID = "$Id$";
