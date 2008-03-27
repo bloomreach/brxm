@@ -48,12 +48,14 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         super();
     }
 
-    private Name handleName;
+    private Name handleName;    
+    private Name requestName;
 
     @Override
     protected void initialize() throws RepositoryException {
         super.initialize();
         handleName = resolveName(HippoNodeType.NT_HANDLE);
+        requestName = resolveName(HippoNodeType.NT_REQUEST);        
     }
     
     @Override
@@ -97,12 +99,23 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         boolean isHandle = state.getNodeTypeName().equals(handleName);
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-            if(!isHandle || match(viewId.view, entry.getId())) {
-                ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.singledView);
-                state.addChildNodeEntry(entry.getName(), childNodeId);
-                if(isHandle && viewId.singledView) {
-                    // stop after first match because single hippo document view
-                    break;
+            if (!isHandle || match(viewId.view, entry.getId())) {
+                /*
+                 * below we check on the entry's nodestate wether the node type is hippo:request, 
+                 * because we do not show these nodes in the facetselects in mode single.
+                 * Since match() already populates the nodestates of the child entries, this won't impose
+                 * extra performance hit
+                 */ 
+                if (isHandle && viewId.singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
+                    continue;
+                } else {
+                    ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view,
+                            viewId.singledView);
+                    state.addChildNodeEntry(entry.getName(), childNodeId);
+                    if (isHandle && viewId.singledView) {
+                        // stop after first match because single hippo document view
+                        break;
+                    }
                 }
             }
         }
