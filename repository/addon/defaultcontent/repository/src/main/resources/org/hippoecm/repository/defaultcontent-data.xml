@@ -23,79 +23,193 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
-  </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>mix:referenceable</sv:value>
   </sv:property>
-  
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
+  </sv:property>
   <sv:node sv:name="articles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:prototyped</sv:value>
       <sv:value>mix:referenceable</sv:value>
+      <sv:value>hippo:prototyped</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>e7579a94-7078-4812-8715-0bfbe7b5967c</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:prototype" sv:type="Reference">
       <sv:value>94b08333-f530-4124-9484-3bc4b6ed025e</sv:value>
     </sv:property>
-
-    <sv:node sv:name="myarticle">
+    <sv:node sv:name="myarticle2">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>2742e21c-5508-4d09-96f0-132b138235c6</sv:value>
-      </sv:property>
-      <sv:node sv:name="myarticle">
+      <sv:node sv:name="myarticle2">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>defaultcontent:article</sv:value>
         </sv:property>
-        <sv:property sv:name="defaultcontent:title" sv:type="String">
-          <sv:value>my article</sv:value>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="defaultcontent:introduction" sv:type="String">
-          <sv:value>&lt;html&gt;&lt;body&gt;demo
-            titel&lt;/body&gt;&lt;/html&gt;</sv:value>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>b363e8be-2ec7-4f62-8ba0-2f9c7a335b17</sv:value>
         </sv:property>
         <sv:property sv:name="defaultcontent:body" sv:type="String">
-          <sv:value>&lt;html&gt;&lt;body&gt;o what a
-            night&lt;/body&gt;&lt;/html&gt;</sv:value>
+          <sv:value>body</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:introduction"
+          sv:type="String">
+          <sv:value>introduction</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>e7579a94-7078-4812-8715-0bfbe7b5967c</sv:value>
+          <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
+    <sv:node sv:name="myarticle1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="myarticle1">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>defaultcontent:article</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>db1bddc5-d29f-47a1-ac12-b34d97a82715</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:body" sv:type="String">
+          <sv:value>body</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:introduction"
+          sv:type="String">
+          <sv:value>introduction</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>e7579a94-7078-4812-8715-0bfbe7b5967c</sv:value>
+          <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
   </sv:node>
-
   <sv:node sv:name="news">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:prototyped</sv:value>
       <sv:value>mix:referenceable</sv:value>
+      <sv:value>hippo:prototyped</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>e0155dd8-69d3-4c80-bc0a-2b81eeb092c4</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:prototype" sv:type="Reference">
       <sv:value>a7073311-86be-4586-9e12-1a2326151bca</sv:value>
     </sv:property>
+    <sv:node sv:name="mynews1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="mynews1">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>defaultcontent:news</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>d1847bd1-78da-4491-beab-e0e6d2fee3e0</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:body" sv:type="String">
+          <sv:value>body</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:date" sv:type="Date">
+          <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:introduction"
+          sv:type="String">
+          <sv:value>introduction</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>e0155dd8-69d3-4c80-bc0a-2b81eeb092c4</sv:value>
+          <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
   </sv:node>
-
   <sv:node sv:name="events">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:prototyped</sv:value>
       <sv:value>mix:referenceable</sv:value>
+      <sv:value>hippo:prototyped</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>cbd837ed-2f07-492e-94dc-409f089a4fcf</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:prototype" sv:type="Reference">
       <sv:value>27477ccb-9c58-48f7-abf1-8950bf1fe380</sv:value>
     </sv:property>
+    <sv:node sv:name="myevent1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="myevent1">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>defaultcontent:event</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>24c54e63-78d3-452f-a9f0-f216cc60c276</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:body" sv:type="String">
+          <sv:value>body</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:date" sv:type="Date">
+          <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:introduction"
+          sv:type="String">
+          <sv:value>introduction</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+          <sv:value>cbd837ed-2f07-492e-94dc-409f089a4fcf</sv:value>
+          <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
   </sv:node>
-
 </sv:node>
