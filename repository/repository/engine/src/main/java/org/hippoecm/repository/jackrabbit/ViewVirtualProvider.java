@@ -24,6 +24,8 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.uuid.UUID;
+
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ViewVirtualProvider extends MirrorVirtualProvider
@@ -56,8 +58,8 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
     
     @Override
     public NodeState populate(NodeState state) throws RepositoryException {
-        String[] docbase = getProperty(state.getNodeId(), docbaseName);
-        NodeState dereference = getNodeState(docbase[0]);
+        String docbase = getProperty(state.getNodeId(), docbaseName)[0];
+        NodeState dereference = getNodeState(new NodeId(new UUID(docbase)));
         Map<Name,String> view = new HashMap<Name,String>();
         if(dereference != null) {
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {

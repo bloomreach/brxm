@@ -24,6 +24,8 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.uuid.UUID;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.ViewVirtualProvider.ViewNodeId;
 
@@ -62,7 +64,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
             return state;
         }
 
-        NodeState dereference = getNodeState(docbase[0]);
+        NodeState dereference = getNodeState(new NodeId(new UUID(docbase[0])));
         if(dereference != null) {
             boolean singledView = false;
             Map<Name,String> view = new HashMap<Name,String>();

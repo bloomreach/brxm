@@ -33,6 +33,12 @@ public class FacetContentUtilities {
                     path = path.substring(path.lastIndexOf("/")+1);
                 }
                 node = node.addNode(path, contents[i+1]);
+                if (node.isNodeType("hippo:testdocument")) {
+                    node.addMixin("hippo:harddocument");
+                }
+                if (node.isNodeType("hippo:handle")) {
+                    node.addMixin("mix:referenceable");
+                }
             } else {
                 PropertyDefinition propDef = null;
                 PropertyDefinition[] propDefs = node.getPrimaryNodeType().getPropertyDefinitions();
@@ -54,7 +60,12 @@ public class FacetContentUtilities {
                     values[values.length-1] = session.getValueFactory().createValue(contents[i+1]);
                     node.setProperty(contents[i], values);
                 } else {
-                    node.setProperty(contents[i], contents[i+1]);
+                    if(contents[i].equals("hippo:docbase")) {
+                        node.setProperty(contents[i],session.getRootNode().getNode(contents[i+1].startsWith("/")
+                                                                       ? contents[i+1].substring(1) : contents[i+1]).getUUID());
+                    } else {
+                        node.setProperty(contents[i], contents[i+1]);
+                    }
                 }
             }
         }

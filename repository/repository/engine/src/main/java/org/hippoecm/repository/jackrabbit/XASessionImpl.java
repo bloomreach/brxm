@@ -53,7 +53,7 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
-import org.hippoecm.repository.servicing.ServicingNodeImpl;
+import org.hippoecm.repository.servicing.NodeDecorator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +174,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
                 filteredResults.add(((org.apache.jackrabbit.core.NodeImpl)node).getNodeId());
             }
         }
-        NodeId nodeId = ((org.apache.jackrabbit.core.NodeImpl)ServicingNodeImpl.unwrap(node)).getNodeId();
+        NodeId nodeId = ((org.apache.jackrabbit.core.NodeImpl)NodeDecorator.unwrap(node)).getNodeId();
 
         Iterator iter = itemStateMgr.getDescendantTransientItemStates(nodeId);
         while(iter.hasNext()) {

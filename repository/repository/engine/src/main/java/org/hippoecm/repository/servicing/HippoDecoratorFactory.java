@@ -37,16 +37,16 @@ import org.apache.jackrabbit.api.XASession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServicingDecoratorFactory
+public class HippoDecoratorFactory
   implements DecoratorFactory
 {
-    private final Logger log = LoggerFactory.getLogger(ServicingDecoratorFactory.class);
+    private final Logger log = LoggerFactory.getLogger(HippoDecoratorFactory.class);
 
     protected WeakHashMap<Repository,RepositoryDecorator> repositoryDecorators;
     protected WeakHashMap<Session,SessionDecorator> sessionDecorators;
     protected WeakHashMap<Workspace,WorkspaceDecorator> workspaceDecorators;
 
-    public ServicingDecoratorFactory() {
+    public HippoDecoratorFactory() {
         repositoryDecorators = new WeakHashMap<Repository,RepositoryDecorator>();
         sessionDecorators = new WeakHashMap<Session,SessionDecorator>();
         workspaceDecorators = new WeakHashMap<Workspace,WorkspaceDecorator>();
@@ -96,7 +96,7 @@ public class ServicingDecoratorFactory
         } else if (node instanceof VersionHistory) {
             return getVersionHistoryDecorator(session, (VersionHistory) node);
         } else {
-            return new ServicingNodeImpl(this, session, node);
+            return new NodeDecorator(this, session, node);
         }
     }
 

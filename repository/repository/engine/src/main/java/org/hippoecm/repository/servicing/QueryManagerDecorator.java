@@ -45,7 +45,7 @@ public class QueryManagerDecorator extends AbstractDecorator implements QueryMan
      * @inheritDoc
      */
     public Query getQuery(Node node) throws InvalidQueryException, RepositoryException {
-        Query query = manager.getQuery(ServicingNodeImpl.unwrap(node));
+        Query query = manager.getQuery(NodeDecorator.unwrap(node));
         return factory.getQueryDecorator(session, query);
     }
 

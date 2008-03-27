@@ -117,7 +117,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
      */
     public void setValue(Node node) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
-        property.setValue(ServicingNodeImpl.unwrap(node));
+        property.setValue(NodeDecorator.unwrap(node));
     }
 
     /**

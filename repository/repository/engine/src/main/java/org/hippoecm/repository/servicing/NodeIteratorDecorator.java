@@ -40,7 +40,7 @@ public class NodeIteratorDecorator extends RangeIteratorDecorator implements Nod
     }
 
     public NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator,
-            ServicingNodeImpl parent) {
+            NodeDecorator parent) {
         super(factory, session, iterator, parent);
     }
 

@@ -69,7 +69,7 @@ import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.servicing.ServicingDecoratorFactory;
+import org.hippoecm.repository.servicing.HippoDecoratorFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     protected final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
 
     private JackrabbitRepository jackrabbitRepository = null;
-    private ServicingDecoratorFactory hippoRepositoryFactory;
+    private HippoDecoratorFactory hippoRepositoryFactory;
 
     /** Whether to generate a dump.xml file of the /hippo:configuration node at shutdown */
     private boolean dump = false;
@@ -213,7 +213,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
         log.info("Node type registration support: " + (result != null ? result : "no"));
 
-        hippoRepositoryFactory = new ServicingDecoratorFactory();
+        hippoRepositoryFactory = new HippoDecoratorFactory();
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
 
         try {

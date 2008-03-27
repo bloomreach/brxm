@@ -78,7 +78,7 @@ public class Document implements Serializable, Cloneable {
             sb.append(identity);
         } else if (isCloned != null) {
             sb.append("cloned=");
-            sb.append(identity);
+            sb.append(isCloned.identity);
         } else {
             sb.append("new");
         }

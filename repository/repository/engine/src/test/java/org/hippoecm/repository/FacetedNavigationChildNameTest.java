@@ -34,10 +34,11 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
         // first create a document node
         {
             if (!session.getRootNode().hasNode("documents"))
-                session.getRootNode().addNode("documents");
+                session.getRootNode().addNode("documents", "hippo:folder");
             node = session.getRootNode().getNode("documents");
             //String encodeMe = "yadida";
-            Node docNode = node.addNode(simple, "hippo:realdocument");
+            Node docNode = node.addNode(simple, "hippo:testdocument");
+            docNode.addMixin("hippo:harddocument");
             docNode.setProperty("x", "success");
             docNode.setProperty("y", encodeMe);
             session.save();
@@ -47,7 +48,7 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
         {
             node = session.getRootNode().getNode("navigation").addNode("navxy", HippoNodeType.NT_FACETSEARCH);
             node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "navxy");
-            node.setProperty(HippoNodeType.HIPPO_DOCBASE, "/documents");
+            node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents").getUUID());
             node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y" });
             session.save();
         }

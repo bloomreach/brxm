@@ -38,7 +38,7 @@ public class FacetedNavigationRemoteTest extends FacetedNavigationAbstractTest {
         // first clean possible old entries
         for (NodeIterator iter = session.getRootNode().getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
-            if (!child.getPath().equals("/jcr:system")) {
+            if (!child.getPath().equals("/jcr:system") && !child.getPath().equals("/hippo:configuration")) {
                 child.remove();
             }
         }
@@ -72,7 +72,7 @@ public class FacetedNavigationRemoteTest extends FacetedNavigationAbstractTest {
 
     public void testCounts() throws RepositoryException, IOException {
         numDocs = 500;
-        Node node = commonStart();
+        commonStart();
         check("/navigation/xyz/x1", 1, 0, 0);
         check("/navigation/xyz/x2", 2, 0, 0);
         check("/navigation/xyz/x1/y1", 1, 1, 0);

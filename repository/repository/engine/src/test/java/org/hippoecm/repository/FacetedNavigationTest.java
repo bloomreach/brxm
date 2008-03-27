@@ -105,7 +105,6 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
             assertTrue(node.hasProperty("hippo:uuid"));
             /* FIXME: enable these for checks for HREPTWO-283
              *  assertFalse(node.isNodeType("mix:referenceable"));
-             *  assertTrue(node.isNodeType("hippo:referenceable"));
              */
         } while(iter.hasNext());
 
@@ -123,7 +122,8 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         session.save();
 
         node = session.getRootNode().getNode("documents");
-        child = node.addNode("test", "hippo:realdocument");
+        child = node.addNode("test", "hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("x", "x1");
         child.setProperty("y", "yy");
         node.save();
@@ -135,7 +135,8 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
         assertFalse(searchNode.getNode("x1").getNode("yy").getNode(HippoNodeType.HIPPO_RESULTSET).hasNode("test[2]"));
 
         node = session.getRootNode().getNode("documents");
-        child = node.addNode("test", "hippo:realdocument");
+        child = node.addNode("test", "hippo:testdocument");
+        child.addMixin("hippo:harddocument");
         child.setProperty("x", "x1");
         child.setProperty("y", "yy");
         session.save();

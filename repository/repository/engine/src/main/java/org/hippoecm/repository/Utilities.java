@@ -30,6 +30,8 @@ import javax.jcr.query.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 public class Utilities {
     private final static Logger log = LoggerFactory.getLogger(Utilities.class);
 
@@ -62,7 +64,7 @@ public class Utilities {
             Property prop = iter.nextProperty();
             if(prop.getName().equals("jcr:primaryType") ||
                prop.getName().equals("jcr:uuid") ||
-               prop.getName().equals("hippo:paths")) {
+               prop.getName().equals(HippoNodeType.HIPPO_PATHS)) {
                 continue;
             }
             out.print(prefix + "- " + prop.getName() + " = ");

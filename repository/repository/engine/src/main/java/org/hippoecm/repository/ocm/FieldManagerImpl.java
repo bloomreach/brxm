@@ -36,16 +36,18 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.jdo.spi.PersistenceCapable;
 
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.jpox.StateManager;
 import org.jpox.exceptions.JPOXDataStoreException;
 import org.jpox.metadata.AbstractClassMetaData;
 import org.jpox.state.StateManagerFactory;
 import org.jpox.store.fieldmanager.AbstractFieldManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 
 class FieldManagerImpl extends AbstractFieldManager {
     protected final Logger log = LoggerFactory.getLogger(FieldManagerImpl.class);
@@ -214,10 +216,14 @@ class FieldManagerImpl extends AbstractFieldManager {
         Entry last = new Entry();
         node = (Node) getItem(node, field, false, last);
         if (node == null && last.node != null) {
-            if (nodetype != null)
+            if (nodetype != null) {
                 node = last.node.addNode(last.relPath, nodetype);
-            else
+            } else {
                 node = last.node.addNode(last.relPath);
+            }
+            if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                node.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+            }
         }
         return node;
     }

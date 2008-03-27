@@ -22,8 +22,6 @@
 
 [hippo:unstructured] > nt:unstructured
 
-[hippo:coredocument] > hippo:document
+[hippo:testdocument] > hippo:document
 + * = hippo:unstructured multiple
 - *
-
-[hippo:realdocument] > hippo:coredocument, mix:referenceable
