@@ -37,6 +37,10 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>defaultcontent:article</sv:value>
       </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String"/>
       <sv:property sv:name="defaultcontent:title" sv:type="String">
         <sv:value>title</sv:value>
       </sv:property>
@@ -66,6 +70,10 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>defaultcontent:news</sv:value>
       </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String"/>
       <sv:property sv:name="defaultcontent:title" sv:type="String">
         <sv:value>title</sv:value>
       </sv:property>
@@ -98,6 +106,10 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>defaultcontent:event</sv:value>
       </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String"/>
       <sv:property sv:name="defaultcontent:title" sv:type="String">
         <sv:value>title</sv:value>
       </sv:property>
