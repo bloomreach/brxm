@@ -104,11 +104,20 @@ public class DerivedDataTest extends TestCase {
         document.setProperty("hippo:b", 4);
         document.setProperty("hippo:c", 6);
         session.save();
+
         Property p = session.getRootNode().getNode("test/folder2/document").getProperty("hippo:paths");
         assertTrue(p.getDefinition().isMultiple());
         Value[] values = p.getValues();
 	assertEquals(1, values.length);
 	values[0].getString().equals(folder2.getUUID());
+
+        session.move(document.getPath(), folder1.getPath()+"/"+document.getName());
+        session.save();
+        p = session.getRootNode().getNode("test/folder1/document").getProperty("hippo:paths");
+        assertTrue(p.getDefinition().isMultiple());
+        values = p.getValues();
+	assertEquals(1, values.length);
+	values[0].getString().equals(folder1.getUUID());
     }
 
     private void disabledTest() throws RepositoryException {
