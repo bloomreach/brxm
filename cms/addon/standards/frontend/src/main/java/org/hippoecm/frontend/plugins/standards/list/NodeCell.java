@@ -109,8 +109,8 @@ public class NodeCell extends Panel {
                                 }
                             }
                         }
-                        addLabel(link, state);
                     }
+                    addLabel(link, state);
                 } else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
                     if (n.getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE)) {
                         NodeIterator nodeIt = n.getNodes();
