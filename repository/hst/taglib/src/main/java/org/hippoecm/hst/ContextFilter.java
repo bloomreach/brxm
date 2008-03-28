@@ -16,104 +16,168 @@
 package org.hippoecm.hst;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
+/**
+ * Filter that creates a context available for expression language.  
+ */
 public class ContextFilter implements Filter {
-    public static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
-    static String ATTRIBUTE = ContextFilter.class.getName() + ".ATTRIBUTE";
+	
+    private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
 
-    private String urlbasehome;
-    private String urlbasepath;
-    private String attributename = "context";
+    public static final String ATTRIBUTE_NAME = ContextFilter.class.getName() + ".ATTRIBUTE_NAME";
+    public static final String URL_MAPPING_LOCATION = ContextFilter.class.getName() + ".URL_MAPPING_LOCATION";
 
+    private String attributeName = "context";
+    private String basePath;
+	private String urlMappingLocation = "/urlMapping";
+	private String[] skippedExtensions = 
+		new String[] {"ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js"};
+	private final List<String> skippedExtensionsList = new ArrayList<String>(); 
+    boolean urlMappingActive = false;
+
+    public ContextFilter() {
+    	super();
+    }
+
+    // from interface
     public void init(FilterConfig filterConfig) throws ServletException {
-        String param;
 
-        param = filterConfig.getInitParameter("urlbasehome");
+    	String param = filterConfig.getInitParameter("attributeName");
         if (param != null && !param.trim().equals("")) {
-            urlbasehome = param;
-        } else
-            urlbasehome = null;
+        	this.attributeName = param.trim();
+        }
 
-        param = filterConfig.getInitParameter("urlbasepath");
-        if (param != null && !param.trim().equals("")) {
-            urlbasepath = param;
-        } else
-            throw new ServletException("Missing parameter urlbasepath in "+filterConfig.getFilterName());
+        // save in context for use by IncludeTag
+        filterConfig.getServletContext().setAttribute(ATTRIBUTE_NAME, this.attributeName);
 
-        param = filterConfig.getInitParameter("attributename");
+        param = filterConfig.getInitParameter("basePath");
         if (param != null && !param.trim().equals("")) {
-            attributename = param.trim();
-            filterConfig.getServletContext().setAttribute(ATTRIBUTE, attributename);
+        	this.basePath = param;
+        } else {
+            throw new ServletException("Missing parameter urlBasePath in filter " + filterConfig.getFilterName());
+        }
+        
+        param = filterConfig.getInitParameter("urlMappingLocation");
+        if (param != null && !param.trim().equals("")) {
+        	this.urlMappingLocation = param;
+
+        } 
+
+        // save in context for use by IncludeTag
+        filterConfig.getServletContext().setAttribute(URL_MAPPING_LOCATION, this.attributeName);
+
+        param = filterConfig.getInitParameter("skippedExtensions");
+        if (param != null && !param.trim().equals("")) {
+        	this.skippedExtensions = param.split(",");
+        } 
+
+        // convert to list for easy 'contains' access
+        for (int i = 0; i < skippedExtensions.length; i++) {
+        	String extension = skippedExtensions[i];
+        	if (!extension.startsWith(".")) {
+        		extension = "." + extension;
+        	}
+        	skippedExtensionsList.add(extension);
         }
     }
 
+    // from interface
     public void destroy() {
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException,
-            ServletException {
+    // from interface
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) 
+    					throws IOException, ServletException {
+    	
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        String pathAfterContext = req.getRequestURI();
+        String servletPath = req.getServletPath();
+
+        if (servletPath.lastIndexOf(".") >= 0) { 
+	        String extension = servletPath.substring(servletPath.lastIndexOf(".")); 
+	    	if (skippedExtensionsList.contains(extension)) {
+	    		return;
+	    	}	
+    	}
+    	
+    	String relativePath = req.getRequestURI();
         /* This next part is better resolved by using filterConfig.getServletContext().getContextPath(), but
          * this is only available after Servlet API 2.5.
          */
-        String servletPath = req.getServletPath();
-        if (pathAfterContext.startsWith(servletPath) && !pathAfterContext.equals(servletPath)) {
-            pathAfterContext = pathAfterContext.substring(servletPath.length());
+        if (relativePath.startsWith(servletPath) && !relativePath.equals(servletPath)) {
+            relativePath = relativePath.substring(servletPath.length());
         }
-        if (pathAfterContext.startsWith(req.getContextPath())) {
-            pathAfterContext = pathAfterContext.substring(req.getContextPath().length());
+        if (relativePath.startsWith(req.getContextPath())) {
+            relativePath = relativePath.substring(req.getContextPath().length());
         }
-        int semicolonIdx = pathAfterContext.indexOf(';');
+        
+        // remove session-related part of url
+        int semicolonIdx = relativePath.indexOf(';');
         if (semicolonIdx != -1) {
-            pathAfterContext = pathAfterContext.substring(0, semicolonIdx);
-        }
-        if (pathAfterContext.equals("") || pathAfterContext.endsWith("/")) {
-            if (urlbasehome != null)
-                pathAfterContext += urlbasehome;
-            else if (pathAfterContext.endsWith("/"))
-                pathAfterContext = pathAfterContext.substring(0,pathAfterContext.length()-1);
-        }
-
-        String documentPath = urlbasepath;
-        if (documentPath == null) {
-            documentPath = "/";
-        }
-        if (!documentPath.endsWith("/") && !pathAfterContext.startsWith("/")) {
-            documentPath = documentPath + "/" + pathAfterContext;
-        } else {
-            documentPath = documentPath + pathAfterContext;
-        }
-
-        if(logger.isDebugEnabled()) {
-            logger.debug("Using document path "+documentPath);
+            relativePath = relativePath.substring(0, semicolonIdx);
+		}
+        
+        // remove end /
+		if (relativePath.endsWith("/")) {
+        	relativePath = relativePath.substring(0, relativePath.length()-1);
         }
 
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
-        Context context = new Context(jcrSession, urlbasepath);
-        context.setPath(documentPath);
-        req.setAttribute(attributename, context);
+        Context context = new Context(jcrSession, basePath);
+        context.setRelativePath(relativePath);
 
-        if(!doInternal(context, documentPath, req, res)) {
-            filterChain.doFilter(req, res);
-            return; // no action ALLOWED after this point.
+        req.setAttribute(attributeName, context);
+
+        // check url mapping
+        if (urlMappingActive) {
+        	
+        	URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, req, res);
+
+			try {
+	        	String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLocation, context.getPath());
+	        	
+	            if (mappedPage == null) {
+	            	logger.warn("No mapped page could be found for path " + context.getPath());
+	            }
+	            else {
+
+		            // forward the request to that page
+		            RequestDispatcher dispatcher = request.getRequestDispatcher(mappedPage);
+		            
+		            if (dispatcher == null) {
+		            	throw new ServletException("No dispatcher could be obtained for mapped page " + mappedPage);
+		            }
+		            
+		            dispatcher.forward(request, responseWrapper);
+	
+		            // no further filter chaining when forwarding
+	        		return;
+	            }	
+			} catch (RepositoryException re) {
+				throw new ServletException(re);
+			}
         }
+
+        // normally call rest of the filter
+        filterChain.doFilter(req, res);
     }
 
     public boolean doInternal(Context context, String documentPath, HttpServletRequest request, HttpServletResponse response)

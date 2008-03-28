@@ -9,13 +9,13 @@ package org.hippoecm.hst;
  */
 public interface HSTNodeTypes {
 
-    //Node types
+    // Node types
     final public static String NT_HST_PAGE = "hst:page";
     final public static String NT_HST_PAGEDEF = "hst:pagedef";
     final public static String NT_HST_URLMAPPING = "hst:urlmapping";
     final public static String NT_HST_URLMAPPINGFOLDER = "hst:urlmappingfolder";
 
-    //Item names
+    // Item names
     final public static String HST_NODETYPE = "hst:nodetype";
     final public static String HST_DISPLAYPAGE = "hst:displaypage";
     final public static String HST_PAGETYPE = "hst:pageType";

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo.
+ * Copyright 2007-2008 Hippo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,14 @@
  */
 package org.hippoecm.hst;
 
-import java.io.IOException;
-
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.jstl.core.ConditionalTagSupport;
-import javax.servlet.jsp.jstl.core.LoopTag;
-import javax.servlet.jsp.tagext.TagSupport;
 
-public class AccessContextTag extends ConditionalTagSupport {
+public class AccessTag extends ConditionalTagSupport {
+	
     private static final long serialVersionUID = 1L;
     
     private String variable;
@@ -44,7 +37,7 @@ public class AccessContextTag extends ConditionalTagSupport {
     }
 
     public void setValue(Context location) {
-        this.location = (location == null ? null : location.path);
+        this.location = (location == null ? null : location.getPath());
     }
 
     @Override
@@ -53,7 +46,7 @@ public class AccessContextTag extends ConditionalTagSupport {
             HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
             Session jcrSession = JCRConnector.getJCRSession(req.getSession());
             Context context = new Context(jcrSession, null);
-            context.setPath(location);
+            context.setRelativePath(location);
             if (context.exists()) {
                 req.setAttribute(variable, context);
                 return true;

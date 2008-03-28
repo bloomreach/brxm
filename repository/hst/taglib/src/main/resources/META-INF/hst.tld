@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2007-2008 Hippo
   
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
 
   <tag>
     <name>access</name>
-    <tagclass>org.hippoecm.hst.AccessContextTag</tagclass>
+    <tagclass>org.hippoecm.hst.AccessTag</tagclass>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -38,6 +38,22 @@
     <attribute>
       <name>value</name>
       <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>include</name>
+    <tagclass>org.hippoecm.hst.IncludeTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>page</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>urlMappingLocation</name>
+      <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
