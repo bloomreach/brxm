@@ -52,9 +52,11 @@ public class EditorPlugin extends Plugin {
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
-            form.destroy();
-            replace(form = new EditorForm("form", nodeModel, this));
-            notification.getContext().addRefresh(this);
+            if (!nodeModel.equals(getPluginModel())) {
+                form.destroy();
+                replace(form = new EditorForm("form", nodeModel, this));
+                notification.getContext().addRefresh(this);
+            }
         }
         super.receive(notification);
     }
