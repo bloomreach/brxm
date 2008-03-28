@@ -71,4 +71,20 @@ public class ClientQuery extends org.apache.jackrabbit.rmi.client.ClientQuery im
             throw new RemoteRepositoryException(ex);
         }
     }
+
+    public void setLimit(long limit) throws RepositoryException {
+        try {
+            remote.setLimit(limit);
+        } catch(RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+
+    public void setOffset(long offset) throws RepositoryException {
+        try {
+            remote.setOffset(offset);
+        } catch(RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
 }
