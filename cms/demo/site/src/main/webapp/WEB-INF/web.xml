@@ -22,18 +22,18 @@
 
   <!-- Repository configuration -->
   <context-param>
-    <param-name>repository-address</param-name>
+    <param-name>repositoryAddress</param-name>
     <param-value>rmi://localhost:1099/hipporepository</param-value>
     <description>The address of the repository</description>
   </context-param>
   <context-param>
-    <description>The username to use for the repository login</description>
-    <param-name>repository-username</param-name>
+    <description>The user name to use for the repository login</description>
+    <param-name>repositoryUserName</param-name>
     <param-value>admin</param-value>
   </context-param>
   <context-param>
     <description>The password to use for the repository login</description>
-    <param-name>repository-password</param-name>
+    <param-name>repositoryPassword</param-name>
     <param-value>admin</param-value>
   </context-param>
 
@@ -46,15 +46,14 @@
         this parameter in the request scope for JSP/JSF pages.
         Defaults to context.
       </description>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>context</param-value>
     </init-param>
     <init-param>
       <description>
-        Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting 
+        The repository path to bind as context.
       </description>      
-      <param-name>urlbasepath</param-name>
+      <param-name>basePath</param-name>
       <param-value>/preview/site/pages</param-value>
     </init-param>
   </filter>
@@ -68,55 +67,54 @@
         this parameter in the request scope for JSP/JSF pages.
         Defaults to context.
       </description>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>context</param-value>
     </init-param>
     <init-param>
       <description>
-        Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting 
+        The repository path to bind as context.
       </description>      
-      <param-name>urlbasepath</param-name>
+      <param-name>basePath</param-name>
       <param-value>/live/site/pages</param-value>
     </init-param>
   </filter>
 
   <filter>
     <filter-name>GlobalContextPreview</filter-name>
-    <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
+    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
     <init-param>
       <description>
         Bind an additional context using the attribute name as specified by
         this parameter in the request scope for JSP/JSF pages.
       </description>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>global</param-value>
     </init-param>
     <init-param>
       <description>
-        The path to bind as context.
+        The repository path to bind as context.
       </description>      
-      <param-name>location</param-name>
+      <param-name>basePath</param-name>
       <param-value>/preview</param-value>
     </init-param>
   </filter>
 
   <filter>
     <filter-name>GlobalContextLive</filter-name>
-    <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
+    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
     <init-param>
       <description>
         Bind an additional context using the attribute name as specified by
         this parameter in the request scope for JSP/JSF pages.
       </description>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>global</param-value>
     </init-param>
     <init-param>
       <description>
-        The path to bind as context.
+        The repository path to bind as context.
       </description>      
-      <param-name>location</param-name>
+      <param-name>basePath</param-name>
       <param-value>/live</param-value>
     </init-param>
   </filter>

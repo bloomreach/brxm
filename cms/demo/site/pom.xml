@@ -64,7 +64,7 @@
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-taglib</artifactId>
-      <version>1.01.00-SNAPSHOT</version>
+      <version>2.01.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
