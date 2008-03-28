@@ -188,14 +188,6 @@
       <type>jar</type>
     </dependency>
    
-    <!-- cms-prototype add-on (DEPRECATED)-->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-cms-prototype-frontend</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-    
     <!-- hst add-on -->
 <!--
     <dependency>
