@@ -65,8 +65,12 @@ public class FacetSelectProvider extends HippoVirtualProvider
         if(docbase == null || newFacets == null || newValues == null || newModes == null) {
             return state;
         }
-
-        NodeState dereference = getNodeState(new NodeId(new UUID(docbase[0])));
+        NodeState dereference = null;
+        try {
+            dereference = getNodeState(new NodeId(new UUID(docbase[0])));
+        } catch (IllegalArgumentException e) {
+            log.error("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
+        }
         if(dereference != null) {
             boolean singledView = false;
             Map<Name,String> view = new HashMap<Name,String>();
