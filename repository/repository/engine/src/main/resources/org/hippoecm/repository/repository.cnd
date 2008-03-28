@@ -218,6 +218,9 @@
 [hippo:relativepropertyreference] > hippo:propertyreference
 - hippo:relPath (String) mandatory
 
+[hippo:resolvepropertyreference] > hippo:propertyreference
+- hippo:relPath (String) mandatory
+
 [hippo:builtinpropertyreference] > hippo:propertyreference
 - hippo:method (String) mandatory < 'ancestors'
 

@@ -172,6 +172,18 @@ public class DerivedDataEngine {
                                     parameters.put(propName, values);
                                 } else
                                     parameters.put(propName, property.getValues());
+                            } else if(propDef.isNodeType("hippo:resolvepropertyreference")) {
+                                Property property = HierarchyResolver.getProperty(modified,
+                                                                              propDef.getProperty("hippo:relPath").getString());
+                                if(property != null) {
+                                    if(!property.getDefinition().isMultiple()) {
+                                        Value[] values = new Value[1];
+                                        values[0] = property.getValue();
+                                        parameters.put(propName, values);
+                                    } else {
+                                        parameters.put(propName, property.getValues());
+                                    }
+                                }
                             } else {
                                 logger.warn("Derived data definition contains unrecognized reference, skipped");
                             }
