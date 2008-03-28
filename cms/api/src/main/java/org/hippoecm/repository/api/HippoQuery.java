@@ -39,10 +39,8 @@ public interface HippoQuery extends Query {
 
     /* FIXME
      * The following methods are part of JCR2, and should be supported
-     * as well within the Query and the QueryManager class:
+     * as well within the QueryManager class:
      * 
-     * public void Query.setLimit(long limit);
-     * public void Query.setOffset(long offset);
      * public PreparedQuery QueryManager.createPreparedQuery(String statement, String language) throws InvalidQueryException, RepositoryException;
      */
 }

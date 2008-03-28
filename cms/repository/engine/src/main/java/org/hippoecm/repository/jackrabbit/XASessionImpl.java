@@ -44,7 +44,9 @@ import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.state.ItemState;
+import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
@@ -179,9 +181,23 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
         Iterator iter = itemStateMgr.getDescendantTransientItemStates(nodeId);
         while(iter.hasNext()) {
             ItemState itemState = (ItemState) iter.next();
-            if(!itemState.isNode())
-                continue;
-            NodeState state = (NodeState) itemState;
+            NodeState state = null;
+            if(!itemState.isNode()) {
+                try {
+                    if(filteredResults.contains(itemState.getParentId()))
+                        continue;
+                    state = (NodeState) itemStateMgr.getItemState(itemState.getParentId());
+                    //continue;
+                } catch(NoSuchItemStateException ex) {
+                    log.error("Cannot find parent of changed property",ex);
+                    continue;
+                } catch(ItemStateException ex) {
+                    log.error("Cannot find parent of changed property",ex);
+                    continue;
+                }
+            } else {
+                state = (NodeState) itemState;
+            }
 
             /* if the node type of the current node state is not of required
              * type (if set), continue with next.

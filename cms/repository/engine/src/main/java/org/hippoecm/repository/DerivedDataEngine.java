@@ -45,6 +45,7 @@ import javax.jcr.version.VersionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.DerivedDataFunction;
 
@@ -64,14 +65,19 @@ public class DerivedDataEngine {
     public void save(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
         ValueFactory valueFactory = session.getValueFactory();
 
-	Set<Node> recomputeSet = new HashSet<Node>();
+        if(logger.isDebugEnabled())
+            logger.debug("Derived engine active");
+        Set<Node> recomputeSet = new HashSet<Node>();
         try {
             for(NodeIterator iter = session.pendingChanges(node,"jcr:uuid"); iter.hasNext(); ) {
                 Node modified = iter.nextNode();
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Derived engine found modified referenceable node "+modified.getPath()+" with "+modified.getReferences().getSize()+" references");
+                }
                 for(PropertyIterator i = modified.getReferences(); i.hasNext(); ) {
                     try {
                         Node dependency = i.nextProperty().getParent();
-                        if(dependency.isNodeType("hippo:derived"))
+                        if(dependency.isNodeType(HippoNodeType.NT_DERIVED))
                             recomputeSet.add(dependency);
                     } catch(AccessDeniedException ex) {
                         // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
@@ -98,39 +104,48 @@ public class DerivedDataEngine {
             throw new RepositoryException("Internal error jcr:uuid not found");
         }
         try {
-            for(NodeIterator iter = session.pendingChanges(node,"hippo:derived"); iter.hasNext(); ) {
-                recomputeSet.add(iter.nextNode());
+            for(NodeIterator iter = session.pendingChanges(node,HippoNodeType.NT_DERIVED); iter.hasNext(); ) {
+                Node modified = iter.nextNode();
+                if(logger.isDebugEnabled())
+                    logger.debug("Derived engine found node "+modified.getPath()+" with derived mixin");
+                recomputeSet.add(modified);
             }
         } catch(NamespaceException ex) {
             // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             // ex.printStackTrace(System.err);
             logger.error(ex.getClass().getName()+": "+ex.getMessage());
-            throw new RepositoryException("Internal error hippo:derived not found");
+            throw new RepositoryException("Internal error "+HippoNodeType.NT_DERIVED+" not found");
         } catch(NoSuchNodeTypeException ex) {
             // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             // ex.printStackTrace(System.err);
             logger.error(ex.getClass().getName()+": "+ex.getMessage());
-            throw new RepositoryException("Internal error hippo:derived not found");
+            throw new RepositoryException("Internal error "+HippoNodeType.NT_DERIVED+" not found");
         }
+
+        if(logger.isDebugEnabled())
+            logger.debug("Derived engine found "+recomputeSet.size()+" nodes to be evaluated");
 
         if(recomputeSet.size() == 0)
             return;
 
         Node derivatesFolder = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
         for(Node modified : recomputeSet) {
+            
             for(NodeIterator funcIter = derivatesFolder.getNodes();
                 funcIter.hasNext(); ) {
                 Node function = funcIter.nextNode();
                 try {
-                    String nodetypeName = function.getProperty("hippo:nodetype").getString();
+                    String nodetypeName = function.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
                     if(modified.isNodeType(nodetypeName)) {
+                        if(logger.isDebugEnabled())
+                            logger.debug("Derived node "+modified.getPath()+" is of derived type as defined in "+function.getPath());
                         /* preparation: build the map of parameters to be fed to
                          * the function and instantiate the class containing the
                          * compute function.
                          */
                         NodeType nodetype = session.getWorkspace().getNodeTypeManager().getNodeType(nodetypeName);
                         Map<String,Value[]> parameters = new TreeMap<String,Value[]>();
-                        Class clazz = Class.forName(function.getProperty("hippo:classname").getString());
+                        Class clazz = Class.forName(function.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
                         DerivedDataFunction func = (DerivedDataFunction) clazz.newInstance();
                         func.setValueFactory(valueFactory);
                         
@@ -194,7 +209,7 @@ public class DerivedDataEngine {
                         /* Use the definition of the derived properties to set the
                          * properties computed by the function.
                          */
-                        for(NodeIterator propDefIter=function.getNode("hippo:derived").getNodes();propDefIter.hasNext();) {
+                        for(NodeIterator propDefIter=function.getNode(HippoNodeType.NT_DERIVED).getNodes();propDefIter.hasNext();) {
                             Node propDef = propDefIter.nextNode();
                             String propName = propDef.getName();
                             if(propDef.isNodeType("hippo:relativepropertyreference")) {
@@ -202,7 +217,7 @@ public class DerivedDataEngine {
                                 StringBuffer sb = null;
                                 if(logger.isDebugEnabled()) {
                                     sb = new StringBuffer();
-                                    sb.append("property ");
+                                    sb.append("Derived property ");
                                     sb.append(propertyPath);
                                     sb.append(" in ");
                                     sb.append(modified.getPath());
