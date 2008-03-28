@@ -117,7 +117,7 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
             for (JcrNodeModel model : resultSet) {
                 resultSetPaths.add(model.getNode().getPath());
             }
-            map.put("resultSet", resultSetPaths);
+            map.put("entries", resultSetPaths);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

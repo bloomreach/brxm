@@ -153,7 +153,21 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-
+    
+    <!-- Reporting addon -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    
     <!-- CMS 7 addons-->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -197,22 +211,7 @@
       <type>jar</type>
     </dependency>
 -->
-
-    <!-- reporting add-on -->
-<!--
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
-      <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
--->      
+      
   </dependencies>
 
   <build>
