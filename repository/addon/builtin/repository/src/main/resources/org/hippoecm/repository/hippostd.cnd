@@ -25,7 +25,7 @@
 - hippostd:language (string) < 'en', 'nl'
 
 [hippostd:publishableSummary] > hippo:derived mixin
-- hippostd:stateSummary (string) mandatory // protected
+- hippostd:stateSummary (string) // mandatory protected
 
 [hippostd:publishable] mixin
 - hippostd:state (string) < 'draft', 'unpublished', 'published', 'stale'

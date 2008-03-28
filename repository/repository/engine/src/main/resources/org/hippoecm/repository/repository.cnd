@@ -211,8 +211,6 @@
 [hippo:namespace] > nt:base
 + * (hippo:templatetype) = hippo:templatetype
 
-
-
 [hippo:propertyreference] > nt:base
 
 [hippo:relativepropertyreference] > hippo:propertyreference
@@ -270,7 +268,6 @@
 [hippo:logfolder] > nt:base
 + * (hippo:logfolder) = hippo:logfolder
 + * (hippo:logitem) = hippo:logitem
-
 
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory

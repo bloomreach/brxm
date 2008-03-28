@@ -82,6 +82,9 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>unknown</sv:value>
+        </sv:property>
       </sv:node>
       <sv:node sv:name="myarticle1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -109,6 +112,9 @@
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>unknown</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -148,6 +154,9 @@
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>unknown</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -207,6 +216,9 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>unknown</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
@@ -263,6 +275,9 @@
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>unknown</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
