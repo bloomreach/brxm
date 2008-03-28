@@ -51,7 +51,8 @@ public abstract class AbstractTreePlugin extends Plugin {
 
         this.rootNode = rootNode;
         JcrTreeModel treeModel = new JcrTreeModel(rootNode);
-        add(newTree(treeModel));
+        tree = newTree(treeModel);
+        add(tree);
     }
 
     /**
