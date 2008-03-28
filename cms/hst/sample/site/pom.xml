@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.hippoecm.hst</groupId>
     <artifactId>hippo-ecm-hst-sample</artifactId>
-    <version>1.01.00-SNAPSHOT</version>
+    <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -55,7 +55,15 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-
+    
+    <!-- hst taglib -->
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-taglib</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    
     <!--Some sample content -->
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
@@ -63,7 +71,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-
+    
     <!-- Following dependencies are only needed when running embedded repository -->
     <dependency>
       <groupId>org.hippoecm</groupId>

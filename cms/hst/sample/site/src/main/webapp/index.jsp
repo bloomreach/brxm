@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="h" %>
 <%--
-    Copyright 2007 Hippo
+    Copyright 2008 Hippo
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -31,14 +31,15 @@
   <jsp:include page="navigation.jsp"/>
 
     <h1>${context.pageTitle}</h1>
-
+<%-- 
     <div id="left">
-      <c:forEach var="item" items="${context['../../../documents']}">
-        <c:if test="${item._index <= context['../../../documents']._size / 2}">
+      <c:forEach var="item" items="${context['../news']}">
+        <c:if test="${item._index <= context['../news']._size / 2}">
           ${item[item._name].title}<br/>
         </c:if>
       </c:forEach>
     </div>
+
     <div id="right">
       <c:forEach var="item" items="${context['../../../documents']}">
         <c:if test="${item._index > context['../../../documents']._size / 2}">
@@ -46,6 +47,6 @@
         </c:if>
       </c:forEach>
     </div>
-
+ --%>
   </div>
 </body></html>
