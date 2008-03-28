@@ -27,7 +27,7 @@
     <sv:value>hippo:prototyped</sv:value>
   </sv:property>
   <sv:property sv:name="hippo:prototype" sv:type="Reference">
-    <sv:value></sv:value>
+    <sv:value>a3101df4-ba42-4d8b-8800-0eccb4282ec4</sv:value>
   </sv:property>
   
   <!-- "Article" template -->
