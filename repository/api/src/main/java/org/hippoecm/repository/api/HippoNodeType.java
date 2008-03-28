@@ -43,6 +43,7 @@ public interface HippoNodeType {
     //--- Hippo NodeTypes ---//
     final public static String NT_APPLICATION = "hippo:application";
     final public static String NT_CONFIGURATION = "hippo:configuration";
+    final public static String NT_DERIVED = "hippo:derived";
     final public static String NT_DOCUMENT = "hippo:document";
     final public static String NT_FACETAUTH = "hippo:facetauth";
     final public static String NT_FACETAUTHFOLDER = "hippo:facetauthfolder";

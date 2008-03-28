@@ -43,7 +43,10 @@ import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.apache.jackrabbit.core.state.ItemState;
+import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
@@ -52,6 +55,7 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
+import org.hippoecm.repository.decorating.NodeDecorator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +93,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     protected org.apache.jackrabbit.core.WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig,
           SharedItemStateManager stateMgr, org.apache.jackrabbit.core.RepositoryImpl rep,
           org.apache.jackrabbit.core.SessionImpl session) {
-        return new WorkspaceImpl(wspConfig, stateMgr, rep, session);
+        return new WorkspaceImpl(wspConfig, stateMgr, rep, this);
     }
 
     @Override
@@ -161,7 +165,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
                                                                               NoSuchNodeTypeException, RepositoryException {
         Name ntName;
         try {
-            ntName = getQName(nodeType);
+            ntName = (nodeType != null  ? getQName(nodeType) : null);
         } catch(IllegalNameException ex) {
             throw new NoSuchNodeTypeException(nodeType);
         }
@@ -169,14 +173,31 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
         if(node == null) {
             node = getRootNode();
             if(node.isModified() && (nodeType == null || node.isNodeType(nodeType))) {
-                filteredResults.add(((NodeImpl)node).getNodeId());
+                filteredResults.add(((org.apache.jackrabbit.core.NodeImpl)node).getNodeId());
             }
         }
-        NodeId nodeId = ((NodeImpl)node).getNodeId();
+        NodeId nodeId = ((org.apache.jackrabbit.core.NodeImpl)NodeDecorator.unwrap(node)).getNodeId();
 
         Iterator iter = itemStateMgr.getDescendantTransientItemStates(nodeId);
         while(iter.hasNext()) {
-            NodeState state = (NodeState) iter.next();
+            ItemState itemState = (ItemState) iter.next();
+            NodeState state = null;
+            if(!itemState.isNode()) {
+                try {
+                    if(filteredResults.contains(itemState.getParentId()))
+                        continue;
+                    state = (NodeState) itemStateMgr.getItemState(itemState.getParentId());
+                    //continue;
+                } catch(NoSuchItemStateException ex) {
+                    log.error("Cannot find parent of changed property",ex);
+                    continue;
+                } catch(ItemStateException ex) {
+                    log.error("Cannot find parent of changed property",ex);
+                    continue;
+                }
+            } else {
+                state = (NodeState) itemState;
+            }
 
             /* if the node type of the current node state is not of required
              * type (if set), continue with next.

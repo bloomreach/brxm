@@ -57,6 +57,14 @@
         <sv:value>../{.}[{_similar},@hippostd:state='draft']/hippostd:state</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="request">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:resolvepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:relPath" sv:type="String">
+        <sv:value>../request[@type='publish']/type</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="hippo:derived">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

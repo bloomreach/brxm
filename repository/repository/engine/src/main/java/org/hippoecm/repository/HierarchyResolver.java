@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public final class HierarchyResolver {
-    private final static Logger log = LoggerFactory.getLogger(HierarchyResolver.class);
+    private final static Logger logger = LoggerFactory.getLogger(HierarchyResolver.class);
 
     public static class Entry {
         public Node node;
@@ -45,6 +45,9 @@ public final class HierarchyResolver {
 
     public static Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
       throws InvalidItemStateException, RepositoryException {
+        if(logger.isDebugEnabled()) {
+            logger.debug("resolving path "+path+(isProperty?" as property":""));
+        }
         if(last != null) {
             last.node = null;
             last.relPath = null;
@@ -56,6 +59,9 @@ public final class HierarchyResolver {
             --pathEltsLength;
         for(int pathIdx=0; pathIdx<pathEltsLength && node != null; pathIdx++) {
             String relPath = pathElts[pathIdx];
+            if(logger.isDebugEnabled()) {
+                logger.debug("resolving path element "+relPath);
+            }
             if(relPath.startsWith("{.}")) {
                 relPath = ancestor.getName() + relPath.substring("{.}".length());
             } else if(relPath.startsWith("{_name}")) {
@@ -116,33 +122,51 @@ public final class HierarchyResolver {
                 if(node.hasNode(relPath)) {
                     try {
                         node = node.getNode(relPath);
+                        if(logger.isDebugEnabled()) {
+                            logger.debug("resolved relPath as non-conditional item "+node.getPath());
+                        }
                     } catch(PathNotFoundException ex) {
-                        return null;
+                        return null; // impossible because of hasNode statement
                     }
                 } else {
+                    if(logger.isDebugEnabled()) {
+                        logger.debug("could not resolve non-conditional path "+relPath);
+                    }
                     return null;
                 }
             } else {
                 Node child = null;
                 for(NodeIterator iter = node.getNodes(relPath); iter.hasNext(); ) {
                     child = iter.nextNode();
+                    if(logger.isDebugEnabled()) {
+                        logger.debug("considering for conditional path "+relPath+" item "+child.getPath());
+                    }
                     for(Map.Entry<String,String> condition: conditions.entrySet()) {
                         if(child.hasProperty(condition.getKey())) {
                             if(condition.getValue() != null) {
                                 try {
                                     if(!child.getProperty(condition.getKey()).getString().equals(condition.getValue())) {
+                                        if(logger.isDebugEnabled()) {
+                                             logger.debug("child is not item because of key "+condition.getKey()+" expected "+condition.getValue()+" found "+child.getProperty(condition.getKey()).getString().equals(condition.getValue()));
+                                        }
                                         child = null;
                                         break;
                                     }
                                 } catch(PathNotFoundException ex) {
-                                    child = null;
+                                    child = null; // impossible because if hasProperty check
                                     break;
                                 } catch(ValueFormatException ex) {
+                                    if(logger.isDebugEnabled()) {
+                                        logger.debug("child is not item because of key "+condition.getKey()+" was not or right type");
+                                    }
                                     child = null;
                                     break;
                                 }
                             }
                         } else {
+                            if(logger.isDebugEnabled()) {
+                                logger.debug("child is not item because of key "+condition.getKey()+" was not found");
+                            }
                             child = null;
                             break;
                         }
@@ -151,12 +175,18 @@ public final class HierarchyResolver {
                         break;
                 }
                 if(child == null) {
+                    if(logger.isDebugEnabled()) {
+                        logger.debug("could not resolve conditional path "+relPath);
+                    }
                     return null;
                 } else
                     node = child;
             }
         }
         if(isProperty) {
+            if(logger.isDebugEnabled()) {
+                logger.debug("resolving final property path "+pathElts[pathEltsLength]);
+            }
             if(node.hasProperty(pathElts[pathEltsLength])) {
                 return node.getProperty(pathElts[pathEltsLength]);
             } else {
