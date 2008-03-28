@@ -20,6 +20,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.lookup.InfoPanel;
@@ -50,10 +51,10 @@ public class LinkPickerDialog extends LookupDialog {
     @Override
     public void update(AjaxRequestTarget target, JcrNodeModel model) {
         super.update(target, model);
-        ok.setEnabled(isValidType(model));
+        ok.setEnabled(isValidType(model) && isReferenceable(model));
         target.addComponent(ok);
-
     }
+
 
     @Override
     protected InfoPanel getInfoPanel(DialogWindow dialogWindow) {
@@ -71,8 +72,8 @@ public class LinkPickerDialog extends LookupDialog {
         if (sourceNodeModel.getParentModel() != null) {
             JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
             if (isValidType(targetNodeModel)) {
-                String targetPath = targetNodeModel.getNode().getPath();
-                valueModel.setObject(targetPath);
+                String targetUUID = targetNodeModel.getNode().getUUID();
+                valueModel.setObject(targetUUID);
             }
         }
         Channel channel = getChannel();
@@ -83,6 +84,19 @@ public class LinkPickerDialog extends LookupDialog {
 
     }
 
+
+    private boolean isReferenceable(JcrNodeModel targetNodeModel) {
+        Node targetNode = targetNodeModel.getNode();
+        try {
+            if(targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+                return true;
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        return false;
+    }
+    
     protected boolean isValidType(JcrNodeModel targetNodeModel) {
         Node targetNode = targetNodeModel.getNode();
         boolean validType = false;
