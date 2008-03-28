@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.hippoecm.repository.reviewedactions;
 
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import javax.jcr.ValueFactory;
 
 public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedDataFunction {
     public Map<String,Value[]> compute(Map<String,Value[]> parameters) {
+System.err.println("BERRY#1");
         if(parameters.containsKey("draft")) {
             parameters.put("summary", new Value[] { getValueFactory().createValue("modified") });
         } else if(parameters.containsKey("unpublished")) {
