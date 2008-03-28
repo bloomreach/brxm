@@ -21,11 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JCRConnector {
-    public static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
+	private static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
 
-    public static final String REPOSITORY_ADRESS_PARAM = "repository-address";
-    public static final String REPOSITORY_USERNAME_PARAM = "repository-username";
-    public static final String REPOSITORY_PASSWORD_PARAM = "repository-password";
+    public static final String REPOSITORY_ADRESS_PARAM = "repositoryAddress";
+    public static final String REPOSITORY_USERNAME_PARAM = "repositoryUserName";
+    public static final String REPOSITORY_PASSWORD_PARAM = "repositoryPassword";
+    
     public static final String JCR_SESSION_KEY = "org.hippoecm.hst.JCRSESSION";
 
     static Session getJCRSession(HttpSession httpSession) {

@@ -48,48 +48,74 @@ public class Context extends AbstractMap {
     public static final Logger logger = LoggerFactory.getLogger(Context.class);
 
     private Session session;
-    private String urlbasepath;
 
-    String path;
+    private String basePath;
+    private String relativePath;
     int index = -1;
     private HippoQuery query;
     private List<String> arguments;
 
-    Context(Session jcrSession, String urlbasepath) {
+    Context(Session jcrSession, String basePath) {
         this.session = jcrSession;
-        this.urlbasepath = urlbasepath;
-        this.path = null;
+        this.basePath = basePath;
+        this.relativePath = null;
     }
 
-    Context(Context parent, String path, int index) {
-    	this(parent.session, parent.urlbasepath);       
-        this.index = index;
-        if (path.startsWith("/")) {
-            this.path = path;
-        } else if (parent.path.endsWith("/")) {
-            this.path = parent.path + path;
+    Context(Context parent, String relativePath) {
+    	this(parent, relativePath, -1);
+    }
+    
+     Context(Context parent, String relativePath, int index) {
+    	this(parent.session, parent.basePath);       
+
+        if (relativePath.startsWith("/")) {
+        	setRelativePath(relativePath);
+        } else if (parent.relativePath.endsWith("/")) {
+            this.relativePath = parent.relativePath + relativePath;
         } else {
-            this.path = parent.path + "/" + path;
+            this.relativePath = parent.relativePath + "/" + relativePath;
         }
+    	
+    	this.index = index;
     }
 
     Context(Context parent, HippoQuery query, List arguments) {
-        this(parent.session, parent.urlbasepath);
+        this(parent.session, parent.basePath);
         this.query = query;
         this.arguments = arguments;
     }
 
-    String getURLBasePath() {
-        return urlbasepath;
+    String getPath() {
+    	
+    	if (relativePath == null) {
+    		return basePath;
+    	}
+    	
+    	if (relativePath.startsWith("/")) {
+    		return basePath + relativePath;
+    	}
+    	else {
+    		return basePath + "/" + relativePath;
+    	}	
     }
 
-    void setPath(String path) {
-        this.path = path;
+    public String getBasePath() {
+        return basePath;
+    }
+
+    void setRelativePath(String relativePath) {
+    	
+    	if (relativePath.startsWith(basePath)) {
+    		this.relativePath = relativePath.substring(basePath.length());
+    	}
+    	else {
+    		this.relativePath = relativePath;
+    	}	
     }
 
     boolean exists() {
         try {
-            Item item = JCRConnector.getItem(session, path);
+            Item item = JCRConnector.getItem(session, getPath());
             return item != null;
         } catch (RepositoryException ex) {
             logger.error("exists", ex);
@@ -118,9 +144,9 @@ public class Context extends AbstractMap {
                             rtvalue.add(child);
                     }
                 } else {
-                    Item item = JCRConnector.getItem(session, path);
+                    Item item = JCRConnector.getItem(session, getPath());
                     if (item == null) {
-                        logger.debug("Item has disappeared " + path);
+                        logger.debug("Item has disappeared " + getPath());
                     } else if (item.isNode()) {
                         Node node = (Node) item;
                         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
@@ -161,9 +187,9 @@ public class Context extends AbstractMap {
                         }
                     }
                 } else {
-                    Item item = JCRConnector.getItem(session, path);
+                    Item item = JCRConnector.getItem(session, getPath());
                     if (item == null) {
-                        logger.debug("Item has disappeared " + path);
+                        logger.debug("Item has disappeared " + getPath());
                     } else if (item.isNode()) {
                         Node node = (Node) item;
                         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
@@ -186,18 +212,19 @@ public class Context extends AbstractMap {
     public Object get(Object key) {
         Object result;
         String field = (String) key;
+
         synchronized (this) {
             try {
-                if (path == null && !field.startsWith("/")) {
+                if (query != null && !field.startsWith("/")) {
                     List newArguments = (arguments == null) ? new LinkedList() : new LinkedList(arguments);
-                    newArguments.add(key);
+                    newArguments.add(field);
                     result = new Context(this, query, newArguments);
                 } else {
-                    String requestedPath = this.path;
+                    String requestedPath = getPath();
                     if (!field.startsWith("_")) {
                         if (field.startsWith("/")) {
                             requestedPath = field;
-                        } else if (path.endsWith("/")) {
+                        } else if (requestedPath.endsWith("/")) {
                             requestedPath += field;
                         } else {
                             requestedPath += "/" + field;
@@ -205,14 +232,16 @@ public class Context extends AbstractMap {
                     }
                     Item item = JCRConnector.getItem(session, requestedPath);
                     if (item == null) {
-                        logger.debug("Path not found on "+requestedPath);
+                        logger.debug("No item found at path "+requestedPath);
                         result = null;
-                    } else if (item.isNode()) {
+                    } 
+                    else if (item.isNode()) {
                         Node node = (Node) item;
                         if (node.isNodeType("nt:query")) {
                             HippoQuery requestedQuery = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(node);
                             result = new Context(this, requestedQuery, new LinkedList());
-                        } else {
+                        } 
+                        else {
                             if (field.startsWith("_")) {
                                 field = field.substring(1);
                                 if (field.equals("name")) {
@@ -226,12 +255,16 @@ public class Context extends AbstractMap {
                                 } else if (field.equals("index")) {
                                     result = new Integer(index);
                                 } else {
-                                    result = "Abstract element not defined _" + field;
+                                    logger.warn("context._" + field + " not defined");
+                                    result = null;
                                 }
-                            } else
+                            } 
+                            else {
                                 result = new Context(this, node.getPath(), -1);
+                            }    
                         }
-                    } else {
+                    } 
+                    else {
                         Property property = (Property) item;
                         switch(property.getType()) {
                         case PropertyType.DATE:
@@ -250,6 +283,7 @@ public class Context extends AbstractMap {
                 result = null;
             }
         }
+ 
         return result;
     }
 
