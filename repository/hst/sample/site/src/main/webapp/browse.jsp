@@ -3,9 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="h" %>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hippo" %>
 <%--
-    Copyright 2007 Hippo
+    Copyright 2008 Hippo
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -35,8 +35,10 @@
   <ul>
     <c:forEach var="item" items="${context['../../../documents']}">
       <li>
-        <h:include page="${item[item._name]._path}" map="/hst-sample/alternatemapping"/>
-      </li>
+      <pre>${item[item._name]._path}</pre>
+<%--
+        <hippo:include page="${item[item._name]._path}" urlMappingLocation="/hst-sample/alternatemapping"/>
+--%>      </li>
     </c:forEach>
   </ul>
 

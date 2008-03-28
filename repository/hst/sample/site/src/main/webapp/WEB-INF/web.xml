@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
   
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -21,97 +21,87 @@
   <description>Hippo ECM Sample site</description>
 
   
-  <!-- Repository configurtation -->
+  <!-- Repository configuration -->
   <context-param>
     <description>The address of the repository</description>
-    <param-name>repository-address</param-name>
+    <param-name>repositoryAddress</param-name>
     <!-- param-value>rmi://localhost:1099/hipporepository</param-value -->
     <param-value>WEB-INF/storage</param-value>
   </context-param>
   <context-param>
-    <description>The username to use for the repository login</description>
-    <param-name>repository-username</param-name>
+    <description>The user name to use for the repository login</description>
+    <param-name>repositoryUserName</param-name>
     <param-value>admin</param-value>
   </context-param>
   <context-param>
     <description>The password to use for the repository login</description>
-    <param-name>repository-password</param-name>
+    <param-name>repositoryPassword</param-name>
     <param-value>admin</param-value>
   </context-param>
   
 
   <filter>
-    <filter-name>Context</filter-name>
-    <filter-class>org.hippoecm.hst.DocumentMapping</filter-class>
+    <filter-name>context</filter-name>
+    <filter-class>org.hippoecm.hst.URLMappingContextFilter</filter-class>
     <init-param>
       <description>
         Bind the context using the attribute name as specified by
         this parameter in the request scope for JSP/JSF pages.
         Defaults to context.
       </description>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>context</param-value>
     </init-param>
     <init-param>
       <description>
-        Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting 
+        The repository path to bind as context.
       </description>      
-      <param-name>urlbasepath</param-name>
+      <param-name>basePath</param-name>
       <param-value>/hst-sample/pages</param-value>
-    </init-param>
-    <init-param>
-      <description>
-        This parameter describes which document is responsible for
-        requests send to the bare context root.   In effect a
-        welcome page, but for the context root itself only.
-      </description>
-      <param-name>urlbasehome</param-name>
-      <param-value>home</param-value>
     </init-param>
     <init-param>
       <description>
         Where to find the default 'node type -> jsp file' mapping,
         must be of type hst:urlmappingfolder
       </description>
-      <param-name>urlmapping</param-name>
-      <param-value>/hst-sample/defaultmapping</param-value>
+      <param-name>urlMappingLocation</param-name>
+      <param-value>/defaultmapping</param-value>
     </init-param>
   </filter>
-
+<!--
   <filter>
     <filter-name>GlobalContext</filter-name>
-    <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
+    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
     <init-param>
       <description>
         Bind an additional context using the attribute name as specified by
         this parameter in the request scope for JSP/JSF pages.
       </description>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>global</param-value>
     </init-param>
     <init-param>
       <description>
         The path to bind as context.
       </description>      
-      <param-name>location</param-name>
+      <param-name>basePath</param-name>
       <param-value>/hst-sample/global</param-value>
     </init-param>
   </filter>
-
+-->
   <filter-mapping>
-    <filter-name>Context</filter-name>
+    <filter-name>context</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
-
+<!--
   <filter-mapping>
     <filter-name>GlobalContext</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
   </filter-mapping>
-
+-->
   <servlet>
     <servlet-name>DirectAccessServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.DirectAccessServlet</servlet-class>
