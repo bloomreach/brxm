@@ -34,6 +34,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
+import org.apache.jackrabbit.core.query.QueryImpl;
+
 import org.hippoecm.repository.api.HippoQuery;
 
 /**
@@ -153,6 +155,14 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
 
     public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException {
         arguments.put(varName, value);
+    }
+
+    public void setLimit(long limit) throws RepositoryException {
+        ((QueryImpl)query).setLimit(limit);
+    }
+
+    public void setOffset(long offset) throws RepositoryException {
+        ((QueryImpl)query).setOffset(offset);
     }
 
     static String mangleArguments(String statement) {
