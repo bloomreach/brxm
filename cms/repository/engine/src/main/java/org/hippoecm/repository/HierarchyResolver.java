@@ -35,12 +35,12 @@ import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class HierarchyResolver {
+public final class HierarchyResolver {
     private final static Logger log = LoggerFactory.getLogger(HierarchyResolver.class);
 
     public static class Entry {
-        Node node;
-        String relPath;
+        public Node node;
+        public String relPath;
     }
 
     public static Item getItem(Node ancestor, String path, boolean isProperty, Entry last)

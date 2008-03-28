@@ -45,6 +45,7 @@ import org.jpox.store.fieldmanager.AbstractFieldManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.HierarchyResolver;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -76,145 +77,9 @@ class FieldManagerImpl extends AbstractFieldManager {
         String relPath;
     }
 
-    private Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
-      throws InvalidItemStateException, RepositoryException {
-        if(last != null) {
-            last.node = null;
-            last.relPath = null;
-        }
-        Node node = ancestor;
-        String[] pathElts = path.split("/");
-        int pathEltsLength = pathElts.length;
-        if(isProperty)
-            --pathEltsLength;
-        for(int pathIdx=0; pathIdx<pathEltsLength && node != null; pathIdx++) {
-            String relPath = pathElts[pathIdx];
-            if(relPath.startsWith("{.}")) {
-                relPath = ancestor.getName() + relPath.substring("{.}".length());
-            } else if(relPath.startsWith("{_name}")) {
-                relPath = ancestor.getName() + relPath.substring("{_name}".length());
-            } else if(relPath.startsWith("{..}")) {
-                relPath = ancestor.getParent().getName() + relPath.substring("{..}".length());
-            } else if(relPath.startsWith("{_parent}")) {
-                relPath = ancestor.getParent().getName() + relPath.substring("{_parent}".length());
-            } else if(relPath.startsWith("{") && relPath.endsWith("}")) {
-                String uuid = relPath.substring(1,relPath.length()-1);
-                uuid = ancestor.getProperty(uuid).getString();
-                node = node.getSession().getNodeByUUID(uuid);
-                continue;
-            }
-            Map<String,String> conditions = null;
-            if(relPath.contains("[") && relPath.endsWith("]")) {
-                conditions = new TreeMap<String,String>();
-                String[] conditionElts = relPath.substring(relPath.indexOf("[")+1,relPath.lastIndexOf("]")).split(",");
-                for(int conditionIdx=0; conditionIdx<conditionElts.length; conditionIdx++) {
-                    int pos = conditionElts[conditionIdx].indexOf("=");
-                    if(pos >= 0) {
-                        String key = conditionElts[conditionIdx].substring(0,pos);
-                        String value = conditionElts[conditionIdx].substring(pos+1);
-                        if(value.startsWith("'") && value.endsWith("'")) {
-                            value = value.substring(1,value.length()-1);
-                            conditions.put(key, value);
-                        } else if(value.startsWith("{") && value.endsWith("}")) {
-                            value = ancestor.getProperty(value.substring(1,value.length()-1)).getString();
-                            conditions.put(key, value);
-                        } else {
-                            conditions.put(key, value);
-                        }
-                    } else {
-                        if(conditionElts[conditionIdx].equals("{_similar}")) {
-                            Node parent = ancestor.getParent();
-                            if(parent.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
-                                Value[] discriminators = parent.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-                                for(int i=0; i<discriminators.length; i++) {
-                                    conditions.put(discriminators[i].getString(),
-                                                   ancestor.getProperty(discriminators[i].getString()).getString());
-                                }
-                            }
-                        } else {
-                            conditions.put(conditionElts[conditionIdx], null);
-                        }
-                    }
-                }
-                relPath = relPath.substring(0,relPath.indexOf("["));
-            }
-            if(last != null) {
-                last.node = node;
-                last.relPath = relPath;
-            }
-            if(conditions == null || conditions.size() == 0) {
-                if(node.hasNode(relPath)) {
-                    try {
-                        node = node.getNode(relPath);
-                    } catch(PathNotFoundException ex) {
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-            } else {
-                Node child = null;
-                for(NodeIterator iter = node.getNodes(relPath); iter.hasNext(); ) {
-                    child = iter.nextNode();
-                    for(Map.Entry<String,String> condition: conditions.entrySet()) {
-                        if(child.hasProperty(condition.getKey())) {
-                            if(condition.getValue() != null) {
-                                try {
-                                    if(!child.getProperty(condition.getKey()).getString().equals(condition.getValue())) {
-                                        child = null;
-                                        break;
-                                    }
-                                } catch(PathNotFoundException ex) {
-                                    child = null;
-                                    break;
-                                } catch(ValueFormatException ex) {
-                                    child = null;
-                                    break;
-                                }
-                            }
-                        } else {
-                            child = null;
-                            break;
-                        }
-                    }
-                    if(child != null)
-                        break;
-                }
-                if(child == null) {
-                    return null;
-                } else
-                    node = child;
-            }
-        }
-        if(isProperty) {
-            if(node.hasProperty(pathElts[pathEltsLength])) {
-                return node.getProperty(pathElts[pathEltsLength]);
-            } else {
-                if(last != null) {
-                    last.node = node;
-                    last.relPath = pathElts[pathEltsLength];
-                }
-                return null;
-            }
-        } else
-            return node;
-    }
-
-    private Property getProperty(Node node, String field) throws RepositoryException {
-        return (Property) getItem(node, field, true, null);
-    }
-
-    private Property getProperty(Node node, String field, Entry last) throws RepositoryException {
-        return (Property) getItem(node, field, true, last);
-    }
-
-    private Node getNode(Node node, String field) throws InvalidItemStateException, RepositoryException {
-        return (Node) getItem(node, field, false, null);
-    }
-
     private Node getNode(Node node, String field, String nodetype) throws RepositoryException {
-        Entry last = new Entry();
-        node = (Node) getItem(node, field, false, last);
+        HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+        node = (Node) HierarchyResolver.getItem(node, field, false, last);
         if (node == null && last.node != null) {
             if (nodetype != null) {
                 node = last.node.addNode(last.relPath, nodetype);
@@ -239,8 +104,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
-                Entry last = new Entry();
-                Property property = getProperty(node, field, last);
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = HierarchyResolver.getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -271,7 +136,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = getProperty(node, field).getBoolean();
+                value = HierarchyResolver.getProperty(node, field).getBoolean();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -303,8 +168,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
-                Entry last = new Entry();
-                Property property = getProperty(node, field, last);
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = HierarchyResolver.getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -335,7 +200,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = getProperty(node, field).getString().charAt(0);
+                value = HierarchyResolver.getProperty(node, field).getString().charAt(0);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -367,8 +232,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
-                Entry last = new Entry();
-                Property property = getProperty(node, field, last);
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = HierarchyResolver.getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -399,7 +264,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (short) getProperty(node, field).getLong();
+                value = (short) HierarchyResolver.getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -431,8 +296,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
-                Entry last = new Entry();
-                Property property = getProperty(node, field, last);
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = HierarchyResolver.getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -463,7 +328,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (int) getProperty(node, field).getLong();
+                value = (int) HierarchyResolver.getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -495,8 +360,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
-                Entry last = new Entry();
-                Property property = getProperty(node, field, last);
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = HierarchyResolver.getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -527,7 +392,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = getProperty(node, field).getLong();
+                value = HierarchyResolver.getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -559,8 +424,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
-                Entry last = new Entry();
-                Property property = getProperty(node, field, last);
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = HierarchyResolver.getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -591,7 +456,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (float) getProperty(node, field).getDouble();
+                value = (float) HierarchyResolver.getProperty(node, field).getDouble();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -623,8 +488,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null) {
             try {
-                Entry last = new Entry();
-                Property property = getProperty(node, field, last);
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = HierarchyResolver.getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -655,7 +520,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = getProperty(node, field).getDouble();
+                value = HierarchyResolver.getProperty(node, field).getDouble();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -687,8 +552,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             log.debug("store \"" + field + "\" = \"" + value + "\"");
         if (field != null && !field.equals("jcr:uuid")) {
             try {
-                Entry last = new Entry();
-                Property property = getProperty(node, field, last);
+                HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                Property property = HierarchyResolver.getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -724,7 +589,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                Property property = getProperty(node, field);
+                Property property = HierarchyResolver.getProperty(node, field);
                 if (property != null)
                     value = property.getString();
                 else
@@ -762,7 +627,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             return;
         if (value == null) {
             try {
-                Node removal = getNode(node, field);
+                Node removal = HierarchyResolver.getNode(node, field);
                 removal.remove();
             } catch (InvalidItemStateException ex) {
                 if (log.isDebugEnabled()) {
@@ -788,8 +653,8 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Node nodetypeNode = types.getNode(classname);
                 String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
                 if (value instanceof Document && ((Document) value).isCloned() != null) {
-                    Entry last = new Entry();
-                    child = (Node) getItem(node, field, false, last);
+                    HierarchyResolver.Entry last = new HierarchyResolver.Entry();
+                    child = (Node) HierarchyResolver.getItem(node, field, false, last);
                     if (child != null) {
                         child.remove();
                     }
@@ -845,7 +710,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                Node child = getNode(node, field);
+                Node child = HierarchyResolver.getNode(node, field);
                 if (child != null) {
                     Class clazz = cmd.getField(fieldNumber).getType();
                     Object id = new JCROID(child.getUUID(), clazz.getName());
