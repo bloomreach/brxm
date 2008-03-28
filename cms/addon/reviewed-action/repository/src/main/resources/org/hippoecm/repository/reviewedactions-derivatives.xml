@@ -38,7 +38,7 @@
         <sv:value>hippo:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:relPath" sv:type="String">
-        <sv:value>../{.}[_similar,@state='published']/hippo:state</sv:value>
+        <sv:value>../{.}[{_similar},@hippostd:state='published']/hippostd:state</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="unpublished">
@@ -46,7 +46,7 @@
         <sv:value>hippo:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:relPath" sv:type="String">
-        <sv:value>../{.}[_similar,@state='unpublished']/hippo:state</sv:value>
+        <sv:value>../{.}[{_similar},@hippostd:state='unpublished']/hippostd:state</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="draft">
@@ -54,7 +54,7 @@
         <sv:value>hippo:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:relPath" sv:type="String">
-        <sv:value>../{.}[_similar,@state='draft']/hippo:state</sv:value>
+        <sv:value>../{.}[{_similar},@hippostd:state='draft']/hippostd:state</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

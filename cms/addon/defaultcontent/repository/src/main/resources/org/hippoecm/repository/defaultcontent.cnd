@@ -22,18 +22,18 @@
 <hippostd='http://www.hippoecm.org/hippostd/nt/1.0'>
 <defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.0'>
 
-[defaultcontent:article] > hippo:document, hippostd:publishable, mix:referenceable
+[defaultcontent:article] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
 - defaultcontent:introduction (string)
 - defaultcontent:body (string)
 
-[defaultcontent:news] > hippo:document, hippostd:publishable, mix:referenceable
+[defaultcontent:news] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
 - defaultcontent:date (date)
 - defaultcontent:introduction (string)
 - defaultcontent:body (string)
 
-[defaultcontent:event] > hippo:document, hippostd:publishable, mix:referenceable
+[defaultcontent:event] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
 - defaultcontent:date (date)
 - defaultcontent:introduction (string)

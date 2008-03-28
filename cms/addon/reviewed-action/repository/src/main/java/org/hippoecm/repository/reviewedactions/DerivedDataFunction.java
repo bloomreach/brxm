@@ -22,12 +22,11 @@ import javax.jcr.ValueFactory;
 
 public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedDataFunction {
     public Map<String,Value[]> compute(Map<String,Value[]> parameters) {
-System.err.println("BERRY#1");
-        if(parameters.containsKey("draft")) {
+        if(parameters.containsValue("draft")) {
             parameters.put("summary", new Value[] { getValueFactory().createValue("modified") });
-        } else if(parameters.containsKey("unpublished")) {
+        } else if(parameters.containsValue("unpublished")) {
             parameters.put("summary", new Value[] { getValueFactory().createValue("preview") });
-        } else if(parameters.containsKey("published")) {
+        } else if(parameters.containsValue("published")) {
             parameters.put("summary", new Value[] { getValueFactory().createValue("live") });
         } else {
             parameters.put("summary", new Value[] { getValueFactory().createValue("new") });
