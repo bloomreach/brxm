@@ -14,14 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="reporting" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+<sv:node sv:name="reporting" 
+  xmlns:sv="http://www.jcp.org/jcr/sv/1.0" 
+  xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+  xmlns:jcr="http://www.jcp.org/jcr/1.0" 
+  xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:hippo="http://www.hippoecm.org/nt/1.0"
-  xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
-  xmlns:hst="http://www.hippoecm.org/hst/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-  xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-  xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
-  xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0">
+  
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
