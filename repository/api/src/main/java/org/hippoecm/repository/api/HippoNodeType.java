@@ -28,17 +28,17 @@ package org.hippoecm.repository.api;
 public interface HippoNodeType {
 
     final public static String CONFIGURATION_PATH = "hippo:configuration";
-    final public static String INITIALIZE_PATH = "hippo:initialize";
-    final public static String WORKFLOWS_PATH = "hippo:workflows";
     final public static String DOCUMENTS_PATH = "hippo:documents";
-    final public static String FRONTEND_PATH = "hippo:frontend";
-    final public static String USERS_PATH = "hippo:users";
-    final public static String GROUPS_PATH = "hippo:groups";
-    final public static String ROLES_PATH = "hippo:roles";
     final public static String FACETAUTH_PATH = "hippo:facetauths";
-    final public static String PLUGIN_PATH = "hippo:plugins";
-    final public static String NAMESPACES_PATH = "hippo:namespaces";
+    final public static String FRONTEND_PATH = "hippo:frontend";
+    final public static String GROUPS_PATH = "hippo:groups";
+    final public static String INITIALIZE_PATH = "hippo:initialize";
     final public static String LOGGING_PATH = "hippo:logging";
+    final public static String NAMESPACES_PATH = "hippo:namespaces";
+    final public static String PLUGIN_PATH = "hippo:plugins";
+    final public static String ROLES_PATH = "hippo:roles";
+    final public static String USERS_PATH = "hippo:users";
+    final public static String WORKFLOWS_PATH = "hippo:workflows";
 
     //--- Hippo NodeTypes ---//
     final public static String NT_APPLICATION = "hippo:application";
@@ -59,6 +59,9 @@ public interface HippoNodeType {
     final public static String NT_HANDLE = "hippo:handle";
     final public static String NT_INITIALIZEFOLDER = "hippo:initializefolder";
     final public static String NT_INITIALIZEITEM = "hippo:initializeitem";
+    final public static String NT_LOGCONFIG = "hippo:logconfig";
+    final public static String NT_LOGFOLDER = "hippo:logfolder";
+    final public static String NT_LOGITEM = "hippo:logitem";
     final public static String NT_MIRROR = "hippo:mirror";
     final public static String NT_MOUNT = "hippo:mount";
     final public static String NT_NAMESPACE = "hippo:namespace";
@@ -102,6 +105,10 @@ public interface HippoNodeType {
     final public static String HIPPO_FIELD = "hippo:field";
     final public static String HIPPO_INITIALIZE = "hippo:initialize";
     final public static String HIPPO_ITEM = "hippo:item";
+    final public static String HIPPO_LOGAPPENDER = "hippo:logappender";
+    final public static String HIPPO_LOGENABLED = "hippo:logenabled";
+    final public static String HIPPO_LOGMAXSIZE = "hippo:logmaxsize";
+    final public static String HIPPO_LOGPATH= "hippo:logpath";
     final public static String HIPPO_MEMBERS = "hippo:members";
     final public static String HIPPO_MANDATORY = "hippo:mandatory";
     final public static String HIPPO_MODES = "hippo:modes";

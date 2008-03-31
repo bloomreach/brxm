@@ -48,7 +48,7 @@
   
   <sv:node sv:name="hippo:logging">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:loggingconfiguration</sv:value>
+      <sv:value>hippo:logconfig</sv:value>
     </sv:property>
   </sv:node>
   

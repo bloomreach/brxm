@@ -15,6 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <span wicket:id="result"></span>
+        <h3><span wicket:id="header">[header]</span></h3>        
+        <table cellspacing="1" class="dataview">
+            <tr wicket:id="view">
+                <td><span wicket:id="timestamp">[timestamp]</span></td>
+                <td><span wicket:id="user">[user]</span></td>
+                <td><span wicket:id="method">[method]</span></td>
+                <!--<td><span wicket:id="arguments">[arguments]</span></td>-->
+                <td><span wicket:id="retval">[retval]</span></td>
+            </tr>
+        </table>
     </wicket:panel>
 </html>

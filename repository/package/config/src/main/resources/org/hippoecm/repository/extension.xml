@@ -25,7 +25,7 @@
   </sv:property>
 
   <!--CMS frontend configuration-->
-  <sv:node sv:name="frontend-cms">
+  <sv:node sv:name="cms-frontend">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -39,30 +39,14 @@
       <sv:value>/hippo:configuration/hippo:frontend</sv:value>
     </sv:property>
   </sv:node>
-  
-  <!--CMS prototype frontend configuration (DEPRECATED)-->
-  <sv:node sv:name="frontend-cms-prototype">
+
+  <!--Roles configuration-->
+  <sv:node sv:name="cms-roles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>903</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>frontend-cms-prototype.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <!--Roles configuration-->
-  <sv:node sv:name="roles">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>904</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>roles-config.xml</sv:value>
@@ -73,12 +57,12 @@
   </sv:node>
 
   <!--User configuration-->
-  <sv:node sv:name="users">
+  <sv:node sv:name="cms-users">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>905</sv:value>
+      <sv:value>904</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>users-config.xml</sv:value>
@@ -89,12 +73,12 @@
   </sv:node>
 
   <!--Group configuration-->
-  <sv:node sv:name="groups">
+  <sv:node sv:name="cms-groups">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>906</sv:value>
+      <sv:value>905</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>groups-config.xml</sv:value>

@@ -44,6 +44,7 @@ import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.EventLogger;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
@@ -190,13 +191,13 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
      */
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
-        char[] empty = {}; 
+        char[] empty = {};
         SimpleCredentials sc = new SimpleCredentials(null, empty);
         Session rootSession = getRootSession(workspaceName);
         if (rootSession == null) {
             throw new RepositoryException("Unable to get the rootSession for workspace: " + workspaceName);
         }
-        
+
         // non anonymous logins
         if (credentials != null) {
             if (credentials instanceof SimpleCredentials) {
@@ -205,7 +206,16 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         }
 
         sc.setAttribute("rootSession", rootSession);
-        return super.login(sc, workspaceName);
+        Session session = super.login(sc, workspaceName);
+        
+        if (session != null && session.isLive()) {
+            String userId = session.getUserID();
+            if (!userId.equals("system") && !userId.equals("anonymous")) {
+                EventLogger logger = new EventLogger(rootSession);
+                logger.logEvent(userId, "Repository", "login", null, null);
+            }
+        }
+        return session;
     }
 
     /**

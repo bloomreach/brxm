@@ -1,9 +1,25 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.plugins.reporting;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -11,7 +27,6 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
-import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,56 +39,60 @@ public class ReportPlugin extends Plugin {
     public ReportPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        String reportId = getDescriptor().getParameter("report").getStrings().get(0);
-        Node node;
-        if (reportId != null) {
-            Session session = ((UserSession) getSession()).getJcrSession();
-            try {
-                node = session.getNodeByUUID(reportId);
-            } catch (RepositoryException e) {
-                node = new JcrNodeModel(model).getNode();
-            }
+        Node reportNode = getReportNode();
+        if (reportNode == null) {
+            setPluginModel(model);
+            add(new Label("report", "Failed to  create report: cannot locate report node"));            
         } else {
-            node = new JcrNodeModel(model).getNode();
+            setPluginModel(new ReportModel(new JcrNodeModel(reportNode)));
+            Plugin report = createReport("report", reportNode);
+            if (report == null) {
+                add(new Label("report", "Failed to  create report: cannot create report plugin"));
+            } else {
+                add(report);
+                return;
+            }
         }
-        add(createReport("report", node));
     }
-
-//    @Override
-//    public void receive(Notification notification) {
-//        if ("select".equals(notification.getOperation())) {
-//            JcrNodeModel model = new JcrNodeModel(notification.getModel());
-//            if (!model.equals(getModel())) {
-//                setPluginModel(model);
-//                replace(createReport("report", model.getNode()));
-//                notification.getContext().addRefresh(this);
-//            }
-//        }
-//        super.receive(notification);
-//    }
 
     // privates
 
-    private Plugin createReport(String id, Node reportNode) {
-        PluginDescriptor pluginDescriptor = null;
+    private Node getReportNode() {
+        String reportId = getDescriptor().getParameter("report").getStrings().get(0);
+        Node node;
         try {
-            if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
-                String basePath = reportNode.getPath().substring(1);
-                PluginConfig pluginConfig = new PluginRepositoryConfig(basePath);
-                pluginDescriptor = pluginConfig.getPlugin(ReportingNodeTypes.PLUGIN);
-                pluginDescriptor.setWicketId(id);
+            if (reportId != null) {
+                Session session = ((UserSession) getSession()).getJcrSession();
+                node = session.getNodeByUUID(reportId);
+                if (!node.isNodeType(ReportingNodeTypes.NT_REPORT)) {
+                    node = null;
+                }
+            } else {
+                node = null;
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
+            node = null;
         }
+        return node;
+    }
 
-        if (pluginDescriptor == null) {
-            pluginDescriptor = new PluginDescriptor(id, EmptyPlugin.class.getName());
+    private Plugin createReport(String id, Node reportNode) {
+        Plugin plugin;
+        try {
+            String basePath = reportNode.getPath().substring(1);
+            PluginConfig pluginConfig = new PluginRepositoryConfig(basePath);
+            PluginDescriptor pluginDescriptor = pluginConfig.getPlugin(ReportingNodeTypes.PLUGIN);
+            pluginDescriptor.setWicketId(id);
+
+            ReportModel reportModel = new ReportModel(new JcrNodeModel(reportNode));
+            PluginFactory pluginFactory = new PluginFactory(getPluginManager());
+            plugin = pluginFactory.createPlugin(pluginDescriptor, reportModel, this);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+            plugin = null;
         }
-        ReportModel reportModel = new ReportModel(new JcrNodeModel(reportNode));
-
-        PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-        return pluginFactory.createPlugin(pluginDescriptor, reportModel, this);
+        return plugin;
     }
 
 }

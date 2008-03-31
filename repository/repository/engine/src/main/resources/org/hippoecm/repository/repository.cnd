@@ -253,19 +253,22 @@
 // The following type is DEPRECATED from start
 [hippo:folder] > nt:unstructured, mix:referenceable
 
-[hippo:loggingconfiguration] > nt:base
-- hippo:logEnabled (boolean) = 'false' mandatory autocreated
-- hippo:logPath (String) = '/log'  mandatory autocreated
+[hippo:logconfig] > nt:base
+- hippo:logenabled (boolean) = 'true' mandatory autocreated
+- hippo:logpath (String) = '/log'  mandatory autocreated
+- hippo:logappender (String) = 'rolling' mandatory autocreated < 'rolling', 'folding'
+- hippo:logmaxsize (Long) = '100' mandatory autocreated 
 
 [hippo:logitem] > nt:base
-- hippo:who (String) mandatory
-- hippo:workflowClass (String) mandatory
-- hippo:workflowMethod (String) mandatory
-- hippo:workflowArguments (String) multiple
-- hippo:workflowReturnType (String)
-- hippo:workflowReturnValue (String)
+- hippo:timestamp (Long) mandatory
+- hippo:eventUser (String) mandatory
+- hippo:eventClass (String) mandatory
+- hippo:eventMethod (String) mandatory
+- hippo:eventArguments (String) multiple
+- hippo:eventReturnType (String)
+- hippo:eventReturnValue (String)
 
-[hippo:logfolder] > nt:base
+[hippo:logfolder] > nt:base orderable
 + * (hippo:logfolder) = hippo:logfolder
 + * (hippo:logitem) = hippo:logitem
 
@@ -279,5 +282,5 @@
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
 + hippo:frontend (hippo:application) = hippo:application
-+ hippo:logging (hippo:loggingconfiguration) = hippo:loggingconfiguration
++ hippo:logging (hippo:logconfig) = hippo:logconfig
 

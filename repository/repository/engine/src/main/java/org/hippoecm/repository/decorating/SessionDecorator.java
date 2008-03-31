@@ -47,9 +47,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
-import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
-
 import javax.transaction.xa.XAResource;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -60,23 +58,25 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.jackrabbit.api.XASession;
-import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.spi.Path;
-
-import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
+import org.hippoecm.repository.DerivedDataEngine;
+import org.hippoecm.repository.EventLogger;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
-
-import org.hippoecm.repository.DerivedDataEngine;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
+import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  */
 public class SessionDecorator implements XASession, HippoSession {
+    
+    private static Logger log = LoggerFactory.getLogger(SessionDecorator.class);
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -388,7 +388,16 @@ public class SessionDecorator implements XASession, HippoSession {
      * Forwards the method call to the underlying session.
      */
     public void logout() {
-        session.logout();
+        try {
+            Repository rep = session.getRepository();
+            Session rootSession = ((RepositoryImpl)rep).getRootSession(null);
+            EventLogger logger = new EventLogger(rootSession);
+            logger.logEvent(session.getUserID(), "Session", "logout", null, null);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+        } finally {      
+        	session.logout();
+        }
     }
 
     /**
