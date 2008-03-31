@@ -19,7 +19,24 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/1.0'>
+<hippostd='http://www.hippoecm.org/hippostd/nt/1.0'>
+<hstsample='http://www.hippoecm.org/hstsample/nt/1.0'>
 
-[hst:samplePlainNodeType] > hippo:document
+[hstsample:samplePlainNodeType] > hippo:document, hippostd:publishable
+- hstsample:title (String)
+- hstsample:content (String)
 
-[hst:sampleSpecialNodeType] > hippo:document
+[hstsample:sampleSpecialNodeType] > hippo:document, hippostd:publishable
+- hstsample:title (String)
+- hstsample:link (String)
+
+[hstsample:globalDocument] > hippo:document
+- hstsample:linkTitle (String)
+- hstsample:linkText (String)
+
+[hstsample:homeDocument] > hippo:document
+- hstsample:pageLabel (String)
+- hstsample:pageTitle (String)
+
+[hstsample:browseDocument] > hippo:document
+- hstsample:pageLabel (String)

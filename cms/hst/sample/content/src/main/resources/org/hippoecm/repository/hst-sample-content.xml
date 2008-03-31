@@ -36,12 +36,17 @@
     </sv:property>
     <sv:node sv:name="global">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:document</sv:value>
+        <sv:value>hstsample:globalDocument</sv:value>
       </sv:property>
-      <sv:property sv:name="linkTitle" sv:type="String">
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+      </sv:property>
+      <sv:property sv:name="hstsample:linkTitle" sv:type="String">
         <sv:value>Print page</sv:value>
       </sv:property>
-      <sv:property sv:name="linkText" sv:type="String">
+      <sv:property sv:name="hstsample:linkText" sv:type="String">
         <sv:value>Print</sv:value>
       </sv:property>
     </sv:node>
@@ -58,21 +63,24 @@
       </sv:property>
       <sv:node sv:name="home">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:document</sv:value>
+          <sv:value>hstsample:homeDocument</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hst:page</sv:value>
+          <sv:value>hippo:harddocument</sv:value>
         </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+      </sv:property>
         <sv:property sv:name="hst:pageType" sv:type="String">
           <sv:value>jsp</sv:value>
         </sv:property>
         <sv:property sv:name="hst:pageFile" sv:type="String">
           <sv:value>/index.jsp</sv:value>
         </sv:property>
-        <sv:property sv:name="pageLabel" sv:type="String">
+        <sv:property sv:name="hstsample:pageLabel" sv:type="String">
           <sv:value>Repository Overview</sv:value>
         </sv:property>
-        <sv:property sv:name="pageTitle" sv:type="String">
+        <sv:property sv:name="hstsample:pageTitle" sv:type="String">
           <sv:value>Home</sv:value>
         </sv:property>
       </sv:node>
@@ -84,10 +92,13 @@
       </sv:property>
       <sv:node sv:name="browse">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:document</sv:value>
+          <sv:value>hstsample:browseDocument</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hst:page</sv:value>
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
         </sv:property>
         <sv:property sv:name="hst:pageType" sv:type="String">
           <sv:value>jsp</sv:value>
@@ -95,7 +106,7 @@
         <sv:property sv:name="hst:pageFile" sv:type="String">
           <sv:value>/browse.jsp</sv:value>
         </sv:property>
-        <sv:property sv:name="pageLabel" sv:type="String">
+        <sv:property sv:name="hstsample:pageLabel" sv:type="String">
           <sv:value>Browse</sv:value>
         </sv:property>
       </sv:node>
@@ -134,15 +145,20 @@
       </sv:property>
       <sv:node sv:name="first">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:samplePlainNodeType</sv:value>
+          <sv:value>hstsample:samplePlainNodeType</sv:value>
         </sv:property>
-        <sv:property sv:name="state" sv:type="String">
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
         </sv:property>
-        <sv:property sv:name="title" sv:type="String">
+        <sv:property sv:name="hstsample:title" sv:type="String">
           <sv:value>First</sv:value>
         </sv:property>
-        <sv:property sv:name="content" sv:type="String">
+        <sv:property sv:name="hstsample:content" sv:type="String">
           <sv:value>First document</sv:value>
         </sv:property>
       </sv:node>
@@ -154,15 +170,20 @@
       </sv:property>
       <sv:node sv:name="second">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:samplePlainNodeType</sv:value>
+          <sv:value>hstsample:samplePlainNodeType</sv:value>
         </sv:property>
-        <sv:property sv:name="state" sv:type="String">
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
         </sv:property>
-        <sv:property sv:name="title" sv:type="String">
+        <sv:property sv:name="hstsample:title" sv:type="String">
           <sv:value>Second</sv:value>
         </sv:property>
-        <sv:property sv:name="content" sv:type="String">
+        <sv:property sv:name="hstsample:content" sv:type="String">
           <sv:value>Second document</sv:value>
         </sv:property>
       </sv:node>
@@ -174,15 +195,20 @@
       </sv:property>
       <sv:node sv:name="third">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:sampleSpecialNodeType</sv:value>
+          <sv:value>hstsample:sampleSpecialNodeType</sv:value>
         </sv:property>
-        <sv:property sv:name="state" sv:type="String">
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
         </sv:property>
-        <sv:property sv:name="title" sv:type="String">
+        <sv:property sv:name="hstsample:title" sv:type="String">
           <sv:value>Third</sv:value>
         </sv:property>
-        <sv:property sv:name="link" sv:type="String">
+        <sv:property sv:name="hstsample:link" sv:type="String">
           <sv:value>http://www.hippocms.org/</sv:value>
         </sv:property>
       </sv:node>
