@@ -90,25 +90,12 @@ public class NodeCell extends Panel {
                 } else if (nodePropertyName.equals("path")) {
                     addLabel(link, n.getPath());
                 } else if (nodePropertyName.equals("state")) {
-                    Node canonicalNode = n.getCanonicalNode();
+                    //State property is only available on variants
+                    HippoNode variant = (HippoNode) (n.getNode(n.getName()));
+                    Node canonicalNode = variant.getCanonicalNode();
                     String state = "unknown";
-                    for (NodeIterator variantsIterator = canonicalNode.getNodes(); variantsIterator.hasNext();) {
-                        Node variant = variantsIterator.nextNode();
-                        if (variant.getName().equals(canonicalNode.getName())) {
-                            if (variant.hasProperty("hippostd:state")) {
-                                if (variant.getProperty("hippostd:state").equals("published")) {
-                                    if (state.equals("new"))
-                                        state = "live";
-                                    if (state.equals("unknown"))
-                                        state = "live";
-                                } else if (variant.getProperty("hippostd:state").equals("unpublished")) {
-                                    if (state.equals("unknown"))
-                                        state = "new";
-                                } else if (variant.getProperty("hippostd:state").equals("draft")) {
-                                    state = "changed";
-                                }
-                            }
-                        }
+                    if(canonicalNode.hasProperty("hippostd:state")) {
+                        state = canonicalNode.getProperty("hippostd:state").getString();
                     }
                     addLabel(link, state);
                 } else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
