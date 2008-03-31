@@ -392,7 +392,7 @@ public class SessionDecorator implements XASession, HippoSession {
             Repository rep = session.getRepository();
             Session rootSession = ((RepositoryImpl)rep).getRootSession(null);
             EventLogger logger = new EventLogger(rootSession);
-            logger.logEvent(session.getUserID(), "Session", "logout", null, null);
+            logger.logEvent(session.getUserID(), "Session", "logout");
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         } finally {      

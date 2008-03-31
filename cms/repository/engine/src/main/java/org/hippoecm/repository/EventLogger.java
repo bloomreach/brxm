@@ -71,7 +71,7 @@ public class EventLogger {
         }
     }
 
-    public void logEvent(String who, String className, String methodName, Object[] args, Object returnObject) {
+    public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject, String documentPath) {
         if (enabled) {
             try {
                 applyAppender();
@@ -100,6 +100,11 @@ public class EventLogger {
                     logNode.setProperty("hippo:eventReturnType", returnObject.getClass().getName());
                     logNode.setProperty("hippo:eventReturnValue", returnObject.toString());
                 }
+                
+                if (documentPath != null) {
+                    logNode.setProperty("hippo:eventDocument", documentPath);
+                }
+                
                 logFolder.save();
                 logFolder.refresh(true);
 
@@ -108,6 +113,33 @@ public class EventLogger {
             }
         }
     }
+    
+    public void logEvent(String who, String className, String methodName) {
+        if (enabled) {
+            try {
+                applyAppender();
+                long timestamp = System.currentTimeMillis();
+
+                Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippo:logitem");
+                if (logFolder.hasNodes()) {
+                    Node firstNode = logFolder.getNodes().nextNode();
+                    logFolder.orderBefore(logNode.getName(), firstNode.getName());
+                }
+
+                logNode.setProperty("hippo:timestamp", timestamp);
+                logNode.setProperty("hippo:eventUser", who == null ? "null" : who);
+                logNode.setProperty("hippo:eventClass", className == null ? "null" : className);
+                logNode.setProperty("hippo:eventMethod", methodName == null ? "null" : methodName);
+
+                logFolder.save();
+                logFolder.refresh(true);
+
+            } catch (RepositoryException e) {
+                log.error("Event logging failed: " + e.getMessage(), e);
+            }
+        }
+    }
+
 
     private void applyAppender() throws RepositoryException {
         if (appender.equals("folding")) {

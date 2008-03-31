@@ -212,7 +212,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
             String userId = session.getUserID();
             if (!userId.equals("system") && !userId.equals("anonymous")) {
                 EventLogger logger = new EventLogger(rootSession);
-                logger.logEvent(userId, "Repository", "login", null, null);
+                logger.logEvent(userId, "Repository", "login");
             }
         }
         return session;

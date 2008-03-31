@@ -267,6 +267,7 @@
 - hippo:eventArguments (String) multiple
 - hippo:eventReturnType (String)
 - hippo:eventReturnValue (String)
+- hippo:eventDocument (String)
 
 [hippo:logfolder] > nt:base orderable
 + * (hippo:logfolder) = hippo:logfolder

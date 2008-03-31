@@ -53,7 +53,7 @@
           <sv:value>sql</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:statement" sv:type="String">
-          <sv:value>SELECT * FROM hippo:logitem ORDER BY hippo:timestamp</sv:value>
+          <sv:value>SELECT * FROM hippo:logitem ORDER BY hippo:timestamp DESC</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hippo:frontendplugin">
