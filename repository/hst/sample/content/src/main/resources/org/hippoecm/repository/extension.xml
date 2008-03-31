@@ -28,12 +28,15 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="hst-sample">
+  <sv:node sv:name="hstsample">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>1010</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:namespace" sv:type="String">
+      <sv:value>http://www.hippoecm.org/hstsample/nt/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>hst-sample.cnd</sv:value>
