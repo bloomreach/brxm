@@ -34,6 +34,7 @@ import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.repository.EventLogger;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -55,7 +56,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
     Session session;
 
     DocumentManagerImpl documentManager;
-    WorkflowLogger workflowLogger;
     String configuration;
 
     public WorkflowManagerImpl(Session session, DocumentManagerImpl documentManager) {
@@ -69,7 +69,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
         } catch(RepositoryException ex) {
             log.error("workflow manager configuration failed: "+ex.getMessage(), ex);
         }
-        workflowLogger = new WorkflowLogger(documentManager.getSession());
     }
 
     public WorkflowManagerImpl(Session session, String uuid) {
@@ -287,7 +286,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (returnObject instanceof Document) {
                     returnObject = new Document(((Document)returnObject).getIdentity());
                 }
-                workflowLogger.log(session.getUserID(), upstream, targetMethod, args, returnObject);
+                EventLogger eventLogger = new EventLogger(rootSession);
+                eventLogger.logEvent(session.getUserID(), upstream.getClass().getName(), targetMethod.getName(), args, returnObject);
                 return returnObject;
             } catch(NoSuchMethodException ex) {
                 throw new RepositoryException("Impossible failure for workflow proxy", ex);

@@ -42,6 +42,9 @@
       </sv:property>
       <sv:property sv:name="reporting:parameternames" sv:type="String"> </sv:property>
       <sv:property sv:name="reporting:parametervalues" sv:type="String"> </sv:property>
+      <sv:property sv:name="reporting:limit" sv:type="Long">
+        <sv:value>10</sv:value>
+      </sv:property>
       <sv:node sv:name="hippo:query">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:query</sv:value>
@@ -50,7 +53,7 @@
           <sv:value>sql</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:statement" sv:type="String">
-          <sv:value>SELECT * FROM hippo:logitem</sv:value>
+          <sv:value>SELECT * FROM hippo:logitem ORDER BY hippo:timestamp</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hippo:frontendplugin">
@@ -58,7 +61,7 @@
           <sv:value>hippo:frontendplugin</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.CurrentPlugin</sv:value>
+          <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.current.CurrentActivityPlugin</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -74,6 +77,9 @@
       </sv:property>
       <sv:property sv:name="reporting:parameternames" sv:type="String"> </sv:property>
       <sv:property sv:name="reporting:parametervalues" sv:type="String"> </sv:property>
+      <sv:property sv:name="reporting:limit" sv:type="Long">
+        <sv:value>10</sv:value>
+      </sv:property>      
       <sv:node sv:name="hippo:query">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:query</sv:value>
@@ -90,7 +96,7 @@
           <sv:value>hippo:frontendplugin</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.TodoPlugin</sv:value>
+          <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.todo.TodoPlugin</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -180,7 +186,7 @@
               <sv:value>Dashboard</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="current">
+          <sv:node sv:name="currentActivityPlugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:frontendplugin</sv:value>
             </sv:property>
@@ -196,7 +202,7 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="todo">
+          <sv:node sv:name="todoPlugin">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:frontendplugin</sv:value>
             </sv:property>

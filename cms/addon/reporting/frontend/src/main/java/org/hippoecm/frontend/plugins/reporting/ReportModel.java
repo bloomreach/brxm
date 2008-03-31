@@ -34,12 +34,28 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
 
     static final Logger log = LoggerFactory.getLogger(ReportModel.class);
 
-    private List<JcrNodeModel> resultSet;
-
     public ReportModel(JcrNodeModel nodeModel) {
         super(nodeModel);
-        resultSet = new ArrayList<JcrNodeModel>();
+    }
 
+    // IDataProvider
+
+    public Iterator iterator(int first, int count) {
+        return resultSet().iterator();
+    }
+
+    public IModel model(Object object) {
+        return (JcrNodeModel) object;
+    }
+
+    public int size() {
+        return resultSet().size();
+    }
+
+    // privates
+
+    private List<JcrNodeModel> resultSet() {
+        List<JcrNodeModel> resultSet = new ArrayList<JcrNodeModel>();
         try {
             Node reportNode = nodeModel.getNode();
             if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
@@ -53,8 +69,8 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
                 if (queryNode != null) {
                     QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
                     HippoQuery query = (HippoQuery) queryManager.getQuery(queryNode);
-                    
-                    Map <String,String> arguments = new HashMap<String, String>();
+
+                    Map<String, String> arguments = new HashMap<String, String>();
                     if (reportNode.hasProperty(ReportingNodeTypes.PARAMETER_NAMES)) {
                         Value[] parameterNames = reportNode.getProperty(ReportingNodeTypes.PARAMETER_NAMES).getValues();
                         Value[] parameterValues = reportNode.getProperty(ReportingNodeTypes.PARAMETER_VALUES).getValues();
@@ -64,7 +80,15 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
                             }
                         }
                     }
-                    
+                    if (reportNode.hasProperty(ReportingNodeTypes.LIMIT)) {
+                        query.setLimit(reportNode.getProperty(ReportingNodeTypes.LIMIT).getLong());
+                    }
+                    if (reportNode.hasProperty(ReportingNodeTypes.OFFSET)) {
+                        query.setOffset(reportNode.getProperty(ReportingNodeTypes.OFFSET).getLong());
+                    }
+
+                    javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
+                    session.refresh(true);
                     QueryResult result;
                     if (arguments.isEmpty()) {
                         result = query.execute();
@@ -81,47 +105,12 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         } catch (PatternSyntaxException e) {
-            //TODO: This occurs if there is a mismatch between 
+            //This occurs if there is a mismatch between 
             //supplied parameters and number of parameter placeholders in statement
             //Should probably be a RepositoryException
             log.error(e.getMessage());
         }
-    }
-
-    public List<JcrNodeModel> getResultSet() {
         return resultSet;
-    }
-
-    // IDataProvider
-
-    public Iterator iterator(int first, int count) {
-        return resultSet.iterator();
-    }
-
-    public IModel model(Object object) {
-        return (JcrNodeModel) object;
-    }
-
-    public int size() {
-        return resultSet.size();
-    }
-
-    // IPluginModel
-
-    public Map<String, Object> getMapRepresentation() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        try {
-            map.put("node", getNodeModel().getNode().getPath());
-
-            List<String> resultSetPaths = new ArrayList<String>();
-            for (JcrNodeModel model : resultSet) {
-                resultSetPaths.add(model.getNode().getPath());
-            }
-            map.put("entries", resultSetPaths);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return map;
     }
 
     // IDetachable
@@ -135,7 +124,7 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("reportNode", nodeModel.toString())
-                .append("resultSet", resultSet.toString()).toString();
+                .toString();
     }
 
     @Override
