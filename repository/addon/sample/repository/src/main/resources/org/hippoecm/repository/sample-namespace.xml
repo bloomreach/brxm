@@ -97,18 +97,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>dca6ced9-7bab-4ebb-ad16-36f3b5a9995c</sv:value>
-      </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:image</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>9e31f0a3-9032-4429-8d5e-9537ede3aaa6</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mimeType" sv:type="String">
           <sv:value>image/gif</sv:value>
@@ -380,12 +371,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>a948ad63-792d-4d7c-a9a4-ca256b69a880</sv:value>
-      </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:simpledocument</sv:value>
@@ -412,9 +397,6 @@
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:prototype" sv:type="Reference">
-          <sv:value>a948ad63-792d-4d7c-a9a4-ca256b69a880</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>

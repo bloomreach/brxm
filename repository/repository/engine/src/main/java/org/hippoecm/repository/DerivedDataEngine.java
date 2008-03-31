@@ -40,6 +40,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
 import org.slf4j.Logger;
@@ -254,7 +255,8 @@ public class DerivedDataEngine {
                                         }
                                     }
                                 } else {
-                                    if(!nodetype.canSetProperty(propertyPath, parameters.get(propName))) {
+                                    PropertyDefinition derivedPropDef = getPropertyDefinition(nodetype, propertyPath);
+                                    if(!derivedPropDef.isMultiple()) {
                                         Value[] values = parameters.get(propName);
                                         if(values != null && values.length >= 1) {
                                             modified.setProperty(propertyPath, values[0]);
@@ -327,6 +329,16 @@ public class DerivedDataEngine {
                 }
             }
         }
+    }
+    
+    private PropertyDefinition getPropertyDefinition(NodeType nodetype, String propertyPath) {
+        PropertyDefinition[] definitions = nodetype.getPropertyDefinitions();
+        for(PropertyDefinition propDef : definitions) {
+            if(propDef.getName().equals(propertyPath)) {
+                return propDef;
+            }
+        }
+        return null;
     }
 
     public static class CoreDerivedDataFunction extends DerivedDataFunction {

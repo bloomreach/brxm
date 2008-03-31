@@ -103,12 +103,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>adc7677e-23e6-4d88-9f29-ce05a62a1c3a</sv:value>
-      </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
@@ -183,9 +177,6 @@
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:prototype" sv:type="Reference">
-          <sv:value>adc7677e-23e6-4d88-9f29-ce05a62a1c3a</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
@@ -298,32 +289,12 @@
             <sv:value>hippo:handle</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>prototype</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:prototype</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-        </sv:node>
       </sv:node>
     </sv:node>
 
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>a3101df4-ba42-4d8b-8800-0eccb4282ec4</sv:value>
       </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -401,12 +372,6 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:handle</sv:value>
           </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>mix:referenceable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>8dac8a01-19e4-43e8-a8bc-1e18c19ea298</sv:value>
-          </sv:property>
           <sv:node sv:name="hippo:prototype">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>nt:unstructured</sv:value>
@@ -433,9 +398,6 @@
           <sv:node sv:name="hippo:template">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:template</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:prototype" sv:type="Reference">
-              <sv:value>8dac8a01-19e4-43e8-a8bc-1e18c19ea298</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:renderer" sv:type="String">
               <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
@@ -544,14 +506,10 @@
         <sv:value>hippo:namespace</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippo:prototyped</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>9553c21f-3708-4096-967c-ec8c6bf105a8</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:prototype" sv:type="Reference">
-        <sv:value>a3101df4-ba42-4d8b-8800-0eccb4282ec4</sv:value>
+      <sv:property sv:name="hippo:prototype" sv:type="String">
+        <sv:value>/hippo:namespaces/hippo/hippo:templatetype/hippo:prototype/hippo:prototype</sv:value>
       </sv:property>
     </sv:node>
 
@@ -753,12 +711,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>d3d2e6ea-3284-4a8d-850d-47370bffb646</sv:value>
-      </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:field</sv:value>
@@ -789,9 +741,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:prototype" sv:type="Reference">
-          <sv:value>d3d2e6ea-3284-4a8d-850d-47370bffb646</sv:value>
-        </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
         </sv:property>
@@ -811,25 +760,6 @@
             </sv:property>
             <sv:property sv:name="caption" sv:type="String">
               <sv:value>Path</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>type</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Type</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
@@ -1093,12 +1023,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>e0938066-5833-4c40-83cb-6892cc9db474</sv:value>
-      </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:query</sv:value>
@@ -1214,12 +1138,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>053f4110-598c-4bdb-bc3d-d665b2d4253e</sv:value>
-      </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:facetlink</sv:value>
@@ -1237,9 +1155,6 @@
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:prototype" sv:type="Reference">
-          <sv:value>053f4110-598c-4bdb-bc3d-d665b2d4253e</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
@@ -1381,12 +1296,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>dd212ac2-31bc-488f-902d-ee31622df144</sv:value>
-      </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:facetselect</sv:value>
@@ -1407,9 +1316,6 @@
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:prototype" sv:type="Reference">
-          <sv:value>dd212ac2-31bc-488f-902d-ee31622df144</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
@@ -1581,12 +1487,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>e39ef2b2-8e6f-49af-9c10-b1e16f822c86</sv:value>
-      </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:facetsearch</sv:value>
@@ -1608,9 +1508,6 @@
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:prototype" sv:type="Reference">
-          <sv:value>e39ef2b2-8e6f-49af-9c10-b1e16f822c86</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>

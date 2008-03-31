@@ -128,6 +128,10 @@ public class OnCloseDialog extends AbstractDialog {
             }
             n.save();
 
+            Channel channel = getChannel();
+            Request request = channel.createRequest("save", new JcrNodeModel(n));
+            channel.send(request);
+
             sendClose(nodeModel);
         } catch (RepositoryException e) {
             log.info(e.getClass().getName() + ": " + e.getMessage());

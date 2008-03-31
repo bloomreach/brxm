@@ -20,7 +20,8 @@ import java.util.Map;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public abstract class NodeModelWrapper implements IChainingModel, IPluginModel {
+public class NodeModelWrapper implements IChainingModel, IPluginModel {
+    private static final long serialVersionUID = 1L;
 
     protected JcrNodeModel nodeModel;
 

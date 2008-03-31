@@ -134,6 +134,11 @@ public class Remodeling {
 
     protected void visit(Node source, Node target) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
+        NodeType[] mixinNodeTypes = source.getMixinNodeTypes();
+        for(int i = 0; i < mixinNodeTypes.length; i++) {
+            target.addMixin(getNewName(mixinNodeTypes[i].getName()));
+        }
+
         for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
             PropertyDefinition definition = prop.getDefinition();
@@ -143,11 +148,6 @@ public class Remodeling {
                 } else {
                     target.setProperty(getNewName(prop.getName()), prop.getValue());
                 }
-            }
-            
-            NodeType[] mixinNodeTypes = source.getMixinNodeTypes();
-            for(int i = 0; i < mixinNodeTypes.length; i++) {
-                target.addMixin(getNewName(mixinNodeTypes[i].getName()));
             }
         }
     }

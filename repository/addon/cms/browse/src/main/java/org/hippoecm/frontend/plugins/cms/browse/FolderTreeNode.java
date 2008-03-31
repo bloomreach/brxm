@@ -51,13 +51,14 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     // hardcoded ignore path set
     private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
-            "/hippo:configuration" }));
+            "/hippo:configuration", "/hippo:namespaces" }));
 
     // ignore nodes below these types
-    private final static String[] ignoreNodesBelowType = new String[] {HippoNodeType.NT_DOCUMENT};
-    
+    private final static String[] ignoreNodesBelowType = new String[] { HippoNodeType.NT_DOCUMENT,
+            HippoNodeType.NT_TEMPLATETYPE };
+
     //  shortcut paths shown as root folders
-    private final static String[] shortCutPaths = new String[] { "hippo:configuration/hippo:templates" };
+    private final static String[] shortCutPaths = new String[] { "hippo:namespaces" };
 
     public FolderTreeNode(JcrNodeModel model) {
         super(model);
@@ -70,9 +71,11 @@ public class FolderTreeNode extends AbstractTreeNode {
         this.belowFacetSelectSingleMode = parent.belowFacetSelectSingleMode;
         try {
             Node node = nodeModel.getNode();
-            if(isFacetSelect(node)) {
+            if (isFacetSelect(node)) {
                 try {
-                    if(node.getProperty(HippoNodeType.HIPPO_MODES).getValues().length > 0 && "single".equals(node.getProperty(HippoNodeType.HIPPO_MODES).getValues()[0].getString().toString())) {
+                    if (node.getProperty(HippoNodeType.HIPPO_MODES).getValues().length > 0
+                            && "single".equals(node.getProperty(HippoNodeType.HIPPO_MODES).getValues()[0].getString()
+                                    .toString())) {
                         belowFacetSelectSingleMode = true;
                     }
                 } catch (PathNotFoundException e) {
@@ -127,7 +130,7 @@ public class FolderTreeNode extends AbstractTreeNode {
         String result = "null";
         if (node != null) {
             try {
-                if(node.isSame(node.getAncestor(0))) {
+                if (node.isSame(node.getAncestor(0))) {
                     return ROOT_NODE_DISPLAYNAME;
                 }
                 result = ISO9075Helper.decodeLocalName(node.getDisplayName());
@@ -153,14 +156,14 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     private List<Node> subNodes(Node node) throws RepositoryException {
         List<Node> result = new ArrayList<Node>();
-        for(String type : ignoreNodesBelowType) {
-           if(node.isNodeType(type)){
-               return result;
-           }
+        for (String type : ignoreNodesBelowType) {
+            if (node.isNodeType(type)) {
+                return result;
+            }
         }
         if (node.isSame(node.getAncestor(0))) {
             // node is rootNode, so add shortcut paths
-            for(String path : shortCutPaths) {
+            for (String path : shortCutPaths) {
                 try {
                     result.add(node.getNode(path));
                 } catch (PathNotFoundException e) {
@@ -168,7 +171,7 @@ public class FolderTreeNode extends AbstractTreeNode {
                 }
             }
         }
-        
+
         NodeIterator subNodes = node.getNodes();
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();

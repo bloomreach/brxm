@@ -110,7 +110,7 @@
 - hippo:sequence (double)
 - hippo:namespace (string)
 - hippo:nodetypesresource (string)
-- hippo:nodetypes (string)
+- hippo:nodetypes (binary)
 - hippo:contentresource (string)
 - hippo:content (string)
 - hippo:contentroot (string)
@@ -189,7 +189,6 @@
 - hippo:supertype (string) multiple
 - hippo:node (boolean)
 - hippo:mixin (boolean)
-+ hippo:prototype (hippo:document)
 + hippo:field (hippo:field) multiple
 
 [hippo:templateitem] > hippo:plugin orderable
@@ -198,10 +197,9 @@
 + hippo:item (hippo:templateitem) multiple
 
 [hippo:template] > hippo:templateitem, hippo:document orderable
-- hippo:prototype (reference)
 
 [hippo:prototyped] mixin
-- hippo:prototype (reference) mandatory
+- hippo:prototype (string) mandatory
 
 [hippo:templatetype]
 + hippo:nodetype (hippo:handle) mandatory
@@ -210,6 +208,11 @@
 
 [hippo:namespace] > nt:base
 + * (hippo:templatetype) = hippo:templatetype
+
+[hippo:unstructured] mixin
+- *
+- * multiple
++ * multiple
 
 [hippo:propertyreference] > nt:base
 

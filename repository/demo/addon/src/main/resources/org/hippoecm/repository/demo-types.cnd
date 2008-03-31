@@ -28,6 +28,16 @@
 [demo:webPage] > hippo:document, hippostd:publishable
 - demo:pageLabel (string)
 - demo:pageTitle (string)
+- demo:content (string)
+
+[demo:image] > nt:resource
+
+[demo:message] > hippo:document, hippostd:publishable
+- demo:title (string)
+- demo:description (string)
+- demo:date (date)
+- demo:keywords (string) multiple
++ demo:image (demo:image)
 
 [demo:queryDocument] > hippo:document, hippostd:publishable
 + demo:query (hippo:query) = hippo:query

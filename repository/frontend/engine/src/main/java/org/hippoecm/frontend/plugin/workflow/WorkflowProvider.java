@@ -23,10 +23,14 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -37,10 +41,12 @@ public class WorkflowProvider implements IDataProvider {
 
     static final Logger log = LoggerFactory.getLogger(WorkflowProvider.class);
 
+    private NodeModelWrapper wrapper;
     private List<String> workflows;
 
-    public WorkflowProvider() {
+    public WorkflowProvider(NodeModelWrapper wrapper) {
         UserSession session = (UserSession) Session.get();
+        this.wrapper = wrapper;
         workflows = new LinkedList<String>();
         try {
             Node wflsNode = session.getJcrSession().getRootNode().getNode(
@@ -59,7 +65,7 @@ public class WorkflowProvider implements IDataProvider {
     }
 
     public IModel model(Object object) {
-        return new WorkflowCategoryModel((String) object);
+        return new WorkflowCategoryModel((String) object, wrapper.getNodeModel());
     }
 
     public Iterator iterator(int first, int count) {
@@ -73,20 +79,32 @@ public class WorkflowProvider implements IDataProvider {
     class WorkflowCategoryModel extends Model {
         private static final long serialVersionUID = 1L;
 
-        WorkflowCategoryModel(String category) {
+        private JcrNodeModel nodeModel;
+
+        WorkflowCategoryModel(String category, JcrNodeModel nodeModel) {
             super(category);
+            this.nodeModel = nodeModel;
+        }
+
+        @Override
+        public void detach() {
+            nodeModel.detach();
+            super.detach();
         }
 
         @Override
         public boolean equals(Object other) {
             if (other instanceof WorkflowCategoryModel) {
                 WorkflowCategoryModel otherModel = (WorkflowCategoryModel) other;
-                if (otherModel.getObject() == null) {
-                    return getObject() == null;
-                }
-                return otherModel.getObject().equals(getObject());
+                return new EqualsBuilder().append(getObject(), otherModel.getObject()).append(nodeModel,
+                        otherModel.nodeModel).isEquals();
             }
             return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder().append(getObject()).append(nodeModel).toHashCode();
         }
     }
 }
