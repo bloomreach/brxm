@@ -22,6 +22,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.Item;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
@@ -39,12 +40,14 @@ public class WorkflowPlugin extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
 
+    NodeModelWrapper wrapper;
     AbstractView view;
 
     public WorkflowPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parent) {
         super(descriptor, new JcrNodeModel(model), parent);
 
-        view = new AbstractView("workflows", new WorkflowProvider(), this) {
+        wrapper = new NodeModelWrapper((JcrNodeModel) getModel());
+        view = new AbstractView("workflows", new WorkflowProvider(wrapper), this) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -90,6 +93,7 @@ public class WorkflowPlugin extends Plugin {
             JcrNodeModel model = new JcrNodeModel(notification.getModel());
             if (!model.equals(getModel())) {
                 setPluginModel(model);
+                wrapper.setChainedModel(model);
                 notification.getContext().addRefresh(this);
                 view.populate();
             }

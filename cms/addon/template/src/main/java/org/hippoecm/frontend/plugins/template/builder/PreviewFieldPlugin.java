@@ -69,7 +69,7 @@ public class PreviewFieldPlugin extends Plugin {
             templateNodeModel = model.getNodeModel();
             Node templateNode = templateNodeModel.getNode();
             Node templateTypeNode = templateNode;
-            while(!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+            while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 templateTypeNode = templateTypeNode.getParent();
             }
             String typeName = templateTypeNode.getName();
@@ -78,7 +78,7 @@ public class PreviewFieldPlugin extends Plugin {
             TemplateDescriptor template = templateConfig.createTemplate(templateNode, type);
             TemplateDescriptor proxy = new PreviewTemplateDescriptor(template);
 
-            Node prototype = templateNode.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getNode().getNode(
+            Node prototype = templateTypeNode.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNode(
                     HippoNodeType.HIPPO_PROTOTYPE);
             JcrNodeModel prototypeModel = new JcrNodeModel(prototype);
             TemplateModel templateModel = new TemplateModel(proxy, prototypeModel.getParentModel(),
@@ -112,11 +112,11 @@ public class PreviewFieldPlugin extends Plugin {
         } else if ("save".equals(notification.getOperation())) {
             if (notification.getModel().equals(nodeModel)) {
                 try {
-                    Node typeNode = getTypeNode();
-                    while (typeNode.isNew()) {
-                        typeNode = typeNode.getParent();
+                    Node templateTypeNode = nodeModel.getNode();
+                    while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                        templateTypeNode = templateTypeNode.getParent();
                     }
-                    typeNode.save();
+                    templateTypeNode.save();
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
@@ -221,7 +221,11 @@ public class PreviewFieldPlugin extends Plugin {
 
     private Node getTypeNode() throws RepositoryException {
         RepositoryTypeConfig typeConfig = new RepositoryTypeConfig();
-        return typeConfig.getTypeNode(templateNodeModel.getNode().getName());
+        Node templateTypeNode = templateNodeModel.getNode();
+        while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+            templateTypeNode = templateTypeNode.getParent();
+        }
+        return typeConfig.getTypeNode(templateTypeNode.getName());
     }
 
     private void deleteItemNode(Node item, Node typeNode) throws RepositoryException {

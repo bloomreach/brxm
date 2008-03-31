@@ -25,15 +25,19 @@
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>hippo:prototyped</sv:value>
+    <sv:value>mix:referenceable</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:prototype" sv:type="Reference">
-    <sv:value>a3101df4-ba42-4d8b-8800-0eccb4282ec4</sv:value>
+  <sv:property sv:name="hippo:prototype" sv:type="String">
+    <sv:value>/hippo:namespaces/hippo/hippo:templatetype/hippo:prototype/hippo:prototype</sv:value>
   </sv:property>
-  
+
   <!-- "Article" template -->
   <sv:node sv:name="defaultcontent:article">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
 
     <sv:node sv:name="hippo:nodetype">
@@ -108,12 +112,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>94b08333-f530-4124-9484-3bc4b6ed025e</sv:value>
-      </sv:property>
 
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -121,6 +119,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippo:unstructured</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>95e02bf8-56b1-4a43-83db-c2bf8dabd877</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"/>
         <sv:property sv:name="defaultcontent:title" sv:type="String">
@@ -222,7 +224,10 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -311,9 +316,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>a7073311-86be-4586-9e12-1a2326151bca</sv:value>
-      </sv:property>
 
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -321,6 +323,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippo:unstructured</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>8580e005-3757-4b05-b4b3-d79f36e064c5</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"/>
         <sv:property sv:name="defaultcontent:title" sv:type="String">
@@ -445,7 +451,10 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -534,16 +543,17 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>27477ccb-9c58-48f7-abf1-8950bf1fe380</sv:value>
-      </sv:property>
-      
+
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>defaultcontent:event</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippo:unstructured</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>1e2ccc8b-5085-45c2-b9f8-a0ab44045648</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"/>
         <sv:property sv:name="defaultcontent:title" sv:type="String">

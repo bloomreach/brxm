@@ -27,25 +27,27 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 
 public class EditmodelWorkflowImpl implements EditmodelWorkflow {
-    private Session userSession;
+    private static final long serialVersionUID = 1L;
+
     private Session rootSession;
     private Node node;
 
     public EditmodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
-        this.userSession = userSession;
         this.rootSession = rootSession;
         this.node = subject;
     }
 
     public String edit() throws WorkflowException, MappingException, RepositoryException {
-        if (!node.isNodeType(HippoNodeType.NT_TEMPLATE))
+        if (!node.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
-        return node.getPath();
+        Node template = node.getNode(HippoNodeType.HIPPO_TEMPLATE);
+        template = template.getNode(HippoNodeType.HIPPO_TEMPLATE);
+        return template.getPath();
     }
 
     public String copy(String name) throws WorkflowException, MappingException, RepositoryException {
-        if (!node.isNodeType(HippoNodeType.NT_TEMPLATE))
+        if (!node.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
         String path = node.getPath();

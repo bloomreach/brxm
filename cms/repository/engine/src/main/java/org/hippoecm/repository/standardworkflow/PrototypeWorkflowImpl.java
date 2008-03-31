@@ -41,7 +41,8 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
         if (!subject.isNodeType(HippoNodeType.NT_PROTOTYPED))
             throw new WorkflowException("Invalid node type for workflow");
 
-        Node prototype = subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getNode();
+        String path =  subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString();
+        Node prototype = userSession.getRootNode().getNode(path.substring(1));
         Node result = ((HippoSession) userSession).copy(prototype, subject.getPath() + "/" + name);
         if (result.isNodeType(HippoNodeType.NT_HANDLE)) {
             NodeIterator children = result.getNodes(prototype.getName());

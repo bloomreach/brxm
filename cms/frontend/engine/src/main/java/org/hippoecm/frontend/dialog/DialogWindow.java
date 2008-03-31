@@ -55,7 +55,7 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
                 if (channel != null) {
                     LinkedList<MessageContext> contexts = new LinkedList<MessageContext>();
                     while (queue.size() > 0) {
-                        Request request = queue.removeLast();
+                        Request request = queue.removeFirst();
                         channel.send(request);
                         contexts.add(request.getContext());
                     }

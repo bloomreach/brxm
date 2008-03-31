@@ -70,7 +70,8 @@ public class PrototypeWorkflowPlugin extends Plugin {
     private void updateLink() {
         try {
             Node node = ((JcrNodeModel) getModel()).getNode();
-            Node prototype = node.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getNode();
+            String path = node.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString();
+            Node prototype = node.getSession().getRootNode().getNode(path.substring(1));
             String name = prototype.getName();
             linkText = new Model("Add " + name);
         } catch (RepositoryException ex) {
