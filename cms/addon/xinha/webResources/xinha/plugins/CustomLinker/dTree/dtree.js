@@ -579,7 +579,7 @@ dTree.prototype.nodeStatus = function(status, id, bottom, node) {
         txt = linker._stripWicketAjax(txt);
         var nodes = eval(txt);
         linker._dialog.makeNodes(nodes, node.id);
-        document.getElementById('Dialog1').innerHTML = myDTree.toString();
+        linker._dialog.ddTree.innerHTML = myDTree.toString();
         node.childrenLoaded = true; 
     };
     var callbackUrl = this.linker.editor.config.callbackUrl + "&browse=" + node.originalUrl;
