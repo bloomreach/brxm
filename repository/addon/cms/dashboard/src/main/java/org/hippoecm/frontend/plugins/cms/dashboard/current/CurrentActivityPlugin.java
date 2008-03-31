@@ -64,7 +64,6 @@ public class CurrentActivityPlugin extends Plugin {
         add(new CurrentActivityView("view", model));
     }
 
-
     private class CurrentActivityView extends RefreshingView {
         private static final long serialVersionUID = 1L;
 
@@ -88,24 +87,42 @@ public class CurrentActivityPlugin extends Plugin {
                     item.add(new Label("user", node.getProperty("hippo:eventUser").getString()));
                     item.add(new Label("method", node.getProperty("hippo:eventMethod").getString()));
 
-                    String retval = "";
-                    if (node.hasProperty("hippo:eventReturnValue")) {
-                        retval = node.getProperty("hippo:eventReturnValue").getValue().getString();
-                        String value = StringUtils.substringBetween(retval, "[uuid=", "]");
-                        if (value != null && !value.equals("")) {
-                            Session session = ((UserSession) getSession()).getJcrSession();
-                            retval = session.getNodeByUUID(value).getPath();
-                            retval = StringUtils.substringBeforeLast(retval, "[");
-                            retval = StringUtils.substringBeforeLast(retval, "/");
+                    String docPath = null;
+                    if (node.hasProperty("hippo:eventDocument")) {
+                        docPath = node.getProperty("hippo:eventDocument").getValue().getString();
+                        //String value = StringUtils.substringBetween(docPath, "[uuid=", "]");
+                        if (docPath != null && !docPath.equals("")) {
+                            //                            Session session = ((UserSession) getSession()).getJcrSession();
+                            //                            docPath = session.getNodeByUUID(value).getPath();
+                            docPath = StringUtils.substringBeforeLast(docPath, "[");
+                            docPath = StringUtils.substringBeforeLast(docPath, "/");
                         }
                     }
-                    item.add(new BrowseLink("retval", new JcrNodeModel(retval), getTopChannel()));
+                    
+                    if (docPath == null) {
+                        if (node.hasProperty("hippo:eventReturnValue")) {
+                            docPath = node.getProperty("hippo:eventReturnValue").getValue().getString();
+                            String value = StringUtils.substringBetween(docPath, "[uuid=", "]");
+                            if (value != null && !value.equals("")) {
+                                Session session = ((UserSession) getSession()).getJcrSession();
+                                docPath = session.getNodeByUUID(value).getPath();
+                                docPath = StringUtils.substringBeforeLast(docPath, "[");
+                                docPath = StringUtils.substringBeforeLast(docPath, "/");
+                            }
+                        }
+                    }
+
+                    if (docPath != null) {
+                        item.add(new BrowseLink("docpath", new JcrNodeModel(docPath), getTopChannel()));
+                    } else {
+                        item.add(new Label("docpath", ""));
+                    }
 
                 } else {
                     item.add(new Label("timestamp", ""));
                     item.add(new Label("user", ""));
                     item.add(new Label("method", ""));
-                    item.add(new Label("retval", ""));
+                    item.add(new Label("docpath", ""));
                 }
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
@@ -119,17 +136,4 @@ public class CurrentActivityPlugin extends Plugin {
             }));
         }
     }
-
 }
-
-//                    String arguments = "";
-//                    if (node.hasProperty("hippo:eventArguments")) {
-//                        Value[] values = node.getProperty("hippo:eventArguments").getValues();
-//                        for (int i = 0; i < values.length; i++) {
-//                            arguments += values[i].getString() + ", ";
-//                        }
-//                    }
-//                    if (arguments.endsWith(", ")) {
-//                        arguments = arguments.substring(0, arguments.length()-2);
-//                    }
-//                    item.add(new Label("arguments", arguments));

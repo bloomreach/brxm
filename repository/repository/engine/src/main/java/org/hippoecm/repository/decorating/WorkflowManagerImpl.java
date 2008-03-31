@@ -275,6 +275,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             Method targetMethod = null;
             Object returnObject = null;
             try {
+                String path = getPath(uuid);
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 returnObject = targetMethod.invoke(upstream, args);
                 if(uuid != null) {
@@ -287,7 +288,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     returnObject = new Document(((Document)returnObject).getIdentity());
                 }
                 EventLogger eventLogger = new EventLogger(rootSession);
-                eventLogger.logEvent(session.getUserID(), upstream.getClass().getName(), targetMethod.getName(), args, returnObject);
+                eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(), targetMethod.getName(), args, returnObject, path);
                 return returnObject;
             } catch(NoSuchMethodException ex) {
                 throw new RepositoryException("Impossible failure for workflow proxy", ex);
@@ -313,6 +314,21 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 sb.append(") -> ");
                 sb.append(returnObject != null ? returnObject.toString() : "null");
                 log.info(new String(sb));
+            }
+        }
+        
+        String getPath(String uuid) {
+            if (uuid == null || uuid.equals("")) {
+                return null;
+            }
+            try {
+                Node node = session.getNodeByUUID(uuid);
+                return node.getPath();
+            } catch (ItemNotFoundException e) {
+                return null;
+            } catch (RepositoryException e) {
+                log.error(e.getMessage(), e);
+                return null;
             }
         }
     }
