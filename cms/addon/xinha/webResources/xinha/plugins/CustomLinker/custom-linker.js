@@ -360,6 +360,9 @@ CustomLinker.Dialog.prototype._prepareDialog = function()
                             } catch(Error) {
                                 lDialog.files = [ {url:'',title:Error.toString()} ];
                             }
+                            if(lDialog.files.length == 0) {
+                                lDialog.files = [ {url:'',title:'Root node is empty'} ];
+                            }
                             lDialog._prepareDialog(); });
     }
     else if(linker.lConfig.files != null)
@@ -454,13 +457,13 @@ CustomLinker.Dialog.prototype.makeNodes = function(files, parent)
       else if(files[i].url) var title = files[i].url.replace(/^.*\//, '');
       else var title = "no title defined";
       
+      var link = '';
       if(files[i].url) {
-        var link = 'javascript:document.getElementsByName(\'' + this.dialog.id.href + '\')[0].value=decodeURIComponent(\'' + encodeURIComponent(files[i].url) + '\');document.getElementsByName(\'' + this.dialog.id.type + '\')[0].click();document.getElementsByName(\'' + this.dialog.id.href + '\')[0].focus();void(0);';
         var originalUrl = files[i].url;
-      } else {
-        var link = '';
-        var originalUrl = ''; 
-      }
+        if(files[i].clickable) {
+          var link = 'javascript:document.getElementsByName(\'' + this.dialog.id.href + '\')[0].value=decodeURIComponent(\'' + encodeURIComponent(files[i].url) + '\');document.getElementsByName(\'' + this.dialog.id.type + '\')[0].click();document.getElementsByName(\'' + this.dialog.id.href + '\')[0].focus();void(0);';
+        }
+      } 
       
       var hasChildrenOverride = files[i].children && files[i].children.length == 0 ? true : false; 
       this.dTree.addNew(id, parent, title, link, title, hasChildrenOverride, originalUrl);

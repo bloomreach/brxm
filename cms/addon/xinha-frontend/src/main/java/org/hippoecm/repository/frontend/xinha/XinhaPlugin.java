@@ -44,6 +44,8 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.model.TemplateModel;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,11 +106,16 @@ public class XinhaPlugin extends Plugin {
 
                 String browse = requestCycle.getRequest().getParameter("browse");
                 if (browse != null) {
-                    StringBuilder sb = new StringBuilder();
+                    
                     if ("".equals(browse)) {
                         browse = "/";
                     }
-                    Node pluginNode = (Node) pluginModel.getObject();
+
+                    StringBuilder sb = new StringBuilder();
+
+                    //TODO: implement browsing through FolderTreeNode
+                    //custom handle browsing
+                    Node pluginNode = (Node) pluginModel.getObject();                    
                     try {
                         Session session = pluginNode.getSession();
                         Item item = session.getItem(browse);
@@ -116,24 +123,30 @@ public class XinhaPlugin extends Plugin {
                             Node itemNode = (Node) item;
                             NodeIterator iterator = itemNode.getNodes();
                             while (iterator.hasNext()) {
-                                sb.append("{");
                                 Node childNode = iterator.nextNode();
-                                sb.append("title: '").append(childNode.getName()).append("'");
-                                sb.append(", url: '").append(childNode.getPath()).append("'");
-                                if (childNode.getNodes().hasNext()) {
-                                    sb.append(", children: []");
-                                }
-                                sb.append("}");
-                                if (iterator.hasNext()) {
-                                    sb.append(",");
+                                Node canonicalNode = ((HippoNode)childNode).getCanonicalNode();
+                                if(canonicalNode != null && canonicalNode.isSame(childNode)) {
+                                    sb.append("{");
+                                    sb.append("title: '").append(childNode.getName()).append("'");
+                                    boolean isHandle = childNode.isNodeType(HippoNodeType.NT_HANDLE); 
+                                    sb.append(", clickable: ").append(isHandle);
+                                    sb.append(", url: '").append(childNode.getPath()).append("'");
+                                    if (childNode.getNodes().hasNext() && !isHandle) {
+                                        sb.append(", children: []");
+                                    }
+                                    sb.append("}");
+                                    if (iterator.hasNext()) {
+                                        sb.append(",");
+                                    }
                                 }
                             }
                         }
                     } catch (RepositoryException e) {
                         log.error(e.getMessage());
                     }
-                    //implement browsing
+                    
                     target.appendJavascript("[" + sb.toString() + "]");
+
                 }
             }
         };
