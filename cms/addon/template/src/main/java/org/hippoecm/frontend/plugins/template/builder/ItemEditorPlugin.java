@@ -126,6 +126,10 @@ public class ItemEditorPlugin extends Plugin {
                         caption.setIsMultiple(true);
                         caption.setType("String");
                         result.put("caption", caption);
+                        FieldDescriptor css = new FieldDescriptor("css");
+                        css.setIsMultiple(true);
+                        css.setType("String");
+                        result.put("css", css);
                         return result;
                     }
                 };
