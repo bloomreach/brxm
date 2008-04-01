@@ -20,8 +20,8 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
 
-[hippo:unstructured] > nt:unstructured
+[hippo:ntunstructured] > nt:unstructured
 
 [hippo:testdocument] > hippo:document
-+ * = hippo:unstructured multiple
++ * = hippo:ntunstructured multiple
 - *
