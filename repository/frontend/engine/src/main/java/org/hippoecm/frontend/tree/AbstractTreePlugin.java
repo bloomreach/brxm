@@ -15,19 +15,11 @@
  */
 package org.hippoecm.frontend.tree;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -79,31 +71,6 @@ public abstract class AbstractTreePlugin extends Plugin {
             Request select = channel.createRequest("select", treeNodeModel.getNodeModel());
             channel.send(select);            
             select.getContext().apply(target);
-            
-            // create and send a "list" request with the children 
-            // of the selected node as a parameters
-            IPluginModel listModel = new PluginModel() {
-                private static final long serialVersionUID = 1L;
-
-                public Map<String, Object> getMapRepresentation() {
-                    Map<String, Object> map = new HashMap<String, Object>();
-                    try {
-                        map.put("node", treeNodeModel.getNodeModel());
-                        List<String> entries = new ArrayList<String>();
-                        Enumeration<AbstractTreeNode> childNodes = treeNodeModel.children();
-                        while (childNodes.hasMoreElements()) {
-                            entries.add(childNodes.nextElement().getNodeModel().getNode().getPath());
-                        }
-                        map.put("entries", entries);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                    }
-                    return map;
-                }
-            };
-            Request list = channel.createRequest("list", listModel);
-            channel.send(list);
-            list.getContext().apply(target);
         }
     }
 

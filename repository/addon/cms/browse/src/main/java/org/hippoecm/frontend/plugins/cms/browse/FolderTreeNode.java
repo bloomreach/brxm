@@ -186,13 +186,16 @@ public class FolderTreeNode extends AbstractTreeNode {
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
             if (!ignorePaths.contains(subNode.getPath()) && !subNode.isNodeType(HippoNodeType.NT_LOGFOLDER)) {
-                if (subNode.isNodeType(HippoNodeType.NT_HANDLE) || isReferenceToHandle(subNode)) {
-                    result.add(subNode);
-                } else {
-                    if (!onlyHandles) {
-                        result.add(subNode);
-                    }
+                if (!subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    result.add(subNode);  
                 }
+//                if (subNode.isNodeType(HippoNodeType.NT_HANDLE) || isReferenceToHandle(subNode)) {
+//                    result.add(subNode);
+//                } else {
+//                    if (!onlyHandles) {
+//                        result.add(subNode);
+//                    }
+//                }
             }
         }
         return result;
