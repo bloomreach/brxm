@@ -1,11 +1,12 @@
 body {
-    background: url('images/introback.gif') repeat-x; 
+    background: #223f5e url('images/back.gif') repeat-x; 
     padding-top: 50px;
     text-align: center;
+    
 }
 
 /* Login page styles */
-div#login-logo {
+/*div#login-logo {
   position: absolute;
   top: 15px;
   right:5px;
@@ -14,7 +15,7 @@ div#login-logo {
   margin: 0px;
   background: url('images/hippoecm.gif') no-repeat;
 }
-
+*/
 div#login-header {
   background: url('images/home_small.gif') no-repeat;
   background-position: 3px;
@@ -29,8 +30,7 @@ div#login-header {
 
 div#login-input {
   margin: 5px;
-  border-bottom: 1px dotted #888888;
-}
+  }
 
 div#login-submit {
   margin-top: 5px;
@@ -42,18 +42,25 @@ div#loginWrapper form {
   position: relative;
   margin: 0px auto;
   margin-top: 20px;
-  background: url('images/blue_gradient.gif') repeat-y right;
-  width:300px;
-  height: auto;
+  width:454px;
+  height: 172px ;
   border:1px solid black;
+  background: url("images/loginback.gif") no-repeat;
+  padding-top: 80px;
+  padding-left: 50px;
 }
 
-div#loginWrapper form label { float: left; width: 90px; margin-right: 10px; }
+div#loginWrapper form label { float: left; width: 90px; margin-right: 10px; color: white}
 div#loginWrapper form label.label-right { float: right; width: 180px; margin-right:0px;}
+
 
 div#loginWrapper form input { 
   margin-bottom: 5px; 
   border:1px solid #999999;
+  padding: 5px;
+  font-size: 18px;
+  color: #666666;
+ font-family: tahoma;
 }
 div#loginWrapper form select { 
   margin-bottom: 5px;
@@ -61,9 +68,7 @@ div#loginWrapper form select {
 }
 
 div#loginWrapper form input.blue_button {
-  background-color: #4A84C8;
-  border:1px solid #e3e3e3;
-  color:#FFFFFF;
+  
   padding:3px 7px;
   text-decoration:none;
 }

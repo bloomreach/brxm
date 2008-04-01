@@ -22,18 +22,22 @@
   <body>
     <wicket:panel>
       <div id="loginWrapper">
-	      <div id="login-logo"><h3>&#160;</h3></div>
-	      <div>
+	     <div>
 	        <form wicket:id="signInForm" name="signInForm">
-	          <div id="login-header">
-	            <wicket:message key="key.key">Login</wicket:message>
-	          </div>
+	          
+	          <!--  <wicket:message key="key.key">Login</wicket:message>-->
+	          
 	          <div id="login-input">
-	            <label wicket:id="username-label">Username</label>
-	            <input wicket:id="username" type="text" value="foo@goo.moo"/>
-	            
-	            <label wicket:id="password-label">Password</label>
-	            <input wicket:id="password" type="password" value="password"/>
+	            <table>
+	            	<tr>
+	            		<td><label wicket:id="username-label">Username</label></td>
+	            			<td><input wicket:id="username" type="text" value="foo@goo.moo"/></td>
+	            	</tr>
+	            <tr>
+	            	<td><label wicket:id="password-label">Password</label></td>
+	            	<td><input wicket:id="password" type="password" value="password"/></td>
+	            </tr>
+	            </table>
 	            
 <!--	            <label>Locale</label>
 	            <select>

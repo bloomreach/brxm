@@ -1,8 +1,39 @@
+/* Defaults */
+* { margin : 0; padding : 0;}
+/* Normalizes font-size for headers */
+h1,h2,h3,h4,h5,h6 { font-size : 100%; }
+/* Removes list-style from lists */
+ol,ul { list-style : none; }
+/* no underlined links by default */
+a {text-decoration: none}
+/* Normalizes font-style and font-weight to normal */
+address, caption, cite, code, dfn, th, var
+{ font-style : normal; font-weight : normal; }
+table { border-collapse : collapse; border-spacing : 0; }
+/* Removes border from fieldset and img */
+fieldset,img { border : 0; }
+/* Left-aligns text in caption and th */
+caption,th { text-align : left; }
+/* used as a fast fix if you want something to float left */
+/* to clear */
+div.clearer {clear: both;}
+.floatleft{float: left}
+ /* firefox fix for left right movement when scrollbar is enabled */
+html { min-height: 100%; margin-bottom: 0.01em; }
+/* ======================================== */
+  
+
+
 body {
-  font-family:arial,sans-serif,helvetica;
-  font-size:0.8em;
-  background: url('images/back.gif') repeat-x;
+  font-family: tahoma, arial,sans-serif,helvetica;
+  font-size: 11px;
+  background: #223f5e url('images/back.gif') repeat-x;
+  padding: 2px;
 }
+
+table#root{height: 100%; width: 100%}
+table#root tr td{vertical-align: top}
+
 
 a { color: #18a4e2 }
 
@@ -36,6 +67,8 @@ body.intro form input.text { display: block; margin-bottom: 12px; width: 120px; 
 body.intro form input.submit { }
 body.intro form select { margin-top: 20px; }
 
+
+
 table {
   font-size:1em;
 }
@@ -57,18 +90,15 @@ table.grey {
 .Tree {
    margin:0px;
    margin-top: -8px;
+   border: none;
 }
+
 .tree .wicket-tree .row a { color: #18a4e2 }
 .tree .wicket-tree .row-selected a { color: white; }
 .tree .wicket-tree .row-selected { background: #4b82c6; }
+.tree div.wicket-tree{border: none; width: auto;}
 
-.Documents {
-  border:1px solid lightgrey;
-  margin:2px;
-  background:#ffffff;
-}
-
-.Menu {
+/* .Menu {
   border:1px solid #334455;
   margin:2px;
   background: url('images/folderactionsback.gif') no-repeat top right;
@@ -76,41 +106,60 @@ table.grey {
   padding-top: 3px;
   margin-bottom: 10px;
 }
+*/
 
-.menu div { margin-top: 5px; }
-.Workflow {
-  border:1px solid lightgrey;
-  margin:2px;
-  background:#ffffff;
-}
+table.displaytable tr td{padding: 15px}
 
-.Editor {
-  border:1px solid lightgrey;
-  margin:2px;
-  background:#ffffff;
+div#templateitemedit{background: red}
+div.fields table{width: 100%}
+div.fields table tr td table{width: auto}
+div.fields table tr td h3{font-size: 15px;}
+table.htmlarea tr td{padding: 0px; border: 1px solid #f1f1f1}
+
+span.templateactions{
+background:none repeat scroll 0%;
+display:block;
+float:right;
+position:absolute;
+right:0px;
+top:160px;
+width:20%;
 }
+span.templateactions ul{padding: 15px;}
 
 th {
   text-align:left;
-  background: url('images/tablehead.gif') repeat-x;
+  background: url('images/filelistHeaderback.gif') repeat-x;
   padding: 4px;
   padding-top: 2px;
 }
 
-tr.even { background-color:#eef3fa; }
+
+
+
 tr.even td, tr.odd td { padding: 5px; }
-tr.odd { background-color:#ffffff; }
+tr.even td { background: #f7f7f7}
+tr.odd td { padding: 5px; }
+
+.Doclist table tr td a{color: black}
+
+
+
+
+
 .tabpanel table tr td { border: none }
 .tabpanel table tr th { border: none }
 
+.dataview{width: 100%}
 .dataview thead tr.navigation td { padding: 5px; }
 .navigatorLabel { font-size: 18px; color: #4a81c3 }
 .navigator, .navigator a { color: green; font-size: 18px; margin-left: 10px; }
 .navigator { color: grey }
 .navigator a { color: #18a4e2 }
 
-p.logout { margin-bottom: 0px; text-align: right; text-transform: capitalize; color: white; }
-p.logout a { color: white }
+div.logout { margin-bottom: 0px; text-align: left; text-transform: capitalize; color: white; padding: 5px; padding-bottom: 0px; padding-top: 0px}
+div.logout span.name{font-size: 22px}
+div.logout div a { color: white; font-weight: bold }
 
 /* TAB PANEL STYLES */
 
@@ -119,24 +168,28 @@ div.tabpanel div.tab-row {
   float:left;
   width:100%;
   line-height:normal;
-  margin-bottom: 40px;
+ 
 }
 
 div.tabpanel div.tab-row ul {
   margin:0;
-  padding:10px 10px 0;
+  padding:2px 10px 0;
   list-style:none;
+  position: absolute;
+  z-index:100
 }
 
 div.tabpanel div.tab-row li {
   display:block;
   float:left;
-  background:url('images/tabback.gif') repeat-x bottom right;
+   background:url('images/tabinactive.gif') no-repeat bottom left; 
   height: 15px;
   margin-right: 2px;
-  padding:10px 10px 10px 10px;
+  padding:14px 30px 6px 10px;
 }
-
+.templateeditor{border: 1px solid black;}
+table.grid tr td div.templateeditor h3{font-size: 14px;}
+table.grid div.fields{padding: 20px; border-bottom: 1px dotted #f1f1f1}
 div.tabpanel div.tab-row a {
   text-decoration:none;
   font-weight:bold;
@@ -144,24 +197,70 @@ div.tabpanel div.tab-row a {
   color: black;
   padding-left: 30px;
   padding-bottom: 10px;
-  padding-top: 11px;
+  padding-top: 15px;
 }
 
-div.tabpanel div.tab-row li a { background: url('images/edit.gif') no-repeat 0px 10px; }
+div.tabpanel div.tab-row li a { background: url('images/edit.gif') no-repeat 0px 0px; font-size: 11px;}
 div.tabpanel div.tab-row li.tab0 a { background: url('images/home.gif') no-repeat 0px 10px; }
 div.tabpanel div.tab-row li.tab1 a { background: url('images/browse.gif') no-repeat 0px 10px; }
-div.tabpanel div.tab-row li.tab2 a { background: url('images/search.gif') no-repeat 0px 10px; }
-
-div.tabpanel div.tab-row li.selected { background:url('images/tabbackactive.gif') repeat-x bottom right; }
+div.tabpanel div.tab-row li.tab2 a { background: url('images/edit.gif') no-repeat 0px 10px; font-size: 10px; font-weight: normal}
+div.tabpanel div.tab-row li.tab3 a { background: url('images/edit.gif') no-repeat 0px 10px; font-size: 10px; font-weight: normal}
+div.tabpanel div.tab-row li.tab2{width: 150px}
+div.tabpanel div.tab-row li.tab3 {width: 150px}
+div.tabpanel div.tab-row li.selected { background:url('images/tabactive.gif') no-repeat bottom left}
 
 div.tabpanel div.tab-row li.selected a { }
 
 div.tabpanel div.tab-row li a.close { background: none; }
 
 
+table.grid{clear: both; border-collapse: separate; border-spacing: 2px; margin-top: 35px}
+table.grid tr td{border: 1px solid white}
+
+
+table.grid tr td.box {background: white url("images/pluginheaderback.gif") repeat-x; vertical-align: top; height: 500px}
+table.grid tr td.box h2{display: block; margin-top: 0px; background-position: center right; background-repeat: no-repeat; text-indent: -9999px; height: 29px; margin-bottom: 0px; font-size: 11px;}
+table.grid tr td.box h2.actions{background-image: url("images/boxheadingactions.gif")}
+table.grid tr td.box h2.search{background-image: url("images/boxheadingsearch.gif")}
+table.grid tr td.box h2.history{background-image: url("images/boxheadinghistory.gif")}
+table.grid tr td.box h2.documents{background-image: url("images/boxheadingdocuments.gif")}
+table.grid tr td.box h2.edit{background-image: url("images/boxheadingedit.gif")}
+table.grid tr td.box h2.task{background-image: url("images/boxheadingtask.gif")}
+table.grid tr td.box h2.edititem{background-image: url("images/edititem.gif")}
+
+
+table.grid tr td.box div.padding{padding: 15px;}
+div div div div b{display: none; color: white;}
+
+table.htmlarea tr td{border: 1px solid #d7d7d7}
+table.htmlarea tr td table tr td{border: none}
+table.htmlarea tr td select{margin-top: 4px;}
+
+
+
+div#templateitemedit{
+background: none;
+position: absolute;
+right: 0px;
+top: 260px;
+width: 20%;
+}
+div#templateitemedit h3{margin-top: 5px; font-size: 12px;}
+div#templateitemedit input{width: 140px;}
+div#templateitemedit div.fields{padding: 10px}
+a.editbutton{}
+a.upbutton{display: block; float: right; width: 10px; height: 10px; margin-right: 3px; padding: 4px;}
+a.downbutton{display: block; float: right; width: 10px; height: 10px;clear: right; margin-right: 3px; padding: 4px;}
+td.itemmovehandle{vertical-align: top; background: #f8f8f9 url("images/templateitemback.gif") no-repeat; width: 54px; position: relative;}
+table.grid tr td.itemmovehandle {padding-top: 4px; padding-right: 0px;}
+
+a.addbutton{float: left: margin-left: 10px}
+
+.Editor table tr td{border-bottom: 1px dotted #999999}
+.Editor table tr td .fields h3{margin-bottom: 5px;}
 /* selected variant */
 .selected {
-  background-color:#4b82c6;
+ /* background-color:#4b82c6; */
 }
 .selected a {
   color:#ffffff;
@@ -171,3 +270,15 @@ div.tabpanel div.tab-row li a.close { background: none; }
 tr.selected {
   background-color:#4b82c6;
 }
+
+.pluginHead{background: url("images/pluginheaderback.gif") repeat-x}
+
+
+body.dialog{background: none; font-size: 18px; padding: 15px; text-align: right;}
+body.dialog table.dialogbuttons{height: 100%; width: 100%}
+body.dialog table.dialogbuttons tr td{vertical-align: middle}
+body.dialog table.dialogbuttons tr td{padding: 15px;}
+body.dialog table.dialogbuttons tr td.okbutton a{padding: 5px;border: 2px solid #333333; display: block; text-align: center;}
+body.dialog table.dialogbuttons tr td.cancelbutton a{padding: 5px;border: 2px solid #333333; display: block; text-align: center;}
+body.dialog table.dialogbuttons tr td.okbutton a:hover{background: #f1f1f1; color: #666666}
+body.dialog table.dialogbuttons tr td.cancelbutton a:hover{background: #f1f1f1; color: #666666}
