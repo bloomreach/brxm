@@ -99,6 +99,12 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 StringBuffer sb = new StringBuffer();
                 sb.append("_editor_url = '" + xinhaEditorUrl + "';\n");
                 sb.append("_editor_lang = '" + page.getLocale().getLanguage() + "';\n");
+                for (XinhaPlugin.Configuration config : configurations) {
+                    if (config.getSkin() != null) {
+                        sb.append("_editor_skin = '" + config.getSkin() + "'");
+                        break;
+                    }
+                }
                 response.renderJavascript(sb, null);
             }
         },
