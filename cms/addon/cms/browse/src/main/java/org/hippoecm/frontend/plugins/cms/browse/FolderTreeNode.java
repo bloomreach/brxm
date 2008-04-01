@@ -58,7 +58,7 @@ public class FolderTreeNode extends AbstractTreeNode {
             HippoNodeType.NT_TEMPLATETYPE };
 
     //  shortcut paths shown as root folders
-    private final static String[] shortCutPaths = new String[] { "hippo:namespaces" };
+    private final static String[] shortCutPaths = new String[] { "hippo:namespaces/defaultcontent" };
 
     public FolderTreeNode(JcrNodeModel model) {
         super(model);
@@ -175,7 +175,7 @@ public class FolderTreeNode extends AbstractTreeNode {
         NodeIterator subNodes = node.getNodes();
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
-            if (!ignorePaths.contains(subNode.getPath())) {
+            if (!ignorePaths.contains(subNode.getPath()) && !subNode.isNodeType(HippoNodeType.NT_LOGFOLDER)) {
                 if (subNode.isNodeType(HippoNodeType.NT_HANDLE) || isReferenceToHandle(subNode)) {
                     result.add(subNode);
                 } else {
