@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.TimeZone;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -33,7 +34,6 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
@@ -80,61 +80,116 @@ public class CurrentActivityPlugin extends Plugin {
         @Override
         protected void populateItem(final Item item) {
             Node node = (Node) item.getModelObject();
+            Session session = ((UserSession) getSession()).getJcrSession();
             try {
-                if (node.isNodeType(HippoNodeType.NT_LOGITEM)) {
-                    String timestamp = df.format(new Date(Long.parseLong(node.getName())));
-                    item.add(new Label("timestamp", timestamp));
-                    item.add(new Label("user", node.getProperty("hippo:eventUser").getString()));
-                    item.add(new Label("method", node.getProperty("hippo:eventMethod").getString()));
+                if (!node.isNodeType(HippoNodeType.NT_LOGITEM)) {
+                    throw new IllegalArgumentException("CurrentActivityPlugin can only process Nodes of type "
+                            + HippoNodeType.NT_LOGITEM + ".");
+                }
 
-                    String docPath = null;
-                    if (node.hasProperty("hippo:eventDocument")) {
-                        docPath = node.getProperty("hippo:eventDocument").getValue().getString();
+                // Add even/odd row css styling
+                item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
+                    private static final long serialVersionUID = 1L;
+
+                    public Object getObject() {
+                        return (item.getIndex() % 2 == 1) ? "even" : "odd";
                     }
+                }));
 
-                    if (node.hasProperty("hippo:eventReturnValue")) {
-                        docPath = node.getProperty("hippo:eventReturnValue").getValue().getString();
-                        String uuid = StringUtils.substringBetween(docPath, "[uuid=", "]");
-                        if (uuid != null && !uuid.equals("")) {
-                            Session session = ((UserSession) getSession()).getJcrSession();
-                            docPath = session.getNodeByUUID(uuid).getPath();
-                        }
-                    }
+                String timestamp = df.format(new Date(Long.parseLong(node.getName())));
+                item.add(new Label("timestamp", timestamp));
+                item.add(new Label("user", node.getProperty("hippo:eventUser").getString()));
+                item.add(new Label("method", node.getProperty("hippo:eventMethod").getString()));
 
-                    if (docPath != null) {
-                        Node docNode = new JcrNodeModel(docPath).getNode();
-                        Node handleNode = docNode;
-                        if (docNode != null) {
-                            while (!handleNode.isNodeType(HippoNodeType.NT_HANDLE) && !handleNode.getPath().equals("/")) {
-                                handleNode = handleNode.getParent();
+                // Best effort algoritm to create a 'browse' link to a document variant.
+
+                // The path to the document variant that was used as input for a Workflow step.    
+                String sourceVariant = null;
+                boolean sourceVariantExists = false;
+                if (node.hasProperty("hippo:eventDocument")) {
+                    sourceVariant = node.getProperty("hippo:eventDocument").getValue().getString();
+                    sourceVariantExists = ((UserSession) getSession()).getJcrSession().itemExists(sourceVariant);
+                }
+
+                //The path to the document variant that was returned by a Workflow step.
+                //Workflow steps can return a Document instance who's toString()
+                //value is stored as 'Document[uuid=...]'
+                String targetVariant = null;
+                boolean targetVariantExists = false;
+                if (node.hasProperty("hippo:eventReturnValue")) {
+                    targetVariant = node.getProperty("hippo:eventReturnValue").getValue().getString();
+                    String uuid = StringUtils.substringBetween(targetVariant, "[uuid=", "]");
+                    if (uuid != null && !uuid.equals("")) {
+                        //The Workflow step has returned a Document instance, look up the 
+                        //document it refers to.
+                        String path = uuid2Path(uuid);
+                        if (path != null && !path.equals("")) {
+                            targetVariantExists = session.itemExists(path);
+                            if (targetVariantExists) {
+                                targetVariant = path;
                             }
                         }
-                        item.add(new BrowseLink("docpath", new JcrNodeModel(docNode), new JcrNodeModel(handleNode),
-                                getTopChannel()));
+                    } else {
+                        //Workflow steps can also return a path String 
+                        targetVariantExists = session.itemExists(targetVariant);
+                    }
+                }
+
+                //Try to create a link to the document 
+                String linkPath = null;
+                if (targetVariantExists) {
+                    linkPath = targetVariant;
+                } else if (sourceVariantExists) {
+                    linkPath = sourceVariant;
+                }
+                if (linkPath != null) {
+                    item.add(new BrowseLink("docpath", linkPath, getTopChannel()));
+
+                //Maybe both variants have been deleted, try to create a label
+                //with the document path
+                } else {
+                    if (sourceVariant != null) {
+                        item.add(new Label("docpath", StringUtils.substringBeforeLast(sourceVariant, "/")));
+                    } else if (targetVariant != null) {
+                        item.add(new Label("docpath", StringUtils.substringBeforeLast(targetVariant, "/")));
+
+                    //Apparently the log item wasn't created by a Workflow step
+                    //on a document.
                     } else {
                         item.add(new Label("docpath", ""));
                     }
-
-                } else {
-                    item.add(new Label("timestamp", ""));
-                    item.add(new Label("user", ""));
-                    item.add(new Label("method", ""));
-                    item.add(new Label("docpath", ""));
                 }
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
-                item.add(new Label("timestamp", e.getClass().getName()));
-                item.add(new Label("user", e.getMessage()));
-                item.add(new Label("method", ""));
-                item.add(new Label("docpath", ""));
-            }
-            item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
-                private static final long serialVersionUID = 1L;
-
-                public Object getObject() {
-                    return (item.getIndex() % 2 == 1) ? "even" : "odd";
+                if (get("timestamp") == null) {
+                    item.add(new Label("timestamp", e.getClass().getName()));
                 }
-            }));
+                if (get("user") == null) {
+                    item.add(new Label("user", e.getMessage()));
+                }
+                if (get("method") == null) {
+                    item.add(new Label("method", ""));
+                }
+                if (get("docpath") == null) {
+                    item.add(new Label("docpath", ""));
+                }
+            }
+        }
+    }
+
+    String uuid2Path(String uuid) {
+        if (uuid == null || uuid.equals("")) {
+            return null;
+        }
+        try {
+            Session session = ((UserSession) getSession()).getJcrSession();
+            Node node = session.getNodeByUUID(uuid);
+            return node.getPath();
+        } catch (ItemNotFoundException e) {
+            return null;
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 }
