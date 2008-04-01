@@ -223,10 +223,13 @@ public class XinhaPlugin extends Plugin {
         private static final String XINHA_PLUGINS = "Xinha.plugins";
         private static final String XINHA_TOOLBAR = "Xinha.config.toolbar";
         private static final String XINHA_CSS = "Xinha.config.css";
+        private static final String XINHA_SKIN = "Xinha.skin";
+        
 
         private Map<String, PluginConfiguration> pluginConfigurations = new HashMap<String, PluginConfiguration>();
         private List<String> toolbarItems;
         private List<String> styleSheets;
+        private String skin;
 
         public Configuration(Map<String, ParameterValue> parameters) {
 
@@ -237,6 +240,8 @@ public class XinhaPlugin extends Plugin {
                         toolbarItems = paramValues;
                     } else if (paramKey.equals(XINHA_CSS)) {
                         styleSheets = paramValues;
+                    } else if(paramKey.equals(XINHA_SKIN)) {
+                        skin = paramValues.get(0);
                     } else if (paramKey.equals(XINHA_PLUGINS)) {
                         for (String pluginName : paramValues) {
                             PluginConfiguration pluginConfig = new PluginConfiguration(pluginName);
@@ -277,6 +282,10 @@ public class XinhaPlugin extends Plugin {
 
         public List<String> getStyleSheets() {
             return styleSheets;
+        }
+        
+        public String getSkin() {
+            return skin;
         }
 
         public void setPluginConfigurations(Set<PluginConfiguration> plugins) {
