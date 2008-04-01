@@ -185,8 +185,7 @@ public class StoreManagerImpl extends StoreManager {
             node = node.addNode(nodeName, nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
             if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 node.addMixin(HippoNodeType.NT_HARDDOCUMENT);
-            }
-            if(node.isNodeType(HippoNodeType.NT_REQUEST)) {
+            } else if(node.isNodeType(HippoNodeType.NT_REQUEST)) {
                 node.addMixin("mix:referenceable");
             }
             sm.provideFields(cmd.getAllFieldNumbers(), new FieldManagerImpl(sm, session, types, node));
