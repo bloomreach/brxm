@@ -90,30 +90,27 @@ public class CurrentActivityPlugin extends Plugin {
                     String docPath = null;
                     if (node.hasProperty("hippo:eventDocument")) {
                         docPath = node.getProperty("hippo:eventDocument").getValue().getString();
-                        //String value = StringUtils.substringBetween(docPath, "[uuid=", "]");
-                        if (docPath != null && !docPath.equals("")) {
-                            //                            Session session = ((UserSession) getSession()).getJcrSession();
-                            //                            docPath = session.getNodeByUUID(value).getPath();
-                            docPath = StringUtils.substringBeforeLast(docPath, "[");
-                            docPath = StringUtils.substringBeforeLast(docPath, "/");
-                        }
                     }
-                    
-                    if (docPath == null) {
-                        if (node.hasProperty("hippo:eventReturnValue")) {
-                            docPath = node.getProperty("hippo:eventReturnValue").getValue().getString();
-                            String value = StringUtils.substringBetween(docPath, "[uuid=", "]");
-                            if (value != null && !value.equals("")) {
-                                Session session = ((UserSession) getSession()).getJcrSession();
-                                docPath = session.getNodeByUUID(value).getPath();
-                                docPath = StringUtils.substringBeforeLast(docPath, "[");
-                                docPath = StringUtils.substringBeforeLast(docPath, "/");
-                            }
+
+                    if (node.hasProperty("hippo:eventReturnValue")) {
+                        docPath = node.getProperty("hippo:eventReturnValue").getValue().getString();
+                        String uuid = StringUtils.substringBetween(docPath, "[uuid=", "]");
+                        if (uuid != null && !uuid.equals("")) {
+                            Session session = ((UserSession) getSession()).getJcrSession();
+                            docPath = session.getNodeByUUID(uuid).getPath();
                         }
                     }
 
                     if (docPath != null) {
-                        item.add(new BrowseLink("docpath", new JcrNodeModel(docPath), getTopChannel()));
+                        Node docNode = new JcrNodeModel(docPath).getNode();
+                        Node handleNode = docNode;
+                        if (docNode != null) {
+                            while (!handleNode.isNodeType(HippoNodeType.NT_HANDLE) && !handleNode.getPath().equals("/")) {
+                                handleNode = handleNode.getParent();
+                            }
+                        }
+                        item.add(new BrowseLink("docpath", new JcrNodeModel(docNode), new JcrNodeModel(handleNode),
+                                getTopChannel()));
                     } else {
                         item.add(new Label("docpath", ""));
                     }
@@ -126,6 +123,10 @@ public class CurrentActivityPlugin extends Plugin {
                 }
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
+                item.add(new Label("timestamp", e.getClass().getName()));
+                item.add(new Label("user", e.getMessage()));
+                item.add(new Label("method", ""));
+                item.add(new Label("docpath", ""));
             }
             item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
