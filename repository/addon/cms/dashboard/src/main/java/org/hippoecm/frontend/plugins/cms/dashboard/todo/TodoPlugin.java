@@ -27,11 +27,9 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,19 +65,13 @@ public class TodoPlugin extends Plugin {
         @Override
         protected void populateItem(final Item item) {
             Node requestNode = (Node) item.getModelObject();
-            Node handleNode = requestNode;
+            String path;
             try {
-                if (requestNode.isNodeType(HippoNodeType.NT_REQUEST)) {
-                    while (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        handleNode = handleNode.getParent();
-                    }
-                }
+                path = requestNode.getPath();
+                item.add(new BrowseLink("request", path, getTopChannel()));
             } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-
-            item.add(new BrowseLink("request", new JcrNodeModel(requestNode), new JcrNodeModel(handleNode),
-                    getTopChannel()));
+                item.add(new Label("request", e.getMessage()));
+            }           
             item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
 
