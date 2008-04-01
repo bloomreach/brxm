@@ -88,6 +88,8 @@ class FieldManagerImpl extends AbstractFieldManager {
             }
             if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 node.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+            } else if(node.isNodeType(HippoNodeType.NT_REQUEST) {
+                node.addMixin("mix:referenceable");
             }
         }
         return node;
