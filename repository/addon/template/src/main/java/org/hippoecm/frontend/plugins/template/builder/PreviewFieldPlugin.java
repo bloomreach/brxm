@@ -36,6 +36,7 @@ import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
+import org.hippoecm.frontend.template.config.JcrTemplateNodeTypeModel;
 import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
@@ -50,13 +51,31 @@ public class PreviewFieldPlugin extends Plugin {
     private static final Logger log = LoggerFactory.getLogger(PreviewFieldPlugin.class);
 
     private JcrNodeModel templateNodeModel;
+    private JcrTemplateNodeTypeModel typeModel;
     private Plugin child;
 
     public PreviewFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new ItemModel(pluginModel), parentPlugin);
 
+        updateModel();
+
         child = createChild();
         add(child);
+    }
+
+    private void updateModel() {
+        try {
+            ItemModel model = (ItemModel) getPluginModel();
+            templateNodeModel = model.getNodeModel();
+            Node templateTypeNode = templateNodeModel.getNode();
+            while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                templateTypeNode = templateTypeNode.getParent();
+            }
+            RepositoryTypeConfig typeConfig = new RepositoryTypeConfig();
+            typeModel = typeConfig.getTypeModel(templateTypeNode.getName());
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     private Plugin createChild() {
@@ -65,19 +84,17 @@ public class PreviewFieldPlugin extends Plugin {
 
         RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig();
         try {
-            ItemModel model = (ItemModel) getPluginModel();
-            templateNodeModel = model.getNodeModel();
             Node templateNode = templateNodeModel.getNode();
-            Node templateTypeNode = templateNode;
-            while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                templateTypeNode = templateTypeNode.getParent();
-            }
-            String typeName = templateTypeNode.getName();
+            String typeName = typeModel.getTypeName();
 
             TypeDescriptor type = engine.getTypeConfig().getTypeDescriptor(typeName);
             TemplateDescriptor template = templateConfig.createTemplate(templateNode, type);
             TemplateDescriptor proxy = new PreviewTemplateDescriptor(template);
 
+            Node templateTypeNode = templateNode;
+            while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                templateTypeNode = templateTypeNode.getParent();
+            }
             Node prototype = templateTypeNode.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNode(
                     HippoNodeType.HIPPO_PROTOTYPE);
             JcrNodeModel prototypeModel = new JcrNodeModel(prototype);
@@ -111,14 +128,8 @@ public class PreviewFieldPlugin extends Plugin {
             }
         } else if ("save".equals(notification.getOperation())) {
             if (notification.getModel().equals(nodeModel)) {
-                try {
-                    Node templateTypeNode = nodeModel.getNode();
-                    while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                        templateTypeNode = templateTypeNode.getParent();
-                    }
-                    templateTypeNode.save();
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
+                if(typeModel != null) {
+                    typeModel.save();
                 }
             }
         }
@@ -172,6 +183,7 @@ public class PreviewFieldPlugin extends Plugin {
 
     @Override
     public void onDetach() {
+        typeModel.detach();
         templateNodeModel.detach();
         super.onDetach();
     }
@@ -210,7 +222,7 @@ public class PreviewFieldPlugin extends Plugin {
         Node itemNode = resolvePath(path);
         if (itemNode != null) {
             try {
-                deleteItemNode(itemNode, getTypeNode());
+                deleteItemNode(itemNode);
                 return true;
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -219,33 +231,14 @@ public class PreviewFieldPlugin extends Plugin {
         return false;
     }
 
-    private Node getTypeNode() throws RepositoryException {
-        RepositoryTypeConfig typeConfig = new RepositoryTypeConfig();
-        Node templateTypeNode = templateNodeModel.getNode();
-        while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-            templateTypeNode = templateTypeNode.getParent();
-        }
-        return typeConfig.getTypeNode(templateTypeNode.getName());
-    }
-
-    private void deleteItemNode(Node item, Node typeNode) throws RepositoryException {
+    private void deleteItemNode(Node item) throws RepositoryException {
         if (item.hasProperty(HippoNodeType.HIPPO_FIELD)) {
             String field = item.getProperty(HippoNodeType.HIPPO_FIELD).getString();
-            NodeIterator fieldIter = typeNode.getNodes(HippoNodeType.HIPPO_FIELD);
-            while (fieldIter.hasNext()) {
-                Node fieldNode = fieldIter.nextNode();
-                if (fieldNode.hasProperty(HippoNodeType.HIPPO_NAME)) {
-                    String name = fieldNode.getProperty(HippoNodeType.HIPPO_NAME).getString();
-                    if (name.equals(field)) {
-                        fieldNode.remove();
-                        break;
-                    }
-                }
-            }
+            typeModel.removeField(field);
         } else {
             NodeIterator itemIter = item.getNodes(HippoNodeType.HIPPO_ITEM);
             while (itemIter.hasNext()) {
-                deleteItemNode(itemIter.nextNode(), typeNode);
+                deleteItemNode(itemIter.nextNode());
             }
         }
         item.remove();

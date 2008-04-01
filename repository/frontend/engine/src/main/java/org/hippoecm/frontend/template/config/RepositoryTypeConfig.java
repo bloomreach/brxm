@@ -34,6 +34,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
@@ -60,6 +61,14 @@ public class RepositoryTypeConfig implements TypeConfig {
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public JcrTemplateNodeTypeModel getTypeModel(String name) {
+        Node node = getTypeNode(name);
+        if (node != null) {
+            return new JcrTemplateNodeTypeModel(new JcrNodeModel(node), name);
         }
         return null;
     }
