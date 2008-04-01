@@ -19,14 +19,12 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.WorkflowException;
 
 public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
-
+    private static final long serialVersionUID = 1L;
+    
     protected FullReviewedActionsWorkflowImpl workflow;
 
     public FullRequestWorkflowImpl() throws RemoteException {
@@ -36,10 +34,13 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
         ReviewedActionsWorkflowImpl.log.info("accepting request for document ");
         if(PublicationRequest.DELETE.equals(request.type)) {
             workflow.delete();
+            request = null;
         } else if(PublicationRequest.PUBLISH.equals(request.type)) {
             workflow.publish();
+            request = null;
         } else if(PublicationRequest.DEPUBLISH.equals(request.type)) {
             workflow.depublish();
+            request = null;
         } else if(PublicationRequest.REJECTED.equals(request.type)) {
             throw new WorkflowException("request has already been rejected");
         } else

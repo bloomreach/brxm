@@ -101,7 +101,7 @@ public class CurrentActivityPlugin extends Plugin {
                 item.add(new Label("user", node.getProperty("hippo:eventUser").getString()));
                 item.add(new Label("method", node.getProperty("hippo:eventMethod").getString()));
 
-                // Best effort algoritm to create a 'browse' link to a document variant.
+                // Best effort algoritm to create a 'browse' link to a document.
 
                 // The path to the document variant that was used as input for a Workflow step.    
                 String sourceVariant = null;
@@ -135,43 +135,43 @@ public class CurrentActivityPlugin extends Plugin {
                     }
                 }
 
-                //Try to create a link to the document 
-                String linkPath = null;
+                //Try to create a link to the document variant
+                String path = null;
                 if (targetVariantExists) {
-                    linkPath = targetVariant;
+                    path = targetVariant;
                 } else if (sourceVariantExists) {
-                    linkPath = sourceVariant;
+                    path = sourceVariant;
                 }
-                if (linkPath != null) {
-                    item.add(new BrowseLink("docpath", linkPath, getTopChannel()));
+                if (path != null) {
+                    item.add(new BrowseLink("docpath", path, getTopChannel()));
+                    return;
+                }
 
-                //Maybe both variants have been deleted, try to create a label
-                //with the document path
-                } else {
-                    if (sourceVariant != null) {
-                        item.add(new Label("docpath", StringUtils.substringBeforeLast(sourceVariant, "/")));
-                    } else if (targetVariant != null) {
-                        item.add(new Label("docpath", StringUtils.substringBeforeLast(targetVariant, "/")));
-
-                    //Apparently the log item wasn't created by a Workflow step
-                    //on a document.
-                    } else {
-                        item.add(new Label("docpath", ""));
+                //Maybe both variants have been deleted, try to create a link to the handle
+                if (sourceVariant != null) {
+                    String handle = StringUtils.substringBeforeLast(sourceVariant, "/");
+                    if (session.itemExists(handle)) {
+                        item.add(new BrowseLink("docpath", handle, getTopChannel()));
+                        return;
                     }
                 }
+
+                //Apparently the log item wasn't created by a Workflow step
+                //on a document.
+                item.add(new Label("docpath", ""));
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
-                if (get("timestamp") == null) {
-                    item.add(new Label("timestamp", e.getClass().getName()));
+                if (item.get("timestamp") == null) {
+                    item.add(new Label("timestamp", ""));
                 }
-                if (get("user") == null) {
-                    item.add(new Label("user", e.getMessage()));
+                if (item.get("user") == null) {
+                    item.add(new Label("user", ""));
                 }
-                if (get("method") == null) {
+                if (item.get("method") == null) {
                     item.add(new Label("method", ""));
                 }
-                if (get("docpath") == null) {
-                    item.add(new Label("docpath", ""));
+                if (item.get("docpath") == null) {
+                    item.add(new Label("docpath", e.getClass().getSimpleName() + ": " + e.getMessage()));
                 }
             }
         }

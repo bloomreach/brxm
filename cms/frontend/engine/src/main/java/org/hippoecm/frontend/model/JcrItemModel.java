@@ -91,7 +91,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             UserSession sessionProvider = (UserSession) Session.get();
             result = sessionProvider.getJcrSession().getItem(path);
         } catch (RepositoryException e) {
-            log.info(e.getMessage());
+            log.warn("failed to load " + e.getMessage());
         }
         return result;
     }
