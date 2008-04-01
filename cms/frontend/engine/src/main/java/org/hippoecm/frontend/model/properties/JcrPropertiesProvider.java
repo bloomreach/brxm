@@ -48,8 +48,8 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
 
     // IDataProvider implementation, provides the properties of the chained nodeModel
 
-    public Iterator iterator(int first, int count) {
-        List list = new ArrayList();
+    public Iterator<Property> iterator(int first, int count) {
+        List<Property> list = new ArrayList<Property>();
         try {
             if (nodeModel.getNode() != null) {
                 PropertyIterator it = nodeModel.getNode().getProperties();

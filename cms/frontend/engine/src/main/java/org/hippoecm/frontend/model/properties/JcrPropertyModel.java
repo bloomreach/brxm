@@ -61,8 +61,8 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider 
     // IDataProvider implementation for use in DataViews
     // (lists and tables)
 
-    public Iterator iterator(int first, int count) {
-        List list = new ArrayList();
+    public Iterator<IndexedValue> iterator(int first, int count) {
+        List<IndexedValue> list = new ArrayList<IndexedValue>();
         try {
             Property prop = getProperty();
             if (prop == null) {
