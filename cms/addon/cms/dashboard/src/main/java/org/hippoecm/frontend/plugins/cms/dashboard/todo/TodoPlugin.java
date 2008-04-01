@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.dashboard.todo;
 import java.util.Iterator;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -30,6 +31,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,10 +66,23 @@ public class TodoPlugin extends Plugin {
 
         @Override
         protected void populateItem(final Item item) {
-            Node node = (Node) item.getModelObject();
-            item.add(new BrowseLink("request", new JcrNodeModel(node), getTopChannel()));
+            Node requestNode = (Node) item.getModelObject();
+            Node handleNode = requestNode;
+            try {
+                if (requestNode.isNodeType(HippoNodeType.NT_REQUEST)) {
+                    while (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        handleNode = handleNode.getParent();
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+
+            item.add(new BrowseLink("request", new JcrNodeModel(requestNode), new JcrNodeModel(handleNode),
+                    getTopChannel()));
             item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
+
                 public Object getObject() {
                     return (item.getIndex() % 2 == 1) ? "even" : "odd";
                 }

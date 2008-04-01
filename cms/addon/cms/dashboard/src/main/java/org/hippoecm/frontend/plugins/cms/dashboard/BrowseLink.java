@@ -19,7 +19,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
@@ -28,20 +27,20 @@ import org.hippoecm.repository.api.ISO9075Helper;
 public class BrowseLink extends Panel {
     private static final long serialVersionUID = 1L;
     
-    public BrowseLink(String id, final IPluginModel model, final Channel channel) {
-        super(id, model);
+    public BrowseLink(String id, final JcrNodeModel variant, JcrNodeModel handle, final Channel channel) {
+        super(id, variant);
         
-        AjaxLink link = new AjaxLink("link", model) {
+        AjaxLink link = new AjaxLink("link", variant) {
             private static final long serialVersionUID = 1L;
             public void onClick(AjaxRequestTarget target) {
-                Request request = channel.createRequest("browse", new JcrNodeModel(model));
+                Request request = channel.createRequest("browse", variant);
                 channel.send(request);
                 request.getContext().apply(target);
             }
         };
         add(link);
         
-        String path = new JcrNodeModel(model).getItemModel().getPath();
+        String path = handle.getItemModel().getPath();
         path = ISO9075Helper.decodeLocalName(path);
         link.add(new Label("label", path));
     }
