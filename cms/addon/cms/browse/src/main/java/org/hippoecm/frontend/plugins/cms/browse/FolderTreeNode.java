@@ -17,8 +17,10 @@ package org.hippoecm.frontend.plugins.cms.browse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -57,9 +59,14 @@ public class FolderTreeNode extends AbstractTreeNode {
     private final static String[] ignoreNodesBelowType = new String[] { HippoNodeType.NT_DOCUMENT,
             HippoNodeType.NT_TEMPLATETYPE };
 
-    //  shortcut paths shown as root folders
-    private final static String[] shortCutPaths = new String[] { "hippo:namespaces/defaultcontent" };
-
+    // shortcut paths shown as root folders + the name how to show them
+    private final static Map<String,String> shortCutInfo;
+    static {
+        shortCutInfo = new HashMap<String,String>();
+        shortCutInfo.put("hippo:namespaces/defaultcontent","document types");
+    }
+    
+    
     public FolderTreeNode(JcrNodeModel model) {
         super(model);
     }
@@ -133,6 +140,9 @@ public class FolderTreeNode extends AbstractTreeNode {
                 if (node.isSame(node.getAncestor(0))) {
                     return ROOT_NODE_DISPLAYNAME;
                 }
+                if(shortCutInfo.containsKey(node.getPath().substring(1))) {
+                    return shortCutInfo.get(node.getPath().substring(1));
+                }
                 result = ISO9075Helper.decodeLocalName(node.getDisplayName());
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
@@ -163,7 +173,7 @@ public class FolderTreeNode extends AbstractTreeNode {
         }
         if (node.isSame(node.getAncestor(0))) {
             // node is rootNode, so add shortcut paths
-            for (String path : shortCutPaths) {
+            for (String path : shortCutInfo.keySet()) {
                 try {
                     result.add(node.getNode(path));
                 } catch (PathNotFoundException e) {
