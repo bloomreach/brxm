@@ -40,7 +40,8 @@ public class JCRConnector {
                 wrapper = new SessionWrapper(httpSession.getServletContext().getInitParameter(REPOSITORY_ADRESS_PARAM),
                                              httpSession.getServletContext().getInitParameter(REPOSITORY_USERNAME_PARAM),
                                              httpSession.getServletContext().getInitParameter(REPOSITORY_PASSWORD_PARAM));
-                httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
+// FIXME turn on storing the JCRSession if caching in JCR is working                                                             
+//				httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;
             }
         } catch (LoginException e) {
@@ -52,17 +53,26 @@ public class JCRConnector {
     }
     
     static Item getItem(Session session, String path) throws RepositoryException {
-        Node node = session.getRootNode();
-        while (path.startsWith("/")) {
+
+    	Node node = session.getRootNode();
+
+    	// strip first slash
+    	while (path.startsWith("/")) {
             path = path.substring(1);
         }
+        
+    	// loop all path elements and interpret them
         String[] pathElts = path.split("/");
         for (int pathIdx = 0; pathIdx < pathElts.length && node != null; pathIdx++) {
             String relPath = pathElts[pathIdx];
             if(relPath.equals(""))
                 continue;
+
+            // determine if this (last) part of the path is a property or argument
+            // with [] notation
             Map<String, String> conditions = null;
-            if (relPath.contains("[") && relPath.endsWith("]") && !Character.isDigit(relPath.charAt(relPath.indexOf("[")+1))) {
+            if (relPath.contains("[") && relPath.endsWith("]") 
+            		&& !Character.isDigit(relPath.charAt(relPath.indexOf("[")+1))) {
                 conditions = new TreeMap<String, String>();
                 int beginIndex = relPath.indexOf("[") + 1;
                 int endIndex = relPath.lastIndexOf("]");
@@ -82,22 +92,34 @@ public class JCRConnector {
                 }
                 relPath = relPath.substring(0, relPath.indexOf("["));
             }
+
+            // current path element is doesn't have [] notation
             if (conditions == null || conditions.size() == 0) {
-                if (pathIdx + 1 == pathElts.length && !relPath.contains("[") && node.hasProperty(relPath)) {
+            	
+            	// a property with . notation
+                if (pathIdx + 1 == pathElts.length && 
+                		!relPath.contains("[") && node.hasProperty(relPath)) {
                     try {
                         return node.getProperty(relPath);
                     } catch (PathNotFoundException ex) {
                         return null;
                     }
-                } else if (node.hasNode(relPath)) {
+                } 
+                
+                // a subnode
+                else if (node.hasNode(relPath)) {
                     try {
                         node = node.getNode(relPath);
                     } catch (PathNotFoundException ex) {
                         return null;
                     }
-                } else
+                } else {
                     return null;
-            } else {
+                }    
+            } 
+
+            // current path element is a property or argument: loop nodes and stop if the condition are ok  
+            else {
                 for (NodeIterator iter = node.getNodes(relPath); iter.hasNext();) {
                     node = iter.nextNode();
                     for (Map.Entry<String, String> condition : conditions.entrySet()) {
@@ -121,11 +143,15 @@ public class JCRConnector {
                             break;
                         }
                     }
-                    if (node != null)
+
+                    // node found
+                    if (node != null) {
                         break;
+                    }    
                 }
             }
         }
+
         return node;
     }
 
@@ -133,16 +159,21 @@ public class JCRConnector {
         Session jcrSession;
 
         SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {
-            logger.info("connecting to repository at " + location + " as " + username);
+// FIXME set debug back to info when this wrapper is again stored in session            	
+            logger.debug("connecting to repository at " + location + " as " + username);
+
             HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             try {
                 jcrSession = repository.login(username, (password != null ? password.toCharArray() : null));
-                logger.info("logged in as " + username);
+
+// FIXME set debug back to info when this wrapper is again stored in session            	
+                logger.debug("logged in as " + username);
             } catch(LoginException ex) {
                 logger.warn("login as " + username + " failed, trying as anonymous.");
                 jcrSession = repository.login();
-                logger.info("logged in as anonymous");
+// FIXME set debug back to info when this wrapper is again stored in session            	
+                logger.debug("logged in as anonymous");
             }
         }
 
