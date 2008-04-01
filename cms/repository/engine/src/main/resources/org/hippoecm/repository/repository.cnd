@@ -57,7 +57,7 @@
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
 + * (hippo:facetsubsearch) = hippo:facetsubsearch multiple
 
-[hippo:request] > nt:unstructured, mix:referenceable
+[hippo:request] > nt:unstructured
 
 [hippo:document] > nt:base
 
