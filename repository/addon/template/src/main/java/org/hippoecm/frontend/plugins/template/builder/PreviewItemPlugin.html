@@ -15,27 +15,19 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table>
+     <table class="displaytable">
       <tbody>
         <tr>
-          <td>
-            <ul>
-              <li>
-                <a wicket:id="up">(up)</a>
-              </li>
-              <li>
-                <a wicket:id="down">(down)</a>
-              </li>
-              <li>
-                <a wicket:id="edit">(edit)</a>
-              </li>
-              <li>
-                <a wicket:id="remove">(remove)</a>
-              </li>
-            </ul>
+          <td class="itemmovehandle">
+            <a class="upbutton" wicket:id="up">&nbsp;</a>
+            <a class="downbutton" wicket:id="down">&nbsp;</a>
+            <a class="editbutton" wicket:id="edit">Edit</a>
           </td>
-          <td>
-            <div wicket:id="item">[ item goes here ]</div>
+          <td style="position: relative">
+          <div wicket:id="item">[ item goes here ]</div>
+          </td>
+          <td style="width: 10%; text-align: right">
+            <a wicket:id="remove">Remove Item</a>
           </td>
         </tr>
       </tbody>

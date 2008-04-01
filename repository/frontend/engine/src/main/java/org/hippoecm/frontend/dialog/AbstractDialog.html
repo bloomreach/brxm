@@ -14,16 +14,19 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <body>
+  <wicket:head>
+    <title>Hippo CMS 7 - Sign in</title>
+    <link href="skin/style.css" rel="stylesheet" type="text/css"/>
+   </wicket:head>
+  <body class="dialog">
     <wicket:child />
     <b><span wicket:id="exception"></span></b>
-    <hr/>
-    <table width="50%">
+        <table class="dialogbuttons" width="50%">
       <tr>
-        <td>
+        <td class="okbutton">
           <a wicket:id="ok">OK</a>
         </td>
-        <td>
+        <td class="cancelbutton">
           <a wicket:id="cancel">Cancel</a>
         </td>
       </tr>

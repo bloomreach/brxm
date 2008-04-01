@@ -20,11 +20,16 @@
   </wicket:head>
 
   <wicket:panel>
-    <h1 id="logo"><img src="skin/images/hippoecm.gif" alt="Hippo ECM" /></h1>
-    <div id="root">
+    <table id="root">
+     <tr>
+       <td>
+     <div style="padding: 10px; padding-bottom: 5px;">
       <div wicket:id="logoutPlugin">logout</div>
       <div wicket:id="exceptionPlugin">[exception holder]</div>
-      <div wicket:id="tabsPlugin">[tabbed panel will be here]</div>
-    </div>
+     </div>
+     <div wicket:id="tabsPlugin">[tabbed panel will be here]</div>
+       </td>
+     </tr>
+    </table>
   </wicket:panel>
 </html>
