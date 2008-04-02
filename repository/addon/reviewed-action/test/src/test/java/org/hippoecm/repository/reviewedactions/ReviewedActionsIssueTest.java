@@ -230,7 +230,7 @@ public class ReviewedActionsIssueTest extends TestCase {
         }
         
         {  
-            Node node2 = HierarchyResolver.getNode(root, "documents/myarticle/request[@type='publish']");
+            Node node2 = HierarchyResolver.getNode(root, "documents/myarticle/request[@type='delete']");
             FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node2, "default");
             requestWorkflow.cancelRequest();
             session.save();
