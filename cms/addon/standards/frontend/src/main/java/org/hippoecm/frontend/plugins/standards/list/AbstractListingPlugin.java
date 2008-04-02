@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.list;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.ItemExistsException;
@@ -37,19 +38,20 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColum
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ICustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractListingPlugin extends Plugin {
 
     protected static final String LISTING_NODETYPE = "hippo:listing";
-    protected static final String LISTINGPROPS_NODETYPE =  "hippo:listingpropnode";
+    protected static final String LISTINGPROPS_NODETYPE = "hippo:listingpropnode";
 
     protected static final String PROPERTYNAME_PROPERTY = "hippo:propertyname";
 
@@ -70,7 +72,6 @@ public abstract class AbstractListingPlugin extends Plugin {
 
     public static final String USER_PATH_PREFIX = "/hippo:configuration/hippo:users/";
 
-    protected ICustomizableDocumentListingDataTable dataTable;
     protected List<IStyledColumn> columns;
 
     public AbstractListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
@@ -78,25 +79,46 @@ public abstract class AbstractListingPlugin extends Plugin {
         this.createTableColumns(pluginDescriptor, (JcrNodeModel) getPluginModel());
     }
 
-
     @Override
     public void receive(Notification notification) {
-        if ("list".equals(notification.getOperation())) {
-          Object newEntries = notification.getModel().getMapRepresentation().get("entries");
-          Object oldEntries = ((IPluginModel)getModel()).getMapRepresentation().get("entries");
-          if (!newEntries.equals(oldEntries)) {
-              setModel(notification.getModel());
-              remove((Component)dataTable);
-              add((Component)getTable(notification.getModel()));
-              notification.getContext().addRefresh(this);
-          }            
+        if ("select".equals(notification.getOperation())) {
+            JcrNodeModel model = new JcrNodeModel(notification.getModel());
+            Node node = (Node) model.getNode();
+            while (node != null) {
+                try {
+                    if (!node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        break;
+                    } else {
+                        node = node.getParent();
+                    }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+            }
+
+            List<String> entries = new ArrayList<String>();
+            try {
+                NodeIterator childNodesIterator = node.getNodes();
+                while (childNodesIterator.hasNext()) {
+                    entries.add(childNodesIterator.nextNode().getPath());
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+            PluginModel listModel = new PluginModel();
+            listModel.put("entries", entries);
+            setModel(listModel);
+            replace(getTable(listModel));
+
+            notification.getContext().addRefresh(this);
         }
     }
 
     public void createTableColumns(PluginDescriptor pluginDescriptor, JcrNodeModel model) {
         UserSession session = (UserSession) Session.get();
         columns = new ArrayList<IStyledColumn>();
-        String userPrefListingSettingsLocation = USER_PATH_PREFIX + session.getJcrSession().getUserID() +"/" + getPluginUserPrefNodeName();
+        String userPrefListingSettingsLocation = USER_PATH_PREFIX + session.getJcrSession().getUserID() + "/"
+                + getPluginUserPrefNodeName();
         String userNodeLocation = USER_PATH_PREFIX + session.getJcrSession().getUserID();
         try {
             Node userPrefNode = (Node) session.getJcrSession().getItem(userPrefListingSettingsLocation);
@@ -105,24 +127,24 @@ public abstract class AbstractListingPlugin extends Plugin {
             viewSize = getPropertyIntValue(userPrefNode, VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);
 
             NodeIterator nodeIt = userPrefNode.getNodes();
-            if(nodeIt.getSize() == 0) {
+            if (nodeIt.getSize() == 0) {
                 defaultColumns(pluginDescriptor);
             }
-            while(nodeIt.hasNext()) {
+            while (nodeIt.hasNext()) {
                 Node n = nodeIt.nextNode();
-                if(n.hasProperty(COLUMNNAME_PROPERTY) && n.hasProperty(PROPERTYNAME_PROPERTY)) {
+                if (n.hasProperty(COLUMNNAME_PROPERTY) && n.hasProperty(PROPERTYNAME_PROPERTY)) {
                     String columnName = n.getProperty(COLUMNNAME_PROPERTY).getString();
                     String propertyName = n.getProperty(PROPERTYNAME_PROPERTY).getString();
-                    columns.add(getNodeColumn(new Model(columnName), propertyName , getTopChannel()));
+                    columns.add(getNodeColumn(new Model(columnName), propertyName, getTopChannel()));
                 }
             }
         } catch (PathNotFoundException e) {
             // The user preference node for the current plugin does not exist: create node now with default settings:
             log.debug("No user doclisting preference node found. Creating default doclisting preference node.");
             javax.jcr.Session jcrSession = session.getJcrSession();
-            try { 
-                if(!jcrSession.itemExists(userPrefListingSettingsLocation)) { 
-                    Node userNode = ((Node)jcrSession.getItem(userNodeLocation));
+            try {
+                if (!jcrSession.itemExists(userPrefListingSettingsLocation)) {
+                    Node userNode = ((Node) jcrSession.getItem(userNodeLocation));
                     // User doesn't have a user folder for this browse perspective yet
                     Node prefNode = createDefaultPrefNodeSetting(userNode);
                     modifyDefaultPrefNode(prefNode, getTopChannel());
@@ -155,25 +177,30 @@ public abstract class AbstractListingPlugin extends Plugin {
             logError(e);
             defaultColumns(pluginDescriptor);
         }
-        add((Component)getTable(model));
+        add(getTable(model));
     }
 
-    private Node createDefaultPrefNodeSetting(Node listingNode) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+    private Node createDefaultPrefNodeSetting(Node listingNode) throws ItemExistsException, PathNotFoundException,
+            NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException,
+            RepositoryException, ValueFormatException {
         Node prefNode = listingNode.addNode(getPluginUserPrefNodeName(), LISTING_NODETYPE);
         prefNode.setProperty(PAGESIZE_PROPERTY, DEFAULT_PAGE_SIZE);
         prefNode.setProperty(VIEWSIZE_PROPERTY, DEFAULT_VIEW_SIZE);
         return prefNode;
-    } 
-    
-    private int getPropertyIntValue(Node userPrefNode,String property, int defaultValue) throws RepositoryException, ValueFormatException, PathNotFoundException {
+    }
+
+    private int getPropertyIntValue(Node userPrefNode, String property, int defaultValue) throws RepositoryException,
+            ValueFormatException, PathNotFoundException {
         int value = 0;
-        if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.LONG ){
-            value = (int)userPrefNode.getProperty(property).getLong();
+        if (userPrefNode.hasProperty(property)
+                && userPrefNode.getProperty(property).getValue().getType() == PropertyType.LONG) {
+            value = (int) userPrefNode.getProperty(property).getLong();
             return value == 0 ? defaultValue : value;
         }
         // TODO : make sure it cannot be a string value. Currently, saving through the console makes the number
         // a string. Also fix this in the repository.cnd
-        else if(userPrefNode.hasProperty(property) && userPrefNode.getProperty(property).getValue().getType() == PropertyType.STRING ){
+        else if (userPrefNode.hasProperty(property)
+                && userPrefNode.getProperty(property).getValue().getType() == PropertyType.STRING) {
             String pageSizeString = userPrefNode.getProperty(property).getString();
             try {
                 value = Integer.parseInt(pageSizeString);
@@ -198,37 +225,38 @@ public abstract class AbstractListingPlugin extends Plugin {
      * @throws RepositoryException
      * @throws ValueFormatException
      */
-    protected void modifyDefaultPrefNode(Node prefNode, Channel channel) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException, ValueFormatException {
+    protected void modifyDefaultPrefNode(Node prefNode, Channel channel) throws ItemExistsException,
+            PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
+            ConstraintViolationException, RepositoryException, ValueFormatException {
         // subclasses should override this if they want to change behavior
-        
-        Node pref = prefNode.addNode("name",LISTINGPROPS_NODETYPE);
+
+        Node pref = prefNode.addNode("name", LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "Name");
         pref.setProperty(PROPERTYNAME_PROPERTY, "name");
 
         pref = prefNode.addNode("type", LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "Type");
         pref.setProperty(PROPERTYNAME_PROPERTY, JcrConstants.JCR_PRIMARYTYPE);
-        
+
         pref = prefNode.addNode("state", LISTINGPROPS_NODETYPE);
         pref.setProperty(COLUMNNAME_PROPERTY, "State");
         pref.setProperty(PROPERTYNAME_PROPERTY, "state");
-        
-        columns.add(getNodeColumn(new Model("Name"), "name" , channel));
-        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , channel));
-        columns.add(getNodeColumn(new Model("State"), "state" , channel));
-        
+
+        columns.add(getNodeColumn(new Model("Name"), "name", channel));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE, channel));
+        columns.add(getNodeColumn(new Model("State"), "state", channel));
+
     }
 
     private void defaultColumns(PluginDescriptor pluginDescriptor) {
-        columns.add(getNodeColumn(new Model("Name"), "name" , getTopChannel()));
-        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE , getTopChannel()));
-        columns.add(getNodeColumn(new Model("State"), "state" , getTopChannel()));
+        columns.add(getNodeColumn(new Model("Name"), "name", getTopChannel()));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE, getTopChannel()));
+        columns.add(getNodeColumn(new Model("State"), "state", getTopChannel()));
     }
-    
+
     private void logError(Exception e1) {
         log.error("error creating user doclisting preference: \n " + e1 + " . \n  default doclisting will be shown");
     }
-
 
     /**
      * Override this method if you want custom table column / nodecells
@@ -241,8 +269,7 @@ public abstract class AbstractListingPlugin extends Plugin {
         return new NodeColumn(model, propertyName, channel);
     }
 
-
-    protected abstract ICustomizableDocumentListingDataTable getTable(IPluginModel model);
+    protected abstract Component getTable(IPluginModel model);
 
     protected abstract String getPluginUserPrefNodeName();
 }

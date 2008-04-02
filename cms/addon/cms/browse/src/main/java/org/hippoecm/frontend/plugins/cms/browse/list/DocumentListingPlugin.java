@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.IPluginModel;
@@ -27,7 +28,6 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ICustomizableDocumentListingDataTable;
 
 public class DocumentListingPlugin extends AbstractListingPlugin {
 
@@ -40,7 +40,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected ICustomizableDocumentListingDataTable getTable(IPluginModel listModel) {
+    protected Component getTable(IPluginModel listModel) {
         List<JcrNodeModel> entries = new ArrayList<JcrNodeModel>();
         List<String> list = (List<String>) listModel.getMapRepresentation().get("entries");
         if (list != null) {
@@ -49,10 +49,10 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
             }
         }
         SortableDocumentsProvider documentsProvider = new SortableDocumentsProvider(entries);
-        dataTable = new CustomizableDocumentListingDataTable("table", columns, documentsProvider, pageSize, false);
+        CustomizableDocumentListingDataTable dataTable = new CustomizableDocumentListingDataTable("table", columns,
+                documentsProvider, pageSize, false);
         dataTable.addBottomPaging(viewSize);
         dataTable.addTopColumnHeaders();
-        
         return dataTable;
     }
 
