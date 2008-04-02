@@ -38,3 +38,9 @@
 - defaultcontent:date (date)
 - defaultcontent:introduction (string)
 - defaultcontent:body (string)
+
+[defaultcontent:overview] > hippo:document, hippostd:publishable, hippostd:publishableSummary
+- defaultcontent:title (string)
+- defaultcontent:introduction (string)
++ defaultcontent:query (hippo:query) 
+ 
