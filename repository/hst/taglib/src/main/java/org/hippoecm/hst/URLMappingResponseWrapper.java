@@ -16,6 +16,7 @@
 package org.hippoecm.hst;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -35,6 +36,8 @@ import org.slf4j.LoggerFactory;
 
 class URLMappingResponseWrapper extends HttpServletResponseWrapper {
 	
+    private static final String ENCODING_SCHEME = "UTF-8";
+    
     private static final Logger logger = LoggerFactory.getLogger(URLMappingResponseWrapper.class);
 
     private Context context;
@@ -53,35 +56,37 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
 
     @Override
     public String encodeRedirectURL(String url) {
-        return super.encodeURL(reverseURL(request.getContextPath(), url));
+        return super.encodeRedirectUrl(reverseURL(request.getContextPath(), url));
     }
     
     public String mapRepositoryDocument(String mappingLocation, String documentPath)
         throws RepositoryException, IOException, ServletException {
 
-    	logger.debug("Mapping repository document " + documentPath + " and mappingLocation = " + mappingLocation);
-    	
         while (documentPath.startsWith("/")) {
             documentPath = documentPath.substring(1);
         }
+        
+        documentPath = URLDecoder.decode(documentPath, ENCODING_SCHEME);   
+        
         while (mappingLocation.startsWith("/")) {
             mappingLocation = mappingLocation.substring(1);
         }
 
-        // fetch the requested document node
+        // check session
         Session session = JCRConnector.getJCRSession(request.getSession());
         
         if (session == null) {
         	throw new ServletException("No JCR session to repository");
         }
 
+        // fetch the requested document node
         if (!session.getRootNode().hasNode(documentPath)) {
         	logger.debug("Cannot find node by path " + documentPath);
         	return null;
         }	
 
         Node documentNode = session.getRootNode().getNode(documentPath);
-
+ 
         // if the requested document node is a handle go one level deeper.
         try {
             if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -96,7 +101,7 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         // update path
         context.setRelativePath(documentNode.getPath());
 
-        // locate the display node associated with the document node.
+        // locate the display node associated with the document node
         Node currentNode = documentNode;
         Node displayNode = null;
         
@@ -115,7 +120,6 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
 			            Node matchNode = iter.nextNode();
 			            try {
 			            	Property prop = matchNode.getProperty(HSTNodeTypes.HST_NODETYPE);
-				            System.out.println("#### displayNode prop " + HSTNodeTypes.HST_NODETYPE + " = " + prop);
 			                if (currentNode.isNodeType(prop.getString())) {
 			                    displayNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
 			                    break;
@@ -144,27 +148,27 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         }
 
         if (displayNode == null) {
-        	logger.debug("DisplayNode cannot be found by documentNode " + documentNode
+        	logger.debug("displayNode cannot be found by documentNode " + documentNode
         				+ " and mappingLocation " + mappingLocation);
             return null;
         }
 
-        // The (jsp) page that will be used
-        if (displayNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
-        	String pageFile = displayNode.getProperty(HSTNodeTypes.HST_PAGEFILE).getString();
-        	logger.debug("Property " + HSTNodeTypes.HST_PAGEFILE + " = " + pageFile);
-        	return pageFile;
+        if (!displayNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
+        	logger.debug("displayNode with path " + displayNode.getPath() + " has no property " + HSTNodeTypes.HST_PAGEFILE);
+        	return null;
     	}
     
-    	logger.debug("No mapped page found for documentPath " + documentPath +
-    								" and mappingLocation " + mappingLocation + 
-    								", displayNode=" + displayNode);
-        return null;
+        // return the page that will be used
+    	String pageFile = displayNode.getProperty(HSTNodeTypes.HST_PAGEFILE).getString();
+
+    	logger.debug("mapped document path " + documentPath + " to page " + pageFile +
+    					", mappingLocation is " + mappingLocation);
+    	return pageFile;
     }
     
     private String reverseURL(String contextPath, String url) {
     	
-        /* Something like the following may be more appropriate, but the
+    	/* Something like the following may be more appropriate, but the
          * current sequence is functional enough
          *   Session session = context.session;
          *   Query query = session.getWorkspace().getQueryManager().createQuery(
