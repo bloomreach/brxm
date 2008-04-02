@@ -32,6 +32,7 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.repository.api.HippoNode;
@@ -183,14 +184,11 @@ public class FolderTreeNode extends AbstractTreeNode {
             if (!ignorePaths.contains(subNode.getPath()) && !subNode.isNodeType(HippoNodeType.NT_LOGFOLDER)) {
                 if (!subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                     result.add(subNode);  
+                } 
+                else if (((HippoNode)subNode).getCanonicalNode()== null || !((HippoNode)subNode).getCanonicalNode().isSame(subNode)) {
+                    // in the virtual tree we show everything
+                    result.add(subNode); 
                 }
-//                if (subNode.isNodeType(HippoNodeType.NT_HANDLE) || isReferenceToHandle(subNode)) {
-//                    result.add(subNode);
-//                } else {
-//                    if (!onlyHandles) {
-//                        result.add(subNode);
-//                    }
-//                }
             }
         }
         return result;
