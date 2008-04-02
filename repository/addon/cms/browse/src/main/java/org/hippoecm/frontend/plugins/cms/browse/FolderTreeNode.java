@@ -78,7 +78,7 @@ public class FolderTreeNode extends AbstractTreeNode {
         this.belowFacetSelectSingleMode = parent.belowFacetSelectSingleMode;
         try {
             Node node = nodeModel.getNode();
-            if (isFacetSelect(node)) {
+            if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                 try {
                     if (node.getProperty(HippoNodeType.HIPPO_MODES).getValues().length > 0
                             && "single".equals(node.getProperty(HippoNodeType.HIPPO_MODES).getValues()[0].getString()
@@ -89,15 +89,10 @@ public class FolderTreeNode extends AbstractTreeNode {
                     // no single mode
                 }
             }
-            if (onlyHandles) {
-                if (isFacetSelect(node) && !isReferenceToHandle(node)) {
-                    onlyHandles = false;
-                }
-            } else {
-                if (!belowFacetSelectSingleMode && node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    onlyHandles = true;
-                }
+            if (!belowFacetSelectSingleMode && node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                onlyHandles = true;
             }
+            
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
@@ -201,27 +196,6 @@ public class FolderTreeNode extends AbstractTreeNode {
         return result;
     }
 
-    private boolean isFacetSelect(Node node) {
-        boolean result;
-        try {
-            result = node.isNodeType(HippoNodeType.NT_FACETSELECT);
-        } catch (RepositoryException e) {
-            result = false;
-        }
-        return result;
-    }
 
-    private boolean isReferenceToHandle(Node node) {
-        boolean result;
-        try {
-            result = node.isNodeType(HippoNodeType.NT_FACETSELECT);
-            HippoNode virtualchild = (HippoNode) node.getNodes().nextNode();
-            Node referencedNode = virtualchild.getCanonicalNode().getParent();
-            result &= referencedNode.isNodeType(HippoNodeType.NT_HANDLE);
-        } catch (Exception e) {
-            result = false;
-        }
-        return result;
-    }
 
 }
