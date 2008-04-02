@@ -94,8 +94,8 @@ public class NodeCell extends Panel {
                     HippoNode variant = (HippoNode) (n.getNode(n.getName()));
                     Node canonicalNode = variant.getCanonicalNode();
                     String state = "unknown";
-                    if(canonicalNode.hasProperty("hippostd:state")) {
-                        state = canonicalNode.getProperty("hippostd:state").getString();
+                    if(canonicalNode.hasProperty("hippostd:stateSummary")) {
+                        state = canonicalNode.getProperty("hippostd:stateSummary").getString();
                     }
                     addLabel(link, state);
                 } else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
