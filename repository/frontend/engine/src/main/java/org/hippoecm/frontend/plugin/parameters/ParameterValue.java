@@ -16,20 +16,27 @@
 package org.hippoecm.frontend.plugin.parameters;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 
 public class ParameterValue implements IClusterable, Cloneable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
+    public static final int TYPE_UNKNOWN = 0;
     public static final int TYPE_BOOLEAN = 1;
     public static final int TYPE_STRING = 2;
     public static final int TYPE_MAP = 3;
 
     private int type;
     private Object value;
+
+    public ParameterValue() {
+        this.type = TYPE_UNKNOWN;
+        this.value = null;
+    }
 
     public ParameterValue(boolean bool) {
         this.type = TYPE_BOOLEAN;
@@ -79,7 +86,7 @@ public class ParameterValue implements IClusterable, Cloneable {
         if (type == TYPE_STRING) {
             return (List<String>) value;
         }
-        return null;
+        return new LinkedList<String>();
     }
 
     public Map<String, ParameterValue> getMap() {

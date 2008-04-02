@@ -19,7 +19,9 @@ import java.lang.reflect.Constructor;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
+
 import org.hippoecm.frontend.dialog.error.ErrorDialog;
+import org.hippoecm.frontend.dialog.IDialogFactory;
 
 /**
  * Class for on-the-fly dialog creation based on a dynamic dialogClass attribute.
@@ -29,15 +31,25 @@ public class DynamicDialogFactory implements PageCreator {
 
     private DialogWindow window;
     private Class dialogClass;
+    private IDialogFactory dialogFactory;
 
     public DynamicDialogFactory(DialogWindow window, Class dialogClass) {
         this.window = window;
         this.dialogClass = dialogClass;
+        this.dialogFactory = null;
+    }
+
+    public DynamicDialogFactory(DialogWindow window, IDialogFactory factory) {
+        this.window = window;
+        this.dialogClass = null;
+        this.dialogFactory = factory;
     }
 
     public Page createPage() {
         Page result = null;
-        if (dialogClass == null) {
+        if (dialogFactory != null) {
+            result = dialogFactory.createDialog(window);
+        } else if (dialogClass == null) {
             String msg = "No dialog renderer specified";
             result = new ErrorDialog(window, msg);
         } else {

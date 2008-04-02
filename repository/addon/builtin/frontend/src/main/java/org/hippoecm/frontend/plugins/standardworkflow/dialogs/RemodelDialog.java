@@ -38,15 +38,14 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
     
     public RemodelDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
-        dialogWindow.setTitle("Apply models");
+        super(dialogWindow, "Apply models");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
     @Override
-    protected void doOk() throws Exception {
+    protected void execute() throws Exception {
         JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
 
         Node node = getDialogWindow().getNodeModel().getNode();
@@ -60,7 +59,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         // Sessions cache path resolver information, which is incorrect after remapping the prefix.
         sessionModel.flush();
 
-        RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow("internal");
+        RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
             String[] nodes = workflow.remodel(cnd);
@@ -77,9 +76,4 @@ public class RemodelDialog extends AbstractWorkflowDialog {
             log.warn("no remodeling workflow available on selected node");
         }
     }
-
-    @Override
-    public void cancel() {
-    }
-
 }

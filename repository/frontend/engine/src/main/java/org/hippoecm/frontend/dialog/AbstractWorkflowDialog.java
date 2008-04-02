@@ -18,7 +18,11 @@ package org.hippoecm.frontend.dialog;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
+
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
@@ -28,6 +32,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,24 +43,24 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
-    static final Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
+    static protected Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
 
-    public AbstractWorkflowDialog(DialogWindow dialogWindow) {
+    public AbstractWorkflowDialog(DialogWindow dialogWindow, String title) {
         super(dialogWindow);
+        dialogWindow.setTitle(title);
+        IModel model = dialogWindow.getModel();
+        if (dialogWindow.getNodeModel().getNode() == null) {
+            ok.setVisible(false);
+        }
     }
 
-    protected Workflow getWorkflow(String category) {
+    protected Workflow getWorkflow() {
         Plugin owningPlugin = getPlugin();
         Workflow workflow = null;
         try {
-            // cast the plugin model to a jcr model
-            JcrNodeModel nodeModel = new JcrNodeModel(owningPlugin.getPluginModel());
+            WorkflowsModel workflowModel = (WorkflowsModel) owningPlugin.getPluginModel();
             WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-
-            WorkflowDescriptor descriptor = manager.getWorkflowDescriptor(category, nodeModel.getNode());
-            if (descriptor != null) {
-                workflow = manager.getWorkflow(descriptor);
-            }
+            return manager.getWorkflow(workflowModel.getWorkflowDescriptor());
         } catch (MappingException e) {
             log.error(e.getMessage());
         } catch (RepositoryException e) {
@@ -74,22 +79,26 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
         // save the handle so that the workflow uses the correct content
         handle.getNode().save();
-        doOk();
+        execute();
 
         ((UserSession) Session.get()).getJcrSession().refresh(true);
 
         // enqueue a request to select the handle
         Channel channel = getChannel();
         if (channel != null) {
-            Request request = channel.createRequest("select", getDialogWindow().getNodeModel());
+            Request request = channel.createRequest("select", (IPluginModel) getDialogWindow().getModel());
             channel.send(request);
         }
+    }
+
+    @Override
+    public void cancel() {
     }
 
     /**
      * This abstract method is called from ok() and should implement
      * the action to be performed when the dialog's ok button is clicked.
      */
-    protected abstract void doOk() throws Exception;
+    protected abstract void execute() throws Exception;
 
 }

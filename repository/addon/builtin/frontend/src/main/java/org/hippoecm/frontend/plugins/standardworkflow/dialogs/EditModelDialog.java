@@ -31,16 +31,15 @@ public class EditModelDialog extends AbstractWorkflowDialog {
     private static final Logger log = LoggerFactory.getLogger(EditModelDialog.class);
 
     public EditModelDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
-        dialogWindow.setTitle("Edit model");
+        super(dialogWindow, "Edit model");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
 
     @Override
-    protected void doOk() throws Exception {
-        EditmodelWorkflow workflow = (EditmodelWorkflow) getWorkflow("internal");
+    protected void execute() throws Exception {
+        EditmodelWorkflow workflow = (EditmodelWorkflow) getWorkflow();
         if (workflow != null) {
             String path = workflow.edit();
             JcrItemModel itemModel = new JcrItemModel(path);

@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -26,7 +27,11 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.PrototypeDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.FolderDialog;
+import org.hippoecm.frontend.model.WorkflowsModel;
+
 import org.hippoecm.repository.api.HippoNodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,41 +43,26 @@ public class PrototypeWorkflowPlugin extends Plugin {
     private Model linkText;
 
     public PrototypeWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        super(pluginDescriptor, model, parentPlugin);
 
         linkText = new Model("Add document");
         updateLink();
 
-        add(new DialogLink("addDocument-dialog", linkText, PrototypeDialog.class, (JcrNodeModel) getPluginModel(),
+        add(new DialogLink("addDocument-dialog", linkText, PrototypeDialog.class, (WorkflowsModel) getModel(),
                 getTopChannel(), getPluginManager().getChannelFactory()));
-    }
 
-    @Override
-    public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
-            if (!nodeModel.equals(getPluginModel())) {
-                try {
-                    Node node = nodeModel.getNode();
-                    if (node.isNodeType(HippoNodeType.NT_PROTOTYPED)) {
-                        setPluginModel(nodeModel);
-                        updateLink();
-                        notification.getContext().addRefresh(this);
-                    }
-                } catch(RepositoryException ex) {
-                    log.error(ex.getMessage());
-                }
-            }
-        }
-        super.receive(notification);
+        add(new DialogLink("addFolder-dialog", new Model("Add folder"), FolderDialog.class, (WorkflowsModel) getModel(),
+                getTopChannel(), getPluginManager().getChannelFactory()));
     }
 
     private void updateLink() {
         try {
-            Node node = ((JcrNodeModel) getModel()).getNode();
+            Node node = ((WorkflowsModel)getModel()).getNodeModel().getNode();
             String path = node.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString();
             Node prototype = node.getSession().getRootNode().getNode(path.substring(1));
-            String name = prototype.getName();
+            String name = prototype.getParent().getName();
+	    if(name.contains(":"))
+	        name = name.substring(name.indexOf(":")+1);
             linkText = new Model("Add " + name);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

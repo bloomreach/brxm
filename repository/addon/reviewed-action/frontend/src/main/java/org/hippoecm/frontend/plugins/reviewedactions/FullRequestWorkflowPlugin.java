@@ -16,41 +16,51 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.acceptrequest.AcceptRequestDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.cancelrequest.CancelRequestDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.rejectrequest.RejectRequestDialog;
+import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
 
-public class FullRequestWorkflowPlugin extends Plugin {
+import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
+
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.Document;
+
+public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
     public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        super(pluginDescriptor, (WorkflowsModel)model, parentPlugin);
 
-        JcrNodeModel jcrModel = (JcrNodeModel) getPluginModel();
-        Channel channel = getTopChannel();
-        ChannelFactory factory = getPluginManager().getChannelFactory();
-        add(new DialogLink("acceptRequest-dialog", new Model("Approve and execute request"),
-                AcceptRequestDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("rejectRequest-dialog", new Model("Reject request (with reason)"),
-                RejectRequestDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("cancelRequest-dialog", new Model("Cancel request"),
-                CancelRequestDialog.class, jcrModel, channel, factory));
+        addWorkflowAction("acceptRequest-dialog", "Approve and execute request", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
+                    workflow.acceptRequest();
+                    return null;
+                }
+            });
+        addWorkflowAction("rejectRequest-dialog", "Reject request (with reason)", "Reject request (with reason)", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
+                    workflow.rejectRequest(""); // FIXME
+                    return null;
+                }
+            });
+        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
+                    workflow.cancelRequest();
+                    return null;
+                }
+            });
     }
-
-    @Override
-    public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            setPluginModel(new JcrNodeModel(notification.getModel()));
-        }
-        super.receive(notification);
-    }
-
 }
