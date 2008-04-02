@@ -62,6 +62,16 @@
         <includes>
           <include>**/*.html</include>
           <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
         </includes>
       </resource>
     </resources>
