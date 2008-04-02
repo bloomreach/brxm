@@ -260,6 +260,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     if (configuration != null) {
                         initializeNodecontent(rootSession, "/", configuration);
                         rootSession.save();
+                    } else {
+                        log.warn("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
                     }
                 } catch (AccessDeniedException ex) {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
@@ -622,31 +624,23 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
                 session.getRootNode().addNode(relpath);
             }
-            session.importXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+            session.importXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
         } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (PathNotFoundException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (ItemExistsException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (ConstraintViolationException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (VersionException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (InvalidSerializedDataException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (LockException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (RepositoryException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
         }
     }
 
@@ -658,11 +652,9 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
                 session.exportSystemView("/hippo:configuration", out, false, false);
             } catch (IOException ex) {
-                System.err.println(ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.error("Error while dumping comfiguration: " + ex.getMessage(), ex);
             } catch (RepositoryException ex) {
-                System.err.println(ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.error("Error while dumping comfiguration: " + ex.getMessage(), ex);
             } finally {
                 if (session != null) {
                     session.logout();
@@ -676,9 +668,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 Workspace workspace = rootSession.getWorkspace();
                 ObservationManager obMgr = workspace.getObservationManager();
                 obMgr.removeEventListener(listener);
-            } catch(Exception e) {
-                System.err.println(e.getMessage());
-                e.printStackTrace();
+            } catch (Exception ex) {
+                log.error("Error while removing listener: " + ex.getMessage(), ex);
             }
             listener = null;
         }
@@ -688,7 +679,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 jackrabbitRepository.shutdown();
                 jackrabbitRepository = null;
             } catch (Exception ex) {
-                // ignore
+                log.error("Error while shuting down jackrabbitRepository: " + ex.getMessage(), ex);
             }
         }
         repository = null;
