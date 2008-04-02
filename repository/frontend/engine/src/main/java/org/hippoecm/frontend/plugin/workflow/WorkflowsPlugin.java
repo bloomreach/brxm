@@ -56,7 +56,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class WorkflowsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(WorkflowsPlugin.class);
 
     RefreshingView view;
     List<String> categories;
@@ -65,6 +65,13 @@ public class WorkflowsPlugin extends Plugin {
         super(descriptor, new JcrNodeModel(model), parent);
 
         categories = descriptor.getParameter("categories").getStrings();
+        if(log.isDebugEnabled()) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("workflow showing categories");
+            for(String category : categories)
+                sb.append(category);
+            log.debug(new String(sb));
+        }
 
         WorkflowsModel workflowsModel = null;
         try {
@@ -84,6 +91,14 @@ public class WorkflowsPlugin extends Plugin {
             @Override
             public void populateItem(Item item) {
                 WorkflowsModel model = (WorkflowsModel) item.getModel();
+                if(log.isDebugEnabled()) {
+                    try {
+                        log.debug("workflow on "+model.getNodeModel().getNode().getPath() +
+                                  " accoring to renderer " + model.getWorkflowName());
+                    } catch(RepositoryException ex) {
+                        log.debug("debug message failed ", ex);
+                    }
+                }
                 PluginDescriptor descriptor = new PluginDescriptor("workflow", model.getWorkflowName());
                 PluginFactory pluginFactory = new PluginFactory(getPluginManager());
                 item.add(pluginFactory.createPlugin(descriptor, model, WorkflowsPlugin.this));
@@ -101,6 +116,14 @@ public class WorkflowsPlugin extends Plugin {
                 setPluginModel(model);
                 try {
                     WorkflowsModel workflowsModel = new WorkflowsModel((JcrNodeModel) getModel(), categories);
+                    if(log.isDebugEnabled()) {
+                        try {
+                            log.debug("obtained workflows on "+workflowsModel.getNodeModel().getNode().getPath() +
+                                      " counted "+workflowsModel.size()+" unique renderers");
+                        } catch(RepositoryException ex) {
+                            log.debug("debug message failed ", ex);
+                        }
+                    }
                     view.setModel(workflowsModel);
                 } catch(RepositoryException ex) {
                     log.error("could not setup workflow model", ex);

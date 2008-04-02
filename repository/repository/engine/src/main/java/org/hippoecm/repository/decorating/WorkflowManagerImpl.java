@@ -42,6 +42,7 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.WorkflowImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

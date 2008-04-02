@@ -57,14 +57,30 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     protected Workflow getWorkflow() {
         Plugin owningPlugin = getPlugin();
         Workflow workflow = null;
-        try {
-            WorkflowsModel workflowModel = (WorkflowsModel) owningPlugin.getPluginModel();
-            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-            return manager.getWorkflow(workflowModel.getWorkflowDescriptor());
-        } catch (MappingException e) {
-            log.error(e.getMessage());
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+        IPluginModel model = owningPlugin.getPluginModel();
+        if(model instanceof WorkflowsModel) {
+            try {
+                WorkflowsModel workflowModel = (WorkflowsModel) owningPlugin.getPluginModel();
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                return manager.getWorkflow(workflowModel.getWorkflowDescriptor());
+            } catch (MappingException e) {
+                log.error(e.getMessage());
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        } else {
+            /* FIXME: The else part is in fact a workaround to support legacy
+             * workflow plugin implementations.
+             */
+            try {
+                JcrNodeModel nodeModel = new JcrNodeModel(model);
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                return manager.getWorkflow("internal", nodeModel.getNode());
+            } catch (MappingException e) {
+                log.error(e.getMessage());
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
         }
         return workflow;
     }
