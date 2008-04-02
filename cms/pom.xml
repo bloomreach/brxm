@@ -46,6 +46,8 @@
     <module>package</module>
     <module>tools</module>
     <module>maven-skin</module>
+    <module>hst</module>
+    <module>demo</module>
   </modules>
 
   <properties>
