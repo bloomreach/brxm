@@ -65,35 +65,5 @@ public class FolderTreePlugin extends AbstractTreePlugin {
         };
     }
 
-    @Override
-    protected void onSelect(final AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
-        super.onSelect(treeNodeModel, target);
-        Channel channel = getTopChannel();
-        if (channel != null) {
-            // create and send a "list" request with the children 
-            // of the selected node as a parameters
-            IPluginModel listModel = new PluginModel() {
-                private static final long serialVersionUID = 1L;
 
-                public Map<String, Object> getMapRepresentation() {
-                    Map<String, Object> map = new HashMap<String, Object>();
-                    try {
-                        map.put("node", treeNodeModel.getNodeModel());
-                        List<String> entries = new ArrayList<String>();
-                        Iterator<Node> childNodes = treeNodeModel.getNodeModel().getNode().getNodes();
-                        while (childNodes.hasNext()) {
-                            entries.add(childNodes.next().getPath());
-                        }
-                        map.put("entries", entries);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                    }
-                    return map;
-                }
-            };
-            Request list = channel.createRequest("list", listModel);
-            channel.send(list);
-            list.getContext().apply(target);
-        }
-    }
 }

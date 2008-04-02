@@ -69,7 +69,7 @@ public abstract class AbstractTreePlugin extends Plugin {
         if (channel != null) {
             // create and send a "select" request with the node path as a parameter
             Request select = channel.createRequest("select", treeNodeModel.getNodeModel());
-            channel.send(select);            
+            channel.send(select);
             select.getContext().apply(target);
         }
     }
