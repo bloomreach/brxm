@@ -15,60 +15,124 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.rmi.RemoteException;
+
+import org.apache.wicket.Session;
 import org.apache.wicket.model.Model;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.delete.DeleteDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.depublish.DePublishDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.disposeeditableinstance.DisposeEditableInstanceDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.obtaineditableinstance.ObtainEditableInstanceDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.commiteditableinstance.CommitEditableInstanceDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.publish.PublishDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdeletion.RequestDeletionDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestdepublication.RequestDePublicationDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.dialogs.requestpublication.RequestPublicationDialog;
+import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.session.UserSession;
 
-public class FullReviewedActionsWorkflowPlugin extends Plugin {
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+
+public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+    public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, (WorkflowsModel)model, parentPlugin);
 
-        JcrNodeModel jcrModel = (JcrNodeModel) getPluginModel();
-        Channel channel = getTopChannel();
-        ChannelFactory factory = getPluginManager().getChannelFactory();
-        add(new DialogLink("obtainEditableInstance-dialog", new Model("Obtain editable copy"),
-                ObtainEditableInstanceDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("commitEditableInstance-dialog", new Model("Commit editable copy"),
-                CommitEditableInstanceDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("disposeEditableInstance-dialog", new Model("Dispose editable copy"),
-                DisposeEditableInstanceDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("requestPublication-dialog", new Model("Request publication"),
-                RequestPublicationDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("requestDePublication-dialog", new Model("Request unpublication"),
-                RequestDePublicationDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("requestDeletion-dialog", new Model("Request delete"),
-                RequestDeletionDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("publish-dialog", new Model("Publish"),
-                PublishDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("dePublish-dialog", new Model("Unpublish"),
-                DePublishDialog.class, jcrModel, channel, factory));
-        add(new DialogLink("delete-dialog", new Model("Unpublish and/or delete"),
-                DeleteDialog.class, jcrModel, channel, factory));
+        addWorkflowAction("edit-dialog", "Edit document", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                    Document docRef = workflow.obtainEditableInstance();
+                    Node docNode = ((UserSession)getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
+                    if (channel != null) {
+                        Request request = channel.createRequest("edit", new JcrNodeModel(docNode));
+                        return request;
+                    } else {
+                        return null;
+                    }
+                }
+            });
+        addWorkflowAction("requestPublication-dialog", "Request publication", "Request publication", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                    workflow.requestPublication();
+                    return null;
+                }
+            });
+        addWorkflowAction("requestDePublication-dialog", "Request unpublication", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                    workflow.requestDepublication();
+                    return null;
+                }
+            });
+        addWorkflowAction("requestDeletion-dialog", "Request delete", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                    workflow.requestDeletion();
+                    return null;
+                }
+            });
+        addWorkflowAction("publish-dialog", "Publish", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                    workflow.publish();
+                    return null;
+                }
+            });
+        addWorkflowAction("dePublish-dialog", "Unpublish", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                    workflow.depublish();
+                    return null;
+                }
+            });
+        addWorkflowAction("delete-dialog", "Unpublish and/or delete", new WorkflowDialogAction() {
+                public Request execute(Channel channel, Workflow wf) throws Exception {
+                    FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                    workflow.delete();
+                    return null;
+                }
+            });
     }
 
     @Override
     public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            setPluginModel(new JcrNodeModel(notification.getModel()));
+        if ("save".equals(notification.getOperation())) {
+            try {
+                WorkflowsModel workflowModel = (WorkflowsModel) getPluginModel();
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow(workflowModel.getWorkflowDescriptor());
+                workflow.commitEditableInstance();
+            } catch (RemoteException e) {
+                log.error(e.getMessage());
+            } catch (WorkflowException e) {
+                log.error(e.getMessage());
+            } catch (MappingException e) {
+                log.error(e.getMessage());
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        } else if ("close".equals(notification.getOperation())) {
+            // FIXME: possibly dispose editable instance?
         }
         super.receive(notification);
     }
-
 }

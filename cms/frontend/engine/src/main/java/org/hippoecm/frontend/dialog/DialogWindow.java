@@ -19,7 +19,11 @@ import java.util.LinkedList;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.model.IModel;
+
+import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.INotificationListener;
 import org.hippoecm.frontend.plugin.channel.IRequestHandler;
@@ -33,7 +37,7 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
     private Channel proxy;
     private LinkedList<Request> queue;
 
-    public DialogWindow(String id, JcrNodeModel nodeModel, final Channel channel, Channel proxy) {
+    public DialogWindow(String id, IPluginModel nodeModel, final Channel channel, Channel proxy) {
         super(id);
         setCookieName(id);
         setModel(nodeModel);
@@ -72,7 +76,13 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
     }
 
     public JcrNodeModel getNodeModel() {
-        return (JcrNodeModel) getModel();
+        IModel model = getModel();
+        if(model instanceof JcrNodeModel)
+            return (JcrNodeModel) getModel();
+        else if(model instanceof WorkflowsModel)
+            return new JcrNodeModel((WorkflowsModel) model);
+        else
+            return null;
     }
 
     public Channel getProxyChannel() {
@@ -92,7 +102,8 @@ public class DialogWindow extends ModalWindow implements INotificationListener, 
 
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
-            setModel(new JcrNodeModel(notification.getModel()));
+            // setModel(new JcrNodeModel(notification.getModel()));
+            setModel(notification.getModel());
         }
     }
 }

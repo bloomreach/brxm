@@ -14,14 +14,13 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <ul>
-      <li>
-        <b>Reason: </b>
-        <fieldset>
-          <span wicket:id="reason"/>
-        </fieldset>
-      </li>
-    </ul>
-  </wicket:extend>
+  <wicket:panel>
+    <div>
+      <table cellspacing="1">
+      <tr wicket:id="workflows">
+        <td><span wicket:id="workflow">[an individual workflow]</span></td>
+      </tr>
+      </table>
+    </div>
+  </wicket:panel>
 </html>

@@ -79,11 +79,17 @@ public class XinhaPlugin extends Plugin {
                 StringBuilder sb = new StringBuilder();
                 ParameterValue value = descriptor.getParameter("width");
                 if (value != null) {
-                    sb.append("width: ").append(value.getStrings().get(0)).append(";");
+                    sb.append("width: ");
+		    if(value.getStrings().size() > 0)
+                        sb.append(value.getStrings().get(0));
+                    sb.append(";");
                 }
                 value = descriptor.getParameter("height");
                 if (value != null) {
-                    sb.append("height: ").append(value.getStrings().get(0)).append(";");
+                    sb.append("height: ");
+		    if(value.getStrings().size() > 0)
+                        sb.append(value.getStrings().get(0));
+                    sb.append(";");
                 }
                 if (sb.length() > 0) {
                     tag.put("style", sb.toString());

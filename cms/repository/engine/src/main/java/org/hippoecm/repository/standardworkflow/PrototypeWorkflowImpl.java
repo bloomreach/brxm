@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -53,6 +54,34 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
                 }
             }
         }
+        subject.save();
+        return result.getPath();
+    }
+
+    public String addFolder(String name) throws WorkflowException, RepositoryException, RemoteException {
+        if (!subject.isNodeType(HippoNodeType.NT_PROTOTYPED))
+            throw new WorkflowException("Invalid node type for workflow");
+
+	Node result = subject.addNode(name, subject.getPrimaryNodeType().getName());
+	NodeType[] nodetypes = subject.getMixinNodeTypes();
+	for (int i=0; i<nodetypes.length; i++) {
+	  result.addMixin(nodetypes[i].getName());
+	}
+	result.setProperty(HippoNodeType.HIPPO_PROTOTYPE,subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString());
+        subject.save();
+        return result.getPath();
+    }
+
+    public String addFolder(String name, String prototypePath) throws WorkflowException, RepositoryException, RemoteException {
+        if (!subject.isNodeType(HippoNodeType.NT_PROTOTYPED))
+            throw new WorkflowException("Invalid node type for workflow");
+
+	Node result = subject.addNode(name, subject.getPrimaryNodeType().getName());
+	NodeType[] nodetypes = subject.getMixinNodeTypes();
+	for (int i=0; i<nodetypes.length; i++) {
+	  result.addMixin(nodetypes[i].getName());
+	}
+	result.setProperty(HippoNodeType.HIPPO_PROTOTYPE,subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString());
         subject.save();
         return result.getPath();
     }

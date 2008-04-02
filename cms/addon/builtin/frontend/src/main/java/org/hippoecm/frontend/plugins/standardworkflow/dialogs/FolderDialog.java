@@ -15,9 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Workspace;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.model.PropertyModel;
+
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -25,37 +36,57 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
+import org.hippoecm.repository.standardworkflow.PrototypeWorkflow;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CopyModelDialog extends AbstractWorkflowDialog {
+public class FolderDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(CopyModelDialog.class);
+    private transient static final Logger log = LoggerFactory.getLogger(PrototypeDialog.class);
 
     private String name;
 
-    public CopyModelDialog(DialogWindow dialogWindow) {
-        super(dialogWindow, "Copy model");
+    private Map<String,String> folderTypes;
+
+    public FolderDialog(DialogWindow dialogWindow) {
+        super(dialogWindow, "Add folder");
+
+        name = "New folder";
+	folderTypes = new TreeMap<String,String>();
+
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setEnabled(false);
-        }
-
-        try {
-            name = dialogWindow.getNodeModel().getNode().getName();
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        } else {
+            try {
+                QueryManager qmgr = dialogWindow.getNodeModel().getNode().getSession().getWorkspace().getQueryManager();
+                Query query = qmgr.createQuery("select * from hippo:templatetype", Query.SQL);
+                QueryResult rs = query.execute();
+                for(NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
+                    Node prototypeNode = iter.nextNode();
+                    if(prototypeNode.hasNode("hippo:prototype")) {
+                        String documentType = prototypeNode.getName();
+                        String prototypePath = prototypeNode.getNode("hippo:prototype").getPath();
+                        folderTypes.put(documentType, prototypePath);
+                    }
+                }
+            } catch(RepositoryException ex) {
+                log.error("could not obtain document types listing", ex);
+            }
         }
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+
+	// TODO: add the folderTypes to a drop-down list
     }
 
     @Override
     protected void execute() throws Exception {
-        EditmodelWorkflow workflow = (EditmodelWorkflow) getWorkflow();
+        PrototypeWorkflow workflow = (PrototypeWorkflow) getWorkflow();
         if (workflow != null) {
-            String path = workflow.copy(name);
+	    // TODO get the type from the drop-down list and add as second parameter to next method call
+            String path = workflow.addFolder(name);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
             if (path != null) {
                 Channel channel = getChannel();
@@ -63,7 +94,7 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
                     Request request = channel.createRequest("flush", nodeModel.getParentModel());
                     channel.send(request);
 
-                    request = channel.createRequest("edit", nodeModel);
+                    request = channel.createRequest("select", nodeModel);
                     channel.send(request);
                 } else {
                     log.error("could not send edit message");

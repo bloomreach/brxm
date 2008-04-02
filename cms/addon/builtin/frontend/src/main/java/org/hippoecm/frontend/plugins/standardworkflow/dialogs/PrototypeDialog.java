@@ -30,16 +30,15 @@ import org.slf4j.LoggerFactory;
 public class PrototypeDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(PrototypeDialog.class);
+    private transient static final Logger log = LoggerFactory.getLogger(PrototypeDialog.class);
 
     private String name;
 
     public PrototypeDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
+        super(dialogWindow, "Add document");
 
         name = "New document";
 
-        dialogWindow.setTitle("Add document");
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setEnabled(false);
         }
@@ -48,8 +47,8 @@ public class PrototypeDialog extends AbstractWorkflowDialog {
     }
 
     @Override
-    protected void doOk() throws Exception {
-        PrototypeWorkflow workflow = (PrototypeWorkflow) getWorkflow("internal");
+    protected void execute() throws Exception {
+        PrototypeWorkflow workflow = (PrototypeWorkflow) getWorkflow();
         if (workflow != null) {
             String path = workflow.addDocument(name);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));

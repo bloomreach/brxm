@@ -25,4 +25,7 @@ import org.hippoecm.repository.api.WorkflowException;
 
 public interface PrototypeWorkflow extends Workflow {
     public String addDocument(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public String addFolder(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public String addFolder(String name, String prototype) throws WorkflowException, MappingException, RepositoryException,
+                                                                  RemoteException;
 }
