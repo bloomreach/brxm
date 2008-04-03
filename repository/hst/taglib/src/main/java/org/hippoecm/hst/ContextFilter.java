@@ -32,17 +32,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import org.slf4j.LoggerFactory;
-//import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * Filter that creates a context available for expression language.  
  */
 public class ContextFilter implements Filter {
-    
-//    private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
     public static final String ENCODING_SCHEME = "UTF-8";
-    
 
     public static final String ATTRIBUTE_NAME = ContextFilter.class.getName() + ".ATTRIBUTE_NAME";
     public static final String URL_MAPPING_LOCATION = ContextFilter.class.getName() + ".URL_MAPPING_LOCATION";
@@ -175,7 +173,7 @@ public class ContextFilter implements Filter {
                 String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLocation, context.getLocation());
                 
                 if (mappedPage == null) {
-                    logger.warn("No mapped page could be found for path " + context.getPath());
+                    logger.warn("No mapped page could be found for path " + context.getLocation());
                     throw new ServletException("No mapped page could be found for path " + context.getLocation());
                 } else {
                     // forward the request to that page

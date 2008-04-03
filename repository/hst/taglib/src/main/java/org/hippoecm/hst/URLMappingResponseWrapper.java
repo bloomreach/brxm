@@ -97,7 +97,7 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         }
 
         // update path, [BvH] set path also if not directly a handle
-        context.setRelativePath(documentNode.getPath());
+        context.setRelativeLocation(documentNode.getPath());
 
         // locate the display node associated with the document node
         Node currentNode = documentNode;
