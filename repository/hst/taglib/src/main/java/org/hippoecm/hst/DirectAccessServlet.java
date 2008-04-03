@@ -46,8 +46,8 @@ public class DirectAccessServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-    	String path = req.getRequestURI();
-		if (path.startsWith(req.getContextPath())) {
+        String path = req.getRequestURI();
+        if (path.startsWith(req.getContextPath())) {
             path = path.substring(req.getContextPath().length());
         }
         if (path.startsWith(req.getServletPath())) {
@@ -94,13 +94,13 @@ public class DirectAccessServlet extends HttpServlet {
             
             String mimeType = node.getProperty("jcr:mimeType").getString();
 
-			if (!node.hasProperty("jcr:data")) {
-			    logger.warn("item at path " + path + " has no property jcr:data, response status = 404)");
-			    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			    return;
-			}
-			
-			InputStream istream = node.getProperty("jcr:data").getStream();
+            if (!node.hasProperty("jcr:data")) {
+                logger.warn("item at path " + path + " has no property jcr:data, response status = 404)");
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            
+            InputStream istream = node.getProperty("jcr:data").getStream();
 
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType(mimeType);

@@ -40,7 +40,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             }
         } else {
             /* FIXME issue HREPTWO-728
-	     * workaround by uncommenting source
+         * workaround by uncommenting source
             if(!getWorkflowContext().getUsername().equals(username))
                 throw new WorkflowException("document already being edited");
              */

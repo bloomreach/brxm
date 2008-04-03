@@ -48,7 +48,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
             }
         } else {
             /* FIXME issue HREPTWO-728
-	     * workaround by uncommenting source
+         * workaround by uncommenting source
             if(!getWorkflowContext().getUsername().equals(username))
                 throw new WorkflowException("document already being edited");
             */

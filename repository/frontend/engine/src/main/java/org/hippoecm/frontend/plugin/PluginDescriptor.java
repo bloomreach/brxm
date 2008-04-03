@@ -85,8 +85,8 @@ public class PluginDescriptor implements IClusterable, Cloneable {
     public ParameterValue getParameter(String key) {
         if(parameters.containsKey(key))
             return parameters.get(key);
-	else
-	    return new ParameterValue();
+    else
+        return new ParameterValue();
     }
 
     public Map<String, ParameterValue> getParameters() {

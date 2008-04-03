@@ -61,8 +61,8 @@ public class PrototypeWorkflowPlugin extends Plugin {
             String path = node.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString();
             Node prototype = node.getSession().getRootNode().getNode(path.substring(1));
             String name = prototype.getParent().getName();
-	    if(name.contains(":"))
-	        name = name.substring(name.indexOf(":")+1);
+        if(name.contains(":"))
+            name = name.substring(name.indexOf(":")+1);
             linkText = new Model("Add " + name);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

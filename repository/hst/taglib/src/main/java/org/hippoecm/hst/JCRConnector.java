@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JCRConnector {
-	private static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
+    private static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
 
     public static final String REPOSITORY_ADRESS_PARAM = "repositoryAddress";
     public static final String REPOSITORY_USERNAME_PARAM = "repositoryUserName";
@@ -41,7 +41,7 @@ public class JCRConnector {
                                              httpSession.getServletContext().getInitParameter(REPOSITORY_USERNAME_PARAM),
                                              httpSession.getServletContext().getInitParameter(REPOSITORY_PASSWORD_PARAM));
 // FIXME turn on storing the JCRSession if caching in JCR is working                                                             
-//				httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
+//              httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;
             }
         } catch (LoginException e) {
@@ -54,14 +54,14 @@ public class JCRConnector {
     
     static Item getItem(Session session, String path) throws RepositoryException {
 
-    	Node node = session.getRootNode();
+        Node node = session.getRootNode();
 
-    	// strip first slash
-    	while (path.startsWith("/")) {
+        // strip first slash
+        while (path.startsWith("/")) {
             path = path.substring(1);
         }
         
-    	// loop all path elements and interpret them
+        // loop all path elements and interpret them
         String[] pathElts = path.split("/");
         for (int pathIdx = 0; pathIdx < pathElts.length && node != null; pathIdx++) {
             String relPath = pathElts[pathIdx];
@@ -72,7 +72,7 @@ public class JCRConnector {
             // with [] notation
             Map<String, String> conditions = null;
             if (relPath.contains("[") && relPath.endsWith("]") 
-            		&& !Character.isDigit(relPath.charAt(relPath.indexOf("[")+1))) {
+                    && !Character.isDigit(relPath.charAt(relPath.indexOf("[")+1))) {
                 conditions = new TreeMap<String, String>();
                 int beginIndex = relPath.indexOf("[") + 1;
                 int endIndex = relPath.lastIndexOf("]");
@@ -95,10 +95,10 @@ public class JCRConnector {
 
             // current path element is doesn't have [] notation
             if (conditions == null || conditions.size() == 0) {
-            	
-            	// a property with . notation
+                
+                // a property with . notation
                 if (pathIdx + 1 == pathElts.length && 
-                		!relPath.contains("[") && node.hasProperty(relPath)) {
+                        !relPath.contains("[") && node.hasProperty(relPath)) {
                     try {
                         return node.getProperty(relPath);
                     } catch (PathNotFoundException ex) {
@@ -159,7 +159,7 @@ public class JCRConnector {
         Session jcrSession;
 
         SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {
-// FIXME set debug back to info when this wrapper is again stored in session            	
+// FIXME set debug back to info when this wrapper is again stored in session                
             logger.debug("connecting to repository at " + location + " as " + username);
 
             HippoRepositoryFactory.setDefaultRepository(location);
@@ -167,12 +167,12 @@ public class JCRConnector {
             try {
                 jcrSession = repository.login(username, (password != null ? password.toCharArray() : null));
 
-// FIXME set debug back to info when this wrapper is again stored in session            	
+// FIXME set debug back to info when this wrapper is again stored in session                
                 logger.debug("logged in as " + username);
             } catch(LoginException ex) {
                 logger.warn("login as " + username + " failed, trying as anonymous.");
                 jcrSession = repository.login();
-// FIXME set debug back to info when this wrapper is again stored in session            	
+// FIXME set debug back to info when this wrapper is again stored in session                
                 logger.debug("logged in as anonymous");
             }
         }

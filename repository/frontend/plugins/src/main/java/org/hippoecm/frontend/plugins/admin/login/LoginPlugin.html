@@ -15,52 +15,52 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:head>
-	  <title>Hippo CMS 7 - Sign in</title>
-	  <link href="skin/style.css" rel="stylesheet" type="text/css"/>
-	  <link href="skin/login.css" rel="stylesheet" type="text/css"/>
+      <title>Hippo CMS 7 - Sign in</title>
+      <link href="skin/style.css" rel="stylesheet" type="text/css"/>
+      <link href="skin/login.css" rel="stylesheet" type="text/css"/>
   </wicket:head>
   <body>
     <wicket:panel>
       <div id="loginWrapper">
-	     <div>
-	        <form wicket:id="signInForm" name="signInForm">
-	          
-	          <!--  <wicket:message key="key.key">Login</wicket:message>-->
-	          
-	          <div id="login-input">
-	            <table>
-	            	<tr>
-	            		<td><label wicket:id="username-label">Username</label></td>
-	            			<td><input wicket:id="username" type="text" value="foo@goo.moo"/></td>
-	            	</tr>
-	            <tr>
-	            	<td><label wicket:id="password-label">Password</label></td>
-	            	<td><input wicket:id="password" type="password" value="password"/></td>
-	            </tr>
-	            </table>
-	            
-<!--	            <label>Locale</label>
-	            <select>
-	              <option>Choose your language</option>
-	            </select>
--->	            
-	            
-	            <div class="feedback" wicket:id="feedback">
-	              Feedback panel
-	            </div>            
-	            
-	          </div>
-	          <div id="login-submit">
-<!-- 	            <div class="row">
-	              <input wicket:id="rememberMe" id="rememberMe" type="checkbox" />
-	              <label wicket:id="rememberMe-label" class="label-right">Always sign in automatically</label>
-	            </div>
- -->	            
-	            <input type="submit" name="submit" wicket:id="submit" value="Sign in" class="blue_button"/>
-	          </div>
-	        </form>
-	      </div>
-	    </div>  
+         <div>
+            <form wicket:id="signInForm" name="signInForm">
+              
+              <!--  <wicket:message key="key.key">Login</wicket:message>-->
+              
+              <div id="login-input">
+                <table>
+                    <tr>
+                        <td><label wicket:id="username-label">Username</label></td>
+                            <td><input wicket:id="username" type="text" value="foo@goo.moo"/></td>
+                    </tr>
+                <tr>
+                    <td><label wicket:id="password-label">Password</label></td>
+                    <td><input wicket:id="password" type="password" value="password"/></td>
+                </tr>
+                </table>
+                
+<!--                <label>Locale</label>
+                <select>
+                  <option>Choose your language</option>
+                </select>
+-->             
+                
+                <div class="feedback" wicket:id="feedback">
+                  Feedback panel
+                </div>            
+                
+              </div>
+              <div id="login-submit">
+<!--                <div class="row">
+                  <input wicket:id="rememberMe" id="rememberMe" type="checkbox" />
+                  <label wicket:id="rememberMe-label" class="label-right">Always sign in automatically</label>
+                </div>
+ -->                
+                <input type="submit" name="submit" wicket:id="submit" value="Sign in" class="blue_button"/>
+              </div>
+            </form>
+          </div>
+        </div>  
     </wicket:panel>
   </body>
 </html>

@@ -54,7 +54,7 @@ public class FolderDialog extends AbstractWorkflowDialog {
         super(dialogWindow, "Add folder");
 
         name = "New folder";
-	folderTypes = new TreeMap<String,String>();
+    folderTypes = new TreeMap<String,String>();
 
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setEnabled(false);
@@ -78,14 +78,14 @@ public class FolderDialog extends AbstractWorkflowDialog {
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
 
-	// TODO: add the folderTypes to a drop-down list
+    // TODO: add the folderTypes to a drop-down list
     }
 
     @Override
     protected void execute() throws Exception {
         PrototypeWorkflow workflow = (PrototypeWorkflow) getWorkflow();
         if (workflow != null) {
-	    // TODO get the type from the drop-down list and add as second parameter to next method call
+        // TODO get the type from the drop-down list and add as second parameter to next method call
             String path = workflow.addFolder(name);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
             if (path != null) {
