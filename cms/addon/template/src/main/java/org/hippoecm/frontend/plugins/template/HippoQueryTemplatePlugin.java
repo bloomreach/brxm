@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -50,10 +53,8 @@ public class HippoQueryTemplatePlugin extends Plugin {
     private JcrNodeModel jcrNodeModel;
     private String language;    
     private String statement;
-    private String incorrectstatement = "";
-    private Label incorrectstatementLabel;
-    
-    
+    private String incorrectquery = "";
+    private Label incorrectqueryLabel;
     
     public HippoQueryTemplatePlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
@@ -104,9 +105,9 @@ public class HippoQueryTemplatePlugin extends Plugin {
                     storeQueryAsNode(target);
                 } 
             });
-            incorrectstatementLabel = new Label("incorrectstatement",new PropertyModel(this, "incorrectstatement"));
-            incorrectstatementLabel.setOutputMarkupId(true);
-            add(incorrectstatementLabel);
+            incorrectqueryLabel = new Label("incorrectquery",new PropertyModel(this, "incorrectquery"));
+            incorrectqueryLabel.setOutputMarkupId(true);
+            add(incorrectqueryLabel);
             
         } catch (ValueFormatException e) {
             log.error(e.getMessage());
@@ -129,6 +130,13 @@ public class HippoQueryTemplatePlugin extends Plugin {
             Session session = queryNode.getSession();
             
             QueryManager qrm = session.getWorkspace().getQueryManager();
+            if(statement == null) {
+                throw new InvalidQueryException("statement is not allowed to be empty");
+            }
+            if(language == null || (!language.equals("xpath") && !language.equals("sql") )) {
+                throw new InvalidQueryException("supported languages are 'xpath' and 'sql'");
+            }
+            
             Query query = qrm.createQuery(statement, language);
 
             /*
@@ -140,8 +148,8 @@ public class HippoQueryTemplatePlugin extends Plugin {
             jcrNodeModel.detach();
             query.storeAsNode(parentNode.getPath()+"/"+nodeName);
             
-            incorrectstatement = "";
-            target.addComponent(incorrectstatementLabel);
+            incorrectquery = "";
+            target.addComponent(incorrectqueryLabel);
             
         } catch (InvalidQueryException e) {
             logAndInform(target,e);
@@ -161,10 +169,9 @@ public class HippoQueryTemplatePlugin extends Plugin {
 
     private void logAndInform(AjaxRequestTarget target, Exception e) {
         if (target != null) {
-            incorrectstatement = "Incorrect statement: changes won't be saved";
+            incorrectquery = "Incorrect statement: changes won't be saved";
             Channel channel = getTopChannel();
-            Request request = channel.createRequest("exception", new ExceptionModel(e,"You have an error in your query statement. " +
-                    "Statement will be reverted to the previous correct version"));
+            Request request = channel.createRequest("exception", new ExceptionModel(e,"You have an error in your query. "));
             channel.send(request);
             request.getContext().apply(target);
         }
