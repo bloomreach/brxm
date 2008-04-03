@@ -56,7 +56,7 @@
       <description>
         The repository path to bind as context.
       </description>      
-      <param-name>basePath</param-name>
+      <param-name>urlBasePath</param-name>
       <param-value>/hst-sample/pages</param-value>
     </init-param>
     <init-param>
@@ -84,7 +84,7 @@
       <description>
         The path to bind as context.
       </description>      
-      <param-name>basePath</param-name>
+      <param-name>urlBasePath</param-name>
       <param-value>/hst-sample/global</param-value>
     </init-param>
   </filter>
