@@ -97,4 +97,17 @@ public class HippoQueryTest extends TestCase {
         }
         assertEquals(1, count);
     }
+
+    public void testReverseMangle() throws RepositoryException {
+        Query query;
+        Node node;
+
+        query = qmgr.createQuery("//$a", Query.XPATH);
+        node = query.storeAsNode("/test/query");
+        assertEquals("//MAGICaCIGAM",node.getProperty("jcr:statement").getString());
+        query = qmgr.getQuery(node);
+        assertEquals(Query.XPATH, query.getLanguage());
+        assertEquals("//$a", query.getStatement());
+        node.remove();
+    }
 }
