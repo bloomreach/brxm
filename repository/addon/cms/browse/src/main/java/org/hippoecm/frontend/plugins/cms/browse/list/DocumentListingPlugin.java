@@ -40,7 +40,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected Component getTable(IPluginModel listModel) {
+    protected CustomizableDocumentListingDataTable getTable(IPluginModel listModel) {
         List<JcrNodeModel> entries = new ArrayList<JcrNodeModel>();
         List<String> list = (List<String>) listModel.getMapRepresentation().get("entries");
         if (list != null) {

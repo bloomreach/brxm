@@ -78,8 +78,8 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
         
         // check if a node in the list has been selected, if yes append appropriate CSS class
         if (selectedNode != null
-                && model instanceof NodeModelWrapper
-                && selectedNode.equals(( (NodeModelWrapper)model ).getNodeModel())) {
+                && model instanceof JcrNodeModel
+                && selectedNode.equals((JcrNodeModel)model )) {
             item.add(new AttributeAppender("class", new Model("selected"), " "));
         }
         
