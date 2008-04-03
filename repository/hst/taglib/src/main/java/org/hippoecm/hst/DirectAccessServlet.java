@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo.
+ * Copyright 2007-2008 Hippo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,19 @@ public class DirectAccessServlet extends HttpServlet {
             path = path.substring(req.getServletPath().length());
         }
 
+        // remove urlBasePath if present
+        String urlBasePath = (String) req.getSession().getServletContext().getAttribute(ContextFilter.URL_BASE_PATH);
+        if (path.startsWith(urlBasePath)) {
+            path = path.substring(urlBasePath.length());
+        }
+
+        // prepend repositoryBaseLocation if not present
+        String baseLocation = (String) req.getSession().getServletContext().getAttribute(
+                ContextFilter.REPOSITORY_BASE_LOCATION);
+        if (!path.startsWith(baseLocation)) {
+            path = baseLocation + path;
+        }
+
         path = URLDecoder.decode(path, "UTF-8");
 
         String currentPath = "";
@@ -83,7 +96,7 @@ public class DirectAccessServlet extends HttpServlet {
                 res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
-            
+
             Node node = (Node) item;
 
             if (!node.hasProperty("jcr:mimeType")) {
@@ -91,7 +104,7 @@ public class DirectAccessServlet extends HttpServlet {
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            
+
             String mimeType = node.getProperty("jcr:mimeType").getString();
 
             if (!node.hasProperty("jcr:data")) {
@@ -99,7 +112,7 @@ public class DirectAccessServlet extends HttpServlet {
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            
+
             InputStream istream = node.getProperty("jcr:data").getStream();
 
             res.setStatus(HttpServletResponse.SC_OK);
