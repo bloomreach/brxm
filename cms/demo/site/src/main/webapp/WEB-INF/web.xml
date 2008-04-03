@@ -53,7 +53,7 @@
       <description>
         The repository path to bind as context.
       </description>      
-      <param-name>basePath</param-name>
+      <param-name>urlBasePath</param-name>
       <param-value>/preview/site/pages</param-value>
     </init-param>
   </filter>
