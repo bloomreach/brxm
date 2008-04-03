@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.rmi.RemoteException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 
 import javax.jcr.Node;
@@ -44,19 +45,45 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
+
+    static protected Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
     public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, (WorkflowsModel)model, parentPlugin);
 
-        addWorkflowAction("edit-dialog", "Edit document", new WorkflowDialogAction() {
+        try {
+            add(new Label("caption", new JcrNodeModel(model).getNode().getName()));
+        } catch(RepositoryException ex) {
+            log.error("Could not obtain name of workflow document", ex);
+            add(new Label("caption", "unknown document"));
+        }
+
+        String stateSummary = "UNKNOWN";
+        try {
+            Node node = ((WorkflowsModel)getModel()).getNodeModel().getNode();
+            if(node.isNodeType(HippoNodeType.NT_HANDLE))
+                node = node.getNode(node.getName());
+            if(node.hasProperty("hippostd:stateSummary"))
+                stateSummary = node.getProperty("hippostd:stateSummary").getString();
+        } catch(RepositoryException ex) {
+            // status unknown, maybe there are legit reasons for this, so don't emit a warning
+        }
+        add(new Label("status", stateSummary));
+
+        addWorkflowAction("edit-dialog", "Edit document", true,
+            new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                     Document docRef = workflow.obtainEditableInstance();
@@ -69,42 +96,53 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     }
                 }
             });
-        addWorkflowAction("requestPublication-dialog", "Request publication", "Request publication", new WorkflowDialogAction() {
+        addWorkflowAction("requestPublication-dialog", "Request publication",
+                          !(stateSummary.equals("review") || stateSummary.equals("live")),
+            new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                     workflow.requestPublication();
                     return null;
                 }
             });
-        addWorkflowAction("requestDePublication-dialog", "Request unpublication", new WorkflowDialogAction() {
+        addWorkflowAction("requestDePublication-dialog", "Request unpublication",
+                          !(stateSummary.equals("review") || stateSummary.equals("live")),
+            new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                     workflow.requestDepublication();
                     return null;
                 }
             });
-        addWorkflowAction("requestDeletion-dialog", "Request delete", new WorkflowDialogAction() {
+        addWorkflowAction("requestDeletion-dialog", "Request delete",
+                          !(stateSummary.equals("review") || stateSummary.equals("live")),
+            new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                     workflow.requestDeletion();
                     return null;
                 }
             });
-        addWorkflowAction("publish-dialog", "Publish", new WorkflowDialogAction() {
+        addWorkflowAction("publish-dialog", "Publish",
+                          !(stateSummary.equals("review") || stateSummary.equals("live")),
+            new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                     workflow.publish();
                     return null;
                 }
             });
-        addWorkflowAction("dePublish-dialog", "Unpublish", new WorkflowDialogAction() {
+        addWorkflowAction("dePublish-dialog", "Unpublish",
+                          !(stateSummary.equals("review") || stateSummary.equals("live")),
+            new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                     workflow.depublish();
                     return null;
                 }
             });
-        addWorkflowAction("delete-dialog", "Unpublish and/or delete", new WorkflowDialogAction() {
+        addWorkflowAction("delete-dialog", "Unpublish and/or delete",
+            new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                     workflow.delete();
@@ -119,8 +157,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             try {
                 WorkflowsModel workflowModel = (WorkflowsModel) getPluginModel();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) manager.getWorkflow(workflowModel.getWorkflowDescriptor());
-                workflow.commitEditableInstance();
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow)
+                                                              manager.getWorkflow(workflowModel.getWorkflowDescriptor());
+                if(workflow != null) {
+                    workflow.commitEditableInstance();
+                }
             } catch (RemoteException e) {
                 log.error(e.getMessage());
             } catch (WorkflowException e) {

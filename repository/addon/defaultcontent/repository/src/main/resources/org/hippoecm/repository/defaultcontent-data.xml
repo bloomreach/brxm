@@ -83,7 +83,7 @@
           <sv:value>unpublished</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>unknown</sv:value>
+          <sv:value>changed</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="myarticle1">
@@ -114,7 +114,7 @@
           <sv:value>published</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>unknown</sv:value>
+          <sv:value>changed</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -156,7 +156,7 @@
           <sv:value>unpublished</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>unknown</sv:value>
+          <sv:value>new</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

@@ -271,8 +271,9 @@ public class TabsPlugin extends Plugin {
         public Model getTitle() {
             PluginDescriptor descriptor = getPlugin().getDescriptor();
             String title = descriptor.getWicketId();
-            if (descriptor.getParameter("title") != null) {
-                title = descriptor.getParameter("title").getStrings().get(0);
+            ParameterValue param = descriptor.getParameter("title");
+            if (param != null && param.getType() != param.TYPE_UNKNOWN) {
+                title = param.getStrings().get(0);
             }
             return new Model(title);
         }

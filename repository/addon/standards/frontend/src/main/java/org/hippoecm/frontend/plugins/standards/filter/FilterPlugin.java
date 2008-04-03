@@ -26,6 +26,8 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +42,9 @@ public class FilterPlugin extends Plugin {
         super(descriptor, new JcrNodeModel(model), parentPlugin);
 
         handle = null;
-        List<String> ops = descriptor.getParameter("handle").getStrings();
-        if (ops != null) {
-            handle = new HashSet<String>(ops);
+        ParameterValue param = descriptor.getParameter("handle");
+        if (param != null && param.getStrings().size() > 0) {
+            handle = new HashSet<String>(param.getStrings());
         } else {
             log.warn("No configuration specified for FilterPlugin.  No filtering will take place.");
         }
