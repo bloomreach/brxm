@@ -18,10 +18,6 @@ package org.hippoecm.repository.decorating;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
@@ -73,7 +69,6 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
     public String getStatement() {
         String queryString = query.getStatement();
         String[] argumentNames = getArguments();
-        System.err.println("\n\n\n");
         for (int i=0; i<argumentNames.length; i++) {
             queryString = queryString.replaceAll(MAGIC_NAMED_START+argumentNames[i]+MAGIC_NAMED_END, "\\$"+argumentNames[i]);
         }
