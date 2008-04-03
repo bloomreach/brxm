@@ -54,7 +54,7 @@ Pets
 |   `-- dog4                 Dog       Large     Adult
 |-- Rabbits
 |   |-- rabbit1              Rabbit    Large     Young
-|   |-- rabbit2              Rabbit    Large	  Old
+|   |-- rabbit2              Rabbit    Large      Old
 |   |-- rabbit3              Rabbit    Small     Young
 `-- Horses
     |-- horse1               Horse     Small     Young
@@ -76,7 +76,7 @@ IsLarge
     |   `-- dog4             Dog       Large     Adult
     |-- Rabbits
     |   |-- rabbit1          Rabbit    Large     Young
-    |   |-- rabbit2          Rabbit    Large	  Old
+    |   |-- rabbit2          Rabbit    Large      Old
     |-- Horses
     |-- horse2               Horse     Large     Young
     `-- horse3               Horse     Large     Old

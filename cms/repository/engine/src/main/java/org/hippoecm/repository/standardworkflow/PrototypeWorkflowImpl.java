@@ -62,12 +62,12 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
         if (!subject.isNodeType(HippoNodeType.NT_PROTOTYPED))
             throw new WorkflowException("Invalid node type for workflow");
 
-	Node result = subject.addNode(name, subject.getPrimaryNodeType().getName());
-	NodeType[] nodetypes = subject.getMixinNodeTypes();
-	for (int i=0; i<nodetypes.length; i++) {
-	  result.addMixin(nodetypes[i].getName());
-	}
-	result.setProperty(HippoNodeType.HIPPO_PROTOTYPE,subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString());
+    Node result = subject.addNode(name, subject.getPrimaryNodeType().getName());
+    NodeType[] nodetypes = subject.getMixinNodeTypes();
+    for (int i=0; i<nodetypes.length; i++) {
+      result.addMixin(nodetypes[i].getName());
+    }
+    result.setProperty(HippoNodeType.HIPPO_PROTOTYPE,subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString());
         subject.save();
         return result.getPath();
     }
@@ -76,12 +76,12 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
         if (!subject.isNodeType(HippoNodeType.NT_PROTOTYPED))
             throw new WorkflowException("Invalid node type for workflow");
 
-	Node result = subject.addNode(name, subject.getPrimaryNodeType().getName());
-	NodeType[] nodetypes = subject.getMixinNodeTypes();
-	for (int i=0; i<nodetypes.length; i++) {
-	  result.addMixin(nodetypes[i].getName());
-	}
-	result.setProperty(HippoNodeType.HIPPO_PROTOTYPE,subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString());
+    Node result = subject.addNode(name, subject.getPrimaryNodeType().getName());
+    NodeType[] nodetypes = subject.getMixinNodeTypes();
+    for (int i=0; i<nodetypes.length; i++) {
+      result.addMixin(nodetypes[i].getName());
+    }
+    result.setProperty(HippoNodeType.HIPPO_PROTOTYPE,subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString());
         subject.save();
         return result.getPath();
     }

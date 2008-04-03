@@ -85,10 +85,10 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
             if(repository instanceof RepositoryImpl) {
                 SessionImpl sessionImpl = (SessionImpl) ((RepositoryImpl)repository).getRootSession(null);
                 rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(),
-		                      sessionImpl.impersonate(new SimpleCredentials("", new char[] { })));
+                              sessionImpl.impersonate(new SimpleCredentials("", new char[] { })));
             }
         } catch(RepositoryException ex) {
-	    logger.warn("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
+        logger.warn("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
         }
     }
 

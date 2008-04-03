@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class URLMappingResponseWrapper extends HttpServletResponseWrapper {
-	
     private static final Logger logger = LoggerFactory.getLogger(URLMappingResponseWrapper.class);
 
     private Context context;
@@ -50,13 +49,13 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
 
     @Override
     public String encodeURL(String url) {
-    	String reversedURL = super.encodeUrl(reverseURL(request.getContextPath(), url));
+        String reversedURL = super.encodeUrl(reverseURL(request.getContextPath(), url));
         return urlEncode(reversedURL);
     }
 
     @Override
     public String encodeRedirectURL(String url) {
-    	String reversedURL = super.encodeRedirectUrl(reverseURL(request.getContextPath(), url));
+        String reversedURL = super.encodeRedirectUrl(reverseURL(request.getContextPath(), url));
         return urlEncode(reversedURL);
     }
     
@@ -75,14 +74,14 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         Session session = JCRConnector.getJCRSession(request.getSession());
         
         if (session == null) {
-        	throw new ServletException("No JCR session to repository");
+            throw new ServletException("No JCR session to repository");
         }
 
         // fetch the requested document node
         if (!session.getRootNode().hasNode(documentPath)) {
-        	logger.debug("Cannot find node by path " + documentPath);
-        	return null;
-        }	
+            logger.debug("Cannot find node by path " + documentPath);
+            return null;
+        }   
 
         Node documentNode = session.getRootNode().getNode(documentPath);
  
@@ -90,9 +89,6 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         try {
             if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 documentNode = documentNode.getNode(documentNode.getName());
-
-                // update path
-                context.setRelativeLocation(documentNode.getPath());
             }
         } catch (PathNotFoundException ex) {
             // deliberate ignore
@@ -100,106 +96,109 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
             // deliberate ignore
         }
 
+        // update path, [BvH] set path also if not directly a handle
+        context.setRelativePath(documentNode.getPath());
+
         // locate the display node associated with the document node
         Node currentNode = documentNode;
         Node displayNode = null;
         
         while (currentNode != null) {
-        	
-	        if (currentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
-	            displayNode = currentNode;
-	        }
-	        else {
-	        	
-	        	// find node by type in mappingLocation
-	        	if (session.getRootNode().hasNode(mappingLocation)) {
-	        		
-		        	Node mappingLocationNode = session.getRootNode().getNode(mappingLocation);
-			        for (NodeIterator iter = mappingLocationNode.getNodes(); iter.hasNext();) {
-			            Node matchNode = iter.nextNode();
-			            try {
-			            	Property prop = matchNode.getProperty(HSTNodeTypes.HST_NODETYPE);
-			                if (currentNode.isNodeType(prop.getString())) {
-			                    displayNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
-			                    break;
-			                }
-			            } catch (PathNotFoundException ex) {
-			                throw new ServletException(ex);
-			            } catch (ValueFormatException ex) {
-			                throw new ServletException(ex);
-			            }
-			        }
-	        	}
-	        }
-	        
-	        // found
-	        if (displayNode != null) {
-	        	break;
-	        }
-	        
-	        // stop at root node
-	        if (currentNode.getPath().equals("/")) {
-	        	break;
-	        }
-	        
-	        // try parent
-	        currentNode = currentNode.getParent();
+            
+            if (currentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
+                displayNode = currentNode;
+            }
+            else {
+                
+                // find node by type in mappingLocation
+                if (session.getRootNode().hasNode(mappingLocation)) {
+                    
+                    Node mappingLocationNode = session.getRootNode().getNode(mappingLocation);
+                    for (NodeIterator iter = mappingLocationNode.getNodes(); iter.hasNext();) {
+                        Node matchNode = iter.nextNode();
+                        try {
+                            Property prop = matchNode.getProperty(HSTNodeTypes.HST_NODETYPE);
+                            if (currentNode.isNodeType(prop.getString())) {
+                                displayNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
+                                break;
+                            }
+                        } catch (PathNotFoundException ex) {
+                            throw new ServletException(ex);
+                        } catch (ValueFormatException ex) {
+                            throw new ServletException(ex);
+                        }
+                    }
+                }
+            }
+            
+            // found
+            if (displayNode != null) {
+                break;
+            }
+            
+            // stop at root node
+            if (currentNode.getPath().equals("/")) {
+                break;
+            }
+            
+            // try parent
+            currentNode = currentNode.getParent();
         }
 
         if (displayNode == null) {
-        	logger.debug("displayNode cannot be found by documentNode " + documentNode
-        				+ " and mappingLocation " + mappingLocation);
+            logger.debug("displayNode cannot be found by documentNode " + documentNode
+                        + " and mappingLocation " + mappingLocation);
             return null;
         }
 
         if (!displayNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
-        	logger.debug("displayNode with path " + displayNode.getPath() + " has no property " + HSTNodeTypes.HST_PAGEFILE);
-        	return null;
-    	}
+            logger.debug("displayNode with path " + displayNode.getPath() + " has no property " + HSTNodeTypes.HST_PAGEFILE);
+            return null;
+        }
     
         // return the page that will be used
-    	String pageFile = displayNode.getProperty(HSTNodeTypes.HST_PAGEFILE).getString();
+        String pageFile = displayNode.getProperty(HSTNodeTypes.HST_PAGEFILE).getString();
 
-    	logger.debug("mapped document path " + documentPath + " to page " + pageFile +
-    					", mappingLocation is " + mappingLocation);
-    	return pageFile;
+        logger.debug("mapped document path " + documentPath + " to page " + pageFile +
+                        ", mappingLocation is " + mappingLocation);
+        return pageFile;
     }
     
     private String urlEncode(String url) {
-    	
-    	// encode the url parts between the slashes: the slashes are or not to be 
-    	// encoded into %2F because the path won't be valid anymore
-    	String[] parts = url.split("/");
-    	
-    	String encoded = url.startsWith("/") ? "/" : "";
-    	
-	    try {
-	    	for (int i = 0; i < parts.length; i++) {
+        
+        // encode the url parts between the slashes: the slashes are or not to be 
+        // encoded into %2F because the path won't be valid anymore
+        String[] parts = url.split("/");
+        
+        String encoded = url.startsWith("/") ? "/" : "";
+        
+        try {
+            for (int i = 0; i < parts.length; i++) {
 
-	    		// part is empty if url starts with /
-				if (parts[i].length() > 0) {
-					encoded += URLEncoder.encode(parts[i], ContextFilter.ENCODING_SCHEME);
+                // part is empty if url starts with /
+                if (parts[i].length() > 0) {
+                    encoded += URLEncoder.encode(parts[i], ContextFilter.ENCODING_SCHEME);
 
-		   			if (i < (parts.length - 1)) {
-		   				encoded += "/";
-		   			}
-				}	
-		    }
-	    
-	    	if (url.endsWith("/")) {
-	    		encoded += "/";
-	    	}
+                    if (i < (parts.length - 1)) {
+                        encoded += "/";
+                    }
+                }   
+            }
+        
+            if (url.endsWith("/")) {
+                encoded += "/";
+            }
 
-	    	return encoded;
-	    }
-	    catch (UnsupportedEncodingException uee) {
-	    	throw new IllegalStateException("Unsupported encoding scheme " + ContextFilter.ENCODING_SCHEME, uee);
-	    }
+            return encoded;
+        }
+        catch (UnsupportedEncodingException uee) {
+            throw new IllegalStateException("Unsupported encoding scheme " + ContextFilter.ENCODING_SCHEME, uee);
+        }
     }
     
     private String reverseURL(String contextPath, String url) {
-    	
-    	/* Something like the following may be more appropriate, but the
+        
+        /* Something like the following may be more appropriate, but the
          * current sequence is functional enough
          *   Session session = context.session;
          *   Query query = session.getWorkspace().getQueryManager().createQuery(
@@ -210,27 +209,24 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         String reversedUrl = url;
 
         if (url.startsWith(context.getBaseLocation())) {
-        	// replace baseLocation by urlBasePath 
+            // replace baseLocation by urlBasePath 
             reversedUrl = contextPath + context.getURLBasePath() + url.substring(context.getBaseLocation().length());
         } else {
-
-        	// if url matches a node path, we can construct the reversed url
-        	String path = url;
+            // if url matches a node path, we can construct the reversed url
+            String path = url;
             while (path.startsWith("/")) {
-            	path = path.substring(1);
+                path = path.substring(1);
             }
-            	
             try {
-	            Session jcrSession = JCRConnector.getJCRSession(request.getSession());
-	            if (jcrSession.getRootNode().hasNode(path)) {
-	                reversedUrl = contextPath + context.getURLBasePath() + "/" + path;
-	            }
-	        } catch (RepositoryException ex) {
-	            logger.error("reverseURL", ex);
-	        }
+                Session jcrSession = JCRConnector.getJCRSession(request.getSession());
+                if (jcrSession.getRootNode().hasNode(path)) {
+                    reversedUrl = contextPath + context.getURLBasePath() + "/" + path;
+                }
+            } catch (RepositoryException ex) {
+                // FIXME: reversedUrl at old location, which is properly improper.
+                logger.error("reverseURL", ex);
+            }
         }
-
         return reversedUrl;
     }
 }
-

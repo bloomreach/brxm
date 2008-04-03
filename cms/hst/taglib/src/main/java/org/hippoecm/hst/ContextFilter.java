@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
  * Filter that creates a context available for expression language.  
  */
 public class ContextFilter implements Filter {
-	
+    
 //    private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
     public static final String ENCODING_SCHEME = "UTF-8";
     
@@ -49,23 +49,23 @@ public class ContextFilter implements Filter {
 
     private String attributeName = "context";
     private String urlBasePath = "";
-    private String repositoryBaseLocation;
-	private String urlMappingLocation = "/urlMapping";
-	private String[] skippedExtensions = 
-		new String[] {"ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js"};
-	private final List<String> skippedExtensionsList = new ArrayList<String>(); 
+    private String repositoryBaseLocation; // [BvH] I'm not fond of this repositoryBaseLocation as the AdditionalContextFilter is a far more elegant solution
+    private String urlMappingLocation = "/urlMapping";
+    private String[] skippedExtensions = 
+        new String[] {"ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js"};
+    private final List<String> skippedExtensionsList = new ArrayList<String>(); 
     boolean urlMappingActive = false;
 
     public ContextFilter() {
-    	super();
+        super();
     }
 
     // from interface
     public void init(FilterConfig filterConfig) throws ServletException {
 
-    	String param = filterConfig.getInitParameter("attributeName");
+        String param = filterConfig.getInitParameter("attributeName");
         if (param != null && !param.trim().equals("")) {
-        	this.attributeName = param.trim();
+            this.attributeName = param.trim();
         }
 
         // save in context for use by tags
@@ -73,19 +73,19 @@ public class ContextFilter implements Filter {
 
         param = filterConfig.getInitParameter("urlBasePath");
         if (param != null && !param.trim().equals("")) {
-        	this.urlBasePath = param;
+            this.urlBasePath = param;
         }
         
         param = filterConfig.getInitParameter("repositoryBaseLocation");
         if (param != null && !param.trim().equals("")) {
-        	this.repositoryBaseLocation = param;
+            this.repositoryBaseLocation = param;
         } else {
             this.repositoryBaseLocation = urlBasePath;
         }
         
         param = filterConfig.getInitParameter("urlMappingLocation");
         if (param != null && !param.trim().equals("")) {
-        	this.urlMappingLocation = param;
+            this.urlMappingLocation = param;
 
         } 
 
@@ -94,16 +94,16 @@ public class ContextFilter implements Filter {
 
         param = filterConfig.getInitParameter("skippedExtensions");
         if (param != null && !param.trim().equals("")) {
-        	this.skippedExtensions = param.split(",");
+            this.skippedExtensions = param.split(",");
         } 
 
         // convert to list for easy 'contains' access
         for (int i = 0; i < skippedExtensions.length; i++) {
-        	String extension = skippedExtensions[i];
-        	if (!extension.startsWith(".")) {
-        		extension = "." + extension;
-        	}
-        	skippedExtensionsList.add(extension);
+            String extension = skippedExtensions[i];
+            if (!extension.startsWith(".")) {
+                extension = "." + extension;
+            }
+            skippedExtensionsList.add(extension);
         }
     }
 
@@ -113,23 +113,24 @@ public class ContextFilter implements Filter {
 
     // from interface
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) 
-    					throws IOException, ServletException {
-    	
+                        throws IOException, ServletException {
+        
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
         String servletPath = req.getServletPath();
 
         if (servletPath.lastIndexOf(".") >= 0) { 
-	        String extension = servletPath.substring(servletPath.lastIndexOf("."));
+            // [BvH] We have lost here the essential ability to generate pictures, nice...
+            String extension = servletPath.substring(servletPath.lastIndexOf("."));
 
-	        if (skippedExtensionsList.contains(extension)) {
-	            filterChain.doFilter(req, res);
-	    		return;
-	    	}	
-    	}
-    	
-    	String relativePath = req.getRequestURI();
+            if (skippedExtensionsList.contains(extension)) {
+                filterChain.doFilter(req, res);
+                return;
+            }   
+        }
+        
+        String relativePath = req.getRequestURI();
         /* This next part is better resolved by using filterConfig.getServletContext().getContextPath(), but
          * this is only available after Servlet API 2.5.
          */
@@ -144,20 +145,20 @@ public class ContextFilter implements Filter {
         int semicolonIdx = relativePath.indexOf(';');
         if (semicolonIdx != -1) {
             relativePath = relativePath.substring(0, semicolonIdx);
-		}
+        }
         
         // remove end /
-		if (relativePath.endsWith("/")) {
-        	relativePath = relativePath.substring(0, relativePath.length() - 1);
+        if (relativePath.endsWith("/")) {
+            relativePath = relativePath.substring(0, relativePath.length() - 1);
         }
 
-		// remove urlBasePath
-		if (relativePath.startsWith(urlBasePath)) {
-			relativePath = relativePath.substring(urlBasePath.length());
-		}
-		
-		// decode
-		relativePath = URLDecoder.decode(relativePath, ENCODING_SCHEME);   
+        // remove urlBasePath
+        if (relativePath.startsWith(urlBasePath)) {
+            relativePath = relativePath.substring(urlBasePath.length());
+        }
+        
+        // decode
+        relativePath = URLDecoder.decode(relativePath, ENCODING_SCHEME);   
 
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = new Context(jcrSession, urlBasePath, repositoryBaseLocation);
@@ -167,32 +168,31 @@ public class ContextFilter implements Filter {
 
         // check url mapping
         if (urlMappingActive) {
-        	
-        	URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, req, res);
+            
+            URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, req, res);
 
-			try {
-	        	String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLocation, context.getLocation());
-	        	
-	            if (mappedPage == null) {
-	            	throw new ServletException("No mapped page could be found for path " + context.getLocation());
-	            }
-	            else {
-
-		            // forward the request to that page
-		            RequestDispatcher dispatcher = request.getRequestDispatcher(mappedPage);
-		            
-		            if (dispatcher == null) {
-		            	throw new ServletException("No dispatcher could be obtained for mapped page " + mappedPage);
-		            }
-		            
-		            dispatcher.forward(request, responseWrapper);
-	
-		            // no further filter chaining when forwarding
-	        		return;
-	            }	
-			} catch (RepositoryException re) {
-				throw new ServletException(re);
-			}
+            try {
+                String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLocation, context.getLocation());
+                
+                if (mappedPage == null) {
+                    logger.warn("No mapped page could be found for path " + context.getPath());
+                    throw new ServletException("No mapped page could be found for path " + context.getLocation());
+                } else {
+                    // forward the request to that page
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(mappedPage);
+                    
+                    if (dispatcher == null) {
+                        throw new ServletException("No dispatcher could be obtained for mapped page " + mappedPage);
+                    }
+                    
+                    dispatcher.forward(request, responseWrapper);
+    
+                    // no further filter chaining when forwarding
+                    return;
+                }   
+            } catch (RepositoryException re) {
+                throw new ServletException(re);
+            }
         }
 
         // normally call rest of the filter

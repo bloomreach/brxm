@@ -47,7 +47,7 @@ site-myproject
                   </p>
                   <source>
 jcr:primaryType: hippo:facetselect
-hippo:facets: {language,state}	
+hippo:facets: {language,state}  
 hippo:values: {nl,published}
 hippo:modes:  {select,select}
 hippo:docbase: /content-myproject   (path implementation will be replaced by UUID in due time)
@@ -99,7 +99,7 @@ content-myproject
                       Now, the node /content-myproject/navigation/default/default/home is a facetselect with properties:    
                   </p>
                   <source>
-hippo:facets: {}		
+hippo:facets: {}        
 hippo:values: {}
 hippo:modes:  {}
 hippo:docbase: /content-myproject/pages/home
@@ -111,7 +111,7 @@ hippo:docbase: /content-myproject/pages/home
                       and the node /content-myproject/navigation/default/default/about is a facetselect with properties:
                   </p>
                   <source>
-hippo:facets: {}		
+hippo:facets: {}        
 hippo:values: {}
 hippo:modes:  {}
 hippo:docbase: /content-myproject/pages/about
@@ -154,7 +154,7 @@ content-myproject
                       This will be translated (frontend knowledge/defined) to <code>/site-myproject/nl/preview</code>. Since <code>preview</code> is a facetselect with 
                   </p>
                   <source>
-hippo:facets: {language,state}	
+hippo:facets: {language,state}  
 hippo:values: {nl,unpublished}
 hippo:docbase: /content-myproject
                   </source>

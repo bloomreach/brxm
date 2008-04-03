@@ -270,14 +270,14 @@
             <sv:property sv:name="hippo:renderer" sv:type="String">
               <sv:value>org.hippoecm.frontend.plugin.workflow.WorkflowsPlugin</sv:value>
             </sv:property>
-	    <sv:node sv:name="hippo:parameters">
-	      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:node sv:name="hippo:parameters">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:parameters</sv:value>
-	      </sv:property>
-	      <sv:property sv:name="categories" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="categories" sv:type="String">
                 <sv:value>internal</sv:value>
                 <sv:value>reviewed-action</sv:value>
-	      </sv:property>
+          </sv:property>
             </sv:node>
           </sv:node>
 

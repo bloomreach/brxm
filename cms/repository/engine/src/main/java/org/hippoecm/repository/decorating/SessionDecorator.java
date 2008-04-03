@@ -396,7 +396,7 @@ public class SessionDecorator implements XASession, HippoSession {
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         } finally {      
-        	session.logout();
+            session.logout();
         }
     }
 

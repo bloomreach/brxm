@@ -35,24 +35,24 @@ public class DateFieldWidget extends AjaxUpdatingWidget {
         final JcrPropertyValueModel  valueModel = (JcrPropertyValueModel) getModel();
         Date date;
         try {
-        	date = valueModel.getValue().getDate().getTime();
+            date = valueModel.getValue().getDate().getTime();
         } catch(RepositoryException ex) {
-        	// FIXME:  log error
-        	date = null;
+            // FIXME:  log error
+            date = null;
         }
         
         addFormField(new AjaxDateTimeField("widget", new Model(date) { 
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			@Override
-        	public void setObject(Object object) {
-				Calendar calendar = new GregorianCalendar();
-	    		calendar.setTime((Date) object);
-	    		valueModel.setValue(new DateValue(calendar));
+            @Override
+            public void setObject(Object object) {
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime((Date) object);
+                valueModel.setValue(new DateValue(calendar));
 
-        		super.setObject(object);
-        	}
-        	
+                super.setObject(object);
+            }
+            
         }));
     }
     

@@ -46,10 +46,10 @@ public class IncludeTag extends TagSupport {
         String contextName = (String) pageContext.findAttribute(ContextFilter.ATTRIBUTE_NAME);
         String urlMappingLoc;
         if (this.urlMappingLocation != null) {
-        	urlMappingLoc = this.urlMappingLocation;
+            urlMappingLoc = this.urlMappingLocation;
         }
         else {
-        	urlMappingLoc = (String) pageContext.findAttribute(ContextFilter.URL_MAPPING_LOCATION);
+            urlMappingLoc = (String) pageContext.findAttribute(ContextFilter.URL_MAPPING_LOCATION);
         }
         
         Context context = (Context) pageContext.findAttribute(contextName);
@@ -60,18 +60,18 @@ public class IncludeTag extends TagSupport {
             request.setAttribute(contextName, newContext);
 
             URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(newContext, request, response);
-        	String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLoc, context.getLocation());
-        	
+            String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLoc, context.getLocation());
+            
             if (mappedPage == null) {
-            	throw new JspException("No mapped page could be found for path " + context.getLocation()
-            			+ " and urlMappingLocation " + urlMappingLoc);
+                throw new JspException("No mapped page could be found for path " + context.getLocation()
+                        + " and urlMappingLocation " + urlMappingLoc);
             }
 
             // include the page
             RequestDispatcher dispatcher = request.getRequestDispatcher(mappedPage);
             
             if (dispatcher == null) {
-            	throw new ServletException("No dispatcher could be obtained for mapped page " + mappedPage);
+                throw new ServletException("No dispatcher could be obtained for mapped page " + mappedPage);
             }
             
             dispatcher.include(request, responseWrapper);

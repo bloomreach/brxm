@@ -24,7 +24,7 @@ package org.hippoecm.hst;
 public class URLMappingContextFilter extends ContextFilter {
 
     public URLMappingContextFilter() {
-    	super();
-    	this.urlMappingActive = true;
+        super();
+        this.urlMappingActive = true;
     }
 }

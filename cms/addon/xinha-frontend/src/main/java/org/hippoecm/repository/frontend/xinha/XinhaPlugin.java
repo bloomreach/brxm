@@ -80,14 +80,14 @@ public class XinhaPlugin extends Plugin {
                 ParameterValue value = descriptor.getParameter("width");
                 if (value != null) {
                     sb.append("width: ");
-		    if(value.getStrings().size() > 0)
+            if(value.getStrings().size() > 0)
                         sb.append(value.getStrings().get(0));
                     sb.append(";");
                 }
                 value = descriptor.getParameter("height");
                 if (value != null) {
                     sb.append("height: ");
-		    if(value.getStrings().size() > 0)
+            if(value.getStrings().size() > 0)
                         sb.append(value.getStrings().get(0));
                     sb.append(";");
                 }

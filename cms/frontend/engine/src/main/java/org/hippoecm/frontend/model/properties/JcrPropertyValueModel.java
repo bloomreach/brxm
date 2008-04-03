@@ -74,8 +74,8 @@ public class JcrPropertyValueModel extends Model {
     }
     
     public Value getValue() {
-    	load();
-    	return value;
+        load();
+        return value;
     }
     
     public void setValue(Value value)

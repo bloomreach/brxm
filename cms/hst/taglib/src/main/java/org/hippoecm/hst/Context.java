@@ -64,21 +64,21 @@ public class Context extends AbstractMap {
     }
 
     Context(Context parent, String relativePath) {
-    	this(parent, relativePath, -1);
+        this(parent, relativePath, -1);
     }
     
-     Context(Context parent, String relativeLocation, int index) {
-    	this(parent.session, parent.urlBasePath, parent.baseLocation);       
+    Context(Context parent, String relativeLocation, int index) {
+        this(parent.session, parent.urlBasePath, parent.baseLocation); // [BvH] is it really the intention to inherit the baseLocation here?
 
         if (relativeLocation.startsWith("/")) {
-        	setRelativeLocation(relativeLocation);
+            setRelativeLocation(relativeLocation);
         } else if (parent.relativeLocation.endsWith("/")) {
             this.relativeLocation = parent.relativeLocation + relativeLocation;
         } else {
             this.relativeLocation = parent.relativeLocation + "/" + relativeLocation;
         }
-    	
-    	this.index = index;
+
+        this.index = index;
     }
 
     Context(Context parent, HippoQuery query, List arguments) {
@@ -88,17 +88,16 @@ public class Context extends AbstractMap {
     }
 
     String getLocation() {
-    	
-    	if (relativeLocation == null) {
-    		return baseLocation;
-    	}
-    	
-    	if (relativeLocation.startsWith("/")) {
-    		return baseLocation + relativeLocation;
-    	}
-    	else {
-    		return baseLocation + "/" + relativeLocation;
-    	}	
+        
+        if (relativeLocation == null) {
+            return baseLocation;
+        }
+        
+        if (relativeLocation.startsWith("/")) {
+            return baseLocation + relativeLocation;
+        } else {
+            return baseLocation + "/" + relativeLocation;
+        }   
     }
 
     public String getURLBasePath() {
@@ -110,13 +109,12 @@ public class Context extends AbstractMap {
     }
 
     void setRelativeLocation(String relativeLocation) {
-    	
-    	if (relativeLocation.startsWith(baseLocation)) {
-    		this.relativeLocation = relativeLocation.substring(baseLocation.length());
-    	}
-    	else {
-    		this.relativeLocation = relativeLocation;
-    	}	
+        
+        if (relativeLocation.startsWith(baseLocation)) {
+            this.relativeLocation = relativeLocation.substring(baseLocation.length());
+        } else {
+            this.relativeLocation = relativeLocation;
+        }   
     }
 
     boolean exists() {
@@ -257,14 +255,14 @@ public class Context extends AbstractMap {
                                 } else if (field.equals("urlBasePath")) {
                                     result = this.urlBasePath;
                                 } else if (field.equals("parent")) {
-                                	
-                                	if (node.getParent() == null) {
-                                		return null;
-                                	}
+                                    
+                                    if (node.getParent() == null) {
+                                        return null;
+                                    }
 
-                                	Context context = new Context(this.session, this.urlBasePath, this.baseLocation);
-                                	context.setRelativeLocation(node.getParent().getPath());
-                                	
+                                    Context context = new Context(this.session, this.urlBasePath, this.baseLocation);
+                                    context.setRelativeLocation(node.getParent().getPath());
+                                    
                                     result = context;
                                 } else if (field.equals("location")) {
                                     result = ((HippoNode)node).getCanonicalNode().getPath();
