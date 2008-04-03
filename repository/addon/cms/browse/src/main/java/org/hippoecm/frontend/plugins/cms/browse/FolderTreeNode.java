@@ -54,7 +54,7 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     // hardcoded ignore path set
     private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
-            "/hippo:configuration", "/hippo:namespaces" }));
+            "/hippo:configuration", "/hippo:namespaces", "/live", "/preview" }));
 
     // ignore nodes below these types
     private final static String[] ignoreNodesBelowType = new String[] { HippoNodeType.NT_DOCUMENT,
@@ -181,15 +181,17 @@ public class FolderTreeNode extends AbstractTreeNode {
         NodeIterator subNodes = node.getNodes();
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
-            if (!ignorePaths.contains(subNode.getPath()) && !subNode.isNodeType(HippoNodeType.NT_LOGFOLDER)) {
-                if (!subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    result.add(subNode);  
-                } 
-                else if (((HippoNode)subNode).getCanonicalNode()== null || !((HippoNode)subNode).getCanonicalNode().isSame(subNode)) {
-                    // in the virtual tree we show everything
-                    result.add(subNode); 
-                }
+            if (ignorePaths.contains(subNode.getPath()) || subNode.isNodeType(HippoNodeType.NT_LOGFOLDER)) { 
+                continue;
             }
+            if (!subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                result.add(subNode);  
+            } 
+            else if (((HippoNode)subNode).getCanonicalNode()== null || !((HippoNode)subNode).getCanonicalNode().isSame(subNode)) {
+                // in the virtual tree we show everything
+                result.add(subNode); 
+            }
+            
         }
         return result;
     }
