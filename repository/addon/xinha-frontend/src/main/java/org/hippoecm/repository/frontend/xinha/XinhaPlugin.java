@@ -16,6 +16,7 @@
 package org.hippoecm.repository.frontend.xinha;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,10 +52,14 @@ import org.slf4j.LoggerFactory;
 
 public class XinhaPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(XinhaPlugin.class);
 
     public final static String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
+
+    // hardcoded ignore path set
+    private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
+            "/hippo:configuration", "/hippo:namespaces" }));
 
     private JcrPropertyValueModel valueModel;
 
@@ -80,14 +85,14 @@ public class XinhaPlugin extends Plugin {
                 ParameterValue value = descriptor.getParameter("width");
                 if (value != null) {
                     sb.append("width: ");
-            if(value.getStrings().size() > 0)
+                    if (value.getStrings().size() > 0)
                         sb.append(value.getStrings().get(0));
                     sb.append(";");
                 }
                 value = descriptor.getParameter("height");
                 if (value != null) {
                     sb.append("height: ");
-            if(value.getStrings().size() > 0)
+                    if (value.getStrings().size() > 0)
                         sb.append(value.getStrings().get(0));
                     sb.append(";");
                 }
@@ -112,16 +117,15 @@ public class XinhaPlugin extends Plugin {
 
                 String browse = requestCycle.getRequest().getParameter("browse");
                 if (browse != null) {
-                    
+
                     if ("".equals(browse)) {
                         browse = "/";
                     }
 
                     StringBuilder sb = new StringBuilder();
 
-                    //TODO: implement browsing through FolderTreeNode
-                    //custom handle browsing
-                    Node pluginNode = (Node) pluginModel.getObject();                    
+                    //custom browsing
+                    Node pluginNode = (Node) pluginModel.getObject();
                     try {
                         Session session = pluginNode.getSession();
                         Item item = session.getItem(browse);
@@ -130,11 +134,12 @@ public class XinhaPlugin extends Plugin {
                             NodeIterator iterator = itemNode.getNodes();
                             while (iterator.hasNext()) {
                                 Node childNode = iterator.nextNode();
-                                Node canonicalNode = ((HippoNode)childNode).getCanonicalNode();
-                                if(canonicalNode != null && canonicalNode.isSame(childNode)) {
+                                Node canonicalNode = ((HippoNode) childNode).getCanonicalNode();
+                                if (canonicalNode != null && canonicalNode.isSame(childNode)
+                                        && !ignorePaths.contains(canonicalNode.getPath())) {
                                     sb.append("{");
                                     sb.append("title: '").append(childNode.getName()).append("'");
-                                    boolean isHandle = childNode.isNodeType(HippoNodeType.NT_HANDLE); 
+                                    boolean isHandle = childNode.isNodeType(HippoNodeType.NT_HANDLE);
                                     sb.append(", clickable: ").append(isHandle);
                                     sb.append(", url: '").append(childNode.getPath()).append("'");
                                     if (childNode.getNodes().hasNext() && !isHandle) {
@@ -150,7 +155,7 @@ public class XinhaPlugin extends Plugin {
                     } catch (RepositoryException e) {
                         log.error(e.getMessage());
                     }
-                    
+
                     target.appendJavascript("[" + sb.toString() + "]");
 
                 }
@@ -230,7 +235,6 @@ public class XinhaPlugin extends Plugin {
         private static final String XINHA_TOOLBAR = "Xinha.config.toolbar";
         private static final String XINHA_CSS = "Xinha.config.css";
         private static final String XINHA_SKIN = "Xinha.skin";
-        
 
         private Map<String, PluginConfiguration> pluginConfigurations = new HashMap<String, PluginConfiguration>();
         private List<String> toolbarItems;
@@ -246,7 +250,7 @@ public class XinhaPlugin extends Plugin {
                         toolbarItems = paramValues;
                     } else if (paramKey.equals(XINHA_CSS)) {
                         styleSheets = paramValues;
-                    } else if(paramKey.equals(XINHA_SKIN)) {
+                    } else if (paramKey.equals(XINHA_SKIN)) {
                         skin = paramValues.get(0);
                     } else if (paramKey.equals(XINHA_PLUGINS)) {
                         for (String pluginName : paramValues) {
@@ -289,7 +293,7 @@ public class XinhaPlugin extends Plugin {
         public List<String> getStyleSheets() {
             return styleSheets;
         }
-        
+
         public String getSkin() {
             return skin;
         }
