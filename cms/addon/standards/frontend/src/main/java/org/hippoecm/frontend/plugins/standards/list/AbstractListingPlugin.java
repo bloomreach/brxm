@@ -43,6 +43,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -73,6 +74,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     public static final String USER_PATH_PREFIX = "/hippo:configuration/hippo:users/";
 
     protected List<IStyledColumn> columns;
+    private CustomizableDocumentListingDataTable dataTable;
 
     public AbstractListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
@@ -109,8 +111,9 @@ public abstract class AbstractListingPlugin extends Plugin {
             PluginModel listModel = new PluginModel();
             listModel.put("entries", entries);
             setModel(listModel);
-            replace(getTable(listModel));
-
+            replace(dataTable = getTable(listModel));
+            dataTable.setSelectedNode(model);
+            
             notification.getContext().addRefresh(this);
         }
     }
@@ -178,7 +181,7 @@ public abstract class AbstractListingPlugin extends Plugin {
             logError(e);
             defaultColumns(pluginDescriptor);
         }
-        add(getTable(model));
+        add(dataTable = getTable(model));
     }
 
     private Node createDefaultPrefNodeSetting(Node listingNode) throws ItemExistsException, PathNotFoundException,
@@ -270,7 +273,7 @@ public abstract class AbstractListingPlugin extends Plugin {
         return new NodeColumn(model, propertyName, channel);
     }
 
-    protected abstract Component getTable(IPluginModel model);
+    protected abstract CustomizableDocumentListingDataTable getTable(IPluginModel model);
 
     protected abstract String getPluginUserPrefNodeName();
 }
