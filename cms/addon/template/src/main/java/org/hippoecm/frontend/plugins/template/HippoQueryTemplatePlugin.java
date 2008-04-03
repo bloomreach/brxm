@@ -27,11 +27,16 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.version.VersionException;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.ExceptionModel;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -45,6 +50,10 @@ public class HippoQueryTemplatePlugin extends Plugin {
     private JcrNodeModel jcrNodeModel;
     private String language;    
     private String statement;
+    private String incorrectstatement = "";
+    private Label incorrectstatementLabel;
+    
+    
     
     public HippoQueryTemplatePlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
@@ -53,7 +62,6 @@ public class HippoQueryTemplatePlugin extends Plugin {
         
         jcrNodeModel = model.getJcrNodeModel();
         Node queryNode = jcrNodeModel.getNode();
-        
         try {
             
             //if(!queryNode.isNodeType(JcrConstants.NT_QUERY))
@@ -66,42 +74,52 @@ public class HippoQueryTemplatePlugin extends Plugin {
             }
             
             QueryManager qrm = queryNode.getSession().getWorkspace().getQueryManager();
-            Query query = qrm.getQuery(queryNode);
+            try {
+               Query query = qrm.getQuery(queryNode);
+               language = query.getLanguage();
+               statement = query.getStatement();
+            } catch (InvalidQueryException e){
+                log.error("invalid query statement. Revert to default statement " + e.getMessage());
+                language = "xpath";
+                statement = "//*";
+                queryNode.setProperty("jcr:statement", "//*");
+                queryNode.setProperty("jcr:language", "xpath");
+            } 
 
-            language = query.getLanguage();
-            statement = query.getStatement();
             
-            add(new TextFieldWidget("language", new PropertyModel(this, "language") {
-                @Override
-                public void setObject(Object object) {
-                    HippoQueryTemplatePlugin.this.language = (String) object;
-                    storeQueryAsNode();
-                }
+            add(new TextFieldWidget("language", new PropertyModel(this, "language")){ 
+                private static final long serialVersionUID = 1L;
 
-            }));
-            
-            add(new TextFieldWidget("statement", new PropertyModel(this, "statement") {
                 @Override
-                public void setObject(Object object) {
-                    HippoQueryTemplatePlugin.this.statement = (String) object;
-                    storeQueryAsNode();
+                protected void onUpdate(AjaxRequestTarget target) {
+                    storeQueryAsNode(target);
                 }
-            }));
-              
-        } catch (InvalidQueryException e){
-             log.error("invalid query " + e.getMessage());
+            });
+            
+            add(new TextFieldWidget("statement", new PropertyModel(this, "statement")){
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    storeQueryAsNode(target);
+                } 
+            });
+            incorrectstatementLabel = new Label("incorrectstatement",new PropertyModel(this, "incorrectstatement"));
+            incorrectstatementLabel.setOutputMarkupId(true);
+            add(incorrectstatementLabel);
+            
         } catch (ValueFormatException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (PathNotFoundException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         
         setOutputMarkupId(true);
     }
     
-    private void storeQueryAsNode() {
+    private void storeQueryAsNode(AjaxRequestTarget target) {
         Node queryNode = jcrNodeModel.getNode();
         
         try {
@@ -109,31 +127,48 @@ public class HippoQueryTemplatePlugin extends Plugin {
             String nodeName = queryNode.getName();
             
             Session session = queryNode.getSession();
+            
+            QueryManager qrm = session.getWorkspace().getQueryManager();
+            Query query = qrm.createQuery(statement, language);
 
-            queryNode.remove();
             /*
              * you cannot directly use storeAsNode again for with the same path, because
              * that result in an item exists exception. The only way is to keep the property
              * values in memory, remove the node, and store is again
              */ 
-            QueryManager qrm = session.getWorkspace().getQueryManager();
-            Query query = qrm.createQuery(statement, language);
-
-            query.storeAsNode(parentNode.getPath()+"/"+nodeName);
+            queryNode.remove();
             jcrNodeModel.detach();
+            query.storeAsNode(parentNode.getPath()+"/"+nodeName);
             
+            incorrectstatement = "";
+            target.addComponent(incorrectstatementLabel);
+            
+        } catch (InvalidQueryException e) {
+            logAndInform(target,e);
         } catch (ValueFormatException e) {
-            e.printStackTrace();
+            logAndInform(target,e);
         } catch (VersionException e) {
-            e.printStackTrace();
+            logAndInform(target,e);
         } catch (LockException e) {
-            e.printStackTrace();
+            logAndInform(target,e);
         } catch (ConstraintViolationException e) {
-            e.printStackTrace();
+            logAndInform(target,e);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            logAndInform(target,e);
         }
         
+    }
+
+    private void logAndInform(AjaxRequestTarget target, Exception e) {
+        if (target != null) {
+            incorrectstatement = "Incorrect statement: changes won't be saved";
+            Channel channel = getTopChannel();
+            Request request = channel.createRequest("exception", new ExceptionModel(e,"You have an error in your query statement. " +
+                    "Statement will be reverted to the previous correct version"));
+            channel.send(request);
+            request.getContext().apply(target);
+        }
+        log.debug(e.getMessage());
     }
 
 }
