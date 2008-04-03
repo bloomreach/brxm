@@ -19,7 +19,12 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Response;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.tree.JcrTree;
@@ -122,4 +127,37 @@ public class CmsJcrTree extends JcrTree{
         }
         
     }
+    @Override
+    protected MarkupContainer newJunctionImage(MarkupContainer parent, final String id,
+            final TreeNode node)
+        {
+            return (MarkupContainer)new WebMarkupContainer(id)
+            {
+                private static final long serialVersionUID = 1L;
+
+                /**
+                 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
+                 */
+                protected void onComponentTag(ComponentTag tag)
+                {
+                    super.onComponentTag(tag);
+
+                    final String cssClassInner;
+                    if (node.isLeaf() == false && node.getChildCount()>0)
+                    {
+                        cssClassInner = isNodeExpanded(node) ? "minus" : "plus";
+                    }
+                    else
+                    {
+                        cssClassInner = "corner";
+                    }
+                    TreeNode parent = node.getParent();
+                    final String cssClassOuter = (parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node)) ? "junction-last" : "junction";
+
+                    Response response = RequestCycle.get().getResponse();
+                    response.write("<span class=\"" + cssClassOuter + "\"><span class=\"" +
+                        cssClassInner + "\"></span></span>");
+                }
+            }.setRenderBodyOnly(true);
+        }
 }
