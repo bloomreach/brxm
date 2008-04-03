@@ -49,10 +49,8 @@ public class NodeCell extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-
                 sendChannelRequest(model, target, channel);
             }
-
         };
         addLabel(model, nodePropertyName, link);
         add(link);
@@ -94,27 +92,33 @@ public class NodeCell extends Panel {
                     HippoNode variant = (HippoNode) (n.getNode(n.getName()));
                     Node canonicalNode = variant.getCanonicalNode();
                     String state = "unknown";
-                    if(canonicalNode.hasProperty("hippostd:stateSummary")) {
+                    if (canonicalNode.hasProperty("hippostd:stateSummary")) {
                         state = canonicalNode.getProperty("hippostd:stateSummary").getString();
                     }
                     addLabel(link, state);
                 } else if (nodePropertyName.equals(JcrConstants.JCR_PRIMARYTYPE)) {
-                    if (n.getPrimaryNodeType().getName().equals(HippoNodeType.NT_HANDLE)) {
+                    String label = null;
+
+                    if (n.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        label = n.getPrimaryNodeType().getName();
                         NodeIterator nodeIt = n.getNodes();
-                        boolean notFound = true;
                         while (nodeIt.hasNext()) {
                             Node childNode = nodeIt.nextNode();
                             if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                                addLabel(link, childNode.getPrimaryNodeType().getName());
-                                notFound = false;
+                                label = childNode.getPrimaryNodeType().getName();
                                 break;
                             }
                         }
-                        if (notFound) {
-                            addEmptyLabel(link);
+                        if (label.indexOf(":") > -1) {
+                            label = label.substring(label.indexOf(":") + 1);
                         }
                     } else {
-                        addLabel(link, n.getPrimaryNodeType().getName());
+                        label = "folder";
+                    }
+                    if (label == null) {
+                        addEmptyLabel(link);
+                    } else {
+                        addLabel(link, label);
                     }
                 } else {
                     getLabel4Property(n.getProperty(nodePropertyName), link);
