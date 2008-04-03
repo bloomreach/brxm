@@ -16,7 +16,8 @@
 package org.hippoecm.hst;
 
 import java.io.IOException;
-import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -36,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 class URLMappingResponseWrapper extends HttpServletResponseWrapper {
 	
-    private static final String ENCODING_SCHEME = "UTF-8";
-    
     private static final Logger logger = LoggerFactory.getLogger(URLMappingResponseWrapper.class);
 
     private Context context;
@@ -51,12 +50,14 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
 
     @Override
     public String encodeURL(String url) {
-        return super.encodeURL(reverseURL(request.getContextPath(), url));
+    	String reversedURL = super.encodeUrl(reverseURL(request.getContextPath(), url));
+        return urlEncode(reversedURL);
     }
 
     @Override
     public String encodeRedirectURL(String url) {
-        return super.encodeRedirectUrl(reverseURL(request.getContextPath(), url));
+    	String reversedURL = super.encodeRedirectUrl(reverseURL(request.getContextPath(), url));
+        return urlEncode(reversedURL);
     }
     
     public String mapRepositoryDocument(String mappingLocation, String documentPath)
@@ -65,8 +66,6 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         while (documentPath.startsWith("/")) {
             documentPath = documentPath.substring(1);
         }
-        
-        documentPath = URLDecoder.decode(documentPath, ENCODING_SCHEME);   
         
         while (mappingLocation.startsWith("/")) {
             mappingLocation = mappingLocation.substring(1);
@@ -91,15 +90,15 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         try {
             if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 documentNode = documentNode.getNode(documentNode.getName());
+
+                // update path
+                context.setRelativeLocation(documentNode.getPath());
             }
         } catch (PathNotFoundException ex) {
             // deliberate ignore
         } catch (ValueFormatException ex) {
             // deliberate ignore
         }
-
-        // update path
-        context.setRelativePath(documentNode.getPath());
 
         // locate the display node associated with the document node
         Node currentNode = documentNode;
@@ -166,6 +165,38 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
     	return pageFile;
     }
     
+    private String urlEncode(String url) {
+    	
+    	// encode the url parts between the slashes: the slashes are or not to be 
+    	// encoded into %2F because the path won't be valid anymore
+    	String[] parts = url.split("/");
+    	
+    	String encoded = url.startsWith("/") ? "/" : "";
+    	
+	    try {
+	    	for (int i = 0; i < parts.length; i++) {
+
+	    		// part is empty if url starts with /
+				if (parts[i].length() > 0) {
+					encoded += URLEncoder.encode(parts[i], ContextFilter.ENCODING_SCHEME);
+
+		   			if (i < (parts.length - 1)) {
+		   				encoded += "/";
+		   			}
+				}	
+		    }
+	    
+	    	if (url.endsWith("/")) {
+	    		encoded += "/";
+	    	}
+
+	    	return encoded;
+	    }
+	    catch (UnsupportedEncodingException uee) {
+	    	throw new IllegalStateException("Unsupported encoding scheme " + ContextFilter.ENCODING_SCHEME, uee);
+	    }
+    }
+    
     private String reverseURL(String contextPath, String url) {
     	
     	/* Something like the following may be more appropriate, but the
@@ -177,24 +208,28 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
          *   url = result.getNodes().getNode().getPath();
          */
         String reversedUrl = url;
-        try {
-            if (url.startsWith(context.getBasePath())) {
-                reversedUrl = contextPath + url.substring(context.getBasePath().length());
-            } else {
-                String reversedPath = url;
-                while (reversedPath.startsWith("/")) {
-                    reversedPath = reversedPath.substring(1);
-                }
 
-                Session jcrSession = JCRConnector.getJCRSession(request.getSession());
-                if (jcrSession.getRootNode().hasNode(reversedPath)) {
-                    reversedUrl = contextPath + "/" + reversedPath;
-                }
+        if (url.startsWith(context.getBaseLocation())) {
+        	// replace baseLocation by urlBasePath 
+            reversedUrl = contextPath + context.getURLBasePath() + url.substring(context.getBaseLocation().length());
+        } else {
+
+        	// if url matches a node path, we can construct the reversed url
+        	String path = url;
+            while (path.startsWith("/")) {
+            	path = path.substring(1);
             }
-
-        } catch (RepositoryException ex) {
-            logger.error("reverseURL", ex);
+            	
+            try {
+	            Session jcrSession = JCRConnector.getJCRSession(request.getSession());
+	            if (jcrSession.getRootNode().hasNode(path)) {
+	                reversedUrl = contextPath + context.getURLBasePath() + "/" + path;
+	            }
+	        } catch (RepositoryException ex) {
+	            logger.error("reverseURL", ex);
+	        }
         }
+
         return reversedUrl;
     }
 }

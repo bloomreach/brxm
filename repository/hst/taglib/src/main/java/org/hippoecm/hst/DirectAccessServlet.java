@@ -45,8 +45,9 @@ public class DirectAccessServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String path = req.getRequestURI();
-        if (path.startsWith(req.getContextPath())) {
+
+    	String path = req.getRequestURI();
+		if (path.startsWith(req.getContextPath())) {
             path = path.substring(req.getContextPath().length());
         }
         if (path.startsWith(req.getServletPath())) {
@@ -78,13 +79,28 @@ public class DirectAccessServlet extends HttpServlet {
                 return;
             }
             if (!item.isNode()) {
+                logger.warn("item at path " + path + " is not a node, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
+            
             Node node = (Node) item;
 
+            if (!node.hasProperty("jcr:mimeType")) {
+                logger.warn("item at path " + path + " has no property jcr:mimeType, response status = 404)");
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            
             String mimeType = node.getProperty("jcr:mimeType").getString();
-            InputStream istream = node.getProperty("jcr:data").getStream();
+
+			if (!node.hasProperty("jcr:data")) {
+			    logger.warn("item at path " + path + " has no property jcr:data, response status = 404)");
+			    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			    return;
+			}
+			
+			InputStream istream = node.getProperty("jcr:data").getStream();
 
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType(mimeType);

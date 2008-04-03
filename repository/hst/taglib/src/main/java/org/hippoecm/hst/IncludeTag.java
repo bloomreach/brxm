@@ -60,10 +60,10 @@ public class IncludeTag extends TagSupport {
             request.setAttribute(contextName, newContext);
 
             URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(newContext, request, response);
-        	String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLoc, context.getPath());
+        	String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLoc, context.getLocation());
         	
             if (mappedPage == null) {
-            	throw new JspException("No mapped page could be found for path " + context.getPath()
+            	throw new JspException("No mapped page could be found for path " + context.getLocation()
             			+ " and urlMappingLocation " + urlMappingLoc);
             }
 
