@@ -16,6 +16,7 @@
 package org.hippoecm.hst;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,21 +32,24 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
 
 /**
  * Filter that creates a context available for expression language.  
  */
 public class ContextFilter implements Filter {
 	
-    private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
+//    private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
+    public static final String ENCODING_SCHEME = "UTF-8";
+    
 
     public static final String ATTRIBUTE_NAME = ContextFilter.class.getName() + ".ATTRIBUTE_NAME";
     public static final String URL_MAPPING_LOCATION = ContextFilter.class.getName() + ".URL_MAPPING_LOCATION";
 
     private String attributeName = "context";
-    private String basePath;
+    private String urlBasePath = "";
+    private String repositoryBaseLocation;
 	private String urlMappingLocation = "/urlMapping";
 	private String[] skippedExtensions = 
 		new String[] {"ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js"};
@@ -64,14 +68,19 @@ public class ContextFilter implements Filter {
         	this.attributeName = param.trim();
         }
 
-        // save in context for use by IncludeTag
+        // save in context for use by tags
         filterConfig.getServletContext().setAttribute(ATTRIBUTE_NAME, this.attributeName);
 
-        param = filterConfig.getInitParameter("basePath");
+        param = filterConfig.getInitParameter("urlBasePath");
         if (param != null && !param.trim().equals("")) {
-        	this.basePath = param;
+        	this.urlBasePath = param;
+        }
+        
+        param = filterConfig.getInitParameter("repositoryBaseLocation");
+        if (param != null && !param.trim().equals("")) {
+        	this.repositoryBaseLocation = param;
         } else {
-            throw new ServletException("Missing parameter urlBasePath in filter " + filterConfig.getFilterName());
+            this.repositoryBaseLocation = urlBasePath;
         }
         
         param = filterConfig.getInitParameter("urlMappingLocation");
@@ -112,8 +121,10 @@ public class ContextFilter implements Filter {
         String servletPath = req.getServletPath();
 
         if (servletPath.lastIndexOf(".") >= 0) { 
-	        String extension = servletPath.substring(servletPath.lastIndexOf(".")); 
-	    	if (skippedExtensionsList.contains(extension)) {
+	        String extension = servletPath.substring(servletPath.lastIndexOf("."));
+
+	        if (skippedExtensionsList.contains(extension)) {
+	            filterChain.doFilter(req, res);
 	    		return;
 	    	}	
     	}
@@ -137,12 +148,20 @@ public class ContextFilter implements Filter {
         
         // remove end /
 		if (relativePath.endsWith("/")) {
-        	relativePath = relativePath.substring(0, relativePath.length()-1);
+        	relativePath = relativePath.substring(0, relativePath.length() - 1);
         }
 
+		// remove urlBasePath
+		if (relativePath.startsWith(urlBasePath)) {
+			relativePath = relativePath.substring(urlBasePath.length());
+		}
+		
+		// decode
+		relativePath = URLDecoder.decode(relativePath, ENCODING_SCHEME);   
+
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
-        Context context = new Context(jcrSession, basePath);
-        context.setRelativePath(relativePath);
+        Context context = new Context(jcrSession, urlBasePath, repositoryBaseLocation);
+        context.setRelativeLocation(relativePath);
 
         req.setAttribute(attributeName, context);
 
@@ -152,10 +171,10 @@ public class ContextFilter implements Filter {
         	URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, req, res);
 
 			try {
-	        	String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLocation, context.getPath());
+	        	String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLocation, context.getLocation());
 	        	
 	            if (mappedPage == null) {
-	            	logger.warn("No mapped page could be found for path " + context.getPath());
+	            	throw new ServletException("No mapped page could be found for path " + context.getLocation());
 	            }
 	            else {
 
@@ -178,10 +197,5 @@ public class ContextFilter implements Filter {
 
         // normally call rest of the filter
         filterChain.doFilter(req, res);
-    }
-
-    public boolean doInternal(Context context, String documentPath, HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-        return false;
     }
 }
