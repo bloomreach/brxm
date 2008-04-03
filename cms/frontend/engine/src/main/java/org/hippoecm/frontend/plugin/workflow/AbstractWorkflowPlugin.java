@@ -55,9 +55,10 @@ public class AbstractWorkflowPlugin extends Plugin {
         super(pluginDescriptor, (WorkflowsModel)model, parentPlugin);
     }
 
-    protected void addWorkflowAction(final String dialogName, final String dialogLink, final String dialogTitle,
+    protected void addWorkflowAction(final String dialogName, final String dialogLink, final String dialogTitle, boolean visible,
                                      final WorkflowDialogAction action) {
-        add(new DialogLink(dialogName, new Model(dialogLink),
+        visible = true; // Temporary until HREPTWO-729 resolved
+        DialogLink item = new DialogLink(dialogName, new Model(dialogLink),
                 new IDialogFactory() {
                     public AbstractDialog createDialog(DialogWindow dialogWindow) {
                         return new AbstractWorkflowDialog(dialogWindow, dialogTitle) {
@@ -71,14 +72,17 @@ public class AbstractWorkflowPlugin extends Plugin {
                                 }
                             };
                     }
-                }, (WorkflowsModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
+                }, (WorkflowsModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory());
+        if(!visible)
+            item.setVisible(visible);
+        add(item);
     }
 
-    protected void addWorkflowAction(final String linkName, final String linkTitle,
+    protected void addWorkflowAction(final String linkName, final String linkTitle, boolean visible,
                                      final WorkflowDialogAction action) {
-
+        visible = true; // Temporary until HREPTWO-729 resolved
         final WorkflowsModel workflowModel = (WorkflowsModel) getModel();
-        add(new AjaxLink(linkName, new Model(linkTitle)) {
+        AjaxLink item = new AjaxLink(linkName, new Model(linkTitle)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -100,6 +104,18 @@ public class AbstractWorkflowPlugin extends Plugin {
                     log.error(e.getMessage());
                 }
             }
-        });
+        };
+        if(!visible)
+            item.setVisible(visible);
+        add(item);
+    }
+
+    protected void addWorkflowAction(final String linkName, final String linkTitle, 
+                                     final WorkflowDialogAction action) {
+        addWorkflowAction(linkName, linkTitle, true, action);
+    }
+    protected void addWorkflowAction(final String dialogName, final String dialogLink, final String dialogTitle,
+                                     final WorkflowDialogAction action) {
+        addWorkflowAction(dialogName, dialogTitle, dialogTitle, true, action);
     }
 }

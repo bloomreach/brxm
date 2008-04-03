@@ -30,7 +30,7 @@ public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedData
                 if(parameters.containsKey("published")) {
                     rtvalue = "changed";
                 } else {
-                    rtvalue = "preview";
+                    rtvalue = "new";
                 }
             } else {
                 if(parameters.containsKey("published")) {

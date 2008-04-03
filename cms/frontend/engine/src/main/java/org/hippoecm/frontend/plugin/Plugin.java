@@ -66,12 +66,22 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
             bottomChannel.register(this);
         }
 
+        StringBuffer sb;
+        
         cssClasses = null;
         ParameterValue classes = pluginDescriptor.getParameter("css");
         if (classes != null) {
-            cssClasses = "";
+            sb = null;
             for (String cssClass : classes.getStrings()) {
-                cssClasses = cssClasses + " " + cssClass;
+                if (sb == null) {
+                    sb = new StringBuffer();
+                } else {
+                    sb.append(" ");
+                }
+                sb.append(cssClass);
+            }
+            if(sb != null) {
+                cssClasses = new String(sb);
             }
         }
 
