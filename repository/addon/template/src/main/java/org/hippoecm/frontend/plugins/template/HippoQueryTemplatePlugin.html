@@ -21,5 +21,62 @@
         <div>Statement</div>
         <div wicket:id="statement" class="fields">
         </div>
-    </wicket:panel>
+        <!-- temporary Statement examples while we do not have a query wizard -->
+        <div>Statement examples (all xpath)</div>
+        <div><strong>NOTE:</strong> Parameterized queries: The hst can resolve parameterized queries: Using $xxx where xxx is some 
+            name, can be used in the queries and will be substituted by the hst by parameters defined there</div>
+        <div>
+            <table style="background-color:lightgrey;">
+                <tr>
+                    <th><strong>What does it</strong></th>
+                    <th><strong>The Query</strong></th>
+                    <th><strong>Note</strong></th>
+                </tr>
+                <tr>
+                    <td>All nodes</td>
+                    <td>//*</td>
+                </tr>
+                <tr>
+                    <td>All nodes of type my:type</td>
+                    <td>//element(*,my:type)</td>
+                </tr>
+                <tr>
+                    <td>All nodes of type my:type with property myprop</td>
+                    <td>//element(*,my:type)[@myprop]</td>
+                </tr>
+                <tr>
+                    <td>All nodes of type my:type with property my:prop = foo</td>
+                    <td>//element(*,my:type)[@myprop='foo']</td>
+                </tr>
+                <tr>
+                    <td>All nodes of type x with property my:prop = foo ordered by my:title</td>
+                    <td>//element(*,my:type)[@my:prop='foo']</td>
+                </tr>
+                <tr>
+                    <td>All nodes of type x with property my:prop = foo ordered by my:title</td>
+                    <td>//element(*,my:type)[@my:prop='foo'] order by my:title</td>
+                </tr>
+                <tr>
+                    <td>All nodes below some path</td>
+                    <td>/content/articles//*</td>
+                    <td>This will be a slow query for large (>10^5 results) repository</td>
+                </tr>
+                <tr>
+                    <td>All nodes below some path of some type</td>
+                    <td>/content/articles//element(*,my:type)</td>
+                    <td>This will be a slow query for large (>10^5 results) repository</td>
+                </tr>
+                <tr>
+                    <td>All nodes below some path with some prop</td>
+                    <td>/content/articles//*[@my:prop]</td>
+                    <td>This will be a slow query for large (>10^5 results) repository</td>
+                </tr>
+                <tr>
+                    <td>All nodes below some path with some prop = 'foo'</td>
+                    <td>/content/articles//*[@my:prop='foo']</td>
+                    <td>This will be a slow query for large (>10^5 results) repository</td>
+                </tr>
+            </table>
+         </div>
+       </wicket:panel>
 </html>

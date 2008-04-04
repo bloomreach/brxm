@@ -133,9 +133,11 @@ public class HippoQueryTemplatePlugin extends Plugin {
             if(statement == null) {
                 throw new InvalidQueryException("statement is not allowed to be empty");
             }
-            if(language == null || (!language.equals("xpath") && !language.equals("sql") )) {
+            
+            if(language == null) {
                 throw new InvalidQueryException("supported languages are 'xpath' and 'sql'");
             }
+            language = language.toLowerCase();
             
             Query query = qrm.createQuery(statement, language);
 
