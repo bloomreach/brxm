@@ -89,7 +89,7 @@ public abstract class AbstractListingPlugin extends Plugin {
             while (node != null) {
                 try {
                     if (!node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType(HippoNodeType.NT_HANDLE)
-                            && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                            && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE) && !node.isNodeType(HippoNodeType.NT_REQUEST)) {
                         break;
                     } else {
                         node = node.getParent();
