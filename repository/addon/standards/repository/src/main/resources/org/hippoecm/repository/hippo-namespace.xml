@@ -228,6 +228,9 @@
                   <sv:value>Html</sv:value>
                   <sv:value>Boolean</sv:value>
                   <sv:value>Date</sv:value>
+                  <sv:value>Binary</sv:value>
+                  <sv:value>hippo:query</sv:value>
+                  <sv:value>hippo:facetselect</sv:value>
                 </sv:property>
               </sv:node>
             </sv:node>
