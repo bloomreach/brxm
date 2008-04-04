@@ -86,12 +86,16 @@ public abstract class AbstractListingPlugin extends Plugin {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel model = new JcrNodeModel(notification.getModel());
             Node node = (Node) model.getNode();
+            boolean selectParentModel = false; 
             while (node != null) {
                 try {
                     if (!node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType(HippoNodeType.NT_HANDLE)
                             && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE) && !node.isNodeType(HippoNodeType.NT_REQUEST)) {
                         break;
                     } else {
+                        if(node.isNodeType(HippoNodeType.NT_DOCUMENT) || node.isNodeType(HippoNodeType.NT_REQUEST)) {
+                            selectParentModel = true;
+                        }
                         node = node.getParent();
                     }
                 } catch (RepositoryException e) {
@@ -112,8 +116,11 @@ public abstract class AbstractListingPlugin extends Plugin {
             listModel.put("entries", entries);
             setModel(listModel);
             replace(dataTable = getTable(listModel));
-            dataTable.setSelectedNode(model);
-            
+            if(selectParentModel) {
+                dataTable.setSelectedNode(model.getParentModel());
+            } else {
+                dataTable.setSelectedNode(model);  
+            }
             notification.getContext().addRefresh(this);
         }
     }
