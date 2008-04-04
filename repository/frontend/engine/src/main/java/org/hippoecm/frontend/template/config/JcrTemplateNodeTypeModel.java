@@ -50,7 +50,7 @@ public class JcrTemplateNodeTypeModel extends NodeModelWrapper {
             field.setProperty(HippoNodeType.HIPPO_TYPE, type);
             UUID uuid = java.util.UUID.randomUUID();
             field.setProperty(HippoNodeType.HIPPO_NAME, uuid.toString());
-            String path = typeName.substring(0, typeName.indexOf(':')) + ":" + type.toLowerCase();
+            String path = typeName.substring(0, typeName.indexOf(':')) + ":" + type.toLowerCase().replace(':', '_') ;
             field.setProperty(HippoNodeType.HIPPO_PATH, path);
 
             return uuid;
