@@ -56,26 +56,9 @@ public class SortableDocumentsProvider extends SortableDataProvider {
     }
 
     private void sortResources() {
-        Collections.sort(resources, new Comparator<JcrNodeModel>() {
-
-            public int compare(JcrNodeModel o1, JcrNodeModel o2) {
-                try {
-                    if(o1 == null || o1.getNode() == null) {
-                      if(o2 == null || o2.getNode() == null) {
-                          return 0;
-                      }
-                      return 1;
-                    } else if(o2 == null || o2.getNode() == null) {
-                        return -1;
-                    }
-                    String name1 = o1.getNode().getName();
-                    String name2 = o2.getNode().getName();
-                    return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
-                } catch (RepositoryException e) {
-                    return 0;
-                }
-            }
-        });
+        
+        JcrNodeModelComparator<JcrNodeModel> jcrNodeModelComparator = new JcrNodeModelComparator<JcrNodeModel>(getSort().getProperty());
+        Collections.sort(resources, jcrNodeModelComparator);       
         if (getSort().isAscending() == false) {
             Collections.reverse(resources);
         }
