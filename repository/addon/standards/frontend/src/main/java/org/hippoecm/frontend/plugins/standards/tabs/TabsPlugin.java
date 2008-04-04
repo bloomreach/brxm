@@ -57,6 +57,8 @@ public class TabsPlugin extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
 
+    public static final int MAX_TAB_TITLE_LENGTH = 9;
+
     private Map<JcrNodeModel, Tab> editors;
     private TabbedPanel tabbedPanel;
     private int selectCount;
@@ -272,8 +274,13 @@ public class TabsPlugin extends Plugin {
             PluginDescriptor descriptor = getPlugin().getDescriptor();
             String title = descriptor.getWicketId();
             ParameterValue param = descriptor.getParameter("title");
+            
             if (param != null && param.getType() != param.TYPE_UNKNOWN) {
-                title = param.getStrings().get(0);
+            	String fulltitle = param.getStrings().get(0).toString();
+            	int length = fulltitle.length();
+            	String appendix = (length < (MAX_TAB_TITLE_LENGTH + 1) ? "" : "..");
+            	length = (length < MAX_TAB_TITLE_LENGTH ? length : MAX_TAB_TITLE_LENGTH);
+                title = fulltitle.substring(0, length) + appendix;
             }
             return new Model(title);
         }
