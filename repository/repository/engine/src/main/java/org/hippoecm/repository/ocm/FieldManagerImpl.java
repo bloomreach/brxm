@@ -45,6 +45,7 @@ import org.jpox.store.fieldmanager.AbstractFieldManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.HierarchyResolver;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -630,6 +631,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (value == null) {
             try {
                 Node removal = HierarchyResolver.getNode(node, field);
+                DerivedDataEngine.removal(removal);
                 removal.remove();
             } catch (InvalidItemStateException ex) {
                 if (log.isDebugEnabled()) {
@@ -658,6 +660,7 @@ class FieldManagerImpl extends AbstractFieldManager {
                     HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                     child = (Node) HierarchyResolver.getItem(node, field, false, last);
                     if (child != null) {
+                        DerivedDataEngine.removal(child);
                         child.remove();
                     }
                     Document document = (Document) value;

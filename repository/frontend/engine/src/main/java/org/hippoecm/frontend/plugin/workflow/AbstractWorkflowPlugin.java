@@ -21,6 +21,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -40,6 +41,7 @@ import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -57,57 +59,72 @@ public class AbstractWorkflowPlugin extends Plugin {
 
     protected void addWorkflowAction(final String dialogName, final String dialogLink, final String dialogTitle, boolean visible,
                                      final WorkflowDialogAction action) {
-        visible = true; // Temporary until HREPTWO-729 resolved
-        DialogLink item = new DialogLink(dialogName, new Model(dialogLink),
-                new IDialogFactory() {
-                    public AbstractDialog createDialog(DialogWindow dialogWindow) {
-                        return new AbstractWorkflowDialog(dialogWindow, dialogTitle) {
-                                protected void execute() throws Exception {
-                                    Channel channel = getTopChannel();
-                                    Request request = action.execute(channel, getWorkflow());
-                                    if(request != null) {
-                                        channel.send(request);
-                                        // request.getContext().apply(target); // FIXME
-                                    }
-                                }
-                            };
-                    }
-                }, (WorkflowsModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory());
-        if(!visible)
-            item.setVisible(visible);
-        add(item);
+        if(visible) {
+            add(new DialogLink(dialogName, new Model(dialogLink),
+                               new IDialogFactory() {
+                                   public AbstractDialog createDialog(DialogWindow dialogWindow) {
+                                       return new AbstractWorkflowDialog(dialogWindow, dialogTitle) {
+                                               protected void execute() throws Exception {
+                                                   Channel channel = getTopChannel();
+                                                   Request request = action.execute(channel, getWorkflow());
+                                                   if(request != null) {
+                                                       channel.send(request);
+                                                       // request.getContext().apply(target); // FIXME
+                                                   }
+                                               }
+                                           };
+                                   }
+                               }, (WorkflowsModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
+        } else {
+            add(new EmptyPanel(dialogName));
+        }
     }
 
     protected void addWorkflowAction(final String linkName, final String linkTitle, boolean visible,
                                      final WorkflowDialogAction action) {
-        visible = true; // Temporary until HREPTWO-729 resolved
         final WorkflowsModel workflowModel = (WorkflowsModel) getModel();
-        AjaxLink item = new AjaxLink(linkName, new Model(linkTitle)) {
-            private static final long serialVersionUID = 1L;
+        if(visible) {
+            add(new AjaxLink(linkName, new Model(linkTitle)) {
+                    private static final long serialVersionUID = 1L;
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                try {
-                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                    Workflow workflow = manager.getWorkflow(workflowModel.getWorkflowDescriptor());
-                    Channel channel = getTopChannel();
-                    Request request = action.execute(channel, workflow);
-                    if(request != null) {
-                        channel.send(request);
-                        request.getContext().apply(target);
+                    @Override
+                        public void onClick(AjaxRequestTarget target) {
+                        try {
+                            // before saving (which possibly means deleting), find the handle
+                            JcrNodeModel handle = workflowModel.getNodeModel();
+                            while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                                handle = handle.getParentModel();
+                            }
+                            // save the handle so that the workflow uses the correct content
+                            handle.getNode().save();
+                            ((UserSession) Session.get()).getJcrSession().refresh(true);
+
+                            try {
+                                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                                Workflow workflow = manager.getWorkflow(workflowModel.getWorkflowDescriptor());
+                                Channel channel = getTopChannel();
+                                Request request = action.execute(channel, workflow);
+                                if(request != null) {
+                                    channel.send(request);
+                                    request.getContext().apply(target);
+                                }
+                            } catch (MappingException e) {
+                                log.error(e.getMessage());
+                            } catch (RepositoryException e) {
+                                log.error(e.getMessage());
+                            } catch (Exception e) {
+                                log.error(e.getMessage());
+                            }
+
+                        } catch(RepositoryException ex) {
+                            log.error("Invalid data to save", ex);
+                        }
+
                     }
-                } catch (MappingException e) {
-                    log.error(e.getMessage());
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-            }
-        };
-        if(!visible)
-            item.setVisible(visible);
-        add(item);
+                });
+        } else {
+            add(new EmptyPanel(linkName));
+        }
     }
 
     protected void addWorkflowAction(final String linkName, final String linkTitle, 

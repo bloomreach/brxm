@@ -1,3 +1,5 @@
+// propertymodels are evil
+
 /*
  * Copyright 2008 Hippo
  *
@@ -15,6 +17,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,6 +30,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.PropertyModel;
 
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
@@ -41,33 +46,81 @@ import org.hippoecm.repository.standardworkflow.PrototypeWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FolderDialog extends AbstractWorkflowDialog {
+public class ExtendedFolderDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     private transient static final Logger log = LoggerFactory.getLogger(PrototypeDialog.class);
 
-    private String name;
+    private Map<String,String> folderTypes;
 
-    public FolderDialog(DialogWindow dialogWindow) {
+    private String name;
+    private String folderType;
+
+    private DropDownChoice folderChoice;
+
+    public ExtendedFolderDialog(DialogWindow dialogWindow) {
         super(dialogWindow, "Add folder");
+
         name = "New folder";
+        folderTypes = new TreeMap<String,String>();
+
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setEnabled(false);
+        } else {
+            try {
+                QueryManager qmgr = dialogWindow.getNodeModel().getNode().getSession().getWorkspace().getQueryManager();
+                Query query = qmgr.createQuery("select * from hippo:templatetype", Query.SQL);
+                QueryResult rs = query.execute();
+                for(NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
+                    Node prototypeNode = iter.nextNode();
+                    if(prototypeNode.hasNode("hippo:prototype")) {
+                        String documentType = prototypeNode.getName();
+                        String prototypePath = prototypeNode.getNode("hippo:prototype").getPath();
+                        if(!documentType.startsWith("hippo:") && !documentType.startsWith("reporting:")) {
+                            /* FIXME: dropping the namespace has of course
+                             * serious consequences, as when within different
+                             * namespaces a same type is used, you can select
+                             * only one.
+                             */
+                            if(documentType.contains(":"))
+                                documentType = documentType.substring(documentType.indexOf(":") + 1);
+                            folderTypes.put(documentType, prototypePath);
+                        }
+                    }
+                }
+            } catch(RepositoryException ex) {
+                log.error("could not obtain document types listing", ex);
+            }
         }
+
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+
+        add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "folderType"), new LinkedList(folderTypes.keySet())) {
+                protected boolean wantOnSelectionChangedNotifications() {
+                    return true;
+                }
+            });
+        folderChoice.setNullValid(false);
+        folderChoice.setRequired(true);
     }
 
     @Override
     protected void execute() throws Exception {
         PrototypeWorkflow workflow = (PrototypeWorkflow) getWorkflow();
         if (workflow != null) {
-            String path = workflow.addFolder(name);
+            String type = folderTypes.get(folderType);
+            if(type == null) {
+                log.error("hacking attempt by user");
+                return;
+            }
+            String path = workflow.addFolder(name, type);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
             if (path != null) {
                 Channel channel = getChannel();
                 if (channel != null) {
                     Request request = channel.createRequest("flush", nodeModel.getParentModel());
                     channel.send(request);
+
                     request = channel.createRequest("select", nodeModel);
                     channel.send(request);
                 } else {

@@ -97,11 +97,14 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
             if(draft != null) {
                 published = (PublishableDocument) draft.clone();
                 published.state = PublishableDocument.PUBLISHED;
-                unpublished = (PublishableDocument) draft.clone();
-                unpublished.state = PublishableDocument.UNPUBLISHED;
+                //unpublished = (PublishableDocument) draft.clone();
+                //unpublished.state = PublishableDocument.UNPUBLISHED;
+                unpublished = null;
+                draft = null;
             } else {
                 published = (PublishableDocument) unpublished.clone();
                 published.state = PublishableDocument.PUBLISHED;
+                unpublished = null;
             }
         } catch(CloneNotSupportedException ex) {
             throw new WorkflowException("document is not a publishable document");

@@ -62,9 +62,9 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
                 if (channel != null) {
                     Request request = channel.createRequest("flush", nodeModel.getParentModel());
                     channel.send(request);
-
-                    request = channel.createRequest("edit", nodeModel);
-                    channel.send(request);
+                    // HREPTWO-749:
+                    // request = channel.createRequest("edit", nodeModel);
+                    // channel.send(request);
                 } else {
                     log.error("could not send edit message");
                 }

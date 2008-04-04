@@ -275,6 +275,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             Session rootSession = documentMgr.getSession();
             Method targetMethod = null;
             Object returnObject = null;
+            Throwable returnException = null;
             try {
                 String path = getPath(uuid);
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
@@ -292,14 +293,17 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(), targetMethod.getName(), args, returnObject, path);
                 return returnObject;
             } catch(NoSuchMethodException ex) {
-                throw new RepositoryException("Impossible failure for workflow proxy", ex);
+                throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
             } catch(IllegalAccessException ex) {
-                throw new RepositoryException("Impossible failure for workflow proxy", ex);
+                throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
             } catch(InvocationTargetException ex) {
-                throw ex.getCause();
+                ex.getCause().printStackTrace(System.err);
+                throw returnException = ex.getCause();
             } finally {
                 StringBuffer sb = new StringBuffer();
                 sb.append("AUDIT workflow invocation ");
+		sb.append(uuid);
+                sb.append(".");
                 sb.append(upstream != null ? upstream.getClass().getName() : "<unknown>");
                 sb.append(".");
                 sb.append(method != null ? method.getName() : "<unknown>");
@@ -313,7 +317,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     }
                 }
                 sb.append(") -> ");
-                sb.append(returnObject != null ? returnObject.toString() : "null");
+                if(returnException != null)
+                    sb.append(returnException.getClass().getName());
+                else if(returnObject != null)
+                    sb.append(returnObject.toString());
+                else
+                    sb.append("<<null>>");
                 log.info(new String(sb));
             }
         }

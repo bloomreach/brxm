@@ -41,6 +41,10 @@ import org.slf4j.LoggerFactory;
  * extend this class and implement the doOk() method.
  *
  */
+/* FIXME: this class should be an inner class of
+ * org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin as their
+ * implementations are dependent.
+ */
 public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     static protected Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);

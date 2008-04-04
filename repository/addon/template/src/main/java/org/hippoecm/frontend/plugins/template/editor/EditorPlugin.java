@@ -34,15 +34,13 @@ public class EditorPlugin extends Plugin {
     private EditorForm form;
 
     public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        super(pluginDescriptor, model, parentPlugin);
 
-        JcrNodeModel jcrModel = (JcrNodeModel) getModel();
+        JcrNodeModel jcrModel = new JcrNodeModel(model);
         Channel channel = getTopChannel();
         ChannelFactory factory = getPluginManager().getChannelFactory();
 
-        DialogLink save = new DialogLink("save-dialog", new Model("Save"), SaveDialog.class, jcrModel, channel, factory);
-        add(save);
-        form = new EditorForm("form", (JcrNodeModel) getModel(), this);
+        form = new EditorForm("form", jcrModel, this);
         add(form);
 
         setOutputMarkupId(true);
@@ -52,7 +50,7 @@ public class EditorPlugin extends Plugin {
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
-            if (!nodeModel.equals(getPluginModel())) {
+            if (!nodeModel.equals(new JcrNodeModel(getPluginModel()))) {
                 form.destroy();
                 replace(form = new EditorForm("form", nodeModel, this));
                 notification.getContext().addRefresh(this);

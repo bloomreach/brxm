@@ -24,12 +24,14 @@ import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.ItemVisitor;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -73,7 +75,8 @@ public class DerivedDataEngine {
             for(NodeIterator iter = session.pendingChanges(node,"jcr:uuid"); iter.hasNext(); ) {
                 Node modified = iter.nextNode();
                 if(logger.isDebugEnabled()) {
-                    logger.debug("Derived engine found modified referenceable node "+modified.getPath()+" with "+modified.getReferences().getSize()+" references");
+                    logger.debug("Derived engine found modified referenceable node " + modified.getPath() +
+                                 " with " + modified.getReferences().getSize() + " references");
                 }
                 for(PropertyIterator i = modified.getReferences(); i.hasNext(); ) {
                     try {
@@ -131,7 +134,10 @@ public class DerivedDataEngine {
 
         Node derivatesFolder = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
         for(Node modified : recomputeSet) {
-            
+
+            modified.setProperty(HippoNodeType.HIPPO_RELATED, new Value[0]);
+            Set<String> dependencies = new HashSet<String>();
+
             for(NodeIterator funcIter = derivatesFolder.getNodes();
                 funcIter.hasNext(); ) {
                 Node function = funcIter.nextNode();
@@ -153,7 +159,7 @@ public class DerivedDataEngine {
                         /* Now populate the parameters map to be fed to the
                          * compute function.
                          */
-                        for(NodeIterator propDefIter=function.getNode("hippo:accessed").getNodes();propDefIter.hasNext();) {
+                        for(NodeIterator propDefIter = function.getNode("hippo:accessed").getNodes(); propDefIter.hasNext(); ) {
                             Node propDef = propDefIter.nextNode();
                             String propName = propDef.getName();
                             if(propDef.isNodeType("hippo:builtinpropertyreference")) {
@@ -307,8 +313,8 @@ public class DerivedDataEngine {
                     logger.error(ex.getClass().getName()+": "+ex.getMessage());
                     throw new RepositoryException(ex); // impossible
                 } catch(ValueFormatException ex) {
-                    // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                    // ex.printStackTrace(System.err);
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
                     logger.error(ex.getClass().getName()+": "+ex.getMessage());
                     throw new RepositoryException(ex); // impossible
                 } catch(ClassNotFoundException ex) {
@@ -328,9 +334,44 @@ public class DerivedDataEngine {
                     throw new RepositoryException(ex); // impossible
                 }
             }
+
+            Value[] dependenciesValues = new Value[dependencies.size()];
+            int i = 0;
+            for(String dependency : dependencies)
+                dependenciesValues[i++] = valueFactory.createValue(dependency, PropertyType.REFERENCE);
+            modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
         }
     }
     
+    public static void removal(Node removed) throws RepositoryException {
+        if(removed.isNodeType("jcr:referenceable")) {
+            final String uuid = removed.getUUID();
+            removed.accept(new ItemVisitor() {
+                    public void visit(Property property) throws RepositoryException {
+                    }
+                    public void visit(Node node) throws RepositoryException {
+                        for(PropertyIterator iter = node.getReferences(); iter.hasNext(); ) {
+                            Property prop = iter.nextProperty();
+                            if(prop.getDefinition().getName().equals(HippoNodeType.HIPPO_RELATED)) {
+                                Value[] values = prop.getValues();
+                                for(int i=0; i<values.length; i++) {
+                                    if(values[i].getString().equals(uuid)) {
+                                        Value[] newValues = new Value[values.length - 1];
+                                        if(i > 0)
+                                            System.arraycopy(values, 0, newValues, 0, i - 1);
+                                        if(values.length - i > 0)
+                                            System.arraycopy(values, i + 1, newValues, i, values.length - i);
+                                        prop.setValue(values);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+        }
+    }
+
     private PropertyDefinition getPropertyDefinition(NodeType nodetype, String propertyPath) {
         PropertyDefinition[] definitions = nodetype.getPropertyDefinitions();
         for(PropertyDefinition propDef : definitions) {
@@ -347,4 +388,5 @@ public class DerivedDataEngine {
             return parameters;
         }
     }
+
 }
