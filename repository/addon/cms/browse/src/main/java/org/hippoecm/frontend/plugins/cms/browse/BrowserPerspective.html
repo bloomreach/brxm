@@ -15,32 +15,30 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-  <table class="grid" width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr style="display: none" >
-        <td class="box" colspan="3">
-          <div wicket:id="browserBreadcrumbPlugin" class="Breadcrumb">breadcrumb</div>
-        </td>
-      </tr>
-      <tr>
-        <td class="box" valign="top" width="20%">
-          <h2 class="search">Search  
-          </h2>
+    <span wicket:id="browserBreadcrumbPlugin" class="Breadcrumb">breadcrumb</span>
+        <tr>
+        <td class="gridside">
+          <div class="pluginbox">
+          <h2 class="search">Search</h2>
          <div wicket:id="browserPlugin" class="Tree">tree here</div>
-        </td>
-        <td class="box" valign="top">
-          <h2 class="documents">Documents  
-          </h2>
-                      <div wicket:id="listPlugin" class="Doclist">documents here</div>
-          
-        </td>
-        <td class="box" valign="top" width="20%">
-          <div class="padding">
-        <br/><br/>
-            <div wicket:id="workflowsPlugin" class="Menu">workflow here</div>
           </div>
         </td>
-        
-      </tr>
-    </table>
+        <td class="gridmiddle">
+          <div class="pluginbox">
+          <h2 class="documents">Documents  
+          </h2>
+                     <div wicket:id="listPlugin" class="Doclist">documents here</div>
+          </div>
+        </td>
+        <td class="gridside">
+          <div class="pluginbox">
+          <h2 class="actions">Actions  
+          </h2>
+          <div class="padding">
+          <div wicket:id="workflowsPlugin" class="Menu">workflow here</div>
+          </div>
+          </div>
+        </td>
+        </tr>
   </wicket:panel>
 </html>
