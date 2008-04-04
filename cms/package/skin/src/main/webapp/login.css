@@ -42,12 +42,14 @@ div#loginWrapper form {
   position: relative;
   margin: 0px auto;
   margin-top: 20px;
-  width:454px;
+  width:398px;
   height: 172px ;
   border:1px solid black;
   background: url("images/loginback.gif") no-repeat;
-  padding-top: 80px;
-  padding-left: 50px;
+  padding-top: 60px;
+  padding-left: 106px
+
+
 }
 
 div#loginWrapper form label { float: left; width: 90px; margin-right: 10px; color: white}
@@ -57,9 +59,9 @@ div#loginWrapper form label.label-right { float: right; width: 180px; margin-rig
 div#loginWrapper form input { 
   margin-bottom: 5px; 
   border:1px solid #999999;
-  padding: 5px;
-  font-size: 18px;
-  color: #666666;
+   padding: 5px;
+   font-size: 12px;
+  
  font-family: tahoma;
 }
 div#loginWrapper form select { 

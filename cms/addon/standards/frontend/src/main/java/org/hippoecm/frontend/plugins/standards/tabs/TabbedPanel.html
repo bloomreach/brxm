@@ -14,15 +14,16 @@
     * limitations under the License.
 -->
 <wicket:panel>
-<div wicket:id="tabs-container" class="tab-row">
-<ul>
-    <li wicket:id="tabs">
-        <div wicket:id="container">
+<div wicket:id="tabs-container">
+       <ul class="tabs">
+           <li wicket:id="tabs">
+               <span wicket:id="container">
+                   <a href="#" wicket:id="close" class="close">X</a>
             <a href="#" wicket:id="link"><span wicket:id="title">[[tab title]]</span></a>
-            <a href="#" wicket:id="close" class="close">X</a>
-        </div>
-    </li>
-</ul>
+            
+               </span>
+        </li>
+        </ul>
 </div>
-<div wicket:id="panel" class="tab-panel">[panel]</div>
+<table wicket:id="panel" class="gridroot">[panel]</table>
 </wicket:panel>
