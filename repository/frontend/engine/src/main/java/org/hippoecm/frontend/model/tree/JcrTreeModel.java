@@ -51,6 +51,14 @@ public class JcrTreeModel extends DefaultTreeModel {
 
     public AbstractTreeNode lookup(JcrNodeModel nodeModel) {
         String key = nodeModel.getItemModel().getPath();
+        if((AbstractTreeNode) registry.get(key) == null) {
+            AbstractTreeNode parentNode = lookup(nodeModel.getParentModel());
+            if(parentNode!=null) {
+                // load children which get registered
+                parentNode.children();
+            } 
+        }
+        
         return (AbstractTreeNode) registry.get(key);
     }
 
