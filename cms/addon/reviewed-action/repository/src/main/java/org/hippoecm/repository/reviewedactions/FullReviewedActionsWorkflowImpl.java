@@ -40,9 +40,9 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             }
         } else {
             /* FIXME issue HREPTWO-728
-         * workaround by uncommenting source
-            if(!getWorkflowContext().getUsername().equals(username))
-                throw new WorkflowException("document already being edited");
+             * workaround by uncommenting source
+              if(!getWorkflowContext().getUsername().equals(username))
+                  throw new WorkflowException("document already being edited");
              */
         }
         return draft;
@@ -55,6 +55,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             try {
                 unpublished = (PublishableDocument) draft.clone();
                 unpublished.state = PublishableDocument.UNPUBLISHED;
+                draft = null;
             } catch(CloneNotSupportedException ex) {
                 throw new WorkflowException("document is not a publishable document");
             }

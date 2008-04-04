@@ -34,6 +34,12 @@
   </context-param>
 
   <servlet>
+    <servlet-name>LoggingServlet</servlet-name>
+    <servlet-class>org.hippoecm.repository.LoggingServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
     <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
     <init-param>
@@ -47,8 +53,13 @@
       <description>The location of the repository configuration file. Unless the location
       starts with file://, the location is retreived with getResourceAsStream().</description>
     </init-param>
-    <load-on-startup>1</load-on-startup>
+    <load-on-startup>2</load-on-startup>
   </servlet>
+
+  <servlet-mapping>
+    <servlet-name>LoggingServlet</servlet-name>
+    <url-pattern>/logging/*</url-pattern>
+  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>RepositoryServlet</servlet-name>

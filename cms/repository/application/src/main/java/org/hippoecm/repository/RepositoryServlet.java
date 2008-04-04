@@ -226,7 +226,6 @@ public class RepositoryServlet extends HttpServlet {
         writer.println("  <h2>Hippo Repository Console</h2>");
         writer.println("  <h3>Request parameters</h3>");
         writer.println("    <table style=\"params\" summary=\"request parameters\"><tr><th>name</th><th>value</th></tr>");
-        //writer.println("    <tr><td>context path</td><td>: <code>" + req.getContextPath() + "</code></td></tr>");
         writer.println("    <tr><td>servlet path</td><td>: <code>" + req.getServletPath() + "</code></td></tr>");
         writer.println("    <tr><td>request uri</td><td>: <code>" + req.getRequestURI() + "</code></td></tr>");
         writer.println("    <tr><td>relative path</td><td>: <code>" + path + "</code></td></tr>");

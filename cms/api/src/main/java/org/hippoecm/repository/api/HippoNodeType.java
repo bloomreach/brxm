@@ -127,6 +127,7 @@ public interface HippoNodeType {
     final public static String HIPPO_PERMISSIONS = "hippo:permissions";
     final public static String HIPPO_PROTOTYPE = "hippo:prototype";
     final public static String HIPPO_QUERYNAME = "hippo:queryname";
+    final public static String HIPPO_RELATED = "hippo:related";
     final public static String HIPPO_RENDERER = "hippo:renderer";
     final public static String HIPPO_RESULTSET = "hippo:resultset";
     final public static String HIPPO_ROLES = "hippo:roles";

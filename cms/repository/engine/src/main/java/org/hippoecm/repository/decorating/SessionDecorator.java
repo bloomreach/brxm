@@ -440,7 +440,7 @@ public class SessionDecorator implements XASession, HippoSession {
     public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
             LockException, VersionException, RepositoryException {
 
-        if (destAbsNodePath.startsWith(srcNode.getPath()) && !destAbsNodePath.equals(srcNode.getPath())) {
+        if (destAbsNodePath.startsWith(srcNode.getPath()+"/") && !destAbsNodePath.equals(srcNode.getPath())) {
             String msg = srcNode.getPath() + ": Invalid destination path (cannot be descendant of source path)";
             throw new RepositoryException(msg);
         }

@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -73,8 +74,10 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
         String stateSummary = "UNKNOWN";
         try {
             Node node = ((WorkflowsModel)getModel()).getNodeModel().getNode();
-            if(node.isNodeType(HippoNodeType.NT_HANDLE))
-                node = node.getNode(node.getName());
+            if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for(NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); )
+                    node = iter.nextNode(); // FIXME: take the last one, the first should be good enough
+            }
             if(node.hasProperty("hippostd:stateSummary"))
                 stateSummary = node.getProperty("hippostd:stateSummary").getString();
         } catch(RepositoryException ex) {
@@ -106,7 +109,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 }
             });
         addWorkflowAction("requestDePublication-dialog", "Request unpublication",
-                          !(stateSummary.equals("review") || stateSummary.equals("live")),
+                          !(stateSummary.equals("review") || stateSummary.equals("new")),
             new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -133,7 +136,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 }
             });
         addWorkflowAction("dePublish-dialog", "Unpublish",
-                          !(stateSummary.equals("review") || stateSummary.equals("live")),
+                          !(stateSummary.equals("review") || stateSummary.equals("new")),
             new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -142,6 +145,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 }
             });
         addWorkflowAction("delete-dialog", "Unpublish and/or delete",
+                          true,
             new WorkflowDialogAction() {
                 public Request execute(Channel channel, Workflow wf) throws Exception {
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -149,31 +153,5 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     return null;
                 }
             });
-    }
-
-    @Override
-    public void receive(Notification notification) {
-        if ("save".equals(notification.getOperation())) {
-            try {
-                WorkflowsModel workflowModel = (WorkflowsModel) getPluginModel();
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow)
-                                                              manager.getWorkflow(workflowModel.getWorkflowDescriptor());
-                if(workflow != null) {
-                    workflow.commitEditableInstance();
-                }
-            } catch (RemoteException e) {
-                log.error(e.getMessage());
-            } catch (WorkflowException e) {
-                log.error(e.getMessage());
-            } catch (MappingException e) {
-                log.error(e.getMessage());
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-        } else if ("close".equals(notification.getOperation())) {
-            // FIXME: possibly dispose editable instance?
-        }
-        super.receive(notification);
     }
 }
