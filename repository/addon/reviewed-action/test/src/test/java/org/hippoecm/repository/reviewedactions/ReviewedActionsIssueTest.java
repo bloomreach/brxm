@@ -101,6 +101,7 @@ public class ReviewedActionsIssueTest extends TestCase {
             root.getNode("documents").remove();
         node = root.addNode("documents");
         node = node.addNode("myarticle", "hippo:handle");
+        node.addMixin("mix:referenceable");
         node = node.addNode("myarticle", "hippo:testdocument");
         node.addMixin("hippo:harddocument");
         node.setProperty("content", LOREM);
@@ -204,7 +205,14 @@ public class ReviewedActionsIssueTest extends TestCase {
 
         // These steps would be taken by editor:
         {
+            node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle");
+            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+            assertNotNull("No applicable workflow where there should be one", workflow);
+            Document document = workflow.obtainEditableInstance();
+            session.save();
+            session.refresh(true);
             node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
+            assertTrue(node.getUUID().equals(document.getIdentity()));
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
             session.save();

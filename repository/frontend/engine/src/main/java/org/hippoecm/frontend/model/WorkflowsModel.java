@@ -78,6 +78,13 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
 
         int sequence = 0;
 
+        if(handle.isNodeType(HippoNodeType.NT_DOCUMENT) || handle.isNodeType(HippoNodeType.NT_REQUEST)) {
+            if(handle.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                handle = handle.getParent();
+                setChainedModel(new JcrNodeModel(handle));
+            }
+        }
+
         for(String category : categories) {
             if(handle.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for(NodeIterator iter = handle.getNodes(); iter.hasNext(); ) {
