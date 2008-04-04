@@ -56,15 +56,18 @@ public class FolderTreeNode extends AbstractTreeNode {
     private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
             "/hippo:configuration", "/hippo:namespaces", "/live", "/preview" }));
 
-    // ignore nodes below these types
+ // ignore nodes below these types
     private final static String[] ignoreNodesBelowType = new String[] { HippoNodeType.NT_DOCUMENT,
             HippoNodeType.NT_TEMPLATETYPE };
+    
+ // ignore nodes below these types
+    private final static String[] ignoreNodesBelowPath = new String[] {"/hippo:namespaces/defaultcontent"};
 
     // shortcut paths shown as root folders + the name how to show them
     private final static Map<String,String> shortCutInfo;
     static {
         shortCutInfo = new HashMap<String,String>();
-        shortCutInfo.put("hippo:namespaces/defaultcontent","document types");
+        shortCutInfo.put("/hippo:namespaces/defaultcontent","document types");
     }
     
     
@@ -136,8 +139,8 @@ public class FolderTreeNode extends AbstractTreeNode {
                 if (node.isSame(node.getAncestor(0))) {
                     return ROOT_NODE_DISPLAYNAME;
                 }
-                if(shortCutInfo.containsKey(node.getPath().substring(1))) {
-                    return shortCutInfo.get(node.getPath().substring(1));
+                if(shortCutInfo.containsKey(node.getPath())) {
+                    return shortCutInfo.get(node.getPath());
                 }
                 result = ISO9075Helper.decodeLocalName(node.getDisplayName());
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
@@ -167,10 +170,18 @@ public class FolderTreeNode extends AbstractTreeNode {
                 return result;
             }
         }
+        for (String path : ignoreNodesBelowPath) {
+            if (node.getPath().equals(path)) {
+                return result;
+            }
+        }
         if (node.isSame(node.getAncestor(0))) {
             // node is rootNode, so add shortcut paths
             for (String path : shortCutInfo.keySet()) {
                 try {
+                    if(path.startsWith("/")) {
+                        path = path.substring(1);
+                    }
                     result.add(node.getNode(path));
                 } catch (PathNotFoundException e) {
                     log.error("shortcut path not found: " + e.getMessage());
