@@ -30,7 +30,10 @@
     </class>
     <class name="FullRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
-      <field name="workflow" column="../{..}"/>
+      <field name="request" column="."/>
+      <field name="document" column="{document}"/>
+      <field name="workflow" column="../{..}[hippostd:state='draft']"/>
+      <field name="workflow2" column="../{..}[hippostd:state='unpublished']"/>
     </class>
     <class name="BasicRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>

@@ -62,6 +62,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
             try {
                 unpublished = (PublishableDocument) draft.clone();
                 unpublished.state = PublishableDocument.UNPUBLISHED;
+                draft = null;
             } catch(CloneNotSupportedException ex) {
                 throw new WorkflowException("document is not a publishable document");
             }
@@ -146,11 +147,15 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
 
     public void depublish() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication on document ");
-        if(unpublish == null) {
-            unpublished = published.clone();
-            unpublished.state = PublishableDocument.UNPUBLISHED
+        try {
+            if(unpublished == null) {
+                unpublished = (PublishableDocument) published.clone();
+                unpublished.state = PublishableDocument.UNPUBLISHED;
+            }
+            published = null;
+        } catch(CloneNotSupportedException ex) {
+            throw new WorkflowException("document is not a publishable document");
         }
-        published = null;
     }
 
     public void requestDepublication() throws WorkflowException {

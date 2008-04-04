@@ -631,8 +631,10 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (value == null) {
             try {
                 Node removal = HierarchyResolver.getNode(node, field);
-                DerivedDataEngine.removal(removal);
-                removal.remove();
+                if(removal != null) {
+                    DerivedDataEngine.removal(removal);
+                    removal.remove();
+                }
             } catch (InvalidItemStateException ex) {
                 if (log.isDebugEnabled()) {
                     log.debug("node already deleted: " + ex.getMessage());
@@ -660,8 +662,10 @@ class FieldManagerImpl extends AbstractFieldManager {
                     HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                     child = (Node) HierarchyResolver.getItem(node, field, false, last);
                     if (child != null) {
-                        DerivedDataEngine.removal(child);
-                        child.remove();
+                        if(child != null) {
+                            DerivedDataEngine.removal(child);
+                            child.remove();
+                        }
                     }
                     Document document = (Document) value;
                     child = node.getSession().getNodeByUUID(document.isCloned().getIdentity());
