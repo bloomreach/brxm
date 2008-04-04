@@ -45,7 +45,7 @@ public class FullRequestWorkflowImpl extends WorkflowImpl implements FullRequest
                 workflow2.delete();
             workflow.current = null;
             workflow2.current = null;
-            request.document = null;
+            request.reference = null;
             request = null;
         } else if(PublicationRequest.PUBLISH.equals(request.type)) {
             if(workflow != null)
@@ -54,7 +54,7 @@ public class FullRequestWorkflowImpl extends WorkflowImpl implements FullRequest
                 workflow2.publish();
             workflow.current = null;
             workflow2.current = null;
-            request.document = null;
+            request.reference = null;
             request = null;
         } else if(PublicationRequest.DEPUBLISH.equals(request.type)) {
             if(workflow != null)
@@ -63,7 +63,7 @@ public class FullRequestWorkflowImpl extends WorkflowImpl implements FullRequest
                 workflow2.depublish();
             workflow.current = null;
             workflow2.current = null;
-            request.document = null;
+            request.reference = null;
             request = null;
         } else if(PublicationRequest.REJECTED.equals(request.type)) {
             throw new WorkflowException("request has already been rejected");
