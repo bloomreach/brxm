@@ -203,7 +203,14 @@ public class ReviewedActionsWorkflowTest extends TestCase {
 
         // These steps would be taken by editor:
         {
+            node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle");
+            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+            assertNotNull("No applicable workflow where there should be one", workflow);
+            Document document = workflow.obtainEditableInstance();
+            session.save();
+            session.refresh(true);
             node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
+            assertTrue(node.getUUID().equals(document.getIdentity()));
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
             session.save();
@@ -218,7 +225,6 @@ public class ReviewedActionsWorkflowTest extends TestCase {
 
         // These steps would be taken by author
         {
-
             node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             // cannot delete published document when request is present
@@ -227,7 +233,6 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             } catch (WorkflowException e) {
                 assertTrue("cannot request deletion when there is already a request", true );
             }
-
         }
         
     }

@@ -21,11 +21,17 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.ext.WorkflowImpl;
 
-public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
+public class FullRequestWorkflowImpl extends WorkflowImpl implements FullRequestWorkflow {
     private static final long serialVersionUID = 1L;
     
+    protected PublicationRequest request;
+    protected PublishableDocument document;
+
     protected FullReviewedActionsWorkflowImpl workflow;
+
+    protected FullReviewedActionsWorkflowImpl workflow2;
 
     public FullRequestWorkflowImpl() throws RemoteException {
     }
@@ -33,18 +39,40 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
     public void acceptRequest() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         ReviewedActionsWorkflowImpl.log.info("accepting request for document ");
         if(PublicationRequest.DELETE.equals(request.type)) {
-            workflow.delete();
+            if(workflow != null)
+                workflow.delete();
+            else
+                workflow2.delete();
+            workflow.current = null;
+            workflow2.current = null;
+            request.document = null;
             request = null;
         } else if(PublicationRequest.PUBLISH.equals(request.type)) {
-            workflow.publish();
+            if(workflow != null)
+                workflow.publish();
+            else
+                workflow2.publish();
+            workflow.current = null;
+            workflow2.current = null;
+            request.document = null;
             request = null;
         } else if(PublicationRequest.DEPUBLISH.equals(request.type)) {
-            workflow.depublish();
+            if(workflow != null)
+                workflow.depublish();
+            else
+                workflow2.depublish();
+            workflow.current = null;
+            workflow2.current = null;
+            request.document = null;
             request = null;
         } else if(PublicationRequest.REJECTED.equals(request.type)) {
             throw new WorkflowException("request has already been rejected");
         } else
             throw new MappingException("unknown publication request");
+    }
+
+    public void cancelRequest() throws WorkflowException, MappingException, RepositoryException {
+        request = null;
     }
 
     public void rejectRequest(String reason) throws WorkflowException, MappingException, RepositoryException {

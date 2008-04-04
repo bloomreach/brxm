@@ -146,6 +146,10 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
 
     public void depublish() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication on document ");
+        if(unpublish == null) {
+            unpublished = published.clone();
+            unpublished.state = PublishableDocument.UNPUBLISHED
+        }
         published = null;
     }
 

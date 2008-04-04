@@ -33,8 +33,13 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         ReviewedActionsWorkflowImpl.log.info("obtain editable instance on document ");
         if(draft == null) {
             try {
-                draft = (PublishableDocument) unpublished.clone();
-                draft.state = PublishableDocument.DRAFT;
+                if(unpublished != null) {
+                    draft = (PublishableDocument) unpublished.clone();
+                    draft.state = PublishableDocument.DRAFT;
+                } else {
+                    draft = (PublishableDocument) published.clone();
+                    draft.state = PublishableDocument.DRAFT;
+                }
             } catch(CloneNotSupportedException ex) {
                 throw new WorkflowException("document is not a publishable document");
             }
