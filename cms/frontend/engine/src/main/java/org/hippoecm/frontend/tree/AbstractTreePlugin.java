@@ -78,10 +78,17 @@ public abstract class AbstractTreePlugin extends Plugin {
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel model = new JcrNodeModel(notification.getModel());
+      
             AbstractTreeNode node = null;
             while (model != null) {
                 node = rootNode.getTreeModel().lookup(model);
+               
                 if (node != null) {
+                    TreeNode parentNode = (AbstractTreeNode)node.getParent(); 
+                    while(parentNode!=null && !tree.getTreeState().isNodeExpanded(parentNode)) {
+                        tree.getTreeState().expandNode(parentNode);
+                        parentNode = parentNode.getParent();  
+                    }
                     tree.getTreeState().selectNode(node, true);
                     break;
                 }
