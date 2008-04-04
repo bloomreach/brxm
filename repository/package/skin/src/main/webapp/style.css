@@ -138,7 +138,8 @@ th {
 
 
 tr.even td, tr.odd td { padding: 5px; }
-tr.even td { background: #f7f7f7}
+tr.even {background-color: #f7f7f7}
+tr.even td { }
 tr.odd td { padding: 5px; }
 
 .Doclist table tr td a{color: black}
