@@ -112,24 +112,22 @@ public class WorkflowsPlugin extends Plugin {
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel model = new JcrNodeModel(notification.getModel());
-            if (!model.equals(getModel())) {
-                setPluginModel(model);
-                try {
-                    WorkflowsModel workflowsModel = new WorkflowsModel((JcrNodeModel) getModel(), categories);
-                    if(log.isDebugEnabled()) {
-                        try {
-                            log.debug("obtained workflows on "+workflowsModel.getNodeModel().getNode().getPath() +
-                                      " counted "+workflowsModel.size()+" unique renderers");
-                        } catch(RepositoryException ex) {
-                            log.debug("debug message failed ", ex);
-                        }
+            setPluginModel(model);
+            try {
+                WorkflowsModel workflowsModel = new WorkflowsModel((JcrNodeModel) getModel(), categories);
+                if(log.isDebugEnabled()) {
+                    try {
+                        log.debug("obtained workflows on "+workflowsModel.getNodeModel().getNode().getPath() +
+                                  " counted "+workflowsModel.size()+" unique renderers");
+                    } catch(RepositoryException ex) {
+                        log.debug("debug message failed ", ex);
                     }
-                    view.setModel(workflowsModel);
-                } catch(RepositoryException ex) {
-                    log.error("could not setup workflow model", ex);
                 }
-                notification.getContext().addRefresh(this);
+                view.setModel(workflowsModel);
+            } catch(RepositoryException ex) {
+                log.error("could not setup workflow model", ex);
             }
+            notification.getContext().addRefresh(this);
         }
         super.receive(notification);
     }
