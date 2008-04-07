@@ -39,14 +39,6 @@ public class JcrResourceStream extends JcrNodeModel implements IResourceStream {
 
     public JcrResourceStream(Node node) {
         super(node);
-
-        if (log.isDebugEnabled()) {
-            try {
-                assert (node.isNodeType("nt:resource"));
-            } catch (RepositoryException e) {
-                // ignore
-            }
-        }
     }
 
     public void close() throws IOException {
