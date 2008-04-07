@@ -18,6 +18,11 @@ package org.hippoecm.frontend.plugins.template;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.DialogPageCreator;
@@ -32,6 +37,7 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.template.model.TemplateModel;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +74,7 @@ public class LinkPickerPlugin extends Plugin {
         // add the dialog link before instantiating the dialog so that a ComponentReference can be created
         // in the dialog.
         final DialogWindow dialogWindow = new DialogWindow("dialog", tmplModel.getNodeModel(), channel, proxy);
-        linkText = new Model(getValue());
+        linkText = new Model(getValue(tmplModel.getNodeModel().getNode()));
         linkPicker = new DialogLink("value", linkText, dialogWindow, tmplModel.getNodeModel());
         linkPicker.setOutputMarkupId(true);
         add(linkPicker);
@@ -85,17 +91,24 @@ public class LinkPickerPlugin extends Plugin {
             setPluginModel(new JcrNodeModel(notification.getModel()));
             notification.getContext().addRefresh(this);
         } else if ("flush".equals(notification.getOperation())) {
-            linkText.setObject(getValue());
+            linkText.setObject(getValue(new JcrNodeModel(notification.getModel()).getNode()));
             notification.getContext().addRefresh(linkPicker);
         }
         super.receive(notification);
     }
 
-    private String getValue() {
-        String value = (String) valueModel.getObject();
-        if (value == null || "".equals(value)) {
-            value = "[...]";
+    private String getValue(Node jcrNode) {
+        try {
+            String docbaseUUID = jcrNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+            return jcrNode.getSession().getNodeByUUID(docbaseUUID).getPath();
+        } catch (ValueFormatException e) {
+            log.error("invalid docbase" + e.getMessage());
+        } catch (PathNotFoundException e) {
+            log.error("invalid docbase" + e.getMessage());
+        } catch (RepositoryException e) {
+            log.error("invalid docbase" + e.getMessage());
         }
-        return value;
+        return "...";
+
     }
 }
