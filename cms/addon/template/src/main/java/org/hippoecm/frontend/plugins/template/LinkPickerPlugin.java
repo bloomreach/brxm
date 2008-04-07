@@ -57,7 +57,6 @@ public class LinkPickerPlugin extends Plugin {
 
         TemplateModel tmplModel = (TemplateModel) getPluginModel();
         valueModel = tmplModel.getJcrPropertyValueModel();
-
         Channel channel = getTopChannel();
         ChannelFactory factory = getPluginManager().getChannelFactory();
 
@@ -98,8 +97,11 @@ public class LinkPickerPlugin extends Plugin {
     }
 
     private String getValue(Node jcrNode) {
+        String docbaseUUID = (String) valueModel.getObject();
+        if(docbaseUUID == null || docbaseUUID.equals("")) {
+            return "[...]";
+        }
         try {
-            String docbaseUUID = jcrNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
             return jcrNode.getSession().getNodeByUUID(docbaseUUID).getPath();
         } catch (ValueFormatException e) {
             log.error("invalid docbase" + e.getMessage());
@@ -108,7 +110,7 @@ public class LinkPickerPlugin extends Plugin {
         } catch (RepositoryException e) {
             log.error("invalid docbase" + e.getMessage());
         }
-        return "...";
-
+        return "[...]";
+        
     }
 }
