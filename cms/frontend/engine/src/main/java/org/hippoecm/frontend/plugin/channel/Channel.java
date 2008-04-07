@@ -146,7 +146,9 @@ public class Channel implements IClusterable {
         return new Notification(request);
     }
 
-    class ListChange<E> {
+    class ListChange<E> implements IClusterable {
+        private static final long serialVersionUID = 1L;
+
         int operation;
         E object;
 
