@@ -215,7 +215,6 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 //add Xinha initialize function to window.onLoad event
                 sb.append("Xinha._addEvent(window,'load', xinha_init);\n");
                 response.renderJavascript(sb, null);
-                System.out.println(sb.toString());
             }
 
             private void appendAsJSArray(StringBuffer sb, Set<? extends XinhaPlugin.BaseConfiguration> configs) {
