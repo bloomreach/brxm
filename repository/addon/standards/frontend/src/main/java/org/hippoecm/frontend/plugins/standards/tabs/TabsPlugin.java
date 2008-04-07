@@ -34,6 +34,7 @@ import org.hippoecm.frontend.model.ExceptionModel;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
@@ -94,6 +95,17 @@ public class TabsPlugin extends Plugin {
     // invoked by the TabbedPanel when a tab is selected    
     protected void onSelect(AjaxRequestTarget target, Tab tabbie) {
         tabbie.select();
+
+        // notify children of focus event
+        Channel channel = getBottomChannel();
+        if (channel != null) {
+            PluginModel model = new PluginModel();
+            model.put("plugin", tabbie.getPlugin().getPluginPath());
+            Notification notification = channel.createNotification("focus", model);
+            channel.publish(notification);
+            notification.getContext().apply(target);
+        }
+
         if (target != null) {
             target.addComponent(tabbedPanel);
         }
@@ -274,12 +286,12 @@ public class TabsPlugin extends Plugin {
             PluginDescriptor descriptor = getPlugin().getDescriptor();
             String title = descriptor.getWicketId();
             ParameterValue param = descriptor.getParameter("title");
-            
+
             if (param != null && param.getType() != param.TYPE_UNKNOWN) {
-            	String fulltitle = param.getStrings().get(0).toString();
-            	int length = fulltitle.length();
-            	String appendix = (length < (MAX_TAB_TITLE_LENGTH + 1) ? "" : "..");
-            	length = (length < MAX_TAB_TITLE_LENGTH ? length : MAX_TAB_TITLE_LENGTH);
+                String fulltitle = param.getStrings().get(0).toString();
+                int length = fulltitle.length();
+                String appendix = (length < (MAX_TAB_TITLE_LENGTH + 1) ? "" : "..");
+                length = (length < MAX_TAB_TITLE_LENGTH ? length : MAX_TAB_TITLE_LENGTH);
                 title = fulltitle.substring(0, length) + appendix;
             }
             return new Model(title);

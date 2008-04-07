@@ -28,10 +28,10 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
@@ -43,6 +43,7 @@ import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.repository.api.HippoNode;
@@ -127,7 +128,7 @@ public class XinhaPlugin extends Plugin {
                     //custom browsing
                     Node pluginNode = (Node) pluginModel.getObject();
                     try {
-                        Session session = pluginNode.getSession();
+                        javax.jcr.Session session = pluginNode.getSession();
                         Item item = session.getItem(browse);
                         if (item.isNode()) {
                             Node itemNode = (Node) item;
@@ -210,6 +211,18 @@ public class XinhaPlugin extends Plugin {
             sharedBehavior = null;
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void receive(Notification notification) {
+        if ("focus".equals(notification.getOperation())) {
+            String plugin = (String) notification.getModel().getMapRepresentation().get("plugin");
+            if (!getPluginPath().startsWith(plugin)) {
+                // FIXME: add logic to clean up on the client (delete Xinha.config)
+                editor.setMarkupId("xinha" + new Integer(Session.get().nextSequenceValue()));
+            }
+        }
+        super.receive(notification);
     }
 
     //Move this to editorBehaviour?
@@ -349,6 +362,9 @@ public class XinhaPlugin extends Plugin {
 
         //properties
         private Map<String, String> properties = new HashMap<String, String>();
+
+        // has Xinha transformed the textarea?
+        private boolean rendered = false;
 
         public void setName(String name) {
             this.name = name;
