@@ -29,6 +29,7 @@
 
 [hippo:query] > nt:query
 
+
 [hippo:mirror]
 - hippo:docbase (string) mandatory
 + * multiple
@@ -71,6 +72,14 @@
 [hippo:reference] > hippo:handle
 - hippo:docbase (string) mandatory
 + * (hippo:document) multiple
+
+[hippo:resource]
+- jcr:encoding (string)
+- jcr:mimeType (string) mandatory
+- jcr:data (binary) primary mandatory
+- jcr:lastModified (date) mandatory ignore
+
+[hippo:image] > hippo:resource
 
 // FIXME ought to be: [hippo:facetselect] > hippo:reference
 [hippo:facetselect] > nt:base
