@@ -33,4 +33,14 @@ public class PublicationRequest extends Document {
         if(document != null)
             reference = document.getIdentity();
     }
+
+    String getType() {
+        return type;
+    }
+
+    void setRejected(PublishableDocument stale, String reason) {
+        type = REJECTED;
+        reference = stale.getIdentity();
+        this.reason = reason;
+    }
 }

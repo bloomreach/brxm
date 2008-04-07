@@ -32,8 +32,6 @@ public class BasicRequestWorkflowImpl extends WorkflowImpl implements BasicReque
     }
 
     public void cancelRequest() throws WorkflowException, MappingException, RepositoryException {
-        document = null;
         request = null;
     }
-
 }

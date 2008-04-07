@@ -23,63 +23,46 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
-public class FullRequestWorkflowImpl extends WorkflowImpl implements FullRequestWorkflow {
+public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
     private static final long serialVersionUID = 1L;
     
-    protected PublicationRequest request;
-    protected PublishableDocument document;
-
-    protected FullReviewedActionsWorkflowImpl workflow;
-
-    protected FullReviewedActionsWorkflowImpl workflow2;
+    protected FullReviewedActionsWorkflowImpl publishedWorkflow;;
+    protected FullReviewedActionsWorkflowImpl unpublishedWorkflow;;
 
     public FullRequestWorkflowImpl() throws RemoteException {
     }
 
     public void acceptRequest() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         ReviewedActionsWorkflowImpl.log.info("accepting request for document ");
-        if(PublicationRequest.DELETE.equals(request.type)) {
-            if(workflow != null)
-                workflow.delete();
-            else
-                workflow2.delete();
-            workflow.current = null;
-            workflow2.current = null;
-            request.reference = null;
+        String requestType = request.getType();
+        if(PublicationRequest.DELETE.equals(requestType)) {
+            if (publishedWorkflow != null) {
+                throw new WorkflowException("cannot delete document when still published");
+            }
+            unpublishedWorkflow.delete();
             request = null;
-        } else if(PublicationRequest.PUBLISH.equals(request.type)) {
-            if(workflow != null)
-                workflow.publish();
-            else
-                workflow2.publish();
-            workflow.current = null;
-            workflow2.current = null;
-            request.reference = null;
+        } else if(PublicationRequest.PUBLISH.equals(requestType)) {
+            if (unpublishedWorkflow == null) {
+                throw new WorkflowException("cannot publish document when no changes present");
+            }
+            unpublishedWorkflow.publish();
             request = null;
-        } else if(PublicationRequest.DEPUBLISH.equals(request.type)) {
-            if(workflow != null)
-                workflow.depublish();
-            else
-                workflow2.depublish();
-            workflow.current = null;
-            workflow2.current = null;
-            request.reference = null;
+        } else if(PublicationRequest.DEPUBLISH.equals(requestType)) {
+            if (publishedWorkflow == null) {
+                throw new WorkflowException("cannot depublish document when not published");
+            }
+            publishedWorkflow.depublish();
             request = null;
-        } else if(PublicationRequest.REJECTED.equals(request.type)) {
+        } else if(PublicationRequest.REJECTED.equals(requestType)) {
             throw new WorkflowException("request has already been rejected");
-        } else
+        } else {
             throw new MappingException("unknown publication request");
-    }
-
-    public void cancelRequest() throws WorkflowException, MappingException, RepositoryException {
-        request = null;
+        }
     }
 
     public void rejectRequest(String reason) throws WorkflowException, MappingException, RepositoryException {
         ReviewedActionsWorkflowImpl.log.info("rejecting request for document ");
-        request.type = PublicationRequest.REJECTED;
-        request.reason = reason;
-        workflow.draft.state = PublishableDocument.STALE;
+        PublishableDocument rejected = unpublishedWorkflow.getRejectedDocument();
+        request.setRejected(rejected, reason);
     }
-
 }

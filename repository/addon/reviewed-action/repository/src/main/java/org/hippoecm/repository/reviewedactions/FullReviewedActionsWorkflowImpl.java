@@ -20,6 +20,8 @@ import java.rmi.RemoteException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
@@ -28,102 +30,31 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public FullReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
-    @Override
-    public Document obtainEditableInstance() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("obtain editable instance on document ");
-        if(draft == null) {
-            try {
-                if(unpublished != null) {
-                    draft = (PublishableDocument) unpublished.clone();
-                    draft.state = PublishableDocument.DRAFT;
-                } else {
-                    draft = (PublishableDocument) published.clone();
-                    draft.state = PublishableDocument.DRAFT;
-                }
-            } catch(CloneNotSupportedException ex) {
-                throw new WorkflowException("document is not a publishable document");
-            }
-        } else {
-            /* FIXME issue HREPTWO-728
-             * workaround by uncommenting source
-              if(!getWorkflowContext().getUsername().equals(username))
-                  throw new WorkflowException("document already being edited");
-             */
-        }
-        return draft;
+    public void delete() throws WorkflowException {
+        ReviewedActionsWorkflowImpl.log.info("deletion on document ");
+        if(current != null)
+            throw new WorkflowException("cannot delete document with pending publication request");
+        if(published != null)
+            throw new WorkflowException("cannot delete published document");
+        unpublished = draft = null;
     }
 
-    @Override
-    public void commitEditableInstance() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("commit editable instance of document ");
-        if(draft != null) {
-            try {
-                unpublished = (PublishableDocument) draft.clone();
+    public void publish() throws WorkflowException, MappingException {
+        ReviewedActionsWorkflowImpl.log.info("publication on document ");
+        published = null;
+        unpublished.setState(PublishableDocument.PUBLISHED);
+    }
+
+    public void depublish() throws WorkflowException {
+        ReviewedActionsWorkflowImpl.log.info("depublication on document ");
+        try {
+            if(unpublished == null) {
+                unpublished = (PublishableDocument) published.clone();
                 unpublished.state = PublishableDocument.UNPUBLISHED;
-                draft = null;
-            } catch(CloneNotSupportedException ex) {
-                throw new WorkflowException("document is not a publishable document");
             }
-        } else {
-            throw new WorkflowException("no draft version of publication");
+            published = null;
+        } catch(CloneNotSupportedException ex) {
+            throw new WorkflowException("document is not a publishable document");
         }
     }
-
-    @Override
-    public void disposeEditableInstance() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("dispose editable instance on document ");
-        draft = null;
-    }
-
-    @Override
-    public void requestDeletion() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("deletion request on document ");
-        if(current == null) {
-            current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUsername());
-        } else {
-            throw new WorkflowException("request deletion failure");
-        }
-    }
-
-    @Override
-    public void requestPublication() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("publication request on document ");
-        if(current == null) {
-            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUsername());
-        } else {
-            throw new WorkflowException("publication request already pending");
-        }
-    }
-
-    @Override
-    public void requestPublication(Date publicationDate) throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("publication request on document ");
-        if(current == null) {
-            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUsername());
-        } else {
-            throw new WorkflowException("publication request already pending");
-        }
-    }
-
-    @Override
-    public void requestPublication(Date publicationDate, Date depublicationDate) throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("publication request on document ");
-        throw new WorkflowException("unsupported");
-    }
-
-    @Override
-    public void requestDepublication() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
-        if(current == null) {
-            current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUsername());
-        } else {
-            throw new WorkflowException("publication request already pending");
-        }
-    }
-
-    @Override
-    public void requestDepublication(Date publicationDate) throws WorkflowException {
-        throw new WorkflowException("Unsupported operation");
-    }
-
 }
