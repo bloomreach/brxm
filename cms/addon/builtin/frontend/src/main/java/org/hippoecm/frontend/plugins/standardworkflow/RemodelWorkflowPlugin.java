@@ -18,27 +18,17 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.RemodelDialog;
 
 public class RemodelWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     public RemodelWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        super(pluginDescriptor, model, parentPlugin);
 
         add(new DialogLink("remodelRequest-dialog", new Model("Apply models"), RemodelDialog.class,
-                (JcrNodeModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
-    }
-
-    @Override
-    public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            setPluginModel(new JcrNodeModel(notification.getModel()));
-        }
-        super.receive(notification);
+                getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
     }
 }

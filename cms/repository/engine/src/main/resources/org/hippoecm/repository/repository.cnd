@@ -176,6 +176,17 @@
 [hippo:pluginfolder] > nt:base
 + * (hippo:plugin) = hippo:plugin
  
+ 
+ 
+[hippo:unstructured] mixin
+- *
+- * multiple
++ * multiple
+
+[hippo:remodel] mixin
+- hippo:remodel (string) mandatory < 'current', 'draft', 'error', 'old'
+- hippo:uri (string)
+ 
 [hippo:field] > nt:base
 - hippo:name (string)
 - hippo:path (string)
@@ -209,10 +220,7 @@
 [hippo:namespace] > nt:base
 + * (hippo:templatetype) = hippo:templatetype
 
-[hippo:unstructured] mixin
-- *
-- * multiple
-+ * multiple
+
 
 [hippo:propertyreference] > nt:base
 

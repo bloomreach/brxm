@@ -17,7 +17,9 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -41,9 +43,58 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
         if (!node.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
-        Node template = node.getNode(HippoNodeType.HIPPO_TEMPLATE);
-        template = template.getNode(HippoNodeType.HIPPO_TEMPLATE);
-        return template.getPath();
+        Node draft = getVersion(node, HippoNodeType.HIPPO_TEMPLATE, "draft");
+        if (draft != null) {
+            return node.getPath();
+        }
+
+        node.save();
+        try {
+            String[] names = { HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.HIPPO_NODETYPE,
+                    HippoNodeType.HIPPO_PROTOTYPE };
+            for (String name : names) {
+                Node current = getVersion(node, name, "current");
+                if (current == null) {
+                    throw new ItemNotFoundException("Remodel node " + name
+                            + ", current version was not found for type " + node.getPath());
+                }
+                Node copy = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/"
+                        + name);
+                copy.addMixin(HippoNodeType.NT_REMODEL);
+                copy.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
+                if (name.equals(HippoNodeType.HIPPO_TEMPLATE)) {
+                    draft = copy;
+                } else if (name.equals(HippoNodeType.HIPPO_PROTOTYPE)) {
+                    copy.addMixin(HippoNodeType.NT_UNSTRUCTURED);
+                }
+            }
+            node.save();
+            return node.getPath();
+        } catch (RepositoryException ex) {
+            node.refresh(false);
+            throw ex;
+        }
+    }
+
+    public void save() throws WorkflowException, MappingException, RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_TEMPLATE) || node.isNodeType(HippoNodeType.HIPPO_NODETYPE)
+                || node.isNodeType(HippoNodeType.HIPPO_PROTOTYPE)) {
+            Node type = node;
+            while (type != null && !type.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                type = type.getParent();
+            }
+            if (type != null) {
+                type.save();
+                String[] names = { HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.HIPPO_NODETYPE,
+                        HippoNodeType.HIPPO_PROTOTYPE };
+                for (String name : names) {
+                    Node draft = getVersion(type, name, "draft");
+                    if (draft != null) {
+                        draft.save();
+                    }
+                }
+            }
+        }
     }
 
     public String copy(String name) throws WorkflowException, MappingException, RepositoryException {
@@ -57,5 +108,21 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
         target = ((HippoSession) rootSession).copy(target, path);
         target.getParent().save();
         return target.getPath();
+    }
+
+    private Node getVersion(Node node, String name, String version) throws RepositoryException {
+        Node template = node.getNode(name);
+        NodeIterator iter = template.getNodes(name);
+        while (iter.hasNext()) {
+            Node versionNode = iter.nextNode();
+            if (versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
+                if (version.equals(versionNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString())) {
+                    return versionNode;
+                }
+            } else if (version.equals("current")) {
+                return versionNode;
+            }
+        }
+        return null;
     }
 }

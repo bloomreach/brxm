@@ -53,6 +53,11 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-classloader</artifactId>
     </dependency>

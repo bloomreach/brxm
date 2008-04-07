@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.template.export;
+package org.hippoecm.frontend.plugins.standardworkflow.export;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +30,9 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
+import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,15 +44,18 @@ public class CndSerializer implements IClusterable {
     private JcrSessionModel jcrSession;
     private HashMap<String, String> namespaces;
     private LinkedHashSet<TypeDescriptor> types;
-    private TypeConfig typeConfig;
+    private TypeConfig currentConfig;
+    private TypeConfig draftConfig;
 
-    public CndSerializer(JcrSessionModel session, TypeConfig config, String namespace) {
+    public CndSerializer(JcrSessionModel session, String namespace) {
         this.jcrSession = session;
         namespaces = new HashMap<String, String>();
         types = new LinkedHashSet<TypeDescriptor>();
-        typeConfig = config;
 
-        List<TypeDescriptor> list = config.getTypes(namespace);
+        currentConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT);
+        draftConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT);
+
+        List<TypeDescriptor> list = draftConfig.getTypes(namespace);
         for (TypeDescriptor descriptor : list) {
             if (descriptor.isNode()) {
                 String type = descriptor.getType();
@@ -121,7 +126,7 @@ public class CndSerializer implements IClusterable {
 
                 for (FieldDescriptor field : typeDescriptor.getFields().values()) {
                     String subType = field.getType();
-                    TypeDescriptor sub = typeConfig.getTypeDescriptor(subType);
+                    TypeDescriptor sub = getTypeDescriptor(subType);
                     if (sub.isNode()) {
                         addNamespace(subType.substring(0, subType.indexOf(':')));
 
@@ -141,7 +146,7 @@ public class CndSerializer implements IClusterable {
 
     private void renderField(StringBuffer output, FieldDescriptor field) {
         String subType = field.getType();
-        TypeDescriptor sub = typeConfig.getTypeDescriptor(subType);
+        TypeDescriptor sub = getTypeDescriptor(subType);
         if (sub.isNode()) {
             output.append("+");
         } else {
@@ -179,7 +184,7 @@ public class CndSerializer implements IClusterable {
         boolean first = true;
         while (superTypes.hasNext()) {
             String superType = superTypes.next();
-            TypeDescriptor superDescriptor = typeConfig.getTypeDescriptor(superType);
+            TypeDescriptor superDescriptor = getTypeDescriptor(superType);
             if (superDescriptor != null) {
                 Iterator<FieldDescriptor> fields = superDescriptor.getFields().values().iterator();
                 while (fields.hasNext()) {
@@ -213,6 +218,14 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
     }
 
+    private TypeDescriptor getTypeDescriptor(String subType) {
+        TypeDescriptor sub = draftConfig.getTypeDescriptor(subType);
+        if (sub == null) {
+            // FIXME: check subType prefix, subType could have been removed
+            sub = currentConfig.getTypeDescriptor(subType);
+        }
+        return sub;
+    }
     private void sortTypes() {
         types = new SortContext(types).sort();
     }
@@ -235,11 +248,11 @@ public class CndSerializer implements IClusterable {
 
             visited.add(descriptor);
             for (String superType : descriptor.getSuperTypes()) {
-                TypeDescriptor type = typeConfig.getTypeDescriptor(superType);
+                TypeDescriptor type = getTypeDescriptor(superType);
                 visit(type);
             }
             for (FieldDescriptor field : descriptor.getFields().values()) {
-                TypeDescriptor type = typeConfig.getTypeDescriptor(field.getType());
+                TypeDescriptor type = getTypeDescriptor(field.getType());
                 visit(type);
             }
             result.add(descriptor);

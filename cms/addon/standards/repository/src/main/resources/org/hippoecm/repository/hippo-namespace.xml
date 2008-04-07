@@ -40,6 +40,7 @@
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:templateitem</sv:value>
+          <sv:value>hippo:document</sv:value>
         </sv:property>
 
         <sv:node sv:name="hippo:field">
@@ -218,7 +219,7 @@
               </sv:property>
               <sv:node sv:name="hippo:parameters">
                 <sv:property sv:name="css" sv:type="String">
-                <sv:value>templateactions</sv:value>
+                  <sv:value>templateactions</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hippo:parameters</sv:value>
@@ -847,7 +848,7 @@
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
-          <sv:value>nt:base</sv:value>
+          <sv:value>hippo:document</sv:value>
         </sv:property>
 
         <sv:node sv:name="hippo:field">
@@ -927,6 +928,68 @@
 
   </sv:node>
   <!-- end "Nodetype" type -->
+
+  <!-- "Remodel" type -->
+  <sv:node sv:name="hippo:remodel">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:templatetype</sv:value>
+    </sv:property>
+
+    <sv:node sv:name="hippo:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:node" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:mixin" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
+
+        <!-- state -->
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>state</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>hippo:remodel</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+        </sv:node>
+
+        <!-- uri -->
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>namespace</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>hippo:uri</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+        </sv:node>
+
+      </sv:node>
+    </sv:node>
+
+  </sv:node>
+  <!-- end "Remodel" type -->
 
   <!-- "Parameter" type -->
   <sv:node sv:name="hippo:parameters">

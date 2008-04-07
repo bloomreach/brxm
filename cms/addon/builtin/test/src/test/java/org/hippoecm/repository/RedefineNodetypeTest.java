@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository;
 
+import java.util.HashMap;
+
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
@@ -184,7 +186,7 @@ public class RedefineNodetypeTest extends TestCase {
         Workflow wf = wfmgr.getWorkflow("internal", nsNode);
         assertNotNull(wf);
         assertTrue(wf instanceof RemodelWorkflow);
-        String[] nodes = ((RemodelWorkflow)wf).remodel(cnd2);
+        String[] nodes = ((RemodelWorkflow)wf).remodel(cnd2, new HashMap());
         assertNotNull(nodes);
 
         node = session.getRootNode().getNode("test").getNode("testing");

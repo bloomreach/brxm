@@ -24,7 +24,5 @@ public interface TypeConfig extends IClusterable {
 
     public TypeDescriptor getTypeDescriptor(String name);
 
-    public List<TypeDescriptor> getTypes();
-
     public List<TypeDescriptor> getTypes(String namespace);
 }

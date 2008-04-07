@@ -18,10 +18,8 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CopyModelDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.EditModelDialog;
 
@@ -29,19 +27,11 @@ public class EditmodelWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     public EditmodelWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+        super(pluginDescriptor, model, parentPlugin);
 
         add(new DialogLink("editModelRequest-dialog", new Model("Edit model"), EditModelDialog.class,
-                (JcrNodeModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
+                getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
         add(new DialogLink("copyModelRequest-dialog", new Model("Copy model"), CopyModelDialog.class,
-                (JcrNodeModel) getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
-    }
-
-    @Override
-    public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            setPluginModel(new JcrNodeModel(notification.getModel()));
-        }
-        super.receive(notification);
+                getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
     }
 }

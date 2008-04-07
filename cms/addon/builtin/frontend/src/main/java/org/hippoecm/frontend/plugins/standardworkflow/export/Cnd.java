@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.template.export;
-
-import java.util.List;
+package org.hippoecm.frontend.plugins.standardworkflow.export;
 
 import javax.jcr.RepositoryException;
 
@@ -23,8 +21,6 @@ import org.apache.wicket.Application;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
@@ -66,15 +62,7 @@ public class Cnd {
         credentials.put("password", SYSTEMUSER_PASSWORD);
         JcrSessionModel jcrSession = new JcrSessionModel(credentials);
 
-        RepositoryTypeConfig templateConfig = new RepositoryTypeConfig();
-        List<TypeDescriptor> list = templateConfig.getTypes();
-
-        CndSerializer serializer = new CndSerializer(jcrSession, templateConfig, args[0]);
-        for (TypeDescriptor template : list) {
-            if (template.isNode()) {
-                serializer.addType(template);
-            }
-        }
+        CndSerializer serializer = new CndSerializer(jcrSession,  args[0]);
         log.debug(serializer.getOutput());
     }
 

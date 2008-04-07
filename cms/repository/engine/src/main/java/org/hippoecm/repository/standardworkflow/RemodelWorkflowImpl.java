@@ -17,6 +17,7 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.io.StringBufferInputStream;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -30,6 +31,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.decorating.Remodeling;
 
 public class RemodelWorkflowImpl implements RemodelWorkflow {
+    private static final long serialVersionUID = 1L;
+
     private Session userSession;
     private Node subject;
 
@@ -38,7 +41,8 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
         this.subject = subject;
     }
 
-    public String[] remodel(String cnd) throws WorkflowException, MappingException, RepositoryException {
+    public String[] remodel(String cnd, Map<String, TypeUpdate> update) throws WorkflowException, MappingException,
+            RepositoryException {
         if (!subject.isNodeType(HippoNodeType.NT_NAMESPACE))
             throw new MappingException("invalid node type for RemodelWorkflow");
 
@@ -46,13 +50,27 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
             String prefix = subject.getName();
 
             StringBufferInputStream istream = new StringBufferInputStream(cnd);
-            Remodeling remodel = Remodeling.remodel(userSession, prefix, istream);
+            Remodeling remodel = Remodeling.remodel(userSession, prefix, istream, update);
             NodeIterator iter = remodel.getNodes();
             String[] paths = new String[(int) iter.getSize()];
             for (int i = 0; iter.hasNext(); i++) {
                 paths[i] = iter.nextNode().getPath();
             }
             return paths;
+        } catch (NamespaceException ex) {
+            throw new RepositoryException(ex);
+        }
+    }
+
+    public void convert(String namespace, Map<String, TypeUpdate> update) throws WorkflowException, MappingException,
+            RepositoryException {
+        if (!subject.isNodeType(HippoNodeType.NT_REMODEL))
+            throw new MappingException("invalid node type for RemodelWorkflow");
+
+        try {
+            String prefix = namespace;
+
+            Remodeling.convert(subject, prefix, update);
         } catch (NamespaceException ex) {
             throw new RepositoryException(ex);
         }

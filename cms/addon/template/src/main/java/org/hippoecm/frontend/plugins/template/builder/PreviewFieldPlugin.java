@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.template.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -36,12 +37,13 @@ import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.JcrTemplateNodeTypeModel;
+import org.hippoecm.frontend.template.config.JcrTypeModel;
 import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +53,8 @@ public class PreviewFieldPlugin extends Plugin {
     private static final Logger log = LoggerFactory.getLogger(PreviewFieldPlugin.class);
 
     private JcrNodeModel templateNodeModel;
-    private JcrTemplateNodeTypeModel typeModel;
+    private JcrNodeModel propertyModel;
+    private JcrTypeModel typeModel;
     private Plugin child;
 
     public PreviewFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
@@ -71,8 +74,10 @@ public class PreviewFieldPlugin extends Plugin {
             while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 templateTypeNode = templateTypeNode.getParent();
             }
-            RepositoryTypeConfig typeConfig = new RepositoryTypeConfig();
+            RepositoryTypeConfig typeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT);
             typeModel = typeConfig.getTypeModel(templateTypeNode.getName());
+
+            propertyModel = new JcrNodeModel(getPrototype());
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -82,21 +87,17 @@ public class PreviewFieldPlugin extends Plugin {
         Plugin child;
         TemplateEngine engine = getPluginManager().getTemplateEngine();
 
-        RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig();
+        RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig(RemodelWorkflow.VERSION_DRAFT);
+        RepositoryTypeConfig typeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT);
         try {
             Node templateNode = templateNodeModel.getNode();
             String typeName = typeModel.getTypeName();
 
-            TypeDescriptor type = engine.getTypeConfig().getTypeDescriptor(typeName);
+            TypeDescriptor type = typeConfig.getTypeDescriptor(typeName);
             TemplateDescriptor template = templateConfig.createTemplate(templateNode, type);
             TemplateDescriptor proxy = new PreviewTemplateDescriptor(template);
 
-            Node templateTypeNode = templateNode;
-            while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                templateTypeNode = templateTypeNode.getParent();
-            }
-            Node prototype = templateTypeNode.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNode(
-                    HippoNodeType.HIPPO_PROTOTYPE);
+            Node prototype = propertyModel.getNode();
             JcrNodeModel prototypeModel = new JcrNodeModel(prototype);
             TemplateModel templateModel = new TemplateModel(proxy, prototypeModel.getParentModel(),
                     prototype.getName(), prototype.getIndex());
@@ -128,8 +129,13 @@ public class PreviewFieldPlugin extends Plugin {
             }
         } else if ("save".equals(notification.getOperation())) {
             if (notification.getModel().equals(nodeModel)) {
-                if(typeModel != null) {
+                if (typeModel != null) {
                     typeModel.save();
+                }
+                try {
+                    propertyModel.getNode().save();
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
                 }
             }
         }
@@ -269,6 +275,24 @@ public class PreviewFieldPlugin extends Plugin {
             log.error(ex.getMessage());
         }
         return null;
+    }
+
+    private Node getPrototype() throws RepositoryException {
+        Node templateTypeNode = templateNodeModel.getNode();
+        while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+            templateTypeNode = templateTypeNode.getParent();
+        }
+        NodeIterator iter = templateTypeNode.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes(
+                HippoNodeType.HIPPO_PROTOTYPE);
+        while (iter.hasNext()) {
+            Node node = iter.nextNode();
+            if (node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                if (node.getProperty(HippoNodeType.HIPPO_REMODEL).getString().equals("draft")) {
+                    return node;
+                }
+            }
+        }
+        throw new ItemNotFoundException("draft version of prototype was not found");
     }
 
     static class PreviewTemplateDescriptor extends TemplateDescriptor {

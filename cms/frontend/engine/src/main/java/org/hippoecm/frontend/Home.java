@@ -18,8 +18,6 @@ package org.hippoecm.frontend;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -37,6 +35,7 @@ import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
 public class Home extends WebPage {
     private static final long serialVersionUID = 1L;
@@ -52,14 +51,14 @@ public class Home extends WebPage {
         UserSession session = getValidUserSession();
         HippoNode rootNode = session.getRootNode();
 
-        TypeConfig repoTypeConfig = new RepositoryTypeConfig();
+        TypeConfig repoTypeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT);
         TypeConfig jcrTypeConfig = new JcrTypeConfig();
         List<TypeConfig> configs = new LinkedList<TypeConfig>();
         configs.add(repoTypeConfig);
         configs.add(jcrTypeConfig);
         TypeConfig typeConfig = new MixedTypeConfig(configs);
 
-        TemplateConfig templateConfig = new RepositoryTemplateConfig();
+        TemplateConfig templateConfig = new RepositoryTemplateConfig(RemodelWorkflow.VERSION_CURRENT);
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
 
         PluginManager pluginManager = new PluginManager(pluginConfig, typeConfig, templateConfig);

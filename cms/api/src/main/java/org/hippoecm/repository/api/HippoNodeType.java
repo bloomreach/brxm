@@ -57,6 +57,7 @@ public interface HippoNodeType {
     final public static String NT_GROUP = "hippo:group";
     final public static String NT_GROUPFOLDER = "hippo:groupfolder";
     final public static String NT_HANDLE = "hippo:handle";
+    final public static String NT_HARDDOCUMENT = "hippo:harddocument";
     final public static String NT_INITIALIZEFOLDER = "hippo:initializefolder";
     final public static String NT_INITIALIZEITEM = "hippo:initializeitem";
     final public static String NT_LOGCONFIG = "hippo:logconfig";
@@ -74,16 +75,17 @@ public interface HippoNodeType {
     final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
     final public static String NT_PROTOTYPED = "hippo:prototyped";
     final public static String NT_REFERENCEABLE = "hippo:referenceable";
-    final public static String NT_HARDDOCUMENT = "hippo:harddocument";
-    final public static String NT_SOFTDOCUMENT = "hippo:softdocument";
+    final public static String NT_REMODEL = "hippo:remodel";
     final public static String NT_REQUEST = "hippo:request";
     final public static String NT_ROLE = "hippo:role";
     final public static String NT_ROLEFOLDER = "hippo:rolefolder";
+    final public static String NT_SOFTDOCUMENT = "hippo:softdocument";
     final public static String NT_TEMPLATE = "hippo:template";
     final public static String NT_TEMPLATEITEM = "hippo:templateitem";
     final public static String NT_TEMPLATETYPE = "hippo:templatetype";
     final public static String NT_TYPE = "hippo:type";
     final public static String NT_TYPES = "hippo:types";
+    final public static String NT_UNSTRUCTURED = "hippo:unstructured";
     final public static String NT_USER = "hippo:user";
     final public static String NT_USERFOLDER = "hippo:userfolder";
     final public static String NT_WORKFLOW = "hippo:workflow";
@@ -127,6 +129,7 @@ public interface HippoNodeType {
     final public static String HIPPO_PERMISSIONS = "hippo:permissions";
     final public static String HIPPO_PROTOTYPE = "hippo:prototype";
     final public static String HIPPO_QUERYNAME = "hippo:queryname";
+    final public static String HIPPO_REMODEL = "hippo:remodel";
     final public static String HIPPO_RELATED = "hippo:related";
     final public static String HIPPO_RENDERER = "hippo:renderer";
     final public static String HIPPO_RESULTSET = "hippo:resultset";
@@ -137,6 +140,7 @@ public interface HippoNodeType {
     final public static String HIPPO_TEMPLATE = "hippo:template";
     final public static String HIPPO_TYPE = "hippo:type";
     final public static String HIPPO_TYPES = "hippo:types";
+    final public static String HIPPO_URI = "hippo:uri";
     final public static String HIPPO_UUID = "hippo:uuid";
     final public static String HIPPO_VALUES = "hippo:values";
     final public static String HIPPO_WORKFLOWS = "hippo:workflows";
