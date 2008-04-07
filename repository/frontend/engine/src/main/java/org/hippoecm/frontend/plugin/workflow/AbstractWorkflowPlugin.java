@@ -117,6 +117,12 @@ public class AbstractWorkflowPlugin extends Plugin {
                                 if(request != null) {
                                     channel.send(request);
                                     request.getContext().apply(target);
+                                } else {
+                                    request = channel.createRequest("flush", new JcrNodeModel(workflowModel).getParentModel());
+                                    channel.send(request);
+                                    request = channel.createRequest("select", new JcrNodeModel(workflowModel));
+                                    channel.send(request);
+                                    request.getContext().apply(target);
                                 }
                             } catch (Exception e) {
                                 log.error(e.getMessage());
@@ -136,6 +142,7 @@ public class AbstractWorkflowPlugin extends Plugin {
                                      final WorkflowDialogAction action) {
         addWorkflowAction(linkName, linkTitle, true, action);
     }
+
     protected void addWorkflowAction(final String dialogName, final String dialogLink, final String dialogTitle,
                                      final WorkflowDialogAction action) {
         addWorkflowAction(dialogName, dialogTitle, dialogTitle, true, action);

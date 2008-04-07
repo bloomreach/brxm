@@ -43,8 +43,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
-    // private static final String LOREM = "Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
-    private static final String LOREM = "TESTING";
+    private static final String LOREM = "Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
 
     private HippoRepository server;
     private Session session;
@@ -166,7 +165,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             session.save();
             session.refresh(true);
             assertTrue(HierarchyResolver.getNode(root, "documents/myarticle/request").getProperty("reason").getString().equals("comma should be a point"));
-            Utilities.dump(root.getNode("documents"));
+            //Utilities.dump(root.getNode("documents"));
         }
 
         // steps taken by an author
