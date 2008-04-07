@@ -229,7 +229,7 @@
                   <sv:value>Html</sv:value>
                   <sv:value>Boolean</sv:value>
                   <sv:value>Date</sv:value>
-                  <sv:value>Binary</sv:value>
+                  <sv:value>hippo:image</sv:value>
                   <sv:value>hippo:query</sv:value>
                   <sv:value>hippo:facetselect</sv:value>
                 </sv:property>
@@ -1121,6 +1121,128 @@
 
   </sv:node>
   <!-- end "Query" type -->
+
+  <!-- "Image" type -->
+  <sv:node sv:name="hippo:image">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:templatetype</sv:value>
+    </sv:property>
+    
+    <sv:node sv:name="hippo:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:supertype" sv:type="String">
+          <sv:value>nt:resource</sv:value>
+        </sv:property>
+        
+        <!-- data -->
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>data</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>jcr:data</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>Binary</sv:value>
+          </sv:property>
+        </sv:node>
+        
+        <!-- last modified -->
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>last modified</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>jcr:lastModified</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>Date</sv:value>
+          </sv:property>
+        </sv:node>
+        
+        <!-- mime type -->
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>mime type</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>jcr:mimeType</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+        </sv:node>
+        
+      </sv:node>
+    </sv:node>
+    
+    <sv:node sv:name="hippo:prototype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:prototype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:image</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mimeType" sv:type="String">
+          <sv:value>image/gif</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:data" sv:type="Binary">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="jcr:lastModified" sv:type="Date">
+          <sv:value>2008-02-04T16:43:01.618+01:00</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    
+    <sv:node sv:name="hippo:template">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:template">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:template</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:renderer" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:item">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:templateitem</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.template.resource.ImageDisplayPlugin</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:item">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:templateitem</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.template.resource.ResourceUploadPlugin</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    
+  </sv:node>
+  <!-- end "Image" type -->
 
   <!-- hippo:facetlink type -->
   <sv:node sv:name="hippo:facetlink">
