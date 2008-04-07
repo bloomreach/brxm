@@ -25,12 +25,14 @@ import org.hippoecm.repository.api.MappingException;
 
 public interface EditmodelWorkflow extends Workflow {
     /**
-     * Returns the path of the JCR node containing the template definition to
-     * edit.  Because this function is invoked on the template definition
-     * itself this is at this time equivalent to returning the UUID of the
-     * same node.
+     * Returns the path of the JCR node containing the template definition to edit.
      */
     public String edit() throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Saves the draft template, prototype and nodetype definitions.
+     */
+    public void save() throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Return the path of the JCR node containing a new the template

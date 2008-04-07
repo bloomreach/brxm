@@ -16,17 +16,61 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.MappingException;
 
 public interface RemodelWorkflow extends Workflow {
+
+    final public static String VERSION_DRAFT = "draft";
+    final public static String VERSION_CURRENT = "current";
+    final public static String VERSION_ERROR = "error";
+    final public static String VERSION_OLD = "old";
+
     /**
      * Instruct the repository to apply the new node definition overriding the
      * earlier node definition.
      */
-    public String[] remodel(String cnd) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public String[] remodel(String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException,
+            RepositoryException, RemoteException;
+
+    /**
+     * convert a single node
+     */
+    public void convert(String namespace, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException,
+            RepositoryException, RemoteException;;
+
+    public abstract class TypeUpdate {
+
+        public String newName;
+
+        abstract public Map<FieldIdentifier, FieldIdentifier> getRenames();
+    }
+
+    public class FieldIdentifier {
+
+        public String path;
+
+        public String type;
+
+        @Override
+        public boolean equals(Object object) {
+            if (object != null) {
+                if (object instanceof FieldIdentifier) {
+                    FieldIdentifier id = (FieldIdentifier) object;
+                    return id.path.equals(path) && id.type.equals(type);
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return (path.hashCode() * type.hashCode()) % 1001;
+        }
+    }
 }

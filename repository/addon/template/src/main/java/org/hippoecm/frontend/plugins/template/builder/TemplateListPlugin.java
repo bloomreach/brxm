@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.template.builder;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -42,13 +41,14 @@ import org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.JcrTemplateNodeTypeModel;
+import org.hippoecm.frontend.template.config.JcrTypeModel;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,7 @@ public class TemplateListPlugin extends Plugin {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateListPlugin.class);
 
-    private JcrTemplateNodeTypeModel typeModel;
+    private JcrTypeModel typeModel;
     private JcrNodeModel templateNodeModel;
 
     public TemplateListPlugin(PluginDescriptor pluginDescriptor, final IPluginModel pluginModel, Plugin parentPlugin) {
@@ -70,7 +70,7 @@ public class TemplateListPlugin extends Plugin {
             while (!typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 typeNode = typeNode.getParent();
             }
-            RepositoryTypeConfig typeConfig = new RepositoryTypeConfig();
+            RepositoryTypeConfig typeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT);
             typeModel = typeConfig.getTypeModel(typeNode.getName());
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -130,12 +130,12 @@ public class TemplateListPlugin extends Plugin {
 
     protected void addField(TemplateDescriptor template) {
         try {
-            UUID uuid = typeModel.addField(template.getTypeDescriptor().getName());
+            String name = typeModel.addField(template.getTypeDescriptor().getName());
 
             // add item to template
             Node templateNode = templateNodeModel.getNode();
             Node itemNode = templateNode.addNode(HippoNodeType.HIPPO_ITEM, HippoNodeType.NT_TEMPLATEITEM);
-            itemNode.setProperty(HippoNodeType.HIPPO_FIELD, uuid.toString());
+            itemNode.setProperty(HippoNodeType.HIPPO_FIELD, name);
             if (template.getTypeDescriptor().isNode()) {
                 itemNode.setProperty(HippoNodeType.HIPPO_RENDERER, NodeFieldPlugin.class.getName());
             } else {

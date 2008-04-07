@@ -39,23 +39,12 @@ public class MixedTypeConfig implements TypeConfig {
         return null;
     }
 
-    public List<TypeDescriptor> getTypes() {
-        List<TypeDescriptor> types = new LinkedList<TypeDescriptor>();
-        for (TypeConfig config : configs) {
-            List<TypeDescriptor> configTypes = config.getTypes();
-            if (configTypes != null) {
-                types.addAll(config.getTypes());
-            }
-        }
-        return types;
-    }
-
     public List<TypeDescriptor> getTypes(String namespace) {
         List<TypeDescriptor> types = new LinkedList<TypeDescriptor>();
         for (TypeConfig config : configs) {
-            List<TypeDescriptor> configTypes = config.getTypes();
+            List<TypeDescriptor> configTypes = config.getTypes(namespace);
             if (configTypes != null) {
-                types.addAll(config.getTypes(namespace));
+                types.addAll(configTypes);
             }
         }
         return types;

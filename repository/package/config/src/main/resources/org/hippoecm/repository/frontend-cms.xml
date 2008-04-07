@@ -320,6 +320,7 @@
                 </sv:property>
                 <sv:property sv:name="categories" sv:type="String">
                   <sv:value>editing</sv:value>
+                  <sv:value>modelling</sv:value>
                 </sv:property>
               </sv:node>
             </sv:node>

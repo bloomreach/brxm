@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
+import java.util.Map;
+
 import javax.jcr.Node;
 
 import org.apache.wicket.Session;
@@ -25,10 +27,13 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugins.standardworkflow.export.CndSerializer;
+import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
-import org.hippoecm.frontend.template.export.CndSerializer;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +41,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
-    
+
     public RemodelDialog(DialogWindow dialogWindow) {
         super(dialogWindow, "Apply models");
         if (dialogWindow.getNodeModel().getNode() == null) {
@@ -50,10 +55,17 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
         Node node = getDialogWindow().getNodeModel().getNode();
         String namespace = node.getName();
-        TypeConfig typeConfig = getPlugin().getPluginManager().getTemplateEngine().getTypeConfig();
-        CndSerializer serializer = new CndSerializer(sessionModel, typeConfig, namespace);
+
+        CndSerializer serializer = new CndSerializer(sessionModel, namespace);
         serializer.versionNamespace(namespace);
         String cnd = serializer.getOutput();
+        System.out.println(cnd);
+
+        NamespaceUpdater updater = new NamespaceUpdater(new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT),
+                new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT));
+        Map<String, TypeUpdate> update = updater.getUpdate(namespace);
+
+        sessionModel.getSession().save();
 
         // log out; the session model will log in again.
         // Sessions cache path resolver information, which is incorrect after remapping the prefix.
@@ -62,10 +74,10 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
-            String[] nodes = workflow.remodel(cnd);
-//            for(int i = 0; i < nodes.length; i++) {
-//                System.err.println("nodes[] " + i + ": " + nodes[i]);
-//            }
+            String[] nodes = workflow.remodel(cnd, update);
+            //            for(int i = 0; i < nodes.length; i++) {
+            //                System.err.println("nodes[] " + i + ": " + nodes[i]);
+            //            }
             sessionModel.getSession().save();
 
             // flush the root node

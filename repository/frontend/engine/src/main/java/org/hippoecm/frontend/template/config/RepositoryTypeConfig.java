@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -39,6 +40,8 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,16 +51,17 @@ public class RepositoryTypeConfig implements TypeConfig {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryTypeConfig.class);
 
-    public RepositoryTypeConfig() {
+    private String version;
+
+    public RepositoryTypeConfig(String version) {
+        this.version = version;
     }
 
     public TypeDescriptor getTypeDescriptor(String name) {
         try {
             Node typeNode = lookupConfigNode(name);
             if (typeNode != null) {
-                return createDescriptor(typeNode).type;
-            } else {
-                log.error("No plugin node found for " + name);
+                return createDescriptor(typeNode, name).type;
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -65,31 +69,23 @@ public class RepositoryTypeConfig implements TypeConfig {
         return null;
     }
 
-    public JcrTemplateNodeTypeModel getTypeModel(String name) {
-        Node node = getTypeNode(name);
-        if (node != null) {
-            return new JcrTemplateNodeTypeModel(new JcrNodeModel(node), name);
-        }
-        return null;
-    }
-
-    public Node getTypeNode(String name) {
+    public JcrTypeModel getTypeModel(String name) {
         try {
-            return lookupConfigNode(name);
+            Node node = lookupConfigNode(name);
+            if (node != null) {
+                return new JcrTypeModel(new JcrNodeModel(node), name);
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return null;
     }
 
-    public List<TypeDescriptor> getTypes() {
-        return getTypes("*");
-    }
-
     public List<TypeDescriptor> getTypes(String namespace) {
         Session session = getJcrSession();
 
-        List<TypeDescriptor> list = new LinkedList<TypeDescriptor>();
+        Map<String, TypeDescriptor> allTypes = new HashMap<String, TypeDescriptor>();
+        Map<String, TypeDescriptor> versionedTypes = new HashMap<String, TypeDescriptor>();
         try {
             String xpath = HippoNodeType.NAMESPACES_PATH + "/" + namespace + "/*/" + HippoNodeType.HIPPO_NODETYPE + "/"
                     + HippoNodeType.HIPPO_NODETYPE;
@@ -100,12 +96,27 @@ public class RepositoryTypeConfig implements TypeConfig {
             NodeIterator iter = result.getNodes();
             while (iter.hasNext()) {
                 Node pluginNode = iter.nextNode();
-                Descriptor descriptor = createDescriptor(pluginNode);
-                TypeDescriptor template = descriptor.type;
-                list.add(template);
+                Descriptor descriptor = new Descriptor(pluginNode, namespace);
+                TypeDescriptor typeDescriptor = descriptor.type;
+                if (isVersion(pluginNode, RemodelWorkflow.VERSION_CURRENT)) {
+                    allTypes.put(typeDescriptor.getName(), typeDescriptor);
+                }
+                if (isVersion(pluginNode, version)) {
+                    versionedTypes.put(typeDescriptor.getName(), typeDescriptor);
+                }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        ArrayList<TypeDescriptor> list = new ArrayList<TypeDescriptor>(allTypes.values().size());
+        for (Map.Entry<String, TypeDescriptor> entry : allTypes.entrySet()) {
+            if (versionedTypes.containsKey(entry.getKey())) {
+                list.add(versionedTypes.get(entry.getKey()));
+            } else {
+                list.add(entry.getValue());
+            }
         }
         return list;
     }
@@ -116,12 +127,39 @@ public class RepositoryTypeConfig implements TypeConfig {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }
 
+    private boolean useOldType() {
+        return (RemodelWorkflow.VERSION_OLD.equals(version) || RemodelWorkflow.VERSION_ERROR.equals(version));
+    }
+
+    private boolean isVersion(Node pluginNode, String version) throws RepositoryException {
+        if (pluginNode.isNodeType(HippoNodeType.NT_REMODEL)) {
+            if (pluginNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString().equals(version)) {
+                return true;
+            }
+        } else if (RemodelWorkflow.VERSION_CURRENT.equals(version)) {
+            return true;
+        }
+        return false;
+    }
+
     private Node lookupConfigNode(String type) throws RepositoryException {
-        Session session = getJcrSession();
+        HippoSession session = (HippoSession) getJcrSession();
+        NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
 
         String prefix = "system";
+        String uri = "";
         if (type.indexOf(':') > 0) {
             prefix = type.substring(0, type.indexOf(':'));
+            uri = nsReg.getURI(prefix);
+        }
+
+        String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
+        if (nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
+            type = type.substring(prefix.length());
+            prefix = prefix.substring(0, prefix.length() - nsVersion.length());
+            type = prefix + type;
+        } else {
+            uri = nsReg.getURI("rep");
         }
 
         String xpath = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/" + HippoNodeType.HIPPO_NODETYPE
@@ -131,21 +169,45 @@ public class RepositoryTypeConfig implements TypeConfig {
         Query query = queryManager.createQuery(xpath, Query.XPATH);
         QueryResult result = query.execute();
         NodeIterator iter = result.getNodes();
-        if (iter.getSize() > 1) {
-            throw new IllegalStateException("Multiple type descriptions found for type " + type);
-        } else if (iter.getSize() == 0) {
-            return null;
-        } else {
-            return iter.nextNode();
+        Node current = null;
+        while (iter.hasNext()) {
+            Node node = iter.nextNode();
+            if (node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                String state = node.getProperty(HippoNodeType.HIPPO_REMODEL).getString();
+                if (version.equals(state)) {
+                    if (useOldType()) {
+                        if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                            return node;
+                        }
+                    } else {
+                        return node;
+                    }
+                } else if (RemodelWorkflow.VERSION_CURRENT.equals(state)) {
+                    current = node;
+                }
+            } else if (RemodelWorkflow.VERSION_CURRENT.equals(version)) {
+                return node;
+            } else {
+                current = node;
+            }
         }
+
+        if (RemodelWorkflow.VERSION_DRAFT.equals(version) || RemodelWorkflow.VERSION_ERROR.equals(version)) {
+            return current;
+        }
+        return null;
     }
 
-    protected Descriptor createDescriptor(Node pluginNode) throws RepositoryException {
-        return new Descriptor(pluginNode);
+    protected Descriptor createDescriptor(Node pluginNode, String type) throws RepositoryException {
+        String prefix = "system";
+        if (type.indexOf(':') > 0) {
+            prefix = type.substring(0, type.indexOf(':'));
+        }
+        return new Descriptor(pluginNode, prefix);
     }
 
-    public TypeDescriptor createTypeDescriptor(Node node) throws RepositoryException {
-        return createDescriptor(node).type;
+    public TypeDescriptor createTypeDescriptor(Node node, String type) throws RepositoryException {
+        return createDescriptor(node, type).type;
     }
 
     protected class Descriptor implements IClusterable {
@@ -155,10 +217,12 @@ public class RepositoryTypeConfig implements TypeConfig {
 
         RepositoryFieldDescriptor field;
         TypeDescriptor type;
+        String prefix;
 
-        Descriptor(Node typeNode) {
+        Descriptor(Node typeNode, String prefix) {
             try {
                 this.jcrPath = typeNode.getPath();
+                this.prefix = prefix;
 
                 if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
                     Node templateTypeNode = typeNode;
@@ -177,6 +241,13 @@ public class RepositoryTypeConfig implements TypeConfig {
                     String path = null;
                     if (typeNode.hasProperty(HippoNodeType.HIPPO_PATH)) {
                         path = typeNode.getProperty(HippoNodeType.HIPPO_PATH).getString();
+                        if (RemodelWorkflow.VERSION_DRAFT.equals(version)
+                                || RemodelWorkflow.VERSION_ERROR.equals(version)) {
+                            // convert path
+                            if (path.indexOf(':') > 0) {
+                                path = prefix + path.substring(path.indexOf(':'));
+                            }
+                        }
                     }
 
                     String name = "";
@@ -200,7 +271,7 @@ public class RepositoryTypeConfig implements TypeConfig {
                     while (it.hasNext()) {
                         Node child = it.nextNode();
                         if (child != null) {
-                            result.add(createDescriptor(child));
+                            result.add(new Descriptor(child, prefix));
                         }
                     }
                 } else {

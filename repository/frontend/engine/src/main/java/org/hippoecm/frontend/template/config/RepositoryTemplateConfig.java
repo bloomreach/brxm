@@ -18,7 +18,9 @@ package org.hippoecm.frontend.template.config;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -27,6 +29,8 @@ import org.hippoecm.frontend.template.ItemDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,20 +39,17 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryTemplateConfig.class);
 
-    public RepositoryTemplateConfig() {
+    private String version;
+
+    public RepositoryTemplateConfig(String version) {
         super(HippoNodeType.NAMESPACES_PATH);
+        this.version = version;
     }
 
     public TemplateDescriptor getTemplate(TypeDescriptor type) {
         if (type != null) {
             String typeName = type.getName();
-            PluginDescriptor plugin;
-            if (typeName.indexOf(':') > 0) {
-                String prefix = typeName.substring(0, typeName.indexOf(':'));
-                plugin = getPlugin(prefix + "/" + typeName);
-            } else {
-                plugin = getPlugin("system/" + typeName);
-            }
+            PluginDescriptor plugin = getPlugin(typeName);
             if (plugin != null) {
                 return new RepositoryTemplateDescriptor(type, plugin);
             }
@@ -56,17 +57,62 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         return null;
     }
 
-    public Node getTemplateNode(String typeName) {
+    public Node getTemplateNode(String type) {
         try {
-            String prefix;
-            if (typeName.indexOf(':') > 0) {
-                prefix = typeName.substring(0, typeName.indexOf(':'));
-            } else {
-                prefix = "system";
+            HippoSession session = (HippoSession) getJcrSession();
+            NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
+
+            String prefix = "system";
+            String uri = "";
+            if (type.indexOf(':') > 0) {
+                prefix = type.substring(0, type.indexOf(':'));
+                uri = nsReg.getURI(prefix);
             }
-            return getJcrSession().getRootNode().getNode(
-                    getBasePath() + "/" + prefix + "/" + typeName + "/" + HippoNodeType.HIPPO_TEMPLATE + "/"
-                            + HippoNodeType.HIPPO_TEMPLATE);
+
+            String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
+            if (nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
+                type = type.substring(prefix.length());
+                prefix = prefix.substring(0, prefix.length() - nsVersion.length());
+                type = prefix + type;
+            } else {
+                uri = nsReg.getURI("rep");
+            }
+
+            String path = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/"
+                    + HippoNodeType.HIPPO_TEMPLATE;
+            Node node = session.getRootNode().getNode(path);
+            if (node != null) {
+                NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TEMPLATE);
+                Node current = null;
+                while (nodes.hasNext()) {
+                    Node child = nodes.nextNode();
+                    if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
+                        String state = child.getProperty(HippoNodeType.HIPPO_REMODEL).getString();
+                        if (state.equals(version)) {
+                            if (useOldType()) {
+                                if (child.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                                    return child;
+                                }
+                            } else {
+                                return child;
+                            }
+                        } else if (state.equals(RemodelWorkflow.VERSION_CURRENT)) {
+                            current = child;
+                        }
+                    } else {
+                        if (version.equals(RemodelWorkflow.VERSION_CURRENT)) {
+                            return child;
+                        } else {
+                            current = child;
+                        }
+                    }
+                }
+
+                // FIXME: this should be under the control of the editmodel workflow
+                if (version.equals(RemodelWorkflow.VERSION_DRAFT) || version.equals(RemodelWorkflow.VERSION_ERROR)) {
+                    return current;
+                }
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -74,15 +120,13 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     }
 
     @Override
-    public PluginDescriptor getPlugin(String pluginId) {
+    public PluginDescriptor getPlugin(String type) {
         try {
-            Node pluginNode = getJcrSession().getRootNode().getNode(
-                    getBasePath() + "/" + pluginId + "/" + HippoNodeType.HIPPO_TEMPLATE + "/"
-                            + HippoNodeType.HIPPO_TEMPLATE);
+            Node pluginNode = getTemplateNode(type);
             if (pluginNode != null) {
                 return nodeToDescriptor(pluginNode);
             }
-            log.error("No plugin node found for " + pluginId);
+            log.error("No plugin node found for " + type);
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
@@ -91,6 +135,10 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     public TemplateDescriptor createTemplate(Node node, TypeDescriptor type) throws RepositoryException {
         return new RepositoryTemplateDescriptor(type, nodeToDescriptor(node));
+    }
+
+    private boolean useOldType() {
+        return (RemodelWorkflow.VERSION_OLD.equals(version) || RemodelWorkflow.VERSION_ERROR.equals(version));
     }
 
     static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, RepositoryTemplateDescriptor parent) {

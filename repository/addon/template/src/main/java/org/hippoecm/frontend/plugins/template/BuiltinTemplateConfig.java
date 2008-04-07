@@ -30,6 +30,7 @@ import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
 public class BuiltinTemplateConfig implements TemplateConfig {
     private static final long serialVersionUID = 1L;
@@ -42,6 +43,13 @@ public class BuiltinTemplateConfig implements TemplateConfig {
 
     public TemplateDescriptor getTemplate(TypeDescriptor type) {
         return new BuiltinTemplateDescriptor(type);
+    }
+
+    public TemplateDescriptor getTemplate(TypeDescriptor type, String version) {
+        if (version.equals(RemodelWorkflow.VERSION_CURRENT)) {
+            return new BuiltinTemplateDescriptor(type);
+        }
+        return null;
     }
 
     class BuiltinTemplateDescriptor extends TemplateDescriptor {

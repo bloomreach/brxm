@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.IPluginModel;
@@ -36,11 +35,14 @@ import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
+import org.hippoecm.frontend.template.config.JcrFieldModel;
+import org.hippoecm.frontend.template.config.JcrTypeModel;
 import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +55,12 @@ public class ItemEditorPlugin extends Plugin {
     private Plugin field;
     private Plugin template;
     private TemplateConfig templateConfig;
+    private JcrTypeModel typeModel;
 
     public ItemEditorPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
         super(descriptor, new JcrNodeModel(model), parentPlugin);
+
+        updateModel();
 
         templateConfig = new BuiltinTemplateConfig(getPluginManager().getTemplateEngine().getTypeConfig());
 
@@ -76,6 +81,8 @@ public class ItemEditorPlugin extends Plugin {
             if (!nodeModel.equals(getPluginModel())) {
                 setPluginModel(nodeModel);
 
+                updateModel();
+
                 field.destroy();
                 replace(field = createFieldPlugin("field"));
 
@@ -91,17 +98,23 @@ public class ItemEditorPlugin extends Plugin {
         super.receive(notification);
     }
 
+    @Override
+    public void onDetach() {
+        typeModel.detach();
+        super.onDetach();
+    }
+
     private Plugin createFieldPlugin(String wicketId) {
         try {
-            Node fieldNode = getFieldNode();
-            if (fieldNode != null) {
-                JcrNodeModel fieldModel = new JcrNodeModel(fieldNode);
+            JcrFieldModel fieldModel = getFieldModel();
+            if (fieldModel != null) {
+                JcrNodeModel nodeModel = fieldModel.getNodeModel();
 
                 TemplateEngine engine = getPluginManager().getTemplateEngine();
                 TypeDescriptor typeDescriptor = engine.getTypeConfig().getTypeDescriptor(HippoNodeType.NT_FIELD);
                 TemplateDescriptor templateDescriptor = engine.getTemplateConfig().getTemplate(typeDescriptor);
-                TemplateModel templateModel = new TemplateModel(templateDescriptor, fieldModel.getParentModel(),
-                        fieldModel.getNode().getName(), fieldModel.getNode().getIndex());
+                TemplateModel templateModel = new TemplateModel(templateDescriptor, nodeModel.getParentModel(),
+                        nodeModel.getNode().getName(), nodeModel.getNode().getIndex());
                 return engine.createTemplate(wicketId, templateModel, this, null);
             }
         } catch (RepositoryException ex) {
@@ -115,7 +128,7 @@ public class ItemEditorPlugin extends Plugin {
         try {
             JcrNodeModel itemNodeModel = (JcrNodeModel) getModel();
             Node itemNode = itemNodeModel.getNode();
-            if (itemNode != null && getFieldNode() != null) {
+            if (itemNode != null && getFieldModel() != null) {
                 TypeDescriptor typeDescriptor = new TypeDescriptor("internal", HippoNodeType.NT_PARAMETERS) {
                     private static final long serialVersionUID = 1L;
 
@@ -152,13 +165,16 @@ public class ItemEditorPlugin extends Plugin {
     private Plugin createTemplatePlugin(String wicketId) {
         try {
             JcrNodeModel itemNodeModel = (JcrNodeModel) getModel();
-            Node fieldNode = getFieldNode();
-            if (fieldNode != null) {
-                String typeName = fieldNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
-                Node subTemplateNode = new RepositoryTemplateConfig().getTemplateNode(typeName);
+            JcrFieldModel fieldModel = getFieldModel();
+            if (fieldModel != null) {
+                String typeName = fieldModel.getTypeName();
+
+                Node subTemplateNode = new RepositoryTemplateConfig(RemodelWorkflow.VERSION_CURRENT)
+                        .getTemplateNode(typeName);
                 if (subTemplateNode != null && subTemplateNode.hasNode("hippo:options")) {
                     Node configNode = subTemplateNode.getNodes("hippo:options").nextNode();
-                    TypeDescriptor typeDescriptor = new RepositoryTypeConfig().createTypeDescriptor(configNode);
+                    TypeDescriptor typeDescriptor = new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT)
+                            .createTypeDescriptor(configNode, typeName);
 
                     Node itemNode = itemNodeModel.getNode();
                     if (!itemNode.hasNode(HippoNodeType.HIPPO_PARAMETERS)) {
@@ -190,33 +206,27 @@ public class ItemEditorPlugin extends Plugin {
         return new PluginFactory(getPluginManager()).createPlugin(plugin, null, this);
     }
 
-    private Node getTypeNode() throws RepositoryException {
-        JcrNodeModel itemNodeModel = (JcrNodeModel) getModel();
-        Node itemNode = itemNodeModel.getNode();
-        Node templateNode = itemNode;
-        while (!templateNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-            templateNode = templateNode.getParent();
+    private void updateModel() {
+        try {
+            JcrNodeModel itemNodeModel = (JcrNodeModel) getModel();
+            Node itemNode = itemNodeModel.getNode();
+            Node templateNode = itemNode;
+            while (!templateNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                templateNode = templateNode.getParent();
+            }
+            String typeName = templateNode.getName();
+            RepositoryTypeConfig repoTypeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT);
+            typeModel = repoTypeConfig.getTypeModel(typeName);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
-        String typeName = templateNode.getName();
-        RepositoryTypeConfig repoTypeConfig = new RepositoryTypeConfig();
-        return repoTypeConfig.getTypeNode(typeName);
     }
 
-    private Node getFieldNode() throws RepositoryException {
+    private JcrFieldModel getFieldModel() throws RepositoryException {
         JcrNodeModel itemNodeModel = (JcrNodeModel) getModel();
         Node itemNode = itemNodeModel.getNode();
         if (itemNode.hasProperty(HippoNodeType.HIPPO_FIELD)) {
-            Node typeNode = getTypeNode();
-
-            String fieldName = itemNode.getProperty(HippoNodeType.HIPPO_FIELD).getString();
-            NodeIterator fieldIter = typeNode.getNodes(HippoNodeType.HIPPO_FIELD);
-            while (fieldIter.hasNext()) {
-                Node fieldNode = fieldIter.nextNode();
-                String name = fieldNode.getProperty(HippoNodeType.HIPPO_NAME).getString();
-                if (name.equals(fieldName)) {
-                    return fieldNode;
-                }
-            }
+            return typeModel.getField(itemNode.getProperty(HippoNodeType.HIPPO_FIELD).getString());
         }
         return null;
     }

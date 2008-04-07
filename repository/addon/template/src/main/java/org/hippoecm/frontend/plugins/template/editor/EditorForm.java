@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.template.editor;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -29,7 +30,12 @@ import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
+import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
+import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
+import org.hippoecm.frontend.template.config.TemplateConfig;
+import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.TemplateModel;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,13 +74,26 @@ public class EditorForm extends Form {
     protected Plugin createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
         try {
-            String type = model.getNode().getPrimaryNodeType().getName();
+            Node node = model.getNode();
             TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
-            TypeDescriptor typeDescriptor = engine.getTypeConfig().getTypeDescriptor(type);
-            TemplateDescriptor templateDescriptor = engine.getTemplateConfig().getTemplate(typeDescriptor);
+            TypeConfig typeConfig;
+            TemplateConfig templateConfig;
+            if (node.isNodeType(HippoNodeType.NT_REMODEL) && !node.isNodeType(HippoNodeType.NT_TEMPLATE)) {
+                String state = node.getProperty(HippoNodeType.HIPPO_REMODEL).getString();
+                typeConfig = new RepositoryTypeConfig(state);
+                templateConfig = new RepositoryTemplateConfig(state);
+            } else {
+                typeConfig = engine.getTypeConfig();
+                templateConfig = engine.getTemplateConfig();
+            }
+
+            String type = node.getPrimaryNodeType().getName();
+            TypeDescriptor typeDescriptor = typeConfig.getTypeDescriptor(type);
+            TemplateDescriptor templateDescriptor = templateConfig.getTemplate(typeDescriptor);
+
             if (templateDescriptor != null) {
-                TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(),
-                        model.getNode().getName(), model.getNode().getIndex());
+                TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(), node
+                        .getName(), node.getIndex());
 
                 return engine.createTemplate("template", templateModel, plugin, null);
             } else {

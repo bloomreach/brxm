@@ -43,11 +43,10 @@ public class JcrTypeConfig implements TypeConfig {
     private static final Logger log = LoggerFactory.getLogger(JcrTypeConfig.class);
 
     public TypeDescriptor getTypeDescriptor(String type) {
-        return new JcrTypeDescriptor(type);
-    }
-
-    public List<TypeDescriptor> getTypes() {
-        // TODO Auto-generated method stub
+        JcrTypeDescriptor result = new JcrTypeDescriptor(type);
+        if (result.isValid()) {
+            return result;
+        }
         return null;
     }
 
@@ -66,6 +65,9 @@ public class JcrTypeConfig implements TypeConfig {
             super(type, type);
 
             this.type = type;
+            if (type.indexOf(':') < 0) {
+                setIsNode(false);
+            }
 
             load();
             if (nt != null) {
@@ -78,8 +80,13 @@ public class JcrTypeConfig implements TypeConfig {
             }
         }
 
+        boolean isValid() {
+            load();
+            return (!isNode() || nt != null);
+        }
+
         void load() {
-            if (nt == null) {
+            if (nt == null && isNode()) {
                 try {
                     Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
                     NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
@@ -129,6 +136,7 @@ public class JcrTypeConfig implements TypeConfig {
             if (definition instanceof NodeDefinition) {
                 NodeDefinition ntDef = (NodeDefinition) definition;
                 setIsMultiple(ntDef.allowsSameNameSiblings());
+                setMandatory(ntDef.isMandatory());
 
                 // set referenced type
                 NodeType[] types = ntDef.getRequiredPrimaryTypes();
@@ -139,6 +147,7 @@ public class JcrTypeConfig implements TypeConfig {
             } else {
                 PropertyDefinition propDef = (PropertyDefinition) definition;
                 setIsMultiple(propDef.isMultiple());
+                setMandatory(propDef.isMandatory());
 
                 setType(PropertyType.nameFromValue(propDef.getRequiredType()));
             }

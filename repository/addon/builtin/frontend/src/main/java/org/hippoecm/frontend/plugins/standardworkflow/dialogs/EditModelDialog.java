@@ -15,12 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,17 +49,23 @@ public class EditModelDialog extends AbstractWorkflowDialog {
         EditmodelWorkflow workflow = (EditmodelWorkflow) getWorkflow();
         if (workflow != null) {
             String path = workflow.edit();
-            JcrItemModel itemModel = new JcrItemModel(path);
-            if (path != null) {
-                Channel channel = getChannel();
-                if (channel != null) {
-                    Request request = channel.createRequest("edit", new JcrNodeModel(itemModel));
-                    channel.send(request);
+            try {
+                Node node = ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path.substring(1));
+                node = getVersion(node, HippoNodeType.HIPPO_TEMPLATE, "draft");
+                JcrItemModel itemModel = new JcrItemModel(node);
+                if (path != null) {
+                    Channel channel = getChannel();
+                    if (channel != null) {
+                        Request request = channel.createRequest("edit", new JcrNodeModel(itemModel));
+                        channel.send(request);
+                    } else {
+                        log.error("could not send edit message");
+                    }
                 } else {
-                    log.error("could not send edit message");
+                    log.error("no model found to edit");
                 }
-            } else {
-                log.error("no model found to edit");
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
         } else {
             log.error("no workflow defined on model for selected node");
@@ -63,4 +76,19 @@ public class EditModelDialog extends AbstractWorkflowDialog {
     public void cancel() {
     }
 
+    private Node getVersion(Node node, String name, String version) throws RepositoryException {
+        Node template = node.getNode(name);
+        NodeIterator iter = template.getNodes(name);
+        while (iter.hasNext()) {
+            Node versionNode = iter.nextNode();
+            if (versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
+                if (version.equals(versionNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString())) {
+                    return versionNode;
+                }
+            } else if (version.equals("current")) {
+                return versionNode;
+            }
+        }
+        return null;
+    }
 }

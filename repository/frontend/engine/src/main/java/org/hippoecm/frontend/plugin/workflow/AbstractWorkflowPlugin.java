@@ -99,15 +99,10 @@ public class AbstractWorkflowPlugin extends Plugin {
                             handle.getNode().save();
                             ((UserSession) Session.get()).getJcrSession().refresh(true);
 
+                            Workflow workflow = null;
                             try {
                                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                                Workflow workflow = manager.getWorkflow(workflowModel.getWorkflowDescriptor());
-                                Channel channel = getTopChannel();
-                                Request request = action.execute(channel, workflow);
-                                if(request != null) {
-                                    channel.send(request);
-                                    request.getContext().apply(target);
-                                }
+                                workflow = manager.getWorkflow(workflowModel.getWorkflowDescriptor());
                             } catch (MappingException e) {
                                 log.error(e.getMessage());
                             } catch (RepositoryException e) {
@@ -116,6 +111,16 @@ public class AbstractWorkflowPlugin extends Plugin {
                                 log.error(e.getMessage());
                             }
 
+                            try {
+                                Channel channel = getTopChannel();
+                                Request request = action.execute(channel, workflow);
+                                if(request != null) {
+                                    channel.send(request);
+                                    request.getContext().apply(target);
+                                }
+                            } catch (Exception e) {
+                                log.error(e.getMessage());
+                            }
                         } catch(RepositoryException ex) {
                             log.error("Invalid data to save", ex);
                         }
