@@ -43,7 +43,8 @@ public class ReviewedActionsWorkflowTest extends TestCase {
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
-    private static final String LOREM = "Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
+    // private static final String LOREM = "Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
+    private static final String LOREM = "TESTING";
 
     private HippoRepository server;
     private Session session;
@@ -141,7 +142,14 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             prop.setValue(prop.getString() + ",");
             session.save();
             session.refresh(true);
+
+            node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
             BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+            reviewedWorkflow.commitEditableInstance();
+            session.save();
+            session.refresh(true);
+
+            reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.requestPublication();
             session.save();
@@ -158,7 +166,7 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             session.save();
             session.refresh(true);
             assertTrue(HierarchyResolver.getNode(root, "documents/myarticle/request").getProperty("reason").getString().equals("comma should be a point"));
-            //Utilities.dump(root.getNode("documents"));
+            Utilities.dump(root.getNode("documents"));
         }
 
         // steps taken by an author
@@ -183,7 +191,14 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + "!");
+
+            node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
             BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+            reviewedWorkflow.commitEditableInstance();
+            session.save();
+            session.refresh(true);
+
+            reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.requestPublication();
             session.save();
@@ -215,7 +230,14 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
             session.save();
             session.refresh(true);
+
+            node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
             FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+            reviewedWorkflow.commitEditableInstance();            
+            session.save();
+            session.refresh(true);
+
+            reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.publish();
             session.save();
@@ -234,6 +256,29 @@ public class ReviewedActionsWorkflowTest extends TestCase {
                 assertTrue("cannot request deletion when there is already a request", true );
             }
         }
-        
+
+
+        // Test regarding Issue HREPTWO-688
+        {  
+            Node node2 = HierarchyResolver.getNode(root, "documents/myarticle/request[@type='delete']");
+            FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node2, "default");
+            requestWorkflow.cancelRequest();
+            session.save();
+            session.refresh(false);
+             
+            // now it should be possible
+            node = HierarchyResolver.getNode(root, "documents/myarticle/myarticle[@hippostd:state='published']");
+            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+
+            try {
+                System.err.println("\n\n\n\n\n\n\n");
+                workflow.requestDeletion();
+            } catch (WorkflowException e) {
+                fail("Issue HREPTWO-688 has resurfaced");
+            }
+            session.save();
+            session.refresh(true);
+            //Utilities.dump(root.getNode("documents"));
+        }
     }
 }

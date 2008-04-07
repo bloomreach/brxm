@@ -23,7 +23,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
-public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements FullReviewedActionsWorkflow {
+public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements BasicReviewedActionsWorkflow {
 
     private static final long serialVersionUID = 1L;
     
@@ -34,24 +34,27 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     protected PublishableDocument draft;
 
     public BasicReviewedActionsWorkflowImpl() throws RemoteException {
-    
     }
 
     public Document obtainEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("obtain editable instance on document ");
         if(draft == null) {
             try {
-                draft = (PublishableDocument) unpublished.clone();
+                if(unpublished != null) {
+                    draft = (PublishableDocument) unpublished.clone();
+                } else {
+                    draft = (PublishableDocument) published.clone();
+                }
                 draft.state = PublishableDocument.DRAFT;
+                draft.setOwner(getWorkflowContext().getUsername());
             } catch(CloneNotSupportedException ex) {
                 throw new WorkflowException("document is not a publishable document");
             }
         } else {
             /* FIXME issue HREPTWO-728
-         * workaround by uncommenting source
-            if(!getWorkflowContext().getUsername().equals(username))
+             * workaround by uncommenting source */
+            if(!getWorkflowContext().getUsername().equals(draft.username))
                 throw new WorkflowException("document already being edited");
-            */
         }
         return draft;
     }
@@ -59,13 +62,8 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     public void commitEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("commit editable instance of document ");
         if(draft != null) {
-            try {
-                unpublished = (PublishableDocument) draft.clone();
-                unpublished.state = PublishableDocument.UNPUBLISHED;
-                draft = null;
-            } catch(CloneNotSupportedException ex) {
-                throw new WorkflowException("document is not a publishable document");
-            }
+            unpublished = null;
+            draft.setState(PublishableDocument.UNPUBLISHED);
         } else {
             throw new WorkflowException("no draft version of publication");
         }
@@ -74,13 +72,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     public void disposeEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("dispose editable instance on document ");
         draft = null;
-    }
-
-    public void delete() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("deletion on document ");
-        if(current != null)
-            throw new WorkflowException("cannot delete document with pending publication request");
-        unpublished = draft = null;
     }
 
     public void requestDeletion() throws WorkflowException {
@@ -92,23 +83,21 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
         }
     }
 
-    public void publish() throws WorkflowException, MappingException {
-        ReviewedActionsWorkflowImpl.log.info("publication on document ");
-        try {
-            if(draft != null) {
-                published = (PublishableDocument) draft.clone();
-                published.state = PublishableDocument.PUBLISHED;
-                //unpublished = (PublishableDocument) draft.clone();
-                //unpublished.state = PublishableDocument.UNPUBLISHED;
-                unpublished = null;
-                draft = null;
-            } else {
-                published = (PublishableDocument) unpublished.clone();
-                published.state = PublishableDocument.PUBLISHED;
-                unpublished = null;
-            }
-        } catch(CloneNotSupportedException ex) {
-            throw new WorkflowException("document is not a publishable document");
+    public void requestPublication() throws WorkflowException {
+        ReviewedActionsWorkflowImpl.log.info("publication request on document ");
+        if(current == null) {
+            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUsername());
+        } else {
+            throw new WorkflowException("publication request already pending");
+        }
+    }
+
+    public void requestDepublication() throws WorkflowException {
+        ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
+        if(current == null) {
+            current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUsername());
+        } else {
+            throw new WorkflowException("publication request already pending");
         }
     }
 
@@ -122,22 +111,9 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
         throw new WorkflowException("unsupported");
     }
 
-    public void requestPublication() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("publication request on document ");
-        if(current == null) {
-            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUsername());
-        } else {
-            throw new WorkflowException("publication request already pending");
-        }
-    }
-
     public void requestPublication(Date publicationDate) throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("publication request on document ");
-        if(current == null) {
-            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUsername());
-        } else {
-            throw new WorkflowException("publication request already pending");
-        }
+        throw new WorkflowException("unsupported");
     }
 
     public void requestPublication(Date publicationDate, Date depublicationDate) throws WorkflowException {
@@ -145,30 +121,18 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
         throw new WorkflowException("unsupported");
     }
 
-    public void depublish() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("depublication on document ");
+    public void requestDepublication(Date publicationDate) throws WorkflowException {
+        ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
+        throw new WorkflowException("Unsupported operation");
+    }
+
+    PublishableDocument getRejectedDocument() throws WorkflowException {
         try {
-            if(unpublished == null) {
-                unpublished = (PublishableDocument) published.clone();
-                unpublished.state = PublishableDocument.UNPUBLISHED;
-            }
-            published = null;
+            PublishableDocument rejected = (PublishableDocument) unpublished.clone();
+            rejected.setState(PublishableDocument.STALE);
+            return rejected;
         } catch(CloneNotSupportedException ex) {
             throw new WorkflowException("document is not a publishable document");
         }
     }
-
-    public void requestDepublication() throws WorkflowException {
-        ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
-        if(current == null) {
-            current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUsername());
-        } else {
-            throw new WorkflowException("publication request already pending");
-        }
-    }
-
-    public void requestDepublication(Date publicationDate) throws WorkflowException {
-        throw new WorkflowException("Unsupported operation");
-    }
-
 }

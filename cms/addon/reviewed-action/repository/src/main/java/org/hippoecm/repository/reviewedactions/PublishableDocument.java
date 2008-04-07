@@ -24,6 +24,7 @@ public class PublishableDocument extends Document {
     final public static String STALE = "stale";
 
     String state;
+    String username;
 
     public PublishableDocument() {
         this.state = UNPUBLISHED;
@@ -32,5 +33,13 @@ public class PublishableDocument extends Document {
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    void setState(String state) {
+        this.state = state;
+    }
+
+    void setOwner(String username) {
+        this.username = username;
     }
 }
