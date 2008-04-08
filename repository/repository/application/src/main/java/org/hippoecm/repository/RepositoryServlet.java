@@ -57,7 +57,7 @@ public class RepositoryServlet extends HttpServlet {
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
 
     /** Parameter name of the repository storage directory */
-    public final static String REPOSITORY_ADDRESS_PARAM = "repository-directory";
+    public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
 
     /** Parameter name of the binging address */
     public final static String REPOSITORY_BINDING_PARAM = "repository-address";
@@ -113,7 +113,7 @@ public class RepositoryServlet extends HttpServlet {
      * @throws ServletException
      */
     private void findStorageLocation(ServletConfig config) throws ServletException {
-        storageLocation = config.getInitParameter("repository-directory");
+        storageLocation = config.getInitParameter(REPOSITORY_DIRECTORY_PARAM);
 
         // basic sanity
         if (storageLocation == null) {
@@ -133,7 +133,7 @@ public class RepositoryServlet extends HttpServlet {
         storageLocation = config.getServletContext().getRealPath(storageLocation);
         if (storageLocation == null) {
             throw new ServletException("Cannot determin repository location "
-                    + config.getInitParameter("repository-directory"));
+                    + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
         }
     }
 
