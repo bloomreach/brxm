@@ -46,28 +46,19 @@ public class DirectAccessServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-        String path = req.getRequestURI();
-        if (path.startsWith(req.getContextPath())) {
-            path = path.substring(req.getContextPath().length());
-        }
-        if (path.startsWith(req.getServletPath())) {
-            path = path.substring(req.getServletPath().length());
-        }
+        String relativeURL = req.getRequestURI();
 
-        // remove urlBasePath if present
+        // URL decode
+        relativeURL = URLDecoder.decode(relativeURL, "UTF-8");
+
+        // transform to documentPath
         String urlBasePath = (String) req.getSession().getAttribute(ContextFilter.URL_BASE_PATH);
-        if (path.startsWith(urlBasePath)) {
-            path = path.substring(urlBasePath.length());
-        }
-
-        // prepend repositoryBaseLocation if not present
         String baseLocation = (String) req.getSession().getAttribute(ContextFilter.REPOSITORY_BASE_LOCATION);
-        if (!path.startsWith(baseLocation)) {
-            path = baseLocation + path;
-        }
 
-        path = URLDecoder.decode(path, "UTF-8");
+        URLPathTranslator urlPathTranslator = new URLPathTranslator(req.getContextPath(), req.getServletPath(), baseLocation);
+        String path = urlPathTranslator.urlToDocumentPath(relativeURL);
 
+        // JCR decode
         String currentPath = "";
         StringTokenizer pathElts = new StringTokenizer(path, "/");
         while (pathElts.hasMoreTokens()) {

@@ -133,49 +133,43 @@ public class ContextFilter implements Filter {
             }
         }
 
-        String relativePath = req.getRequestURI();
-        /* This next part is better resolved by using filterConfig.getServletContext().getContextPath(), but
-         * this is only available after Servlet API 2.5.
-         */
-        if (relativePath.startsWith(servletPath) && !relativePath.equals(servletPath)) {
-            relativePath = relativePath.substring(servletPath.length());
-        }
-        if (relativePath.startsWith(req.getContextPath())) {
-            relativePath = relativePath.substring(req.getContextPath().length());
-        }
+        String relativeURL = req.getRequestURI();
 
         // remove session-related part of url
-        int semicolonIdx = relativePath.indexOf(';');
+        int semicolonIdx = relativeURL.indexOf(';');
         if (semicolonIdx != -1) {
-            relativePath = relativePath.substring(0, semicolonIdx);
+            relativeURL = relativeURL.substring(0, semicolonIdx);
         }
 
-        // remove end /
-        if (relativePath.endsWith("/")) {
-            relativePath = relativePath.substring(0, relativePath.length() - 1);
-        }
-
-        // remove urlBasePath
-        if (relativePath.startsWith(urlBasePath)) {
-            relativePath = relativePath.substring(urlBasePath.length());
-        }
-
-        // decode
-        relativePath = URLDecoder.decode(relativePath, ENCODING_SCHEME);
+        // URL decode
+        relativeURL = URLDecoder.decode(relativeURL, ENCODING_SCHEME);
 
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = new Context(jcrSession, urlBasePath, repositoryBaseLocation);
-        context.setRelativeLocation(relativePath);
+
+        // remove contextPath before setting the relative location as the context has 
+        // no idea of that part of the path
+        if (relativeURL.startsWith(req.getContextPath())) {
+            relativeURL = relativeURL.substring(req.getContextPath().length());
+        }
+        
+        context.setRelativeLocation(relativeURL);
 
         req.setAttribute(attributeName, context);
 
         // check url mapping
         if (urlMappingActive) {
 
-            URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, req, res);
+            URLPathTranslator urlPathTranslator = new URLPathTranslator(req.getContextPath(), 
+                                    context.getURLBasePath(), context.getBaseLocation());
+            String documentPath = urlPathTranslator.urlToDocumentPath(relativeURL);
+
+            // set translated location 
+            context.setRelativeLocation(documentPath);
 
             try {
-                String mappedPage = responseWrapper.mapRepositoryDocument(urlMappingLocation, context.getLocation());
+                URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, urlPathTranslator, req, res);
+                String mappedPage = responseWrapper.mapRepositoryDocument(context.getLocation(), urlMappingLocation);
 
                 // mapping allowed to fail, use-case is a /images url with this filter in root
                 if (mappedPage != null) {
