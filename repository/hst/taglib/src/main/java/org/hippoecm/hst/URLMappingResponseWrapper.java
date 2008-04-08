@@ -38,28 +38,38 @@ import org.slf4j.LoggerFactory;
 class URLMappingResponseWrapper extends HttpServletResponseWrapper {
     private static final Logger logger = LoggerFactory.getLogger(URLMappingResponseWrapper.class);
 
-    private Context context;
-    private HttpServletRequest request;
+    private final Context context;
+    private final HttpServletRequest request;
+    private final URLPathTranslator urlPathTranslator;
 
-    public URLMappingResponseWrapper(Context context, HttpServletRequest req, HttpServletResponse res) {
+    public URLMappingResponseWrapper(Context context, URLPathTranslator urlPathTranslator, HttpServletRequest req, HttpServletResponse res) {
         super(res);
         this.context = context;
         this.request = req;
+        this.urlPathTranslator = urlPathTranslator;
     }
 
     @Override
     public String encodeURL(String url) {
-        String reversedURL = super.encodeUrl(reverseURL(request.getContextPath(), url));
+        
+        // url in this case is an existing documentPath
+        
+        Session jcrSession = JCRConnector.getJCRSession(request.getSession());
+        String reversedURL = super.encodeUrl(this.urlPathTranslator.documentPathToURL(jcrSession, url));
         return urlEncode(reversedURL);
     }
 
     @Override
     public String encodeRedirectURL(String url) {
-        String reversedURL = super.encodeRedirectUrl(reverseURL(request.getContextPath(), url));
+
+        // url in this case is an existing documentPath
+        
+        Session jcrSession = JCRConnector.getJCRSession(request.getSession());
+        String reversedURL = super.encodeRedirectUrl(this.urlPathTranslator.documentPathToURL(jcrSession, url));
         return urlEncode(reversedURL);
     }
     
-    public String mapRepositoryDocument(String mappingLocation, String documentPath)
+    public String mapRepositoryDocument(String documentPath, String mappingLocation)
         throws RepositoryException, IOException, ServletException {
 
         while (documentPath.startsWith("/")) {
@@ -146,7 +156,7 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         }
 
         if (displayNode == null) {
-            logger.debug("displayNode cannot be found by documentNode " + documentNode
+            logger.debug("displayNode cannot be found by documentNode with path " + documentNode.getPath()
                         + " and mappingLocation " + mappingLocation);
             return null;
         }
@@ -194,39 +204,5 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         catch (UnsupportedEncodingException uee) {
             throw new IllegalStateException("Unsupported encoding scheme " + ContextFilter.ENCODING_SCHEME, uee);
         }
-    }
-    
-    private String reverseURL(String contextPath, String url) {
-        
-        /* Something like the following may be more appropriate, but the
-         * current sequence is functional enough
-         *   Session session = context.session;
-         *   Query query = session.getWorkspace().getQueryManager().createQuery(
-         *     "select jcr:name from hst:page where hst:pageFile = '"+url+"' and path.startsWith("+urlbasepath+")";
-         *   QueryResult result = query.execute();
-         *   url = result.getNodes().getNode().getPath();
-         */
-        String reversedUrl = url;
-
-        if (url.startsWith(context.getBaseLocation())) {
-            // replace baseLocation by urlBasePath 
-            reversedUrl = contextPath + context.getURLBasePath() + url.substring(context.getBaseLocation().length());
-        } else {
-            // if url matches a node path, we can construct the reversed url
-            String path = url;
-            while (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            try {
-                Session jcrSession = JCRConnector.getJCRSession(request.getSession());
-                if (jcrSession.getRootNode().hasNode(path)) {
-                    reversedUrl = contextPath + context.getURLBasePath() + "/" + path;
-                }
-            } catch (RepositoryException ex) {
-                // FIXME: reversedUrl at old location, which is properly improper.
-                logger.error("reverseURL", ex);
-            }
-        }
-        return reversedUrl;
     }
 }
