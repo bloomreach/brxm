@@ -45,7 +45,7 @@ public class AccessTag extends ConditionalTagSupport {
         if (location != null) {
             HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
 
-            String attributeName = (String) pageContext.getServletContext().getAttribute(ContextFilter.ATTRIBUTE_NAME);
+            String attributeName = (String) req.getSession().getAttribute(ContextFilter.ATTRIBUTE_NAME);
             Context context = (Context) req.getAttribute(attributeName);
 
             Session jcrSession = JCRConnector.getJCRSession(req.getSession());

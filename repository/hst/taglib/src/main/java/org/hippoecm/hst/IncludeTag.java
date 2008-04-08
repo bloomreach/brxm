@@ -43,16 +43,16 @@ public class IncludeTag extends TagSupport {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
-        String contextName = (String) pageContext.findAttribute(ContextFilter.ATTRIBUTE_NAME);
         String urlMappingLoc;
         if (this.urlMappingLocation != null) {
             urlMappingLoc = this.urlMappingLocation;
         }
         else {
-            urlMappingLoc = (String) pageContext.findAttribute(ContextFilter.URL_MAPPING_LOCATION);
+            urlMappingLoc = (String) request.getSession().getAttribute(ContextFilter.URL_MAPPING_LOCATION);
         }
         
-        Context context = (Context) pageContext.findAttribute(contextName);
+        String contextName = (String) request.getSession().getAttribute(ContextFilter.ATTRIBUTE_NAME);
+        Context context = (Context) request.getSession().getAttribute(contextName);
         try {
             pageContext.getOut().flush();
 
