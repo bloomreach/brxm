@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -46,7 +47,9 @@ public class CurrentActivityPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
-    protected DateFormat df;
+    //describes all valid JCR paths except '/'
+    static final Pattern jcrPath = Pattern.compile("(/[\\w\\s]+)+(\\[\\d+\\])?");
+    static DateFormat df;
 
     public CurrentActivityPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
@@ -130,8 +133,10 @@ public class CurrentActivityPlugin extends Plugin {
                             }
                         }
                     } else {
-                        //Workflow steps can also return a path String 
-                        targetVariantExists = session.itemExists(targetVariant);
+                        //Try if the workflow step returned a path String
+                        if (jcrPath.matcher(targetVariant).matches()) {
+                            targetVariantExists = session.itemExists(targetVariant);
+                        }
                     }
                 }
 

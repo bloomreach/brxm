@@ -59,47 +59,39 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IPlu
         try {
             Node reportNode = nodeModel.getNode();
             if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
-                Node queryNode = null;
-                try {
-                    queryNode = reportNode.getNode(ReportingNodeTypes.QUERY);
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                }
+                Node queryNode = reportNode.getNode(ReportingNodeTypes.QUERY);
+                QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+                HippoQuery query = (HippoQuery) queryManager.getQuery(queryNode);
 
-                if (queryNode != null) {
-                    QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
-                    HippoQuery query = (HippoQuery) queryManager.getQuery(queryNode);
-
-                    Map<String, String> arguments = new HashMap<String, String>();
-                    if (reportNode.hasProperty(ReportingNodeTypes.PARAMETER_NAMES)) {
-                        Value[] parameterNames = reportNode.getProperty(ReportingNodeTypes.PARAMETER_NAMES).getValues();
-                        Value[] parameterValues = reportNode.getProperty(ReportingNodeTypes.PARAMETER_VALUES).getValues();
-                        if (parameterNames.length == parameterValues.length) {
-                            for (int i = 0; i < parameterNames.length; i++) {
-                                arguments.put(parameterNames[i].getString(), parameterValues[i].getString());
-                            }
+                Map<String, String> arguments = new HashMap<String, String>();
+                if (reportNode.hasProperty(ReportingNodeTypes.PARAMETER_NAMES)) {
+                    Value[] parameterNames = reportNode.getProperty(ReportingNodeTypes.PARAMETER_NAMES).getValues();
+                    Value[] parameterValues = reportNode.getProperty(ReportingNodeTypes.PARAMETER_VALUES).getValues();
+                    if (parameterNames.length == parameterValues.length) {
+                        for (int i = 0; i < parameterNames.length; i++) {
+                            arguments.put(parameterNames[i].getString(), parameterValues[i].getString());
                         }
                     }
-                    if (reportNode.hasProperty(ReportingNodeTypes.LIMIT)) {
-                        query.setLimit(reportNode.getProperty(ReportingNodeTypes.LIMIT).getLong());
-                    }
-                    if (reportNode.hasProperty(ReportingNodeTypes.OFFSET)) {
-                        query.setOffset(reportNode.getProperty(ReportingNodeTypes.OFFSET).getLong());
-                    }
+                }
+                if (reportNode.hasProperty(ReportingNodeTypes.LIMIT)) {
+                    query.setLimit(reportNode.getProperty(ReportingNodeTypes.LIMIT).getLong());
+                }
+                if (reportNode.hasProperty(ReportingNodeTypes.OFFSET)) {
+                    query.setOffset(reportNode.getProperty(ReportingNodeTypes.OFFSET).getLong());
+                }
 
-                    javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
-                    session.refresh(true);
-                    QueryResult result;
-                    if (arguments.isEmpty()) {
-                        result = query.execute();
-                    } else {
-                        result = query.execute(arguments);
-                    }
+                javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
+                session.refresh(true);
+                QueryResult result;
+                if (arguments.isEmpty()) {
+                    result = query.execute();
+                } else {
+                    result = query.execute(arguments);
+                }
 
-                    NodeIterator it = result.getNodes();
-                    while (it.hasNext()) {
-                        resultSet.add(new JcrNodeModel(it.nextNode()));
-                    }
+                NodeIterator it = result.getNodes();
+                while (it.hasNext()) {
+                    resultSet.add(new JcrNodeModel(it.nextNode()));
                 }
             }
         } catch (RepositoryException e) {
