@@ -55,14 +55,13 @@ public class DirectAccessServlet extends HttpServlet {
         }
 
         // remove urlBasePath if present
-        String urlBasePath = (String) req.getSession().getServletContext().getAttribute(ContextFilter.URL_BASE_PATH);
+        String urlBasePath = (String) req.getSession().getAttribute(ContextFilter.URL_BASE_PATH);
         if (path.startsWith(urlBasePath)) {
             path = path.substring(urlBasePath.length());
         }
 
         // prepend repositoryBaseLocation if not present
-        String baseLocation = (String) req.getSession().getServletContext().getAttribute(
-                ContextFilter.REPOSITORY_BASE_LOCATION);
+        String baseLocation = (String) req.getSession().getAttribute(ContextFilter.REPOSITORY_BASE_LOCATION);
         if (!path.startsWith(baseLocation)) {
             path = baseLocation + path;
         }

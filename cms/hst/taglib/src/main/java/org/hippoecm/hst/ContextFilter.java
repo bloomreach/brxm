@@ -31,6 +31,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 //import org.slf4j.LoggerFactory;
 //import org.slf4j.Logger;
@@ -64,37 +65,31 @@ public class ContextFilter implements Filter {
     // from interface
     public void init(FilterConfig filterConfig) throws ServletException {
 
-        // get attributeName, save in context for use by tags
+        // get attributeName
         String param = filterConfig.getInitParameter("attributeName");
         if (param != null && !param.trim().equals("")) {
             this.attributeName = param.trim();
         }
-        filterConfig.getServletContext().setAttribute(ATTRIBUTE_NAME, this.attributeName);
 
-        // get urlBasePath, save in context for use by DirectAccessServlet
+        // get urlBasePath
         param = filterConfig.getInitParameter("urlBasePath");
         if (param != null && !param.trim().equals("")) {
             this.urlBasePath = param;
         }
-        filterConfig.getServletContext().setAttribute(URL_BASE_PATH, this.urlBasePath);
 
-        // get repositoryBaseLocation, save in context for use by DirectAccessServlet
+        // get repositoryBaseLocation
         param = filterConfig.getInitParameter("repositoryBaseLocation");
         if (param != null && !param.trim().equals("")) {
             this.repositoryBaseLocation = param;
         } else {
             this.repositoryBaseLocation = urlBasePath;
         }
-        filterConfig.getServletContext().setAttribute(REPOSITORY_BASE_LOCATION, this.repositoryBaseLocation);
 
-        
-        // get urlMappingLocation, save in context for use by IncludeTag
+        // get urlMappingLocation
         param = filterConfig.getInitParameter("urlMappingLocation");
         if (param != null && !param.trim().equals("")) {
             this.urlMappingLocation = param;
-
         }
-        filterConfig.getServletContext().setAttribute(URL_MAPPING_LOCATION, this.attributeName);
 
         // get skippedExtensions
         param = filterConfig.getInitParameter("skippedExtensions");
@@ -120,8 +115,11 @@ public class ContextFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) 
 		    			throws IOException, ServletException {
 
+        
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
+
+        storeSessionAttributes(req.getSession());
 
         String servletPath = req.getServletPath();
 
@@ -201,5 +199,15 @@ public class ContextFilter implements Filter {
 
         // normally call rest of the filter
         filterChain.doFilter(req, res);
+    }
+
+    private void storeSessionAttributes(HttpSession session) {
+
+        // save some data in session for use by tags or DirectAccessServlet;
+        // don't do it lazily as the user might switch from 'live' to 'preview' in one session  
+        session.setAttribute(ATTRIBUTE_NAME, this.attributeName);
+        session.setAttribute(URL_BASE_PATH, this.urlBasePath);
+        session.setAttribute(REPOSITORY_BASE_LOCATION, this.repositoryBaseLocation);
+        session.setAttribute(URL_MAPPING_LOCATION, this.attributeName);
     }
 }
