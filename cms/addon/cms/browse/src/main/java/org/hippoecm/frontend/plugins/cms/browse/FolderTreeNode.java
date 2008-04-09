@@ -16,23 +16,18 @@
 package org.hippoecm.frontend.plugins.cms.browse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
+import javax.jcr.nodetype.NodeType;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.repository.api.HippoNode;
@@ -51,33 +46,18 @@ public class FolderTreeNode extends AbstractTreeNode {
     private boolean onlyHandles = false;
     private boolean belowFacetSelectSingleMode = false;
     private FolderTreeNode parent;
+    private FolderTreeConfig config;
 
-    // hardcoded ignore path set
-    private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
-            "/hippo:configuration", "/hippo:namespaces", "/live", "/preview" }));
-
- // ignore nodes below these types
-    private final static String[] ignoreNodesBelowType = new String[] { HippoNodeType.NT_DOCUMENT,
-            HippoNodeType.NT_TEMPLATETYPE };
-    
- // ignore nodes below these types
-    private final static String[] ignoreNodesBelowPath = new String[] {"/hippo:namespaces/defaultcontent"};
-
-    // shortcut paths shown as root folders + the name how to show them
-    private final static Map<String,String> shortCutInfo;
-    static {
-        shortCutInfo = new HashMap<String,String>();
-        shortCutInfo.put("/hippo:namespaces/defaultcontent","document types");
-    }
-    
-    
-    public FolderTreeNode(JcrNodeModel model) {
+    public FolderTreeNode(JcrNodeModel model, FolderTreeConfig config) {
         super(model);
+        this.parent = null;
+        this.config = config;
     }
 
     public FolderTreeNode(JcrNodeModel model, FolderTreeNode parent) {
         super(model);
         this.parent = parent;
+        this.config = parent.config;
         this.onlyHandles = parent.onlyHandles;
         this.belowFacetSelectSingleMode = parent.belowFacetSelectSingleMode;
         try {
@@ -96,7 +76,7 @@ public class FolderTreeNode extends AbstractTreeNode {
             if (!belowFacetSelectSingleMode && node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 onlyHandles = true;
             }
-            
+
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
@@ -139,9 +119,9 @@ public class FolderTreeNode extends AbstractTreeNode {
                 if (node.isSame(node.getAncestor(0))) {
                     return ROOT_NODE_DISPLAYNAME;
                 }
-                if(shortCutInfo.containsKey(node.getPath())) {
-                    return shortCutInfo.get(node.getPath());
-                }
+                result = config.getShortcut(node.getPath());
+                if (result != null)
+                    return result;
                 result = ISO9075Helper.decodeLocalName(node.getDisplayName());
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
@@ -165,21 +145,26 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     private List<Node> subNodes(Node node) throws RepositoryException {
         List<Node> result = new ArrayList<Node>();
-        for (String type : ignoreNodesBelowType) {
-            if (node.isNodeType(type)) {
+
+        if (config.areChildrenIgnored(node.getPath())) {
+            return result;
+        }
+
+        NodeType nt = node.getPrimaryNodeType();
+        if (config.isNodeTypeIgnored(nt)) {
+            return result;
+        }
+        for (NodeType mixin : node.getMixinNodeTypes()) {
+            if (config.isNodeTypeIgnored(mixin)) {
                 return result;
             }
         }
-        for (String path : ignoreNodesBelowPath) {
-            if (node.getPath().equals(path)) {
-                return result;
-            }
-        }
+
         if (node.isSame(node.getAncestor(0))) {
             // node is rootNode, so add shortcut paths
-            for (String path : shortCutInfo.keySet()) {
+            for (String path : config.getShortcuts()) {
                 try {
-                    if(path.startsWith("/")) {
+                    if (path.startsWith("/")) {
                         path = path.substring(1);
                     }
                     result.add(node.getNode(path));
@@ -192,21 +177,19 @@ public class FolderTreeNode extends AbstractTreeNode {
         NodeIterator subNodes = node.getNodes();
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
-            if (ignorePaths.contains(subNode.getPath()) || subNode.isNodeType(HippoNodeType.NT_LOGFOLDER)) { 
+            if (config.isPathIgnored(subNode.getPath()) || subNode.isNodeType(HippoNodeType.NT_LOGFOLDER)) {
                 continue;
             }
             if (!subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                result.add(subNode);  
-            } 
-            else if (((HippoNode)subNode).getCanonicalNode()== null || !((HippoNode)subNode).getCanonicalNode().isSame(subNode)) {
+                result.add(subNode);
+            } else if (((HippoNode) subNode).getCanonicalNode() == null
+                    || !((HippoNode) subNode).getCanonicalNode().isSame(subNode)) {
                 // in the virtual tree we show everything
-                result.add(subNode); 
+                result.add(subNode);
             }
-            
+
         }
         return result;
     }
-
-
 
 }

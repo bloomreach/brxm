@@ -34,11 +34,12 @@ import org.slf4j.LoggerFactory;
  */
 public class FolderTreePlugin extends AbstractTreePlugin {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
     public FolderTreePlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new FolderTreeNode(new JcrNodeModel(model)), parentPlugin);
+        super(pluginDescriptor, new FolderTreeNode(new JcrNodeModel(model), new FolderTreeConfig(pluginDescriptor
+                .getParameters())), parentPlugin);
     }
 
     @Override
@@ -53,6 +54,5 @@ public class FolderTreePlugin extends AbstractTreePlugin {
             }
         };
     }
-
 
 }
