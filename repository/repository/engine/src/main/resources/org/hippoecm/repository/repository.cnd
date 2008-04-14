@@ -221,7 +221,7 @@
 [hippo:prototyped] mixin
 - hippo:prototype (string) mandatory
 
-[hippo:templatetype]
+[hippo:templatetype] orderable
 + hippo:nodetype (hippo:handle) mandatory
 + hippo:template (hippo:handle)
 + hippo:prototype (nt:base)

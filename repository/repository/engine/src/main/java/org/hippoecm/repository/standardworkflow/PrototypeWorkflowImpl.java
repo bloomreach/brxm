@@ -44,7 +44,23 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
 
         String path =  subject.getProperty(HippoNodeType.HIPPO_PROTOTYPE).getString();
         Node prototype = userSession.getRootNode().getNode(path.substring(1));
-        Node result = ((HippoSession) userSession).copy(prototype, subject.getPath() + "/" + name);
+        if(prototype.hasNodes()) {
+            for(NodeIterator prototypeIter = prototype.getNodes(); prototypeIter.hasNext(); ) {
+                prototype = prototypeIter.nextNode();
+                if(prototype != null) {
+                    if(prototype.hasProperty("hippo:remodel"))
+                        prototype = null;
+                    else
+                        break;
+                }
+            }
+        } else {
+            prototype = null;
+        }
+        if(prototype == null)
+          throw new WorkflowException("No prototype found");
+        userSession.getRootNode().getNode(subject.getPath().substring(1)).addNode(name, HippoNodeType.NT_HANDLE);
+        Node result = ((HippoSession) userSession).copy(prototype, subject.getPath() + "/" + name + "/" + name);
         if (result.isNodeType(HippoNodeType.NT_HANDLE)) {
             NodeIterator children = result.getNodes(prototype.getName());
             while (children.hasNext()) {
