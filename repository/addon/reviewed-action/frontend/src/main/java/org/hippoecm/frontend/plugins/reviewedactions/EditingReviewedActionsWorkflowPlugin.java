@@ -70,12 +70,10 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                     BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                     workflow.commitEditableInstance();
                     if (channel != null) {
-                        request = channel.createRequest("save", new JcrNodeModel(model));
-                        channel.send(request);
-                        request = channel.createRequest("flush", new JcrNodeModel(model));
+                        request = channel.createRequest("close", new JcrNodeModel(model));
                         channel.send(request);
                     }
-                    return request; // FIXME: can only return one request, shows problem with model
+                    return request;
                 }
             });
         addWorkflowAction("revert", "Revert", true,
@@ -85,12 +83,10 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                     BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                     workflow.disposeEditableInstance();
                     if (channel != null) {
-                        request = channel.createRequest("save", new JcrNodeModel(model));
-                        channel.send(request);
-                        request = channel.createRequest("flush", new JcrNodeModel(model));
+                        request = channel.createRequest("close", new JcrNodeModel(model));
                         channel.send(request);
                     }
-                    return request; // FIXME: can only return one request, shows problem with model
+                    return request;
                 }
             });
     }

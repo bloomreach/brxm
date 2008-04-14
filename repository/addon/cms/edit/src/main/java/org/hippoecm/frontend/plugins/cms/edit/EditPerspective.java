@@ -61,4 +61,14 @@ public class EditPerspective extends Plugin {
         }
         super.receive(notification);
     }
+
+    @Override
+    public void handle(Request request) {
+        if ("close".equals(request.getOperation())) {
+            PluginModel requestModel = new PluginModel();
+            requestModel.put("plugin", getPluginPath());
+            request.setModel(requestModel);
+        }
+        super.handle(request);
+    }
 }
