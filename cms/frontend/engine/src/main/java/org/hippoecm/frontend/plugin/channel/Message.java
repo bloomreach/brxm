@@ -43,6 +43,10 @@ public class Message implements IClusterable {
         return model;
     }
 
+    public void setModel(IPluginModel model) {
+        this.model = model;
+    }
+
     public void setContext(MessageContext context) {
         this.context = context;
     }
