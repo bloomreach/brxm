@@ -49,6 +49,7 @@
     <module>xinha</module>
     <module>xinha-frontend</module>
     <module>cms</module>
+    <module>frontend</module>
     
     <module>mailsponge</module>
     <module>sample</module>    
