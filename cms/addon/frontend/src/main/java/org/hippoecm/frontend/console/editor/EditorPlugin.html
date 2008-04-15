@@ -1,0 +1,60 @@
+<!--
+    * Copyright 2007 Hippo
+    *
+    * Licensed under the Apache License, Version 2.0 (the  "License");
+    * you may not use this file except in compliance with the License.
+    * You may obtain a copy of the License at
+    *
+    * http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+    <wicket:panel>
+        <form wicket:id="editor">
+            <h3>Primary Type</h3>
+            <ul>
+                <li>
+                    <strong><span wicket:id="primarytype"/></strong>
+                </li>
+            </ul>
+            <h3>Properties</h3>
+            <ul>
+                <li wicket:id="properties">
+                    <strong><span wicket:id="name">Property name</span></strong>
+                    <sup><a wicket:id="delete">(delete)</a></sup>
+                    <table>
+                        <tr>
+                            <td>
+                                <ul style="list-style: none">
+                                    <li wicket:id="values">
+                                        <span wicket:id="value"></span>
+                                        <sup><a wicket:id="remove">X</a></sup>
+                                    </li>
+                                </ul>
+                            </td>
+                            <td>
+                                <sup><a wicket:id="add">(add)</a></sup>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                </li>
+            </ul>
+            <h3>Mixin Types</h3>
+            <div wicket:id="mixintypes">
+                <ul style="list-style: none;">
+                    <li wicket:id="type">
+                        <input type="checkbox" wicket:id="check">
+                            <strong><span wicket:id="name">Mixin name</span></strong>
+                        </input>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </wicket:panel>
+</html>
