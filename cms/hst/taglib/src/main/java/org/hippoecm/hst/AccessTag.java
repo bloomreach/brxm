@@ -49,7 +49,7 @@ public class AccessTag extends ConditionalTagSupport {
             Context context = (Context) req.getAttribute(attributeName);
 
             Session jcrSession = JCRConnector.getJCRSession(req.getSession());
-            Context newContext = new Context(jcrSession, context.getURLBasePath(), context.getBaseLocation());
+            Context newContext = new Context(jcrSession, req.getContextPath(), context.getURLBasePath(), context.getBaseLocation());
             context.setRelativeLocation(location);
             if (context.exists()) {
                 req.setAttribute(variable, newContext);

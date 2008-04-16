@@ -41,7 +41,7 @@ import javax.servlet.http.HttpSession;
  */
 public class ContextFilter implements Filter {
 
-    //    private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
+    // private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
     public static final String ENCODING_SCHEME = "UTF-8";
 
     public static final String ATTRIBUTE_NAME = ContextFilter.class.getName() + ".ATTRIBUTE_NAME";
@@ -53,8 +53,7 @@ public class ContextFilter implements Filter {
     private String urlBasePath = "";
     private String repositoryBaseLocation;
     private String urlMappingLocation = "/urlMapping";
-    private String[] skippedExtensions = 
-        new String[] { "ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js" };
+    private String[] skippedExtensions = new String[] { "ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js" };
     private final List<String> skippedExtensionsList = new ArrayList<String>();
     boolean urlMappingActive = false;
 
@@ -112,10 +111,9 @@ public class ContextFilter implements Filter {
     }
 
     // from interface
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) 
-		    			throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException,
+            ServletException {
 
-        
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
@@ -124,7 +122,7 @@ public class ContextFilter implements Filter {
         String servletPath = req.getServletPath();
 
         if (servletPath.lastIndexOf(".") >= 0) {
-			// images are to be retrieved with the DirectAccessServlet        
+            // images are to be retrieved with the DirectAccessServlet        
             String extension = servletPath.substring(servletPath.lastIndexOf("."));
 
             if (skippedExtensionsList.contains(extension)) {
@@ -145,14 +143,14 @@ public class ContextFilter implements Filter {
         relativeURL = URLDecoder.decode(relativeURL, ENCODING_SCHEME);
 
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
-        Context context = new Context(jcrSession, urlBasePath, repositoryBaseLocation);
+        Context context = new Context(jcrSession, req.getContextPath(), urlBasePath, repositoryBaseLocation);
 
         // remove contextPath before setting the relative location as the context has 
         // no idea of that part of the path
         if (relativeURL.startsWith(req.getContextPath())) {
             relativeURL = relativeURL.substring(req.getContextPath().length());
         }
-        
+
         context.setRelativeLocation(relativeURL);
 
         req.setAttribute(attributeName, context);
@@ -160,15 +158,16 @@ public class ContextFilter implements Filter {
         // check url mapping
         if (urlMappingActive) {
 
-            URLPathTranslator urlPathTranslator = new URLPathTranslator(req.getContextPath(), 
-                                    context.getURLBasePath(), context.getBaseLocation());
+            URLPathTranslator urlPathTranslator = new URLPathTranslator(req.getContextPath(), context.getURLBasePath(),
+                    context.getBaseLocation());
             String documentPath = urlPathTranslator.urlToDocumentPath(relativeURL);
 
             // set translated location 
             context.setRelativeLocation(documentPath);
 
             try {
-                URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, urlPathTranslator, req, res);
+                URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, urlPathTranslator,
+                        req, res);
                 String mappedPage = responseWrapper.mapRepositoryDocument(context.getLocation(), urlMappingLocation);
 
                 // mapping allowed to fail, use-case is a /images url with this filter in root
@@ -185,7 +184,7 @@ public class ContextFilter implements Filter {
 
                     // no further filter chaining when forwarding
                     return;
-                }   
+                }
             } catch (RepositoryException re) {
                 throw new ServletException(re);
             }

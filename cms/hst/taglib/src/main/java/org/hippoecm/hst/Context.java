@@ -48,16 +48,18 @@ public class Context extends AbstractMap {
     private static final Logger logger = LoggerFactory.getLogger(Context.class);
 
     private final Session session;
+    private final String contextPath;
     private final String urlBasePath;
     private final String baseLocation;
     private String relativeLocation;
     int index = -1;
     private HippoQuery query;
     private List<String> arguments;
-
+    private DocumentPathReplacer pathReplacer;
     
-    Context(final Session jcrSession, final String urlBasePath, final String baseLocation) {
+    Context(final Session jcrSession, final String contextPath, final String urlBasePath, final String baseLocation) {
         this.session = jcrSession;
+        this.contextPath = contextPath;
         this.urlBasePath = urlBasePath;
         this.baseLocation = baseLocation;
         this.relativeLocation = null;
@@ -68,8 +70,8 @@ public class Context extends AbstractMap {
     }
     
     Context(Context parent, String relativeLocation, int index) {
-        this(parent.session, parent.urlBasePath, parent.baseLocation); // [BvH] is it really the intention to inherit the baseLocation here?
-
+        this(parent.session, parent.contextPath, parent.urlBasePath, parent.baseLocation); 
+        
         if (relativeLocation.startsWith("/")) {
             setRelativeLocation(relativeLocation);
         } else if (parent.relativeLocation.endsWith("/")) {
@@ -82,7 +84,7 @@ public class Context extends AbstractMap {
     }
 
     Context(Context parent, HippoQuery query, List arguments) {
-        this(parent.session, parent.urlBasePath, parent.baseLocation);
+        this(parent.session, parent.contextPath, parent.urlBasePath, parent.baseLocation);
         this.query = query;
         this.arguments = arguments;
     }
@@ -260,7 +262,7 @@ public class Context extends AbstractMap {
                                         return null;
                                     }
 
-                                    Context context = new Context(this.session, this.urlBasePath, this.baseLocation);
+                                    Context context = new Context(this.session, this.contextPath, this.urlBasePath, this.baseLocation);
                                     context.setRelativeLocation(node.getParent().getPath());
                                     
                                     result = context;
@@ -286,6 +288,10 @@ public class Context extends AbstractMap {
                         case PropertyType.DATE:
                             result = property.getDate().getTime();
                             break;
+                        case PropertyType.STRING:
+                            String value = property.getString();
+                            result = getPathReplacer().replace(session, value);
+                            break;
                         default:
                             result = property.getString();
                         }
@@ -301,6 +307,17 @@ public class Context extends AbstractMap {
         }
  
         return result;
+    }
+
+
+    private DocumentPathReplacer getPathReplacer() {
+        
+        // lazy
+        if (pathReplacer == null) {
+            pathReplacer = new DocumentPathReplacer(this.contextPath, this.urlBasePath, this.baseLocation);
+        }
+        
+        return pathReplacer;
     }
 
 
