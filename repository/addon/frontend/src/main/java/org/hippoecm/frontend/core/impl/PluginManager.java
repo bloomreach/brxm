@@ -1,3 +1,18 @@
+/*
+ * Copyright 2008 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.core.impl;
 
 import java.io.Serializable;
@@ -54,25 +69,29 @@ public class PluginManager implements Serializable {
     }
 
     public void registerService(Serializable service, String name) {
+        log.debug("registering " + service + " as " + name);
+
         List<Serializable> list = services.get(name);
         if (list == null) {
             list = new LinkedList<Serializable>();
             services.put(name, list);
-
-            List<ListenerEntry> notify = listeners.get(name);
-            if (notify != null) {
-                Iterator<ListenerEntry> iter = notify.iterator();
-                while (iter.hasNext()) {
-                    ListenerEntry entry = iter.next();
-                    String localName = entry.config.resolve(name);
-                    entry.listener.processEvent(ServiceListener.ADDED, localName, service);
-                }
-            }
         }
         list.add(service);
+
+        List<ListenerEntry> notify = listeners.get(name);
+        if (notify != null) {
+            Iterator<ListenerEntry> iter = notify.iterator();
+            while (iter.hasNext()) {
+                ListenerEntry entry = iter.next();
+                String localName = entry.config.resolve(name);
+                entry.listener.processEvent(ServiceListener.ADDED, localName, service);
+            }
+        }
     }
 
     public void unregisterService(Serializable service, String name) {
+        log.debug("unregistering " + service + " from " + name);
+
         List<Serializable> list = services.get(name);
         if (list != null) {
             // TODO Auto-generated method stub
@@ -96,6 +115,8 @@ public class PluginManager implements Serializable {
     }
 
     public void registerListener(PluginConfig config, ServiceListener listener, String name) {
+        log.debug("registering listener " + listener + " for " + name);
+
         List<ListenerEntry> list = listeners.get(name);
         if (list == null) {
             list = new LinkedList<ListenerEntry>();
@@ -115,6 +136,8 @@ public class PluginManager implements Serializable {
     }
 
     public void unregisterListener(ServiceListener listener, String name) {
+        log.debug("unregistering listener " + listener + " for " + name);
+
         List<ListenerEntry> list = listeners.get(name);
         if (list != null) {
             Iterator<ListenerEntry> iter = list.iterator();

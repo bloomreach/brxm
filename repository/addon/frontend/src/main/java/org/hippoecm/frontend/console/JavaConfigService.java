@@ -46,12 +46,14 @@ public class JavaConfigService implements Serializable {
         config.put(Plugin.NAME, "browser");
         config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.console.browser.BrowserPlugin");
         config.put(RenderPlugin.WICKET_ID, "browser");
+        config.put("model", "model");
         plugins.add(config);
 
         config = new PluginConfig();
         config.put(Plugin.NAME, "content");
         config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.console.editor.EditorPlugin");
         config.put(RenderPlugin.WICKET_ID, "content");
+        config.put("model", "model");
         plugins.add(config);
     }
 
