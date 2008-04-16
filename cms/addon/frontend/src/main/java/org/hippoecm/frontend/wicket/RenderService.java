@@ -1,4 +1,19 @@
-package org.hippoecm.frontend.service;
+/*
+ * Copyright 2008 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.hippoecm.frontend.wicket;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -6,23 +21,33 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.IRequestTarget;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.core.ServiceListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RenderService extends Panel implements ServiceListener {
     private static final long serialVersionUID = 1L;
 
+    private static final Logger log = LoggerFactory.getLogger(RenderService.class);
+
     private String wicketId;
     private PluginContext context;
     private Map<String, List<Serializable>> references;
+    private ModelReference modelRef;
 
     public RenderService() {
         super("id");
+        setOutputMarkupId(true);
 
         this.references = new HashMap<String, List<Serializable>>();
+
+        this.modelRef = new ModelReference(this, "model");
     }
 
     @Override
@@ -33,9 +58,38 @@ public class RenderService extends Panel implements ServiceListener {
     protected void init(PluginContext context, String wicketId) {
         this.wicketId = wicketId;
         this.context = context;
+
+        modelRef.init(context);
     }
 
     protected void destroy(PluginContext context) {
+        modelRef.destroy();
+    }
+
+    // override model change methods
+
+    @Override
+    public void onModelChanged() {
+        IRequestTarget target = RequestCycle.get().getRequestTarget();
+        if (target != null) {
+            if (target instanceof PluginRequestTarget) {
+                PluginRequestTarget pluginTarget = (PluginRequestTarget) target;
+                pluginTarget.addUpdate(this);
+            } else {
+                log.warn("Request target is not an instance of PluginRequestTarget, ajax update is cancelled");
+            }
+        }
+        super.onModelChanged();
+    }
+
+    @Override
+    public Component setModel(IModel model) {
+        modelRef.setModel(model);
+        return updateModel(model);
+    }
+
+    public Component updateModel(IModel model) {
+        return super.setModel(model);
     }
 
     protected PluginContext getPluginContext() {
@@ -83,10 +137,6 @@ public class RenderService extends Panel implements ServiceListener {
     }
 
     protected void onServiceRemoved(String name, Serializable service) {
-    }
-
-    protected IDataProvider getChildRenderers(String name) {
-        return new ListDataProvider(references.get(name));
     }
 
     public Object resolvePath(String path) {

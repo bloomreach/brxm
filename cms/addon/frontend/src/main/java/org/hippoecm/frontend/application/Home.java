@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.console;
+package org.hippoecm.frontend.application;
 
 import java.io.Serializable;
 
+import org.apache.wicket.markup.html.WebPage;
+import org.hippoecm.frontend.console.Application;
+import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.core.ServiceListener;
 import org.hippoecm.frontend.core.impl.PluginManager;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.wicket.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Adapter extends Plugin implements ServiceListener {
+public class Home extends WebPage implements ServiceListener {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(Adapter.class);
+    private static final Logger log = LoggerFactory.getLogger(Home.class);
+
+    public static final String ROOT_PLUGIN = "rootPlugin";
+//    public static final String LOGIN_PLUGIN = "loginPlugin";
 
     private PluginManager mgr;
-    private org.hippoecm.frontend.core.Plugin application;
     private RenderService root;
 
-    public Adapter(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
-        super(descriptor, model, parentPlugin);
+    public Home() {
 
         root = null;
         mgr = new PluginManager();
@@ -47,17 +48,13 @@ public class Adapter extends Plugin implements ServiceListener {
         mgr.registerListener(config, this, "root");
 
         config = new PluginConfig();
-        config.put(org.hippoecm.frontend.core.Plugin.NAME, "app");
-        config.put(org.hippoecm.frontend.core.Plugin.CLASSNAME, Application.class.getName());
-        application = mgr.start(config);
+        config.put(Plugin.NAME, "app");
+        config.put(Plugin.CLASSNAME, Application.class.getName());
+        /* Plugin application = */ mgr.start(config);
     }
 
-    @Override
-    public void destroy() {
-        application.stop();
-
-        mgr.unregisterListener(this, "root");
-        super.destroy();
+    public RenderService getRootPlugin() {
+        return root;
     }
 
     public void processEvent(int type, String name, Serializable service) {
@@ -79,4 +76,5 @@ public class Adapter extends Plugin implements ServiceListener {
             break;
         }
     }
+
 }

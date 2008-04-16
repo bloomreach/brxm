@@ -18,19 +18,18 @@ package org.hippoecm.frontend.console.editor;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.INotificationListener;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeEditor extends Form implements INotificationListener {
+public class NodeEditor extends Form {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
@@ -40,13 +39,10 @@ public class NodeEditor extends Form implements INotificationListener {
     private PropertiesEditor properties;
     private NodeTypesEditor types;
 
-    public NodeEditor(String id, JcrNodeModel model, Channel channel) {
+    public NodeEditor(String id, JcrNodeModel model) {
         super(id, model);
         setOutputMarkupId(true);
 
-        if (channel != null) {
-            channel.subscribe(this);
-        }
         try {
             primaryType = model.getNode().getPrimaryNodeType().getName();
             add(new Label("primarytype", new PropertyModel(this, "primaryType")));
@@ -86,18 +82,16 @@ public class NodeEditor extends Form implements INotificationListener {
         add(types);
     }
 
-    public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            JcrNodeModel newModel = new JcrNodeModel(notification.getModel());
-            properties.setProvider(new JcrPropertiesProvider(newModel));
-            types.setProvider(new JcrNodeTypesProvider(newModel));
-            try {
-                primaryType = newModel.getNode().getPrimaryNodeType().getName();
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-            setModel(newModel);
-            notification.getContext().addRefresh(this);
+    @Override
+    public Component setModel(IModel model) {
+        JcrNodeModel newModel = (JcrNodeModel) model;
+        properties.setProvider(new JcrPropertiesProvider(newModel));
+        types.setProvider(new JcrNodeTypesProvider(newModel));
+        try {
+            primaryType = newModel.getNode().getPrimaryNodeType().getName();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
         }
+        return super.setModel(newModel);
     }
 }

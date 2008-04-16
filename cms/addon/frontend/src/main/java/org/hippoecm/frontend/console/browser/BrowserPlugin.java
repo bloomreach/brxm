@@ -48,8 +48,36 @@ public class BrowserPlugin extends RenderPlugin {
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
+                AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
+                BrowserPlugin.this.onSelect(treeNodeModel, target);
             }
         };
+    }
+
+    protected void onSelect(final AbstractTreeNode treeNodeModel, AjaxRequestTarget target) {
+        setModel(treeNodeModel.getNodeModel());
+    }
+
+    @Override
+    public void onModelChanged() {
+        super.onModelChanged();
+
+        JcrNodeModel model = (JcrNodeModel) getModel();
+        AbstractTreeNode node = null;
+        while (model != null) {
+            node = rootNode.getTreeModel().lookup(model);
+
+            if (node != null) {
+                TreeNode parentNode = (AbstractTreeNode) node.getParent();
+                while (parentNode != null && !tree.getTreeState().isNodeExpanded(parentNode)) {
+                    tree.getTreeState().expandNode(parentNode);
+                    parentNode = parentNode.getParent();
+                }
+                tree.getTreeState().selectNode(node, true);
+                break;
+            }
+            model = model.getParentModel();
+        }
     }
 
 }

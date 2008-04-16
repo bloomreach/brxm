@@ -13,32 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.core;
+package org.hippoecm.frontend.service;
 
-import java.util.Hashtable;
+import java.io.Serializable;
 
-public class PluginConfig extends Hashtable<String, String> {
+public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Hashtable<String, String> reverse;
+    private int type;
 
-    public PluginConfig() {
-        reverse = new Hashtable<String, String>();
+    public Message(int type) {
+        this.type = type;
     }
 
-    @Override
-    public String put(String key, String value) {
-        String old = super.put(key, value);
-        if (old != null) {
-            reverse.put(old, null);
-        }
-        if (value != null) {
-            reverse.put(value, key);
-        }
-        return old;
-    }
-
-    public String resolve(String name) {
-        return reverse.get(name);
+    public int getType() {
+        return type;
     }
 }

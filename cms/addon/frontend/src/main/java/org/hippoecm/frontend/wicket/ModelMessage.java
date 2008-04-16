@@ -13,32 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.core;
+package org.hippoecm.frontend.wicket;
 
-import java.util.Hashtable;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.service.Message;
 
-public class PluginConfig extends Hashtable<String, String> {
+public class ModelMessage extends Message {
     private static final long serialVersionUID = 1L;
 
-    private Hashtable<String, String> reverse;
+    private IModel model;
 
-    public PluginConfig() {
-        reverse = new Hashtable<String, String>();
+    public ModelMessage(int type, IModel model) {
+        super(type);
+
+        this.model = model;
     }
 
-    @Override
-    public String put(String key, String value) {
-        String old = super.put(key, value);
-        if (old != null) {
-            reverse.put(old, null);
-        }
-        if (value != null) {
-            reverse.put(value, key);
-        }
-        return old;
-    }
-
-    public String resolve(String name) {
-        return reverse.get(name);
+    public IModel getModel() {
+        return model;
     }
 }

@@ -24,13 +24,22 @@ public class EditorPlugin extends RenderPlugin {
 
     private NodeEditor editor;
 
-    public EditorPlugin() {
-    }
-    
     @Override
     public void init(PluginContext context, String wicketId) {
         super.init(context, wicketId);
-        editor = new NodeEditor("editor", new JcrNodeModel("/"), null);
+        editor = new NodeEditor("editor", new JcrNodeModel("/"));
         add(editor);
+    }
+
+    @Override
+    public void destroy(PluginContext context) {
+        remove(editor);
+        super.destroy(context);
+    }
+
+    @Override
+    public void onModelChanged() {
+        super.onModelChanged();
+        editor.setModel(getModel());
     }
 }

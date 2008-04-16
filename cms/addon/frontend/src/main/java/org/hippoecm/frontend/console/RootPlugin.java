@@ -18,7 +18,7 @@ package org.hippoecm.frontend.console;
 import java.io.Serializable;
 
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.service.RenderService;
+import org.hippoecm.frontend.wicket.RenderService;
 
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
