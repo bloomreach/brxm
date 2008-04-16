@@ -36,7 +36,6 @@
     <url>https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst</url>
   </scm>
 
-  <!--
   <distributionManagement>
     <site>
       <id>repodocs.hippocms.org</id>
@@ -47,7 +46,6 @@
       <url>ftp://repository.hippocms.org/maven2</url>
     </snapshotRepository>
   </distributionManagement>
-  -->
 
   <modules>
     <module>taglib</module>
