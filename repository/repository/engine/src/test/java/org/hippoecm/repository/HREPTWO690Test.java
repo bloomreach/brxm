@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.TestCase;
 
-public class HREPTWO690IssueTest extends TestCase {
+public class HREPTWO690Test extends TestCase {
     private String[] content1 = {
         "/test", "nt:unstructured",
         "/test/docs", "nt:unstructured",
