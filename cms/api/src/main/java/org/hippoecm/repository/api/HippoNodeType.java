@@ -77,7 +77,6 @@ public interface HippoNodeType {
     final public static String NT_PLUGIN = "hippo:plugin";
     final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
     final public static String NT_PROTOTYPED = "hippo:prototyped";
-    final public static String NT_REFERENCEABLE = "hippo:referenceable";
     final public static String NT_REMODEL = "hippo:remodel";
     final public static String NT_REQUEST = "hippo:request";
     final public static String NT_ROLE = "hippo:role";

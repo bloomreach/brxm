@@ -51,9 +51,10 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     }
 
     Name docbaseName;
-    Name jcrUUIDdocbaseName;
+    Name jcrUUIDName;
     Name hippoUUIDName;
-    Name hippoReferenceableName;
+    Name hardDocumentName;
+    Name softDocumentName;
     Name mixinReferenceableName;
 
     PropDef hippoUUIDPropDef;
@@ -63,12 +64,13 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         register(resolveName(HippoNodeType.NT_MIRROR), null);
 
         docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
-        jcrUUIDdocbaseName = resolveName("jcr:uuid");
+        jcrUUIDName = resolveName("jcr:uuid");
         hippoUUIDName = resolveName(HippoNodeType.HIPPO_UUID);
-        hippoReferenceableName = resolveName(HippoNodeType.NT_REFERENCEABLE);
+        hardDocumentName = resolveName(HippoNodeType.NT_HARDDOCUMENT);
+        softDocumentName = resolveName(HippoNodeType.NT_SOFTDOCUMENT);
         mixinReferenceableName = resolveName("mix:referenceable");
 
-        hippoUUIDPropDef = lookupPropDef(hippoReferenceableName, hippoUUIDName);
+        hippoUUIDPropDef = lookupPropDef(softDocumentName, hippoUUIDName);
     }
 
     MirrorVirtualProvider() throws RepositoryException {
@@ -92,15 +94,15 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         NodeState state = createNew(nodeId, upstream.getNodeTypeName(), parentId);
         state.setNodeTypeName(upstream.getNodeTypeName());
 
-        Set mixins = ((NodeState) state).getMixinTypeNames();
+        Set mixins = new HashSet(((NodeState) upstream).getMixinTypeNames());
         if(mixins.contains(mixinReferenceableName)) {
-            mixins = new HashSet(mixins);
             mixins.remove(mixinReferenceableName);
-            mixins.add(hippoReferenceableName);
-            state.setMixinTypeNames(mixins);
-        } else {
-            state.setMixinTypeNames(mixins);
         }
+        if(mixins.contains(hardDocumentName)) {
+            mixins.remove(hardDocumentName);
+            mixins.add(softDocumentName);
+        }
+        state.setMixinTypeNames(mixins);
 
         state.setDefinitionId(upstream.getDefinitionId());
         for(Iterator iter = upstream.getPropertyNames().iterator(); iter.hasNext(); ) {
@@ -108,7 +110,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
             PropertyId upstreamPropId = new HippoPropertyId(upstream.getNodeId(), propName);
             PropertyState upstreamPropState = getPropertyState(upstreamPropId);
             PropDefId propDefId = upstreamPropState.getDefinitionId();
-            if(propName.equals(jcrUUIDdocbaseName)) {
+            if(propName.equals(jcrUUIDName)) {
                 propName = hippoUUIDName;
                 propDefId = hippoUUIDPropDef.getId();
             }
