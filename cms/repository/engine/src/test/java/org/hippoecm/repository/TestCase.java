@@ -29,15 +29,17 @@ public abstract class TestCase extends junit.framework.TestCase {
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     private HippoRepositoryServer backgroundServer = null;;
-    private enum Mode { STANDALONE, REMOTED, APPSERVER };
-    private Mode mode = Mode.STANDALONE;
+    private final static int STANDALONE = 1;
+    private final static int REMOTED    = 2;
+    private final static int APPSERVER  = 3;
+    private int mode = STANDALONE;
 
     protected HippoRepository server = null;
     protected Session session = null;
 
     public TestCase() {
-        if(isRemote() && mode != mode.STANDALONE) {
-            mode = mode.REMOTED;
+        if(isRemote() && mode != STANDALONE) {
+            mode = REMOTED;
         }
     }
 
