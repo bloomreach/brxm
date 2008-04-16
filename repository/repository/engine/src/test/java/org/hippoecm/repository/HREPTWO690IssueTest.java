@@ -27,9 +27,8 @@ public class HREPTWO690IssueTest extends TestCase {
         "jcr:mixinTypes", "mix:referenceable",
         "/test/docs/funny", "hippo:document",
         "jcr:mixinTypes", "hippo:harddocument",
-        "jcr:mixinTypes", "hst:page",
-        "hst:pageType", "jsp",
-        "hst:pageFile", "index.jsp",
+        "jcr:mixinTypes", "hippo:testmixin",
+        "hippo:a", "test",
     };
     private String[] content2 = {
         "/test/nav", "hippo:facetselect",
@@ -53,12 +52,12 @@ public class HREPTWO690IssueTest extends TestCase {
 
         result = traverse(session, "/test/docs/funny");
         assertNotNull(result);
-        assertTrue(result.isNodeType("hst:page"));
+        assertTrue(result.isNodeType("hippo:testmixin"));
 
         result = traverse(session, "/test/nav/funny");
         assertNotNull(result);
 
         // actual issue: (ought to be assertTrue)
-        assertFalse(result.isNodeType("hst:page"));
+        assertFalse(result.isNodeType("hippo:testmixin"));
     }
 }
