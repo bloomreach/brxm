@@ -91,6 +91,13 @@
       <version>${parent.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-addon-repository</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- provided -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
