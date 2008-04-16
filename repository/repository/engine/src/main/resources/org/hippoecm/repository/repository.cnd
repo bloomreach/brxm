@@ -34,9 +34,6 @@
 - hippo:docbase (string) mandatory
 + * multiple
 
-[hippo:referenceable] mixin
-- hippo:uuid (string) mandatory
-
 [hippo:facetresult]
 - hippo:count (long)
 + * multiple
@@ -83,7 +80,7 @@
 
 // FIXME ought to be: [hippo:facetselect] > hippo:reference
 [hippo:facetselect] > nt:base
-- hippo:docbase (string) mandatory
+- hippo:docbase (string) mandatory // FIXME ought to be reference
 - hippo:facets (string) mandatory multiple
 - hippo:values (string) mandatory multiple
 - hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single'
@@ -185,8 +182,7 @@
 [hippo:pluginfolder] > nt:base
 + * (hippo:plugin) = hippo:plugin
  
- 
- 
+// FIXME to be removed 
 [hippo:unstructured] mixin
 - *
 - * multiple
@@ -229,8 +225,6 @@
 [hippo:namespace] > nt:base
 + * (hippo:templatetype) = hippo:templatetype
 
-
-
 [hippo:propertyreference] > nt:base
 
 [hippo:relativepropertyreference] > hippo:propertyreference
@@ -267,7 +261,8 @@
 [hippo:harddocument] > hippo:derived, mix:referenceable mixin
 - hippo:paths (String) multiple mandatory
 
-[hippo:softdocument] > hippo:referenceable mixin
+[hippo:softdocument] mixin
+- hippo:uuid (string) mandatory
 - hippo:paths (String) multiple mandatory
 
 // The following type is DEPRECATED from start
@@ -304,4 +299,3 @@
 + hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
 + hippo:frontend (hippo:application) = hippo:application
 + hippo:logging (hippo:logconfig) = hippo:logconfig
-

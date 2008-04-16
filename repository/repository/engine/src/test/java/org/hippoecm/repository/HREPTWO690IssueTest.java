@@ -53,11 +53,13 @@ public class HREPTWO690IssueTest extends TestCase {
         result = traverse(session, "/test/docs/funny");
         assertNotNull(result);
         assertTrue(result.isNodeType("hippo:testmixin"));
+        assertTrue(result.isNodeType("hippo:harddocument"));
+        assertFalse(result.isNodeType("hippo:softdocument"));
 
         result = traverse(session, "/test/nav/funny");
         assertNotNull(result);
-
-        // actual issue: (ought to be assertTrue)
-        assertFalse(result.isNodeType("hippo:testmixin"));
+        assertTrue(result.isNodeType("hippo:testmixin"));
+        assertFalse(result.isNodeType("hippo:harddocument"));
+        assertTrue(result.isNodeType("hippo:softdocument"));
     }
 }
