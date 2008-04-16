@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Object that can translate an URL to a repository path (a.k.a. location) 
  * and vice versa. Used in the URL mapping functionality.
- *  
- * @author jhoffman
  */
 public class URLPathTranslator {
 
@@ -46,8 +44,7 @@ public class URLPathTranslator {
     /**
      * Constructor.
      */
-    URLPathTranslator(final String contextPath, final String urlBasePath,
-            final String repositoryBaseLocation) {
+    URLPathTranslator(final String contextPath, final String urlBasePath, final String repositoryBaseLocation) {
         super();
 
         this.contextPath = contextPath;
@@ -59,9 +56,9 @@ public class URLPathTranslator {
      * Translate an URL to a path in the repository.
      */
     public String urlToDocumentPath(final String url) {
-        
+
         String path = url;
-        
+
         // remove end /
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
@@ -82,7 +79,7 @@ public class URLPathTranslator {
             path = this.repositoryBaseLocation + path;
         }
 
-        logger.debug("url " + url +  " to documentPath " + path);
+        logger.debug("url " + url + " to documentPath " + path);
         return path;
     }
 
@@ -90,7 +87,7 @@ public class URLPathTranslator {
      * Translate a path in the repository to an URL.
      */
     public String documentPathToURL(final Session jcrSession, final String documentPath) {
-        
+
         // Something like the following may be more appropriate, but the
         //  current sequence is functional enough
         //    Session session = context.session;
@@ -99,12 +96,13 @@ public class URLPathTranslator {
         //    QueryResult result = query.execute();
         //    url = result.getNodes().getNode().getPath();
 
+        String url;
+
         if (documentPath.startsWith(this.repositoryBaseLocation)) {
             // replace repositoryBaseLocation by urlBasePath 
-            return this.contextPath + this.urlBasePath 
-                    + documentPath.substring(this.repositoryBaseLocation.length());
+            url = this.contextPath + this.urlBasePath + documentPath.substring(this.repositoryBaseLocation.length());
         } else {
-            
+
             try {
                 // if documentPath actually matches a node path, we can construct the reversed url
                 String path = documentPath;
@@ -113,15 +111,17 @@ public class URLPathTranslator {
                 }
 
                 if (jcrSession.getRootNode().hasNode(path)) {
-                    return this.contextPath + this.urlBasePath + "/" + path;
+                    url = this.contextPath + this.urlBasePath + "/" + path;
+                } else {
+                    // error, the returned documentPath won't be valid!
+                    logger.warn("documentPath " + documentPath + " does not represent a node");
+                    url = documentPath;
                 }
-
-                // error, the returned documentPath won't be valid!
-                logger.warn("documentPath " + documentPath + " does not represent a node");
-                return documentPath;
             } catch (RepositoryException re) {
                 throw new IllegalStateException("unexpected error getting node by path " + documentPath, re);
             }
         }
+        logger.debug("documentPath " + documentPath + " to url " + url);
+        return url;
     }
 }
