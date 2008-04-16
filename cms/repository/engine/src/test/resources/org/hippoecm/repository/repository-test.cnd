@@ -32,3 +32,6 @@
 [hippo:testderiveddocument] > hippo:document
 - hippo:a (Long)
 - hippo:b (Long)
+
+[hippo:testmixin] mixin
+- hippo:a (String) mandatory
