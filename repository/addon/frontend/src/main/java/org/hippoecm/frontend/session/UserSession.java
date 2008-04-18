@@ -24,7 +24,7 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.wicket.JcrSessionModel;
+import org.hippoecm.frontend.service.render.JcrSessionModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;

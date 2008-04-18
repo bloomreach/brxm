@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.console.editor;
+package org.hippoecm.frontend.service.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;

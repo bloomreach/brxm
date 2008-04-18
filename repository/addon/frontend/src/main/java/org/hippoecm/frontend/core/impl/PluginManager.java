@@ -43,6 +43,10 @@ public class PluginManager implements Serializable {
             this.config = config;
             this.listener = listener;
         }
+
+        void send(int type, String name, Serializable service) {
+            listener.processEvent(type, name, service);
+        }
     }
 
     private PluginFactory factory;
@@ -64,12 +68,13 @@ public class PluginManager implements Serializable {
         return plugin;
     }
 
-    public List<Serializable> getServices(String name) {
-        return services.get(name);
-    }
-
     public void registerService(Serializable service, String name) {
-        log.debug("registering " + service + " as " + name);
+        if (name == null) {
+            log.error("service name is null");
+            return;
+        } else {
+            log.info("registering " + service + " as " + name);
+        }
 
         List<Serializable> list = services.get(name);
         if (list == null) {
@@ -83,18 +88,21 @@ public class PluginManager implements Serializable {
             Iterator<ListenerEntry> iter = notify.iterator();
             while (iter.hasNext()) {
                 ListenerEntry entry = iter.next();
-                String localName = entry.config.resolve(name);
-                entry.listener.processEvent(ServiceListener.ADDED, localName, service);
+                entry.send(ServiceListener.ADDED, name, service);
             }
         }
     }
 
     public void unregisterService(Serializable service, String name) {
-        log.debug("unregistering " + service + " from " + name);
+        if (name == null) {
+            log.error("service name is null");
+            return;
+        } else {
+            log.info("unregistering " + service + " from " + name);
+        }
 
         List<Serializable> list = services.get(name);
         if (list != null) {
-            // TODO Auto-generated method stub
             list.remove(service);
             if (list.isEmpty()) {
                 services.put(name, null);
@@ -105,8 +113,7 @@ public class PluginManager implements Serializable {
                 Iterator<ListenerEntry> iter = notify.iterator();
                 while (iter.hasNext()) {
                     ListenerEntry entry = iter.next();
-                    String localName = entry.config.resolve(name);
-                    entry.listener.processEvent(ServiceListener.REMOVED, localName, service);
+                    entry.send(ServiceListener.REMOVED, name, service);
                 }
             }
         } else {
@@ -115,7 +122,12 @@ public class PluginManager implements Serializable {
     }
 
     public void registerListener(PluginConfig config, ServiceListener listener, String name) {
-        log.debug("registering listener " + listener + " for " + name);
+        if (name == null) {
+            log.error("listener name is null");
+            return;
+        } else {
+            log.info("registering listener " + listener + " for " + name);
+        }
 
         List<ListenerEntry> list = listeners.get(name);
         if (list == null) {
@@ -124,19 +136,23 @@ public class PluginManager implements Serializable {
         }
         list.add(new ListenerEntry(config, listener));
 
-        String localName = config.resolve(name);
         List<Serializable> notify = services.get(name);
         if (notify != null) {
             Iterator<Serializable> iter = notify.iterator();
             while (iter.hasNext()) {
                 Serializable service = iter.next();
-                listener.processEvent(ServiceListener.ADDED, localName, service);
+                listener.processEvent(ServiceListener.ADDED, name, service);
             }
         }
     }
 
     public void unregisterListener(ServiceListener listener, String name) {
-        log.debug("unregistering listener " + listener + " for " + name);
+        if (name == null) {
+            log.error("listener name is null");
+            return;
+        } else {
+            log.info("unregistering listener " + listener + " for " + name);
+        }
 
         List<ListenerEntry> list = listeners.get(name);
         if (list != null) {
@@ -155,4 +171,5 @@ public class PluginManager implements Serializable {
             log.error("unregistering a listener that wasn't registered.");
         }
     }
+
 }

@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.service.topic;
 
-import java.io.Serializable;
+public interface MessageListener {
 
-public class Message implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    private int type;
-
-    public Message(int type) {
-        this.type = type;
-    }
-
-    public int getType() {
-        return type;
-    }
+    void onMessage(Message message);
 }

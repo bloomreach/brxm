@@ -23,7 +23,7 @@ import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.core.ServiceListener;
 import org.hippoecm.frontend.core.impl.PluginManager;
-import org.hippoecm.frontend.wicket.RenderService;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +44,10 @@ public class Home extends WebPage implements ServiceListener {
         mgr = new PluginManager();
 
         PluginConfig config = new PluginConfig();
-        config.put("root", "root");
-        mgr.registerListener(config, this, "root");
+        config.put("root", "service.root");
+        mgr.registerListener(config, this, "service.root");
 
         config = new PluginConfig();
-        config.put(Plugin.NAME, "app");
         config.put(Plugin.CLASSNAME, Application.class.getName());
         /* Plugin application = */ mgr.start(config);
     }

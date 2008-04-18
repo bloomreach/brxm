@@ -17,9 +17,14 @@ package org.hippoecm.frontend.core;
 
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PluginConfig extends Hashtable<String, String> {
     private static final long serialVersionUID = 1L;
 
+    private static final Logger log = LoggerFactory.getLogger(PluginConfig.class);
+    
     private Hashtable<String, String> reverse;
 
     public PluginConfig() {
@@ -39,6 +44,13 @@ public class PluginConfig extends Hashtable<String, String> {
     }
 
     public String resolve(String name) {
-        return reverse.get(name);
+        if (name != null) {
+            if (reverse.containsKey(name)) {
+                return reverse.get(name);
+            }
+        } else {
+            log.error("Cannot resolve null name");
+        }
+        return null;
     }
 }

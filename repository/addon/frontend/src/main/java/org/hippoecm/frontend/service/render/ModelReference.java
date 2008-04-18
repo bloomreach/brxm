@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.wicket;
+package org.hippoecm.frontend.service.render;
 
 import java.io.Serializable;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.service.Message;
-import org.hippoecm.frontend.service.MessageListener;
-import org.hippoecm.frontend.service.TopicService;
+import org.hippoecm.frontend.service.topic.Message;
+import org.hippoecm.frontend.service.topic.MessageListener;
+import org.hippoecm.frontend.service.topic.TopicService;
 
 public class ModelReference implements Serializable, MessageListener {
     private static final long serialVersionUID = 1L;
@@ -29,14 +29,22 @@ public class ModelReference implements Serializable, MessageListener {
     public static final int SET_MODEL = 1;
     public static final int GET_MODEL = 2;
 
+    public interface IListener {
+        
+        public IModel getModel();
+
+        void updateModel(IModel model);
+    }
+
     private TopicService topic;
     private RenderService view;
     private IModel model;
 
-    public ModelReference(RenderService renderer, String topic) {
+    public ModelReference(RenderService renderer, String serviceId) {
         this.view = renderer;
 
-        this.topic = new TopicService(topic, this);
+        this.topic = new TopicService(serviceId);
+        topic.addListener(this);
     }
 
     public void init(PluginContext context) {
