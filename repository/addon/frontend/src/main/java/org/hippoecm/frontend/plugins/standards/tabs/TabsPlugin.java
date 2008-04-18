@@ -27,6 +27,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.util.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,40 +42,14 @@ public class TabsPlugin extends RenderPlugin {
 
     private TabbedPanel tabbedPanel;
     private List<Tab> tabs;
-    private String tabId;
+    private ServiceTracker tabsTracker;
 
-    @Override
-    public void init(PluginContext context, String serviceId, String parentId, String wicketId, String modelId) {
-        tabId = context.getProperty(TAB_ID);
+    public TabsPlugin() {
+        tabsTracker = new ServiceTracker(IRenderService.class);
+        tabsTracker.addListener(new ServiceTracker.IListener() {
+            private static final long serialVersionUID = 1L;
 
-        super.init(context, serviceId, parentId, wicketId, modelId);
-
-        tabs = new ArrayList<Tab>();
-        tabbedPanel = new TabbedPanel("tabs", tabs);
-
-        add(new EmptyPanel("tabs"));
-
-        registerListener(TAB_ID);
-    }
-
-    @Override
-    public void destroy() {
-        unregisterListener(TAB_ID);
-    }
-
-    @Override
-    public void focus(IRenderService child) {
-        Tab tabbie = findTabbie(child);
-        if (tabbie != null) {
-            tabbie.select();
-        }
-        super.focus(child);
-    }
-
-    @Override
-    protected void onServiceAdded(String name, Serializable service) {
-        if (tabId.equals(name)) {
-            if ((service instanceof IRenderService) && (service instanceof Panel)) {
+            public void onServiceAdded(String name, Serializable service) {
                 // add the plugin
                 Tab tabbie = new Tab((IRenderService) service);
                 if (tabs.size() == 0) {
@@ -83,17 +58,12 @@ public class TabsPlugin extends RenderPlugin {
                 tabs.add(tabbie);
                 tabbie.select();
                 redraw();
-            } else {
-                log.warn("tab is not a IRenderService or Panel");
             }
-        }
-        super.onServiceAdded(name, service);
-    }
 
-    @Override
-    protected void onServiceRemoved(String name, Serializable service) {
-        if (tabId.equals(name)) {
-            if (service instanceof IRenderService) {
+            public void onServiceChanged(String name, Serializable service) {
+            }
+
+            public void onServiceRemoved(String name, Serializable service) {
                 Tab tabbie = findTabbie((IRenderService) service);
                 if (tabbie != null) {
                     tabs.remove(tabbie);
@@ -103,8 +73,34 @@ public class TabsPlugin extends RenderPlugin {
                     redraw();
                 }
             }
+        });
+
+        add(new EmptyPanel("tabs"));
+    }
+
+    @Override
+    public void init(PluginContext context, String serviceId, String parentId, String wicketId, String modelId) {
+        tabsTracker.open(context, context.getProperty(TAB_ID));
+
+        super.init(context, serviceId, parentId, wicketId, modelId);
+
+        tabs = new ArrayList<Tab>();
+        tabbedPanel = new TabbedPanel("tabs", tabs);
+    }
+
+    @Override
+    public void destroy() {
+        tabsTracker.close();
+        replace(new EmptyPanel("tabs"));
+    }
+
+    @Override
+    public void focus(IRenderService child) {
+        Tab tabbie = findTabbie(child);
+        if (tabbie != null) {
+            tabbie.select();
         }
-        super.onServiceRemoved(name, service);
+        super.focus(child);
     }
 
     @Override

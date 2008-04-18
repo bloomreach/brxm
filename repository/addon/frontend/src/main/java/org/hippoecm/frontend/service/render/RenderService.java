@@ -29,6 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.core.ServiceListener;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.util.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,17 +40,17 @@ public class RenderService extends Panel implements ServiceListener, ModelRefere
 
     private String serviceId;
     private String wicketId;
-    private String parentId;
     private PluginContext context;
-    private Map<String, List<Serializable>> references;
+    private Map<String, List<IRenderService>> children;
     private ModelReference modelRef;
-    private IRenderService parent;
+    private ServiceTracker parentTracker;
 
     public RenderService() {
         super("id");
         setOutputMarkupId(true);
 
-        this.references = new HashMap<String, List<Serializable>>();
+        this.children = new HashMap<String, List<IRenderService>>();
+        this.parentTracker = new ServiceTracker(IRenderService.class);
     }
 
     @Override
@@ -59,7 +60,6 @@ public class RenderService extends Panel implements ServiceListener, ModelRefere
 
     protected void init(PluginContext context, String serviceId, String parentId, String wicketId, String modelId) {
         this.serviceId = serviceId;
-        this.parentId = parentId;
         this.wicketId = wicketId;
         this.context = context;
 
@@ -69,14 +69,15 @@ public class RenderService extends Panel implements ServiceListener, ModelRefere
             modelRef.init(context);
         }
 
+        parentTracker.open(context, parentId);
+
         context.registerService(this, serviceId);
-        context.registerListener(this, parentId);
     }
 
     public void destroy() {
         PluginContext context = getPluginContext();
-        context.unregisterListener(this, parentId);
         context.unregisterService(this, serviceId);
+        parentTracker.close();
 
         if (modelRef != null) {
             modelRef.destroy();
@@ -120,78 +121,52 @@ public class RenderService extends Panel implements ServiceListener, ModelRefere
         }
     }
 
-    protected void registerListener(String serviceName) {
-        context.registerListener(this, context.getProperty(serviceName));
+    protected void addExtensionPoint(String name) {
+        String full = context.getProperty(name);
+        children.put(full, new LinkedList<IRenderService>());
+        context.registerListener(this, full);
     }
 
-    protected void unregisterListener(String serviceName) {
-        context.unregisterListener(this, context.getProperty(serviceName));
+    protected void removeExtensionPoint(String name) {
+        String full = context.getProperty(name);
+        context.unregisterListener(this, full);
+        children.remove(full);
     }
 
     public final void processEvent(int type, String name, Serializable service) {
-        List<Serializable> list = references.get(name);
+        List<IRenderService> list = children.get(name);
         switch (type) {
         case ServiceListener.ADDED:
-            if (list == null) {
-                list = new LinkedList<Serializable>();
-                references.put(name, list);
-            }
-            list.add(service);
-            onServiceAdded(name, service);
+            list.add((IRenderService) service);
             break;
 
         case ServiceListener.CHANGED:
-            onServiceChanged(name, service);
             break;
 
         case ServiceListener.REMOVED:
             list.remove(service);
-            if (list.isEmpty()) {
-                references.put(name, null);
-            }
-            onServiceRemoved(name, service);
             break;
         }
     }
 
-    protected void onServiceAdded(String name, Serializable service) {
-        if (parentId != null && parentId.equals(name)) {
-            if (service instanceof RenderService) {
-                parent = (RenderService) service;
-            } else {
-                log.error("parent service is not a RenderService");
-            }
-        }
-    }
-
-    protected void onServiceChanged(String name, Serializable service) {
-    }
-
-    protected void onServiceRemoved(String name, Serializable service) {
-        if (parentId != null && parentId.equals(name)) {
-            if (parent == service) {
-                parent = null;
-            } else {
-                log.error("unrecognised parent service");
-            }
-        }
-    }
-
     public void focus(IRenderService child) {
+        IRenderService parent = getParentRenderer();
         if (parent != null) {
             parent.focus(this);
         }
     }
 
-    public String getPath(IRenderService child) {
+    public final String getPath(IRenderService child) {
         StringBuilder sb = new StringBuilder();
+
+        IRenderService parent = getParentRenderer();
         if (parent != null) {
             sb.append(parent.getPath(this));
             sb.append(':');
         }
 
-        for (Map.Entry<String, List<Serializable>> entry : references.entrySet()) {
-            List<Serializable> list = entry.getValue();
+        for (Map.Entry<String, List<IRenderService>> entry : children.entrySet()) {
+            List<IRenderService> list = entry.getValue();
             if (list.contains(child)) {
                 sb.append(entry.getKey());
                 sb.append(':');
@@ -202,12 +177,12 @@ public class RenderService extends Panel implements ServiceListener, ModelRefere
         return sb.toString();
     }
 
-    public IRenderService resolvePath(String path) {
+    public final IRenderService resolvePath(String path) {
         int sep = path.indexOf(':');
         String name = path.substring(0, sep);
         path = path.substring(sep + 1);
 
-        List<Serializable> list = references.get(name);
+        List<IRenderService> list = children.get(name);
         if (list == null) {
             return null;
         }
@@ -221,19 +196,22 @@ public class RenderService extends Panel implements ServiceListener, ModelRefere
             path = path.substring(sep + 1);
         }
 
-        if (list.get(idx) instanceof IRenderService) {
-            IRenderService service = (IRenderService) list.get(idx);
-            if (sep < 0) {
-                return service;
-            } else {
-                if (service == null) {
-                    return null;
-                }
-                return service.resolvePath(path);
-            }
+        IRenderService service = (IRenderService) list.get(idx);
+        if (sep < 0) {
+            return service;
         } else {
-            log.warn("Service found under path " + path + " is not a RenderService.");
-            return null;
+            if (service == null) {
+                return null;
+            }
+            return service.resolvePath(path);
         }
+    }
+
+    protected final IRenderService getParentRenderer() {
+        List<Serializable> services = parentTracker.getServices();
+        if (services.size() == 1) {
+            return (IRenderService) services.get(0);
+        }
+        return null;
     }
 }
