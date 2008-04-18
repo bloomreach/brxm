@@ -23,7 +23,7 @@ import org.hippoecm.frontend.core.impl.PluginManager;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.wicket.RenderService;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,6 @@ public class Adapter extends Plugin implements ServiceListener {
         mgr.registerListener(config, this, "root");
 
         config = new PluginConfig();
-        config.put(org.hippoecm.frontend.core.Plugin.NAME, "app");
         config.put(org.hippoecm.frontend.core.Plugin.CLASSNAME, Application.class.getName());
         application = mgr.start(config);
     }

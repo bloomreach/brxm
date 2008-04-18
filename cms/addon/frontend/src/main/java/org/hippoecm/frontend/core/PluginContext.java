@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.core;
 
 import java.io.Serializable;
-import java.util.List;
 
 
 public interface PluginContext {
@@ -24,15 +23,6 @@ public interface PluginContext {
     String getProperty(String key);
 
     Plugin start(PluginConfig config);
-    
-    /**
-     * Returns a reference to the service that has been configured to be available
-     * under "name" for the plugin.
-     * 
-     * @param name
-     * @return
-     */
-    List<Serializable> getServices(String name);
 
     /**
      * Registers a service with the given name.

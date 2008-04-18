@@ -13,23 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.wicket;
+package org.hippoecm.frontend.service;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.service.Message;
+import org.hippoecm.frontend.service.topic.Message;
 
-public class ModelMessage extends Message {
-    private static final long serialVersionUID = 1L;
+public interface ITopicService {
 
-    private IModel model;
-
-    public ModelMessage(int type, IModel model) {
-        super(type);
-
-        this.model = model;
-    }
-
-    public IModel getModel() {
-        return model;
-    }
+    void onPublish(Message message);
 }

@@ -13,29 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.console;
+package org.hippoecm.frontend.plugin.render;
 
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.wicket.RenderService;
+import org.hippoecm.frontend.service.render.RenderService;
 
 public class RenderPlugin extends RenderService implements Plugin {
     private static final long serialVersionUID = 1L;
 
-    public static final String WICKET_ID = "wicket";
+    public static final String MODEL_ID = "wicket.model";
+    public static final String WICKET_ID = "wicket.id";
+    public static final String PARENT_ID = "wicket.parent";
 
     public void start(PluginContext context) {
-        String wicketId = context.getProperty(WICKET_ID);
-        init(context, wicketId);
-
-        context.registerService(this, WICKET_ID);
+        init(context, context.getProperty(Plugin.SERVICE_ID), context.getProperty(PARENT_ID), context
+                .getProperty(WICKET_ID), context.getProperty(MODEL_ID));
     }
 
     public void stop() {
-        PluginContext context = getPluginContext();
-        context.unregisterService(this, WICKET_ID);
-
-        destroy(context);
+        destroy();
     }
 
 }

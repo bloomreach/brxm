@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.core.impl;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginConfig;
@@ -42,40 +41,20 @@ public class PluginContextImpl implements PluginContext, Serializable {
         return config.get(key);
     }
 
-    public List<Serializable> getServices(String name) {
-        String full = config.get(name);
-        if (full != null) {
-            return manager.getServices(full);
-        }
-        return null;
-    }
-
     public void registerService(Serializable service, String name) {
-        String full = config.get(name);
-        if (full != null) {
-            manager.registerService(service, full);
-        }
+        manager.registerService(service, name);
     }
 
     public void unregisterService(Serializable service, String name) {
-        String full = config.get(name);
-        if (full != null) {
-            manager.unregisterService(service, full);
-        }
+        manager.unregisterService(service, name);
     }
 
     public void registerListener(ServiceListener listener, String name) {
-        String full = config.get(name);
-        if (full != null) {
-            manager.registerListener(config, listener, full);
-        }
+        manager.registerListener(config, listener, name);
     }
 
     public void unregisterListener(ServiceListener listener, String name) {
-        String full = config.get(name);
-        if (full != null) {
-            manager.unregisterListener(listener, full);
-        }
+        manager.unregisterListener(listener, name);
     }
 
 }

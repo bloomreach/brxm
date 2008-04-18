@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.core;
+package org.hippoecm.frontend.plugins.standards.tabs;
 
-public interface Plugin {
+import java.util.List;
 
-    String SERVICE_ID = "service.pid";
+import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 
-    String FACTORY_ID = "factory.pid";
+public class TabbedPanel extends AjaxTabbedPanel {
+    private static final long serialVersionUID = 1L;
 
-    String CLASSNAME = "plugin.class";
+    public TabbedPanel(String wicketId, List<TabsPlugin.Tab> tabs) {
+        super(wicketId, tabs);
 
-    void start(PluginContext context);
-
-    void stop();
+        setOutputMarkupId(true);
+        setVersioned(false);
+    }
 }

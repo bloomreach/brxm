@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.console;
+package org.hippoecm.frontend.plugin.root;
 
 import java.io.Serializable;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.wicket.RenderService;
+import org.hippoecm.frontend.plugin.render.RenderPlugin;
 
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -34,6 +36,7 @@ public class RootPlugin extends RenderPlugin {
         super.start(context);
 
         for (String extension : extensions) {
+            add(new EmptyPanel(extension));
             registerListener(extension);
         }
     }
@@ -42,6 +45,7 @@ public class RootPlugin extends RenderPlugin {
     public void stop() {
         for (String extension : extensions) {
             unregisterListener(extension);
+            remove(extension);
         }
 
         super.stop();
@@ -50,15 +54,15 @@ public class RootPlugin extends RenderPlugin {
     @Override
     protected void onServiceAdded(String name, Serializable service) {
         super.onServiceAdded(name, service);
-        if (service instanceof RenderService) {
-            add((RenderService) service);
+        if (service instanceof Component) {
+            replace((Component) service);
         }
     }
 
     @Override
     protected void onServiceRemoved(String name, Serializable service) {
-        if (service instanceof RenderService) {
-            remove((RenderService) service);
+        if (service instanceof Component) {
+            replace(new EmptyPanel(name));
         }
         super.onServiceRemoved(name, service);
     }

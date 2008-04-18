@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.core;
+package org.hippoecm.frontend.service;
 
-public interface Plugin {
+public interface IRenderService {
 
-    String SERVICE_ID = "service.pid";
+    void focus(IRenderService child);
 
-    String FACTORY_ID = "factory.pid";
+    String getPath(IRenderService child);
 
-    String CLASSNAME = "plugin.class";
-
-    void start(PluginContext context);
-
-    void stop();
+    IRenderService resolvePath(String path);
 }

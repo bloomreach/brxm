@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.console.editor;
+package org.hippoecm.frontend.service.editor;
 
-import org.hippoecm.frontend.console.RenderPlugin;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.render.RenderService;
 
-public class EditorPlugin extends RenderPlugin {
+public class EditorService extends RenderService implements IEditService {
     private static final long serialVersionUID = 1L;
 
     private NodeEditor editor;
 
     @Override
-    public void init(PluginContext context, String wicketId) {
-        super.init(context, wicketId);
+    public void init(PluginContext context, String serviceId, String parentId, String wicketId, String modelId) {
         editor = new NodeEditor("editor", new JcrNodeModel("/"));
         add(editor);
+        super.init(context, serviceId, parentId, wicketId, modelId);
     }
 
     @Override
-    public void destroy(PluginContext context) {
+    public void destroy() {
         remove(editor);
-        super.destroy(context);
+        super.destroy();
     }
 
     @Override
@@ -42,4 +44,9 @@ public class EditorPlugin extends RenderPlugin {
         super.onModelChanged();
         editor.setModel(getModel());
     }
+
+    public void edit(IModel model) {
+        setModel(model);
+    }
+
 }

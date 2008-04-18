@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.core;
+package org.hippoecm.frontend.service;
 
-public interface Plugin {
+import org.apache.wicket.model.IModel;
 
-    String SERVICE_ID = "service.pid";
+public interface IEditService {
 
-    String FACTORY_ID = "factory.pid";
-
-    String CLASSNAME = "plugin.class";
-
-    void start(PluginContext context);
-
-    void stop();
+    void edit(IModel model);
 }
