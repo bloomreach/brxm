@@ -16,54 +16,60 @@
 package org.hippoecm.frontend.plugin.root;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
+import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.util.ServiceTracker;
 
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
-    private String[] extensions;
+    private Map<String, ServiceTracker> trackers;
 
     public RootPlugin() {
-        extensions = new String[] { "browser", "content" };
+        trackers = new HashMap<String, ServiceTracker>();
+        for (String extension : new String[] { "browser", "content" }) {
+            ServiceTracker tracker = new ServiceTracker(IRenderService.class);
+            tracker.addListener(new ServiceTracker.IListener() {
+                private static final long serialVersionUID = 1L;
+
+                public void onServiceAdded(String name, Serializable service) {
+                    replace((Component) service);
+                }
+
+                public void onServiceChanged(String name, Serializable service) {
+                }
+
+                public void onServiceRemoved(String name, Serializable service) {
+                    replace(new EmptyPanel(((Component) service).getId()));
+                }
+            });
+            trackers.put(extension, tracker);
+            add(new EmptyPanel(extension));
+        }
     }
 
     @Override
     public void start(PluginContext context) {
         super.start(context);
 
-        for (String extension : extensions) {
-            add(new EmptyPanel(extension));
-            registerListener(extension);
+        for (Map.Entry<String, ServiceTracker> entry : trackers.entrySet()) {
+            entry.getValue().open(context, context.getProperty(entry.getKey()));
         }
     }
 
     @Override
     public void stop() {
-        for (String extension : extensions) {
-            unregisterListener(extension);
-            remove(extension);
+        for (Map.Entry<String, ServiceTracker> entry : trackers.entrySet()) {
+            entry.getValue().close();
+            replace(new EmptyPanel(entry.getKey()));
         }
 
         super.stop();
-    }
-
-    @Override
-    protected void onServiceAdded(String name, Serializable service) {
-        super.onServiceAdded(name, service);
-        if (service instanceof Component) {
-            replace((Component) service);
-        }
-    }
-
-    @Override
-    protected void onServiceRemoved(String name, Serializable service) {
-        if (service instanceof Component) {
-            replace(new EmptyPanel(name));
-        }
-        super.onServiceRemoved(name, service);
     }
 }
