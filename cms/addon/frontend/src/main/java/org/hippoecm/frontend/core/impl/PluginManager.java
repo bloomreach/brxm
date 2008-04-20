@@ -33,30 +33,14 @@ public class PluginManager implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
 
-    private static class ListenerEntry implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        ServiceListener listener;
-        PluginConfig config;
-
-        ListenerEntry(PluginConfig config, ServiceListener listener) {
-            this.config = config;
-            this.listener = listener;
-        }
-
-        void send(int type, String name, Serializable service) {
-            listener.processEvent(type, name, service);
-        }
-    }
-
     private PluginFactory factory;
     private Map<String, List<Serializable>> services;
-    private Map<String, List<ListenerEntry>> listeners;
+    private Map<String, List<ServiceListener>> listeners;
 
     public PluginManager() {
         factory = new PluginFactory();
         services = new HashMap<String, List<Serializable>>();
-        listeners = new HashMap<String, List<ListenerEntry>>();
+        listeners = new HashMap<String, List<ServiceListener>>();
     }
 
     public Plugin start(PluginConfig config) {
@@ -83,12 +67,12 @@ public class PluginManager implements Serializable {
         }
         list.add(service);
 
-        List<ListenerEntry> notify = listeners.get(name);
+        List<ServiceListener> notify = listeners.get(name);
         if (notify != null) {
-            Iterator<ListenerEntry> iter = notify.iterator();
+            Iterator<ServiceListener> iter = notify.iterator();
             while (iter.hasNext()) {
-                ListenerEntry entry = iter.next();
-                entry.send(ServiceListener.ADDED, name, service);
+                ServiceListener entry = iter.next();
+                entry.processEvent(ServiceListener.ADDED, name, service);
             }
         }
     }
@@ -108,12 +92,12 @@ public class PluginManager implements Serializable {
                 services.put(name, null);
             }
 
-            List<ListenerEntry> notify = listeners.get(name);
+            List<ServiceListener> notify = listeners.get(name);
             if (notify != null) {
-                Iterator<ListenerEntry> iter = notify.iterator();
+                Iterator<ServiceListener> iter = notify.iterator();
                 while (iter.hasNext()) {
-                    ListenerEntry entry = iter.next();
-                    entry.send(ServiceListener.REMOVED, name, service);
+                    ServiceListener entry = iter.next();
+                    entry.processEvent(ServiceListener.REMOVED, name, service);
                 }
             }
         } else {
@@ -121,7 +105,7 @@ public class PluginManager implements Serializable {
         }
     }
 
-    public void registerListener(PluginConfig config, ServiceListener listener, String name) {
+    public void registerListener(ServiceListener listener, String name) {
         if (name == null) {
             log.error("listener name is null");
             return;
@@ -129,12 +113,12 @@ public class PluginManager implements Serializable {
             log.info("registering listener " + listener + " for " + name);
         }
 
-        List<ListenerEntry> list = listeners.get(name);
+        List<ServiceListener> list = listeners.get(name);
         if (list == null) {
-            list = new LinkedList<ListenerEntry>();
+            list = new LinkedList<ServiceListener>();
             listeners.put(name, list);
         }
-        list.add(new ListenerEntry(config, listener));
+        list.add(listener);
 
         List<Serializable> notify = services.get(name);
         if (notify != null) {
@@ -154,18 +138,13 @@ public class PluginManager implements Serializable {
             log.info("unregistering listener " + listener + " for " + name);
         }
 
-        List<ListenerEntry> list = listeners.get(name);
+        List<ServiceListener> list = listeners.get(name);
         if (list != null) {
-            Iterator<ListenerEntry> iter = list.iterator();
-            while (iter.hasNext()) {
-                ListenerEntry entry = iter.next();
-                if (entry.listener == listener) {
-                    iter.remove();
-                    break;
-                }
+            if(list.contains(listener)) {
+                list.remove(listener);
             }
             if (list.isEmpty()) {
-                listeners.put(name, null);
+                listeners.remove(name);
             }
         } else {
             log.error("unregistering a listener that wasn't registered.");

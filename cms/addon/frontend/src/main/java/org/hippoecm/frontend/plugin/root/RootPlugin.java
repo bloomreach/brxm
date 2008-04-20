@@ -16,29 +16,28 @@
 package org.hippoecm.frontend.plugin.root;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.dialog.DialogService;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.util.ServiceTracker;
 
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
-    private Map<String, ServiceTracker> trackers;
+    private DialogService dialogService;
 
     public RootPlugin() {
-        trackers = new HashMap<String, ServiceTracker>();
-        for (String extension : new String[] { "browser", "content" }) {
-            ServiceTracker tracker = new ServiceTracker(IRenderService.class);
-            tracker.addListener(new ServiceTracker.IListener() {
+        for (final String extension : new String[] { "browser", "content" }) {
+            addExtensionPoint(extension, new ServiceTracker.IListener() {
                 private static final long serialVersionUID = 1L;
 
                 public void onServiceAdded(String name, Serializable service) {
+                    ((IRenderService) service).bind(RootPlugin.this, extension);
                     replace((Component) service);
                 }
 
@@ -47,28 +46,25 @@ public class RootPlugin extends RenderPlugin {
 
                 public void onServiceRemoved(String name, Serializable service) {
                     replace(new EmptyPanel(((Component) service).getId()));
+                    ((IRenderService) service).unbind();
                 }
             });
-            trackers.put(extension, tracker);
-            add(new EmptyPanel(extension));
         }
+        dialogService = new DialogService();
+        add(new EmptyPanel("dialog"));
     }
 
     @Override
     public void start(PluginContext context) {
         super.start(context);
 
-        for (Map.Entry<String, ServiceTracker> entry : trackers.entrySet()) {
-            entry.getValue().open(context, context.getProperty(entry.getKey()));
-        }
+        dialogService.init(context, (String) context.getProperties().get(RenderService.DIALOG_ID), "dialog");
     }
 
     @Override
     public void stop() {
-        for (Map.Entry<String, ServiceTracker> entry : trackers.entrySet()) {
-            entry.getValue().close();
-            replace(new EmptyPanel(entry.getKey()));
-        }
+        dialogService.destroy();
+        replace(new EmptyPanel("dialog"));
 
         super.stop();
     }

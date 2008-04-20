@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.service.editor;
 
+import java.util.Map;
+
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -27,10 +29,10 @@ public class EditorService extends RenderService implements IEditService {
     private NodeEditor editor;
 
     @Override
-    public void init(PluginContext context, String serviceId, String parentId, String wicketId, String modelId) {
+    public void init(PluginContext context, String serviceId, Map<String, Object> properties) {
         editor = new NodeEditor("editor", new JcrNodeModel("/"));
         add(editor);
-        super.init(context, serviceId, parentId, wicketId, modelId);
+        super.init(context, serviceId, properties);
     }
 
     @Override

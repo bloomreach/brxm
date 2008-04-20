@@ -44,7 +44,7 @@ public class Adapter extends Plugin implements ServiceListener {
 
         PluginConfig config = new PluginConfig();
         config.put("root", "root");
-        mgr.registerListener(config, this, "root");
+        mgr.registerListener(this, "root");
 
         config = new PluginConfig();
         config.put(org.hippoecm.frontend.core.Plugin.CLASSNAME, Application.class.getName());

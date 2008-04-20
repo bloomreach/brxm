@@ -38,7 +38,6 @@ import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.service.render.JcrSessionModel;
-import org.hippoecm.frontend.service.render.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;

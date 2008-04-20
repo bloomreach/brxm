@@ -15,11 +15,33 @@
  */
 package org.hippoecm.frontend.service;
 
+import java.util.List;
+
+import org.hippoecm.frontend.application.PluginRequestTarget;
+
 public interface IRenderService {
+
+    void render(PluginRequestTarget target);
 
     void focus(IRenderService child);
 
-    String getPath(IRenderService child);
+    // Rendering hierarchy management
 
-    IRenderService resolvePath(String path);
+    void bind(IRenderService parent, String id);
+
+    void unbind();
+
+    String getId();
+
+    IRenderService getParentService();
+
+    List<IRenderService> getChildServices(String name);
+
+    // Service id that is used to register decorators
+
+    String getDecoratorId();
+
+    // Service ids that can be used to hook into the layout
+
+    List<String> getExtensionPoints();
 }

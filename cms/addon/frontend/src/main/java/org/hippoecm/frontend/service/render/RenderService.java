@@ -22,71 +22,81 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.application.PluginRequestTarget;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.core.ServiceListener;
+import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.util.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RenderService extends Panel implements ServiceListener, ModelReference.IListener, IRenderService {
+public class RenderService extends Panel implements ModelReference.IListener, IRenderService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RenderService.class);
 
+    public static final String MODEL_ID = "wicket.model";
+    public static final String DIALOG_ID = "wicket.dialog";
+    public static final String DECORATOR_ID = "wicket.decorator";
+
+    private boolean redraw;
     private String serviceId;
     private String wicketId;
     private PluginContext context;
-    private Map<String, List<IRenderService>> children;
+    private Map<String, Object> properties;
+    private Map<String, ServiceTracker> children;
     private ModelReference modelRef;
-    private ServiceTracker parentTracker;
+    private IRenderService parent;
+    private ServiceTracker dialogTracker;
 
     public RenderService() {
         super("id");
         setOutputMarkupId(true);
+        redraw = false;
 
-        this.children = new HashMap<String, List<IRenderService>>();
-        this.parentTracker = new ServiceTracker(IRenderService.class);
+        wicketId = "service.render";
+
+        this.children = new HashMap<String, ServiceTracker>();
+        this.dialogTracker = new ServiceTracker(IDialogService.class);
     }
 
-    @Override
-    public String getId() {
-        return wicketId;
-    }
-
-    protected void init(PluginContext context, String serviceId, String parentId, String wicketId, String modelId) {
-        this.serviceId = serviceId;
-        this.wicketId = wicketId;
+    protected void init(PluginContext context, String serviceId, Map<String, Object> properties) {
         this.context = context;
+        this.properties = properties;
+        this.serviceId = serviceId;
 
+        String modelId = (String) properties.get(MODEL_ID);
         if (modelId != null) {
             this.modelRef = new ModelReference(this, modelId);
 
             modelRef.init(context);
         }
 
-        parentTracker.open(context, parentId);
+        dialogTracker.open(context, (String) properties.get(DIALOG_ID));
 
+        for (Map.Entry<String, ServiceTracker> entry : children.entrySet()) {
+            entry.getValue().open(context, (String) properties.get(entry.getKey()));
+        }
         context.registerService(this, serviceId);
     }
 
-    public void destroy() {
+    protected void destroy() {
         PluginContext context = getPluginContext();
+
         context.unregisterService(this, serviceId);
-        parentTracker.close();
+        for (Map.Entry<String, ServiceTracker> entry : children.entrySet()) {
+            entry.getValue().close();
+        }
+
+        dialogTracker.close();
 
         if (modelRef != null) {
             modelRef.destroy();
             modelRef = null;
         }
-    }
-
-    protected PluginContext getPluginContext() {
-        return context;
     }
 
     // override model change methods
@@ -109,109 +119,94 @@ public class RenderService extends Panel implements ServiceListener, ModelRefere
 
     // utility routines for subclasses
 
-    protected void redraw() {
-        IRequestTarget target = RequestCycle.get().getRequestTarget();
-        if (target != null) {
-            if (target instanceof PluginRequestTarget) {
-                PluginRequestTarget pluginTarget = (PluginRequestTarget) target;
-                pluginTarget.addUpdate(this);
-            } else {
-                log.warn("Request target is not an instance of PluginRequestTarget, ajax update is cancelled");
-            }
-        }
+    protected PluginContext getPluginContext() {
+        return context;
     }
 
-    protected void addExtensionPoint(String name) {
-        String full = context.getProperty(name);
-        children.put(full, new LinkedList<IRenderService>());
-        context.registerListener(this, full);
+    protected Object getProperty(String key) {
+        return properties.get(key);
+    }
+
+    protected void redraw() {
+        redraw = true;
+    }
+
+    protected void addExtensionPoint(String name, ServiceTracker.IListener listener) {
+        ServiceTracker tracker = new ServiceTracker(IRenderService.class);
+        tracker.addListener(listener);
+        children.put(name, tracker);
+        add(new EmptyPanel(name));
     }
 
     protected void removeExtensionPoint(String name) {
-        String full = context.getProperty(name);
-        context.unregisterListener(this, full);
-        children.remove(full);
+        children.remove(name);
+        replace(new EmptyPanel(name));
     }
 
-    public final void processEvent(int type, String name, Serializable service) {
-        List<IRenderService> list = children.get(name);
-        switch (type) {
-        case ServiceListener.ADDED:
-            list.add((IRenderService) service);
-            break;
-
-        case ServiceListener.CHANGED:
-            break;
-
-        case ServiceListener.REMOVED:
-            list.remove(service);
-            break;
+    protected IDialogService getDialogService() {
+        List<Serializable> dialogs = dialogTracker.getServices();
+        if (dialogs.size() > 0) {
+            return (IDialogService) dialogs.get(0);
         }
+        return null;
+    }
+
+    // implement IRenderService
+
+    public void render(PluginRequestTarget target) {
+        PluginRequestTarget childTarget = target;
+        if (redraw) {
+            PluginRequestTarget pluginTarget = (PluginRequestTarget) target;
+            pluginTarget.addComponent(this);
+            childTarget = new PluginRequestTarget(target.getPage());
+        }
+        // FIXME: filter updates from child services when this render service is redrawn
+        for (Map.Entry<String, ServiceTracker> entry : children.entrySet()) {
+            for (Serializable service : entry.getValue().getServices()) {
+                ((IRenderService) service).render(childTarget);
+            }
+        }
+        redraw = false;
     }
 
     public void focus(IRenderService child) {
-        IRenderService parent = getParentRenderer();
+        IRenderService parent = getParentService();
         if (parent != null) {
             parent.focus(this);
         }
     }
 
-    public final String getPath(IRenderService child) {
-        StringBuilder sb = new StringBuilder();
-
-        IRenderService parent = getParentRenderer();
-        if (parent != null) {
-            sb.append(parent.getPath(this));
-            sb.append(':');
-        }
-
-        for (Map.Entry<String, List<IRenderService>> entry : children.entrySet()) {
-            List<IRenderService> list = entry.getValue();
-            if (list.contains(child)) {
-                sb.append(entry.getKey());
-                sb.append(':');
-                sb.append(list.indexOf(child));
-                break;
-            }
-        }
-        return sb.toString();
+    @Override
+    public String getId() {
+        return wicketId;
     }
 
-    public final IRenderService resolvePath(String path) {
-        int sep = path.indexOf(':');
-        String name = path.substring(0, sep);
-        path = path.substring(sep + 1);
-
-        List<IRenderService> list = children.get(name);
-        if (list == null) {
-            return null;
-        }
-
-        sep = path.indexOf(':');
-        int idx;
-        if (sep < 0) {
-            idx = Integer.valueOf(path);
-        } else {
-            idx = Integer.valueOf(path.substring(0, sep));
-            path = path.substring(sep + 1);
-        }
-
-        IRenderService service = (IRenderService) list.get(idx);
-        if (sep < 0) {
-            return service;
-        } else {
-            if (service == null) {
-                return null;
-            }
-            return service.resolvePath(path);
-        }
+    public void bind(IRenderService parent, String wicketId) {
+        this.parent = parent;
+        this.wicketId = wicketId;
     }
 
-    protected final IRenderService getParentRenderer() {
-        List<Serializable> services = parentTracker.getServices();
-        if (services.size() == 1) {
-            return (IRenderService) services.get(0);
-        }
-        return null;
+    public void unbind() {
+        this.parent = null;
+        wicketId = "service.render";
     }
+
+    public IRenderService getParentService() {
+        return parent;
+    }
+
+    public List<IRenderService> getChildServices(String name) {
+        return (List) children.get(name).getServices();
+    }
+
+    public List<String> getExtensionPoints() {
+        List<String> result = new LinkedList<String>();
+        result.addAll(children.keySet());
+        return result;
+    }
+
+    public String getDecoratorId() {
+        return (String) properties.get(DECORATOR_ID);
+    }
+
 }

@@ -42,6 +42,7 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
     public static final String EDITOR_ID = "editor";
 
     private PluginContext context;
+    private Map<String, Object> properties;
     private String factoryId;
     private Map<IModel, EditorPlugin> editors;
     private TopicService topic;
@@ -54,11 +55,13 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
 
     public void start(PluginContext context) {
         this.context = context;
-        topic = new TopicService(context.getProperty("editor.model"));
+        properties = context.getProperties();
+
+        topic = new TopicService((String) properties.get("editor.model"));
         topic.addListener(this);
         topic.init(context);
 
-        factoryId = context.getProperty(Plugin.FACTORY_ID);
+        factoryId = (String) properties.get(Plugin.FACTORY_ID);
         if (factoryId != null) {
             context.registerService(this, factoryId);
         }
@@ -79,15 +82,16 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
     public void edit(final IModel model) {
         EditorPlugin plugin;
         if (!editors.containsKey(model)) {
-            String modelId = context.getProperty(EDITOR_ID) + editCount + ".model";
-
             PluginConfig config = new PluginConfig();
-            config.put(Plugin.SERVICE_ID, context.getProperty(Plugin.SERVICE_ID));
+            config.put(Plugin.SERVICE_ID, properties.get(Plugin.SERVICE_ID));
             config.put(Plugin.FACTORY_ID, factoryId);
             config.put(Plugin.CLASSNAME, EditorPlugin.class.getName());
-            config.put(RenderPlugin.WICKET_ID, context.getProperty(RenderPlugin.WICKET_ID));
-            config.put(RenderPlugin.PARENT_ID, context.getProperty(RenderPlugin.PARENT_ID));
+
+            String modelId = (String) properties.get(EDITOR_ID) + editCount + ".model";
             config.put(RenderPlugin.MODEL_ID, modelId);
+
+            String decoratorId = (String) properties.get(EDITOR_ID) + editCount + ".decorator";
+            config.put(RenderPlugin.DECORATOR_ID, decoratorId);
 
             plugin = (EditorPlugin) context.start(config);
             plugin.edit(model);
