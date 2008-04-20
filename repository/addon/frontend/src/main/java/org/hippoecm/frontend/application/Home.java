@@ -16,27 +16,30 @@
 package org.hippoecm.frontend.application;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebPage;
 import org.hippoecm.frontend.console.Application;
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.core.ServiceListener;
 import org.hippoecm.frontend.core.impl.PluginManager;
-import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.service.IRenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Home extends WebPage implements ServiceListener {
+public class Home extends WebPage implements ServiceListener, IRenderService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(Home.class);
 
     public static final String ROOT_PLUGIN = "rootPlugin";
-//    public static final String LOGIN_PLUGIN = "loginPlugin";
+    //    public static final String LOGIN_PLUGIN = "loginPlugin";
 
     private PluginManager mgr;
-    private RenderService root;
+    private IRenderService root;
 
     public Home() {
 
@@ -45,23 +48,24 @@ public class Home extends WebPage implements ServiceListener {
 
         PluginConfig config = new PluginConfig();
         config.put("root", "service.root");
-        mgr.registerListener(config, this, "service.root");
+        mgr.registerListener(this, "service.root");
 
         config = new PluginConfig();
         config.put(Plugin.CLASSNAME, Application.class.getName());
-        /* Plugin application = */ mgr.start(config);
+        /* Plugin application = */mgr.start(config);
     }
 
-    public RenderService getRootPlugin() {
+    private IRenderService getRootPlugin() {
         return root;
     }
 
     public void processEvent(int type, String name, Serializable service) {
         switch (type) {
         case ServiceListener.ADDED:
-            if (service instanceof RenderService) {
-                root = (RenderService) service;
-                add(root);
+            if (service instanceof IRenderService) {
+                root = (IRenderService) service;
+                root.bind(this, "root");
+                add((Component) root);
             } else {
                 log.error("root plugin is not a RenderService");
             }
@@ -69,11 +73,50 @@ public class Home extends WebPage implements ServiceListener {
 
         case ServiceListener.REMOVED:
             if (service == root) {
-                remove(root);
+                remove((Component) root);
+                root.unbind();
                 root = null;
             }
             break;
         }
+    }
+
+    public void render(PluginRequestTarget target) {
+        IRenderService root = getRootPlugin();
+        if (root != null) {
+            root.render(target);
+        }
+    }
+
+    public void focus(IRenderService child) {
+    }
+
+    public void bind(IRenderService parent, String wicketId) {
+    }
+
+    public void unbind() {
+    }
+
+    public List<IRenderService> getChildServices(String name) {
+        List<IRenderService> result = new LinkedList<IRenderService>();
+        if ("root".equals(name)) {
+            result.add(getRootPlugin());
+        }
+        return result;
+    }
+
+    public IRenderService getParentService() {
+        return null;
+    }
+
+    public String getDecoratorId() {
+        return null;
+    }
+
+    public List<String> getExtensionPoints() {
+        List<String> result = new LinkedList<String>();
+        result.add("root");
+        return result;
     }
 
 }

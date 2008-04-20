@@ -20,20 +20,20 @@ import java.util.Hashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginConfig extends Hashtable<String, String> {
+public class PluginConfig extends Hashtable<String, Object> {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginConfig.class);
     
-    private Hashtable<String, String> reverse;
+    private Hashtable<Object, String> reverse;
 
     public PluginConfig() {
-        reverse = new Hashtable<String, String>();
+        reverse = new Hashtable<Object, String>();
     }
 
     @Override
-    public String put(String key, String value) {
-        String old = super.put(key, value);
+    public Object put(String key, Object value) {
+        Object old = super.put(key, value);
         if (old != null) {
             reverse.put(old, null);
         }
@@ -43,7 +43,7 @@ public class PluginConfig extends Hashtable<String, String> {
         return old;
     }
 
-    public String resolve(String name) {
+    public Object resolve(String name) {
         if (name != null) {
             if (reverse.containsKey(name)) {
                 return reverse.get(name);

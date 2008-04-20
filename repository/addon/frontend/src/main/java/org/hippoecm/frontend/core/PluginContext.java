@@ -16,13 +16,13 @@
 package org.hippoecm.frontend.core;
 
 import java.io.Serializable;
-
+import java.util.Map;
 
 public interface PluginContext {
 
-    String getProperty(String key);
-
     Plugin start(PluginConfig config);
+
+    Map<String, Object> getProperties();
 
     /**
      * Registers a service with the given name.

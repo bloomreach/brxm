@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.core.impl;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginConfig;
@@ -25,20 +26,20 @@ import org.hippoecm.frontend.core.ServiceListener;
 public class PluginContextImpl implements PluginContext, Serializable {
     private static final long serialVersionUID = 1L;
 
+    private Map<String, Object> properties;
     private PluginManager manager;
-    private PluginConfig config;
 
-    public PluginContextImpl(PluginManager manager, PluginConfig directory) {
+    public PluginContextImpl(PluginManager manager, PluginConfig config) {
         this.manager = manager;
-        this.config = directory;
+        this.properties = config;
     }
 
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+    
     public Plugin start(PluginConfig config) {
         return manager.start(config);
-    }
-
-    public String getProperty(String key) {
-        return config.get(key);
     }
 
     public void registerService(Serializable service, String name) {
@@ -50,7 +51,7 @@ public class PluginContextImpl implements PluginContext, Serializable {
     }
 
     public void registerListener(ServiceListener listener, String name) {
-        manager.registerListener(config, listener, name);
+        manager.registerListener(listener, name);
     }
 
     public void unregisterListener(ServiceListener listener, String name) {

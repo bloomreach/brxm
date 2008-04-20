@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -27,6 +28,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.util.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,7 @@ public class TabsPlugin extends RenderPlugin {
 
             public void onServiceAdded(String name, Serializable service) {
                 // add the plugin
+                ((IRenderService) service).bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 Tab tabbie = new Tab((IRenderService) service);
                 if (tabs.size() == 0) {
                     replace(tabbedPanel);
@@ -67,6 +70,7 @@ public class TabsPlugin extends RenderPlugin {
                 Tab tabbie = findTabbie((IRenderService) service);
                 if (tabbie != null) {
                     tabs.remove(tabbie);
+                    ((IRenderService) service).unbind();
                     if (tabs.size() == 0) {
                         replace(new EmptyPanel("tabs"));
                     }
@@ -75,23 +79,29 @@ public class TabsPlugin extends RenderPlugin {
             }
         });
 
+        tabs = new ArrayList<Tab>();
         add(new EmptyPanel("tabs"));
     }
 
     @Override
-    public void init(PluginContext context, String serviceId, String parentId, String wicketId, String modelId) {
-        tabsTracker.open(context, context.getProperty(TAB_ID));
+    public void init(PluginContext context, String serviceId, Map<String, Object> properties) {
+        tabsTracker.open(context, (String) properties.get(TAB_ID));
 
-        super.init(context, serviceId, parentId, wicketId, modelId);
-
-        tabs = new ArrayList<Tab>();
         tabbedPanel = new TabbedPanel("tabs", tabs);
+        if (tabs.size() > 0) {
+            replace(tabbedPanel);
+        }
+
+        super.init(context, serviceId, properties);
     }
 
     @Override
     public void destroy() {
+        super.destroy();
         tabsTracker.close();
-        replace(new EmptyPanel("tabs"));
+        if (tabs.size() > 0) {
+            replace(new EmptyPanel("tabs"));
+        }
     }
 
     @Override
@@ -128,14 +138,22 @@ public class TabsPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         IRenderService renderer;
+        ServiceTracker titleTracker;
 
         Tab(IRenderService renderer) {
             this.renderer = renderer;
+            titleTracker = new ServiceTracker(ITitleDecorator.class);
+            titleTracker.open(getPluginContext(), renderer.getDecoratorId());
         }
 
         // implement ITab interface
 
         public Model getTitle() {
+            List<Serializable> titles = titleTracker.getServices();
+            if (titles.size() > 0) {
+                ITitleDecorator title = (ITitleDecorator) titles.get(0);
+                return new Model(title.getTitle());
+            }
             return new Model("title");
         }
 

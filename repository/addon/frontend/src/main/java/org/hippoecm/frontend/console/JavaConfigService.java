@@ -23,6 +23,7 @@ import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.plugin.editor.MultiEditorPlugin;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
+import org.hippoecm.frontend.plugin.root.RootPlugin;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 
 /**
@@ -40,7 +41,7 @@ public class JavaConfigService implements Serializable {
         PluginConfig config = new PluginConfig();
         config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugin.root.RootPlugin");
         config.put(Plugin.SERVICE_ID, "service.root");
-        config.put(RenderPlugin.WICKET_ID, "root");
+        config.put(RootPlugin.DIALOG_ID, "service.dialog");
         config.put("browser", "service.browser");
         config.put("content", "service.content");
         plugins.add(config);
@@ -48,17 +49,13 @@ public class JavaConfigService implements Serializable {
         config = new PluginConfig();
         config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugin.browser.BrowserPlugin");
         config.put(Plugin.SERVICE_ID, "service.browser");
-        config.put(RenderPlugin.WICKET_ID, "browser");
         config.put(RenderPlugin.MODEL_ID, "model.node");
-        config.put(RenderPlugin.PARENT_ID, "service.root");
         plugins.add(config);
 
         config = new PluginConfig();
         config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin");
         config.put(Plugin.SERVICE_ID, "service.content");
         config.put(TabsPlugin.TAB_ID, "service.tab");
-        config.put(RenderPlugin.WICKET_ID, "content");
-        config.put(RenderPlugin.PARENT_ID, "service.root");
         plugins.add(config);
 
         config = new PluginConfig();
@@ -67,8 +64,6 @@ public class JavaConfigService implements Serializable {
         config.put("editor.model", "model.node");
 
         config.put(Plugin.SERVICE_ID, "service.tab");
-        config.put(RenderPlugin.WICKET_ID, "panel");
-        config.put(RenderPlugin.PARENT_ID, "service.content");
         config.put(MultiEditorPlugin.EDITOR_ID, "editor.id");
         plugins.add(config);
     }
