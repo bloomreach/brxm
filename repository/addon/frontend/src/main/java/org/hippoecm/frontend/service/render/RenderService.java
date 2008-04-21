@@ -154,19 +154,16 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
     // implement IRenderService
 
     public void render(PluginRequestTarget target) {
-        PluginRequestTarget childTarget = target;
         if (redraw) {
             PluginRequestTarget pluginTarget = (PluginRequestTarget) target;
             pluginTarget.addComponent(this);
-            childTarget = new PluginRequestTarget(target.getPage());
+            redraw = false;
         }
-        // FIXME: filter updates from child services when this render service is redrawn
         for (Map.Entry<String, ServiceTracker> entry : children.entrySet()) {
             for (Serializable service : entry.getValue().getServices()) {
-                ((IRenderService) service).render(childTarget);
+                ((IRenderService) service).render(target);
             }
         }
-        redraw = false;
     }
 
     public void focus(IRenderService child) {
@@ -188,7 +185,7 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
 
     public void unbind() {
         this.parent = null;
-        wicketId = "service.render";
+        wicketId = "service.render.unbound";
     }
 
     public IRenderService getParentService() {

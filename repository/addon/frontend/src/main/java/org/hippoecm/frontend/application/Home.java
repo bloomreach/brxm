@@ -71,7 +71,7 @@ public class Home extends WebPage implements ServiceListener, IRenderService {
             }
             break;
 
-        case ServiceListener.REMOVED:
+        case ServiceListener.REMOVE:
             if (service == root) {
                 remove((Component) root);
                 root.unbind();

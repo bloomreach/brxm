@@ -87,18 +87,18 @@ public class PluginManager implements Serializable {
 
         List<Serializable> list = services.get(name);
         if (list != null) {
-            list.remove(service);
-            if (list.isEmpty()) {
-                services.put(name, null);
-            }
-
             List<ServiceListener> notify = listeners.get(name);
             if (notify != null) {
                 Iterator<ServiceListener> iter = notify.iterator();
                 while (iter.hasNext()) {
                     ServiceListener entry = iter.next();
-                    entry.processEvent(ServiceListener.REMOVED, name, service);
+                    entry.processEvent(ServiceListener.REMOVE, name, service);
                 }
+            }
+
+            list.remove(service);
+            if (list.isEmpty()) {
+                services.remove(name);
             }
         } else {
             log.error("unregistering a service that wasn't registered.");

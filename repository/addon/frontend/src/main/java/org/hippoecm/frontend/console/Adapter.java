@@ -70,7 +70,7 @@ public class Adapter extends Plugin implements ServiceListener {
             }
             break;
 
-        case ServiceListener.REMOVED:
+        case ServiceListener.REMOVE:
             if (service == root) {
                 remove(root);
                 root = null;

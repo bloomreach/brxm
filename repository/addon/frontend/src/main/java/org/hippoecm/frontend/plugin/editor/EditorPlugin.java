@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.core.Plugin;
@@ -31,6 +32,7 @@ import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.editor.EditorService;
 import org.hippoecm.frontend.util.ServiceTracker;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,10 +77,12 @@ public class EditorPlugin extends EditorService implements Plugin, IDynamicServi
     public void delete() {
         IDialogService dialogService = getDialogService();
         try {
-            JcrNodeModel model = (JcrNodeModel) getModel();
-            if (model.getNode().getSession().hasPendingChanges()) {
-                OnCloseDialog onCloseDialog = new OnCloseDialog(dialogService, model);
-                dialogService.show(onCloseDialog);
+            Node node = ((JcrNodeModel) getModel()).getNode();
+            // FIXME: repo bug
+/*            HippoSession session = (HippoSession) node.getSession();
+            if (session.pendingChanges(node, "nt:base").hasNext()) { */
+            if(node.getSession().hasPendingChanges()) {
+                dialogService.show(new OnCloseDialog(dialogService, (JcrNodeModel) getModel(), this));
             } else {
                 deleteEditor();
             }
