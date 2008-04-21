@@ -237,18 +237,17 @@ cd hippo-ecm/package/war
 mvn jetty:run-war
 </source>
         <p>
-          You should now be able to approach the frontend application with your web browser
-          on <a href="http://localhost:8080/">http://localhost:8080/</a>.
-          Login with username "admin" and password "admin". Make sure you select the
-          "hippo:console" application.
+          You should now be able to approach the Console application with your web browser
+          on <a href="http://localhost:8080/console">http://localhost:8080/console</a>.
+          Login with username "admin" and password "admin". The full CMS is accessible at <a href="http://localhost:8080/">http://localhost:8080/</a>, using the same account. 
         </p>
       </subsection>
 
       <subsection name="Configuring to application to use the plugin">
         <p>
           All it takes to see our plugin in all its glory is to replace one of the
-          standard plugins in the plugin configuration with our own. To do this, navigate to
-          <b>/hippo:configuration/hippo:frontend/hippo:console/rootPlugin/contentPlugin</b>
+          standard plugins in the plugin configuration with our own, using the Console interface. To do this, navigate to
+          <b>/hippo:configuration/hippo:frontend/hippo:cms/rootPlugin/tabsPlugin/panel/dashboardPerspective/todoPlugin</b>
           in the tree, and click on the contentPlugin node. The properties of the contentPlugin node
           are displayed on the right side of the page.
           Now change the class name
@@ -256,7 +255,8 @@ mvn jetty:run-war
         </p>
         <img src="../images/configure-hello-world-plugin.jpg" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
         <p>
-          Refresh your browser, and admire your work!
+          Now login with a different browser on <a href="http://localhost:8080/">http://localhost:8080/</a>, and admire your work!
+          The Hello World plugin should be visible on the right hand side of the Dashboard tab (since you replaced the TodoPlugin with your HelloWorld plugin).
         </p>
         <img src="../images/hello-world-plugin.jpg" alt="Hello World screenshot"  style="border:1px solid grey;"/>
         <br/>
