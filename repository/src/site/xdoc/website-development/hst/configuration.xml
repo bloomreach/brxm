@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+      <section name="HST Configuration">
+        <p>
+          Basic HST functionality is set up into your web application by configuring one or more filters in your 
+          web deployment descriptor (web.xml). This applies to making the expression language and the 
+          tag library available.<br/>
+          Secondly, when wanting to view images or other binaries, a servlet for binaries has to be set up
+          in the web.xml as well. 
+        </p>
+        <subsection name="Repository configuration">
+          <p>To access the repository, some <code>&lt;context-param&gt;</code>'s have to be configured in the web.xml file:</p>
+          <table>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>repositoryAddress</td>
+              <td>The address of the repository, e.g. rmi://localhost:1099/hipporepository</td>
+            </tr>
+            <tr>
+              <td>repositoryUserName</td>
+              <td>The user name to use for the repository login</td>
+            </tr>                 
+            <tr>
+              <td>repositoryPassword</td>
+              <td>The password to use for the repository login</td>
+            </tr>                 
+          </table>  
+        </subsection>
+        <subsection name="Configuration of your HST web filter(s)">
+            <p>To use the HST, one or more webfilters should be installed in your web application
+            using the <code>&lt;filter&gt;</code> tag.</p>
+            <p>The main function of an HST web filter is to provide a object in request scope that
+            is able to access the repository. This object, by default identified by the name <em>context</em>, 
+            represents a certain location in the repository. It can easily be used from within a jsp using 
+            expression language, using for example <code>${context.title}</code> to retrieve the <code>title</code> 
+            property of the current context. See <a href="el-index.html">here</a> for more on the expression language
+            and usage of the context.</p>
+          <h4>Which filter: URL mapping or not?</h4>
+          <p>
+            If you want to be using the URL mapping functionality (<a href="url-mapping.html">see here</a>),  
+            filter(s) of class <code>org.hippoecm.hst.URLMappingContextFilter</code> should be installed.        
+            For regular jsp site development, <code>org.hippoecm.hst.ContextFilter</code>
+            should be used.<br/> 
+          </p>
+          <h4>The filter's init parameters</h4>
+          <p>As the context object should point to a location in your repository, this should be configured 
+            by init parameters. The <code>urlBasePath</code> and <code>repositoryBaseLocation</code> are the ones
+            that describe the relation between the first part of the url and the location in the repository.
+            Note that if these are the same (e.g. <code>/preview</code> url points to <code>/preview</code> location,
+            the latter may be omitted. </p>
+          <table>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Default</th>
+            </tr>
+            <tr>
+              <td>attributeName</td>
+              <td>The name of the context object created in the request scope.</td>
+              <td>context</td>
+            </tr>                 
+            <tr>
+              <td>urlBasePath</td>
+              <td>The part of the url this filter matches to, so must match 
+                the actual url-pattern of the filter-mapping.</td>
+              <td>/</td>
+            </tr>
+            <tr>
+              <td>repositoryBaseLocation</td>
+              <td>The repository base path to bind the context to.</td>
+              <td>Same value as urlBasePath</td>
+            </tr>                 
+            <tr>
+              <td>urlMappingLocation</td>
+              <td>The location in the repository where to find URL mappings
+                based on document type. Only used by URLMappingContextFilter.
+              </td>
+              <td>/urlMapping</td>
+            </tr>                 
+            <tr>
+              <td>ignoreExtension</td>
+              <td>A list of extensions that the filter will not create context objects
+                for, if the URL ends with such an extension. 
+              </td>
+              <td>ico,gif,jpg,jpeg,svg,png,css,js</td>
+            </tr>                 
+          </table>  
+          
+          <h4>One HST filter or more?</h4>
+          <p>Depending on the structure of repository content and application specific
+            decisions, you may want to install more than one filter.</p> 
+          <p>For instance, it is common practice to have a <code>/preview</code> and a <code>/live</code> location
+            in your repository, containing <code>unpublished</code> and <code>published</code>
+            documents, respectively. In this case, one <code>previewContext</code> and one
+            <code>liveContext</code> are to be installed, matching <code>/preview</code> and <code>/live</code>
+            in the URL. Their attribute names should be identical, so the jsp code doesn't have to change!</p>
+           <p>In another case, if you want to have just one application pointing to the live environment, 
+             just install one <code>context</code> pointing to <code>/live</code>!</p>
+        </subsection>
+        
+        <a name="BinariesServlet"></a>
+        <subsection name="Configuration of the servlet for binaries">
+          <p>A separate servlet is available in the HST, that can serve binaries such as images and documents 
+            from any location within the repository based on the URL path it recieves.</p>
+          <p>If you need binaries in your application, use a regular <code>&lt;servlet&gt;</code>
+            configuration with class <code>org.hippoecm.hst.BinariesServlet</code>. 
+            Set up a descriptive <code>&lt;url-pattern&gt;</code> like <code>/binaries/*</code>, 
+            that you will have to use as prefix in your jsp's, for instance in the in a the <code>src</code> 
+            attribute of the &lt;img&gt; tag (<a href="binaries.html">more here</a>).</p>  
+        </subsection>
+         
+        <p>For an example web.xml, <a href="configuration-example.html">see here!</a></p>      
+      </section>
+
+    </body>
+</document>

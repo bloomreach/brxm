@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+      <section name="The JSP tag library">
+        <subsection name="Importing the taglib">
+          <p>The taglib definition file is present as <code>/META-INF/hst.tld</code> 
+            within the included HST jar file (see <a href="include.html">include the HST</a>) and should be 
+            found by your web application. The URI of the taglib is <code>http://www.hippoecm.org/jsp/hst</code> 
+            so to import the taglib in your jsp use the piece of code below. As prefix we recommend <code>hippo</code>, as a simple 
+            <code>h</code> is commonly used for jsf html tags.</p>
+          <source><![CDATA[<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hippo" %>]]></source>
+        </subsection> 
+        <subsection name="Tags">
+        </subsection> 
+      </section>
+    </body>
+</document>
