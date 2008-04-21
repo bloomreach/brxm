@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+      <section name="Website Development">
+        <p>
+          After having set up your ECM, you may very well want to publish the contents
+          of the repository by means of a website. This means that your website has to connect to 
+          the repository. As the repository is Java Content Repository (JCR) compliant, 
+          Java clients using this standard can communicate with the repository. 
+          Besides that, Hippo has developed a library on top of the JCR layer 
+          that is called the <code>Hippo Site Toolkit</code>, which is targeted at JSP clients, 
+          for easy website development, see the <a href="index.html">Hippo Site Toolkit</a>. 
+        </p>
+
+        <subsection name="The JCR Interface">
+          <p>
+            The Hippo Repository provides a standard Java Content Repository (JCR) interface that is also known 
+            as <a href="http://www.jcp.org/en/jsr/detail?id=170" target="_blank">Java Specification Request 170</a>.
+            It uses an <a href="http://jackrabbit.apache.org/jcr-api.html" target="_blank">Apache JackRabbit</a> implementation.  
+            The JCR interface is also mentioned in the example under <a href="/integrate-hippo-ecm/example.html">Integrating Hippo ECM</a>,
+            which was applicable for extending the CMS interface.</p> 
+          <p>A Java client that wants to use the interface must retrieve a <code>javax.jcr.Session</code> object.
+             A static factory class is available to help with that. A simple example on how to connect and login 
+             to a Hippo Repository based on location, user name and password is:     
+          </p>
+          <source><![CDATA[HippoRepository repository 
+                = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
+                javax.jcr.Session session = repository.login(<userName>, <password>);
+                session.getRootNode()  etc..]]></source>
+        </subsection>
+       </section>
+
+    </body>
+</document>

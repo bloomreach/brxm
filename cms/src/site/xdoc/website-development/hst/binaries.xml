@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+      <section name="Serving binaries with the BinariesServlet">
+        <p>
+          The HST contains a servlet for serving binaries, e.g. a gif image or a pdf document.
+          The servlet should be installed in your web.xml, 
+          see <a href="configuration.html#BinariesServlet">configuration</a>.
+        </p>
+        
+        <subsection name="How does it work?">
+          <p>
+             All data in Hippo Repository is stored as property of a certain node. 
+             The BinariesServlet will look for a node in the repository based on the url it gets.
+             If the application uses the <a href="url-mapping.html">URL mapping</a>functionality,
+             it will transform the incoming url to a path in the repository, if not it will just use 
+             the incoming url directly as repository path. Then, the repository node found by the servlet
+            should have the following two properties: <code>jcr:mimeType</code> and <code>jcr:data</code>.
+          </p>
+          <p>If above node and properties are found, the servlet will</p>
+          <ul>
+            <li>Set the found mime type to the response</li>
+            <li>Write the property as stream to the response</li>
+          </ul>
+        </subsection>
+        <subsection name="Usage">
+            <p>It is common use the access the BinariesServlet in the <code>src</code> attribute of
+              a <code>img</code> tag, or in the <code>href</code> attribute of the <code>a</code> tag.</p>
+            <p>The path to the binary node in the repository should be easily obtained using the
+              expression language's <code>_path</code> property (<a href="el-index.html#FixedProperties">see here</a>). 
+              In the following example <code>hippo:small_image</code> is a subnode of the current context:</p>
+          <source><![CDATA[  web.xml setup: BinariesServlet has url-pattern /binaries/*
+          
+  <c:if test="${context['hippo:small_image'] != null}">
+      <img src="/<contextpath>/binaries${context['hippo:small_image']._path}"/>
+  </c:if>]]></source>
+        </subsection>
+        
+      </section>
+
+    </body>
+</document>

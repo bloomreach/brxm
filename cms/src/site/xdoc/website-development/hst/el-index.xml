@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+      <section name="HST Expression Language">
+        <p>An HST web filter provides an object in request scope that is able to access the repository. 
+          This object, by default identified by the name <em>context</em>,  can easily be used from within a jsp 
+          using JSP 2.0's standard JSTL Expression Language (or EL, <a href="http://java.sun.com/j2ee/1.4/docs/tutorial/doc/JSPIntro7.html" target="_blank">see here</a>).
+          EL accesses objects through <code>${}</code> notation, and using dots <code>.</code> or square brackets 
+          <code>['']</code> to access nested objects and properties.</p>
+          
+         <p>For instance, retrieving the title property of a news node in the current context 
+           would have notation <code>${context.news.title}</code>, or <code>${context['news']['title']}</code>, 
+           which is identical.</p>
+           
+        <subsection name="The context object">
+          <p>So the context object is always made available by the filter in the request scope. 
+            This context points to a certain location in the repository, of which the base location is 
+            defined by the filter's <code>repositoryBaseLocation</code> parameter, or the <code>urlBasePath</code> 
+            in case the former is omitted.</p>
+            
+          <p>When using the <b>URL mapping</b> functionality (<a href="url-mapping.html">see here</a>), 
+            the context represents the node in the repository that is described by the base location 
+            plus the part of the URL path after the <code>urlBasePath</code>. So, in the following example, 
+            the context object maps to repository node <code>/preview/content/news/2008</code>.</p>
+            <source><![CDATA[  URL:                          /preview/news/2008
+  urlBasePath:                  /preview
+  repositoryBaseLocation:       /preview/content
+  
+  context represents node:      /preview/content/news/2008]]></source>
+   
+          <h4>Accessing other repository nodes</h4>
+          <p>From the context, other repository locations can be retrieved that will have their representation
+            also by a context object. This may be done in a relative or absolute way.</p>
+          <p><b>Relative access to other nodes</b> may be achieved by using either the dot notation or by using a path 
+            field property that doesn't start with <code>'/'</code>. <b>Absolute access to other nodes</b> may be
+            done by having a path field property that does start with <code>'/'</code>.   
+            For example, accessing node <code>/preview/content/news/2008</code></p>
+             <source><![CDATA[  context represents node:      /preview/content/
+  
+  relative access to news node: ${context.news.2008}
+                                or
+                                ${context['news/2008']}
+  absolute access to news node: ${context['/news/2008']}]]></source>
+          <h4>Iterating over nodes</h4>
+          <p>Looping subnodes of a certain node is possible using the standard <code>&lt;c:forEach&gt;</code>
+            tag (see ). Below a quick example looping a news node for items. Note there is a 'handle' node between 
+            the news folder node and the actual news item document.</p>
+          <source><![CDATA[  context represents node: /preview/content/news/2008
+  <c:forEach items="${context}" var="newsItemHandle" varStatus="status">
+    <c:set var="newsItem" value="${newsItemHandle[newsItemHandle._name]}" />
+    
+    .. use newsItem ..
+    
+  <c:forEach>]]></source>
+                        
+          <h4>Accessing data through properties</h4>
+          <p>In the CMS/repository back-end templates are defined that describe documents and their 
+            contained properties. Where the document is a repository node, represented by a context
+            object, it's properties containing the actual data can be accessed using EL properties.</p>
+           <p>Normally the properties are namespaced with colon (<code>:</code>) separation, which makes
+             it not possible to use dot notation.</p>
+          <p>The jsp snippet example below shows a simple news document with the properties <code>hippo:title</code>,
+               <code>hippo:introduction</code> and <code>hippo:body</code>. Again, note the handle node!</p>
+          <source><![CDATA[  context represents node: /preview/content/news/2008/new-release
+
+  <c:set var="${newsItem}" value="${context[context._name]}" />
+
+  <div class="newsItem">
+    <div class="newsItemTitle">
+        ${newsItem['hippo:title']}
+    </div>
+    <div class="newsItemIntroduction">
+        ${newsItem['hippo:introduction']}
+    </div>
+    <div class="newsItemBody">
+        ${newsItem['hippo:body']}
+    </div>
+  </div>]]></source>
+          <a name="FixedProperties"></a>
+          <h4>Fixed properties starting with underscore</h4>
+          <p>As you might have seen in the examples above, an <code>_name</code> property exists. In fact,
+            there are some more properties starting with uinderscore that can always be retrieved 
+            from a context. These are:</p>
+          <table>
+            <tr>
+              <th>Property</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>_name</td>
+              <td>The name of the node this context points to.</td>
+            </tr>
+            <tr>
+              <td>_path</td>
+              <td>The complete path of the node this context points to.</td>
+            </tr>                 
+            <tr>
+              <td>_parent</td>
+              <td>Returns a context pointing to the parent of the node this context points to.</td>
+            </tr>                 
+            <tr>
+              <td>_urlBasePath</td>
+              <td>The urlBasePath as configured in the filter, may be used the reconstruct URLs in jsps.</td>
+            </tr>                 
+            <tr>
+              <td>_size</td>
+              <td>Returns the number of subnodes.</td>
+            </tr>                 
+            <tr>
+              <td>_index</td>
+              <td>The index of a looped context.</td>
+            </tr>                 
+          </table>  
+          
+        </subsection>
+        
+      </section>
+
+    </body>
+</document>
