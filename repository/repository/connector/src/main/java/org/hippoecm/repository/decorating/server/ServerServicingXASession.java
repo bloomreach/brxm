@@ -46,10 +46,15 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
         }
     }
 
-    public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws RepositoryException,
-                                                                                                RemoteException {
+    public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws NamespaceException,
+                                                                 NoSuchNodeTypeException, RepositoryException, RemoteException {
         try {
-            return getFactory().getRemoteNodeIterator(session.pendingChanges(session.getRootNode().getNode(absPath), nodeType, prune));
+            return getFactory().getRemoteNodeIterator(session.pendingChanges(session.getRootNode().getNode(absPath.substring(1)),
+                                                                             nodeType, prune));
+        } catch (NamespaceException ex) {
+            throw getRepositoryException(ex);
+        } catch (NoSuchNodeTypeException ex) {
+            throw getRepositoryException(ex);
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
