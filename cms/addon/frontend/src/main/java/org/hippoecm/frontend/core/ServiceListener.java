@@ -22,7 +22,7 @@ public interface ServiceListener extends EventListener {
 
     int ADDED = 1;
     int CHANGED = 2;
-    int REMOVED = 3;
+    int REMOVE = 3;
 
     void processEvent(int type, String name, Serializable service);
 }

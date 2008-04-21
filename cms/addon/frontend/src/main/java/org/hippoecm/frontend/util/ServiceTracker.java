@@ -22,7 +22,7 @@ public class ServiceTracker implements ServiceListener, Serializable {
 
         void onServiceChanged(String name, Serializable service);
 
-        void onServiceRemoved(String name, Serializable service);
+        void onRemoveService(String name, Serializable service);
 
     }
 
@@ -72,10 +72,10 @@ public class ServiceTracker implements ServiceListener, Serializable {
                 }
                 break;
                 
-            case ServiceListener.REMOVED:
+            case ServiceListener.REMOVE:
                 services.remove(service);
                 for (IListener listener : listeners) {
-                    listener.onServiceRemoved(name, service);
+                    listener.onRemoveService(name, service);
                 }
                 break;
             }

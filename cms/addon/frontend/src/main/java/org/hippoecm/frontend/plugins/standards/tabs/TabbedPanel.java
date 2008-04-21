@@ -17,15 +17,40 @@ package org.hippoecm.frontend.plugins.standards.tabs;
 
 import java.util.List;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 
 public class TabbedPanel extends AjaxTabbedPanel {
     private static final long serialVersionUID = 1L;
 
-    public TabbedPanel(String wicketId, List<TabsPlugin.Tab> tabs) {
+    private TabsPlugin plugin;
+
+    public TabbedPanel(String wicketId, TabsPlugin plugin, List<TabsPlugin.Tab> tabs) {
         super(wicketId, tabs);
+
+        this.plugin = plugin;
 
         setOutputMarkupId(true);
         setVersioned(false);
+    }
+
+    @Override
+    protected WebMarkupContainer newLink(String linkId, final int index)
+    {
+        final TabsPlugin.Tab tabbie = (TabsPlugin.Tab) getTabs().get(index);
+        return new AjaxFallbackLink(linkId)
+        {
+
+            private static final long serialVersionUID = 1L;
+
+            public void onClick(AjaxRequestTarget target)
+            {
+                setSelectedTab(index);
+                plugin.onSelect(tabbie, target);
+            }
+
+        };
     }
 }

@@ -73,7 +73,7 @@ public class TopicService implements ServiceListener, Serializable, ITopicServic
             }
             break;
 
-        case ServiceListener.REMOVED:
+        case ServiceListener.REMOVE:
             if (peers.contains(service)) {
                 peers.remove(service);
             }

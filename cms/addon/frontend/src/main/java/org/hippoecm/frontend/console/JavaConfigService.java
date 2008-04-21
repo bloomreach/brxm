@@ -65,6 +65,7 @@ public class JavaConfigService implements Serializable {
 
         config.put(Plugin.SERVICE_ID, "service.tab");
         config.put(MultiEditorPlugin.EDITOR_ID, "editor.id");
+        config.put(RenderPlugin.DIALOG_ID, "service.dialog");
         plugins.add(config);
     }
 

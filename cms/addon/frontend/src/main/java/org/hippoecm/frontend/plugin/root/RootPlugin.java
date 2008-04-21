@@ -44,7 +44,7 @@ public class RootPlugin extends RenderPlugin {
                 public void onServiceChanged(String name, Serializable service) {
                 }
 
-                public void onServiceRemoved(String name, Serializable service) {
+                public void onRemoveService(String name, Serializable service) {
                     replace(new EmptyPanel(((Component) service).getId()));
                     ((IRenderService) service).unbind();
                 }
@@ -59,12 +59,13 @@ public class RootPlugin extends RenderPlugin {
         super.start(context);
 
         dialogService.init(context, (String) context.getProperties().get(RenderService.DIALOG_ID), "dialog");
+        replace(dialogService);
     }
 
     @Override
     public void stop() {
-        dialogService.destroy();
         replace(new EmptyPanel("dialog"));
+        dialogService.destroy();
 
         super.stop();
     }

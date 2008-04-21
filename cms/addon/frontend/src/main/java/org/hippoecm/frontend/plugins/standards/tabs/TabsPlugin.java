@@ -21,12 +21,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.application.PluginRequestTarget;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
+import org.hippoecm.frontend.service.IDynamicService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.util.ServiceTracker;
@@ -45,6 +48,7 @@ public class TabsPlugin extends RenderPlugin {
     private TabbedPanel tabbedPanel;
     private List<Tab> tabs;
     private ServiceTracker tabsTracker;
+    private int selectCount;
 
     public TabsPlugin() {
         tabsTracker = new ServiceTracker(IRenderService.class);
@@ -56,23 +60,26 @@ public class TabsPlugin extends RenderPlugin {
                 ((IRenderService) service).bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 Tab tabbie = new Tab((IRenderService) service);
                 if (tabs.size() == 0) {
+                    tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs);
                     replace(tabbedPanel);
                 }
                 tabs.add(tabbie);
-                tabbie.select();
+                tabbie.select(true);
                 redraw();
             }
 
             public void onServiceChanged(String name, Serializable service) {
             }
 
-            public void onServiceRemoved(String name, Serializable service) {
+            public void onRemoveService(String name, Serializable service) {
                 Tab tabbie = findTabbie((IRenderService) service);
                 if (tabbie != null) {
                     tabs.remove(tabbie);
+                    tabbie.destroy();
                     ((IRenderService) service).unbind();
                     if (tabs.size() == 0) {
                         replace(new EmptyPanel("tabs"));
+                        tabbedPanel = null;
                     }
                     redraw();
                 }
@@ -81,14 +88,16 @@ public class TabsPlugin extends RenderPlugin {
 
         tabs = new ArrayList<Tab>();
         add(new EmptyPanel("tabs"));
+
+        selectCount = 0;
     }
 
     @Override
     public void init(PluginContext context, String serviceId, Map<String, Object> properties) {
         tabsTracker.open(context, (String) properties.get(TAB_ID));
 
-        tabbedPanel = new TabbedPanel("tabs", tabs);
         if (tabs.size() > 0) {
+            tabbedPanel = new TabbedPanel("tabs", this, tabs);
             replace(tabbedPanel);
         }
 
@@ -101,6 +110,15 @@ public class TabsPlugin extends RenderPlugin {
         tabsTracker.close();
         if (tabs.size() > 0) {
             replace(new EmptyPanel("tabs"));
+            tabbedPanel = null;
+        }
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        super.render(target);
+        for (Tab tabbie : tabs) {
+            tabbie.renderer.render(target);
         }
     }
 
@@ -108,7 +126,7 @@ public class TabsPlugin extends RenderPlugin {
     public void focus(IRenderService child) {
         Tab tabbie = findTabbie(child);
         if (tabbie != null) {
-            tabbie.select();
+            tabbie.select(false);
         }
         super.focus(child);
     }
@@ -121,6 +139,13 @@ public class TabsPlugin extends RenderPlugin {
             tabbie.detach();
         }
         super.onDetach();
+    }
+
+    void onSelect(Tab tabbie, AjaxRequestTarget target) {
+        if (tabbie.renderer instanceof IDynamicService) {
+            IDynamicService service = (IDynamicService) tabbie.renderer;
+            service.delete();
+        }
     }
 
     private Tab findTabbie(IRenderService service) {
@@ -139,6 +164,7 @@ public class TabsPlugin extends RenderPlugin {
 
         IRenderService renderer;
         ServiceTracker titleTracker;
+        int lastSelected;
 
         Tab(IRenderService renderer) {
             this.renderer = renderer;
@@ -146,13 +172,36 @@ public class TabsPlugin extends RenderPlugin {
             titleTracker.open(getPluginContext(), renderer.getDecoratorId());
         }
 
+        void destroy() {
+            titleTracker.close();
+
+            // look for previously selected tab
+            int lastCount = 0;
+            Tab lastTab = null;
+            Iterator<Tab> tabs = tabbedPanel.getTabs().iterator();
+            while (tabs.hasNext()) {
+                Tab tabbie = tabs.next();
+                if (tabbie.lastSelected > lastCount) {
+                    lastCount = tabbie.lastSelected;
+                    lastTab = tabbie;
+                }
+            }
+            if (lastTab != null) {
+                lastTab.select(true);
+            }
+        }
+
         // implement ITab interface
 
         public Model getTitle() {
             List<Serializable> titles = titleTracker.getServices();
             if (titles.size() > 0) {
-                ITitleDecorator title = (ITitleDecorator) titles.get(0);
-                return new Model(title.getTitle());
+                String fulltitle = ((ITitleDecorator) titles.get(0)).getTitle();
+                int length = fulltitle.length();
+                String appendix = (length < (MAX_TAB_TITLE_LENGTH + 1) ? "" : "..");
+                length = (length < MAX_TAB_TITLE_LENGTH ? length : MAX_TAB_TITLE_LENGTH);
+                String title = fulltitle.substring(0, length) + appendix;
+                return new Model(title);
             }
             return new Model("title");
         }
@@ -165,10 +214,10 @@ public class TabsPlugin extends RenderPlugin {
 
         // package internals
 
-        void select() {
-            int selected = tabbedPanel.getSelectedTab();
-            if (tabs.indexOf(this) != selected) {
+        void select(boolean force) {
+            if (force || tabs.indexOf(this) != tabbedPanel.getSelectedTab()) {
                 tabbedPanel.setSelectedTab(tabs.indexOf(this));
+                lastSelected = ++TabsPlugin.this.selectCount;
                 redraw();
             }
         }

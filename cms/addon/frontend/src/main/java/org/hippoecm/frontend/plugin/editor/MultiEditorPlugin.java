@@ -84,6 +84,8 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
         if (!editors.containsKey(model)) {
             PluginConfig config = new PluginConfig();
             config.put(Plugin.SERVICE_ID, properties.get(Plugin.SERVICE_ID));
+            config.put(RenderPlugin.DIALOG_ID, properties.get(RenderPlugin.DIALOG_ID));
+
             config.put(Plugin.FACTORY_ID, factoryId);
             config.put(Plugin.CLASSNAME, EditorPlugin.class.getName());
 
@@ -118,6 +120,8 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
             for (Map.Entry<IModel, EditorPlugin> entry : editors.entrySet()) {
                 if (entry.getValue().equals(service)) {
                     editors.remove(entry.getKey());
+                    EditorPlugin plugin = (EditorPlugin) service;
+                    plugin.stop();
                     return;
                 }
             }

@@ -23,6 +23,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.RenderReference;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
@@ -39,11 +40,13 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     protected AjaxLink discard;
     protected AjaxLink save;
     private JcrNodeModel model;
+    private RenderReference editor;
 
-    public OnCloseDialog(IDialogService dialogWindow, JcrNodeModel model) {
+    public OnCloseDialog(IDialogService dialogWindow, JcrNodeModel model, EditorPlugin plugin) {
         super(dialogWindow);
 
         this.model = model;
+        this.editor = new RenderReference(plugin);
 
         this.ok.setVisible(false);
         this.cancel.setVisible(false);
@@ -64,6 +67,8 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 save();
+                EditorPlugin plugin = (EditorPlugin) editor.resolve();
+                plugin.deleteEditor();
                 getDialogService().close();
             }
         };
@@ -75,6 +80,8 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 discard();
+                EditorPlugin plugin = (EditorPlugin) editor.resolve();
+                plugin.deleteEditor();
                 getDialogService().close();
             }
         };
