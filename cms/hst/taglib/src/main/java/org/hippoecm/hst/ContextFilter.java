@@ -50,11 +50,11 @@ public class ContextFilter implements Filter {
     public static final String URL_MAPPING_LOCATION = ContextFilter.class.getName() + ".URL_MAPPING_LOCATION";
 
     private String attributeName = "context";
-    private String urlBasePath = "";
+    private String urlBasePath = "/";
     private String repositoryBaseLocation;
     private String urlMappingLocation = "/urlMapping";
-    private String[] skippedExtensions = new String[] { "ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js" };
-    private final List<String> skippedExtensionsList = new ArrayList<String>();
+    private String[] ignoreExtensions = new String[] { "ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js" };
+    private final List<String> ignoreExtensionsList = new ArrayList<String>();
     boolean urlMappingActive = false;
 
     public ContextFilter() {
@@ -90,19 +90,19 @@ public class ContextFilter implements Filter {
             this.urlMappingLocation = param;
         }
 
-        // get skippedExtensions
-        param = filterConfig.getInitParameter("skippedExtensions");
+        // get ignoreExtensions
+        param = filterConfig.getInitParameter("ignoreExtensions");
         if (param != null && !param.trim().equals("")) {
-            this.skippedExtensions = param.split(",");
+            this.ignoreExtensions = param.split(",");
         }
 
         // convert extensions to list for easy 'contains' access
-        for (int i = 0; i < skippedExtensions.length; i++) {
-            String extension = skippedExtensions[i];
+        for (int i = 0; i < ignoreExtensions.length; i++) {
+            String extension = ignoreExtensions[i].trim();
             if (!extension.startsWith(".")) {
                 extension = "." + extension;
             }
-            skippedExtensionsList.add(extension);
+            ignoreExtensionsList.add(extension);
         }
     }
 
@@ -125,7 +125,7 @@ public class ContextFilter implements Filter {
             // images are to be retrieved with the DirectAccessServlet        
             String extension = servletPath.substring(servletPath.lastIndexOf("."));
 
-            if (skippedExtensionsList.contains(extension)) {
+            if (ignoreExtensionsList.contains(extension)) {
                 filterChain.doFilter(req, res);
                 return;
             }
