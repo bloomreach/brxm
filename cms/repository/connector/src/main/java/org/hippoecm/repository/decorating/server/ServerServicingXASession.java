@@ -17,7 +17,10 @@ package org.hippoecm.repository.decorating.server;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
