@@ -30,7 +30,6 @@ import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +38,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryTemplateConfig.class);
 
-    private String version;
-
-    public RepositoryTemplateConfig(String version) {
+    public RepositoryTemplateConfig() {
         super(HippoNodeType.NAMESPACES_PATH);
-        this.version = version;
     }
 
     public TemplateDescriptor getTemplate(TypeDescriptor type) {
@@ -83,34 +79,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             Node node = session.getRootNode().getNode(path);
             if (node != null) {
                 NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TEMPLATE);
-                Node current = null;
-                while (nodes.hasNext()) {
-                    Node child = nodes.nextNode();
-                    if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
-                        String state = child.getProperty(HippoNodeType.HIPPO_REMODEL).getString();
-                        if (state.equals(version)) {
-                            if (useOldType()) {
-                                if (child.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                                    return child;
-                                }
-                            } else {
-                                return child;
-                            }
-                        } else if (state.equals(RemodelWorkflow.VERSION_CURRENT)) {
-                            current = child;
-                        }
-                    } else {
-                        if (version.equals(RemodelWorkflow.VERSION_CURRENT)) {
-                            return child;
-                        } else {
-                            current = child;
-                        }
-                    }
-                }
-
-                // FIXME: this should be under the control of the editmodel workflow
-                if (version.equals(RemodelWorkflow.VERSION_DRAFT) || version.equals(RemodelWorkflow.VERSION_ERROR)) {
-                    return current;
+                if (nodes.hasNext()) {
+                    return nodes.nextNode();
                 }
             }
         } catch (RepositoryException ex) {
@@ -135,10 +105,6 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     public TemplateDescriptor createTemplate(Node node, TypeDescriptor type) throws RepositoryException {
         return new RepositoryTemplateDescriptor(type, nodeToDescriptor(node));
-    }
-
-    private boolean useOldType() {
-        return (RemodelWorkflow.VERSION_OLD.equals(version) || RemodelWorkflow.VERSION_ERROR.equals(version));
     }
 
     static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, RepositoryTemplateDescriptor parent) {

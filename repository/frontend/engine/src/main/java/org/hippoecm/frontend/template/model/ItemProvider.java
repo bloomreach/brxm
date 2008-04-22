@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.template.ItemDescriptor;
+import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +64,17 @@ public class ItemProvider extends AbstractProvider<ItemModel> implements IDataPr
         if (descriptor != null) {
             Iterator<ItemDescriptor> iter = descriptor.getItems().iterator();
             while (iter.hasNext()) {
-                ItemDescriptor field = iter.next();
-                elements.addLast(new ItemModel(field, model));
+                ItemDescriptor item = iter.next();
+                TemplateDescriptor template = item.getTemplate();
+                if(template == null) {
+                    template = (TemplateDescriptor) item;
+                }
+                if (item.getField() == null
+                        || template.getTypeDescriptor().getField(item.getField()) != null) {
+                    elements.addLast(new ItemModel(item, model));
+                } else {
+                    log.debug("template field does not exist in type");
+                }
             }
         }
     }

@@ -15,17 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.template.editor;
 
-import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 
 public class EditorPlugin extends Plugin {
 
@@ -37,8 +33,6 @@ public class EditorPlugin extends Plugin {
         super(pluginDescriptor, model, parentPlugin);
 
         JcrNodeModel jcrModel = new JcrNodeModel(model);
-        Channel channel = getTopChannel();
-        ChannelFactory factory = getPluginManager().getChannelFactory();
 
         form = new EditorForm("form", jcrModel, this);
         add(form);

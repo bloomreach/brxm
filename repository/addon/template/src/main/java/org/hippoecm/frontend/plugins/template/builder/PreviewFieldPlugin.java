@@ -87,7 +87,7 @@ public class PreviewFieldPlugin extends Plugin {
         Plugin child;
         TemplateEngine engine = getPluginManager().getTemplateEngine();
 
-        RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig(RemodelWorkflow.VERSION_DRAFT);
+        RepositoryTemplateConfig templateConfig = new RepositoryTemplateConfig();
         RepositoryTypeConfig typeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT);
         try {
             Node templateNode = templateNodeModel.getNode();

@@ -60,12 +60,12 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
                 }
                 Node copy = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/"
                         + name);
-                copy.addMixin(HippoNodeType.NT_REMODEL);
-                copy.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
-                if (name.equals(HippoNodeType.HIPPO_TEMPLATE)) {
-                    draft = copy;
-                } else if (name.equals(HippoNodeType.HIPPO_PROTOTYPE)) {
-                    copy.addMixin(HippoNodeType.NT_UNSTRUCTURED);
+                if (!name.equals(HippoNodeType.HIPPO_TEMPLATE)) {
+                    copy.addMixin(HippoNodeType.NT_REMODEL);
+                    copy.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
+                    if (name.equals(HippoNodeType.HIPPO_PROTOTYPE)) {
+                        copy.addMixin(HippoNodeType.NT_UNSTRUCTURED);
+                    }
                 }
             }
             node.save();

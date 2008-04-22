@@ -58,7 +58,7 @@ public class Home extends WebPage {
         configs.add(jcrTypeConfig);
         TypeConfig typeConfig = new MixedTypeConfig(configs);
 
-        TemplateConfig templateConfig = new RepositoryTemplateConfig(RemodelWorkflow.VERSION_CURRENT);
+        TemplateConfig templateConfig = new RepositoryTemplateConfig();
         PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
 
         PluginManager pluginManager = new PluginManager(pluginConfig, typeConfig, templateConfig);
