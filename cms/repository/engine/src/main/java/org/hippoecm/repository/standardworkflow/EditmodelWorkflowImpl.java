@@ -43,7 +43,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
         if (!node.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
-        Node draft = getVersion(node, HippoNodeType.HIPPO_TEMPLATE, "draft");
+        Node draft = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "draft");
         if (draft != null) {
             return node.getPath();
         }
