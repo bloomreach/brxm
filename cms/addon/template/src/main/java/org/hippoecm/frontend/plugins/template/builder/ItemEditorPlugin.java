@@ -169,8 +169,7 @@ public class ItemEditorPlugin extends Plugin {
             if (fieldModel != null) {
                 String typeName = fieldModel.getTypeName();
 
-                Node subTemplateNode = new RepositoryTemplateConfig(RemodelWorkflow.VERSION_CURRENT)
-                        .getTemplateNode(typeName);
+                Node subTemplateNode = new RepositoryTemplateConfig().getTemplateNode(typeName);
                 if (subTemplateNode != null && subTemplateNode.hasNode("hippo:options")) {
                     Node configNode = subTemplateNode.getNodes("hippo:options").nextNode();
                     TypeDescriptor typeDescriptor = new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT)

@@ -338,7 +338,7 @@ public class Remodeling {
     }
 
     private void visitTemplateType(Node node) throws RepositoryException {
-        String[] names = { HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.HIPPO_NODETYPE };
+        String[] names = { HippoNodeType.HIPPO_NODETYPE };
         for (String name : names) {
             Node current = getVersion(node, name, "current");
             Node draft = getVersion(node, name, "draft");

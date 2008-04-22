@@ -30,7 +30,6 @@ import org.hippoecm.frontend.plugin.empty.EmptyPlugin;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
@@ -81,11 +80,10 @@ public class EditorForm extends Form {
             if (node.isNodeType(HippoNodeType.NT_REMODEL) && !node.isNodeType(HippoNodeType.NT_TEMPLATE)) {
                 String state = node.getProperty(HippoNodeType.HIPPO_REMODEL).getString();
                 typeConfig = new RepositoryTypeConfig(state);
-                templateConfig = new RepositoryTemplateConfig(state);
             } else {
                 typeConfig = engine.getTypeConfig();
-                templateConfig = engine.getTemplateConfig();
             }
+            templateConfig = engine.getTemplateConfig();
 
             String type = node.getPrimaryNodeType().getName();
             TypeDescriptor typeDescriptor = typeConfig.getTypeDescriptor(type);
