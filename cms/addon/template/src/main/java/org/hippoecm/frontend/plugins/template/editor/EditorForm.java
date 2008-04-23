@@ -77,7 +77,7 @@ public class EditorForm extends Form {
             TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
             TypeConfig typeConfig;
             TemplateConfig templateConfig;
-            if (node.isNodeType(HippoNodeType.NT_REMODEL) && !node.isNodeType(HippoNodeType.NT_TEMPLATE)) {
+            if (node.isNodeType(HippoNodeType.NT_REMODEL)) {
                 String state = node.getProperty(HippoNodeType.HIPPO_REMODEL).getString();
                 typeConfig = new RepositoryTypeConfig(state);
             } else {

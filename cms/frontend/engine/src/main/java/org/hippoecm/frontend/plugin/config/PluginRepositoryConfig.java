@@ -57,6 +57,19 @@ public class PluginRepositoryConfig implements PluginConfig {
         return result;
     }
 
+    public void save(Node node, PluginDescriptor descriptor) {
+        try {
+            node.setProperty(HippoNodeType.HIPPO_RENDERER, descriptor.getClassName());
+            if (descriptor.getParameters().size() > 0) {
+                Node paramNode = node.addNode(HippoNodeType.HIPPO_PARAMETERS, HippoNodeType.NT_PARAMETERS);
+                RepositoryParameterValue parameters = new RepositoryParameterValue(paramNode);
+                parameters.setObject(descriptor.getParameters());
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
     protected Session getJcrSession() {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }

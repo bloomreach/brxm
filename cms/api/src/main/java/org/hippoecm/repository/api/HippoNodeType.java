@@ -69,6 +69,7 @@ public interface HippoNodeType {
     final public static String NT_MIRROR = "hippo:mirror";
     final public static String NT_MOUNT = "hippo:mount";
     final public static String NT_NAMESPACE = "hippo:namespace";
+    final public static String NT_NAMESPACEFOLDER = "hippo:namespacefolder";
     final public static String NT_NODETYPE = "hippo:nodetype";
     final public static String NT_OCMQUERY = "hippo:ocmquery";
     final public static String NT_OCMQUERYFOLDER = "hippo:ocmqueryfolder";

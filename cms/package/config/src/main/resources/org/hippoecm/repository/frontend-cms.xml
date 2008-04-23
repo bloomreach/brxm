@@ -256,12 +256,14 @@
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:parameters</sv:value>
               </sv:property>
-              <sv:property sv:name="namespace" sv:type="String">
-                <sv:value>defaultcontent</sv:value>
-              </sv:property>
               <sv:property sv:name="ignored" sv:type="String">
                 <sv:value>/live</sv:value>
                 <sv:value>/preview</sv:value>
+                <sv:value>/hippo:namespaces/system</sv:value>
+                <sv:value>/hippo:namespaces/hippo</sv:value>
+                <sv:value>/hippo:namespaces/hippostd</sv:value>
+                <sv:value>/hippo:namespaces/hst</sv:value>
+                <sv:value>/hippo:namespaces/reporting</sv:value>
               </sv:property>
             </sv:node>
           </sv:node>

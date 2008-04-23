@@ -84,7 +84,7 @@ public class RepositoryTypeConfig implements TypeConfig {
     public List<TypeDescriptor> getTypes(String namespace) {
         Session session = getJcrSession();
 
-        Map<String, TypeDescriptor> allTypes = new HashMap<String, TypeDescriptor>();
+        Map<String, TypeDescriptor> currentTypes = new HashMap<String, TypeDescriptor>();
         Map<String, TypeDescriptor> versionedTypes = new HashMap<String, TypeDescriptor>();
         try {
             String xpath = HippoNodeType.NAMESPACES_PATH + "/" + namespace + "/*/" + HippoNodeType.HIPPO_NODETYPE + "/"
@@ -99,7 +99,7 @@ public class RepositoryTypeConfig implements TypeConfig {
                 Descriptor descriptor = new Descriptor(pluginNode, namespace);
                 TypeDescriptor typeDescriptor = descriptor.type;
                 if (isVersion(pluginNode, RemodelWorkflow.VERSION_CURRENT)) {
-                    allTypes.put(typeDescriptor.getName(), typeDescriptor);
+                    currentTypes.put(typeDescriptor.getName(), typeDescriptor);
                 }
                 if (isVersion(pluginNode, version)) {
                     versionedTypes.put(typeDescriptor.getName(), typeDescriptor);
@@ -110,11 +110,10 @@ public class RepositoryTypeConfig implements TypeConfig {
             ex.printStackTrace();
         }
 
-        ArrayList<TypeDescriptor> list = new ArrayList<TypeDescriptor>(allTypes.values().size());
-        for (Map.Entry<String, TypeDescriptor> entry : allTypes.entrySet()) {
-            if (versionedTypes.containsKey(entry.getKey())) {
-                list.add(versionedTypes.get(entry.getKey()));
-            } else {
+        ArrayList<TypeDescriptor> list = new ArrayList<TypeDescriptor>(currentTypes.values().size());
+        list.addAll(versionedTypes.values());
+        for (Map.Entry<String, TypeDescriptor> entry : currentTypes.entrySet()) {
+            if (!versionedTypes.containsKey(entry.getKey())) {
                 list.add(entry.getValue());
             }
         }
@@ -154,7 +153,8 @@ public class RepositoryTypeConfig implements TypeConfig {
         }
 
         String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
-        if (nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
+        if (prefix.length() > nsVersion.length()
+                && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
             type = type.substring(prefix.length());
             prefix = prefix.substring(0, prefix.length() - nsVersion.length());
             type = prefix + type;

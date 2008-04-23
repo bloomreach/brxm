@@ -31,32 +31,37 @@ import org.hippoecm.repository.api.WorkflowException;
 public class EditmodelWorkflowImpl implements EditmodelWorkflow {
     private static final long serialVersionUID = 1L;
 
+    private Session userSession;
     private Session rootSession;
-    private Node node;
+    private Node subject;
 
     public EditmodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
+        this.userSession = userSession;
         this.rootSession = rootSession;
-        this.node = subject;
+        this.subject = subject;
     }
 
     public String edit() throws WorkflowException, MappingException, RepositoryException {
-        if (!node.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
+        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
-        Node draft = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "draft");
+        Node draft = getVersion(subject, HippoNodeType.HIPPO_NODETYPE, "draft");
         if (draft != null) {
-            return node.getPath();
+            return subject.getPath();
         }
 
-        node.save();
+        subject.save();
         try {
             String[] names = { HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.HIPPO_NODETYPE,
                     HippoNodeType.HIPPO_PROTOTYPE };
             for (String name : names) {
-                Node current = getVersion(node, name, "current");
+                Node current = getVersion(subject, name, "current");
                 if (current == null) {
+                    if (name.equals(HippoNodeType.HIPPO_TEMPLATE)) {
+                        continue;
+                    }
                     throw new ItemNotFoundException("Remodel node " + name
-                            + ", current version was not found for type " + node.getPath());
+                            + ", current version was not found for type " + subject.getPath());
                 }
                 Node copy = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/"
                         + name);
@@ -68,59 +73,47 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
                     }
                 }
             }
-            node.save();
-            return node.getPath();
+            subject.save();
+            return subject.getPath();
         } catch (RepositoryException ex) {
-            node.refresh(false);
+            subject.refresh(false);
             throw ex;
         }
     }
 
     public void save() throws WorkflowException, MappingException, RepositoryException {
-        if (node.isNodeType(HippoNodeType.NT_TEMPLATE) || node.isNodeType(HippoNodeType.HIPPO_NODETYPE)
-                || node.isNodeType(HippoNodeType.HIPPO_PROTOTYPE)) {
-            Node type = node;
-            while (type != null && !type.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                type = type.getParent();
-            }
-            if (type != null) {
-                type.save();
-                String[] names = { HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.HIPPO_NODETYPE,
-                        HippoNodeType.HIPPO_PROTOTYPE };
-                for (String name : names) {
-                    Node draft = getVersion(type, name, "draft");
-                    if (draft != null) {
-                        draft.save();
-                    }
-                }
-            }
-        }
+        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
+            throw new MappingException("invalid node type for EditmodelWorkflow");
+
+        subject.save();
     }
 
     public String copy(String name) throws WorkflowException, MappingException, RepositoryException {
-        if (!node.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
+        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
-        String path = node.getPath();
+        String path = subject.getPath();
         path = path.substring(0, path.lastIndexOf("/") + 1);
         path += name;
-        Node target = (Node) rootSession.getItem(node.getPath());
+        Node target = (Node) rootSession.getItem(subject.getPath());
         target = ((HippoSession) rootSession).copy(target, path);
         target.getParent().save();
         return target.getPath();
     }
 
     private Node getVersion(Node node, String name, String version) throws RepositoryException {
-        Node template = node.getNode(name);
-        NodeIterator iter = template.getNodes(name);
-        while (iter.hasNext()) {
-            Node versionNode = iter.nextNode();
-            if (versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
-                if (version.equals(versionNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString())) {
+        if (node.hasNode(name)) {
+            Node template = node.getNode(name);
+            NodeIterator iter = template.getNodes(name);
+            while (iter.hasNext()) {
+                Node versionNode = iter.nextNode();
+                if (versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    if (version.equals(versionNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString())) {
+                        return versionNode;
+                    }
+                } else if (version.equals("current")) {
                     return versionNode;
                 }
-            } else if (version.equals("current")) {
-                return versionNode;
             }
         }
         return null;

@@ -32,11 +32,10 @@ public class FolderTreeConfig implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     // hardcoded ignore path set
-    private Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
-            "/hippo:configuration", "/hippo:namespaces", "/live", "/preview" }));
+    private Set<String> ignorePaths;
 
     // ignore nodes below these types
-    private String[] ignoreNodesBelowType = new String[] { HippoNodeType.NT_DOCUMENT, HippoNodeType.NT_TEMPLATETYPE };
+    private String[] ignoreNodesBelowType = new String[] { HippoNodeType.NT_DOCUMENT, HippoNodeType.NT_NAMESPACE };
 
     // ignore nodes below these types
     private String[] ignoreNodesBelowPath;
@@ -45,12 +44,10 @@ public class FolderTreeConfig implements IClusterable {
     private Map<String, String> shortCutInfo;
 
     public FolderTreeConfig(Map<String, ParameterValue> parameters) {
-        String namespace = parameters.get("namespace").getStrings().get(0);
-
         shortCutInfo = new HashMap<String, String>();
-        shortCutInfo.put("/hippo:namespaces/" + namespace, "document types");
+        shortCutInfo.put("/hippo:namespaces", "document types");
 
-        ignoreNodesBelowPath = new String[] { "/hippo:namespaces/" + namespace };
+        ignoreNodesBelowPath = new String[] { };
 
         ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system", "/hippo:configuration",
                 "/hippo:namespaces" }));

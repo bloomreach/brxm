@@ -27,7 +27,7 @@
       <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippo:template</sv:value>
+      <sv:value>hippo:templatetype</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>

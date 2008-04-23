@@ -66,7 +66,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             }
 
             String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
-            if (nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
+            if (prefix.length() > nsVersion.length() &&
+                    nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
                 type = type.substring(prefix.length());
                 prefix = prefix.substring(0, prefix.length() - nsVersion.length());
                 type = prefix + type;
@@ -105,6 +106,21 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
     public TemplateDescriptor createTemplate(Node node, TypeDescriptor type) throws RepositoryException {
         return new RepositoryTemplateDescriptor(type, nodeToDescriptor(node));
+    }
+
+    public void save(Node node, ItemDescriptor descriptor) {
+        try {
+            super.save(node, descriptor.getPlugin());
+            if (descriptor.getField() != null) {
+                node.setProperty(HippoNodeType.HIPPO_FIELD, descriptor.getField());
+            }
+            for (ItemDescriptor item : descriptor.getItems()) {
+                Node itemNode = node.addNode(HippoNodeType.HIPPO_ITEM, HippoNodeType.NT_TEMPLATEITEM);
+                save(itemNode, item);
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, RepositoryTemplateDescriptor parent) {
