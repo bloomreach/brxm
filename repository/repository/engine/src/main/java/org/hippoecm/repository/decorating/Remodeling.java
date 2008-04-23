@@ -387,17 +387,14 @@ public class Remodeling {
             }
 
             Node handle = node.getNode(HippoNodeType.HIPPO_PROTOTYPE);
-            NodeType oldType = draft.getPrimaryNodeType();
-            NodeType newType = conversion.get(oldType);
+            NodeType newType = node.getSession().getWorkspace().getNodeTypeManager().getNodeType(node.getName());
             if (newType != null) {
-                if (newType != oldType) {
-                    Node newChild = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, newType.getName());
-                    int result = traverse(draft, true, newChild);
-                    if (result == ERR_NONE) {
-                        draft.remove(); // iter.remove();
-                    } else {
-                        newChild.remove();
-                    }
+                Node newChild = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, newType.getName());
+                int result = traverse(draft, true, newChild);
+                if (result == ERR_NONE) {
+                    draft.remove(); // iter.remove();
+                } else {
+                    newChild.remove();
                 }
             }
         }

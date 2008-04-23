@@ -20,19 +20,15 @@ import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CreateTypeDialog;
-import org.hippoecm.frontend.plugins.standardworkflow.dialogs.RemodelDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NamespaceDialog;
 
-public class RemodelWorkflowPlugin extends Plugin {
+public class NamespaceWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    public RemodelWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+    public NamespaceWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        add(new DialogLink("remodelRequest-dialog", new Model("Update content"), RemodelDialog.class,
-                getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
-
-        add(new DialogLink("createTypeRequest-dialog", new Model("Create new type"), CreateTypeDialog.class,
+        add(new DialogLink("createNamespaceRequest-dialog", new Model("Create namespace"), NamespaceDialog.class,
                 getPluginModel(), getTopChannel(), getPluginManager().getChannelFactory()));
     }
 }

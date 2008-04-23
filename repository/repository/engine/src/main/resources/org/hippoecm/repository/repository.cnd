@@ -225,6 +225,9 @@
 [hippo:namespace] > nt:base
 + * (hippo:templatetype) = hippo:templatetype
 
+[hippo:namespacefolder] > nt:base
++ * (hippo:namespace) = hippo:namespace
+
 [hippo:propertyreference] > nt:base
 
 [hippo:relativepropertyreference] > hippo:propertyreference

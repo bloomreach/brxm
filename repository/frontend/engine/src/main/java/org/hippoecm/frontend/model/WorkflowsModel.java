@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.model;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,14 +29,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -49,10 +42,12 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
     private class Entry {
         String name;
         int order;
+
         Entry(String name, int order) {
             this.name = name;
             this.order = order;
         }
+
         Entry(String name) {
             this.name = name;
             order = -1;
@@ -61,13 +56,14 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
 
     List<String> categories;
 
-    transient private Map<Entry,Vector<WorkflowDescriptor>> workflows;
+    transient private Map<Entry, Vector<WorkflowDescriptor>> workflows;
 
     public void initialize() throws RepositoryException {
-        workflows = new TreeMap<Entry,Vector<WorkflowDescriptor>>(new Comparator<Entry>() {
+        workflows = new TreeMap<Entry, Vector<WorkflowDescriptor>>(new Comparator<Entry>() {
             public int compare(Entry o1, Entry o2) {
                 return o1.name.compareTo(o2.name);
             }
+
             public boolean equals(Entry o1, Entry o2) {
                 return o1.name.equals(o2.name);
             }
@@ -78,54 +74,57 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
 
         int sequence = 0;
 
-        if(handle.isNodeType(HippoNodeType.NT_DOCUMENT) || handle.isNodeType(HippoNodeType.NT_REQUEST)) {
-            if(handle.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+        if (handle.isNodeType(HippoNodeType.NT_DOCUMENT) || handle.isNodeType(HippoNodeType.NT_REQUEST)) {
+            if (handle.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 handle = handle.getParent();
                 setChainedModel(new JcrNodeModel(handle));
             }
         }
 
-        for(String category : categories) {
-            if(handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for(NodeIterator iter = handle.getNodes(); iter.hasNext(); ) {
+        for (String category : categories) {
+            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
-                    if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, child);
-                        if(workflowDescriptor != null) {
-                            if(!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                                workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
+                        if (workflowDescriptor != null) {
+                            if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
+                                workflows
+                                        .put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
                             workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
                         }
                     }
                 }
-            } else if(handle.isNodeType("hippo:prototyped") || handle.isNodeType("hippo:templatetype") ||
-                      handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            } else if (handle.isNodeType("hippo:prototyped") || handle.isNodeType("hippo:templatetype")
+                    || handle.isNodeType("hippo:namespace") || handle.isNodeType("hippo:namespacefolder")
+                    || handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
-                if(workflowDescriptor != null) {
-                    if(!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                        workflows.put(new Entry(workflowDescriptor.getRendererName(),sequence++), new Vector());
+                if (workflowDescriptor != null) {
+                    if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
+                        workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
                     workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
                 }
             }
         }
-        for(String category : categories) {
-            if(handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for(NodeIterator iter = handle.getNodes(); iter.hasNext(); ) {
+        for (String category : categories) {
+            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
-                    if(child.isNodeType(HippoNodeType.NT_REQUEST)) {
+                    if (child.isNodeType(HippoNodeType.NT_REQUEST)) {
                         WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, child);
-                        if(workflowDescriptor != null) {
-                            if(!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                                workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
+                        if (workflowDescriptor != null) {
+                            if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
+                                workflows
+                                        .put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
                             workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
                         }
                     }
                 }
-            } else if(handle.isNodeType(HippoNodeType.NT_REQUEST)) {
+            } else if (handle.isNodeType(HippoNodeType.NT_REQUEST)) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
-                if(workflowDescriptor != null) {
-                    if(!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                        workflows.put(new Entry(workflowDescriptor.getRendererName(),sequence++), new Vector());
+                if (workflowDescriptor != null) {
+                    if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
+                        workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
                     workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
                 }
             }
@@ -145,7 +144,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
         // deliberate before adding categories
         initialize();
         this.categories.addAll(categories);
-        workflows.put(new Entry(renderer,0), model.workflows.get(new Entry(renderer)));
+        workflows.put(new Entry(renderer, 0), model.workflows.get(new Entry(renderer)));
     }
 
     @Override
@@ -157,13 +156,13 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
 
     public String getWorkflowName() {
         try {
-            if(workflows == null)
+            if (workflows == null)
                 initialize();
             Iterator iter = workflows.keySet().iterator();
-            if(iter.hasNext()) {
-                return ((Entry)iter.next()).name;
+            if (iter.hasNext()) {
+                return ((Entry) iter.next()).name;
             }
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             // FIXME
         }
         return null;
@@ -171,15 +170,15 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
 
     public WorkflowDescriptor getWorkflowDescriptor() {
         try {
-            if(workflows == null)
+            if (workflows == null)
                 initialize();
             Iterator<Vector<WorkflowDescriptor>> iter = workflows.values().iterator();
-            if(iter.hasNext()) {
+            if (iter.hasNext()) {
                 Vector<WorkflowDescriptor> descriptors = iter.next();
-                if(descriptors.size() > 0)
+                if (descriptors.size() > 0)
                     return descriptors.get(0);
             }
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             // FIXME
         }
         return null;
@@ -187,9 +186,9 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
 
     public Iterator iterator(int first, final int count) {
         try {
-            if(workflows == null)
+            if (workflows == null)
                 initialize();
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             // FIXME
             return null;
         }
@@ -198,6 +197,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
             public int compare(Entry o1, Entry o2) {
                 return o1.order - o2.order;
             }
+
             public boolean equals(Entry o1, Entry o2) {
                 return o1.order == o2.order;
             }
@@ -205,40 +205,43 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
         sortedWorkflows.addAll(workflows.keySet());
         final Iterator<Entry> renderers = sortedWorkflows.iterator();
 
-        while(first > 0 && renderers.hasNext()) {
+        while (first > 0 && renderers.hasNext()) {
             --first;
             renderers.next();
         }
         return new Iterator() {
-                int remaining = count;
-                public boolean hasNext() {
-                    if(remaining == 0)
-                        return false;
-                    return renderers.hasNext();
+            int remaining = count;
+
+            public boolean hasNext() {
+                if (remaining == 0)
+                    return false;
+                return renderers.hasNext();
+            }
+
+            public WorkflowsModel next() {
+                if (remaining == 0)
+                    throw new NoSuchElementException();
+                --remaining;
+                try {
+                    return new WorkflowsModel(WorkflowsModel.this, categories, renderers.next().name);
+                } catch (RepositoryException ex) {
+                    // FIXME
+                    throw new NoSuchElementException();
                 }
-                public WorkflowsModel next() {
-                    if(remaining == 0)
-                        throw new NoSuchElementException();
-                    --remaining;
-                    try {
-                        return new WorkflowsModel(WorkflowsModel.this, categories, renderers.next().name);
-                    } catch(RepositoryException ex) {
-                        // FIXME
-                        throw new NoSuchElementException();
-                    }
-                }
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
         };
     }
 
     public int size() {
         try {
-            if(workflows == null)
+            if (workflows == null)
                 initialize();
             return workflows.keySet().size();
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             // FIXME
             return 0;
         }

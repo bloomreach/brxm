@@ -44,10 +44,12 @@ public class NamespaceUpdater {
                     String prefix = type.substring(0, type.indexOf(':'));
                     if (namespace.equals(prefix)) {
                         TypeDescriptor current = currentConfig.getTypeDescriptor(type);
-                        TypeDescriptor draft = draftConfig.getTypeDescriptor(type);
+                        if (current != null) {
+                            TypeDescriptor draft = draftConfig.getTypeDescriptor(type);
 
-                        TypeUpdate update = new TypeConversion(currentConfig, draftConfig, current, draft);
-                        result.put(type, update);
+                            TypeUpdate update = new TypeConversion(currentConfig, draftConfig, current, draft);
+                            result.put(type, update);
+                        }
                     }
                 }
             }

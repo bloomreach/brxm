@@ -51,7 +51,6 @@ public class EditModelDialog extends AbstractWorkflowDialog {
             String path = workflow.edit();
             try {
                 Node node = ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path.substring(1));
-                node = node.getNode(HippoNodeType.HIPPO_TEMPLATE).getNode(HippoNodeType.HIPPO_TEMPLATE);
                 JcrItemModel itemModel = new JcrItemModel(node);
                 if (path != null) {
                     Channel channel = getChannel();

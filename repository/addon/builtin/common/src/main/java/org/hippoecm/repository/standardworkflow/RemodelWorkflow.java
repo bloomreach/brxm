@@ -42,7 +42,20 @@ public interface RemodelWorkflow extends Workflow {
      * convert a single node
      */
     public void convert(String namespace, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException;;
+            RepositoryException, RemoteException;
+
+    /**
+     * create a new namespace
+     */
+    public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
+            RepositoryException, RemoteException;
+
+    /**
+     * Create a new node type definition
+     * FIXME: also create a template and return its path
+     */
+    public void createType(String name) throws WorkflowException, MappingException, RepositoryException,
+            RemoteException;
 
     public abstract class TypeUpdate {
 

@@ -469,6 +469,20 @@
       </sv:node>
     </sv:node>
 
+    <sv:node sv:name="hippo:template">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:template">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:template</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:renderer" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.template.builder.TemplateTypePlugin</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
   </sv:node>
   <!-- end "Template type" type -->
 
@@ -1124,7 +1138,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -1136,7 +1150,7 @@
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>nt:resource</sv:value>
         </sv:property>
-        
+
         <!-- data -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1152,7 +1166,7 @@
             <sv:value>Binary</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <!-- last modified -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1168,7 +1182,7 @@
             <sv:value>Date</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <!-- mime type -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1184,10 +1198,10 @@
             <sv:value>String</sv:value>
           </sv:property>
         </sv:node>
-        
+
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -1207,7 +1221,7 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -1237,7 +1251,7 @@
         </sv:node>
       </sv:node>
     </sv:node>
-    
+
   </sv:node>
   <!-- end "Image" type -->
 
