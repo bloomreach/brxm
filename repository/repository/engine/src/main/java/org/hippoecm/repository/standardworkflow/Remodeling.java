@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.decorating;
+package org.hippoecm.repository.standardworkflow;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -51,7 +51,6 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 import org.slf4j.Logger;
@@ -338,46 +337,28 @@ public class Remodeling {
     }
 
     private void visitTemplateType(Node node) throws RepositoryException {
-        String[] names = { HippoNodeType.HIPPO_NODETYPE };
-        for (String name : names) {
-            Node current = getVersion(node, name, "current");
-            Node draft = getVersion(node, name, "draft");
-            if (current != null) {
-                if (draft == null) {
-                    // same as in EditmodelWorkflowImpl
-                    draft = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/"
-                            + name);
-                    draft.addMixin(HippoNodeType.NT_REMODEL);
-                    draft.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
-                }
-
-                if (!current.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    current.addMixin(HippoNodeType.NT_REMODEL);
-                }
-                current.setProperty(HippoNodeType.HIPPO_REMODEL, "old");
-                current.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(oldPrefix));
-            }
-
-            if (draft != null) {
-                draft.removeMixin(HippoNodeType.NT_REMODEL);
-            }
+        Node draft = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "draft");
+        if (draft == null) {
+            EditmodelWorkflowImpl.checkoutType(node);
+            draft = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "draft");
         }
 
-        if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
-            Node draft = getVersion(node, HippoNodeType.HIPPO_PROTOTYPE, "draft");
-            Node current = getVersion(node, HippoNodeType.HIPPO_PROTOTYPE, "current");
-            if (draft == null) {
-                if (current != null) {
-                    // same as in EditmodelWorkflowImpl
-                    draft = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/"
-                            + HippoNodeType.HIPPO_PROTOTYPE);
-                    draft.addMixin(HippoNodeType.NT_REMODEL);
-                    draft.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
-                } else {
-                    return;
-                }
+        // visit node type
+        Node current = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "current");
+        if (current != null) {
+            if (!current.isNodeType(HippoNodeType.NT_REMODEL)) {
+                current.addMixin(HippoNodeType.NT_REMODEL);
             }
+            current.setProperty(HippoNodeType.HIPPO_REMODEL, "old");
+            current.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(oldPrefix));
+        }
 
+        draft = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "draft");
+        draft.removeMixin(HippoNodeType.NT_REMODEL);
+
+        // visit prototype
+        if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
+            current = getVersion(node, HippoNodeType.HIPPO_PROTOTYPE, "current");
             if (current != null) {
                 if (!current.isNodeType(HippoNodeType.NT_REMODEL)) {
                     current.addMixin(HippoNodeType.NT_REMODEL);
@@ -386,6 +367,7 @@ public class Remodeling {
                 current.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(oldPrefix));
             }
 
+            draft = getVersion(node, HippoNodeType.HIPPO_PROTOTYPE, "draft");
             Node handle = node.getNode(HippoNodeType.HIPPO_PROTOTYPE);
             NodeType newType = node.getSession().getWorkspace().getNodeTypeManager().getNodeType(node.getName());
             if (newType != null) {

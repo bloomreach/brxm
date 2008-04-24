@@ -36,7 +36,6 @@ import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.decorating.Remodeling;
 
 public class RemodelWorkflowImpl implements RemodelWorkflow {
     private static final long serialVersionUID = 1L;

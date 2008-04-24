@@ -78,14 +78,24 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
                     return;
                 }
 
-                Value[] oldValues = node.getProperty(path).getValues();
-                Value[] newValues = new Value[oldValues.length + 1];
-                for (int i = 0; i < oldValues.length; i++) {
-                    newValues[i] = oldValues[i];
+                Property property = node.getProperty(path);
+                if (property.getDefinition().isMultiple()) {
+                    Value[] oldValues = property.getValues();
+                    Value[] newValues = new Value[oldValues.length + 1];
+                    for (int i = 0; i < oldValues.length; i++) {
+                        newValues[i] = oldValues[i];
+                    }
+                    newValues[oldValues.length] = value;
+                    node.setProperty(path, newValues);
+                    index = oldValues.length;
+                } else {
+                    Value old = property.getValue();
+                    Value[] newValues = new Value[2];
+                    newValues[0] = old;
+                    newValues[1] = value;
+                    property.setValue(newValues);
+                    index = 1;
                 }
-                newValues[oldValues.length] = value;
-                node.setProperty(path, newValues);
-                index = oldValues.length;
             }
 
             elements.addLast(new TemplateModel(template, getNodeModel(), path, index));
@@ -108,23 +118,27 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
                     if (!node.hasProperty(path)) {
                         log.warn("value not found");
                     } else {
+                        Property property = node.getProperty(path);
                         if (descriptor.isMultiple()) {
-                            Value[] oldValues = node.getProperty(path).getValues();
-                            int index = model.getIndex();
-                            if (index >= 0 && index < oldValues.length) {
-                                Value[] newValues = new Value[oldValues.length - 1];
-                                int j = 0;
-                                for (int i = 0; i < oldValues.length; i++) {
-                                    if (i == index)
-                                        continue;
-                                    newValues[j++] = oldValues[i];
+                            if (property.getDefinition().isMultiple()) {
+                                Value[] oldValues = property.getValues();
+                                int index = model.getIndex();
+                                if (index >= 0 && index < oldValues.length) {
+                                    Value[] newValues = new Value[oldValues.length - 1];
+                                    int j = 0;
+                                    for (int i = 0; i < oldValues.length; i++) {
+                                        if (i == index)
+                                            continue;
+                                        newValues[j++] = oldValues[i];
+                                    }
+                                    property.setValue(newValues);
+                                } else {
+                                    log.warn("index outside of range");
                                 }
-                                node.getProperty(path).setValue(newValues);
                             } else {
-                                log.warn("index outside of range");
+                                property.remove();
                             }
                         } else {
-                            Property property = node.getProperty(path);
                             property.remove();
                         }
                     }
@@ -152,13 +166,28 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
             Node node = getNodeModel().getNode();
             if (node.hasProperty(path)) {
                 Property property = node.getProperty(path);
-                if (descriptor.isMultiple()) {
+                if (property.getDefinition().isMultiple()) {
                     int size = property.getValues().length;
                     for (int index = 0; index < size; index++) {
-                        addTemplate(new JcrItemModel(property), index);
+                        if (descriptor.isMultiple()) {
+                            addTemplate(new JcrItemModel(property), index);
+                        } else {
+                            Value value = property.getValues()[0];
+                            property.remove();
+                            property = node.setProperty(path, value);
+                            addTemplate(new JcrItemModel(property), JcrPropertyValueModel.NO_INDEX);
+                            break;
+                        }
                     }
                 } else {
-                    addTemplate(new JcrItemModel(property), JcrPropertyValueModel.NO_INDEX);
+                    if (descriptor.isMultiple()) {
+                        Value value = property.getValue();
+                        property.remove();
+                        property = node.setProperty(path, new Value[] { value });
+                        addTemplate(new JcrItemModel(property), 0);
+                    } else {
+                        addTemplate(new JcrItemModel(property), JcrPropertyValueModel.NO_INDEX);
+                    }
                 }
             }
         } catch (RepositoryException ex) {

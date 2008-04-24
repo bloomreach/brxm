@@ -37,7 +37,8 @@ public class ValueView extends AbstractView {
 
     private Map<String, ParameterValue> config;
 
-    public ValueView(String id, ValueTemplateProvider dataProvider, PropertyFieldPlugin plugin, Map<String, ParameterValue> config) {
+    public ValueView(String id, ValueTemplateProvider dataProvider, PropertyFieldPlugin plugin,
+            Map<String, ParameterValue> config) {
         super(id, dataProvider, plugin);
         this.config = config;
         populate();
@@ -54,7 +55,7 @@ public class ValueView extends AbstractView {
         item.add(engine.createTemplate("value", templateModel, plugin, config));
 
         //Remove value link
-        if (!provider.getDescriptor().isMandatory() || (provider.size() > 0)) {
+        if (!provider.getDescriptor().isMandatory() || provider.getDescriptor().isMultiple()) {
             item.add(new AjaxLink("remove") {
                 private static final long serialVersionUID = 1L;
 
