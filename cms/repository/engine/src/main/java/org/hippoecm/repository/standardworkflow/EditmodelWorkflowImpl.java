@@ -20,6 +20,8 @@ import java.rmi.RemoteException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -52,27 +54,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
 
         subject.save();
         try {
-            String[] names = { HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.HIPPO_NODETYPE,
-                    HippoNodeType.HIPPO_PROTOTYPE };
-            for (String name : names) {
-                Node current = getVersion(subject, name, "current");
-                if (current == null) {
-                    if (name.equals(HippoNodeType.HIPPO_TEMPLATE)) {
-                        continue;
-                    }
-                    throw new ItemNotFoundException("Remodel node " + name
-                            + ", current version was not found for type " + subject.getPath());
-                }
-                Node copy = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/"
-                        + name);
-                if (!name.equals(HippoNodeType.HIPPO_TEMPLATE)) {
-                    copy.addMixin(HippoNodeType.NT_REMODEL);
-                    copy.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
-                    if (name.equals(HippoNodeType.HIPPO_PROTOTYPE)) {
-                        copy.addMixin(HippoNodeType.NT_UNSTRUCTURED);
-                    }
-                }
-            }
+            checkoutType(subject);
+
             subject.save();
             return subject.getPath();
         } catch (RepositoryException ex) {
@@ -101,7 +84,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
         return target.getPath();
     }
 
-    private Node getVersion(Node node, String name, String version) throws RepositoryException {
+    private static Node getVersion(Node node, String name, String version) throws RepositoryException {
         if (node.hasNode(name)) {
             Node template = node.getNode(name);
             NodeIterator iter = template.getNodes(name);
@@ -117,5 +100,61 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
             }
         }
         return null;
+    }
+
+    public static void checkoutType(Node subject) throws RepositoryException {
+        // copy nodetype
+
+        String name = HippoNodeType.HIPPO_NODETYPE;
+        Node current = getVersion(subject, name, "current");
+        if (current == null) {
+            throw new ItemNotFoundException("Remodel node " + name + ", current version was not found for type "
+                    + subject.getPath());
+        }
+        Node copy = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/" + name);
+        copy.addMixin(HippoNodeType.NT_REMODEL);
+        copy.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
+
+        // copy prototype
+
+        name = HippoNodeType.HIPPO_PROTOTYPE;
+        current = getVersion(subject, name, "current");
+        if (current == null) {
+            throw new ItemNotFoundException("Remodel node " + name + ", current version was not found for type "
+                    + subject.getPath());
+        }
+        copy = current.getParent().addNode(name, "nt:base");
+        copy.addMixin(HippoNodeType.NT_REMODEL);
+        copy.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
+        copy.addMixin(HippoNodeType.NT_UNSTRUCTURED);
+
+        PropertyIterator propIter = current.getProperties();
+        while (propIter.hasNext()) {
+            Property prop = propIter.nextProperty();
+            if (!prop.getDefinition().isProtected()) {
+                if (prop.getDefinition().isMultiple()) {
+                    copy.setProperty(prop.getName(), prop.getValues());
+                } else {
+                    copy.setProperty(prop.getName(), prop.getValue());
+                }
+            }
+        }
+
+        NodeIterator nodeIter = current.getNodes();
+        while (nodeIter.hasNext()) {
+            Node child = nodeIter.nextNode();
+            ((HippoSession) current.getSession()).copy(child, copy.getPath() + "/" + child.getName());
+        }
+
+        // copy template
+
+        name = HippoNodeType.HIPPO_TEMPLATE;
+        current = getVersion(subject, name, "current");
+        if (current == null) {
+            return;
+        }
+        copy = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/" + name);
+        copy.addMixin(HippoNodeType.NT_REMODEL);
+        copy.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
     }
 }
