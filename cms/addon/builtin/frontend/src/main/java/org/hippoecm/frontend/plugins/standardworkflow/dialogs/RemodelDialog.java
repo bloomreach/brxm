@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
@@ -31,7 +33,7 @@ import org.hippoecm.frontend.plugins.standardworkflow.export.CndSerializer;
 import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
-import org.hippoecm.frontend.template.config.TypeConfig;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 import org.slf4j.Logger;
@@ -64,6 +66,21 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         NamespaceUpdater updater = new NamespaceUpdater(new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT),
                 new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT));
         Map<String, TypeUpdate> update = updater.getUpdate(namespace);
+        for (Map.Entry<String, TypeUpdate> entry : update.entrySet()) {
+            Node typeNode = node.getNode(entry.getKey());
+            if (typeNode.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
+                Node handle = typeNode.getNode(HippoNodeType.HIPPO_PROTOTYPE);
+                NodeIterator children = handle.getNodes(HippoNodeType.HIPPO_PROTOTYPE);
+                while (children.hasNext()) {
+                    Node child = children.nextNode();
+                    if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
+                        if (child.getProperty(HippoNodeType.HIPPO_REMODEL).getString().equals("draft")) {
+                            entry.getValue().prototype = child.getPath();
+                        }
+                    }
+                }
+            }
+        }
 
         sessionModel.getSession().save();
 
@@ -74,16 +91,24 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
-            String[] nodes = workflow.remodel(cnd, update);
-            //            for(int i = 0; i < nodes.length; i++) {
-            //                System.err.println("nodes[] " + i + ": " + nodes[i]);
-            //            }
-            sessionModel.getSession().save();
+            try {
+                String[] nodes = workflow.remodel(cnd, update);
+//              for(int i = 0; i < nodes.length; i++) {
+//                  System.err.println("nodes[] " + i + ": " + nodes[i]);
+//              }
+                sessionModel.getSession().save();
+    
+                // flush the root node
+                Channel channel = getChannel();
+                Request request = channel.createRequest("flush", new JcrNodeModel(new JcrItemModel("/")));
+                channel.send(request);
+            } catch(RepositoryException ex) {
+                // log out; the session model will log in again.
+                // Sessions cache path resolver information, which is incorrect after remapping the prefix.
+                sessionModel.flush();
 
-            // flush the root node
-            Channel channel = getChannel();
-            Request request = channel.createRequest("flush", new JcrNodeModel(new JcrItemModel("/")));
-            channel.send(request);
+                throw ex;
+            }
         } else {
             log.warn("no remodeling workflow available on selected node");
         }
