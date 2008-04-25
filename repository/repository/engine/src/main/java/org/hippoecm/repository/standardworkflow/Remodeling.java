@@ -336,15 +336,21 @@ public class Remodeling {
                                 NodeIterator siblings = prototype.getNodes(getOldName(nodeDef.getName()));
                                 while (siblings.hasNext()) {
                                     Node node = siblings.nextNode();
-                                    NodeType newType = conversion.get(node.getPrimaryNodeType().getName());
+                                    NodeType newType = conversion.get(node.getPrimaryNodeType());
                                     Node copy = target.addNode(nodeDef.getName(), newType.getName());
                                     traverse(node, true, copy);
                                 }
                             } else {
-                                Node node = prototype.getNode(nodeDef.getName());
-                                NodeType newType = conversion.get(node.getPrimaryNodeType().getName());
-                                Node copy = target.addNode(nodeDef.getName(), newType.getName());
-                                traverse(node, true, copy);
+                                Node node = prototype.getNode(getOldName(nodeDef.getName()));
+                                log.info("pri type: " + node.getPrimaryNodeType().getName());
+                                NodeType newType = conversion.get(node.getPrimaryNodeType());
+                                if (newType != null) {
+                                    Node copy = target.addNode(nodeDef.getName(), newType.getName());
+                                    traverse(node, true, copy);
+                                } else {
+                                    log.warn("removing node " + node.getPath()
+                                            + " as there is no new type defined for type " + node.getPrimaryNodeType().getName());
+                                }
                             }
                         }
                     }
@@ -528,44 +534,39 @@ public class Remodeling {
         if (copy) {
             // copy mixin types and properties
             visit(node, target);
-        }
-
-        LinkedList<Node> toRename = new LinkedList<Node>();
-        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            if (isVirtual(child)) {
-                continue;
-            }
-
-            NodeType oldType = child.getPrimaryNodeType();
-            NodeType newType = conversion.get(oldType);
-            if (newType != null) {
-                if (newType != oldType) {
-                    Node newChild = target.addNode(getNewName(child.getName()), newType.getName());
-                    traverse(child, true, newChild);
-                    if (!copy) {
-                        child.remove(); // iter.remove();
-                    }
-                    changes.add(newChild);
-                } else if (copy) {
-                    Node newChild = target.addNode(getNewName(child.getName()), newType.getName());
-                    traverse(child, true, newChild);
-                } else if (child.getName().startsWith(oldPrefix)) {
-                    toRename.addLast(child);
-                } else {
-                    traverse(child, false, child);
+        } else {
+            LinkedList<Node> toRename = new LinkedList<Node>();
+            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                Node child = iter.nextNode();
+                if (isVirtual(child)) {
+                    continue;
                 }
-            } else {
-                log.warn("Deleting node " + child.getPath() + " as there is no new type to convert it to");
-                child.remove();
+
+                NodeType oldType = child.getPrimaryNodeType();
+                NodeType newType = conversion.get(oldType);
+                if (newType != null) {
+                    if (newType != oldType) {
+                        Node newChild = target.addNode(getNewName(child.getName()), newType.getName());
+                        traverse(child, true, newChild);
+                        child.remove(); // iter.remove();
+                        changes.add(newChild);
+                    } else if (child.getName().startsWith(oldPrefix)) {
+                        toRename.addLast(child);
+                    } else {
+                        traverse(child, false, child);
+                    }
+                } else {
+                    log.warn("Deleting node " + child.getPath() + " as there is no new type to convert it to");
+                    child.remove();
+                }
             }
-        }
-        for (Node child : toRename) {
-            String newName = getNewName(child.getName());
-            session.move(child.getPath(), node.getPath() + "/" + newName);
-            int index = (int) node.getNodes(newName).getSize();
-            child = node.getNode(newName + "[" + index + "]");
-            traverse(child, false, child);
+            for (Node child : toRename) {
+                String newName = getNewName(child.getName());
+                session.move(child.getPath(), node.getPath() + "/" + newName);
+                int index = (int) node.getNodes(newName).getSize();
+                child = node.getNode(newName + "[" + index + "]");
+                traverse(child, false, child);
+            }
         }
     }
 
@@ -638,13 +639,19 @@ public class Remodeling {
             nsreg.commit(prefix);
             nsreg.close();
             return remodel;
-        } catch (RepositoryException ex) {
+        } catch (Exception ex) {
             userSession.refresh(false);
             nsreg.unregisterNamespace(prefix);
             nsreg.close();
             String oldPrefix = nsreg.getPrefix(oldNamespaceURI);
             nsreg.externalRemap(oldPrefix, prefix, oldNamespaceURI);
-            throw ex;
+            if(ex instanceof NamespaceException) {
+                throw (NamespaceException) ex;
+            } else if(ex instanceof RepositoryException) {
+                throw (RepositoryException) ex;
+            } else {
+                throw (RuntimeException) ex;
+            }
         }
     }
 
