@@ -18,6 +18,7 @@ package org.hippoecm.repository.standardworkflow;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
@@ -35,8 +36,8 @@ public interface RemodelWorkflow extends Workflow {
      * Instruct the repository to apply the new node definition overriding the
      * earlier node definition.
      */
-    public String[] remodel(String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException;
+    public String[] remodel(String cnd, Map<String, TypeUpdate> updates)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * convert a single node
@@ -60,6 +61,8 @@ public interface RemodelWorkflow extends Workflow {
     public abstract class TypeUpdate {
 
         public String newName;
+
+        public String prototype;
 
         abstract public Map<FieldIdentifier, FieldIdentifier> getRenames();
     }

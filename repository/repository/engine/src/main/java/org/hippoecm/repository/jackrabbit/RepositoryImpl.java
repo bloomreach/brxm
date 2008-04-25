@@ -97,7 +97,8 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         } else {
             facetedContext = facetedEngine.prepare(session.getUserID(), authorizationQuery, null, session);
         }
-        stateMgr.initialize(session.getNamespaceResolver(), session.getHierarchyManager(), facetedEngine, facetedContext);
+        stateMgr.initialize(session.getNamespaceResolver(), session.getHierarchyManager(), facetedEngine,
+                facetedContext);
     }
 
     public static RepositoryImpl create(RepositoryConfig config) throws RepositoryException {
@@ -141,6 +142,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     @Override
     protected NamespaceRegistryImpl getNamespaceRegistry() {
         return super.getNamespaceRegistry();
+    }
+
+    @Override
+    protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs) throws RepositoryException {
+        return new HippoNamespaceRegistry(fs);
     }
 
     public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
@@ -207,7 +213,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
         sc.setAttribute("rootSession", rootSession);
         Session session = super.login(sc, workspaceName);
-        
+
         if (session != null && session.isLive()) {
             String userId = session.getUserID();
             if (!userId.equals("system") && !userId.equals("anonymous")) {
