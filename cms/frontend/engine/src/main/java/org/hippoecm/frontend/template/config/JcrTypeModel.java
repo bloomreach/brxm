@@ -64,7 +64,7 @@ public class JcrTypeModel extends NodeModelWrapper {
         try {
             Node typeNode = getNodeModel().getNode();
             NodeIterator iter = typeNode.getNodes(HippoNodeType.HIPPO_FIELD);
-            while(iter.hasNext()) {
+            while (iter.hasNext()) {
                 Node fieldNode = iter.nextNode();
                 list.add(new JcrFieldModel(new JcrNodeModel(fieldNode)));
             }
@@ -81,7 +81,7 @@ public class JcrTypeModel extends NodeModelWrapper {
             field.setProperty(HippoNodeType.HIPPO_TYPE, type);
             UUID uuid = java.util.UUID.randomUUID();
             field.setProperty(HippoNodeType.HIPPO_NAME, uuid.toString());
-            String path = typeName.substring(0, typeName.indexOf(':')) + ":" + type.toLowerCase();
+            String path = typeName.substring(0, typeName.indexOf(':')) + ":" + type.toLowerCase().replace(':', '_');
             field.setProperty(HippoNodeType.HIPPO_PATH, path);
 
             return uuid.toString();
