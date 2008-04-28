@@ -54,6 +54,7 @@ public class ClassLoaderTest extends TestCase {
             loader.destroy();
         }
         session.getRootNode().getNode("hippo:plugins").remove();
+        session.save();
         super.tearDown();
     }
 
