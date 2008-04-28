@@ -29,7 +29,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>
-
+<!--
   <sv:node sv:name="global">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
@@ -51,7 +51,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
+-->
   <sv:node sv:name="pages">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
@@ -75,7 +75,7 @@
           <sv:value>jsp</sv:value>
         </sv:property>
         <sv:property sv:name="hst:pageFile" sv:type="String">
-          <sv:value>/index.jsp</sv:value>
+          <sv:value>/home.jsp</sv:value>
         </sv:property>
         <sv:property sv:name="hstsample:pageLabel" sv:type="String">
           <sv:value>Repository Overview</sv:value>
@@ -121,13 +121,16 @@
           <sv:value>hippo:facetselect</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:docbase" sv:type="String">
-          <sv:value>/hst-sample/documents</sv:value>
+          <sv:value>a01f619e-beed-3a34-a4b6-e2960a00c65d</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:facets" sv:type="String">
+          <sv:value>hippostd:state</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:values" sv:type="String">
+          <sv:value>published</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:modes" sv:type="String">
+          <sv:value>select</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -138,7 +141,13 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
-
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>a01f619e-beed-3a34-a4b6-e2960a00c65d</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="first">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -156,10 +165,10 @@
           <sv:value>published</sv:value>
         </sv:property>
         <sv:property sv:name="hstsample:title" sv:type="String">
-          <sv:value>First</sv:value>
+          <sv:value>First title</sv:value>
         </sv:property>
         <sv:property sv:name="hstsample:content" sv:type="String">
-          <sv:value>First document</sv:value>
+          <sv:value>First content</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -181,10 +190,10 @@
           <sv:value>published</sv:value>
         </sv:property>
         <sv:property sv:name="hstsample:title" sv:type="String">
-          <sv:value>Second</sv:value>
+          <sv:value>Second title</sv:value>
         </sv:property>
         <sv:property sv:name="hstsample:content" sv:type="String">
-          <sv:value>Second document</sv:value>
+          <sv:value>Second content</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -206,7 +215,7 @@
           <sv:value>published</sv:value>
         </sv:property>
         <sv:property sv:name="hstsample:title" sv:type="String">
-          <sv:value>Third</sv:value>
+          <sv:value>Third title</sv:value>
         </sv:property>
         <sv:property sv:name="hstsample:link" sv:type="String">
           <sv:value>http://www.hippocms.org/</sv:value>
@@ -226,7 +235,7 @@
         <sv:value>hst:urlmapping</sv:value>
       </sv:property>
       <sv:property sv:name="hst:nodetype" sv:type="String">
-        <sv:value>hst:sampleSpecialNodeType</sv:value>
+        <sv:value>hstsample:sampleSpecialNodeType</sv:value>
       </sv:property>
       <sv:node sv:name="hst:displaypage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -246,7 +255,7 @@
         <sv:value>hst:urlmapping</sv:value>
       </sv:property>
       <sv:property sv:name="hst:nodetype" sv:type="String">
-        <sv:value>hst:samplePlainNodeType</sv:value>
+        <sv:value>hstsample:samplePlainNodeType</sv:value>
       </sv:property>
       <sv:node sv:name="hst:displaypage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -262,7 +271,7 @@
     </sv:node>
 
   </sv:node>
-
+<!--
   <sv:node sv:name="alternatemapping">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:urlmappingfolder</sv:value>
@@ -309,7 +318,7 @@
     </sv:node>
 
   </sv:node>
-
+-->
   <sv:node sv:name="images">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:folder</sv:value>

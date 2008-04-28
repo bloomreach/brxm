@@ -13,9 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+
+h1, h2, h3, h4, h5 {
+    padding: 0px;
+    margin: 10px 0px; 
+}
+
 #canvas {
   width: 80%;
   margin: 0 auto 30px auto;
+  padding: 0 auto 30px;
   text-align: left;
   position: relative;
   overflow: hidden;
@@ -26,8 +33,11 @@
 }
 #menu {
   width: 80%;
-  float: center;
 }
+#menu ul {
+  margin: 5px 0px;
+}
+
 #bar {
   width: 100%;
   float: center;

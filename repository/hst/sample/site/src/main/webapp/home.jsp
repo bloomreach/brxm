@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="h" %>
 <%--
-    Copyright 2007 Hippo
+    Copyright 2008 Hippo
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -31,16 +31,35 @@
 
     <jsp:include page="navigation.jsp"/>
 
-    <h3>Viewing node samplePlainNodeType</h3>
-    <pre>${context._path}<p/></pre>
+    <h3>${context._path}</h3>
 
-    <table cellspacing="2"><tr>
-      <td>title</td><td>:</td><td>${context['hstsample:title']}</td>
-    </tr><tr>
-      <td>state</td><td>:</td><td>${context['hippostd:state']}</td>
-    </tr><tr>
-      <td>content</td><td>:</td><td>${context['hstsample:content']}</td>
-    </tr></table>
+    <div id="left">
+ 	<c:set var="docContext" value="${context['../../hst-sample/documents']}"/>
+	   <h4>${docContext._path}</h4>
+       <c:forEach var="item" items="${docContext}">
+          ${item[item._name]['hstsample:title']}<br/>
+      </c:forEach>
+     </div>
+
+    <div id="right">
+    <h4>${defaultContext._path}/${defaultContext.articles._name}</h4>
+      <c:forEach var="handle" items="${defaultContext.articles}">
+    	<c:set var="item" value="${handle[handle._name]}"/>
+          ${item._name}<br/>
+      </c:forEach>
+
+    <h4>${defaultContext._path}/${defaultContext.news._name}</h4>
+      <c:forEach var="handle" items="${defaultContext.news}">
+    	<c:set var="item" value="${handle[handle._name]}"/>
+          ${item._name}<br/>
+      </c:forEach>
+
+    <h4>${defaultContext._path}/${defaultContext.events._name}</h4>
+      <c:forEach var="handle" items="${defaultContext.events}">
+    	<c:set var="item" value="${handle[handle._name]}"/>
+          ${item._name}<br/>
+      </c:forEach>
+    </div>
 
   </div>
 </body></html>
