@@ -52,7 +52,12 @@ public class IncludeTag extends TagSupport {
         }
         
         String contextName = (String) request.getSession().getAttribute(ContextFilter.ATTRIBUTE_NAME);
-        Context context = (Context) request.getSession().getAttribute(contextName);
+        Context context = (Context) request.getAttribute(contextName);
+        
+        if (context == null) {
+            throw new JspException("No context found in request by name '" + contextName + "'.");
+        }
+        
         try {
             pageContext.getOut().flush();
 
