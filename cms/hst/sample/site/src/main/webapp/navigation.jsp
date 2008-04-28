@@ -22,17 +22,14 @@
 
 <div id="block">
 
-  <div id="bar" width="100%"><img src="/static/hst-sample/images/test/jcr:content"></div><br/>
-
-  <div id="earmarks">
-    <a href="#" onclick="window.print();" class="printpage" title="${global[global._name].linkTitle}">${global[global._name].linkText}</a>
-  </div>
+  <div id="bar" width="100%"><img src="/static/hst-sample/images/test/jcr:content"></div>
 
   <div id="menu">
     <ul>
-      <c:forEach var="item" items="${context['../../../pages']}">
+      <c:forEach var="item" items="${context['/pages']}">
         <c:if test="${item['jcr:primaryType'] == 'hippo:handle'}">
-          <li><c:url var="url" value="${item._path}"/><a href="${url}"/>${item[item._name].pageLabel}</a>
+          <li><c:url var="url" value="/${context['/pages']._name}/${item._name}"/>
+          <a href="${url}">${item[item._name]['hstsample:pageLabel']}</a>
         </c:if>
       </c:forEach>
     </ul>

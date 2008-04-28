@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hippo" %>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>
 <%--
     Copyright 2008 Hippo
     
@@ -20,8 +20,6 @@
     limitations under the License.
 --%>
 
-<c:set var="global" value="${context['../../../global/global']}" scope="page"/>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -32,13 +30,14 @@
 
   <jsp:include page="navigation.jsp"/>
 
+ 	<c:set var="docContext" value="${context['../../hst-sample/documents']}"/>
+  <h4>Context: ${docContext._name}</h4>
   <ul>
-    <c:forEach var="item" items="${context['../../../documents']}">
+    <c:forEach var="handle" items="${docContext}">
+      <c:set var="item" value="${handle[handle._name]}"/>
       <li>
-      <pre>${item[item._name]._path}</pre>
-<%--
-        <hippo:include page="${item[item._name]._path}" urlMappingLocation="/hst-sample/alternatemapping"/>
---%>      </li>
+      <a href="/${context['/documents']._name}/${item._name}">${item._path}</a>
+      </li>
     </c:forEach>
   </ul>
 

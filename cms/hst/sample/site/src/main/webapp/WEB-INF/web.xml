@@ -39,6 +39,26 @@
     <param-value>admin</param-value>
   </context-param>
   
+  <filter>
+    <filter-name>defaultContext</filter-name>
+    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <init-param>
+      <description>
+        Bind the context using the attribute name as specified by
+        this parameter in the request scope for JSP/JSF pages.
+        Defaults to context.
+      </description>
+      <param-name>attributeName</param-name>
+      <param-value>defaultContext</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        The repository path to bind as context.
+      </description>      
+      <param-name>repositoryBaseLocation</param-name>
+      <param-value>/live/content</param-value>
+    </init-param>
+  </filter>
 
   <filter>
     <filter-name>context</filter-name>
@@ -57,7 +77,7 @@
         The repository path to bind as context.
       </description>      
       <param-name>urlBasePath</param-name>
-      <param-value>/hst-sample/pages</param-value>
+      <param-value>/hst-sample</param-value>
     </init-param>
     <init-param>
       <description>
@@ -65,10 +85,11 @@
         must be of type hst:urlmappingfolder
       </description>
       <param-name>urlMappingLocation</param-name>
-      <param-value>/defaultmapping</param-value>
+      <param-value>/hst-sample/defaultmapping</param-value>
     </init-param>
   </filter>
-<!--
+  
+  <!--
   <filter>
     <filter-name>GlobalContext</filter-name>
     <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
@@ -89,12 +110,20 @@
     </init-param>
   </filter>
 -->
+
+  <filter-mapping>
+    <filter-name>defaultContext</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  
   <filter-mapping>
     <filter-name>context</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
-<!--
+  
+  <!--
   <filter-mapping>
     <filter-name>GlobalContext</filter-name>
     <url-pattern>/*</url-pattern>
