@@ -44,11 +44,11 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
@@ -349,7 +349,8 @@ public class Remodeling {
                                     traverse(node, true, copy);
                                 } else {
                                     log.warn("removing node " + node.getPath()
-                                            + " as there is no new type defined for type " + node.getPrimaryNodeType().getName());
+                                            + " as there is no new type defined for type "
+                                            + node.getPrimaryNodeType().getName());
                                 }
                             }
                         }
@@ -476,13 +477,21 @@ public class Remodeling {
 
             draft = getVersion(node, HippoNodeType.HIPPO_PROTOTYPE, "draft");
             Node handle = node.getNode(HippoNodeType.HIPPO_PROTOTYPE);
-            NodeType newType = node.getSession().getWorkspace().getNodeTypeManager().getNodeType(node.getName());
+            NodeTypeManager ntMgr = node.getSession().getWorkspace().getNodeTypeManager();
+            NodeType newType = ntMgr.getNodeType(node.getName());
             if (newType != null) {
                 Node newChild = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, newType.getName());
                 traverse(draft, true, newChild);
                 draft.remove();
                 newChild.removeMixin(HippoNodeType.NT_REMODEL);
                 newChild.removeMixin(HippoNodeType.NT_UNSTRUCTURED);
+
+                // prepare workflow mixins
+                if (newChild.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    newChild.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                } else if (newChild.isNodeType(HippoNodeType.NT_REQUEST)) {
+                    newChild.addMixin(JcrConstants.MIX_REFERENCEABLE);
+                }
             }
         }
     }
@@ -645,9 +654,9 @@ public class Remodeling {
             nsreg.close();
             String oldPrefix = nsreg.getPrefix(oldNamespaceURI);
             nsreg.externalRemap(oldPrefix, prefix, oldNamespaceURI);
-            if(ex instanceof NamespaceException) {
+            if (ex instanceof NamespaceException) {
                 throw (NamespaceException) ex;
-            } else if(ex instanceof RepositoryException) {
+            } else if (ex instanceof RepositoryException) {
                 throw (RepositoryException) ex;
             } else {
                 throw (RuntimeException) ex;
