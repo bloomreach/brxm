@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugins.template.resource;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -33,6 +35,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +45,21 @@ public class ResourceUploadPlugin extends Plugin {
 
     static final Logger log = LoggerFactory.getLogger(ResourceUploadPlugin.class);
 
+    private Map<String, String> types;
     private FileUploadForm form;
 
     public ResourceUploadPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, new ItemModel(model), parentPlugin);
+
+        types = new HashMap<String, String>();
+        for (Map.Entry<String, ParameterValue> entry : pluginDescriptor.getParameters().entrySet()) {
+            if (entry.getKey().startsWith("extension.")) {
+                if (entry.getValue().getType() == ParameterValue.TYPE_STRING
+                        && entry.getValue().getStrings().size() > 0) {
+                    types.put(entry.getKey().substring("extension.".length()), entry.getValue().getStrings().get(0));
+                }
+            }
+        }
 
         // Add upload form with ajax progress bar
         form = new FileUploadForm("form");
@@ -84,24 +98,31 @@ public class ResourceUploadPlugin extends Plugin {
         protected void onSubmit() {
             final FileUpload upload = fileUploadField.getFileUpload();
             if (upload != null) {
-                ItemModel itemModel = (ItemModel) ResourceUploadPlugin.this.getModel();
-                Node node = itemModel.getNodeModel().getNode();
-                try {
-                    node.setProperty("jcr:mimeType", "image/jpeg");
-                    node.setProperty("jcr:data", upload.getInputStream());
-                    node.setProperty("jcr:lastModified", Calendar.getInstance());
+                String fileName = upload.getClientFileName();
+                String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+                String type = types.get(extension);
+                if (type != null) {
+                    ItemModel itemModel = (ItemModel) ResourceUploadPlugin.this.getModel();
+                    Node node = itemModel.getNodeModel().getNode();
+                    try {
+                        node.setProperty("jcr:mimeType", type);
+                        node.setProperty("jcr:data", upload.getInputStream());
+                        node.setProperty("jcr:lastModified", Calendar.getInstance());
 
-                    Channel channel = getTopChannel();
-                    if (channel != null) {
-                        Request request = channel.createRequest("flush", itemModel.getNodeModel());
-                        channel.send(request);
+                        Channel channel = getTopChannel();
+                        if (channel != null) {
+                            Request request = channel.createRequest("flush", itemModel.getNodeModel());
+                            channel.send(request);
+                        }
+                    } catch (RepositoryException ex) {
+                        // FIXME: report back to user
+                        log.error(ex.getMessage());
+                    } catch (IOException ex) {
+                        // FIXME: report back to user
+                        log.error(ex.getMessage());
                     }
-                } catch (RepositoryException ex) {
-                    // FIXME: report back to user
-                    log.error(ex.getMessage());
-                } catch (IOException ex) {
-                    // FIXME: report back to user
-                    log.error(ex.getMessage());
+                } else {
+                    log.warn("Unrecognised file type");
                 }
             }
         }
