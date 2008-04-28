@@ -229,7 +229,7 @@ public class Context extends AbstractMap {
                     String requestedPath = getLocation();
                     if (!field.startsWith("_")) {
                         if (field.startsWith("/")) {
-                            requestedPath = field;
+                            requestedPath = baseLocation + field;
                         } else if (requestedPath.endsWith("/")) {
                             requestedPath += field;
                         } else {
