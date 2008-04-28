@@ -23,8 +23,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.jackrabbit.value.StringValue;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -109,8 +112,23 @@ public class TemplateListPlugin extends Plugin {
                         request.getContext().apply(target);
                     }
                 };
-                link.add(new Label("template-name", new Model(template.getTypeDescriptor().getName())));
+                final String name = template.getTypeDescriptor().getName();
+                link.add(new Label("template-name", new Model(name)));
                 item.add(link);
+
+                item.add(new AbstractBehavior() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void onComponentTag(final Component component, final ComponentTag tag) {
+                        Object classes = tag.getUserData("class");
+                        if (classes instanceof String) {
+                            tag.put("class", (String) classes + " " + name.toLowerCase().replace(':', '_'));
+                        } else {
+                            tag.put("class", name.toLowerCase().replace(':', '_'));
+                        }
+                    }
+                });
             }
 
             public void destroyItem(Item item) {
