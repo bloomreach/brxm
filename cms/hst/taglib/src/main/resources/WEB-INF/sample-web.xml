@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+  <!-- Repository configuration -->
+  <context-param>
+      <description>The address of the repository</description>
+      <param-name>repositoryAddress</param-name>
+      <!-- param-value>rmi://localhost:1099/hipporepository</param-value -->
+      <param-value>WEB-INF/storage</param-value>
+  </context-param>
+  <context-param>
+      <description>The user name to use for the repository login</description>
+      <param-name>repositoryUserName</param-name>
+      <param-value>admin</param-value>
+  </context-param>
+  <context-param>
+      <description>The password to use for the repository login</description>
+      <param-name>repositoryPassword</param-name>
+      <param-value>admin</param-value>
+  </context-param>
+ 
+  <!-- Example of one HST filter pointing to a preview path in the repository. -->
+  <filter>
+      <filter-name>previewContext</filter-name>
+      <filter-class>org.hippoecm.hst.URLMappingContextFilter</filter-class>
+      <!-- to omit URL mapping functionality use:  
+      <filter-class>org.hippoecm.hst.ContextFilter</filter-class> 
+      -->
+      <init-param>
+          <description>
+              The name of the context object created in the request scope. 
+              Defaults to 'context'.
+          </description>
+          <param-name>attributeName</param-name>
+          <param-value>context</param-value>
+      </init-param>
+      <init-param>
+          <description>
+              The part of the url this filter matches to, so must match 
+              the actual url-pattern of the filter-mapping below.
+          </description>      
+          <param-name>urlBasePath</param-name>
+          <param-value>/preview</param-value>
+      </init-param>
+      <init-param>
+          <description>
+              The repository base path to bind the context to. 
+              Defaults to the same value as urlBasePath.
+          </description>      
+          <param-name>repositoryBaseLocation</param-name>
+          <param-value>/preview</param-value>
+      </init-param>
+      <init-param>
+          <description>
+              The location in the repository where to find URL mappings
+              based on document type. Only used by URLMappingContextFilter.
+              Defaults to '/urlMapping'.
+          </description>
+          <param-name>urlMappingLocation</param-name>
+          <param-value>/urlMapping</param-value>
+      </init-param>
+      <init-param>
+          <description>
+              A list of extensions that the filter will not create context objects
+              for, if the URL ends with such an extension. 
+              Defaults to the given value so may be omitted. 
+          </description>
+          <param-name>skippedExtensions</param-name>
+          <param-value>ico,gif,jpg,jpeg,svg,png,css,js</param-value>
+      </init-param>
+  </filter>
+
+  <filter-mapping>
+      <filter-name>previewContext</filter-name>
+      <url-pattern>/preview/*</url-pattern>
+      <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <!-- Installation of a servlet serving binaries from repository. -->
+  <servlet>
+    <servlet-name>DirectAccessServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.DirectAccessServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>DirectAccessServlet</servlet-name>
+    <url-pattern>/binaries/*</url-pattern>
+  </servlet-mapping>
+  
