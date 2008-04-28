@@ -151,8 +151,6 @@ public class ContextFilter implements Filter {
             relativeURL = relativeURL.substring(req.getContextPath().length());
         }
 
-        context.setRelativeLocation(relativeURL);
-
         req.setAttribute(attributeName, context);
 
         // check url mapping
