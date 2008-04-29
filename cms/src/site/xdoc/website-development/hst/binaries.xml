@@ -45,7 +45,7 @@
           </ul>
         </subsection>
         <subsection name="Usage">
-            <p>It is common use the access the BinariesServlet in the <code>src</code> attribute of
+            <p>It is common use to access the BinariesServlet in the <code>src</code> attribute of
               a <code>img</code> tag, or in the <code>href</code> attribute of the <code>a</code> tag.</p>
             <p>The path to the binary node in the repository should be easily obtained using the
               expression language's <code>_path</code> property (<a href="el-index.html#FixedProperties">see here</a>). 

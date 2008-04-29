@@ -44,10 +44,10 @@
              A static factory class is available to help with that. A simple example on how to connect and login 
              to a Hippo Repository based on location, user name and password is:     
           </p>
-          <source><![CDATA[HippoRepository repository 
-                = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-                javax.jcr.Session session = repository.login(<userName>, <password>);
-                session.getRootNode()  etc..]]></source>
+          <source><![CDATA[  HippoRepository repository 
+      = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
+  javax.jcr.Session session = repository.login(<userName>, <password>);
+  session.getRootNode()  etc..]]></source>
         </subsection>
        </section>
 

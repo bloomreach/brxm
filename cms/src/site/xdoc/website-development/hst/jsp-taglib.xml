@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!DOCTYPE document PUBLIC
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
@@ -18,21 +19,28 @@
   limitations under the License.
 -->
 <document>
-    <properties>
-      <title>ECM Website Development</title>
-    </properties>
-    <body>
-      <section name="The JSP tag library">
-        <subsection name="Importing the taglib">
-          <p>The taglib definition file is present as <code>/META-INF/hst.tld</code> 
-            within the included HST jar file (see <a href="include.html">include the HST</a>) and should be 
-            found by your web application. The URI of the taglib is <code>http://www.hippoecm.org/jsp/hst</code> 
-            so to import the taglib in your jsp use the piece of code below. As prefix we recommend <code>hippo</code>, as a simple 
-            <code>h</code> is commonly used for jsf html tags.</p>
-          <source><![CDATA[<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hippo" %>]]></source>
-        </subsection> 
-        <subsection name="Tags">
-        </subsection> 
-      </section>
-    </body>
+  <properties>
+    <title>ECM Website Development</title>
+  </properties>
+  <body>
+    <section name="The JSP tag library">
+      <subsection name="Importing the taglib">
+        <p>The taglib definition file is present as <code>/META-INF/hst.tld</code> within the
+          included HST jar file (see <a href="include.html">include the HST</a>) and should be found
+          by your web application. The URI of the taglib is
+          <code>http://www.hippoecm.org/jsp/hst</code> so to import the taglib in your jsp use the
+          piece of code below. As prefix we recommend <code>hst</code>, as a simple <code>h</code>
+          is commonly used for jsf html tags.</p>
+        <source><![CDATA[<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>]]></source>
+      </subsection>
+      <subsection name="Tags"> 
+        <p>The following tags are availabe:</p> 
+        <ul>
+          <li>&lt;hst:access&gt;</li>
+          <li>&lt;hst:include&gt;</li>
+        </ul>
+        <p>No extensive documentation is available as the taglib will undergo a redesign.</p> 
+      </subsection>
+    </section>
+  </body>
 </document>
