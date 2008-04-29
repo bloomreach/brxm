@@ -104,7 +104,7 @@
             scriptlet is needed as no tag exists (yet) for the encodeURL method.</p>
           <source><![CDATA[  ${context} points to /preview/content/news/
           
-  <a href="/<contextPath}>${context._urlBasePath}/${context._name}">Link to /news</a>
+  <a href="/<contextPath>${context._urlBasePath}/${context._name}">Link to /news</a>
           
           or
           
