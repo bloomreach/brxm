@@ -187,7 +187,7 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
 
                 // part is empty if url starts with /
                 if (parts[i].length() > 0) {
-                    encoded += URLEncoder.encode(parts[i], ContextFilter.ENCODING_SCHEME);
+                    encoded += URLEncoder.encode(parts[i], URLMappingContextFilter.ENCODING_SCHEME);
 
                     if (i < (parts.length - 1)) {
                         encoded += "/";
@@ -202,7 +202,7 @@ class URLMappingResponseWrapper extends HttpServletResponseWrapper {
             return encoded;
         }
         catch (UnsupportedEncodingException uee) {
-            throw new IllegalStateException("Unsupported encoding scheme " + ContextFilter.ENCODING_SCHEME, uee);
+            throw new IllegalStateException("Unsupported encoding scheme " + URLMappingContextFilter.ENCODING_SCHEME, uee);
         }
     }
 }
