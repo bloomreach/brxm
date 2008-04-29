@@ -48,7 +48,7 @@ public class IncludeTag extends TagSupport {
             urlMappingLoc = this.urlMappingLocation;
         }
         else {
-            urlMappingLoc = (String) request.getSession().getAttribute(ContextFilter.URL_MAPPING_LOCATION);
+            urlMappingLoc = (String) request.getSession().getAttribute(URLMappingContextFilter.URL_MAPPING_LOCATION);
         }
         
         String contextName = (String) request.getSession().getAttribute(ContextFilter.ATTRIBUTE_NAME);

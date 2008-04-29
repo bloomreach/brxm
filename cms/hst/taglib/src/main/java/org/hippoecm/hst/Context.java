@@ -65,6 +65,11 @@ public class Context extends AbstractMap {
         this.relativeLocation = null;
     }
 
+    Context(final Session jcrSession, final String contextPath, final String baseLocation) {
+        // create with urlBasePath same as baseLocation
+        this(jcrSession, contextPath, baseLocation, baseLocation);
+    }
+
     Context(Context parent, String relativePath) {
         this(parent, relativePath, -1);
     }
