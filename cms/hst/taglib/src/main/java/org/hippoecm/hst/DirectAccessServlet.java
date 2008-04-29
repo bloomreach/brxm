@@ -51,13 +51,30 @@ public class DirectAccessServlet extends HttpServlet {
         // URL decode
         relativeURL = URLDecoder.decode(relativeURL, "UTF-8");
 
-        // transform to documentPath
-        String urlBasePath = (String) req.getSession().getAttribute(ContextFilter.URL_BASE_PATH);
-        String baseLocation = (String) req.getSession().getAttribute(ContextFilter.REPOSITORY_BASE_LOCATION);
+        // transform to documentPath if URL mapping is active
+        String path;
+        String urlBasePath = (String) req.getSession().getAttribute(URLMappingContextFilter.URL_BASE_PATH);
+        if (urlBasePath != null) {
 
-        URLPathTranslator urlPathTranslator = new URLPathTranslator(req.getContextPath(), req.getServletPath(), baseLocation);
-        String path = urlPathTranslator.urlToDocumentPath(relativeURL);
+            String baseLocation = (String) req.getSession().getAttribute(ContextFilter.REPOSITORY_BASE_LOCATION);
 
+            URLPathTranslator urlPathTranslator = new URLPathTranslator(req.getContextPath(), req.getServletPath(), baseLocation);
+            path = urlPathTranslator.urlToDocumentPath(relativeURL);
+        }
+        else {
+            
+            // simply remove the contextpath and end /
+            path = relativeURL;
+            
+            if (path.startsWith(req.getContextPath())) {
+                path = path.substring(req.getContextPath().length());
+            }
+
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            }
+        }
+        
         // JCR decode
         String currentPath = "";
         StringTokenizer pathElts = new StringTokenizer(path, "/");
