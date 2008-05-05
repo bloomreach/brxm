@@ -203,14 +203,18 @@
     </dependency>
    
     <!-- hst add-on -->
-<!--
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-addon-repository</artifactId>
-      <version>1.01.00-SNAPSHOT</version>
+      <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
--->
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-sample-content</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
       
   </dependencies>
 
