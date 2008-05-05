@@ -29,7 +29,6 @@ import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
@@ -125,10 +124,6 @@ public class Main extends WebApplication {
     @Override
     public Session newSession(Request request, Response response) {
         return new UserSession(request);
-    }
-
-    public String getHippoApplication() {
-        return getConfigurationParameter("hippoApplication", "hippo:console (builtin)");
     }
 
     public String getConfigurationParameter(String parameterName, String defaultValue) {

@@ -17,79 +17,78 @@
 -->
 <web-app id="hippo-ecm">
 
-  <!-- General configuration -->
-  <display-name>Hippo ECM</display-name>
-  <description>An empty repository that binds to the RMI registry.</description>
+    <!-- General configuration -->
+    <display-name>Hippo ECM WAR package</display-name>
+    <description>Hippo ECM WAR package</description>
 
-  <context-param>
-    <param-name>repository-address</param-name>
+    <context-param>
+        <param-name>repository-address</param-name>
         <param-value>rmi://localhost:1099/hipporepository</param-value>
-    <description>The address of the repository</description>
-  </context-param>
-  
-  <!--Console application-->
-  <filter>
-    <filter-name>Console</filter-name>
-    <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-    <init-param>
-      <param-name>applicationClassName</param-name>
-      <param-value>org.hippoecm.frontend.Main</param-value>
-    </init-param>
-    <init-param>
-      <param-name>hippoApplication</param-name>
-      <param-value>hippo:console</param-value>
-    </init-param>
-  </filter>
-  
-  <!--CMS application-->
-  <filter>
-    <filter-name>CMS</filter-name>
-    <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-    <init-param>
-      <param-name>applicationClassName</param-name>
-      <param-value>org.hippoecm.frontend.Main</param-value>
-    </init-param>
-    <init-param>
-      <param-name>hippoApplication</param-name>
-      <param-value>hippo:cms</param-value>
-    </init-param>
-  </filter>
-  
-  <filter-mapping>
-    <filter-name>Console</filter-name>
-    <url-pattern>/console/*</url-pattern>
-  </filter-mapping>
+        <description>The address of the repository</description>
+    </context-param>
 
-  <filter-mapping>
-    <filter-name>CMS</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>  
+    <!--Default application-->
+    <filter>
+        <filter-name>CMS</filter-name>
+        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+        <init-param>
+            <param-name>applicationClassName</param-name>
+            <param-value>org.hippoecm.frontend.Main</param-value>
+        </init-param>
+    </filter>
+    
+    <!--Builtin console-->
+    <filter>
+        <filter-name>Console</filter-name>
+        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+        <init-param>
+            <param-name>applicationClassName</param-name>
+            <param-value>org.hippoecm.frontend.Main</param-value>
+        </init-param>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>builtin</param-value>
+        </init-param>
+    </filter>
+        
+    <filter-mapping>
+        <filter-name>CMS</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>Console</filter-name>
+        <url-pattern>/console/*</url-pattern>
+    </filter-mapping>    
 
-  <servlet>
-    <servlet-name>RepositoryServlet</servlet-name>
-    <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
-    <init-param>
-      <param-name>repository-directory</param-name>
-      <param-value>WEB-INF/storage</param-value>
-      <description>The (relative) location where to store files</description>
-    </init-param>
-    <init-param>
-      <param-name>repository-config</param-name>
-      <param-value>repository.xml</param-value>
-      <description>The location of the repository configuration file. Unless the location
-      starts with file://, the location is retreived with getResourceAsStream().</description>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
+    <!-- Repository -->
+    <servlet>
+        <servlet-name>Repository</servlet-name>
+        <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
+        <init-param>
+            <param-name>repository-directory</param-name>
+            <param-value>WEB-INF/storage</param-value>
+            <description>The (relative) location where to store files</description>
+        </init-param>
+        <init-param>
+            <param-name>repository-config</param-name>
+            <param-value>repository.xml</param-value>
+            <description>The location of the repository configuration file. Unless the location
+                starts with file://, the location is retreived with
+            getResourceAsStream().</description>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>RepositoryServlet</servlet-name>
-    <url-pattern>/repository/*</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Repository</servlet-name>
+        <url-pattern>/repository/*</url-pattern>
+    </servlet-mapping>
 
-  <!-- Timeout in minutes -->
-  <session-config>
-    <session-timeout>60</session-timeout>
-  </session-config>
+
+    <!-- Timeout in minutes -->
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
 
 </web-app>

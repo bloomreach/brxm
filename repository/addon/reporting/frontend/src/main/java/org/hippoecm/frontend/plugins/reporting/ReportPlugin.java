@@ -78,21 +78,13 @@ public class ReportPlugin extends Plugin {
     }
 
     private Plugin createReport(String id, Node reportNode) {
-        Plugin plugin;
-        try {
-            String basePath = reportNode.getPath().substring(1);
-            PluginConfig pluginConfig = new PluginRepositoryConfig(basePath);
-            PluginDescriptor pluginDescriptor = pluginConfig.getPlugin(ReportingNodeTypes.PLUGIN);
-            pluginDescriptor.setWicketId(id);
-
-            ReportModel reportModel = new ReportModel(new JcrNodeModel(reportNode));
-            PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-            plugin = pluginFactory.createPlugin(pluginDescriptor, reportModel, this);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-            plugin = null;
-        }
-        return plugin;
+	    PluginConfig pluginConfig = new PluginRepositoryConfig(reportNode);
+	    PluginDescriptor pluginDescriptor = pluginConfig.getPlugin(ReportingNodeTypes.PLUGIN);
+	    pluginDescriptor.setWicketId(id);
+	
+	    ReportModel reportModel = new ReportModel(new JcrNodeModel(reportNode));
+	    PluginFactory pluginFactory = new PluginFactory(getPluginManager());
+	    return pluginFactory.createPlugin(pluginDescriptor, reportModel, this);
     }
 
 }

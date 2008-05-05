@@ -126,7 +126,7 @@
 
 [hippo:temporaryfolder] > nt:unstructured
 
-[hippo:application] > nt:unstructured
+[hippo:application] > nt:unstructured orderable
 
 [hippo:facetauth] > nt:base
 - hippo:facet (string)  mandatory

@@ -26,33 +26,38 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginConfigFactory {
 
-    private PluginConfig pluginConfig;
+	private PluginConfig pluginConfig;
 
-    public PluginConfigFactory() {
-        try {
-            UserSession session = (UserSession) Session.get();
-            Node rootNode = session.getJcrSession().getRootNode();
-            String path = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-            Node configNode = rootNode.getNode(path);
+	public PluginConfigFactory() {
+		try {
+			javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+			String config = ((Main) Application.get()).getConfigurationParameter("config", null);
 
-            Main main = (Main) Application.get();
-            String application = main.getHippoApplication();
-            boolean hipposAvailable = configNode.getNodes().hasNext();
-            boolean builtIn = application.contains("(builtin)");
+			String basePath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
+			Node baseNode = (Node)session.getItem(basePath);
+			
+			if (config == null && baseNode.hasNodes()) {
+				//Use the first frontend configuration node
+				Node configNode = baseNode.getNodes().nextNode();
+				pluginConfig = new PluginRepositoryConfig(configNode);
+				
+			} else if (baseNode.hasNode(config)) {
+				//Use specified configuration
+				pluginConfig = new PluginRepositoryConfig(baseNode.getNode(config));
+				
+			} else {
+				//Fall back to builtin configuration
+				pluginConfig = new PluginJavaConfig();
+			}
+		} catch (RepositoryException e) {
+			//Fall back to builtin configuration
+			pluginConfig = new PluginJavaConfig();
+		}
 
-            if (!builtIn && hipposAvailable) {
-                pluginConfig = new PluginRepositoryConfig(path + "/" + application);
-            } else {
-                pluginConfig = new PluginJavaConfig();
-            }
-        } catch (RepositoryException e) {
-            pluginConfig = new PluginJavaConfig();
-        }
+	}
 
-    }
-
-    public PluginConfig getPluginConfig() {
-        return pluginConfig;
-    }
+	public PluginConfig getPluginConfig() {
+		return pluginConfig;
+	}
 
 }
