@@ -35,10 +35,10 @@ import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DirectAccessServlet extends HttpServlet {
+public class BinariesServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    public static final Logger logger = LoggerFactory.getLogger(DirectAccessServlet.class);
+    public static final Logger logger = LoggerFactory.getLogger(BinariesServlet.class);
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);

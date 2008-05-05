@@ -100,12 +100,12 @@
   </filter-mapping -->
 
   <servlet>
-    <servlet-name>DirectAccessServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.DirectAccessServlet</servlet-class>
+    <servlet-name>BinariesServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.BinariesServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>DirectAccessServlet</servlet-name>
+    <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/static/*</url-pattern>
   </servlet-mapping>
   

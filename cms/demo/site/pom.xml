@@ -104,7 +104,7 @@
           <contextPath>/</contextPath>
         </configuration>
         <dependencies>
-          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
+          <!-- atomikos dependencies for running jetty:run[-war|-exploded] -->
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-api</artifactId>

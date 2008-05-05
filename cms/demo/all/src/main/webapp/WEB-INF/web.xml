@@ -208,8 +208,8 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
   </filter-mapping>
 
   <servlet>
-    <servlet-name>DirectAccessServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.DirectAccessServlet</servlet-class>
+    <servlet-name>BinariesServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.BinariesServlet</servlet-class>
   </servlet>
 
   <servlet>
@@ -239,7 +239,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>DirectAccessServlet</servlet-name>
+    <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/images/*</url-pattern>
   </servlet-mapping>
 
