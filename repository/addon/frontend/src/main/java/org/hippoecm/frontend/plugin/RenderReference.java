@@ -40,7 +40,7 @@ public class RenderReference extends LoadableDetachableModel implements IRenderR
         IRenderService parent = renderer;
         IRenderService ancestor = parent.getParentService();
         while (ancestor != null) {
-            List<IRenderService> siblings = ancestor.getChildServices(parent.getId());
+            List<? extends IRenderService> siblings = ancestor.getChildServices(parent.getId());
             int index = siblings.indexOf(parent);
 
             sb.insert(0, ':');
@@ -71,7 +71,7 @@ public class RenderReference extends LoadableDetachableModel implements IRenderR
             String name = path.substring(0, sep);
             path = path.substring(sep + 1);
 
-            List<IRenderService> list = renderer.getChildServices(name);
+            List<? extends IRenderService> list = renderer.getChildServices(name);
             if (list == null) {
                 return null;
             }
@@ -85,7 +85,7 @@ public class RenderReference extends LoadableDetachableModel implements IRenderR
                 path = path.substring(sep + 1);
             }
 
-            IRenderService service = (IRenderService) list.get(idx);
+            IRenderService service = list.get(idx);
             if (sep < 0) {
                 return service;
             } else {

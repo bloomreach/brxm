@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.service.render;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
     private String wicketId;
     private PluginContext context;
     private Map<String, Object> properties;
-    private Map<String, ServiceTracker> children;
+    private Map<String, ServiceTracker<IRenderService>> children;
     private ModelReference modelRef;
     private IRenderService parent;
     private ServiceTracker dialogTracker;
@@ -59,7 +60,7 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
 
         wicketId = "service.render";
 
-        this.children = new HashMap<String, ServiceTracker>();
+        this.children = new HashMap<String, ServiceTracker<IRenderService>>();
         this.dialogTracker = new ServiceTracker(IDialogService.class);
     }
 
@@ -77,7 +78,7 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
 
         dialogTracker.open(context, (String) properties.get(DIALOG_ID));
 
-        for (Map.Entry<String, ServiceTracker> entry : children.entrySet()) {
+        for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
             entry.getValue().open(context, (String) properties.get(entry.getKey()));
         }
         context.registerService(this, serviceId);
@@ -87,7 +88,7 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
         PluginContext context = getPluginContext();
 
         context.unregisterService(this, serviceId);
-        for (Map.Entry<String, ServiceTracker> entry : children.entrySet()) {
+        for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
             entry.getValue().close();
         }
 
@@ -131,8 +132,8 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
         redraw = true;
     }
 
-    protected void addExtensionPoint(String name, ServiceTracker.IListener listener) {
-        ServiceTracker tracker = new ServiceTracker(IRenderService.class);
+    protected void addExtensionPoint(String name, ServiceTracker.IListener<IRenderService> listener) {
+        ServiceTracker<IRenderService> tracker = new ServiceTracker<IRenderService>(IRenderService.class);
         tracker.addListener(listener);
         children.put(name, tracker);
         add(new EmptyPanel(name));
@@ -159,9 +160,9 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
             pluginTarget.addComponent(this);
             redraw = false;
         }
-        for (Map.Entry<String, ServiceTracker> entry : children.entrySet()) {
-            for (Serializable service : entry.getValue().getServices()) {
-                ((IRenderService) service).render(target);
+        for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
+            for (IRenderService service : entry.getValue().getServices()) {
+                service.render(target);
             }
         }
     }
@@ -192,8 +193,13 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
         return parent;
     }
 
-    public List<IRenderService> getChildServices(String name) {
-        return (List) children.get(name).getServices();
+    public List<? extends IRenderService> getChildServices(String name) {
+        ServiceTracker tracker = children.get(name);
+        if (tracker != null) {
+            return tracker.getServices();
+        } else {
+            return new ArrayList<IRenderService>();
+        }
     }
 
     public List<String> getExtensionPoints() {

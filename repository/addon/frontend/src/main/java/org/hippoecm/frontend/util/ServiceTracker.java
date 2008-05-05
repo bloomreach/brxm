@@ -7,30 +7,30 @@ import java.util.List;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.core.ServiceListener;
 
-public class ServiceTracker implements ServiceListener, Serializable {
+public class ServiceTracker<S extends Serializable> implements ServiceListener, Serializable {
     private static final long serialVersionUID = 1L;
 
     private PluginContext context;
     private String name;
     private Class clazz;
-    private List<Serializable> services;
-    private List<IListener> listeners;
+    private List<S> services;
+    private List<IListener<S>> listeners;
 
-    public interface IListener extends Serializable {
+    public interface IListener<S extends Serializable> extends Serializable {
 
-        void onServiceAdded(String name, Serializable service);
+        void onServiceAdded(String name, S service);
 
-        void onServiceChanged(String name, Serializable service);
+        void onServiceChanged(String name, S service);
 
-        void onRemoveService(String name, Serializable service);
+        void onRemoveService(String name, S service);
 
     }
 
     public ServiceTracker(Class clazz) {
         this.clazz = clazz;
 
-        services = new LinkedList<Serializable>();
-        listeners = new LinkedList<IListener>();
+        services = new LinkedList<S>();
+        listeners = new LinkedList<IListener<S>>();
     }
 
     public void open(PluginContext context, String name) {
@@ -41,7 +41,7 @@ public class ServiceTracker implements ServiceListener, Serializable {
 
     public void close() {
         context.unregisterListener(this, name);
-        services = new LinkedList<Serializable>();
+        services = new LinkedList<S>();
     }
 
     public void addListener(IListener listener) {
@@ -52,30 +52,31 @@ public class ServiceTracker implements ServiceListener, Serializable {
         listeners.remove(listener);
     }
 
-    public List<Serializable> getServices() {
+    public List<S> getServices() {
         return services;
     }
 
     public final void processEvent(int type, String name, Serializable service) {
         if (this.name.equals(name) && clazz.isInstance(service)) {
+            S casted = (S) service;
             switch (type) {
             case ServiceListener.ADDED:
-                services.add(service);
+                services.add(casted);
                 for (IListener listener : listeners) {
-                    listener.onServiceAdded(name, service);
+                    listener.onServiceAdded(name, casted);
                 }
                 break;
 
             case ServiceListener.CHANGED:
                 for (IListener listener : listeners) {
-                    listener.onServiceChanged(name, service);
+                    listener.onServiceChanged(name, casted);
                 }
                 break;
                 
             case ServiceListener.REMOVE:
                 services.remove(service);
                 for (IListener listener : listeners) {
-                    listener.onRemoveService(name, service);
+                    listener.onRemoveService(name, casted);
                 }
                 break;
             }

@@ -22,9 +22,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 import org.apache.wicket.markup.html.WebPage;
+import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class DialogWindow extends ModalWindow implements PageCreator {
+public class DialogWindow extends ModalWindow implements PageCreator, IDialogService {
     private static final long serialVersionUID = 1L;
 
     private WebPage page;
