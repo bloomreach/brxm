@@ -78,10 +78,8 @@ public class EditorPlugin extends EditorService implements Plugin, IDynamicServi
         IDialogService dialogService = getDialogService();
         try {
             Node node = ((JcrNodeModel) getModel()).getNode();
-            // FIXME: repo bug
-/*            HippoSession session = (HippoSession) node.getSession();
-            if (session.pendingChanges(node, "nt:base").hasNext()) { */
-            if(node.getSession().hasPendingChanges()) {
+            HippoSession session = (HippoSession) node.getSession();
+            if (session.pendingChanges(node, "nt:base").hasNext()) {
                 dialogService.show(new OnCloseDialog(dialogService, (JcrNodeModel) getModel(), this));
             } else {
                 deleteEditor();
