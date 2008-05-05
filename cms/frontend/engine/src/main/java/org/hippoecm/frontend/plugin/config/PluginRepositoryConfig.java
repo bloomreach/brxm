@@ -37,15 +37,26 @@ public class PluginRepositoryConfig implements PluginConfig {
     static final Logger log = LoggerFactory.getLogger(PluginRepositoryConfig.class);
 
     private String basePath;
+    
+    public PluginRepositoryConfig(String path) {
+    	if (!path.startsWith("/")) {
+    		path = "/" + path; 
+    	}
+    	this.basePath = path;
+    }
 
-    public PluginRepositoryConfig(String base) {
-        basePath = base;
+    public PluginRepositoryConfig(Node baseNode) {
+        try {
+			basePath = baseNode.getPath();
+		} catch (RepositoryException e) {
+			log.error(e.getMessage());
+		}
     }
 
     public PluginDescriptor getPlugin(String pluginId) {
         PluginDescriptor result = null;
         try {
-            Node pluginNode = getJcrSession().getRootNode().getNode(basePath + "/" + pluginId);
+            Node pluginNode = (Node)getJcrSession().getItem(basePath + "/" + pluginId);
             if (pluginNode != null) {
                 result = nodeToDescriptor(pluginNode);
             } else {
@@ -74,9 +85,6 @@ public class PluginRepositoryConfig implements PluginConfig {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }
 
-    protected String getBasePath() {
-        return basePath;
-    }
 
     protected PluginDescriptor nodeToDescriptor(Node pluginNode) throws RepositoryException {
         String classname = pluginNode.getProperty(HippoNodeType.HIPPO_RENDERER).getString();
