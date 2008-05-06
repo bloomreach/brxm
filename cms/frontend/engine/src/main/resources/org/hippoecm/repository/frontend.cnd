@@ -25,3 +25,5 @@
 + * (hippo:frontendplugin) = hippo:frontendplugin
 
 [hippo:page] > nt:unstructured
+- hippo:style (string)
+

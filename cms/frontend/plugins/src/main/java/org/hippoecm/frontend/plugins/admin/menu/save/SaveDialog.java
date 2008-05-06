@@ -16,9 +16,12 @@
 package org.hippoecm.frontend.plugins.admin.menu.save;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -34,19 +37,27 @@ public class SaveDialog extends AbstractDialog {
         super(dialogWindow);
         dialogWindow.setTitle("Save Session");
 
-        Label label;
+        Component message;
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         try {
-            hasPendingChanges = nodeModel.getNode().getSession().hasPendingChanges();
+        	NodeIterator it = nodeModel.getNode().pendingChanges();
+            hasPendingChanges = it.hasNext();
             if (hasPendingChanges) {
-                label = new Label("message", "There are pending changes");
+            	StringBuffer buf = new StringBuffer("Pending changes:\n");
+            	while (it.hasNext()) {
+            		Node node = it.nextNode();
+            		buf.append(node.getPath()).append("\n");
+            	}
+                message = new MultiLineLabel("message", buf.toString());
             } else {
-                label = new Label("message", "There are no pending changes");
+                message = new Label("message", "There are no pending changes");
+                ok.setVisible(false);
             }
         } catch (RepositoryException e) {
-            label = new Label("message", "exception: " + e.getMessage());
+            message = new Label("message", "exception: " + e.getMessage());
+            ok.setVisible(false);
         }
-        add(label);
+        add(message);
     }
 
     @Override

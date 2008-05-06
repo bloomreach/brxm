@@ -18,6 +18,7 @@ package org.hippoecm.frontend;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -59,7 +60,8 @@ public class Home extends WebPage {
         TypeConfig typeConfig = new MixedTypeConfig(configs);
 
         TemplateConfig templateConfig = new RepositoryTemplateConfig();
-        PluginConfig pluginConfig = new PluginConfigFactory().getPluginConfig();
+        PluginConfigFactory configFactory = new PluginConfigFactory();
+        PluginConfig pluginConfig = configFactory.getPluginConfig();
 
         PluginManager pluginManager = new PluginManager(pluginConfig, typeConfig, templateConfig);
         PluginFactory pluginFactory = new PluginFactory(pluginManager);
@@ -76,6 +78,11 @@ public class Home extends WebPage {
 
         rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
         rootPlugin.setPluginManager(pluginManager);
+
+        String style = configFactory.getStyle();
+        if (style != null) {
+        	add(HeaderContributor.forCss(style));
+        }
 
         add(rootPlugin);
         rootPlugin.addChildren();

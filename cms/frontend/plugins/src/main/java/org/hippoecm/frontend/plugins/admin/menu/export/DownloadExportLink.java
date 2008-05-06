@@ -28,30 +28,20 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.INotificationListener;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DownloadExportLink extends Link implements INotificationListener {
-
+public class DownloadExportLink extends Link {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(DownloadExportLink.class);
 
-    public DownloadExportLink(String id, IModel linktext, JcrNodeModel model, Channel channel) {
-        super(id, model);
-        add(new Label("download-export-label", linktext));
-        if (channel != null) {
-            channel.subscribe(this);
-        }
+    public DownloadExportLink(String id, JcrNodeModel nodeModel) {
+        super(id, nodeModel);
     }
 
     @Override
@@ -61,27 +51,18 @@ public class DownloadExportLink extends Link implements INotificationListener {
         RequestCycle.get().setRequestTarget(rsrt);
     }
 
-    public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            setModel(new JcrNodeModel(notification.getModel()));
-        }
-    }
-
-    public class JcrExportRequestTarget implements IRequestTarget {
-        
+    private class JcrExportRequestTarget implements IRequestTarget {
         private static final long serialVersionUID = 1L;
-        File tempFile;
-        FileInputStream fis;
-        Node node;
+        
+        private File tempFile;
+        private FileInputStream fis;
+        private Node node;
 
-        public JcrExportRequestTarget(Node node) {
+        JcrExportRequestTarget(Node node) {
             this.node = node;
-
         }
 
         /**
-         * Responds by sending the string property.
-         * 
          * @see org.apache.wicket.IRequestTarget#respond(org.apache.wicket.RequestCycle)
          */
         public void respond(RequestCycle requestCycle) {
