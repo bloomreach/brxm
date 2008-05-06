@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service.render;
+package org.hippoecm.frontend.plugin.config;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.service.topic.Message;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ModelMessage extends Message {
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
+
+public class ConfigValue extends ParameterValue {
     private static final long serialVersionUID = 1L;
 
-    private IModel model;
-
-    public ModelMessage(int type, IModel model) {
-        super(type);
-
-        this.model = model;
+    public ConfigValue(String value) {
+        super(getList(value));
     }
 
-    public IModel getModel() {
-        return model;
+    static List<String> getList(String value) {
+        List<String> list = new ArrayList<String>(1);
+        list.add(value);
+        return list;
     }
 }

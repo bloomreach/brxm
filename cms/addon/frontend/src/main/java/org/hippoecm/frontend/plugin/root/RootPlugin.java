@@ -15,16 +15,11 @@
  */
 package org.hippoecm.frontend.plugin.root;
 
-import java.io.Serializable;
-
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
-import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.dialog.DialogService;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.util.ServiceTracker;
 
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -32,23 +27,8 @@ public class RootPlugin extends RenderPlugin {
     private DialogService dialogService;
 
     public RootPlugin() {
-        for (final String extension : new String[] { "browser", "content" }) {
-            addExtensionPoint(extension, new ServiceTracker.IListener() {
-                private static final long serialVersionUID = 1L;
-
-                public void onServiceAdded(String name, Serializable service) {
-                    ((IRenderService) service).bind(RootPlugin.this, extension);
-                    replace((Component) service);
-                }
-
-                public void onServiceChanged(String name, Serializable service) {
-                }
-
-                public void onRemoveService(String name, Serializable service) {
-                    replace(new EmptyPanel(((Component) service).getId()));
-                    ((IRenderService) service).unbind();
-                }
-            });
+        for (String extension : new String[] { "browser", "content" }) {
+            addExtensionPoint(extension);
         }
         dialogService = new DialogService();
         add(new EmptyPanel("dialog"));
@@ -58,7 +38,7 @@ public class RootPlugin extends RenderPlugin {
     public void start(PluginContext context) {
         super.start(context);
 
-        dialogService.init(context, (String) context.getProperties().get(RenderService.DIALOG_ID), "dialog");
+        dialogService.init(context, context.getProperties().get(RenderService.DIALOG_ID).getStrings().get(0), "dialog");
         replace(dialogService);
     }
 

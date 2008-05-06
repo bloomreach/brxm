@@ -22,8 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
-import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.core.ServiceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class PluginManager implements Serializable {
         listeners = new HashMap<String, List<ServiceListener>>();
     }
 
-    public Plugin start(PluginConfig config) {
+    public Plugin start(IPluginConfig config) {
         Plugin plugin = factory.createPlugin(config);
         if (plugin != null) {
             PluginContextImpl context = new PluginContextImpl(this, config);

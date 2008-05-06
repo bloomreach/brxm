@@ -17,12 +17,13 @@ package org.hippoecm.frontend.console;
 
 import java.io.Serializable;
 
-import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.core.ServiceListener;
+import org.hippoecm.frontend.core.impl.PluginConfig;
 import org.hippoecm.frontend.core.impl.PluginManager;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.config.ConfigValue;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +44,11 @@ public class Adapter extends Plugin implements ServiceListener {
         mgr = new PluginManager();
 
         PluginConfig config = new PluginConfig();
-        config.put("root", "root");
+        config.put("root", new ConfigValue("root"));
         mgr.registerListener(this, "root");
 
         config = new PluginConfig();
-        config.put(org.hippoecm.frontend.core.Plugin.CLASSNAME, Application.class.getName());
+        config.put(org.hippoecm.frontend.core.Plugin.CLASSNAME, new ConfigValue(Application.class.getName()));
         application = mgr.start(config);
     }
 

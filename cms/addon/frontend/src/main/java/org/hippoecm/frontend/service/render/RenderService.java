@@ -28,13 +28,14 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.application.PluginRequestTarget;
 import org.hippoecm.frontend.core.PluginContext;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.util.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RenderService extends Panel implements ModelReference.IListener, IRenderService {
+public class RenderService extends Panel implements ModelReference.IView, IRenderService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RenderService.class);
@@ -47,7 +48,7 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
     private String serviceId;
     private String wicketId;
     private PluginContext context;
-    private Map<String, Object> properties;
+    private Map<String, ParameterValue> properties;
     private Map<String, ServiceTracker<IRenderService>> children;
     private ModelReference modelRef;
     private IRenderService parent;
@@ -64,22 +65,30 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
         this.dialogTracker = new ServiceTracker(IDialogService.class);
     }
 
-    protected void init(PluginContext context, String serviceId, Map<String, Object> properties) {
+    protected void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
         this.context = context;
         this.properties = properties;
         this.serviceId = serviceId;
 
-        String modelId = (String) properties.get(MODEL_ID);
-        if (modelId != null) {
-            this.modelRef = new ModelReference(this, modelId);
+        if (properties.get(MODEL_ID) != null) {
+            String modelId = properties.get(MODEL_ID).getStrings().get(0);
+            if (modelId != null) {
+                this.modelRef = new ModelReference(modelId, this);
 
-            modelRef.init(context);
+                modelRef.init(context);
+            }
+        } else {
+            log.warn("No model ({}) defined for service {}", MODEL_ID, serviceId);
         }
 
-        dialogTracker.open(context, (String) properties.get(DIALOG_ID));
+        if (properties.get(DIALOG_ID) != null) {
+            dialogTracker.open(context, properties.get(DIALOG_ID).getStrings().get(0));
+        } else {
+            log.warn("No dialog service ({}) defined for service {}", DIALOG_ID, serviceId);
+        }
 
         for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
-            entry.getValue().open(context, (String) properties.get(entry.getKey()));
+            entry.getValue().open(context, properties.get(entry.getKey()).getStrings().get(0));
         }
         context.registerService(this, serviceId);
     }
@@ -105,6 +114,7 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
     @Override
     public void onModelChanged() {
         super.onModelChanged();
+        redraw();
     }
 
     @Override
@@ -137,6 +147,25 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
         tracker.addListener(listener);
         children.put(name, tracker);
         add(new EmptyPanel(name));
+    }
+
+    protected void addExtensionPoint(final String extension) {
+        addExtensionPoint(extension, new ServiceTracker.IListener() {
+            private static final long serialVersionUID = 1L;
+
+            public void onServiceAdded(String name, Serializable service) {
+                ((IRenderService) service).bind(RenderService.this, extension);
+                replace((Component) service);
+            }
+
+            public void onServiceChanged(String name, Serializable service) {
+            }
+
+            public void onRemoveService(String name, Serializable service) {
+                replace(new EmptyPanel(extension));
+                ((IRenderService) service).unbind();
+            }
+        });
     }
 
     protected void removeExtensionPoint(String name) {
@@ -209,7 +238,12 @@ public class RenderService extends Panel implements ModelReference.IListener, IR
     }
 
     public String getDecoratorId() {
-        return (String) properties.get(DECORATOR_ID);
+        if (properties.get(DECORATOR_ID) != null) {
+            return properties.get(DECORATOR_ID).getStrings().get(0);
+        } else {
+            log.warn("No decorator id ({}) defined for service {}", DECORATOR_ID, serviceId);
+            return null;
+        }
     }
 
 }
