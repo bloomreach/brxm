@@ -41,9 +41,9 @@
   <!-- Example of one HST filter pointing to a preview path in the repository. -->
   <filter>
     <filter-name>previewContext</filter-name>
-    <filter-class>org.hippoecm.hst.URLMappingContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
     <!-- to omit URL mapping functionality use:  
-      <filter-class>org.hippoecm.hst.ContextFilter</filter-class> 
+      <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class> 
     -->
     <init-param>
       <description>
@@ -98,7 +98,7 @@
   <!-- Installation of a servlet serving binaries from repository. -->
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.BinariesServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.core.BinariesServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>

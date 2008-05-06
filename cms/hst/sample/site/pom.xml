@@ -59,6 +59,12 @@
     <!-- hst taglib -->
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-core</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-taglib</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>

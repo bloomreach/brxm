@@ -23,10 +23,20 @@
     </properties>
     <body> 
       <section name="Include the HST in your application">
-        <p>The packaged HST is contained in <code>hippo-ecm-hst-taglib.jar</code>, version 2.01.00
-          at time of writing. When using Maven-2 as project build tool, add the following dependency 
+        <p>The HST is packaged in two jar files, <code>hippo-ecm-hst-core.jar</code> and 
+        <code>hippo-ecm-hst-taglib.jar</code>, both at version 2.01.00
+          at time of writing. The core package must always be included, the taglib 
+          may be omitted if you are not using actual JSP tags in your application. 
+          When using Maven-2 as project build tool, add the following dependencies 
           to you <code>pom.xml</code>.</p>
         <source><![CDATA[<dependency>
+  <groupId>org.hippoecm.hst</groupId>
+  <artifactId>hippo-ecm-hst-core</artifactId>
+  <version>[version]</version>
+  <type>jar</type>
+</dependency>
+
+<dependency>
   <groupId>org.hippoecm.hst</groupId>
   <artifactId>hippo-ecm-hst-taglib</artifactId>
   <version>[version]</version>

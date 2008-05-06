@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst;
+package org.hippoecm.hst.core;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -34,12 +34,12 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoNode;
 
@@ -57,7 +57,7 @@ public class Context extends AbstractMap {
     private List<String> arguments;
     private DocumentPathReplacer pathReplacer;
     
-    Context(final Session jcrSession, final String contextPath, final String urlBasePath, final String baseLocation) {
+    public Context(final Session jcrSession, final String contextPath, final String urlBasePath, final String baseLocation) {
         this.session = jcrSession;
         this.contextPath = contextPath;
         this.urlBasePath = urlBasePath;
@@ -65,15 +65,15 @@ public class Context extends AbstractMap {
         this.relativeLocation = null;
     }
 
+    public Context(Context parent, String relativePath) {
+        this(parent, relativePath, -1);
+    }
+    
     Context(final Session jcrSession, final String contextPath, final String baseLocation) {
         // create with urlBasePath same as baseLocation
         this(jcrSession, contextPath, baseLocation, baseLocation);
     }
 
-    Context(Context parent, String relativePath) {
-        this(parent, relativePath, -1);
-    }
-    
     Context(Context parent, String relativeLocation, int index) {
         this(parent.session, parent.contextPath, parent.urlBasePath, parent.baseLocation); 
         
@@ -94,7 +94,7 @@ public class Context extends AbstractMap {
         this.arguments = arguments;
     }
 
-    String getLocation() {
+    public String getLocation() {
         
         if (relativeLocation == null) {
             return baseLocation;
@@ -115,7 +115,7 @@ public class Context extends AbstractMap {
         return baseLocation;
     }
 
-    void setRelativeLocation(String relativeLocation) {
+    public void setRelativeLocation(String relativeLocation) {
         
         if (relativeLocation.startsWith(baseLocation)) {
             this.relativeLocation = relativeLocation.substring(baseLocation.length());
@@ -124,7 +124,7 @@ public class Context extends AbstractMap {
         }   
     }
 
-    boolean exists() {
+    public boolean exists() {
         try {
             Item item = JCRConnector.getItem(session, getLocation());
             return item != null;

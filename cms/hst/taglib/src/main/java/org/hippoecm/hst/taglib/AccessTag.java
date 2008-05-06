@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst;
+package org.hippoecm.hst.taglib;
 
 import javax.jcr.Session;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.jstl.core.ConditionalTagSupport;
+
+import org.hippoecm.hst.core.Context;
+import org.hippoecm.hst.core.ContextFilter;
+import org.hippoecm.hst.jcr.JCRConnector;
 
 public class AccessTag extends ConditionalTagSupport {
     

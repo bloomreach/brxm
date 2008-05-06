@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo.
+ * Copyright 2007-2008 Hippo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst;
+package org.hippoecm.hst.taglib;
 
 public class Helper {
     /** Concat is a simple helper function, to allow two strings to be

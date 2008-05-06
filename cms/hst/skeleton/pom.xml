@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2007-2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@
   </scm>
 
   <dependencies>
+    <!-- general -->
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
@@ -51,6 +52,7 @@
       <version>2.3</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Hippo Repository -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
@@ -61,6 +63,12 @@
       <artifactId>hippo-ecm-repository-connector</artifactId>
       <version>${ecm.version}</version>
       <scope>runtime</scope>
+    </dependency>
+    <!-- Hippo Site Toolkit -->
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-core</artifactId>
+      <version>${parent.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm.hst</groupId>

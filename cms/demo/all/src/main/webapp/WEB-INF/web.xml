@@ -80,83 +80,55 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
     </init-param>
   </filter>
 
+  <!-- HST -->
   <filter>
     <filter-name>ContextPreview</filter-name>
-    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
     <init-param>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>context</param-value>
-      <!-- description>
-        Bind the context using the attribute name as specified by
-        this parameter in the request scope for JSP/JSF pages.
-        Defaults to context.
-      </description -->
     </init-param>
     <init-param>
-      <param-name>urlbasepath</param-name>
+      <param-name>urlBasePath</param-name>
       <param-value>/preview/site/pages</param-value>
-      <!-- description>
-        Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting
-      </description -->
     </init-param>
   </filter>
 
   <filter>
     <filter-name>ContextLive</filter-name>
-    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
     <init-param>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>context</param-value>
-      <!-- description>
-        Bind the context using the attribute name as specified by
-        this parameter in the request scope for JSP/JSF pages.
-        Defaults to context.
-      </description -->
     </init-param>
     <init-param>
-      <param-name>urlbasepath</param-name>
+      <param-name>urlBasePath</param-name>
       <param-value>/live/site/pages</param-value>
-      <!-- description>
-        Where to find the nodes of type hippo:document
-        that can be accessed using url rewriting
-      </description -->
     </init-param>
   </filter>
 
   <filter>
     <filter-name>GlobalContextPreview</filter-name>
-    <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
+    <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class>
     <init-param>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>global</param-value>
-      <!-- description>
-        Bind an additional context using the attribute name as specified by
-        this parameter in the request scope for JSP/JSF pages.
-      </description -->
     </init-param>
     <init-param>
-      <param-name>location</param-name>
+      <param-name>repositoryBaseLocation</param-name>
       <param-value>/preview</param-value>
-      <!-- description>
-        The path to bind as context.
-      </description -->
     </init-param>
   </filter>
 
   <filter>
     <filter-name>GlobalContextLive</filter-name>
-    <filter-class>org.hippoecm.hst.AdditionalContext</filter-class>
+    <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class>
     <init-param>
-      <param-name>attributename</param-name>
+      <param-name>attributeName</param-name>
       <param-value>global</param-value>
-      <!-- description>
-        Bind an additional context using the attribute name as specified by
-        this parameter in the request scope for JSP/JSF pages.
-      </description -->
     </init-param>
     <init-param>
-      <param-name>location</param-name>
+      <param-name>repositoryBaseLocation</param-name>
       <param-value>/live</param-value>
       <!-- description>
         The path to bind as context.
@@ -209,7 +181,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
 
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.BinariesServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.core.BinariesServlet</servlet-class>
   </servlet>
 
   <servlet>
