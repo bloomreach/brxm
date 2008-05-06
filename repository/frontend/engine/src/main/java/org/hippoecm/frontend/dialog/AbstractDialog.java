@@ -15,14 +15,18 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import static org.hippoecm.frontend.dialog.AbstractDialog.log;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.ComponentReference;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +46,11 @@ public abstract class AbstractDialog extends WebPage {
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
         add(exceptionLabel);
+        
+        String style =  new PluginConfigFactory().getStyle();
+        if (style != null) {
+        	add(HeaderContributor.forCss(style));
+        }
 
         ok = new AjaxLink("ok") {
             private static final long serialVersionUID = 1L;

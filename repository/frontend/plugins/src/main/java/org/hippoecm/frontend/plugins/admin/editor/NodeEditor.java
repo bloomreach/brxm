@@ -17,7 +17,9 @@ package org.hippoecm.frontend.plugins.admin.editor;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.PropertyModel;
@@ -37,6 +39,7 @@ public class NodeEditor extends Form implements INotificationListener {
 
     @SuppressWarnings("unused")
     private String primaryType;
+    private String mixinTypes;
     private PropertiesEditor properties;
     private NodeTypesEditor types;
 
@@ -49,10 +52,18 @@ public class NodeEditor extends Form implements INotificationListener {
         }
         try {
             primaryType = model.getNode().getPrimaryNodeType().getName();
+            NodeType[] nodeTypes = model.getNode().getMixinNodeTypes();
+            mixinTypes = new String();
+            for (NodeType type : nodeTypes) {
+            	mixinTypes += type.getName() + ", ";
+            }
+            mixinTypes = StringUtils.substringBeforeLast(mixinTypes, ",");
             add(new Label("primarytype", new PropertyModel(this, "primaryType")));
+            add(new Label("types", new PropertyModel(this, "mixinTypes")));
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             add(new Label("primarytype", e.getMessage()));
+            add(new Label("types", ""));
         }
 
         properties = new PropertiesEditor("properties", new JcrPropertiesProvider(model));
@@ -93,6 +104,12 @@ public class NodeEditor extends Form implements INotificationListener {
             types.setProvider(new JcrNodeTypesProvider(newModel));
             try {
                 primaryType = newModel.getNode().getPrimaryNodeType().getName();
+                NodeType[] nodeTypes = newModel.getNode().getMixinNodeTypes();
+                mixinTypes = new String();
+                for (NodeType type : nodeTypes) {
+                	mixinTypes += type.getName() + ", ";
+                }
+                mixinTypes = StringUtils.substringBeforeLast(mixinTypes, ",");
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
