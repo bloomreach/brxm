@@ -16,16 +16,12 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +53,7 @@ public class SortableDocumentsProvider extends SortableDataProvider {
 
     private void sortResources() {
         
-        JcrNodeModelComparator<JcrNodeModel> jcrNodeModelComparator = new JcrNodeModelComparator<JcrNodeModel>(getSort().getProperty());
+        JcrNodeModelComparator jcrNodeModelComparator = new JcrNodeModelComparator(getSort().getProperty());
         Collections.sort(resources, jcrNodeModelComparator);       
         if (getSort().isAscending() == false) {
             Collections.reverse(resources);
