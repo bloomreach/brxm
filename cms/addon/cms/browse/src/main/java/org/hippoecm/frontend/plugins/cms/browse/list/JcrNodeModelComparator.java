@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import javax.jcr.Node;
@@ -28,7 +29,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class JcrNodeModelComparator<T extends JcrNodeModel> implements Comparator<T> {
+public class JcrNodeModelComparator implements Comparator<JcrNodeModel>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     String sortby;
 
@@ -36,7 +38,7 @@ public class JcrNodeModelComparator<T extends JcrNodeModel> implements Comparato
         this.sortby = sortby;
     }
 
-    public int compare(T o1, T o2) {
+    public int compare(JcrNodeModel o1, JcrNodeModel o2) {
         try {
             HippoNode n1 = o1.getNode();
             HippoNode n2 = o2.getNode();
