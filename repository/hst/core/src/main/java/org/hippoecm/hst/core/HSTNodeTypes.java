@@ -1,4 +1,4 @@
-package org.hippoecm.hst;
+package org.hippoecm.hst.core;
 
 /**
  * This interface defines the node types and item names that are in use by

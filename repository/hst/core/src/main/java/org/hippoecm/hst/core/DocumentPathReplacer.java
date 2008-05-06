@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst;
+package org.hippoecm.hst.core;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,9 +55,6 @@ public class DocumentPathReplacer  {
                         
             String documentPath = m.group(2);
             String url = urlPathTranslator.documentPathToURL(jcrSession, documentPath);
-System.out.println(" --  documentPath = " + documentPath);//FIXME
-System.out.println(" --  url = " + url);
-System.out.println(" --  replacedURL = " + m.group(1) + url + m.group(3));
             m.appendReplacement(sb, m.group(1) + url + m.group(3));
         }
         

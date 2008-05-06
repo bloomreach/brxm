@@ -21,7 +21,7 @@
  * 
  * @author jhoffman
  */
-package org.hippoecm.hst;
+package org.hippoecm.hst.core;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -44,7 +44,7 @@ public class URLPathTranslator {
     /**
      * Constructor.
      */
-    URLPathTranslator(final String contextPath, final String urlBasePath, final String repositoryBaseLocation) {
+    public URLPathTranslator(final String contextPath, final String urlBasePath, final String repositoryBaseLocation) {
         super();
 
         this.contextPath = contextPath;

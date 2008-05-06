@@ -1,4 +1,4 @@
-package org.hippoecm.hst;
+package org.hippoecm.hst.jcr;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,7 +29,7 @@ public class JCRConnector {
     
     public static final String JCR_SESSION_KEY = "org.hippoecm.hst.JCRSESSION";
 
-    static Session getJCRSession(HttpSession httpSession) {
+    public static Session getJCRSession(HttpSession httpSession) {
         Session result = null;
         try {
             SessionWrapper wrapper = (SessionWrapper) httpSession.getAttribute(JCR_SESSION_KEY);
@@ -52,7 +52,7 @@ public class JCRConnector {
         return result;
     }
     
-    static Item getItem(Session session, String path) throws RepositoryException {
+    public static Item getItem(Session session, String path) throws RepositoryException {
 
         Node node = session.getRootNode();
 

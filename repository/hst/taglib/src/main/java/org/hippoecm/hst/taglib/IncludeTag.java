@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst;
+package org.hippoecm.hst.taglib;
 
 import java.io.IOException;
 
@@ -24,6 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+
+import org.hippoecm.hst.core.Context;
+import org.hippoecm.hst.core.ContextFilter;
+import org.hippoecm.hst.core.URLMappingContextFilter;
+import org.hippoecm.hst.core.URLMappingResponseWrapper;
+import org.hippoecm.hst.core.URLPathTranslator;
 
 public class IncludeTag extends TagSupport {
     private static final long serialVersionUID = 1L;
@@ -61,7 +67,7 @@ public class IncludeTag extends TagSupport {
         try {
             pageContext.getOut().flush();
 
-            Context newContext = new Context(context, page, -1);
+            Context newContext = new Context(context, page);
             request.setAttribute(contextName, newContext);
 
             URLPathTranslator urlPathTranslator = new URLPathTranslator(request.getContextPath(), 

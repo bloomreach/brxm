@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst;
+package org.hippoecm.hst.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +29,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.hippoecm.hst.jcr.JCRConnector;
 
 //import org.slf4j.LoggerFactory;
 //import org.slf4j.Logger;

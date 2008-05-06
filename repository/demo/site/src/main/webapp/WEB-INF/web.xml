@@ -41,7 +41,7 @@
 
   <filter>
     <filter-name>ContextPreview</filter-name>
-    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
     <init-param>
       <description>
         Bind the context using the attribute name as specified by
@@ -62,7 +62,7 @@
 
   <filter>
     <filter-name>ContextLive</filter-name>
-    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
     <init-param>
       <description>
         Bind the context using the attribute name as specified by
@@ -83,7 +83,7 @@
 
   <filter>
     <filter-name>GlobalContextPreview</filter-name>
-    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class>
     <init-param>
       <description>
         Bind an additional context using the attribute name as specified by
@@ -93,17 +93,14 @@
       <param-value>global</param-value>
     </init-param>
     <init-param>
-      <description>
-        The repository path to bind as context.
-      </description>      
-      <param-name>basePath</param-name>
+      <param-name>repositoryBaseLocation</param-name>
       <param-value>/preview</param-value>
     </init-param>
   </filter>
 
   <filter>
     <filter-name>GlobalContextLive</filter-name>
-    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class>
     <init-param>
       <description>
         Bind an additional context using the attribute name as specified by
@@ -113,10 +110,7 @@
       <param-value>global</param-value>
     </init-param>
     <init-param>
-      <description>
-        The repository path to bind as context.
-      </description>      
-      <param-name>basePath</param-name>
+      <param-name>repositoryBaseLocation</param-name>
       <param-value>/live</param-value>
     </init-param>
   </filter>

@@ -17,7 +17,7 @@
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
   <!-- General configuration -->
-  <display-name>sample website</display-name>
+  <display-name>Sample website with HST</display-name>
   <description>Hippo ECM Sample site</description>
 
   
@@ -41,7 +41,7 @@
   
   <filter>
     <filter-name>defaultContext</filter-name>
-    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class>
     <init-param>
       <description>
         Bind the context using the attribute name as specified by
@@ -62,7 +62,7 @@
 
   <filter>
     <filter-name>context</filter-name>
-    <filter-class>org.hippoecm.hst.URLMappingContextFilter</filter-class>
+    <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
     <init-param>
       <description>
         Bind the context using the attribute name as specified by
@@ -89,28 +89,6 @@
     </init-param>
   </filter>
   
-  <!--
-  <filter>
-    <filter-name>GlobalContext</filter-name>
-    <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
-    <init-param>
-      <description>
-        Bind an additional context using the attribute name as specified by
-        this parameter in the request scope for JSP/JSF pages.
-      </description>
-      <param-name>attributeName</param-name>
-      <param-value>global</param-value>
-    </init-param>
-    <init-param>
-      <description>
-        The path to bind as context.
-      </description>      
-      <param-name>urlBasePath</param-name>
-      <param-value>/hst-sample/global</param-value>
-    </init-param>
-  </filter>
--->
-
   <filter-mapping>
     <filter-name>defaultContext</filter-name>
     <url-pattern>/*</url-pattern>
@@ -123,17 +101,9 @@
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
   
-  <!--
-  <filter-mapping>
-    <filter-name>GlobalContext</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>INCLUDE</dispatcher>
-  </filter-mapping>
--->
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.BinariesServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.core.BinariesServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
