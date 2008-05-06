@@ -165,6 +165,9 @@ public class Application extends WicketTester.DummyWebApplication {
 
             value.getString();
             valueControl.setReturnValue("testvalue", MockControl.ONE_OR_MORE);
+            
+            node.hasProperty("jcr:mixinTypes");
+            nodeControl.setReturnValue(true, MockControl.ONE_OR_MORE);
 
             // set up the node types editor
             node.getMixinNodeTypes();

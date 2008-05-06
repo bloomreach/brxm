@@ -46,8 +46,6 @@ public class EditorPluginTest extends TestCase {
         tester.assertComponent("editorPlugin", EditorPlugin.class);
         tester.assertComponent("editorPlugin:editor", NodeEditor.class);
         tester.assertComponent("editorPlugin:editor:properties", PropertiesEditor.class);
-        tester.assertComponent("editorPlugin:editor:properties:1:values", PropertyValueEditor.class);
-        tester.assertComponent("editorPlugin:editor:properties:1:values:1:value", TextFieldWidget.class);
 
         tester.assertComponent("editorPlugin:editor:mixintypes", NodeTypesEditor.class);
         tester.assertComponent("editorPlugin:editor:mixintypes:type:0:check", Check.class);
