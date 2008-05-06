@@ -21,6 +21,7 @@ public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int type;
+    private TopicService source;
 
     public Message(int type) {
         this.type = type;
@@ -28,5 +29,13 @@ public class Message implements Serializable {
 
     public int getType() {
         return type;
+    }
+
+    public void setSource(TopicService source) {
+        this.source = source;
+    }
+
+    public TopicService getSource() {
+        return source;
     }
 }

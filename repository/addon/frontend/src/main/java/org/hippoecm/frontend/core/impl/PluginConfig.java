@@ -13,27 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.core;
+package org.hippoecm.frontend.core.impl;
 
 import java.util.Hashtable;
 
+import org.hippoecm.frontend.core.IPluginConfig;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginConfig extends Hashtable<String, Object> {
+public class PluginConfig extends Hashtable<String, ParameterValue> implements IPluginConfig {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginConfig.class);
-    
-    private Hashtable<Object, String> reverse;
+
+    private Hashtable<ParameterValue, String> reverse;
 
     public PluginConfig() {
-        reverse = new Hashtable<Object, String>();
+        reverse = new Hashtable<ParameterValue, String>();
+    }
+
+    public ParameterValue get(String key) {
+        return super.get(key);
     }
 
     @Override
-    public Object put(String key, Object value) {
-        Object old = super.put(key, value);
+    public ParameterValue put(String key, ParameterValue value) {
+        ParameterValue old = super.put(key, value);
         if (old != null) {
             reverse.put(old, null);
         }
@@ -43,7 +49,7 @@ public class PluginConfig extends Hashtable<String, Object> {
         return old;
     }
 
-    public Object resolve(String name) {
+    public String resolve(String name) {
         if (name != null) {
             if (reverse.containsKey(name)) {
                 return reverse.get(name);

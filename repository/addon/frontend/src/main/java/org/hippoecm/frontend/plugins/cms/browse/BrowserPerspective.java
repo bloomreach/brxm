@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugin.render;
+package org.hippoecm.frontend.plugins.cms.browse;
 
-import org.hippoecm.frontend.core.Plugin;
-import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.plugin.render.RenderPlugin;
+import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class RenderPlugin extends RenderService implements Plugin {
+public class BrowserPerspective extends RenderPlugin implements ITitleDecorator {
     private static final long serialVersionUID = 1L;
 
-    public void start(PluginContext context) {
-        init(context, context.getProperties().get(Plugin.SERVICE_ID).getStrings().get(0), context.getProperties());
+    public BrowserPerspective() {
+        addExtensionPoint("browserBreadcrumbPlugin");
+        addExtensionPoint("browserPlugin");
+        addExtensionPoint("listPlugin");
+        addExtensionPoint("workflowsPlugin");
     }
 
-    public void stop() {
-        destroy();
+    public String getTitle() {
+        return "browse";
     }
-
 }

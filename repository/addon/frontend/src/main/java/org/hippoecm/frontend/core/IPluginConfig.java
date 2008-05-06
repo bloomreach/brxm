@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugin.render;
+package org.hippoecm.frontend.core;
 
-import org.hippoecm.frontend.core.Plugin;
-import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.service.render.RenderService;
+import java.util.Map;
 
-public class RenderPlugin extends RenderService implements Plugin {
-    private static final long serialVersionUID = 1L;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 
-    public void start(PluginContext context) {
-        init(context, context.getProperties().get(Plugin.SERVICE_ID).getStrings().get(0), context.getProperties());
-    }
-
-    public void stop() {
-        destroy();
-    }
-
+public interface IPluginConfig extends Map<String, ParameterValue> {
+    
+    public ParameterValue get(String key);
+    
+    public ParameterValue put(String key, ParameterValue value);
 }

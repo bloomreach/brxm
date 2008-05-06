@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hippoecm.frontend.core.Plugin;
-import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
+import org.hippoecm.frontend.core.impl.PluginConfig;
 
 public class Application implements Plugin, Serializable {
     private static final long serialVersionUID = 1L;

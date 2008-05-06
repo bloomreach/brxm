@@ -21,12 +21,13 @@ import java.util.Map;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.core.Plugin;
-import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
+import org.hippoecm.frontend.core.impl.PluginConfig;
+import org.hippoecm.frontend.plugin.config.ConfigValue;
+import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
-import org.hippoecm.frontend.service.render.ModelMessage;
 import org.hippoecm.frontend.service.render.ModelReference;
 import org.hippoecm.frontend.service.topic.Message;
 import org.hippoecm.frontend.service.topic.MessageListener;
@@ -42,7 +43,7 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
     public static final String EDITOR_ID = "editor";
 
     private PluginContext context;
-    private Map<String, Object> properties;
+    private Map<String, ParameterValue> properties;
     private String factoryId;
     private Map<IModel, EditorPlugin> editors;
     private TopicService topic;
@@ -57,11 +58,11 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
         this.context = context;
         properties = context.getProperties();
 
-        topic = new TopicService((String) properties.get("editor.model"));
+        topic = new TopicService(properties.get("editor.model").getStrings().get(0));
         topic.addListener(this);
         topic.init(context);
 
-        factoryId = (String) properties.get(Plugin.FACTORY_ID);
+        factoryId = properties.get(Plugin.FACTORY_ID).getStrings().get(0);
         if (factoryId != null) {
             context.registerService(this, factoryId);
         }
@@ -86,14 +87,15 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
             config.put(Plugin.SERVICE_ID, properties.get(Plugin.SERVICE_ID));
             config.put(RenderPlugin.DIALOG_ID, properties.get(RenderPlugin.DIALOG_ID));
 
-            config.put(Plugin.FACTORY_ID, factoryId);
-            config.put(Plugin.CLASSNAME, EditorPlugin.class.getName());
+            config.put(Plugin.FACTORY_ID, new ConfigValue(factoryId));
+            config.put(Plugin.CLASSNAME, new ConfigValue(EditorPlugin.class.getName()));
 
-            String modelId = (String) properties.get(EDITOR_ID) + editCount + ".model";
-            config.put(RenderPlugin.MODEL_ID, modelId);
+            String editorId = properties.get(EDITOR_ID).getStrings().get(0);
+            String modelId = editorId + editCount + ".model";
+            config.put(RenderPlugin.MODEL_ID, new ConfigValue(modelId));
 
-            String decoratorId = (String) properties.get(EDITOR_ID) + editCount + ".decorator";
-            config.put(RenderPlugin.DECORATOR_ID, decoratorId);
+            String decoratorId = editorId + editCount + ".decorator";
+            config.put(RenderPlugin.DECORATOR_ID, new ConfigValue(decoratorId));
 
             plugin = (EditorPlugin) context.start(config);
             plugin.edit(model);
@@ -110,7 +112,7 @@ public class MultiEditorPlugin implements Plugin, IEditService, IFactoryService,
     public void onMessage(Message message) {
         switch (message.getType()) {
         case ModelReference.SET_MODEL:
-            edit(((ModelMessage) message).getModel());
+            edit(((ModelReference.ModelMessage) message).getModel());
             break;
         }
     }

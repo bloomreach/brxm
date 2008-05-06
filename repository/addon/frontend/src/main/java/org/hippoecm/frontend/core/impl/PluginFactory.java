@@ -19,8 +19,8 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 
 import org.apache.wicket.Session;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
-import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +33,8 @@ public class PluginFactory implements Serializable {
     public PluginFactory() {
     }
 
-    public Plugin createPlugin(PluginConfig config) {
-        String className = (String) config.get(Plugin.CLASSNAME);
+    public Plugin createPlugin(IPluginConfig config) {
+        String className = config.get(Plugin.CLASSNAME).getStrings().get(0);
         if (className != null) {
             try {
                 ClassLoader loader = ((UserSession) Session.get()).getClassLoader();

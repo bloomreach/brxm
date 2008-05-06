@@ -17,45 +17,44 @@ package org.hippoecm.frontend.service.render;
 
 import java.io.Serializable;
 
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.service.topic.Message;
 import org.hippoecm.frontend.service.topic.MessageListener;
 import org.hippoecm.frontend.service.topic.TopicService;
 
-public class ModelReference implements Serializable, MessageListener {
+public class ProviderReference implements Serializable, MessageListener {
     private static final long serialVersionUID = 1L;
 
-    public static final int GET_MODEL = 1;
-    public static final int SET_MODEL = 2;
+    public static final int SET_PROVIDER = 1;
+    public static final int GET_PROVIDER = 2;
 
     public interface IView {
 
-        IModel getModel();
+        public IDataProvider getDataProvider();
 
-        void updateModel(IModel model);
+        void updateDataProvider(IDataProvider provider);
     }
 
-    public static class ModelMessage extends Message {
+    public static class ProviderMessage extends Message {
         private static final long serialVersionUID = 1L;
 
-        private IModel model;
+        private IDataProvider provider;
 
-        public ModelMessage(int type, IModel model) {
+        public ProviderMessage(int type, IDataProvider provider) {
             super(type);
-
-            this.model = model;
+            this.provider = provider;
         }
 
-        public IModel getModel() {
-            return model;
+        public IDataProvider getProvider() {
+            return provider;
         }
     }
 
     private TopicService topic;
     private IView view;
 
-    public ModelReference(String serviceId, IView view) {
+    public ProviderReference(String serviceId, IView view) {
         this.view = view;
 
         this.topic = new TopicService(serviceId);
@@ -64,45 +63,34 @@ public class ModelReference implements Serializable, MessageListener {
 
     public void init(PluginContext context) {
         topic.init(context);
-        ModelMessage message = new ModelMessage(GET_MODEL, null);
-        message.setSource(topic);
-        topic.publish(message);
+        topic.publish(new ProviderMessage(GET_PROVIDER, null));
     }
 
     public void destroy() {
         topic.destroy();
     }
 
-    public IModel getModel() {
-        return view.getModel();
+    public void setDataProvider(IDataProvider provider) {
+        topic.publish(new ProviderMessage(SET_PROVIDER, provider));
     }
-
-    public void setModel(IModel model) {
-        topic.publish(new ModelMessage(SET_MODEL, model));
-    }
-
+    
     public void onMessage(Message message) {
-        if (message instanceof ModelMessage) {
+        if (message instanceof ProviderMessage) {
             switch (message.getType()) {
-            case GET_MODEL:
-                TopicService source = ((ModelMessage) message).getSource();
-                if (source != null) {
-                    source.onPublish(new ModelMessage(SET_MODEL, view.getModel()));
-                } else {
-                    topic.publish(new ModelMessage(SET_MODEL, view.getModel()));
-                }
+            case GET_PROVIDER:
+                topic.publish(new ProviderMessage(SET_PROVIDER, view.getDataProvider()));
                 break;
 
-            case SET_MODEL:
-                IModel newModel = ((ModelMessage) message).getModel();
-                IModel oldModel = view.getModel();
-                if (newModel == null) {
-                    if (oldModel != null) {
-                        view.updateModel(newModel);
+            case SET_PROVIDER:
+                IDataProvider newProvider = ((ProviderMessage) message).getProvider();
+                IDataProvider oldProvider = view.getDataProvider();
+                if (newProvider == null) {
+                    if (oldProvider != null) {
+                        view.updateDataProvider(newProvider);
                     }
                 } else {
-                    if (!newModel.equals(oldModel)) {
-                        view.updateModel(newModel);
+                    if (!newProvider.equals(oldProvider)) {
+                        view.updateDataProvider(newProvider);
                     }
                 }
                 break;

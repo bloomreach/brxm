@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugin.render;
+package org.hippoecm.frontend.plugins.cms.browse.list;
 
-import org.hippoecm.frontend.core.Plugin;
-import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.service.render.RenderService;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.NodeCell;
 
-public class RenderPlugin extends RenderService implements Plugin {
+public class DocumentListingNodeCell extends NodeCell {
     private static final long serialVersionUID = 1L;
 
-    public void start(PluginContext context) {
-        init(context, context.getProperties().get(Plugin.SERVICE_ID).getStrings().get(0), context.getProperties());
+    private DocumentListingPlugin plugin;
+
+    public DocumentListingNodeCell(String id, JcrNodeModel model, String nodePropertyName, DocumentListingPlugin plugin) {
+        super(id, model, nodePropertyName);
+        this.plugin = plugin;
     }
 
-    public void stop() {
-        destroy();
+    @Override
+    protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
+        plugin.onSelect(model, target);
     }
-
 }

@@ -16,29 +16,28 @@
 package org.hippoecm.frontend.core.impl;
 
 import java.io.Serializable;
-import java.util.Map;
 
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
-import org.hippoecm.frontend.core.PluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.core.ServiceListener;
 
 public class PluginContextImpl implements PluginContext, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Map<String, Object> properties;
+    private IPluginConfig properties;
     private PluginManager manager;
 
-    public PluginContextImpl(PluginManager manager, PluginConfig config) {
+    public PluginContextImpl(PluginManager manager, IPluginConfig config) {
         this.manager = manager;
         this.properties = config;
     }
 
-    public Map<String, Object> getProperties() {
+    public IPluginConfig getProperties() {
         return properties;
     }
     
-    public Plugin start(PluginConfig config) {
+    public Plugin start(IPluginConfig config) {
         return manager.start(config);
     }
 

@@ -17,11 +17,11 @@ package org.hippoecm.frontend.plugin.editor;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
@@ -49,9 +49,9 @@ public class EditorPlugin extends EditorService implements Plugin, IDynamicServi
     }
 
     public void start(PluginContext context) {
-        Map<String, Object> properties = context.getProperties();
-        factory.open(context, (String) properties.get(Plugin.FACTORY_ID));
-        init(context, (String) properties.get(Plugin.SERVICE_ID), properties);
+        IPluginConfig properties = context.getProperties();
+        factory.open(context, properties.get(Plugin.FACTORY_ID).getStrings().get(0));
+        init(context, properties.get(Plugin.SERVICE_ID).getStrings().get(0), properties);
 
         String decoratorId = getDecoratorId();
         if (decoratorId != null) {
