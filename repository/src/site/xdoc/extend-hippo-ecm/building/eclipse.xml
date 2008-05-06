@@ -51,6 +51,17 @@
                         <p>URL='http://www.polarion.org/projects/subversive/download/1.1/update-site/'</p>
                     </li>
                 </ol>
+                <p>
+                    In the 'Select features to install' step ONLY select the following two features:
+                </p>                                    
+                <ol>
+                    <li>
+                        Subversive SVN Team Provider Plugin -> SVN Team Provider &lt;version number&gt;
+                    </li>
+                    <li>
+                        Subversive Client Libraries -> SVNKit &lt;version number&gt; Implementation
+                    </li>
+                </ol>
                 <p>In the eclipse preferences dialog:</p>
                 <ol>
                     <li>
