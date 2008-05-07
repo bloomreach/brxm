@@ -32,13 +32,13 @@
   <groupId>org.hippoecm.hst</groupId>
   <artifactId>hippo-ecm-hst-core</artifactId>
   <packaging>jar</packaging>
-<!--
+
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/core</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/core</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/hst/core</url>
   </scm>
--->
+
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
