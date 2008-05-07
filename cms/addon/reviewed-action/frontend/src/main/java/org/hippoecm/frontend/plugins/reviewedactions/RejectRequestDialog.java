@@ -35,6 +35,7 @@ public class RejectRequestDialog extends AbstractWorkflowDialog {
     protected void execute() throws Exception {
         FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow();
         if (workflow != null) {
+            reason = reason == null ? "" : reason;
             workflow.rejectRequest(reason);
         }
               

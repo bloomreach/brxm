@@ -21,18 +21,17 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
-public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
+public class BasicRequestWorkflowPlugin extends AbstractRequestWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
     public BasicRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
-
-        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowAction() {
+        
+        addWorkflowAction("cancelRequest-dialog", "Cancel request", visible, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
             public Request execute(Channel channel, Workflow wf) throws Exception {
                 BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
