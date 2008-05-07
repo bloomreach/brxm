@@ -90,7 +90,7 @@
           <sv:value>sql</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:statement" sv:type="String">
-          <sv:value>SELECT * FROM hippo:request</sv:value>
+          <sv:value>SELECT * FROM hippo:request WHERE type &lt;&gt; 'rejected'</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hippo:frontendplugin">
