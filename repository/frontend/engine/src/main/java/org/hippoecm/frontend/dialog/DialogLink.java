@@ -20,55 +20,48 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
 
-    public DialogLink(String id, IModel linktext, Class clazz, IPluginModel model, Channel channel,
-            ChannelFactory factory) {
+    
+    public DialogLink(String id, IModel linktext, Class clazz, IPluginModel model, Channel channel, ChannelFactory factory) {
         super(id, model);
-
         Channel proxy = factory.createChannel();
-        final DialogWindow dialogWindow = new DialogWindow("dialog", model, channel, proxy);
+        DialogWindow dialogWindow = new DialogWindow("dialog", model, channel, proxy);
         dialogWindow.setPageCreator(new DynamicDialogFactory(dialogWindow, clazz));
-        panelAdders(linktext, dialogWindow);
+        add(linktext, dialogWindow);
     }
-
-    public DialogLink(String id, IModel linktext, IDialogFactory dialogFactory, IPluginModel model, Channel channel,
-            ChannelFactory factory) {
+    
+     
+    public DialogLink(String id, IModel linktext, IDialogFactory dialogFactory, IPluginModel model, Channel channel, ChannelFactory channelFactory) {
         super(id, model);
-
-        Channel proxy = factory.createChannel();
-        final DialogWindow dialogWindow = new DialogWindow("dialog", model, channel, proxy);
+        Channel proxy = channelFactory.createChannel();
+        DialogWindow dialogWindow = new DialogWindow("dialog", model, channel, proxy);
         dialogWindow.setPageCreator(new DynamicDialogFactory(dialogWindow, dialogFactory));
-        panelAdders(linktext, dialogWindow);
+        add(linktext, dialogWindow);        
     }
-
+    
+    
     public DialogLink(String id, IModel linktext, DialogWindow window, IModel model) {
         super(id, model);
-
-        panelAdders(linktext, window);
+        add(linktext, window);
     }
 
-    private void panelAdders(IModel linktext, final DialogWindow dialogWindow) {
-        add(dialogWindow);
 
+    private void add(IModel linktext, final DialogWindow dialogWindow) {
+        add(dialogWindow);
         AjaxLink link = new AjaxLink("dialog-link") {
             private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 dialogWindow.show(target);
             }
         };
         add(link);
-
         link.add(new Label("dialog-link-text", linktext));
     }
 

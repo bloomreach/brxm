@@ -27,7 +27,7 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -45,7 +45,7 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin {
             Plugin parentPlugin) {
         super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
 
-        addWorkflowAction("save", "Save", true, new WorkflowDialogAction() {
+        addWorkflowAction("save", "Save", true, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public Request execute(Channel channel, Workflow wf) throws Exception {

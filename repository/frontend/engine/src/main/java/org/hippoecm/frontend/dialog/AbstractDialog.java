@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import static org.hippoecm.frontend.dialog.AbstractDialog.log;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.HeaderContributor;

@@ -15,52 +15,52 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.apache.wicket.model.Model;
-
-import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.ChannelFactory;
-import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
-
-import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
-
+import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
 public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
     public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, (WorkflowsModel)model, parentPlugin);
+        super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
 
-        addWorkflowAction("acceptRequest-dialog", "Approve and execute request", new WorkflowDialogAction() {
-                public Request execute(Channel channel, Workflow wf) throws Exception {
-                    FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
-                    workflow.acceptRequest();
-                    return null;
-                }
-            });
-        addWorkflowAction("rejectRequest-dialog", "Reject request (with reason)", "Reject request (with reason)", new WorkflowDialogAction() {
-                public Request execute(Channel channel, Workflow wf) throws Exception {
-                    FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
-                    workflow.rejectRequest(""); // FIXME
-                    return null;
-                }
-            });
-        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowDialogAction() {
-                public Request execute(Channel channel, Workflow wf) throws Exception {
-                    FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
-                    workflow.cancelRequest();
-                    return null;
-                }
-            });
+        WorkflowAction acceptRequestAction = new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+            public Request execute(Channel channel, Workflow wf) throws Exception {
+                FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
+                workflow.acceptRequest();
+                return null;
+            }
+        }; 
+        addWorkflowAction("acceptRequest-dialog", "Approve and execute request", acceptRequestAction);
+
+        IDialogFactory rejectRequestDialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+            public AbstractDialog createDialog(DialogWindow dialogWindow) {
+                return new RejectRequestDialog(dialogWindow);
+            }
+        };
+        addWorkflowDialog("rejectRequest-dialog", "Reject request (with reason)", rejectRequestDialogFactory);
+        
+        WorkflowAction cancelRequestAction = new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+            public Request execute(Channel channel, Workflow wf) throws Exception {
+                FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
+                workflow.cancelRequest();
+                return null;
+            }
+        };
+        addWorkflowAction("cancelRequest-dialog", "Cancel request", cancelRequestAction);
     }
 }

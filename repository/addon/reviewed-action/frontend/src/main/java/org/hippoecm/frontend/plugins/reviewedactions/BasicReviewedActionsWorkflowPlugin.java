@@ -17,79 +17,76 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.rmi.RemoteException;
 
-import org.apache.wicket.Session;
-import org.apache.wicket.model.Model;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.DialogLink;
-import org.hippoecm.frontend.dialog.DialogWindow;
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.session.UserSession;
-
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    public BasicReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, (WorkflowsModel)model, parentPlugin);
+    public BasicReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final IPluginModel model,
+            Plugin parentPlugin) {
+        super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
 
-        addWorkflowAction("edit-dialog", "Edit document", new WorkflowDialogAction() {
-                public Request execute(Channel channel, Workflow wf) throws Exception {
-                    BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
-                    Document docRef = workflow.obtainEditableInstance();
-                    Node docNode = ((UserSession)getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                    if (channel != null) {
-                        Request request = channel.createRequest("edit", new JcrNodeModel(docNode));
-                        return request;
-                    } else {
-                        return null;
-                    }
-                }
-            });
-        addWorkflowAction("requestPublication-dialog", "Request publication", new WorkflowDialogAction() {
-                public Request execute(Channel channel, Workflow wf) throws Exception {
-                    BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
-                    workflow.requestPublication();
+        addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+            public Request execute(Channel channel, Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                Document docRef = workflow.obtainEditableInstance();
+                Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
+                if (channel != null) {
+                    Request request = channel.createRequest("edit", new JcrNodeModel(docNode));
+                    return request;
+                } else {
                     return null;
                 }
-            });
-        addWorkflowAction("requestDePublication-dialog", "Request unpublication", new WorkflowDialogAction() {
-                public Request execute(Channel channel, Workflow wf) throws Exception {
-                    BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
-                    workflow.requestDepublication();
-                    return null;
-                }
-            });
-        addWorkflowAction("requestDeletion-dialog", "Request delete", new WorkflowDialogAction() {
-                public Request execute(Channel channel, Workflow wf) throws Exception {
-                    BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
-                    workflow.requestDeletion();
-                    return null;
-                }
-            });
+            }
+        });
+        
+        addWorkflowAction("requestPublication-dialog", "Request publication", new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+            public Request execute(Channel channel, Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                workflow.requestPublication();
+                return null;
+            }
+        });
+        
+        addWorkflowAction("requestDePublication-dialog", "Request unpublication", new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+            public Request execute(Channel channel, Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                workflow.requestDepublication();
+                return null;
+            }
+        });
+        
+        addWorkflowAction("requestDeletion-dialog", "Request delete", new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+            public Request execute(Channel channel, Workflow wf) throws Exception {
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+                workflow.requestDeletion();
+                return null;
+            }
+        });
     }
 
     @Override
@@ -98,7 +95,8 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             try {
                 WorkflowsModel workflowModel = (WorkflowsModel) getPluginModel();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(workflowModel.getWorkflowDescriptor());
+                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) manager
+                        .getWorkflow(workflowModel.getWorkflowDescriptor());
                 workflow.commitEditableInstance();
             } catch (RemoteException e) {
                 log.error(e.getMessage());

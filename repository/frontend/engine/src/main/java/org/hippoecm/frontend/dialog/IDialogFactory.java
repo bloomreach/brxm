@@ -15,15 +15,8 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.ChannelFactory;
+import org.apache.wicket.IClusterable;
 
-public interface IDialogFactory extends java.io.Serializable {
+public interface IDialogFactory extends IClusterable {
     public AbstractDialog createDialog(DialogWindow dialogWindow);
 }

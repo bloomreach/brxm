@@ -15,14 +15,11 @@
  */
 package org.hippoecm.frontend.plugin.workflow;
 
-import java.io.Serializable;
-
-import org.hippoecm.repository.api.Workflow;
-
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.repository.api.Workflow;
 
-public interface WorkflowDialogAction extends Serializable
-{
+public interface WorkflowAction extends IClusterable {
     public Request execute(Channel channel, Workflow workflow) throws Exception;
 }
