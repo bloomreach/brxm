@@ -18,8 +18,6 @@ package org.hippoecm.frontend.dialog;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.model.IModel;
-
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
@@ -30,21 +28,10 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A dialog operating in a workflow context. Each workflow action should
- * extend this class and implement the doOk() method.
- *
- */
-/* FIXME: this class should be an inner class of
- * org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin as their
- * implementations are dependent.
- */
 public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     static protected Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
@@ -52,7 +39,6 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     public AbstractWorkflowDialog(DialogWindow dialogWindow, String title) {
         super(dialogWindow);
         dialogWindow.setTitle(title);
-        IModel model = dialogWindow.getModel();
         if (dialogWindow.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
@@ -62,7 +48,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         Plugin owningPlugin = getPlugin();
         Workflow workflow = null;
         IPluginModel model = owningPlugin.getPluginModel();
-        if(model instanceof WorkflowsModel) {
+        if (model instanceof WorkflowsModel) {
             try {
                 WorkflowsModel workflowModel = (WorkflowsModel) owningPlugin.getPluginModel();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
@@ -89,21 +75,19 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         return workflow;
     }
 
+    
     @Override
     protected void ok() throws Exception {
-        // before saving (which possibly means deleting), find the handle
         JcrNodeModel handle = getDialogWindow().getNodeModel();
         while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
             handle = handle.getParentModel();
         }
-
-        // save the handle so that the workflow uses the correct content
         handle.getNode().save();
-        execute();
-
         ((UserSession) Session.get()).getJcrSession().refresh(true);
-
-        // enqueue a request to select the handle
+        
+        execute();
+        ((UserSession) Session.get()).getJcrSession().refresh(true);
+         
         Channel channel = getChannel();
         if (channel != null) {
             Request request = channel.createRequest("select", (IPluginModel) getDialogWindow().getModel());

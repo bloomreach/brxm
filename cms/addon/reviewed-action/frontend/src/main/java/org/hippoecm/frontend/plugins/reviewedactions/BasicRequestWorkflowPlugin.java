@@ -15,38 +15,30 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.apache.wicket.model.Model;
-
-import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugin.channel.ChannelFactory;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
-
-import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
-
+import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
 public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
     public BasicRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, (WorkflowsModel)model, parentPlugin);
+        super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
 
-        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowDialogAction() {
-                public Request execute(Channel channel, Workflow wf) throws Exception {
-                    BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
-                    workflow.cancelRequest();
-                    return null;
-                }
-            });
+        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+            public Request execute(Channel channel, Workflow wf) throws Exception {
+                BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
+                workflow.cancelRequest();
+                return null;
+            }
+        });
     }
 }

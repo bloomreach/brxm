@@ -19,13 +19,8 @@ import java.lang.reflect.Constructor;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
-
 import org.hippoecm.frontend.dialog.error.ErrorDialog;
-import org.hippoecm.frontend.dialog.IDialogFactory;
 
-/**
- * Class for on-the-fly dialog creation based on a dynamic dialogClass attribute.
- */
 public class DynamicDialogFactory implements PageCreator {
     private static final long serialVersionUID = 1L;
 
@@ -36,23 +31,18 @@ public class DynamicDialogFactory implements PageCreator {
     public DynamicDialogFactory(DialogWindow window, Class dialogClass) {
         this.window = window;
         this.dialogClass = dialogClass;
-        this.dialogFactory = null;
     }
 
-    public DynamicDialogFactory(DialogWindow window, IDialogFactory factory) {
+    public DynamicDialogFactory(DialogWindow window, IDialogFactory dialogFactory) {
         this.window = window;
-        this.dialogClass = null;
-        this.dialogFactory = factory;
+        this.dialogFactory = dialogFactory;
     }
 
     public Page createPage() {
-        Page result = null;
+        AbstractDialog result = null;
         if (dialogFactory != null) {
             result = dialogFactory.createDialog(window);
-        } else if (dialogClass == null) {
-            String msg = "No dialog renderer specified";
-            result = new ErrorDialog(window, msg);
-        } else {
+        } else if (dialogClass != null) {
             try {
                 Class[] formalArgs = new Class[] { DialogWindow.class };
                 Constructor constructor = dialogClass.getConstructor(formalArgs);
@@ -62,12 +52,11 @@ public class DynamicDialogFactory implements PageCreator {
                 String msg = e.getClass().getName() + ": " + e.getMessage();
                 result = new ErrorDialog(window, msg);
             }
-        }
+        } else {
+            String msg = "No dialog renderer specified";
+            result = new ErrorDialog(window, msg);
+        }        
         return result;
     }
-
-    public void setDialogClass(Class dialogClass) {
-        this.dialogClass = dialogClass;
-    }
-
+    
 }

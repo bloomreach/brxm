@@ -30,16 +30,13 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
-import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 import org.slf4j.Logger;
@@ -53,7 +50,7 @@ public class ConversionWorkflowPlugin extends AbstractWorkflowPlugin {
     public ConversionWorkflowPlugin(PluginDescriptor pluginDescriptor, final IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
 
-        addWorkflowAction("convert", "Convert to new model", true, new WorkflowDialogAction() {
+        addWorkflowAction("convert", "Convert to new model", true, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public Request execute(Channel channel, Workflow wf) throws Exception {
