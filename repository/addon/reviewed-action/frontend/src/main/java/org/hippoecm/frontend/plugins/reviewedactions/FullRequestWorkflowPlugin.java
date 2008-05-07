@@ -24,17 +24,16 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
-public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
+public class FullRequestWorkflowPlugin extends AbstractRequestWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
     public FullRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
-
+        
         WorkflowAction acceptRequestAction = new WorkflowAction() {
             private static final long serialVersionUID = 1L;
             public Request execute(Channel channel, Workflow wf) throws Exception {
@@ -43,7 +42,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                 return null;
             }
         }; 
-        addWorkflowAction("acceptRequest-dialog", "Approve and execute request", acceptRequestAction);
+        addWorkflowAction("acceptRequest-dialog", "Approve and execute request", visible, acceptRequestAction);
 
         IDialogFactory rejectRequestDialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -51,7 +50,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                 return new RejectRequestDialog(dialogWindow);
             }
         };
-        addWorkflowDialog("rejectRequest-dialog", "Reject request (with reason)", rejectRequestDialogFactory);
+        addWorkflowDialog("rejectRequest-dialog", "Reject request (with reason)", visible, rejectRequestDialogFactory);
         
         WorkflowAction cancelRequestAction = new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -61,6 +60,6 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                 return null;
             }
         };
-        addWorkflowAction("cancelRequest-dialog", "Cancel request", cancelRequestAction);
+        addWorkflowAction("cancelRequest-dialog", "Cancel request", visible, cancelRequestAction);
     }
 }
