@@ -15,11 +15,16 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import javax.jcr.ReferentialIntegrityException;
+
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.ItemState;
+import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
+import org.apache.jackrabbit.core.state.StaleItemStateException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,21 +32,40 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoSessionItemStateManager.class);
 
     HippoHierarchyManager wrappedHierMgr = null;
-    LocalItemStateManager localStateMgr;
+    HippoLocalItemStateManager localStateMgr;
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, SessionImpl session) {
         super(rootNodeId, manager, session);
-        this.localStateMgr = manager;
+        this.localStateMgr = (HippoLocalItemStateManager) manager;
         if(wrappedHierMgr == null)
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
     }
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, XASessionImpl session) {
         super(rootNodeId, manager, session);
-        this.localStateMgr = manager;
+        this.localStateMgr = (HippoLocalItemStateManager) manager;
         if(wrappedHierMgr == null)
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
     }
+
+    public void disposeAllTransientItemStates() {
+	/* It is imperative that the stateMgr.refresh() method is ONLY called after a 
+	 * super.disposeAllTransientItemStates().  This is the only way to guarantee
+	 * that there are in fact no changes in the changelog of the local ISM.
+	 */
+        super.disposeAllTransientItemStates();
+        try {
+            edit();
+            localStateMgr.refresh();
+        } catch(ReferentialIntegrityException ex) {
+            // cannot occur
+        } catch(StaleItemStateException ex) {
+            // cannot occur
+        } catch(ItemStateException ex) {
+            // cannot occur
+        }
+    }
+
 
     @Override
     public HierarchyManager getHierarchyMgr() {
@@ -57,9 +81,6 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
 
     @Override
     public void stateDiscarded(ItemState discarded) {
-//        System.out.println("SESSION discarder");
         super.stateDiscarded(discarded);
     }
-    
-    
 }

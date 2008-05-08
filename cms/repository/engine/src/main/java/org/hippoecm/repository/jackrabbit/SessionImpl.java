@@ -85,15 +85,15 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     }
 
     @Override
-    protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
-        return new HippoSessionItemStateManager(((RepositoryImpl) rep).getRootNodeId(), manager, this);
-    }
-
-    @Override
     protected org.apache.jackrabbit.core.WorkspaceImpl createWorkspaceInstance(WorkspaceConfig wspConfig,
           SharedItemStateManager stateMgr, org.apache.jackrabbit.core.RepositoryImpl rep,
           org.apache.jackrabbit.core.SessionImpl session) {
         return new WorkspaceImpl(wspConfig, stateMgr, rep, this);
+    }
+
+    @Override
+    protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
+        return new HippoSessionItemStateManager(((RepositoryImpl) rep).getRootNodeId(), manager, this);
     }
 
     @Override
