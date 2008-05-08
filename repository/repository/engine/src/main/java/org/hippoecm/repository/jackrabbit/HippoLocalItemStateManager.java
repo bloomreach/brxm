@@ -46,11 +46,13 @@ import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class HippoLocalItemStateManager extends XAItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
@@ -75,6 +77,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     FacetedNavigationEngine<Query, Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
     protected FilteredChangeLog filteredChangeLog = null;
+    protected boolean noUpdateChangeLog = false;
     protected Map<String,HippoVirtualProvider> virtualProviders;
     protected Map<Name,HippoVirtualProvider> virtualNodeNames;
     protected Set<Name> virtualPropertyNames;
@@ -115,7 +118,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
 
-        String[] providerClassnames = new String[] { "org.hippoecm.repository.jackrabbit.MirrorVirtualProvider", "org.hippoecm.repository.jackrabbit.ViewVirtualProvider", "org.hippoecm.repository.jackrabbit.FacetSelectProvider", "org.hippoecm.repository.jackrabbit.FacetResultSetProvider", "org.hippoecm.repository.jackrabbit.FacetSubSearchProvider", "org.hippoecm.repository.jackrabbit.FacetSearchProvider" };
+        String[] providerClassnames = new String[] { "org.hippoecm.repository.jackrabbit.MirrorVirtualProvider", "org.hippoecm.repository.jackrabbit.ViewVirtualProvider", "org.hippoecm.repository.jackrabbit.FacetSelectProvider", "org.hippoecm.repository.jackrabbit.FacetResultSetProvider", "org.hippoecm.repository.jackrabbit.FacetSubSearchProvider", "org.hippoecm.repository.jackrabbit.FacetSearchProvider" }; // FIXME: should be configurable
         HippoVirtualProvider[] providerInstances = new HippoVirtualProvider[providerClassnames.length];
 
         for(int i=0; i<providerClassnames.length; i++) {
@@ -159,13 +162,15 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     }
 
     @Override
-    protected void update(ChangeLog changeLog)
-    throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
+    protected void update(ChangeLog changeLog) throws ReferentialIntegrityException, StaleItemStateException,
+                                                      ItemStateException {
         filteredChangeLog = new FilteredChangeLog(changeLog);
         virtualStates.clear();
         virtualNodes.clear();
         filteredChangeLog.invalidate();
-        super.update(filteredChangeLog);
+	if(!noUpdateChangeLog) {
+            super.update(filteredChangeLog);
+        }
     }
 
     @Override
@@ -176,6 +181,12 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         FilteredChangeLog tempChangeLog = filteredChangeLog;
         filteredChangeLog = null;
         tempChangeLog.repopulate();
+    }
+
+    void refresh() throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
+	noUpdateChangeLog = true;
+	update();
+	noUpdateChangeLog = false;
     }
 
     @Override

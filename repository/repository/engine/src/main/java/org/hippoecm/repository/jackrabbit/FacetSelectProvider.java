@@ -43,7 +43,6 @@ public class FacetSelectProvider extends HippoVirtualProvider
         super();
     }
 
-    
     protected void initialize() throws RepositoryException {
         this.subNodesProvider = (ViewVirtualProvider) lookup("org.hippoecm.repository.jackrabbit.ViewVirtualProvider");
         register(resolveName(HippoNodeType.NT_FACETSELECT), null);
@@ -92,7 +91,8 @@ public class FacetSelectProvider extends HippoVirtualProvider
                 throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
             }
             for(int i=0; i<newFacets.length; i++) {
-                if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select") || newModes[i].equalsIgnoreCase("single")) {
+                if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select") ||
+                   newModes[i].equalsIgnoreCase("single")) {
                     view.put(resolveName(newFacets[i]), newValues[i]);
                     if(newModes[i].equalsIgnoreCase("single")) {
                         singledView = true;
@@ -115,9 +115,9 @@ public class FacetSelectProvider extends HippoVirtualProvider
                     if(isHandle && singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
                         continue;
                     } else {
-                        NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view, singledView);
+                        NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(),
+                                                                               entry.getName(),view, singledView);
                         state.addChildNodeEntry(entry.getName(), childNodeId);
-    
                         if(isHandle && singledView) {    
                            // stop after first match because single hippo document view
                            break;
