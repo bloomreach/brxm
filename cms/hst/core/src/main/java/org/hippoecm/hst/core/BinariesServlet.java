@@ -53,23 +53,27 @@ public class BinariesServlet extends HttpServlet {
         // URL decode
         relativeURL = URLDecoder.decode(relativeURL, "UTF-8");
 
-        // transform to documentPath if URL mapping is active
+        // transform to documentPath if URL mapping is active (session attributes exist)
         String path;
         String urlBasePath = (String) req.getSession().getAttribute(URLMappingContextFilter.URL_BASE_PATH);
         if (urlBasePath != null) {
 
-            String baseLocation = (String) req.getSession().getAttribute(ContextFilter.REPOSITORY_BASE_LOCATION);
+            String baseLocation = (String) req.getSession().getAttribute(URLMappingContextFilter.REPOSITORY_BASE_LOCATION);
 
             URLPathTranslator urlPathTranslator = new URLPathTranslator(req.getContextPath(), req.getServletPath(), baseLocation);
             path = urlPathTranslator.urlToDocumentPath(relativeURL);
         }
         else {
             
-            // simply remove the contextpath and end /
+            // simply remove the contextpath, servletpath and end /
             path = relativeURL;
-            
+
             if (path.startsWith(req.getContextPath())) {
                 path = path.substring(req.getContextPath().length());
+            }
+
+            if (path.startsWith(req.getServletPath())) {
+                path = path.substring(req.getServletPath().length());
             }
 
             if (path.endsWith("/")) {

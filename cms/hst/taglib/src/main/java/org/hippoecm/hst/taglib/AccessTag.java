@@ -22,11 +22,13 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.jstl.core.ConditionalTagSupport;
 
 import org.hippoecm.hst.core.Context;
-import org.hippoecm.hst.core.ContextFilter;
+import org.hippoecm.hst.core.HSTConfiguration;
 import org.hippoecm.hst.jcr.JCRConnector;
 
 public class AccessTag extends ConditionalTagSupport {
     
+    private static final String KEY_CONTEXT_NAME = "tags.accesstag.context.name";
+    private static final String DEFAULT_CONTEXT_NAME = "context";
     private static final long serialVersionUID = 1L;
     
     private String variable;
@@ -49,8 +51,12 @@ public class AccessTag extends ConditionalTagSupport {
         if (location != null) {
             HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
 
-            String attributeName = (String) req.getSession().getAttribute(ContextFilter.ATTRIBUTE_NAME);
-            Context context = (Context) req.getAttribute(attributeName);
+            String contextName = HSTConfiguration.get(req.getSession().getServletContext(), 
+                                                    KEY_CONTEXT_NAME, false/*not required*/);
+            if (contextName == null) {
+                contextName = DEFAULT_CONTEXT_NAME;
+            }
+            Context context = (Context) req.getAttribute(contextName);
 
             Session jcrSession = JCRConnector.getJCRSession(req.getSession());
             Context newContext = new Context(jcrSession, req.getContextPath(), context.getURLBasePath(), context.getBaseLocation());

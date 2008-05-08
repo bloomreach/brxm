@@ -28,7 +28,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.jcr.JCRConnector;
 
@@ -41,9 +40,6 @@ import org.hippoecm.hst.jcr.JCRConnector;
 public class ContextFilter implements Filter {
 
     // private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
-
-    public static final String ATTRIBUTE_NAME = ContextFilter.class.getName() + ".ATTRIBUTE_NAME";
-    public static final String REPOSITORY_BASE_LOCATION = ContextFilter.class.getName() + ".REPOSITORY_BASE_LOCATION";
 
     private String attributeName = "context";
     String repositoryBaseLocation = "/";
@@ -100,13 +96,10 @@ public class ContextFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        storeSessionAttributes(req.getSession());
-
-        // check extensions
+        // check skipped extensions, images may be retrieved with the BinariesServlet
         String servletPath = req.getServletPath();
 
         if (servletPath.lastIndexOf(".") >= 0) {
-            // images may be retrieved with the BinariesServlet        
             String extension = servletPath.substring(servletPath.lastIndexOf("."));
 
             if (ignoreExtensionsList.contains(extension)) {
@@ -115,22 +108,21 @@ public class ContextFilter implements Filter {
             }
         }
 
-        // create context
+        // create context and set in request
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = createContext(jcrSession, req);
-
         req.setAttribute(attributeName, context);
 
-        if (callFilterChain(context, req, res)) {
+        if (shouldCallFilterChain(context, req, res)) {
             filterChain.doFilter(req, res);
         }
     }
 
     /**
-     * A hook for subclasses to forward or redirect and not calling doFilter. 
+     * A hook for subclasses to forward or redirect and not calling filterChain.doFilter. 
      */
-    boolean callFilterChain(final Context context, final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
+    boolean shouldCallFilterChain(final Context context, final HttpServletRequest request,
+            final HttpServletResponse response) throws ServletException, IOException {
         return true;
     }
 
@@ -139,14 +131,5 @@ public class ContextFilter implements Filter {
      */
     Context createContext(Session jcrSession, HttpServletRequest request) {
         return new Context(jcrSession, request.getContextPath(), this.repositoryBaseLocation);
-    }
-
-    /*
-     * Save some data in session for use by tags or BinariesServlet;
-     * don't do it lazily as the user might switch from 'live' to 'preview' in one session
-     */   
-    void storeSessionAttributes(HttpSession session) {
-        session.setAttribute(ATTRIBUTE_NAME, this.attributeName);
-        session.setAttribute(REPOSITORY_BASE_LOCATION, this.repositoryBaseLocation);
     }
 }

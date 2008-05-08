@@ -27,20 +27,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 /**
- * Filter that creates a context available for expression language and that does 
- * url mapping.  
+ * Filter that creates a context available for expression language and that  
+ * supports url mapping.  
  */
 public class URLMappingContextFilter extends ContextFilter {
 
     public static final String ENCODING_SCHEME = "UTF-8";
 
-    public static final String URL_BASE_PATH = ContextFilter.class.getName() + ".URL_BASE_PATH";
-    public static final String URL_MAPPING_LOCATION = ContextFilter.class.getName() + ".URL_MAPPING_LOCATION";
+    public static final String URL_BASE_PATH = URLMappingContextFilter.class.getName() + ".CURRENT_URL_BASE_PATH";
+    public static final String REPOSITORY_BASE_LOCATION = ContextFilter.class.getName() + ".CURRENT_REPOSITORY_BASE_LOCATION";
 
     private String urlBasePath = "/";
-    private String urlMappingLocation = "/urlMapping";
 
     public URLMappingContextFilter() {
         super();
@@ -62,18 +60,15 @@ public class URLMappingContextFilter extends ContextFilter {
         if (param == null) {
             this.repositoryBaseLocation = urlBasePath;
         }
-
-        // get urlMappingLocation
-        param = filterConfig.getInitParameter("urlMappingLocation");
-        if (param != null && !param.trim().equals("")) {
-            this.urlMappingLocation = param;
-        }
     }
 
     // javadoc from super
-    boolean callFilterChain(final Context context, final HttpServletRequest request, final HttpServletResponse response)
+    boolean shouldCallFilterChain(final Context context, final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
 
+        storeSessionAttributes(request.getSession());
+        
+        // start URL mapping
         String relativeURL = request.getRequestURI();
 
         // remove session-related part of url
@@ -99,6 +94,8 @@ public class URLMappingContextFilter extends ContextFilter {
         context.setRelativeLocation(documentPath);
 
         try {
+            String urlMappingLocation = HSTConfiguration.get(request.getSession().getServletContext(), 
+                                                        HSTConfiguration.KEY_REPOSITORY_URLMAPPING_LOCATION);
             URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, urlPathTranslator,
                     request, response);
             String mappedPage = responseWrapper.mapRepositoryDocument(context.getLocation(), urlMappingLocation);
@@ -130,12 +127,13 @@ public class URLMappingContextFilter extends ContextFilter {
         return new Context(jcrSession, request.getContextPath(), this.urlBasePath, this.repositoryBaseLocation);
     }
 
-    // javadoc from super
+    /*
+     * Save some data in session for use by other objects, e.g. BinariesServlet;
+     * don't do it lazily as the user might switch filters, e.g. from 'live' to 
+     * 'preview' in one session
+     */   
     void storeSessionAttributes(HttpSession session) {
-
-        super.storeSessionAttributes(session);
-
+        session.setAttribute(REPOSITORY_BASE_LOCATION, this.repositoryBaseLocation);
         session.setAttribute(URL_BASE_PATH, this.urlBasePath);
-        session.setAttribute(URL_MAPPING_LOCATION, this.urlMappingLocation);
     }
 }
