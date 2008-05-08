@@ -163,7 +163,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 /* The synchronized must operate on the core root session, because there is
                  * only one such session, while there may be many decorated ones.
                  */
-                synchronized(SessionDecorator.unwrap(documentManager.getSession())) {
+                synchronized(SessionDecorator.unwrap(rootSession)) { 
                     Workflow workflow;
                     if(classname.startsWith("org.hippoecm.repository.standardworkflow")) {
                         try {
@@ -186,7 +186,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         Object object = documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow) object;
                         if(workflow instanceof WorkflowImpl) {
-                            ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(rootSession));
+                            ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContext(session));
                         }
                     }
 
