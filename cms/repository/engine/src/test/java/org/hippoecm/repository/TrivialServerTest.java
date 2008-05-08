@@ -20,31 +20,26 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.api.ISO9075Helper;
+
+import org.hippoecm.repository.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class TrivialServerTest extends TestCase {
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    private HippoRepository server;
-    private Session session;
     private Node root;
 
-    public void setUp() throws RepositoryException {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+    public void setUp() throws Exception {
+        super.setUp();
         root = session.getRootNode();
+        if(root.hasNode("test"))
+            root = root.getNode("test");
+        else
+            root = root.addNode("test");
     }
 
-    public void tearDown() throws Exception {
-        session.logout();
-        server.close();
-    }
-
-    public void testTrivialNodeOperations()  {
+    @Test public void testTrivialNodeOperations()  {
         try {
             root.addNode("x");
         } catch (RepositoryException e) {
@@ -99,15 +94,17 @@ public class TrivialServerTest extends TestCase {
 
     }
 
-    public void testEncodedNode() throws RepositoryException {
+    @Test public void testEncodedNode() throws RepositoryException {
         String name = "2..,!@#$%^&*()_-[]{}|\\:;'\".,/?testnode";
-        Node root = session.getRootNode();
         Node encodedNode = root.addNode(ISO9075Helper.encodeLocalName(name));
         assertNotNull(encodedNode);
         assertEquals(ISO9075Helper.encodeLocalName(name),encodedNode.getName());
         session.save();
         Node encodedNode2 = root.getNode(ISO9075Helper.encodeLocalName(name));
-        assertEquals(encodedNode, encodedNode2);
+
+        // assertEquals(encodedNode, encodedNode2);    -- this test is WRONG [BvH], instead:
+        assertTrue(encodedNode.isSame(encodedNode2));
+
         assertEquals(ISO9075Helper.encodeLocalName(name),encodedNode.getName());
         encodedNode2.remove();
     }

@@ -19,48 +19,20 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
-import junit.framework.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class ConfigurationTest extends TestCase {
-
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    private HippoRepository server;
-    private Session session;
-
-    /**
-     * Handle atomikos setup and create transaction test node
-     */
-    public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-    }
-
-    public void tearDown() throws Exception {
-        Node root = session.getRootNode();
-        try {
-            root.getNode("configtest").remove();
-            root.getNode("hippo:configuration/hippo:initialize/testnode").remove();
-        } catch (RepositoryException e) {
-            // ignore
-        }
-        session.save();
-        session.logout();
-        server.close();
-    }
-
-    public synchronized void testConfiguration() throws Exception {
+    @Test
+    public void testConfiguration() throws Exception {
         Node root = session.getRootNode();
         Node node = root.addNode("hippo:configuration/hippo:initialize/testnode", "hippo:initializeitem");
-        node.setProperty("hippo:contentresource", "configtest.xml");
-        node.setProperty("hippo:contentroot", "/configtest");
+        node.setProperty("hippo:content", "<sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" xmlns:nt=\"http://www.jcp.org/jcr/nt/1.0\" xmlns:jcr=\"http://www.jcp.org/jcr/1.0\" sv:name=\"testnode\"><sv:property sv:name=\"jcr:primaryType\" sv:type=\"Name\"><sv:value>nt:unstructured</sv:value></sv:property></sv:node>");
+        node.setProperty("hippo:contentroot", "/test");
         session.save();
 
-        // observation manager calls listeners asynchronously
-        wait(1000);
+        Thread.sleep(1000);
 
-        node = root.getNode("configtest");
-        assertNotNull(node.getNode("testnode"));
+        assertTrue(root.getNode("test").hasNode("testnode"));
     }
 }

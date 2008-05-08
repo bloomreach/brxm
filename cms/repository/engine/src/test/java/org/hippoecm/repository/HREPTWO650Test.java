@@ -24,21 +24,35 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 public class HREPTWO650Test extends FacetedNavigationAbstractTest {
-    
+
+    @Before
+    public void setUp() throws Exception {
+      super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+      super.tearDown();
+    }
+
+    @Test
     public void testDates() throws RepositoryException {
         numDocs = 0;
         commonStart();
-        addNodeWithDate(session.getRootNode().getNode("documents"));
-        addFacetDateSearch(session.getRootNode());
+        addNodeWithDate(session.getRootNode().getNode("test/documents"));
+        addFacetDateSearch(session.getRootNode().getNode("test"));
         session.save();
-        assertTrue(session.getRootNode().getNode("facetdatesearch").getNodes().getSize() > 1 );
+        assertTrue(session.getRootNode().getNode("test/facetdatesearch").getNodes().getSize() > 1 );
     }
     
     private void addFacetDateSearch(Node rootNode) throws RepositoryException {
         Node facetdatesearch = rootNode.addNode("facetdatesearch", HippoNodeType.NT_FACETSEARCH);
         facetdatesearch.setProperty(HippoNodeType.HIPPO_QUERYNAME, "fds");
-        facetdatesearch.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents").getUUID());
+        facetdatesearch.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         facetdatesearch.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "date" });
     }
 
@@ -53,8 +67,4 @@ public class HREPTWO650Test extends FacetedNavigationAbstractTest {
         cal = new GregorianCalendar();
         datenode.setProperty("date", cal);
     }
-    
-    public void testPerformance() throws RepositoryException, IOException {
-    }
-    
 }

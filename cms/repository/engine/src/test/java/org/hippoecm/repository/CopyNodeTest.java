@@ -19,41 +19,25 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import junit.framework.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 
 public class CopyNodeTest extends TestCase {
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    protected HippoRepository server;
-    protected Session session;
-
+    @Before
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
+        super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
-        session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        if(session != null) {
-            session.logout();
-        }
-        if (server != null) {
-            server.close();
-        }
+        super.tearDown();
     }
 
+    @Test
     public void testVirtualTreeCopy() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test","hippo:folder");
         node = root.addNode("documents");

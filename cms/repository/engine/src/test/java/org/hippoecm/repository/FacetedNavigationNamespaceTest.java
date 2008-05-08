@@ -6,10 +6,13 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTest {
 
-    private final static int PROP_COUNT = 2;
-    private final static int NODE_COUNT = 3;
+    private final static long PROP_COUNT = 2;
+    private final static long NODE_COUNT = 3;
 
     protected void commonSetup() throws RepositoryException {
         createDocuments();
@@ -96,62 +99,68 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "val0" });
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
     }
-    
+
+    @Test
     public void testFacetSearchWithoutNamespace() throws RepositoryException {
         commonSetup();
         Node node = session.getRootNode().getNode("navigation/normalsearch");
         for (int j = 0; j < PROP_COUNT; j++) {
             assertTrue(node.hasNode("val" + j));
             assertTrue(node.getNode("val" + j).hasProperty(HippoNodeType.HIPPO_COUNT));
-            assertEquals( (double) NODE_COUNT, node.getNode("val" + j).getProperty(HippoNodeType.HIPPO_COUNT).getDouble());
+            assertEquals(NODE_COUNT, node.getNode("val" + j).getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         }
     }
 
+    @Test
     public void testFacetSearchWithNamespace() throws RepositoryException {
         commonSetup();
         Node node = session.getRootNode().getNode("navigation/namespacesearch");
         for (int j = 0; j < PROP_COUNT; j++) {
             assertTrue(node.hasNode("val" + j));
             assertTrue(node.getNode("val" + j).hasProperty(HippoNodeType.HIPPO_COUNT));
-            assertEquals( (double) NODE_COUNT, node.getNode("val" + j).getProperty(HippoNodeType.HIPPO_COUNT).getDouble());
+            assertEquals(NODE_COUNT, node.getNode("val" + j).getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         }
     }
+
+    @Test
     public void testFacetSearchWithBoth() throws RepositoryException {
         commonSetup();
         Node node = session.getRootNode().getNode("navigation/bothsearch");
         for (int j = 0; j < PROP_COUNT; j++) {
             assertTrue(node.hasNode("val" + j));
             assertTrue(node.getNode("val" + j).hasProperty(HippoNodeType.HIPPO_COUNT));
-            assertEquals( (double) NODE_COUNT, node.getNode("val" + j).getProperty(HippoNodeType.HIPPO_COUNT).getDouble());
+            assertEquals(NODE_COUNT, node.getNode("val" + j).getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         }
     }
 
-
+    @Test
     public void testFacetSelectWithoutNamespace() throws RepositoryException {
         commonSetup();
         Node node = session.getRootNode().getNode("navigation/normalselect");
         NodeIterator iter = node.getNodes();
-        assertEquals( (long) NODE_COUNT, iter.getSize());
+        assertEquals(NODE_COUNT, iter.getSize());
         for (int j = 0; j < NODE_COUNT; j++) {
             assertTrue(node.hasNode("docNormal" + j));
         }
     }
 
+    @Test
     public void testFacetSelectWithNamespace() throws RepositoryException {
         commonSetup();
         Node node = session.getRootNode().getNode("navigation/namespaceselect");
         NodeIterator iter = node.getNodes();
-        assertEquals( (long) NODE_COUNT, iter.getSize());
+        assertEquals(NODE_COUNT, iter.getSize());
         for (int j = 0; j < NODE_COUNT; j++) {
             assertTrue(node.hasNode("docNamespace" + j));
         }
     }
 
+    @Test
     public void testFacetSelectWithBoth() throws RepositoryException {
         commonSetup();
         Node node = session.getRootNode().getNode("navigation/bothselect");
         NodeIterator iter = node.getNodes();
-        assertEquals( (long) NODE_COUNT, iter.getSize());
+        assertEquals(NODE_COUNT, iter.getSize());
         for (int j = 0; j < NODE_COUNT; j++) {
             assertTrue(node.hasNode("docBoth" + j));
         }

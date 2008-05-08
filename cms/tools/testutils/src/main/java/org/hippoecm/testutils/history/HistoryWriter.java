@@ -27,13 +27,19 @@ import java.lang.reflect.Method;
 
 import org.hippoecm.testutils.history.myXML.myXMLException;
 
-import junit.extensions.TestSetup;
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-import junit.framework.TestListener;
-import junit.framework.TestResult;
+import org.junit.*;
+import org.junit.internal.runners.InitializationError;
+import org.junit.runner.Description;
+import org.junit.runner.Result;
+import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.Suite;
+import static org.junit.Assert.*;
 
-public class HistoryWriter extends TestSetup implements TestListener, XmlConstants {
+public class HistoryWriter extends Suite implements XmlConstants {
+    private final static String SVN_ID = "$Id$";
 
     private File historyFile;
 
@@ -45,43 +51,37 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
 
     private String history;
 
-    public HistoryWriter(Test test) {
-        super(test);
-        this.name = getName(test);
+    public HistoryWriter(Class<?> klass) throws InitializationError {
+        super(klass);
         this.timeStamp = System.currentTimeMillis();
         this.history = System.getProperty("history.points");
-        history = history == null ? null : history.startsWith("${") ? null : history;
+        history = (history == null ? null : history.startsWith("${") ? null : history);
     }
 
-    public String getName() {
-        return name;
-    }
+    public static HistoryWriter currentHistoryWriter;
 
-    public void run(final TestResult result) {
+    @Override
+    public void run(final RunNotifier notifier) {
+        currentHistoryWriter = this;
+        Listener listener = null;
         if (history != null) {
-            result.addListener(this);
-        }
-        super.run(result);
-    }
-
-    public void setUp() {
-        if (history != null) {
+            listener = new Listener();
+            notifier.addListener(listener);
             try {
-                historyFile = new File(history, getName() + "-history.xml");
+                historyFile = new File(history, getDescription().getDisplayName() + "-history.xml");
                 if (historyFile.exists()) {
                     testSuite = new myXML(new BufferedReader(new FileReader(historyFile)));
                 } else {
                     testSuite = new myXML(TESTSUITE);
                 }
-                testSuite.Attribute.add(ATTR_CLASSNAME, getName());
+                testSuite.Attribute.add(ATTR_CLASSNAME, getDescription().getDisplayName());
             } catch (Exception e) {
                 System.err.println("HistoryWriter.setUp failed: " + e.getMessage());
             }
-        }
-    }
 
-    public void tearDown() {
-        if (history != null) {
+        }
+        super.run(notifier);
+        if (listener != null) {
             OutputStream out = null;
             try {
                 historyFile.getParentFile().mkdirs();
@@ -106,11 +106,62 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
         }
     }
 
-    public void write(String name, String value, String unit) {
-        write(name, value, unit, true);
+    class Listener extends RunListener {
+        @Override
+        public void testRunStarted(Description description) throws Exception {
+        }
+        @Override
+        public void testRunFinished(Result result) throws Exception {
+        }
+        @Override
+        public void testStarted(Description description) throws Exception {
+            try {
+                String name = description.getDisplayName();
+                if(name.contains("("))
+                    name = name.substring(0,name.indexOf("("));
+                testCase = testSuite.findElement(TESTCASE, ATTR_NAME, name);
+                if (testCase == null) {
+                    testCase = testSuite.addElement(TESTCASE);
+                }
+                testCase.Attribute.add(ATTR_NAME, name);
+            } catch (myXMLException e) {
+                System.err.println("Failed to add testcase data to testsuite: " + e.getMessage());
+            }
+        }
+        @Override
+        public void testFinished(Description description) throws Exception {
+            if (testCase.isEmpty()) {
+                String name = description.getDisplayName();
+                if(name.contains("("))
+                    name = name.substring(0,name.indexOf("("));
+                try {
+                    testSuite.removeElement(testCase);
+                } catch (myXMLException e) {
+                    System.err.println("Unable to remove empty testcase " + name + " from suite");
+                }
+            }
+        }
+        @Override
+        public void testFailure(Failure failure) throws Exception {
+        }
+        @Override
+        public void testIgnored(Description description) throws Exception {
+        }
     }
 
-    public void write(String name, String value, String unit, boolean fuzzy) {
+    public static void write(String name, String value, String unit) {
+	if (currentHistoryWriter != null) {
+            currentHistoryWriter.writeInternal(name, value, unit, true);
+        }
+    }
+
+    public static void write(String name, String value, String unit, boolean fuzzy) {
+	if (currentHistoryWriter != null) {
+            currentHistoryWriter.writeInternal(name, value, unit, fuzzy);
+	}
+    }
+
+    public void writeInternal(String name, String value, String unit, boolean fuzzy) {
         if (history != null) {
             try {
                 myXML metric = testCase.findElement(METRIC, ATTR_NAME, name);
@@ -129,49 +180,4 @@ public class HistoryWriter extends TestSetup implements TestListener, XmlConstan
             }
         }
     }
-
-    // interface TestListener
-
-    public void startTest(Test test) {
-        try {
-            testCase = testSuite.findElement(TESTCASE, ATTR_NAME, getName(test));
-            if (testCase == null) {
-                testCase = testSuite.addElement(TESTCASE);
-            }
-            testCase.Attribute.add(ATTR_NAME, getName(test));
-        } catch (myXMLException e) {
-            System.err.println("Failed to add testcase data to testsuite: " + e.getMessage());
-        }
-    }
-
-    public void endTest(Test test) {
-        if (testCase.isEmpty()) {
-            try {
-                testSuite.removeElement(testCase);
-            } catch (myXMLException e) {
-                System.err.println("Unable to remove empty testcase " + getName(test) + " from suite " + getName());
-            }
-        }
-    }
-
-    public void addError(Test test, Throwable t) {
-    }
-
-    public void addFailure(Test test, AssertionFailedError t) {
-    }
-
-    // privates
-
-    private String getName(Test t) {
-        try {
-            Method getNameMethod = t.getClass().getMethod("getName", new Class[0]);
-            if (getNameMethod != null && getNameMethod.getReturnType() == String.class) {
-                return (String) getNameMethod.invoke(t, new Object[0]);
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        return "unknown";
-    }
-
 }

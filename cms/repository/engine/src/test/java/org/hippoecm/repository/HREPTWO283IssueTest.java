@@ -19,6 +19,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class HREPTWO283IssueTest extends TestCase {
     private String[] content1 = {
@@ -40,7 +42,7 @@ public class HREPTWO283IssueTest extends TestCase {
         super.setUp();
     }
 
-    public void testIssue() throws RepositoryException {
+    @Test public void testIssue() throws RepositoryException {
         Node result;
         build(session, content1);
         build(session, content2);
