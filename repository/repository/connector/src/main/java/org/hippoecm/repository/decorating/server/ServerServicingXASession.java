@@ -29,7 +29,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.server.ServerXASession;
 
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.decorating.remote.RemoteServicingAdapterFactory;
 import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
 

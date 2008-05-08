@@ -34,16 +34,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HierarchyResolver;
 
-public final class HierarchyResolver {
-    private final static Logger logger = LoggerFactory.getLogger(HierarchyResolver.class);
+public class HierarchyResolverImpl implements HierarchyResolver {
+    private final Logger logger = LoggerFactory.getLogger(HierarchyResolverImpl.class);
 
-    public static class Entry {
-        public Node node;
-        public String relPath;
-    }
-
-    public static Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
+    public Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
       throws InvalidItemStateException, RepositoryException {
         if(logger.isDebugEnabled()) {
             logger.debug("resolving path "+path+(isProperty?" as property":""));
@@ -200,15 +196,19 @@ public final class HierarchyResolver {
             return node;
     }
 
-    public static Property getProperty(Node node, String field) throws RepositoryException {
+    public Item getItem(Node node, String field) throws RepositoryException {
+        return getItem(node, field, false, null);
+    }
+
+    public Property getProperty(Node node, String field) throws RepositoryException {
         return (Property) getItem(node, field, true, null);
     }
 
-    public static Property getProperty(Node node, String field, Entry last) throws RepositoryException {
+    public Property getProperty(Node node, String field, Entry last) throws RepositoryException {
         return (Property) getItem(node, field, true, last);
     }
 
-    public static Node getNode(Node node, String field) throws InvalidItemStateException, RepositoryException {
+    public Node getNode(Node node, String field) throws InvalidItemStateException, RepositoryException {
         return (Node) getItem(node, field, false, null);
     }
 }

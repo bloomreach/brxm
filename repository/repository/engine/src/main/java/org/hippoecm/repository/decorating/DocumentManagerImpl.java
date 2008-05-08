@@ -18,6 +18,8 @@ package org.hippoecm.repository.decorating;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -41,6 +43,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.ocm.JCROID;
 import org.hippoecm.repository.ocm.StoreManagerImpl;
 
@@ -143,14 +146,18 @@ public class DocumentManagerImpl
     public Document getDocument(String category, String identifier) throws MappingException, RepositoryException {
         try {
             Node queryNode = session.getNodeByUUID(configuration).getNode(category);
-            String queryLanguage = queryNode.getProperty("jcr:language").getString();
-            String queryString = queryNode.getProperty("jcr:statement").getString();
-            queryString = queryString.replace("?", identifier);
-            if(log.isDebugEnabled()) {
-                log.debug("executing query"+queryString);
+	    HippoQuery query = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(queryNode);
+            QueryResult result;
+            if(query.getArgumentCount() > 0) {
+                Map<String,String> arguments = new TreeMap<String,String>();
+                String[] queryArguments = query.getArguments();
+                for(int i=0; i<queryArguments.length; i++) {
+                    arguments.put(queryArguments[i], identifier);
+                }
+                result = query.execute(arguments);
+            } else {
+                result = query.execute();
             }
-            Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryLanguage);
-            QueryResult result = query.execute();
             NodeIterator iter = result.getNodes();
             if (iter.hasNext()) {
                 Node resultNode = iter.nextNode();

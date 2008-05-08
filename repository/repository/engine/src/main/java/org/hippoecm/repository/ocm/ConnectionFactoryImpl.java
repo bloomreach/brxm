@@ -92,7 +92,7 @@ class ConnectionFactoryImpl implements ConnectionFactory {
 
     class JCRManagedConnection implements ManagedConnection {
         private Session session;
-        private boolean transactional;
+        @SuppressWarnings("unused") private boolean transactional;
 
         public JCRManagedConnection() {
             this.session = null;

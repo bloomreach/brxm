@@ -29,12 +29,15 @@ import org.apache.jackrabbit.rmi.remote.RemoteXASession;
 
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.HierarchyResolver;
+
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
+import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
 
@@ -69,6 +72,10 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
 
     public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote) {
         return new ClientWorkflowManager(session, remote, this);
+    }
+
+    public HierarchyResolver getHierarchyResolver(Session session, RemoteHierarchyResolver remote) {
+        return new ClientHierarchyResolver(session, remote, this);
     }
 
     @Override

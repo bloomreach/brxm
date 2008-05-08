@@ -15,20 +15,15 @@
  */
 package org.hippoecm.repository.ocm;
 
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.InvalidItemStateException;
-import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -46,10 +41,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.DerivedDataEngine;
-import org.hippoecm.repository.HierarchyResolver;
+import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HierarchyResolver;
+import org.hippoecm.repository.api.HippoWorkspace;
 
 class FieldManagerImpl extends AbstractFieldManager {
     protected final Logger log = LoggerFactory.getLogger(FieldManagerImpl.class);
@@ -80,7 +77,7 @@ class FieldManagerImpl extends AbstractFieldManager {
 
     private Node getNode(Node node, String field, String nodetype) throws RepositoryException {
         HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-        node = (Node) HierarchyResolver.getItem(node, field, false, last);
+        node = (Node)((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getItem(node, field, false, last);
         if (node == null && last.node != null) {
             if (nodetype != null) {
                 node = last.node.addNode(last.relPath, nodetype);
@@ -96,6 +93,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         return node;
     }
 
+    @Override   
     public void storeBooleanField(int fieldNumber, boolean value) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
         while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
@@ -108,7 +106,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (field != null) {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = HierarchyResolver.getProperty(node, field, last);
+                Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -127,6 +125,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         }
     }
 
+    @Override
     public boolean fetchBooleanField(int fieldNumber) {
         AbstractClassMetaData cmd = sm.getClassMetaData();
         while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
@@ -139,7 +138,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = HierarchyResolver.getProperty(node, field).getBoolean();
+                value =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getBoolean();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -172,7 +171,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (field != null) {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = HierarchyResolver.getProperty(node, field, last);
+                Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -203,7 +202,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = HierarchyResolver.getProperty(node, field).getString().charAt(0);
+                value =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getString().charAt(0);
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -236,7 +235,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (field != null) {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = HierarchyResolver.getProperty(node, field, last);
+                Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -267,7 +266,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (short) HierarchyResolver.getProperty(node, field).getLong();
+                value = (short)((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -300,7 +299,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (field != null) {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = HierarchyResolver.getProperty(node, field, last);
+                Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -331,7 +330,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (int) HierarchyResolver.getProperty(node, field).getLong();
+                value = (int)((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -364,7 +363,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (field != null) {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = HierarchyResolver.getProperty(node, field, last);
+                Property property =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -395,7 +394,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = HierarchyResolver.getProperty(node, field).getLong();
+                value =((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getProperty(node, field).getLong();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -428,7 +427,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (field != null) {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = HierarchyResolver.getProperty(node, field, last);
+                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -459,7 +458,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = (float) HierarchyResolver.getProperty(node, field).getDouble();
+                value = (float) ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field).getDouble();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -492,7 +491,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (field != null) {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = HierarchyResolver.getProperty(node, field, last);
+                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -523,7 +522,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                value = HierarchyResolver.getProperty(node, field).getDouble();
+                value = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field).getDouble();
             } catch (ValueFormatException ex) {
                 throw new JPOXDataStoreException("ValueFormatException", ex);
             } catch (VersionException ex) {
@@ -556,7 +555,7 @@ class FieldManagerImpl extends AbstractFieldManager {
         if (field != null && !field.equals("jcr:uuid")) {
             try {
                 HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                Property property = HierarchyResolver.getProperty(node, field, last);
+                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field, last);
                 if (property == null)
                     property = last.node.setProperty(last.relPath, value);
                 else
@@ -592,7 +591,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                Property property = HierarchyResolver.getProperty(node, field);
+                Property property = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, field);
                 if (property != null)
                     value = property.getString();
                 else
@@ -630,7 +629,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             return;
         if (value == null) {
             try {
-                Node removal = HierarchyResolver.getNode(node, field);
+                Node removal = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, field);
                 if(removal != null) {
                     DerivedDataEngine.removal(removal);
                     removal.remove();
@@ -660,7 +659,7 @@ class FieldManagerImpl extends AbstractFieldManager {
                 String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
                 if (value instanceof Document && ((Document) value).isCloned() != null) {
                     HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                    child = (Node) HierarchyResolver.getItem(node, field, false, last);
+                    child = (Node) ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, field, false, last);
                     if (child != null) {
                         if(child != null) {
                             DerivedDataEngine.removal(child);
@@ -670,6 +669,9 @@ class FieldManagerImpl extends AbstractFieldManager {
                     Document document = (Document) value;
                     child = node.getSession().getNodeByUUID(document.isCloned().getIdentity());
                     child = ((HippoSession)node.getSession()).copy(child, last.node.getPath() + "/" + last.relPath);
+                    if(log.isDebugEnabled()) {
+                        log.debug("copying \"" + field + "\" from cloned");
+                    }
                     document.setIdentity(child.getUUID());
                 } else
                     child = getNode(node, field, nodetype);
@@ -719,7 +721,7 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                Node child = HierarchyResolver.getNode(node, field);
+                Node child = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, field);
                 if (child != null) {
                     Class clazz = cmd.getField(fieldNumber).getType();
                     Object id = new JCROID(child.getUUID(), clazz.getName());
