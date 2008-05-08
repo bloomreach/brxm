@@ -23,7 +23,6 @@ import org.apache.jackrabbit.rmi.server.ServerObject;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
-import org.hippoecm.repository.decorating.remote.RemoteServicingAdapterFactory;
 
 public class ServerDocumentManager extends ServerObject implements RemoteDocumentManager {
     private DocumentManager documentManager;

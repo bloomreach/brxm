@@ -43,10 +43,12 @@ import org.apache.jackrabbit.core.SessionImpl;
 import org.xml.sax.ContentHandler;
 
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.hippoecm.repository.HierarchyResolverImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,6 +175,10 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
         return workflowManager;
     }
 
+    public HierarchyResolver getHierarchyResolver() throws RepositoryException {
+        return new HierarchyResolverImpl();
+    }
+
     /**
      * Forwards the method call to the underlying workspace.
      */
@@ -219,5 +225,4 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
             LockException, RepositoryException {
         workspace.importXML(parentAbsPath, in, uuidBehaviour);
     }
-
 }

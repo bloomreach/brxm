@@ -24,4 +24,5 @@ public interface HippoWorkspace extends Workspace {
 
     public WorkflowManager getWorkflowManager() throws RepositoryException;
 
+    public HierarchyResolver getHierarchyResolver() throws RepositoryException;
 }

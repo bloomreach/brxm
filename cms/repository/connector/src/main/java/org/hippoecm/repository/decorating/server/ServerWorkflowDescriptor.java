@@ -27,7 +27,6 @@ import org.apache.jackrabbit.rmi.server.ServerObject;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.decorating.remote.RemoteServicingAdapterFactory;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowDescriptor;
 
 public class ServerWorkflowDescriptor extends UnicastRemoteObject implements RemoteWorkflowDescriptor {

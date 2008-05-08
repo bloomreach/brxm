@@ -32,12 +32,14 @@ import org.apache.jackrabbit.rmi.remote.RemoteQuery;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
-import org.hippoecm.repository.decorating.remote.RemoteServicingAdapterFactory;
+import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
@@ -81,5 +83,10 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
     @Override
     public RemoteQuery getRemoteQuery(Query query) throws RemoteException {
         return new ServerQuery((HippoQuery)query, this);
+    }
+
+    public RemoteHierarchyResolver getRemoteHierarchyResolver(HierarchyResolver hierarchyResolver, Session session)
+        throws RemoteException {
+        return new ServerHierarchyResolver(hierarchyResolver, this, session);
     }
 }

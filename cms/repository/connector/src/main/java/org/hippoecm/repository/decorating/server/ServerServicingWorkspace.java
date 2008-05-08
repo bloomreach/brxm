@@ -24,10 +24,12 @@ import org.apache.jackrabbit.rmi.remote.RemoteQueryManager;
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
 
 import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
-import org.hippoecm.repository.decorating.remote.RemoteServicingAdapterFactory;
+import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
@@ -62,6 +64,16 @@ public class ServerServicingWorkspace extends ServerWorkspace implements RemoteS
         try {
             QueryManager queryManager = workspace.getQueryManager();
             return ((RemoteServicingAdapterFactory)getFactory()).getRemoteQueryManager(queryManager, workspace.getSession());
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
+    public RemoteHierarchyResolver getHierarchyResolver() throws RepositoryException, RemoteException {
+        try {
+            HierarchyResolver hierarchyResolver = workspace.getHierarchyResolver();
+            return ((RemoteServicingAdapterFactory)getFactory()).getRemoteHierarchyResolver(hierarchyResolver,
+                                                                                            workspace.getSession());
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }

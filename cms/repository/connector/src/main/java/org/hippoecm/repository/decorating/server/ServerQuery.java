@@ -26,7 +26,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteQueryResult;
 import org.apache.jackrabbit.rmi.server.ServerQueryResult;
 
 import org.hippoecm.repository.api.HippoQuery;
-import org.hippoecm.repository.decorating.remote.RemoteServicingAdapterFactory;
 import org.hippoecm.repository.decorating.remote.RemoteQuery;
 
 public class ServerQuery extends org.apache.jackrabbit.rmi.server.ServerQuery implements RemoteQuery {

@@ -23,7 +23,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.server.ServerNode;
 
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.decorating.remote.RemoteServicingAdapterFactory;
 import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 
 public class ServerServicingNode extends ServerNode implements RemoteServicingNode {
