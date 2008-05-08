@@ -16,9 +16,7 @@
 package org.hippoecm.frontend.service.render;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -142,30 +140,26 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
         redraw = true;
     }
 
-    protected void addExtensionPoint(String name, ServiceTracker.IListener<IRenderService> listener) {
-        ServiceTracker<IRenderService> tracker = new ServiceTracker<IRenderService>(IRenderService.class);
-        tracker.addListener(listener);
-        children.put(name, tracker);
-        add(new EmptyPanel(name));
-    }
-
     protected void addExtensionPoint(final String extension) {
-        addExtensionPoint(extension, new ServiceTracker.IListener() {
+        ServiceTracker<IRenderService> tracker = new ServiceTracker<IRenderService>(IRenderService.class);
+        tracker.addListener(new ServiceTracker.IListener<IRenderService>() {
             private static final long serialVersionUID = 1L;
 
-            public void onServiceAdded(String name, Serializable service) {
-                ((IRenderService) service).bind(RenderService.this, extension);
+            public void onServiceAdded(String name, IRenderService service) {
+                service.bind(RenderService.this, extension);
                 replace((Component) service);
             }
 
-            public void onServiceChanged(String name, Serializable service) {
+            public void onServiceChanged(String name, IRenderService service) {
             }
 
-            public void onRemoveService(String name, Serializable service) {
+            public void onRemoveService(String name, IRenderService service) {
                 replace(new EmptyPanel(extension));
-                ((IRenderService) service).unbind();
+                service.unbind();
             }
         });
+        children.put(extension, tracker);
+        add(new EmptyPanel(extension));
     }
 
     protected void removeExtensionPoint(String name) {
@@ -220,21 +214,6 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
 
     public IRenderService getParentService() {
         return parent;
-    }
-
-    public List<? extends IRenderService> getChildServices(String name) {
-        ServiceTracker tracker = children.get(name);
-        if (tracker != null) {
-            return tracker.getServices();
-        } else {
-            return new ArrayList<IRenderService>();
-        }
-    }
-
-    public List<String> getExtensionPoints() {
-        List<String> result = new LinkedList<String>();
-        result.addAll(children.keySet());
-        return result;
     }
 
     public String getDecoratorId() {

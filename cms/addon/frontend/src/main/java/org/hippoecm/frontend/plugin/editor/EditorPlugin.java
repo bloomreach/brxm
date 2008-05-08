@@ -41,11 +41,11 @@ public class EditorPlugin extends EditorService implements Plugin, IDynamicServi
 
     private static final Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
-    private ServiceTracker factory;
+    private ServiceTracker<IFactoryService> factory;
     private TitleDecorator title;
 
     public EditorPlugin() {
-        factory = new ServiceTracker(IFactoryService.class);
+        factory = new ServiceTracker<IFactoryService>(IFactoryService.class);
     }
 
     public void start(PluginContext context) {
@@ -74,27 +74,31 @@ public class EditorPlugin extends EditorService implements Plugin, IDynamicServi
         factory.close();
     }
 
+    public boolean canDelete() {
+        return (factory.getServices().size() > 0);
+    }
+
     public void delete() {
         IDialogService dialogService = getDialogService();
         try {
             Node node = ((JcrNodeModel) getModel()).getNode();
             HippoSession session = (HippoSession) node.getSession();
             if (session.pendingChanges(node, "nt:base").hasNext()) {
-                dialogService.show(new OnCloseDialog(dialogService, (JcrNodeModel) getModel(), this));
+                dialogService
+                        .show(new OnCloseDialog(getPluginContext(), dialogService, (JcrNodeModel) getModel(), this));
             } else {
                 deleteEditor();
             }
         } catch (RepositoryException e) {
-            dialogService.show(new ExceptionDialog(dialogService, e.getMessage()));
+            dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, e.getMessage()));
             log.info(e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
     void deleteEditor() {
-        List<Serializable> services = factory.getServices();
+        List<IFactoryService> services = factory.getServices();
         if (services.size() == 1) {
-            IFactoryService service = (IFactoryService) services.get(0);
-            service.delete(this);
+            services.get(0).delete(this);
         }
     }
 

@@ -15,20 +15,20 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.plugin.ComponentReference;
+import org.hippoecm.frontend.core.PluginContext;
+import org.hippoecm.frontend.core.ServiceReference;
 import org.hippoecm.frontend.service.IDialogService;
 
 public class ExceptionDialog extends WebPage {
 
-    private ComponentReference windowRef;
+    private ServiceReference<IDialogService> windowRef;
 
-    public ExceptionDialog(IDialogService dialogService, String exception) {
-        windowRef = new ComponentReference((Component) dialogService);
+    public ExceptionDialog(PluginContext context, IDialogService dialogService, String exception) {
+        windowRef = context.getReference(dialogService);
 
         add(new Label("exception", exception));
         add(new AjaxLink("ok") {
@@ -46,6 +46,6 @@ public class ExceptionDialog extends WebPage {
     }
 
     protected IDialogService getDialogWindow() {
-        return (IDialogService) windowRef.getObject();
+        return windowRef.getService();
     }
 }

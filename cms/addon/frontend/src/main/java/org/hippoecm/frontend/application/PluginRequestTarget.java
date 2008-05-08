@@ -17,6 +17,8 @@ package org.hippoecm.frontend.application;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,18 +34,34 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
     private static final Logger log = LoggerFactory.getLogger(PluginRequestTarget.class);
 
     private Set<Component> updates;
+    private List<IListener> listeners;
 
     public PluginRequestTarget(Page page) {
         super(page);
 
         this.updates = new HashSet<Component>();
 
-        addListener(this);
+        super.addListener(this);
     }
 
     @Override
     public void addComponent(Component component) {
         this.updates.add(component);
+    }
+
+    @Override
+    public void addListener(IListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("Argument `listener` cannot be null");
+        }
+
+        if (listeners == null) {
+            listeners = new LinkedList();
+        }
+
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
     }
 
     // implement AjaxRequestTarget.IListener
@@ -54,8 +72,15 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
         }
 
         Page page = getPage();
-        if (page instanceof Home) {
-            ((Home) page).render(this);
+        if (page instanceof PluginPage) {
+            ((PluginPage) page).render(this);
+        }
+
+        if (listeners != null) {
+            Iterator it = listeners.iterator();
+            while (it.hasNext()) {
+                ((IListener) it.next()).onBeforeRespond(existing, this);
+            }
         }
 
         Iterator<Component> components = updates.iterator();
@@ -67,6 +92,8 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
                     super.addComponent(component);
                     break;
                 } else if (updates.contains(parent)) {
+                    // give component chance to clean up
+                    component.detach();
                     break;
                 }
                 parent = parent.getParent();
@@ -75,7 +102,12 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
     }
 
     public void onAfterRespond(Map map, IJavascriptResponse response) {
-        // nothing
+        if (listeners != null) {
+            Iterator it = listeners.iterator();
+            while (it.hasNext()) {
+                ((IListener) it.next()).onAfterRespond(map, response);
+            }
+        }
     }
 
 }

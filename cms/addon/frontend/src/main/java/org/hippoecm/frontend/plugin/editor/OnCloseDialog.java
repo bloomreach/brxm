@@ -21,9 +21,10 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.core.PluginContext;
+import org.hippoecm.frontend.core.ServiceReference;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.RenderReference;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
@@ -40,13 +41,13 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     protected AjaxLink discard;
     protected AjaxLink save;
     private JcrNodeModel model;
-    private RenderReference editor;
+    private ServiceReference<EditorPlugin> editor;
 
-    public OnCloseDialog(IDialogService dialogWindow, JcrNodeModel model, EditorPlugin plugin) {
-        super(dialogWindow);
+    public OnCloseDialog(PluginContext context, IDialogService dialogWindow, JcrNodeModel model, EditorPlugin plugin) {
+        super(context, dialogWindow);
 
         this.model = model;
-        this.editor = new RenderReference(plugin);
+        this.editor = context.getReference(plugin);
 
         this.ok.setVisible(false);
         this.cancel.setVisible(false);
@@ -67,9 +68,9 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 save();
-                EditorPlugin plugin = (EditorPlugin) editor.resolve();
+                EditorPlugin plugin = editor.getService();
                 plugin.deleteEditor();
-                getDialogService().close();
+                closeDialog();
             }
         };
         add(save);
@@ -80,9 +81,9 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 discard();
-                EditorPlugin plugin = (EditorPlugin) editor.resolve();
+                EditorPlugin plugin = editor.getService();
                 plugin.deleteEditor();
-                getDialogService().close();
+                closeDialog();
             }
         };
         add(discard);
@@ -93,10 +94,14 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 donothing();
-                getDialogService().close();
+                closeDialog();
             }
         };
         add(donothing);
+    }
+
+    protected EditorPlugin getEditor() {
+        return editor.getService();
     }
 
     protected void save() {
@@ -136,7 +141,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             return "Close";
         }
     }
-    
+
     @Override
     protected void ok() throws Exception {
     }

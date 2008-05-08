@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.service;
 
 public interface IDynamicService {
+    boolean canDelete();
 
     void delete();
 }

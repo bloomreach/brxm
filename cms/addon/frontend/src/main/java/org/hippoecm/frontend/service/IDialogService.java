@@ -15,9 +15,11 @@
  */
 package org.hippoecm.frontend.service;
 
+import java.io.Serializable;
+
 import org.apache.wicket.markup.html.WebPage;
 
-public interface IDialogService {
+public interface IDialogService extends Serializable {
 
     void show(WebPage page);
 
