@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.service;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.hippoecm.frontend.application.PluginRequestTarget;
 
@@ -36,13 +35,7 @@ public interface IRenderService extends Serializable {
 
     IRenderService getParentService();
 
-    List<? extends IRenderService> getChildServices(String name);
-
     // Service id that is used to register decorators
 
     String getDecoratorId();
-
-    // Service ids that can be used to hook into the layout
-
-    List<String> getExtensionPoints();
 }

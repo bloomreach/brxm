@@ -13,17 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse;
+package org.hippoecm.frontend.dialog;
 
-import org.hippoecm.frontend.plugin.composite.Perspective;
+import org.hippoecm.frontend.service.IDialogService;
 
-public class BrowserPerspective extends Perspective {
-    private static final long serialVersionUID = 1L;
-
-    public BrowserPerspective() {
-        addExtensionPoint("browserBreadcrumbPlugin");
-        addExtensionPoint("browserPlugin");
-        addExtensionPoint("listPlugin");
-        addExtensionPoint("workflowsPlugin");
-    }
+public interface IDialogFactory extends java.io.Serializable {
+    public AbstractDialog createDialog(IDialogService dialogService);
 }

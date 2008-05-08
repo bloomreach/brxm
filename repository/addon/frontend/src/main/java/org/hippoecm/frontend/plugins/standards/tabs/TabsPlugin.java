@@ -145,7 +145,9 @@ public class TabsPlugin extends RenderPlugin {
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
         if (tabbie.renderer instanceof IDynamicService) {
             IDynamicService service = (IDynamicService) tabbie.renderer;
-            service.delete();
+            if (service.canDelete()) {
+                service.delete();
+            }
         }
     }
 

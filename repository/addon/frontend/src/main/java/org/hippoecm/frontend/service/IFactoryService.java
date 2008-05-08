@@ -17,7 +17,7 @@ package org.hippoecm.frontend.service;
 
 import java.io.Serializable;
 
-public interface IFactoryService {
+public interface IFactoryService extends Serializable {
 
     void delete(Serializable service);
 }

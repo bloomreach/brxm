@@ -65,7 +65,7 @@ public class Main extends WebApplication {
             }
 
             public boolean isInstantiationAuthorized(Class componentClass) {
-                if (Home.class.isAssignableFrom(componentClass)) {
+                if (PluginPage.class.isAssignableFrom(componentClass)) {
                     UserSession session = (UserSession) Session.get();
                     session.getJcrSession();
                 }
@@ -124,7 +124,7 @@ public class Main extends WebApplication {
 
     @Override
     public Class getHomePage() {
-        return Home.class;
+        return PluginPage.class;
     }
 
     @Override

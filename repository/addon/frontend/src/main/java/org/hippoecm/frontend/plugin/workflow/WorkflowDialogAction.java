@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse;
+package org.hippoecm.frontend.plugin.workflow;
 
-import org.hippoecm.frontend.plugin.composite.Perspective;
+import java.io.Serializable;
 
-public class BrowserPerspective extends Perspective {
-    private static final long serialVersionUID = 1L;
+import org.hippoecm.repository.api.Workflow;
 
-    public BrowserPerspective() {
-        addExtensionPoint("browserBreadcrumbPlugin");
-        addExtensionPoint("browserPlugin");
-        addExtensionPoint("listPlugin");
-        addExtensionPoint("workflowsPlugin");
-    }
+public interface WorkflowDialogAction extends Serializable {
+    public void execute(Workflow workflow) throws Exception;
 }

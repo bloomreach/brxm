@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.service.topic;
 
-public interface MessageListener {
+import java.io.Serializable;
+
+public interface MessageListener extends Serializable {
 
     void onMessage(Message message);
 }

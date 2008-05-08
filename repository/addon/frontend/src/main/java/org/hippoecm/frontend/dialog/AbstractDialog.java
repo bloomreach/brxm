@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.plugin.ComponentReference;
+import org.hippoecm.frontend.core.PluginContext;
+import org.hippoecm.frontend.core.ServiceReference;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
@@ -33,12 +33,12 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
 
     protected AjaxLink ok;
     protected AjaxLink cancel;
-    private ComponentReference windowRef;
+    private ServiceReference<IDialogService> windowRef;
 
     private String exception = "";
 
-    public AbstractDialog(IDialogService dialogWindow) {
-        this.windowRef = new ComponentReference((Component) dialogWindow);
+    public AbstractDialog(PluginContext context, IDialogService dialogWindow) {
+        this.windowRef = context.getReference(dialogWindow);
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
@@ -51,7 +51,6 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
             public void onClick(AjaxRequestTarget target) {
                 try {
                     ok();
-                    getDialogService().close();
                 } catch (Exception e) {
                     String msg = e.getClass().getName() + ": " + e.getMessage();
                     log.error(msg);
@@ -72,7 +71,7 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 cancel();
-                getDialogService().close();
+                closeDialog();
             }
         };
         add(cancel);
@@ -87,7 +86,12 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
     }
 
     protected IDialogService getDialogService() {
-        return (IDialogService) windowRef.getObject();
+        return windowRef.getService();
+    }
+
+    // override to do any cleanup.
+    protected void closeDialog() {
+        getDialogService().close();
     }
 
     protected abstract void ok() throws Exception;

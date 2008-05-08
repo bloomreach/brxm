@@ -13,25 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.core.impl;
+package org.hippoecm.frontend.core;
 
-import java.util.Hashtable;
+import java.io.Serializable;
 
-import org.hippoecm.frontend.core.IPluginConfig;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.frontend.application.PluginPage;
+import org.hippoecm.frontend.core.impl.PluginManager;
 
-public class PluginConfig extends Hashtable<String, ParameterValue> implements IPluginConfig {
+public class ServiceReference<T extends Serializable> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(PluginConfig.class);
+    private PluginPage page;
+    private int id;
 
-    public PluginConfig() {
+    public ServiceReference(PluginPage page, int id) {
+        this.page = page;
+        this.id = id;
     }
 
-    public ParameterValue get(String key) {
-        return super.get(key);
+    public T getService() {
+        PluginManager mgr = page.getPluginManager();
+        return mgr.getService(this);
     }
 
+    public PluginPage getPage() {
+        return page;
+    }
+
+    public int getId() {
+        return id;
+    }
 }

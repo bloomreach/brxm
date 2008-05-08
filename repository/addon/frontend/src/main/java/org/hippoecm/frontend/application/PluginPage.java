@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.application;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebPage;
@@ -31,10 +29,10 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Home extends WebPage implements ServiceListener, IRenderService {
+public class PluginPage extends WebPage implements ServiceListener, IRenderService {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(Home.class);
+    private static final Logger log = LoggerFactory.getLogger(PluginPage.class);
 
     public static final String ROOT_PLUGIN = "rootPlugin";
     //    public static final String LOGIN_PLUGIN = "loginPlugin";
@@ -42,10 +40,10 @@ public class Home extends WebPage implements ServiceListener, IRenderService {
     private PluginManager mgr;
     private IRenderService root;
 
-    public Home() {
+    public PluginPage() {
 
         root = null;
-        mgr = new PluginManager();
+        mgr = new PluginManager(this);
 
         PluginConfig config = new PluginConfig();
         config.put("root", new ConfigValue("service.root"));
@@ -98,14 +96,6 @@ public class Home extends WebPage implements ServiceListener, IRenderService {
     public void unbind() {
     }
 
-    public List<IRenderService> getChildServices(String name) {
-        List<IRenderService> result = new LinkedList<IRenderService>();
-        if ("root".equals(name)) {
-            result.add(getRootPlugin());
-        }
-        return result;
-    }
-
     public IRenderService getParentService() {
         return null;
     }
@@ -114,10 +104,7 @@ public class Home extends WebPage implements ServiceListener, IRenderService {
         return null;
     }
 
-    public List<String> getExtensionPoints() {
-        List<String> result = new LinkedList<String>();
-        result.add("root");
-        return result;
+    public final PluginManager getPluginManager() {
+        return mgr;
     }
-
 }

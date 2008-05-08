@@ -17,9 +17,12 @@ package org.hippoecm.frontend.core;
 
 import java.io.Serializable;
 
+
 public interface PluginContext {
 
     Plugin start(IPluginConfig config);
+
+    <T extends Serializable> ServiceReference<T> getReference(T service);
 
     IPluginConfig getProperties();
 

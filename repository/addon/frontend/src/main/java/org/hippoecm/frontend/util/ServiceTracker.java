@@ -1,19 +1,40 @@
+/*
+ * Copyright 2008 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.core.ServiceListener;
+import org.hippoecm.frontend.core.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServiceTracker<S extends Serializable> implements ServiceListener, Serializable {
     private static final long serialVersionUID = 1L;
 
+    private static final Logger log = LoggerFactory.getLogger(ServiceTracker.class);
+
     private PluginContext context;
     private String name;
     private Class clazz;
-    private List<S> services;
+    private List<ServiceReference<S>> services;
     private List<IListener<S>> listeners;
 
     public interface IListener<S extends Serializable> extends Serializable {
@@ -29,7 +50,7 @@ public class ServiceTracker<S extends Serializable> implements ServiceListener, 
     public ServiceTracker(Class clazz) {
         this.clazz = clazz;
 
-        services = new LinkedList<S>();
+        services = new LinkedList<ServiceReference<S>>();
         listeners = new LinkedList<IListener<S>>();
     }
 
@@ -40,8 +61,13 @@ public class ServiceTracker<S extends Serializable> implements ServiceListener, 
     }
 
     public void close() {
-        context.unregisterListener(this, name);
-        services = new LinkedList<S>();
+        if (context != null) {
+            context.unregisterListener(this, name);
+            services = new LinkedList<ServiceReference<S>>();
+            context = null;
+        } else {
+            log.warn("Wasn't open");
+        }
     }
 
     public void addListener(IListener listener) {
@@ -53,7 +79,11 @@ public class ServiceTracker<S extends Serializable> implements ServiceListener, 
     }
 
     public List<S> getServices() {
-        return services;
+        List<S> result = new ArrayList<S>(services.size());
+        for (ServiceReference<S> reference : services) {
+            result.add(reference.getService());
+        }
+        return result;
     }
 
     public final void processEvent(int type, String name, Serializable service) {
@@ -61,7 +91,7 @@ public class ServiceTracker<S extends Serializable> implements ServiceListener, 
             S casted = (S) service;
             switch (type) {
             case ServiceListener.ADDED:
-                services.add(casted);
+                services.add(context.getReference(casted));
                 for (IListener listener : listeners) {
                     listener.onServiceAdded(name, casted);
                 }
@@ -72,9 +102,9 @@ public class ServiceTracker<S extends Serializable> implements ServiceListener, 
                     listener.onServiceChanged(name, casted);
                 }
                 break;
-                
+
             case ServiceListener.REMOVE:
-                services.remove(service);
+                services.remove(context.getReference(service));
                 for (IListener listener : listeners) {
                     listener.onRemoveService(name, casted);
                 }

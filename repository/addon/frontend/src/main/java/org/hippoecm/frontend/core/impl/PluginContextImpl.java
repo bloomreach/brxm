@@ -17,44 +17,57 @@ package org.hippoecm.frontend.core.impl;
 
 import java.io.Serializable;
 
+import org.hippoecm.frontend.application.PluginPage;
 import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.core.ServiceListener;
+import org.hippoecm.frontend.core.ServiceReference;
 
 public class PluginContextImpl implements PluginContext, Serializable {
     private static final long serialVersionUID = 1L;
 
+    private PluginPage page;
     private IPluginConfig properties;
-    private PluginManager manager;
+    private transient PluginManager manager = null;
 
-    public PluginContextImpl(PluginManager manager, IPluginConfig config) {
-        this.manager = manager;
+    public PluginContextImpl(PluginPage page, IPluginConfig config) {
+        this.page = page;
         this.properties = config;
     }
 
     public IPluginConfig getProperties() {
         return properties;
     }
-    
+
     public Plugin start(IPluginConfig config) {
-        return manager.start(config);
+        return getManager().start(config);
+    }
+
+    public <T extends Serializable> ServiceReference<T> getReference(T service) {
+        return getManager().getReference(service);
     }
 
     public void registerService(Serializable service, String name) {
-        manager.registerService(service, name);
+        getManager().registerService(service, name);
     }
 
     public void unregisterService(Serializable service, String name) {
-        manager.unregisterService(service, name);
+        getManager().unregisterService(service, name);
     }
 
     public void registerListener(ServiceListener listener, String name) {
-        manager.registerListener(listener, name);
+        getManager().registerListener(listener, name);
     }
 
     public void unregisterListener(ServiceListener listener, String name) {
-        manager.unregisterListener(listener, name);
+        getManager().unregisterListener(listener, name);
     }
 
+    private PluginManager getManager() {
+        if (manager == null) {
+            manager = page.getPluginManager();
+        }
+        return manager;
+    }
 }

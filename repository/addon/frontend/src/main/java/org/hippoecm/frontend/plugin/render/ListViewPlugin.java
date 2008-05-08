@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse;
+package org.hippoecm.frontend.plugin.render;
 
-import org.hippoecm.frontend.plugin.composite.Perspective;
+import org.hippoecm.frontend.core.Plugin;
+import org.hippoecm.frontend.core.PluginContext;
+import org.hippoecm.frontend.service.render.ListViewService;
 
-public class BrowserPerspective extends Perspective {
+public class ListViewPlugin extends ListViewService implements Plugin {
     private static final long serialVersionUID = 1L;
 
-    public BrowserPerspective() {
-        addExtensionPoint("browserBreadcrumbPlugin");
-        addExtensionPoint("browserPlugin");
-        addExtensionPoint("listPlugin");
-        addExtensionPoint("workflowsPlugin");
+    public void start(PluginContext context) {
+        init(context, context.getProperties().get(Plugin.SERVICE_ID).getStrings().get(0), context.getProperties());
     }
+
+    public void stop() {
+        destroy();
+    }
+
 }
