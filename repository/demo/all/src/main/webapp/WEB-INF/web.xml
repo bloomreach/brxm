@@ -21,22 +21,15 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
   <description>Hippo ECM Sample site all-in-one</description>
   <display-name>Hippo ECM all-in-one Demo</display-name>
 
-  <!-- Repository configuration -->
+  <!-- General HST configuration -->
   <context-param>
-    <param-name>repository-address</param-name>
-    <param-value>rmi://localhost:1099/hipporepository</param-value>
-    <!-- description>The address of the repository</description -->
+    <description>Comma separated list of configuration files.</description>
+    <param-name>configurationFiles</param-name>
+    <param-value>/WEB-INF/hst.properties</param-value>
   </context-param>
-  <context-param>
-    <param-name>repository-username</param-name>
-    <param-value>admin</param-value>
-    <!-- description>The username to use for the repository login</description -->
-  </context-param>
-  <context-param>
-    <param-name>repository-password</param-name>
-    <param-value>admin</param-value>
-    <!-- description>The password to use for the repository login</description -->
-  </context-param>
+  <listener>
+    <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
+  </listener>
 
   <!--builtin console-->
   <filter>
@@ -130,10 +123,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
     <init-param>
       <param-name>repositoryBaseLocation</param-name>
       <param-value>/live</param-value>
-      <!-- description>
-        The path to bind as context.
-      </description -->
-    </init-param>
+     </init-param>
   </filter>
 
   <filter-mapping>

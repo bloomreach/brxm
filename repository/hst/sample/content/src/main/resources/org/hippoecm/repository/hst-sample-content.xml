@@ -112,6 +112,32 @@
       </sv:node>
     </sv:node>
 
+    <sv:node sv:name="includeAll">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="includeAll">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hstsample:homeDocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hst:page</sv:value>
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hst:pageType" sv:type="String">
+          <sv:value>jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:pageFile" sv:type="String">
+          <sv:value>/includeAll.jsp</sv:value>
+        </sv:property>
+        <sv:property sv:name="hstsample:pageLabel" sv:type="String">
+          <sv:value>Include all</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    
     <sv:node sv:name="hst-sample">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>

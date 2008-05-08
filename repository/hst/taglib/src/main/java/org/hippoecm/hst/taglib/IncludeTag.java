@@ -26,38 +26,35 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.Context;
-import org.hippoecm.hst.core.ContextFilter;
-import org.hippoecm.hst.core.URLMappingContextFilter;
+import org.hippoecm.hst.core.HSTConfiguration;
 import org.hippoecm.hst.core.URLMappingResponseWrapper;
 import org.hippoecm.hst.core.URLPathTranslator;
 
 public class IncludeTag extends TagSupport {
+    
+    private static final String KEY_CONTEXT_NAME = "tags.includetag.context.name";
+    private static final String DEFAULT_CONTEXT_NAME = "context";
+    
     private static final long serialVersionUID = 1L;
     
-    private String page;
-    private String urlMappingLocation;
+    private String path;
 
-    public void setPage(String page) {
-        this.page = page;
-    }
-
-    public void setUrlMappingLocation(String urlMappingLocation) {
-        this.urlMappingLocation = urlMappingLocation;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public int doEndTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
-        String urlMappingLoc;
-        if (this.urlMappingLocation != null) {
-            urlMappingLoc = this.urlMappingLocation;
-        }
-        else {
-            urlMappingLoc = (String) request.getSession().getAttribute(URLMappingContextFilter.URL_MAPPING_LOCATION);
-        }
+        String urlMappingLocation = HSTConfiguration.get(request.getSession().getServletContext(),
+                                        HSTConfiguration.KEY_REPOSITORY_URLMAPPING_LOCATION);
         
-        String contextName = (String) request.getSession().getAttribute(ContextFilter.ATTRIBUTE_NAME);
+        String contextName = HSTConfiguration.get(request.getSession().getServletContext(), 
+                                        KEY_CONTEXT_NAME, false/*not required*/);
+        if (contextName == null) {
+            contextName = DEFAULT_CONTEXT_NAME;
+        }
         Context context = (Context) request.getAttribute(contextName);
         
         if (context == null) {
@@ -67,17 +64,18 @@ public class IncludeTag extends TagSupport {
         try {
             pageContext.getOut().flush();
 
-            Context newContext = new Context(context, page);
+            // create a new context, used only in the included page
+            Context newContext = new Context(context, path);
             request.setAttribute(contextName, newContext);
 
             URLPathTranslator urlPathTranslator = new URLPathTranslator(request.getContextPath(), 
-                                    context.getURLBasePath(), context.getBaseLocation());
+                                    newContext.getURLBasePath(), newContext.getBaseLocation());
             URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(newContext, urlPathTranslator, request, response);
-            String mappedPage = responseWrapper.mapRepositoryDocument(context.getLocation(), urlMappingLoc);
+            String mappedPage = responseWrapper.mapRepositoryDocument(newContext.getLocation(), urlMappingLocation);
             
             if (mappedPage == null) {
-                throw new JspException("No mapped page could be found for path " + context.getLocation()
-                        + " and urlMappingLocation " + urlMappingLoc);
+                throw new JspException("No mapped page could be found for location " + newContext.getLocation()
+                        + " and url mapping location " + urlMappingLocation);
             }
 
             // include the page
@@ -96,6 +94,7 @@ public class IncludeTag extends TagSupport {
         } catch (RepositoryException ex) {
             throw new JspException(ex);
         } finally {
+            // always reset the 'old' context
             request.setAttribute(contextName, context);
         }
         return EVAL_PAGE;

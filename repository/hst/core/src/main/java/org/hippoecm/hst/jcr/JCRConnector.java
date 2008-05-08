@@ -11,10 +11,12 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
+import org.hippoecm.hst.core.HSTConfiguration;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
@@ -23,10 +25,6 @@ import org.slf4j.LoggerFactory;
 public class JCRConnector {
     private static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
 
-    public static final String REPOSITORY_ADRESS_PARAM = "repositoryAddress";
-    public static final String REPOSITORY_USERNAME_PARAM = "repositoryUserName";
-    public static final String REPOSITORY_PASSWORD_PARAM = "repositoryPassword";
-    
     public static final String JCR_SESSION_KEY = "org.hippoecm.hst.JCRSESSION";
 
     public static Session getJCRSession(HttpSession httpSession) {
@@ -37,9 +35,11 @@ public class JCRConnector {
                 result = wrapper.jcrSession;
             } else {
                 httpSession.removeAttribute(JCR_SESSION_KEY);
-                wrapper = new SessionWrapper(httpSession.getServletContext().getInitParameter(REPOSITORY_ADRESS_PARAM),
-                                             httpSession.getServletContext().getInitParameter(REPOSITORY_USERNAME_PARAM),
-                                             httpSession.getServletContext().getInitParameter(REPOSITORY_PASSWORD_PARAM));
+                
+                ServletContext sc = httpSession.getServletContext(); 
+                wrapper = new SessionWrapper(HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_ADRESS),
+                                             HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_USERNAME),
+                                             HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_PASSWORD));
 // FIXME turn on storing the JCRSession if caching in JCR is working                                                             
 //              httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;

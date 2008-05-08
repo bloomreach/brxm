@@ -18,27 +18,19 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-  <!-- General configuration -->
   <display-name>sample website</display-name>
   <description>Hippo ECM Sample site</description>
 
-  <!-- Repository configuration -->
+  <!-- General HST configuration -->
   <context-param>
-    <description>The address of the repository</description>
-    <param-name>repositoryAddress</param-name>
-    <param-value>rmi://localhost:1099/hipporepository</param-value>
+    <description>Comma separated list of configuration files.</description>
+    <param-name>configurationFiles</param-name>
+    <param-value>/WEB-INF/hst.properties</param-value>
   </context-param>
-  <context-param>
-    <description>The user name to use for the repository login</description>
-    <param-name>repositoryUserName</param-name>
-    <param-value>admin</param-value>
-  </context-param>
-  <context-param>
-    <description>The password to use for the repository login</description>
-    <param-name>repositoryPassword</param-name>
-    <param-value>admin</param-value>
-  </context-param>
-
+  <listener>
+    <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
+  </listener>
+  
   <filter>
     <filter-name>ContextPreview</filter-name>
     <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
@@ -76,7 +68,7 @@
       <description>
         The repository path to bind as context.
       </description>      
-      <param-name>basePath</param-name>
+      <param-name>urlBasePath</param-name>
       <param-value>/live/site/pages</param-value>
     </init-param>
   </filter>

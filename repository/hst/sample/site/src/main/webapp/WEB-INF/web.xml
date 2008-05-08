@@ -16,28 +16,18 @@
 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-  <!-- General configuration -->
   <display-name>Sample website with HST</display-name>
   <description>Hippo ECM Sample site</description>
 
-  
-  <!-- Repository configuration -->
+  <!-- General HST configuration -->
   <context-param>
-    <description>The address of the repository</description>
-    <param-name>repositoryAddress</param-name>
-    <param-value>rmi://localhost:1099/hipporepository</param-value>
-    <!-- param-value>WEB-INF/storage</param-value -->
+    <description>Comma separated list of configuration files.</description>
+    <param-name>configurationFiles</param-name>
+    <param-value>/WEB-INF/hst.properties</param-value>
   </context-param>
-  <context-param>
-    <description>The user name to use for the repository login</description>
-    <param-name>repositoryUserName</param-name>
-    <param-value>admin</param-value>
-  </context-param>
-  <context-param>
-    <description>The password to use for the repository login</description>
-    <param-name>repositoryPassword</param-name>
-    <param-value>admin</param-value>
-  </context-param>
+  <listener>
+    <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
+  </listener>
   
   <filter>
     <filter-name>defaultContext</filter-name>
@@ -79,14 +69,6 @@
       <param-name>urlBasePath</param-name>
       <param-value>/hst-sample</param-value>
     </init-param>
-    <init-param>
-      <description>
-        Where to find the default 'node type -> jsp file' mapping,
-        must be of type hst:urlmappingfolder
-      </description>
-      <param-name>urlMappingLocation</param-name>
-      <param-value>/hst-sample/defaultmapping</param-value>
-    </init-param>
   </filter>
   
   <filter-mapping>
@@ -124,5 +106,5 @@
     <exception-type>javax.servlet.ServletException</exception-type>
     <location>/error.jsp</location>
   </error-page>
-
+  
 </web-app>
