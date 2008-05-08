@@ -24,32 +24,25 @@
     <body>
       <section name="HST Configuration">
         <p>
-          Basic HST functionality is set up into your web application by configuring one or more filters in your 
-          web deployment descriptor (web.xml). This applies to making the expression language and the 
-          tag library available.<br/>
-          Secondly, when wanting to view images or other binaries, a servlet for binaries has to be set up
+          In the application's web deployment descriptor (web.xml), a general HST configuration file is set 
+          up holding configuration for the connection to the repository and also taglib configuration. You 
+          may add your own configuration files at will.</p>
+        <p>  
+          Secondly, the basic HST functionality is set up by configuring one or more filters in your 
+          web.xml. This applies mainly to making the JSP expression language available.</p>
+         <p> 
+          Thirdly, when wanting to view images or other binaries, a servlet for binaries has to be set up
           in the web.xml as well. 
         </p>
-        <subsection name="Repository configuration">
-          <p>To access the repository, some <code>&lt;context-param&gt;</code>'s have to be configured in the web.xml file:</p>
-          <table>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-            </tr>
-            <tr>
-              <td>repositoryAddress</td>
-              <td>The address of the repository, e.g. rmi://localhost:1099/hipporepository</td>
-            </tr>
-            <tr>
-              <td>repositoryUserName</td>
-              <td>The user name to use for the repository login</td>
-            </tr>                 
-            <tr>
-              <td>repositoryPassword</td>
-              <td>The password to use for the repository login</td>
-            </tr>                 
-          </table>  
+        <subsection name="General configuration file(s)">
+          <p>Repository and taglib configuration is set up in a separate properties file.
+            The file plus an accompanying configuration object is set up in web.xml with a combination 
+            <code>&lt;context-param&gt;</code> and <code>&lt;listener&gt;</code></p>
+           <p>The context parameter is called <code>configurationFiles</code> which represents a 
+              comma-separated list of configuration file locations. The object's listener class is 
+              <code>org.hippoecm.hst.core.HSTConfiguration</code>.
+           </p>
+          <p>For an example <a href="configuration-example.html#1">see here!</a></p>      
         </subsection>
         <subsection name="Configuration of your HST web filter(s)">
             <p>To use the HST, one or more webfilters should be installed in your web application
@@ -85,30 +78,24 @@
               <td>context</td>
             </tr>                 
             <tr>
-              <td>urlBasePath</td>
-              <td>The part of the url this filter matches to, so must match 
-                the actual url-pattern of the filter-mapping.</td>
-              <td>/</td>
-            </tr>
-            <tr>
-              <td>repositoryBaseLocation</td>
-              <td>The repository base path to bind the context to.</td>
-              <td>Same value as urlBasePath</td>
-            </tr>                 
-            <tr>
-              <td>urlMappingLocation</td>
-              <td>The location in the repository where to find URL mappings
-                based on document type. Only used by URLMappingContextFilter.
-              </td>
-              <td>/urlMapping</td>
-            </tr>                 
-            <tr>
               <td>ignoreExtension</td>
               <td>A list of extensions that the filter will not create context objects
                 for, if the URL ends with such an extension. 
               </td>
               <td>ico,gif,jpg,jpeg,svg,png,css,js</td>
             </tr>                 
+            <tr>
+              <td>repositoryBaseLocation</td>
+              <td>The repository base path to bind the context to.</td>
+              <td>Same value as urlBasePath</td>
+            </tr>                 
+            <tr>
+              <td>urlBasePath</td>
+              <td>The part of the url this filter matches to, so must match 
+                the actual url-pattern of the filter-mapping. 
+                <em>Only for URLMappingContextFilter!</em></td>
+              <td>/</td>
+            </tr>
           </table>  
           
           <h4>One HST filter or more?</h4>
@@ -134,7 +121,7 @@
             attribute of the &lt;img&gt; tag (<a href="binaries.html">more here</a>).</p>  
         </subsection>
          
-        <p>For an example web.xml, <a href="configuration-example.html">see here!</a></p>      
+        <p>For an example web.xml, <a href="configuration-example.html#2">see here!</a></p>      
       </section>
 
     </body>
