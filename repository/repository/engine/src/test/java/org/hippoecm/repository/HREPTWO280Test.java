@@ -20,34 +20,42 @@ import java.io.IOException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 public class HREPTWO280Test extends FacetedNavigationAbstractTest {
 
+    @Before
+    public void setUp() throws Exception {
+      super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+      super.tearDown();
+    }
+
+    @Test
     public void testIssue() throws RepositoryException {
         commonStart();
 
-        Node node, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
-        traverse(session.getRootNode().getNode("navigation"));
+        Node node, searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
+        traverse(session.getRootNode().getNode("test/navigation"));
 
-        node = session.getRootNode().getNode("documents").addNode("aap");
+        node = session.getRootNode().getNode("test/documents").addNode("aap");
         node.setProperty("x", "x1");
         session.save();
 
-        searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+        searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
         traverse(searchNode);
 
-        session.getRootNode().getNode("navigation").remove();
+        session.getRootNode().getNode("test/navigation").remove();
         session.save();
         session.refresh(false);
-        session.getRootNode().getNode("documents").remove();
+        session.getRootNode().getNode("test/documents").remove();
         session.save();
         session.refresh(false);
 
         commonEnd();
     }
-
-
-    @Override
-    public void testPerformance() throws RepositoryException, IOException {
-    }
-
 }

@@ -111,6 +111,7 @@ public class DerivedDataTest extends TestCase {
         assertEquals(1, values.length);
         values[0].getString().equals(folder2.getUUID());
 
+        //System.err.println("BERRY MOVING TO "+folder1.getPath()+"/"+document.getName());
         session.move(document.getPath(), folder1.getPath()+"/"+document.getName());
         session.save();
         p = session.getRootNode().getNode("test/folder1/document").getProperty("hippo:paths");

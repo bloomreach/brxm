@@ -43,8 +43,7 @@
   <modules>
     <module>connector</module>
     <module>engine</module>
-    <module>application</module>
     <module>test</module>
+    <module>application</module>
   </modules>
-
 </project>

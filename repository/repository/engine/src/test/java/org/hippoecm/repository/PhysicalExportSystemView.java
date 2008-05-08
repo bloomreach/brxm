@@ -40,6 +40,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 public class PhysicalExportSystemView extends FacetedNavigationAbstractTest {
 
     private static final String FACETSELECTNODE = "facetselect";
@@ -57,11 +60,7 @@ public class PhysicalExportSystemView extends FacetedNavigationAbstractTest {
         return null;
     }
 
-    
-    @Override
-    public void testPerformance() throws RepositoryException, IOException {
-    }
-
+    @Test
     public void testFacetSearchExport() throws RepositoryException, Exception {
         commonStart();
         Result result = new Result();
@@ -74,7 +73,7 @@ public class PhysicalExportSystemView extends FacetedNavigationAbstractTest {
         assertTrue(result.isSucces());
     }
 
-    
+    @Test
     public void testFacetSelectExport() throws RepositoryException, Exception {
         commonStart();
         Result result = new Result();
@@ -87,6 +86,7 @@ public class PhysicalExportSystemView extends FacetedNavigationAbstractTest {
         assertTrue(result.isSucces());
     }
 
+    @Test
     public void testTotalExport() throws RepositoryException, Exception {
         commonStart();
         Result result = new Result();

@@ -53,7 +53,7 @@
   <properties>
     <!-- Test dependencies  -->
     <easymock.version>1.1</easymock.version>
-    <junit.version>3.8.1</junit.version>
+    <junit.version>[4.4,)</junit.version>
     <selenium.version>0.9.2</selenium.version>
     <atomikos.version>3.1.4</atomikos.version>
 
@@ -252,8 +252,19 @@
       <layout>legacy</layout>
     </repository>
     <repository>
+      <id>glassfish</id>
+      <name>Glassfish maven repository</name>
+      <url>http://download.java.net/maven/glassfish</url>
+      <snapshots><enabled>true</enabled></snapshots>
+      <releases><updatePolicy>never</updatePolicy></releases>
+    </repository>
+    <repository>
       <id>openqa</id>
+      <name>OpenQA Repository</name>
       <url>http://maven.openqa.org</url>
+      <layout>default</layout>
+      <snapshots><enabled>false</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
     </repository>
   </repositories>
 

@@ -114,7 +114,45 @@
           <contextPath>/</contextPath>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <forkMode>always</forkMode>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemProperties>
+            <property>
+              <name>product</name>
+              <value>${basedir}/target/${artifactId}-${version}</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
    </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>test</id>
+      <activation>
+        <property>
+          <name>maven.test.skip</name>
+          <value>false</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-repository-engine</artifactId>
+          <version>${parent.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
 </project>

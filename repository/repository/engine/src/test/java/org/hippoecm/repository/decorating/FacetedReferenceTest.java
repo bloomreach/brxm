@@ -25,50 +25,48 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 
-public class FacetedReferenceTest extends TestCase {
+import org.junit.*;
+import static org.junit.Assert.*;
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    protected HippoRepository repository;
-    protected Session session;
+public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
 
     private static String[] contents = new String[] {
-        "/documents",                                                   "hippo:folder",
-        "/documents/pages",                                             "nt:unstructured",
-        "/documents/pages/index",                                       "hippo:handle",
-        "/documents/pages/index/index",                                 "hippo:testdocument",
-        "/documents/pages/index/index/links",                           "nt:unstructured",
-        "/documents/pages/index/index/thema",                           "nt:unstructured",
-        "/documents/articles",                                          "nt:unstructured",
-        "/documents/articles/brave-new-world",                          "hippo:handle",
-        "/documents/articles/brave-new-world/brave-new-world",          "hippo:testdocument",
+        "/test",                                                             "nt:unstructured",
+        "/test/documents",                                                   "hippo:folder",
+        "jcr:mixinTypes", "mix:referenceable",
+        "/test/documents/pages",                                             "nt:unstructured",
+        "/test/documents/pages/index",                                       "hippo:handle",
+        "/test/documents/pages/index/index",                                 "hippo:testdocument",
+        "/test/documents/pages/index/index/links",                           "nt:unstructured",
+        "/test/documents/pages/index/index/thema",                           "nt:unstructured",
+        "/test/documents/articles",                                          "nt:unstructured",
+        "/test/documents/articles/brave-new-world",                          "hippo:handle",
+        "/test/documents/articles/brave-new-world/brave-new-world",          "hippo:testdocument",
         "language","english",
-        "/documents/articles/the-invisible-man",                        "hippo:handle",
-        "/documents/articles/the-invisible-man/the-invisible-man",      "hippo:testdocument",
+        "/test/documents/articles/the-invisible-man",                        "hippo:handle",
+        "/test/documents/articles/the-invisible-man/the-invisible-man",      "hippo:testdocument",
         "language","english",
-        "/documents/articles/war-of-the-worlds",                        "hippo:handle",
-        "/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
+        "/test/documents/articles/war-of-the-worlds",                        "hippo:handle",
+        "jcr:mixinTypes", "mix:referenceable",
+        "/test/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
         "language","english",
-        "/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
+        "/test/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
         "language","dutch",
-        "/documents/articles/nineteeneightyfour",                       "hippo:handle",
-        "/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:testdocument",
+        "/test/documents/articles/nineteeneightyfour",                       "hippo:handle",
+        "/test/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:testdocument",
         "language","dutch",
-        "/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:testdocument",
+        "/test/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:testdocument",
         "language","english",
-        "/english",                                                     "hippo:facetselect",
-        "hippo:docbase", "/documents",
+        "/test/english",                                                     "hippo:facetselect",
+        "hippo:docbase", "/test/documents",
         "hippo:facets",  "language",
         "hippo:values",  "english",
         "hippo:modes",   "stick",
-        "/dutch",                                                       "hippo:facetselect",
-        "hippo:docbase", "/documents/articles/war-of-the-worlds",
+        "/test/dutch",                                                       "hippo:facetselect",
+        "hippo:docbase", "/test/documents/articles/war-of-the-worlds",
         "hippo:facets",  "language",
         "hippo:facets",  "state",
         "hippo:values",  "dutch",
@@ -77,112 +75,26 @@ public class FacetedReferenceTest extends TestCase {
         "hippo:modes",   "clear"
     };
 
-    private Node traverse(Session session, String path) throws RepositoryException {
-        if(path.startsWith("/"))
-            path = path.substring(1);
-        return traverse(session.getRootNode(), path);
-    }
-
-    private Node traverse(Node node, String path) throws RepositoryException {
-        String[] pathElts = path.split("/");
-        for(int pathIdx=0; pathIdx<pathElts.length && node != null; pathIdx++) {
-            String relPath = pathElts[pathIdx];
-            Map<String,String> conditions = null;
-            if(relPath.contains("[") && relPath.endsWith("]")) {
-                conditions = new TreeMap<String,String>();
-                String[] conditionElts = relPath.substring(relPath.indexOf("[")+1,relPath.lastIndexOf("]")).split(",");
-                for(int conditionIdx=0; conditionIdx<conditionElts.length; conditionIdx++) {
-                    int pos = conditionElts[conditionIdx].indexOf("=");
-                    if(pos >= 0) {
-                        String key = conditionElts[conditionIdx].substring(0,pos);
-                        String value = conditionElts[conditionIdx].substring(pos+1);
-                        if(value.startsWith("'") && value.endsWith("'"))
-                            value = value.substring(1,value.length()-1);
-                        conditions.put(key, value);
-                    } else
-                        conditions.put(conditionElts[conditionIdx], null);
-                }
-                relPath = relPath.substring(0,relPath.indexOf("["));
-            }
-            if(conditions == null || conditions.size() == 0) {
-                if(node.hasNode(relPath)) {
-                    try {
-                        node = node.getNode(relPath);
-                    } catch(PathNotFoundException ex) {
-                        return null;
-                    }
-                } else
-                    return null;
-            } else {
-                for(NodeIterator iter = node.getNodes(relPath); iter.hasNext(); ) {
-                    node = iter.nextNode();
-                    for(Map.Entry<String,String> condition: conditions.entrySet()) {
-                        if(node.hasProperty(condition.getKey())) {
-                            if(condition.getValue() != null) {
-                                try {
-                                    if(!node.getProperty(condition.getKey()).getString().equals(condition.getValue())) {
-                                        node = null;
-                                        break;
-                                    }
-                                } catch(PathNotFoundException ex) {
-                                    node = null;
-                                    break;
-                                } catch(ValueFormatException ex) {
-                                    node = null;
-                                    break;
-                                }
-                            }
-                        } else {
-                           node = null;
-                            break;
-                        }
-                    }
-                    if(node != null)
-                        break;
-                }
-            }
-        }
-        return node;
-    }
-
-    public void testFacetedReference() throws Exception {
-        Session session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds"));
-        assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
-        assertNotNull(traverse(session,"/documents/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
-        assertNotNull(traverse(session,"/english/articles/brave-new-world/brave-new-world"));
-        assertNotNull(traverse(session,"/english/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
-        assertNull(traverse(session,"/english/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
-        assertNotNull(traverse(session,"/dutch/war-of-the-worlds[language='dutch']"));
-        assertNull(traverse(session,"/dutch/war-of-the-worlds[language='english']"));
-        session.logout();
-    }
-
+    @Before
     public void setUp() throws Exception {
-        repository = null;
-        repository = HippoRepositoryFactory.getHippoRepository();
-        session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        FacetContentUtilities.build(session, contents);
+        super.setUp();
+        build(session, contents);
         session.save();
-        session.logout();
     }
 
+    @After
     public void tearDown() throws Exception {
-        session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        Node node = session.getRootNode();
-        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            if (!child.getPath().equals("/jcr:system")) {
-                child.remove();
-            }
-        }
-        session.save();
-        if(session != null) {
-            session.logout();
-        }
-        if (repository != null) {
-            repository.close();
-            repository = null;
-        }
+        super.tearDown();
+    }
+
+    @Test public void testFacetedReference() throws Exception {
+        assertNotNull(traverse(session,"/test/documents/articles/war-of-the-worlds/war-of-the-worlds"));
+        assertNotNull(traverse(session,"/test/documents/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
+        assertNotNull(traverse(session,"/test/documents/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
+        assertNotNull(traverse(session,"/test/english/articles/brave-new-world/brave-new-world"));
+        assertNotNull(traverse(session,"/test/english/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
+        assertNull(traverse(session,"/test/english/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
+        assertNotNull(traverse(session,"/test/dutch/war-of-the-worlds[language='dutch']"));
+        assertNull(traverse(session,"/test/dutch/war-of-the-worlds[language='english']"));
     }
 }

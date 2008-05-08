@@ -21,6 +21,9 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
  * These tests try all kind of variants of browsing through facetted navigation and
  * changing, with and without saving physical content (real nodes and external nodes),
@@ -36,15 +39,26 @@ import org.hippoecm.repository.api.HippoNodeType;
  * in errors in these tests (the HippoLocalItemStateManager is pretty close coupled to the ISM;'s
  * in Jackrabbit)
  */
-public class HippoISMTests extends FacetedNavigationAbstractTest {
+public class HippoISMTest extends FacetedNavigationAbstractTest {
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+         super.tearDown();
+    }
+
+    @Test
     public void testTrivialMultipleTraverseVirtualNavigation() throws RepositoryException{
         try {
             commonStart();
             // external node indicates for the half regular half virtual nodes
-            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            Node externalNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
             traverse(externalNode);
             traverse(externalNode);
             traverse(externalNode);
@@ -59,24 +73,26 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
 
+    @Test
     public void testSaveRefetchExternalNode() throws RepositoryException {
         try {
             commonStart();
-            Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            Node node, child, searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
 
             long countBefore = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
             session.refresh(false);
             session.save();
 
-            node = session.getRootNode().getNode("documents");
+            node = session.getRootNode().getNode("test/documents");
 
             for(int i =1 ; i < 50; i++){
-                child = node.addNode("test"+i, HippoNodeType.NT_DOCUMENT);
+                child = node.addNode("test"+i, "hippo:testdocument");
+                child.addMixin("hippo:harddocument");
                 child.setProperty("x", "x1");
                 child.setProperty("y", "yy");
                 node.save();
                 // refetch searchNode
-                searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+                searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
                 long countAfter = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
                 assertEquals(countBefore + i, countAfter);
             }
@@ -93,15 +109,16 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
 
+    @Test
     public void testSaveNoRefetchExternalNode() throws RepositoryException {
         try {
             commonStart();
-            Node node, child, searchNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            Node node, child, searchNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
             traverse(searchNode);
             traverse(searchNode);
             long countBefore = searchNode.getNode("x1").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
 
-            node = session.getRootNode().getNode("documents");
+            node = session.getRootNode().getNode("test/documents");
             child = node.addNode("test", HippoNodeType.NT_DOCUMENT);
             child.setProperty("x", "x1");
             child.setProperty("y", "yy");
@@ -127,15 +144,16 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
     }
 
 
+    @Test
     public void testCorrectRemoveExternalNodeSave() throws RepositoryException{
         try{
             commonStart();
             //external node indicates for the half regular half virtual nodes
-            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            Node externalNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
             traverse(externalNode);
-            session.getRootNode().getNode("documents").addNode("test");
+            session.getRootNode().getNode("test/documents").addNode("test");
             session.save();
-            externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            externalNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
             externalNode.remove();
             session.save();
         } catch(NullPointerException ex) {
@@ -150,14 +168,14 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
 
     }
 
-    public void testWrongRemoveExternalNodeSave() throws RepositoryException{
-
-        try{
+    @Test
+    public void testWrongRemoveExternalNodeSave() throws RepositoryException {
+        try {
             commonStart();
             //external node indicates for the half regular half virtual nodes
-            Node externalNode = session.getRootNode().getNode("navigation").getNode("xyz");
+            Node externalNode = session.getRootNode().getNode("test/navigation").getNode("xyz");
             traverse(externalNode);
-            session.getRootNode().getNode("documents").addNode("test");
+            session.getRootNode().getNode("test/documents").addNode("test");
             session.save();
             // without refetch gives correctly an exception!
             externalNode.remove();
@@ -176,15 +194,16 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
         }
     }
 
-    public void testCorrectRemoveVirtualNodeSave() throws RepositoryException{
-        try{
+    @Test
+    public void testCorrectRemoveVirtualNodeSave() throws RepositoryException {
+        try {
             commonStart();
             //external node indicates for the half regular half virtual nodes
-            Node virtualNode = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1");
+            Node virtualNode = session.getRootNode().getNode("test/navigation").getNode("xyz").getNode("x1");
             traverse(virtualNode);
-            session.getRootNode().getNode("documents").addNode("test");
+            session.getRootNode().getNode("test/documents").addNode("test");
             session.save();
-            virtualNode = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1");
+            virtualNode = session.getRootNode().getNode("test/navigation").getNode("xyz").getNode("x1");
             virtualNode.remove();
             session.save();
         } catch(NullPointerException ex) {
@@ -199,14 +218,14 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
 
     }
 
-
-    public void testWrongRemoveVirtualNodeSave() throws RepositoryException{
-        try{
+    @Test
+    public void testWrongRemoveVirtualNodeSave() throws RepositoryException {
+        try {
             commonStart();
             //external node indicates for the half regular half virtual nodes
-            Node virtualNode = session.getRootNode().getNode("navigation").getNode("xyz").getNode("x1");
+            Node virtualNode = session.getRootNode().getNode("test/navigation").getNode("xyz").getNode("x1");
             traverse(virtualNode);
-            session.getRootNode().getNode("documents").addNode("test");
+            session.getRootNode().getNode("test/documents").addNode("test");
             session.save();
             // without refetch gives correctly an exception!
             virtualNode.remove();
@@ -224,11 +243,4 @@ public class HippoISMTests extends FacetedNavigationAbstractTest {
             commonEnd();
         }
     }
-
-
-    public void testPerformance() throws RepositoryException {
-
-    }
-
-
 }

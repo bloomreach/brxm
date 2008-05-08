@@ -30,14 +30,13 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.TestCase;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public abstract class FacetedNavigationAbstractTest extends TestCase {
-
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     static class Document {
         int docid;
@@ -54,8 +53,6 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     private final static int defaultNumDocs = 20;
     protected int numDocs = -1;
 
-    protected HippoRepository server;
-    protected Session session;
     private String[] nodeNames;
     protected boolean verbose = false;
     private Map<Integer,Document> documents;
@@ -85,7 +82,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     }
 
     protected Map<Integer,Document> fill() throws RepositoryException {
-        Node node = session.getRootNode();
+        Node node = session.getRootNode().getNode("test");
 
         if (!node.hasNode("documents")) {
             node.addNode("documents", "hippo:folder");
@@ -133,7 +130,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         }
         for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
-            //if (!child.getPath().equals("/jcr:system"))
+            if (!child.getPath().equals("/jcr:system"))
                 traverse(child);
         }
     }
@@ -191,69 +188,46 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         assertEquals("counted and reference mismatch on "+facetPath, checkedCount, realCount);
     }
 
+    @Before
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        // first clean possible old entries
-        if(session.getRootNode().hasNode("navigation")) {
-            session.getRootNode().getNode("navigation").remove();
+        super.setUp();
+        if (!session.getRootNode().hasNode("test")) {
+            session.getRootNode().addNode("test");
         }
-        if(session.getRootNode().hasNode("documents")) {
-            session.getRootNode().getNode("documents").remove();
-        }
-//
-//        for (NodeIterator iter = session.getRootNode().getNodes(); iter.hasNext();) {
-//            Node child = iter.nextNode();
-//            if (!child.getPath().equals("/jcr:system")) {
-//                child.remove();
-//            }
-//        }
-        session.save();
-        session.getRootNode().addNode("navigation");
+        session.getRootNode().getNode("test").addNode("navigation");
     }
 
+    @After
     public void tearDown() throws Exception {
         session.refresh(false);
-        if(session.getRootNode().hasNode("navigation")) {
-            session.getRootNode().getNode("navigation").remove();
+        if(session.getRootNode().getNode("test").hasNode("navigation")) {
+            session.getRootNode().getNode("test").getNode("navigation").remove();
         }
-        if(session.getRootNode().hasNode("documents")) {
-            session.getRootNode().getNode("documents").remove();
-        }
-        if(session != null) {
-            session.logout();
-        }
-        if (server != null) {
-            server.close();
+        if(session.getRootNode().getNode("test").hasNode("documents")) {
+            session.getRootNode().getNode("test").getNode("documents").remove();
         }
     }
 
     protected Node commonStart() throws RepositoryException {
         documents = fill();
-        Node node = session.getRootNode().getNode("navigation");
+        Node node = session.getRootNode().getNode("test/navigation");
         node = node.addNode("xyz", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("documents").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
         session.save();
         session.refresh(false);
-        return session.getRootNode().getNode("navigation").getNode("xyz");
+        return session.getRootNode().getNode("test/navigation").getNode("xyz");
     }
 
     protected void commonEnd() throws RepositoryException {
         session.refresh(false);
     }
 
-    public void testPerformance() throws RepositoryException, IOException {
-        Node node = commonStart();
-        node.getNode("x1").getNode("y2").getNode("z2").getNode(HippoNodeType.HIPPO_RESULTSET).getProperty(HippoNodeType.HIPPO_COUNT).getLong();
-        commonEnd();
-    }
-
     public boolean getVerbose() {
         return verbose;
     }
+
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }

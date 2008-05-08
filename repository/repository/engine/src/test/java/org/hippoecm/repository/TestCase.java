@@ -22,62 +22,76 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
-public abstract class TestCase extends junit.framework.TestCase {
-    private final static String SVN_ID = "$Id";
+import org.junit.*;
+import static org.junit.Assert.*;
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
+import org.hippoecm.repository.api.HippoWorkspace;
 
-    private HippoRepositoryServer backgroundServer = null;;
-    private final static int STANDALONE = 1;
-    private final static int REMOTED    = 2;
-    private final static int APPSERVER  = 3;
-    private int mode = STANDALONE;
+/**
+ * Abstract base class for writing tests against repository.
+ *
+ * Your unit test should follow the following pattern:
+ *
+        <code>
+        public class SampleTest extends org.hippoecm.repository.TestCase {
+            public void setUp() throws Exception {
+                super.setUp();
+                // your code here
+            }
+            public void tearDown() throws Exception {
+                // your code here
+                super.tearDown();
+            }
+        }
+        </code>
+ */
+public abstract class TestCase
+    // used to extends junit.framework.TestCase
+{
+    private final static String SVN_ID = "$Id$";
 
+    protected static final String SYSTEMUSER_ID = "admin";
+    protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
+
+    protected static HippoRepository external = null;
     protected HippoRepository server = null;
     protected Session session = null;
 
     public TestCase() {
-        if(isRemote() && mode != STANDALONE) {
-            mode = REMOTED;
-        }
     }
 
-    protected boolean isRemote() {
-        return false;
+    static public void setRepository(HippoRepository repository) {
+        external = repository;
     }
 
-    protected void setUp() throws Exception {
-        switch(mode) {
-        case APPSERVER:
-            throw new UnsupportedOperationException("not yet supported");
-        case REMOTED:
-            backgroundServer = new HippoRepositoryServer();
-            backgroundServer.run(true);
-            Thread.sleep(3000);
-            server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository"); 
-            break;
-        case STANDALONE: // deliberate fall through
-        default:
-            backgroundServer = null;
+    @BeforeClass public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass public static void tearDownClass() throws Exception {
+    }
+
+    @Before public void setUp() throws Exception {
+        if (external != null) {
+            server = external;
+        } else {
             server = HippoRepositoryFactory.getHippoRepository();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         }
-        if(session.getRootNode().hasNode("test")) {
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        if (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
         session.save();
     }
 
-    protected void tearDown() throws Exception {
-        session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        if(session != null) {
+    @After public void tearDown() throws Exception {
+        if (session != null) {
+            session.refresh(false);
+            if (session.getRootNode().hasNode("test")) {
+                session.getRootNode().getNode("test").remove();
+            }
             session.logout();
         }
-        if (server != null) {
+        if (external == null && server != null) {
             server.close();
         }
     }
@@ -97,11 +111,11 @@ public abstract class TestCase extends junit.framework.TestCase {
                 PropertyDefinition propDef = null;
                 PropertyDefinition[] propDefs = node.getPrimaryNodeType().getPropertyDefinitions();
                 for (int propidx=0; propidx<propDefs.length; propidx++)
-                    if(propDefs[propidx].getName().equals(contents[i])) {
+                    if (propDefs[propidx].getName().equals(contents[i])) {
                         propDef = propDefs[propidx];
                         break;
                     }
-                if("jcr:mixinTypes".equals(contents[i])) {
+                if ("jcr:mixinTypes".equals(contents[i])) {
                     node.addMixin(contents[i+1]);
                 } else {
                     if (propDef != null && propDef.isMultiple()) {
@@ -112,24 +126,27 @@ public abstract class TestCase extends junit.framework.TestCase {
                             System.arraycopy(values,0,newValues,0,values.length);
                             values = newValues;
                         } else {
-                            if(contents[i+1] != null)
+                            if (contents[i+1] != null)
                                 values = new Value[1];
                             else
                                 values = new Value[0];
                         }
-                        if(values.length > 0) {
-                            if(propDef.getRequiredType() == PropertyType.REFERENCE) {
-                                values[values.length-1] = session.getValueFactory().createValue(session.getRootNode().getNode(contents[i+1]).getUUID(), PropertyType.REFERENCE);
+                        if (values.length > 0) {
+                            if (propDef.getRequiredType() == PropertyType.REFERENCE) {
+                                String uuid = session.getRootNode().getNode(contents[i+1]).getUUID();
+                                values[values.length-1] = session.getValueFactory().createValue(uuid, PropertyType.REFERENCE);
                             } else {
                                 values[values.length-1] = session.getValueFactory().createValue(contents[i+1]);
                             }
                         }
                         node.setProperty(contents[i], values);
                     } else {
-                        if(propDef != null && propDef.getRequiredType() == PropertyType.REFERENCE) {
-                            node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().getNode(contents[i+1].substring(1)).getUUID(), PropertyType.REFERENCE));
-                        } else if("hippo:docbase".equals(contents[i])) {
-                            node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().getNode(contents[i+1].substring(1)).getUUID(), PropertyType.REFERENCE));
+                        if (propDef != null && propDef.getRequiredType() == PropertyType.REFERENCE) {
+                            node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().
+                                                         getNode(contents[i+1].substring(1)).getUUID(), PropertyType.REFERENCE));
+                        } else if ("hippo:docbase".equals(contents[i])) {
+                            node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().
+                                                         getNode(contents[i+1].substring(1)).getUUID(), PropertyType.REFERENCE));
                         } else {
                             node.setProperty(contents[i], contents[i+1]);
                         }
@@ -140,8 +157,8 @@ public abstract class TestCase extends junit.framework.TestCase {
     }
 
     protected Node traverse(Session session, String path) throws RepositoryException {
-        if(path.startsWith("/"))
+        if (path.startsWith("/"))
             path = path.substring(1);
-        return HierarchyResolver.getNode(session.getRootNode(), path);
+        return ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
     }
 }
