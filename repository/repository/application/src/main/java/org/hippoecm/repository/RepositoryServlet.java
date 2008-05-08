@@ -18,23 +18,14 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URLDecoder;
+import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.Naming;
-import java.net.MalformedURLException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.StringTokenizer;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -42,15 +33,29 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.repository.api.ISO9075Helper;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import javax.jcr.LoginException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import sun.misc.BASE64Decoder;
+
+import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoNode;
+
+import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 
 public class RepositoryServlet extends HttpServlet {
 
@@ -205,6 +210,33 @@ public class RepositoryServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        // if(req.getAuthType() != req.BASIC_AUTH) {
+        //     res.setHeader("WWW-Authenticate","Basic realm=\"Repository\"");
+        //     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+        //     return;
+        // }
+
+        String username = "admin", password = "admin";
+        String authhead = req.getHeader("Authorization");
+        if(authhead != null) {
+            String userpass = new String(new BASE64Decoder().decodeBuffer(authhead.substring(6)));
+            username = userpass.substring(0, userpass.indexOf(":"));
+            password = userpass.substring(userpass.indexOf(":") + 1);
+        } else {
+            /* An alternative for this else body part is to use:
+             *   username = req.getUserPrincipal().getName(); or req.getRemoteUser()
+             *   password = null;  a problem is that we don't have a password then
+             * but this only works if we fully configured a security realm for this.
+             */
+            if(req.getAuthType() != req.BASIC_AUTH) {
+                res.setHeader("WWW-Authenticate","Basic realm=\"Repository\"");
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+                return;
+            } else {
+                username = password = null;
+            }
+        }
+
         String path = req.getRequestURI();
         if (path.startsWith(req.getContextPath()))
             path = path.substring(req.getContextPath().length());
@@ -214,28 +246,38 @@ public class RepositoryServlet extends HttpServlet {
         res.setContentType("text/html");
         PrintWriter writer = res.getWriter();
 
-        writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
-        writer.println("    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
-        writer.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-        writer.println("<head><title>Hippo Repository Console</title>");
-        writer.println("<style type=\"text/css\">");
-        writer.println(" table.params {font-size:small}");
-        writer.println("</style>");
-        writer.println("</head>");
-        writer.println("<body>");
-        writer.println("  <h2>Hippo Repository Console</h2>");
-        writer.println("  <h3>Request parameters</h3>");
-        writer.println("    <table style=\"params\" summary=\"request parameters\"><tr><th>name</th><th>value</th></tr>");
-        writer.println("    <tr><td>servlet path</td><td>: <code>" + req.getServletPath() + "</code></td></tr>");
-        writer.println("    <tr><td>request uri</td><td>: <code>" + req.getRequestURI() + "</code></td></tr>");
-        writer.println("    <tr><td>relative path</td><td>: <code>" + path + "</code></td></tr>");
-        writer.println("    </table>");
-        writer.println("  <h3>Referenced node</h3>");
         Session session = null;
         try {
-            session = repository.login();
-            Node node = session.getRootNode();
+            if(username == null || username.equals("")) {
+                session = repository.login();
+            } else {
+                session = repository.login(username, (password != null ? password.toCharArray() : null));
+            }
 
+            writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
+            writer.println("    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
+            writer.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+            writer.println("<head><title>Hippo Repository Console</title>");
+            writer.println("<style type=\"text/css\">");
+            writer.println(" table.params {font-size:small}");
+            writer.println("</style>");
+            writer.println("</head>");
+            writer.println("<body>");
+            writer.println("  <h2>Hippo Repository Console</h2>");
+            writer.println("  <h3>Request parameters</h3>");
+            writer.println("    <table style=\"params\" summary=\"request parameters\"><tr><th>name</th><th>value</th></tr>");
+            writer.println("    <tr><td>servlet path</td><td>: <code>" + req.getServletPath() + "</code></td></tr>");
+            writer.println("    <tr><td>request uri</td><td>: <code>" + req.getRequestURI() + "</code></td></tr>");
+            writer.println("    <tr><td>relative path</td><td>: <code>" + path + "</code></td></tr>");
+            writer.println("    </table>");
+
+            writer.println("  <h3>Login information</h3>");
+            writer.println("    <table style=\"params\" summary=\"login parameters\"><tr>");
+            writer.println("    <tr><th>logged in as:</th><td>" + session.getUserID() + "</code></td></tr>");
+            writer.println("    </table>");
+            writer.println("  <h3>Referenced node</h3>");
+
+            Node node = session.getRootNode();
             while (path.startsWith("/")) {
                 path = path.substring(1);
             }
@@ -291,6 +333,9 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }
             writer.println("    </ul>");
+        } catch (LoginException ex) {
+            res.setHeader("WWW-Authenticate","Basic realm=\"Repository\"");
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
         } catch (RepositoryException ex) {
             writer.println("<p>Error while accessing the repository, exception reads as follows:");
             writer.println("<pre>" + ex.getClass().getName() + ": " + ex.getMessage());
