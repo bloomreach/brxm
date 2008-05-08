@@ -28,6 +28,8 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.hippoecm.repository.DerivedDataEngine;
+
 /**
  */
 public class ItemDecorator extends AbstractDecorator implements Item {
@@ -154,7 +156,10 @@ public class ItemDecorator extends AbstractDecorator implements Item {
 
     /** {@inheritDoc} */
     public void remove() throws VersionException, LockException, RepositoryException {
-        item.remove();
+        if(isNode()) {
+            DerivedDataEngine.removal((Node)this);
+            item.remove();
+        }
     }
 
     public boolean equals(Object obj) {

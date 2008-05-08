@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
+
 import org.hippoecm.repository.ext.DerivedDataFunction;
 
 public class DerivedDataEngine {
@@ -66,6 +68,7 @@ public class DerivedDataEngine {
     }
 
     public void save(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+      try {
         ValueFactory valueFactory = session.getValueFactory();
 
         if(logger.isDebugEnabled())
@@ -188,6 +191,9 @@ public class DerivedDataEngine {
                                 }
                             } else if(propDef.isNodeType("hippo:relativepropertyreference")) {
                                 Property property = modified.getProperty(propDef.getProperty("hippo:relPath").getString());
+                                if(property.getParent().isNodeType("mix:referenceable")) {
+                                    dependencies.add(property.getParent().getUUID());
+                                }
                                 if(!property.getDefinition().isMultiple()) {
                                     Value[] values = new Value[1];
                                     values[0] = property.getValue();
@@ -195,9 +201,11 @@ public class DerivedDataEngine {
                                 } else
                                     parameters.put(propName, property.getValues());
                             } else if(propDef.isNodeType("hippo:resolvepropertyreference")) {
-                                Property property = HierarchyResolver.getProperty(modified,
-                                                                              propDef.getProperty("hippo:relPath").getString());
+                                Property property = ((HippoWorkspace)modified.getSession().getWorkspace()).getHierarchyResolver().getProperty(modified, propDef.getProperty("hippo:relPath").getString());
                                 if(property != null) {
+                                    if(property.getParent().isNodeType("mix:referenceable")) {
+                                        dependencies.add(property.getParent().getUUID());
+                                    }
                                     if(!property.getDefinition().isMultiple()) {
                                         Value[] values = new Value[1];
                                         values[0] = property.getValue();
@@ -335,12 +343,21 @@ public class DerivedDataEngine {
                 }
             }
 
+            dependencies.remove(modified.getUUID());
             Value[] dependenciesValues = new Value[dependencies.size()];
             int i = 0;
-            for(String dependency : dependencies)
+            for(String dependency : dependencies) {
                 dependenciesValues[i++] = valueFactory.createValue(dependency, PropertyType.REFERENCE);
+            }
             modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
         }
+      } catch(ConstraintViolationException ex) {
+          System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+          ex.printStackTrace(System.err);
+      } catch(RepositoryException ex) {
+          System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+          ex.printStackTrace(System.err);
+      }
     }
     
     public static void removal(Node removed) throws RepositoryException {
