@@ -27,7 +27,7 @@ import org.hippoecm.hst.jcr.JCRConnector;
 
 public class AccessTag extends ConditionalTagSupport {
     
-    private static final String KEY_CONTEXT_NAME = "tags.accesstag.context.name";
+    private static final String KEY_CONTEXT_NAME = "accesstag.context.name";
     private static final String DEFAULT_CONTEXT_NAME = "context";
     private static final long serialVersionUID = 1L;
     
