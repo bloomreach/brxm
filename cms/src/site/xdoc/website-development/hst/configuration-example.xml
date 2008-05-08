@@ -23,22 +23,42 @@
     </properties>
     <body>
       <section name="HST Configuration Example">
+         <a name="1"></a>
+         <h4>hst.properties</h4>  
+         <p>Usually the main configuration file is <code>/WEB-INF/hst.properties</code>.</p>
+          <source><![CDATA[# Repository configuration.
+# The address of the repository and the user name and password
+# to use for the repository login. All required.
+repository.address=rmi://localhost:1099/hipporepository
+repository.user.name=admin
+repository.password=admin
+
+# The location in the repository where to find URL mappings based on 
+# document type. Required only if url mapping is used. 
+# Defaults to '/urlMapping'.
+# repository.urlmapping.location=
+
+#
+# HST Tags Configuration
+#
+
+# Name by which the IncludeTag gets it's context object from request.
+# Not required, defaults to 'context'.
+# includetag.context.name=]]></source>
+        <a name="2"></a>
+        <h4>web.xml</h4>  
         <p>This example shows the installation of one 'preview' web filter and
           a servlet for binaries.</p>
-        <source><![CDATA[  <!-- Repository configuration -->
+          <source><![CDATA[  <!-- General configuration -->
   <context-param>
-      <param-name>repositoryAddress</param-name>
-      <param-value>rmi://localhost:1099/hipporepository</param-value>
+    <description>Comma separated list of configuration files.</description>
+    <param-name>configurationFiles</param-name>
+    <param-value>/WEB-INF/hst.properties</param-value>
   </context-param>
-  <context-param>
-      <param-name>repositoryUserName</param-name>
-      <param-value>admin</param-value>
-  </context-param>
-  <context-param>
-      <param-name>repositoryPassword</param-name>
-      <param-value>admin</param-value>
-  </context-param>
-
+  <listener>
+    <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
+  </listener>
+  
   <!-- Example of one HST filter pointing to a preview path in the repository. -->
   <filter>
       <filter-name>previewContext</filter-name>
