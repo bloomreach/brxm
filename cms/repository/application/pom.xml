@@ -51,59 +51,37 @@
       <version>${parent.version}</version>
     </dependency>
 
-    <!-- provided -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
-    <!-- runtime -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <version>${org.slf4j.version}</version>
       <scope>runtime</scope>
     </dependency>
 
-    <!-- The following are only needed for JDK1.4 -->
-   <!-- <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>1.3.03</version>
-    </dependency>-->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-tools-testutils</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
     <plugins>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>process-classes-rmic</id>
-            <phase>process-classes</phase>
-            <configuration>
-              <tasks>
-                <rmic base="${project.build.outputDirectory}" verify="true"
-                      includes="org/hippoecm/repository/TestImpl.class"
-                      classpathref="maven.compile.classpath"/>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
