@@ -65,11 +65,13 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
+    <!--
     <dependency>
       <groupId>javax.enterprise.deploy</groupId>
       <artifactId>deployment-api</artifactId>
       <version>[1.2,)</version>
     </dependency>
+    -->
   </dependencies>
 
   <build>
