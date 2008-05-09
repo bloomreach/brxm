@@ -29,7 +29,6 @@
 
 [hippo:query] > nt:query
 
-
 [hippo:mirror]
 - hippo:docbase (string) mandatory
 + * multiple
@@ -110,7 +109,7 @@
 + hippo:types (hippo:types) = hippo:types mandatory autocreated
 
 [hippo:ocmqueryfolder] > nt:base, mix:referenceable
-+ * (hippo:ocmquery) = hippo:ocmquery
++ * (nt:query) = hippo:ocmquery
 
 [hippo:initializeitem] > nt:base
 - hippo:sequence (double)

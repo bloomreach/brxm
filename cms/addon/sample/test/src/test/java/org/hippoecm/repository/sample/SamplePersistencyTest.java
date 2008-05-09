@@ -28,34 +28,33 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 
-public class SamplePersistencyTest extends TestCase
-{
-  private HippoRepository server;
+public class SamplePersistencyTest extends TestCase {
+    private HippoRepository server;
 
-  @Override
-public void setUp() throws RepositoryException, IOException {
-    server = HippoRepositoryFactory.getHippoRepository();
-    SampleWorkflowSetup.commonStart(server);
-  }
+    @Override
+    public void setUp() throws RepositoryException, IOException {
+        server = HippoRepositoryFactory.getHippoRepository();
+        SampleWorkflowSetup.commonStart(server);
+    }
 
-  @Override
-public void tearDown() throws RepositoryException {
-    SampleWorkflowSetup.commonEnd(server);
-    server.close();
-  }
+    @Override
+    public void tearDown() throws RepositoryException {
+        SampleWorkflowSetup.commonEnd(server);
+        server.close();
+    }
 
-  public void testAuthorDocument() throws RepositoryException {
-    Session session = server.login("dummy","dummy".toCharArray());
+    public void testAuthorDocument() throws RepositoryException {
+        Session session = server.login("dummy","dummy".toCharArray());
 
-    DocumentManager manager = ((HippoWorkspace)session.getWorkspace()).getDocumentManager();
-    Document document = manager.getDocument("authors","Jan Smit");
+        DocumentManager manager = ((HippoWorkspace)session.getWorkspace()).getDocumentManager();
+        Document document = manager.getDocument("authors","Jan Smit");
 
-    assertNotNull(document);
+        assertNotNull(document);
 
-    assertTrue("document is of wrong type: "+document.getClass().getName(), document instanceof AuthorDocument);
-    AuthorDocument author = (AuthorDocument) document;
-    assertTrue(author.authorId == SampleWorkflowSetup.newAuthorId);
+        assertTrue("document is of wrong type: "+document.getClass().getName(), document instanceof AuthorDocument);
+        AuthorDocument author = (AuthorDocument) document;
+        assertTrue(author.authorId == SampleWorkflowSetup.newAuthorId);
 
-    session.logout();
-  }
+        session.logout();
+    }
 }
