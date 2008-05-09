@@ -45,12 +45,14 @@
       <artifactId>jcr</artifactId>
       <version>1.0</version>
     </dependency>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.3</version>
+      <version>2.4</version>
       <scope>provided</scope>
     </dependency>
+    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
@@ -59,6 +61,13 @@
       <scope>compile</scope>
     </dependency>
 
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.0</version>
+      <scope>provided</scope>
+    </dependency>
+    
     <!-- Hippo ECM -->
     <dependency>
       <groupId>org.hippoecm</groupId>

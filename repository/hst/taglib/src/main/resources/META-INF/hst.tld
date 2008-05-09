@@ -15,7 +15,9 @@
   limitations under the License.
 -->
 <!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd">
-<taglib>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
 
   <tlib-version>1.0</tlib-version>
   <jsp-version>1.2</jsp-version>
@@ -47,6 +49,30 @@
     <attribute>
       <name>path</name>
       <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>news</name>
+    <tagclass>org.hippoecm.hst.taglib.NewsTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+  	  <description>The name by which to get a context object from request</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+  	  <description>The location relative to the context, pointing to the news node applicable</description>
+      <name>location</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The maximum number of news items to be shown</description>
+      <name>maxItems</name>
+      <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
