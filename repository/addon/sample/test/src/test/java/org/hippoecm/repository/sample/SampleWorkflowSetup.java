@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.HippoRepository;
 
@@ -57,11 +58,16 @@ abstract class SampleWorkflowSetup
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.ArticleDocument");
 
     // set up the queryable document specification as a node "/configuration/hippo:documents/authors"
-    node = root.getNode("hippo:configuration");
-    node = node.getNode("hippo:documents");
+    QueryManager queryManager = session.getWorkspace().getQueryManager();
+    Query query = queryManager.createQuery("files//*[@jcr:primaryType='sample:author' and @sample:name='$name']", Query.XPATH);
+    node = query.storeAsNode("/hippo:configuration/hippo:documents/authors");
+    String statement = node.getProperty("jcr:statement").getString();
+    String language = node.getProperty("jcr:language").getString();
+    node.remove();
+    node = root.getNode("hippo:configuration/hippo:documents");
     node = node.addNode("authors","hippo:ocmquery");
-    node.setProperty("jcr:statement","files//*[@jcr:primaryType='sample:author' and @sample:name='?']");
-    node.setProperty("jcr:language",Query.XPATH);
+    node.setProperty("jcr:statement",statement);
+    node.setProperty("jcr:language",language);
     node.setProperty("hippo:classname","org.hippoecm.repository.sample.AuthorDocument");
     node = node.getNode("hippo:types");
     node = node.addNode("org.hippoecm.repository.sample.AuthorDocument","hippo:type");
