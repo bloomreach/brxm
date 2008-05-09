@@ -85,6 +85,21 @@ public class URLPathTranslator {
 
     /**
      * Translate a path in the repository to an URL.
+     * 
+     * @param documentPath repository path that should start with the base location
+     *      as present in this context.  
+     */
+    public String documentPathToURL(final String documentPath) {
+        return this.documentPathToURL(null, documentPath);
+    }
+    
+    /**
+     * Translate a path in the repository to an URL, with the possibility to enter an 
+     * absolute path, that is check using the jcrSession parameter.  
+     * 
+     * @param jcrSession JCR session for checking an absolute documentPath parameter.   
+     * @param documentPath repository path that either starts with the base location
+     *      as present in this context, or is an absolute path.  
      */
     public String documentPathToURL(final Session jcrSession, final String documentPath) {
 
@@ -101,26 +116,36 @@ public class URLPathTranslator {
         if (documentPath.startsWith(this.repositoryBaseLocation)) {
             // replace repositoryBaseLocation by urlBasePath 
             url = this.contextPath + this.urlBasePath + documentPath.substring(this.repositoryBaseLocation.length());
-        } else {
-
-            try {
-                // if documentPath actually matches a node path, we can construct the reversed url
-                String path = documentPath;
-                while (path.startsWith("/")) {
-                    path = path.substring(1);
+        } 
+        else {
+            
+            if (jcrSession != null) {
+                try {
+                    // if documentPath actually matches an absolute node path, 
+                    // we can construct the reversed url
+                    String path = documentPath;
+                    while (path.startsWith("/")) {
+                        path = path.substring(1);
+                    }
+    
+                    if (jcrSession.getRootNode().hasNode(path)) {
+                        url = this.contextPath + this.urlBasePath + "/" + path;
+                    } else {
+                        // error, the returned documentPath won't be valid!
+                        logger.warn("documentPath " + documentPath + " does not represent an absolute node");
+                        url = documentPath;
+                    }
+                } catch (RepositoryException re) {
+                    throw new IllegalStateException("unexpected error getting node by path " + documentPath, re);
                 }
-
-                if (jcrSession.getRootNode().hasNode(path)) {
-                    url = this.contextPath + this.urlBasePath + "/" + path;
-                } else {
-                    // error, the returned documentPath won't be valid!
-                    logger.warn("documentPath " + documentPath + " does not represent a node");
-                    url = documentPath;
-                }
-            } catch (RepositoryException re) {
-                throw new IllegalStateException("unexpected error getting node by path " + documentPath, re);
+            } else {
+                // error, the returned documentPath won't be valid!
+                logger.warn("documentPath " + documentPath + " doesn't start with "
+                        + this.repositoryBaseLocation + " and does not represent an absolute node");
+                url = documentPath;
             }
         }
+        
         logger.debug("documentPath " + documentPath + " to url " + url);
         return url;
     }

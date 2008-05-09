@@ -1,9 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page isELIgnored="false" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="h" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <%--
     Copyright 2008 Hippo
     
@@ -19,8 +14,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link href="/css/screen.css" rel="stylesheet" type="text/css" media="screen"/>
@@ -49,10 +48,7 @@
       </c:forEach>
 
     <h4>${defaultContext._path}/${defaultContext.news._name}</h4>
-      <c:forEach var="handle" items="${defaultContext.news}">
-    	<c:set var="item" value="${handle[handle._name]}"/>
-          ${item._name}<br/>
-      </c:forEach>
+    	<hst:news context="defaultContext"/>
 
     <h4>${defaultContext._path}/${defaultContext.events._name}</h4>
       <c:forEach var="handle" items="${defaultContext.events}">
