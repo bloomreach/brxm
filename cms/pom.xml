@@ -208,6 +208,16 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+      <name>Arthur Bogaart</name>
+      <id>abogaart</id>
+      <email/>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>  
   </developers>
 
   <mailingLists>
