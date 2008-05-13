@@ -169,7 +169,9 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
         config.put(RenderPlugin.DECORATOR_ID, new ConfigValue(decoratorId));
 
         Plugin plugin = context.start(config);
-        workflows.put(model, plugin);
+        if (plugin != null) {
+            workflows.put(model, plugin);
+        }
     }
 
     private void closeWorkflows() {

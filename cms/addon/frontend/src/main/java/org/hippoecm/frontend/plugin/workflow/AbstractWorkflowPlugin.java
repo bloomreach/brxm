@@ -27,6 +27,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -70,6 +71,11 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
         actions = new HashMap<String, Action>();
     }
 
+    @Override
+    public PluginContext getPluginContext() {
+        return super.getPluginContext();
+    }
+
     protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
             Visibility visible, final WorkflowDialogAction action) {
         add(new EmptyPanel(dialogName));
@@ -78,9 +84,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
-                return new AbstractWorkflowDialog(getPluginContext(), dialogService,
-                        (WorkflowsModel) AbstractWorkflowPlugin.this.getModel(), dialogTitle,
-                        AbstractWorkflowPlugin.this) {
+                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, dialogTitle) {
                     protected void execute() throws Exception {
                         action.execute(getWorkflow());
                     }
@@ -148,7 +152,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
     protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
             final WorkflowDialogAction action) {
-        addWorkflowDialog(dialogName, dialogTitle, dialogTitle,  new Visibility() {
+        addWorkflowDialog(dialogName, dialogTitle, dialogTitle, new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
