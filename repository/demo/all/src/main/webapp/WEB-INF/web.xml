@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2007 Hippo
+  * Copyright 2007-2008 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -21,6 +21,23 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
   <description>Hippo ECM Sample site all-in-one</description>
   <display-name>Hippo ECM all-in-one Demo</display-name>
 
+  <!-- Repository configuration -->
+  <context-param>
+    <description>The address of the repository</description>
+    <param-name>repository-address</param-name>
+    <param-value>rmi://localhost:1099/hipporepository</param-value>
+  </context-param>
+  <context-param>
+    <description>The username to use for the repository login</description>
+    <param-name>repository-username</param-name>
+    <param-value>admin</param-value>
+  </context-param>
+  <context-param>
+    <description>The password to use for the repository login</description>
+    <param-name>repository-password</param-name>
+    <param-value>admin</param-value>
+  </context-param>
+
   <!-- General HST configuration -->
   <context-param>
     <description>Comma separated list of configuration files.</description>
@@ -31,21 +48,17 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
     <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
   </listener>
 
-  <!--builtin console-->
+  <!-- CMS application (default) -->
   <filter>
-    <filter-name>BuiltinConsole</filter-name>
+    <filter-name>CMS</filter-name>
     <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
     <init-param>
       <param-name>applicationClassName</param-name>
       <param-value>org.hippoecm.frontend.Main</param-value>
     </init-param>
-    <init-param>
-      <param-name>hippoApplication</param-name>
-      <param-value>hippo:console (builtin)</param-value>
-    </init-param>
   </filter>
-
-  <!--Console application-->
+  
+  <!-- Console application-->
   <filter>
     <filter-name>Console</filter-name>
     <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
@@ -54,25 +67,11 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
       <param-value>org.hippoecm.frontend.Main</param-value>
     </init-param>
     <init-param>
-      <param-name>hippoApplication</param-name>
-      <param-value>hippo:console</param-value>
+      <param-name>config</param-name>
+      <param-value>builtin</param-value>
     </init-param>
   </filter>
-
-  <!--CMS application-->
-  <filter>
-    <filter-name>CMS</filter-name>
-    <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-    <init-param>
-      <param-name>applicationClassName</param-name>
-      <param-value>org.hippoecm.frontend.Main</param-value>
-    </init-param>
-    <init-param>
-      <param-name>hippoApplication</param-name>
-      <param-value>hippo:cms</param-value>
-    </init-param>
-  </filter>
-
+  
   <!-- HST -->
   <filter>
     <filter-name>ContextPreview</filter-name>
@@ -125,21 +124,16 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
       <param-value>/live</param-value>
      </init-param>
   </filter>
-
-  <filter-mapping>
-    <filter-name>BuiltinConsole</filter-name>
-    <url-pattern>/builtin/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>Console</filter-name>
-    <url-pattern>/console/*</url-pattern>
-  </filter-mapping>
-
+  
   <filter-mapping>
     <filter-name>CMS</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  
+  <filter-mapping>
+    <filter-name>Console</filter-name>
+    <url-pattern>/console/*</url-pattern>
+  </filter-mapping>    
 
   <filter-mapping>
     <filter-name>ContextPreview</filter-name>
