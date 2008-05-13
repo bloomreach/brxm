@@ -39,6 +39,8 @@ public class URLMappingContextFilter extends ContextFilter {
     public static final String REPOSITORY_BASE_LOCATION = ContextFilter.class.getName() + ".CURRENT_REPOSITORY_BASE_LOCATION";
 
     private String urlBasePath = "/";
+    private String urlMappingLocation = null;
+    private static final String DEFAULT_URL_MAPPING_LOCATION = "/urlMapping";
 
     public URLMappingContextFilter() {
         super();
@@ -94,11 +96,10 @@ public class URLMappingContextFilter extends ContextFilter {
         context.setRelativeLocation(documentPath);
 
         try {
-            String urlMappingLocation = HSTConfiguration.get(request.getSession().getServletContext(), 
-                                                        HSTConfiguration.KEY_REPOSITORY_URLMAPPING_LOCATION);
-            URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, urlPathTranslator,
-                    request, response);
-            String mappedPage = responseWrapper.mapRepositoryDocument(context.getLocation(), urlMappingLocation);
+            URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, 
+                    urlPathTranslator, request, response);
+            String mappedPage = responseWrapper.mapRepositoryDocument(context.getLocation(), 
+                    getURLMappingLocation(request));
 
             // mapping allowed to fail, use-case is a /images url with this filter in root
             if (mappedPage != null) {
@@ -127,6 +128,26 @@ public class URLMappingContextFilter extends ContextFilter {
         return new Context(jcrSession, request.getContextPath(), this.urlBasePath, this.repositoryBaseLocation);
     }
 
+    private String getURLMappingLocation(HttpServletRequest request) {
+
+        // lazy
+        if (this.urlMappingLocation == null) {
+        
+            // by configuration
+            String urlMappingLocation = HSTConfiguration.get(request.getSession().getServletContext(), 
+                HSTConfiguration.KEY_REPOSITORY_URLMAPPING_LOCATION, false/*not required*/);
+            
+            // by default
+            if (urlMappingLocation == null) {
+                urlMappingLocation = DEFAULT_URL_MAPPING_LOCATION;
+            }
+
+            this.urlMappingLocation = urlMappingLocation;
+        }
+
+        return this.urlMappingLocation;
+    }
+    
     /*
      * Save some data in session for use by other objects, e.g. BinariesServlet;
      * don't do it lazily as the user might switch filters, e.g. from 'live' to 
