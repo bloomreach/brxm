@@ -16,8 +16,6 @@
 package org.hippoecm.hst.core;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -37,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
+
     private static final Logger logger = LoggerFactory.getLogger(URLMappingResponseWrapper.class);
 
     private final Context context;
@@ -56,8 +55,8 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         // url in this case is an existing documentPath
         
         Session jcrSession = JCRConnector.getJCRSession(request.getSession());
-        String reversedURL = super.encodeUrl(this.urlPathTranslator.documentPathToURL(jcrSession, url));
-        return urlEncode(reversedURL);
+        String reversedURL = this.urlPathTranslator.documentPathToURL(jcrSession, url);
+        return super.encodeUrl(reversedURL);
     }
 
     @Override
@@ -66,8 +65,8 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         // url in this case is an existing documentPath
         
         Session jcrSession = JCRConnector.getJCRSession(request.getSession());
-        String reversedURL = super.encodeRedirectUrl(this.urlPathTranslator.documentPathToURL(jcrSession, url));
-        return urlEncode(reversedURL);
+        String reversedURL = this.urlPathTranslator.documentPathToURL(jcrSession, url);
+        return super.encodeRedirectUrl(reversedURL);
     }
     
     public String mapRepositoryDocument(String documentPath, String mappingLocation)
@@ -173,37 +172,5 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         logger.debug("mapped document path " + documentPath + " to page " + pageFile +
                         ", mappingLocation is " + mappingLocation);
         return pageFile;
-    }
-    
-    private String urlEncode(String url) {
-        
-        // encode the url parts between the slashes: the slashes are or not to be 
-        // encoded into %2F because the path won't be valid anymore
-        String[] parts = url.split("/");
-        
-        String encoded = url.startsWith("/") ? "/" : "";
-        
-        try {
-            for (int i = 0; i < parts.length; i++) {
-
-                // part is empty if url starts with /
-                if (parts[i].length() > 0) {
-                    encoded += URLEncoder.encode(parts[i], URLMappingContextFilter.ENCODING_SCHEME);
-
-                    if (i < (parts.length - 1)) {
-                        encoded += "/";
-                    }
-                }   
-            }
-        
-            if (url.endsWith("/")) {
-                encoded += "/";
-            }
-
-            return encoded;
-        }
-        catch (UnsupportedEncodingException uee) {
-            throw new IllegalStateException("Unsupported encoding scheme " + URLMappingContextFilter.ENCODING_SCHEME, uee);
-        }
     }
 }

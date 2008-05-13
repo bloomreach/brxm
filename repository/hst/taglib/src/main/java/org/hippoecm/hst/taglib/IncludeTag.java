@@ -34,8 +34,7 @@ public class IncludeTag extends TagSupport {
     
     private static final String KEY_CONTEXT_NAME = "includetag.context.name";
     private static final String DEFAULT_CONTEXT_NAME = "context";
-    
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4078985544852183874L;
     
     private String path;
 

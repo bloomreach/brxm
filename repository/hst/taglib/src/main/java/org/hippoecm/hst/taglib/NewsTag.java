@@ -60,8 +60,6 @@ public class NewsTag extends SimpleTagSupport {
         new String[] {PROPERTY_TYPE_LINK, PROPERTY_TYPE_DATE, PROPERTY_TYPE_STRING};
     private static final String DEFAULT_FORMAT_DATE = "MM/dd/yyyy"; 
     
-    private static final long serialVersionUID = 1L;
-    
     private String contextName = null;
     private String location = null;
     private Integer maxItems = null;
