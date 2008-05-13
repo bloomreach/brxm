@@ -43,6 +43,33 @@
   </tag>
 
   <tag>
+    <name>encodeURL</name>
+    <tagclass>org.hippoecm.hst.taglib.EncodeURLTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>The required value to encode</description>
+      <name>value</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The variable name by which the encoded URL is set as request attribute. 
+      		If given, no output is written to the jsp directly</description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+  	  <description>The name by which to get a context object from request, that is then used 
+  	  		to initialize URL encoding, instead of using the default initialization as 
+  	  		done by URLMappingContextFilter</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
     <name>include</name>
     <tagclass>org.hippoecm.hst.taglib.IncludeTag</tagclass>
     <body-content>empty</body-content>
@@ -76,6 +103,7 @@
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
+
 
   <function>
     <name>concat</name>

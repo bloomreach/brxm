@@ -51,7 +51,7 @@ public class BinariesServlet extends HttpServlet {
         String relativeURL = req.getRequestURI();
 
         // URL decode
-        relativeURL = URLDecoder.decode(relativeURL, "UTF-8");
+        relativeURL = URLDecoder.decode(relativeURL, URLMappingContextFilter.ENCODING_SCHEME);
 
         // transform to documentPath if URL mapping is active (session attributes exist)
         String path;

@@ -29,8 +29,8 @@ public class AccessTag extends ConditionalTagSupport {
     
     private static final String KEY_CONTEXT_NAME = "accesstag.context.name";
     private static final String DEFAULT_CONTEXT_NAME = "context";
-    private static final long serialVersionUID = 1L;
-    
+    private static final long serialVersionUID = 9184896455255819105L;
+
     private String variable;
     private String location;
 
