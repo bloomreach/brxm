@@ -49,12 +49,12 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     private WorkflowsModel model;
     private ServiceReference<AbstractWorkflowPlugin> pluginRef;
 
-    public AbstractWorkflowDialog(PluginContext context, IDialogService dialogWindow, WorkflowsModel model,
-            String title, AbstractWorkflowPlugin plugin) {
-        super(context, dialogWindow);
+    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, String title) {
+        super(plugin.getPluginContext(), dialogWindow);
 
+        PluginContext context = plugin.getPluginContext();
         this.title = title;
-        this.model = model;
+        this.model = (WorkflowsModel) plugin.getModel();
         this.pluginRef = context.getReference(plugin);
 
         if (model.getNodeModel().getNode() == null) {

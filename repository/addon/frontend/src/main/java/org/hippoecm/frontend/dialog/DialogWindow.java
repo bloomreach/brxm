@@ -21,14 +21,13 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
-import org.apache.wicket.markup.html.WebPage;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
 public class DialogWindow extends ModalWindow implements PageCreator, IDialogService {
     private static final long serialVersionUID = 1L;
 
-    private WebPage page;
+    private Page page;
 
     public DialogWindow(String id) {
         super(id);
@@ -40,7 +39,7 @@ public class DialogWindow extends ModalWindow implements PageCreator, IDialogSer
         return page;
     }
 
-    public void show(WebPage page) {
+    public void show(Page page) {
         this.page = page;
 
         if (page instanceof ITitleDecorator) {
