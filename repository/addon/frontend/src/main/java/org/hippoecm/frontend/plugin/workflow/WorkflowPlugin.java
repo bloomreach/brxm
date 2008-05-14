@@ -45,19 +45,20 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
 
     public static final String CATEGORIES = "workflow.categories";
     public static final String WORKFLOW_ID = "workflow.display";
+    public static final String VIEWER_ID = "workflow.viewer";
 
     private PluginContext context;
     private Map<String, ParameterValue> properties;
     private List<String> categories;
     private String factoryId;
-    private Map<WorkflowsModel, Plugin> workflows;
-    private Map<WorkflowsModel, TopicService> models;
+    private Map<String, Plugin> workflows;
+    private Map<String, TopicService> models;
     private TopicService topic;
     private int wflCount;
 
     public WorkflowPlugin() {
-        workflows = new HashMap<WorkflowsModel, Plugin>();
-        models = new HashMap<WorkflowsModel, TopicService>();
+        workflows = new HashMap<String, Plugin>();
+        models = new HashMap<String, TopicService>();
         wflCount = 0;
         topic = null;
     }
@@ -65,10 +66,6 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
     public void start(PluginContext context) {
         this.context = context;
         properties = context.getProperties();
-
-        if (properties.get(Plugin.FACTORY_ID) != null) {
-            factoryId = properties.get(Plugin.FACTORY_ID).getStrings().get(0);
-        }
 
         if (properties.get(CATEGORIES) != null) {
             categories = properties.get(CATEGORIES).getStrings();
@@ -141,13 +138,15 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
         }
 
         PluginConfig config = new PluginConfig();
-        config.put(Plugin.SERVICE_ID, properties.get(Plugin.SERVICE_ID));
+        config.put(RenderPlugin.WICKET_ID, properties.get(RenderPlugin.WICKET_ID));
         config.put(RenderPlugin.DIALOG_ID, properties.get(RenderPlugin.DIALOG_ID));
 
+        String workflowId = properties.get(WORKFLOW_ID).getStrings().get(0) + wflCount;
         config.put(Plugin.CLASSNAME, new ConfigValue(model.getWorkflowName()));
+        config.put(Plugin.SERVICE_ID, new ConfigValue(workflowId));
+        config.put(VIEWER_ID, properties.get(VIEWER_ID));
 
-        String workflowId = properties.get(WORKFLOW_ID).getStrings().get(0);
-        String modelId = workflowId + wflCount + ".model";
+        String modelId = workflowId + ".model";
         config.put(RenderPlugin.MODEL_ID, new ConfigValue(modelId));
 
         TopicService modelTopic = new TopicService(modelId);
@@ -163,26 +162,28 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
             }
         });
         modelTopic.init(context);
-        models.put(model, modelTopic);
+        models.put(workflowId, modelTopic);
 
-        String decoratorId = workflowId + wflCount + ".decorator";
-        config.put(RenderPlugin.DECORATOR_ID, new ConfigValue(decoratorId));
+        context.registerService(this, workflowId + ".factory");
 
         Plugin plugin = context.start(config);
         if (plugin != null) {
-            workflows.put(model, plugin);
+            workflows.put(workflowId, plugin);
         }
     }
 
     private void closeWorkflows() {
-        for (Map.Entry<WorkflowsModel, Plugin> entry : workflows.entrySet()) {
+        for (Map.Entry<String, Plugin> entry : workflows.entrySet()) {
+            String workflowId = entry.getKey();
             entry.getValue().stop();
 
-            TopicService topic = models.get(entry.getKey());
+            context.unregisterService(this, workflowId + ".factory");
+
+            TopicService topic = models.get(workflowId);
             topic.destroy();
             models.remove(entry.getKey());
         }
-        workflows = new HashMap<WorkflowsModel, Plugin>();
+        workflows = new HashMap<String, Plugin>();
     }
 
 }

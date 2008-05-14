@@ -100,7 +100,7 @@ public class PluginPage extends WebPage implements ServiceListener, IRenderServi
         return null;
     }
 
-    public String getDecoratorId() {
+    public String getServiceId() {
         return null;
     }
 

@@ -22,8 +22,8 @@ import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
-import org.hippoecm.frontend.service.IDynamicService;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IFactoryService;
+import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.util.ServiceTracker;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
@@ -37,10 +37,10 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
 
     public static final String EDITOR_ID = "workflow.editor";
 
-    private ServiceTracker<IEditService> editor;
+    private ServiceTracker<IViewService> editor;
 
     public EditingReviewedActionsWorkflowPlugin() {
-        editor = new ServiceTracker<IEditService>(IEditService.class);
+        editor = new ServiceTracker<IViewService>(IViewService.class);
 
         addWorkflowAction("save", "Save", new WorkflowDialogAction() {
             private static final long serialVersionUID = 1L;
@@ -63,12 +63,12 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
     }
 
     @Override
-    public void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
-        super.init(context, serviceId, properties);
+    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+        super.init(context, properties);
         if (properties.get(EDITOR_ID) != null) {
             editor.open(context, properties.get(EDITOR_ID).getStrings().get(0));
         } else {
-            log.warn("No editor ({}) specified for service {}", EDITOR_ID, serviceId);
+            log.warn("No editor ({}) specified", EDITOR_ID);
         }
     }
 
@@ -79,17 +79,13 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
     }
 
     private void close() {
-        List<IEditService> services = editor.getServices();
+        List<IViewService> services = editor.getServices();
         if (services.size() > 0) {
-            if (services.get(0) instanceof IDynamicService) {
-                IDynamicService dynamic = (IDynamicService) services.get(0);
-                if (dynamic.canDelete()) {
-                    dynamic.delete();
-                } else {
-                    log.warn("Could not close editor");
-                }
-            } else {
-                log.warn("Editor is not dynamic");
+            ServiceTracker<IFactoryService> factoryTracker = new ServiceTracker<IFactoryService>(IFactoryService.class);
+            factoryTracker.open(getPluginContext(), services.get(0).getServiceId());
+            if(factoryTracker.getServices().size() > 0) {
+                IFactoryService factory = factoryTracker.getServices().get(0);
+                factory.delete(services.get(0));
             }
         } else {
             log.warn("No editor service found");

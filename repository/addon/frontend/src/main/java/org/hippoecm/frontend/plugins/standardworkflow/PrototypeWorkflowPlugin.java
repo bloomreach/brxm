@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -30,12 +31,13 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.ExtendedFolderDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.FolderDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.PrototypeDialog;
 import org.hippoecm.frontend.service.IDialogService;
-import org.hippoecm.frontend.service.render.ModelReference;
-import org.hippoecm.frontend.service.topic.TopicService;
+import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.util.ServiceTracker;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +47,11 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(PrototypeWorkflowPlugin.class);
 
-    public static final String BROWSER_ID = "service.browser";
-
-    private TopicService browser;
+    private ServiceTracker<IViewService> viewer;
 
     public PrototypeWorkflowPlugin() {
+        viewer = new ServiceTracker<IViewService>(IViewService.class);
+
         add(new EmptyPanel("addDocument-dialog"));
         add(new EmptyPanel("addFolder-dialog"));
 
@@ -63,20 +65,16 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     @Override
-    public void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
-        super.init(context, serviceId, properties);
-        if (properties.get(BROWSER_ID) != null) {
-            browser = new TopicService(properties.get(BROWSER_ID).getStrings().get(0));
-            browser.init(context);
+    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+        super.init(context, properties);
+        if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
+            viewer.open(context, properties.get(WorkflowPlugin.VIEWER_ID).getStrings().get(0));
         }
     }
 
     @Override
     public void destroy() {
-        if (browser != null) {
-            browser.destroy();
-            browser = null;
-        }
+        viewer.close();
         super.destroy();
     }
 
@@ -120,6 +118,9 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     public void select(JcrNodeModel nodeModel) {
-        browser.publish(new ModelReference.ModelMessage(ModelReference.SET_MODEL, nodeModel));
+        List<IViewService> viewers = viewer.getServices();
+        if (viewers.size() > 0) {
+            viewers.get(0).view(nodeModel);
+        }
     }
 }

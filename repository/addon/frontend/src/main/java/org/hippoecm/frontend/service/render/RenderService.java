@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.service.render;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.application.PluginRequestTarget;
+import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.service.IDialogService;
@@ -38,9 +38,9 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
 
     private static final Logger log = LoggerFactory.getLogger(RenderService.class);
 
+    public static final String WICKET_ID = "wicket.id";
     public static final String MODEL_ID = "wicket.model";
     public static final String DIALOG_ID = "wicket.dialog";
-    public static final String DECORATOR_ID = "wicket.decorator";
 
     private boolean redraw;
     private String serviceId;
@@ -50,7 +50,7 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     private Map<String, ServiceTracker<IRenderService>> children;
     private ModelReference modelRef;
     private IRenderService parent;
-    private ServiceTracker dialogTracker;
+    private ServiceTracker<IDialogService> dialogTracker;
 
     public RenderService() {
         super("id");
@@ -60,13 +60,18 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
         wicketId = "service.render";
 
         this.children = new HashMap<String, ServiceTracker<IRenderService>>();
-        this.dialogTracker = new ServiceTracker(IDialogService.class);
+        this.dialogTracker = new ServiceTracker<IDialogService>(IDialogService.class);
     }
 
-    protected void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
+    protected void init(PluginContext context, Map<String, ParameterValue> properties) {
         this.context = context;
         this.properties = properties;
-        this.serviceId = serviceId;
+
+        if (properties.get(WICKET_ID) != null) {
+            this.serviceId = properties.get(WICKET_ID).getStrings().get(0);
+        } else {
+            log.warn("No service id ({}) defined", WICKET_ID);
+        }
 
         if (properties.get(MODEL_ID) != null) {
             String modelId = properties.get(MODEL_ID).getStrings().get(0);
@@ -168,9 +173,9 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     }
 
     protected IDialogService getDialogService() {
-        List<Serializable> dialogs = dialogTracker.getServices();
+        List<IDialogService> dialogs = dialogTracker.getServices();
         if (dialogs.size() > 0) {
-            return (IDialogService) dialogs.get(0);
+            return dialogs.get(0);
         }
         return null;
     }
@@ -216,11 +221,11 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
         return parent;
     }
 
-    public String getDecoratorId() {
-        if (properties.get(DECORATOR_ID) != null) {
-            return properties.get(DECORATOR_ID).getStrings().get(0);
+    public String getServiceId() {
+        if (properties.get(Plugin.SERVICE_ID) != null) {
+            return properties.get(Plugin.SERVICE_ID).getStrings().get(0);
         } else {
-            log.warn("No decorator id ({}) defined for service {}", DECORATOR_ID, serviceId);
+            log.warn("No decorator id ({}) defined", Plugin.SERVICE_ID);
             return null;
         }
     }

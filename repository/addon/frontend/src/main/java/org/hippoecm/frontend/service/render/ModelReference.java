@@ -23,39 +23,39 @@ import org.hippoecm.frontend.service.topic.Message;
 import org.hippoecm.frontend.service.topic.MessageListener;
 import org.hippoecm.frontend.service.topic.TopicService;
 
-public class ModelReference implements Serializable, MessageListener {
+public class ModelReference<T extends IModel> implements Serializable, MessageListener {
     private static final long serialVersionUID = 1L;
 
     public static final int GET_MODEL = 1;
     public static final int SET_MODEL = 2;
 
-    public interface IView {
-
-        IModel getModel();
-
-        void updateModel(IModel model);
+    public interface IView<T extends IModel> {
+        
+        T getModel();
+        
+        void updateModel(T model);
     }
-
-    public static class ModelMessage extends Message {
+    
+    public static class ModelMessage<T extends IModel> extends Message {
         private static final long serialVersionUID = 1L;
 
-        private IModel model;
+        private T model;
 
-        public ModelMessage(int type, IModel model) {
+        public ModelMessage(int type, T model) {
             super(type);
 
             this.model = model;
         }
 
-        public IModel getModel() {
+        public T getModel() {
             return model;
         }
     }
 
     private TopicService topic;
-    private IView view;
+    private IView<T> view;
 
-    public ModelReference(String serviceId, IView view) {
+    public ModelReference(String serviceId, IView<T> view) {
         this.view = view;
 
         this.topic = new TopicService(serviceId);
@@ -73,11 +73,11 @@ public class ModelReference implements Serializable, MessageListener {
         topic.destroy();
     }
 
-    public IModel getModel() {
+    public T getModel() {
         return view.getModel();
     }
 
-    public void setModel(IModel model) {
+    public void setModel(T model) {
         topic.publish(new ModelMessage(SET_MODEL, model));
     }
 
@@ -87,15 +87,15 @@ public class ModelReference implements Serializable, MessageListener {
             case GET_MODEL:
                 TopicService source = ((ModelMessage) message).getSource();
                 if (source != null) {
-                    source.onPublish(new ModelMessage(SET_MODEL, view.getModel()));
+                    source.onPublish(new ModelMessage<T>(SET_MODEL, view.getModel()));
                 } else {
-                    topic.publish(new ModelMessage(SET_MODEL, view.getModel()));
+                    topic.publish(new ModelMessage<T>(SET_MODEL, view.getModel()));
                 }
                 break;
 
             case SET_MODEL:
-                IModel newModel = ((ModelMessage) message).getModel();
-                IModel oldModel = view.getModel();
+                T newModel = ((ModelMessage<T>) message).getModel();
+                T oldModel = view.getModel();
                 if (newModel == null) {
                     if (oldModel != null) {
                         view.updateModel(newModel);

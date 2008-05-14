@@ -23,7 +23,7 @@ public class RenderPlugin extends RenderService implements Plugin {
     private static final long serialVersionUID = 1L;
 
     public void start(PluginContext context) {
-        init(context, context.getProperties().get(Plugin.SERVICE_ID).getStrings().get(0), context.getProperties());
+        init(context, context.getProperties());
     }
 
     public void stop() {

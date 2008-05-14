@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.service;
 
-import java.io.Serializable;
-
 import org.apache.wicket.model.IModel;
 
-public interface IEditService extends Serializable {
+public interface IViewService<T extends IModel> extends IService {
 
-    void edit(IModel model);
+    void view(T model);
 }

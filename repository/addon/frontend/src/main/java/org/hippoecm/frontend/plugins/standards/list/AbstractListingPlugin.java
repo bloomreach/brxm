@@ -94,8 +94,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Prov
     }
 
     @Override
-    public void init(PluginContext context, String serviceId, Map<String, ParameterValue> config) {
-        super.init(context, serviceId, config);
+    public void init(PluginContext context, Map<String, ParameterValue> config) {
+        super.init(context, config);
         createTableColumns();
     }
 

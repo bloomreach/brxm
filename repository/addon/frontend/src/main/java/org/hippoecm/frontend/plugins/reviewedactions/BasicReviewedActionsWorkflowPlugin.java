@@ -25,7 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.ServiceTracker;
 import org.hippoecm.repository.api.Document;
@@ -41,10 +41,10 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     public static final String EDITOR_ID = "workflow.editor";
 
-    private ServiceTracker<IEditService> editors;
+    private ServiceTracker<IViewService> editors;
 
     public BasicReviewedActionsWorkflowPlugin() {
-        editors = new ServiceTracker<IEditService>(IEditService.class);
+        editors = new ServiceTracker<IViewService>(IViewService.class);
 
         addWorkflowAction("edit-dialog", "Edit document", new WorkflowDialogAction() {
             private static final long serialVersionUID = 1L;
@@ -53,9 +53,9 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                List<IEditService> services = editors.getServices();
+                List<IViewService> services = editors.getServices();
                 if (services.size() > 0) {
-                    services.get(0).edit(new JcrNodeModel(docNode));
+                    services.get(0).view(new JcrNodeModel(docNode));
                 }
             }
         });
@@ -86,8 +86,8 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     @Override
-    public void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
-        super.init(context, serviceId, properties);
+    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+        super.init(context, properties);
         if (properties.get(EDITOR_ID) != null) {
             editors.open(context, properties.get(EDITOR_ID).getStrings().get(0));
         }

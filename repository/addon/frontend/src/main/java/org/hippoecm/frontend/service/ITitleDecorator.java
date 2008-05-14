@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.service;
 
-public interface ITitleDecorator extends IDecorator {
+public interface ITitleDecorator {
 
     String getTitle();
 }
