@@ -27,7 +27,7 @@ public class RootPlugin extends RenderPlugin {
     private DialogService dialogService;
 
     public RootPlugin() {
-        for (String extension : new String[] { "browser", "content" }) {
+        for (String extension : new String[] { "content" }) {
             addExtensionPoint(extension);
         }
         dialogService = new DialogService();

@@ -22,6 +22,7 @@ import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.util.ServiceTracker;
@@ -35,12 +36,10 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
 
     private static Logger log = LoggerFactory.getLogger(EditingReviewedActionsWorkflowPlugin.class);
 
-    public static final String EDITOR_ID = "workflow.editor";
-
-    private ServiceTracker<IViewService> editor;
+    private ServiceTracker<IViewService> viewers;
 
     public EditingReviewedActionsWorkflowPlugin() {
-        editor = new ServiceTracker<IViewService>(IViewService.class);
+        viewers = new ServiceTracker<IViewService>(IViewService.class);
 
         addWorkflowAction("save", "Save", new WorkflowDialogAction() {
             private static final long serialVersionUID = 1L;
@@ -65,25 +64,25 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
     @Override
     public void init(PluginContext context, Map<String, ParameterValue> properties) {
         super.init(context, properties);
-        if (properties.get(EDITOR_ID) != null) {
-            editor.open(context, properties.get(EDITOR_ID).getStrings().get(0));
+        if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
+            viewers.open(context, properties.get(WorkflowPlugin.VIEWER_ID).getStrings().get(0));
         } else {
-            log.warn("No editor ({}) specified", EDITOR_ID);
+            log.warn("No editor ({}) specified", WorkflowPlugin.VIEWER_ID);
         }
     }
 
     @Override
     public void destroy() {
-        editor.close();
+        viewers.close();
         super.destroy();
     }
 
     private void close() {
-        List<IViewService> services = editor.getServices();
+        List<IViewService> services = viewers.getServices();
         if (services.size() > 0) {
             ServiceTracker<IFactoryService> factoryTracker = new ServiceTracker<IFactoryService>(IFactoryService.class);
             factoryTracker.open(getPluginContext(), services.get(0).getServiceId());
-            if(factoryTracker.getServices().size() > 0) {
+            if (factoryTracker.getServices().size() > 0) {
                 IFactoryService factory = factoryTracker.getServices().get(0);
                 factory.delete(services.get(0));
             }

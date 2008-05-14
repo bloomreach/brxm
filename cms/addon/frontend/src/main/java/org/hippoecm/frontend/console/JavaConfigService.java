@@ -47,14 +47,7 @@ public class JavaConfigService implements Serializable {
         config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.root.RootPlugin"));
         config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.root"));
         config.put(RootPlugin.DIALOG_ID, new ConfigValue("service.dialog"));
-        config.put("browser", new ConfigValue("service.browser"));
         config.put("content", new ConfigValue("service.content"));
-        plugins.add(config);
-
-        config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.browser.BrowserPlugin"));
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.browser"));
-        config.put(RenderPlugin.MODEL_ID, new ConfigValue("model.node"));
         plugins.add(config);
 
         config = new PluginConfig();
@@ -96,7 +89,7 @@ public class JavaConfigService implements Serializable {
 
         config = new PluginConfig();
         config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.workflow.WorkflowPlugin"));
-        config.put(WorkflowPlugin.VIEWER_ID, new ConfigValue("model.browse"));
+        config.put(WorkflowPlugin.VIEWER_ID, new ConfigValue("service.edit"));
         config.put(WorkflowPlugin.WORKFLOW_ID, new ConfigValue("workflows.id"));
         config.put(RenderPlugin.MODEL_ID, new ConfigValue("model.browse.node"));
         List<String> categories = new ArrayList<String>(2);
@@ -112,7 +105,7 @@ public class JavaConfigService implements Serializable {
         config = new PluginConfig();
         config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.editor.MultiEditorPlugin"));
         config.put(MultiEditorPlugin.EDITOR_CLASS, new ConfigValue("org.hippoecm.frontend.plugin.editor.EditorPlugin"));
-        config.put(MultiEditorPlugin.EDITOR_MODEL, new ConfigValue("model.node"));
+        config.put(Plugin.SERVICE_ID, new ConfigValue("service.edit"));
         config.put(RenderPlugin.DIALOG_ID, new ConfigValue("service.dialog"));
 
         // instance properties

@@ -25,6 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.ServiceTracker;
@@ -39,12 +40,10 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
-    public static final String EDITOR_ID = "workflow.editor";
-
-    private ServiceTracker<IViewService> editors;
+    private ServiceTracker<IViewService> viewers;
 
     public BasicReviewedActionsWorkflowPlugin() {
-        editors = new ServiceTracker<IViewService>(IViewService.class);
+        viewers = new ServiceTracker<IViewService>(IViewService.class);
 
         addWorkflowAction("edit-dialog", "Edit document", new WorkflowDialogAction() {
             private static final long serialVersionUID = 1L;
@@ -53,7 +52,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                List<IViewService> services = editors.getServices();
+                List<IViewService> services = viewers.getServices();
                 if (services.size() > 0) {
                     services.get(0).view(new JcrNodeModel(docNode));
                 }
@@ -88,14 +87,14 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     public void init(PluginContext context, Map<String, ParameterValue> properties) {
         super.init(context, properties);
-        if (properties.get(EDITOR_ID) != null) {
-            editors.open(context, properties.get(EDITOR_ID).getStrings().get(0));
+        if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
+            viewers.open(context, properties.get(WorkflowPlugin.VIEWER_ID).getStrings().get(0));
         }
     }
 
     @Override
     public void destroy() {
-        editors.close();
+        viewers.close();
         super.destroy();
     }
 

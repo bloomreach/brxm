@@ -35,24 +35,19 @@ import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IViewService;
-import org.hippoecm.frontend.service.render.ModelReference;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.service.topic.Message;
-import org.hippoecm.frontend.service.topic.MessageListener;
-import org.hippoecm.frontend.service.topic.TopicService;
 import org.hippoecm.frontend.util.ServiceTracker;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService, MessageListener, Serializable {
+public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService, Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final Logger log = LoggerFactory.getLogger(MultiEditorPlugin.class);
 
     public static final String EDITOR_ID = "editor";
     public static final String EDITOR_CLASS = "editor.class";
-    public static final String EDITOR_MODEL = "editor.model";
 
     private static class PluginEntry implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -66,7 +61,6 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
     private Map<String, ParameterValue> properties;
     private String editorClass;
     private Map<IModel, PluginEntry> editors;
-    private TopicService topic;
     private int editCount;
 
     public MultiEditorPlugin() {
@@ -85,10 +79,6 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
             log.warn("No dialog service ({}) defined", RenderService.DIALOG_ID);
         }
 
-        topic = new TopicService(properties.get(EDITOR_MODEL).getStrings().get(0));
-        topic.addListener(this);
-        topic.init(context);
-
         if (properties.get(EDITOR_CLASS) != null) {
             editorClass = properties.get(EDITOR_CLASS).getStrings().get(0);
             try {
@@ -105,10 +95,15 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
         } else {
             log.error("No editor class ({}) defined", EDITOR_CLASS);
         }
+
+        if (properties.get(Plugin.SERVICE_ID) != null) {
+            context.registerService(this, properties.get(Plugin.SERVICE_ID).getStrings().get(0));
+        } else {
+            log.warn("No service id defined");
+        }
     }
 
     public void stop() {
-        topic.destroy();
         for (Map.Entry<IModel, PluginEntry> entry : editors.entrySet()) {
             entry.getValue().plugin.stop();
             editors.remove(entry.getKey());
@@ -131,9 +126,7 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
             config.put(Plugin.SERVICE_ID, new ConfigValue(editorId));
             config.put(Plugin.CLASSNAME, new ConfigValue(editorClass));
 
-            String modelId = editorId + ".model";
-            config.put(RenderPlugin.MODEL_ID, new ConfigValue(modelId));
-
+            config.put(RenderPlugin.WICKET_ID, properties.get(RenderPlugin.WICKET_ID));
             config.put(RenderPlugin.DIALOG_ID, properties.get(RenderPlugin.DIALOG_ID));
 
             String factoryId = editorId + ".factory";
@@ -158,14 +151,6 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
         }
     }
 
-    public void onMessage(Message message) {
-        switch (message.getType()) {
-        case ModelReference.SET_MODEL:
-            view(((ModelReference.ModelMessage) message).getModel());
-            break;
-        }
-    }
-
     public void deleteEditor(IViewService service) {
         Map.Entry<IModel, PluginEntry> entry = getPluginEntry(service);
         if (entry != null) {
@@ -173,7 +158,7 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
             context.unregisterService(this, editorId + ".factory");
 
             entry.getValue().plugin.stop();
-            editors.remove(editorId);
+            editors.remove(entry.getKey());
         } else {
             log.error("unknown editor " + service + " delete is ignored");
         }
@@ -209,11 +194,9 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
     }
 
     private Map.Entry<IModel, PluginEntry> getPluginEntry(IViewService service) {
-        if (editors.containsValue(service)) {
-            for (Map.Entry<IModel, PluginEntry> entry : editors.entrySet()) {
-                if (entry.getValue().plugin.equals(service)) {
-                    return entry;
-                }
+        for (Map.Entry<IModel, PluginEntry> entry : editors.entrySet()) {
+            if (entry.getValue().plugin.equals(service)) {
+                return entry;
             }
         }
         return null;
