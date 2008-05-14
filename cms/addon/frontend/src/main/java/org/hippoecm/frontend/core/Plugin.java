@@ -19,8 +19,6 @@ public interface Plugin {
 
     String SERVICE_ID = "service.pid";
 
-    String FACTORY_ID = "factory.pid";
-
     String CLASSNAME = "plugin.class";
 
     void start(PluginContext context);

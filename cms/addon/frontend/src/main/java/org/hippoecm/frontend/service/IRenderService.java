@@ -37,5 +37,5 @@ public interface IRenderService extends Serializable {
 
     // Service id that is used to register decorators
 
-    String getDecoratorId();
+    String getServiceId();
 }

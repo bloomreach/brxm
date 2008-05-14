@@ -16,44 +16,30 @@
 package org.hippoecm.frontend.plugin.editor;
 
 import java.io.Serializable;
-import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.service.IDialogService;
-import org.hippoecm.frontend.service.IDynamicService;
-import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.editor.EditorService;
-import org.hippoecm.frontend.util.ServiceTracker;
-import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorPlugin extends EditorService implements Plugin, IDynamicService {
+public class EditorPlugin extends EditorService implements Plugin {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
-    private ServiceTracker<IFactoryService> factory;
     private TitleDecorator title;
-
-    public EditorPlugin() {
-        factory = new ServiceTracker<IFactoryService>(IFactoryService.class);
-    }
 
     public void start(PluginContext context) {
         IPluginConfig properties = context.getProperties();
-        factory.open(context, properties.get(Plugin.FACTORY_ID).getStrings().get(0));
-        init(context, properties.get(Plugin.SERVICE_ID).getStrings().get(0), properties);
+        init(context, properties);
 
-        String decoratorId = getDecoratorId();
+        String decoratorId = getServiceId() + ".decorator";
         if (decoratorId != null) {
             title = new TitleDecorator();
             context.registerService(title, decoratorId);
@@ -67,39 +53,10 @@ public class EditorPlugin extends EditorService implements Plugin, IDynamicServi
         PluginContext context = getPluginContext();
 
         if (title != null) {
-            context.unregisterService(title, getDecoratorId());
+            context.unregisterService(title, getServiceId() + ".decorator");
             title = null;
         }
         destroy();
-        factory.close();
-    }
-
-    public boolean canDelete() {
-        return (factory.getServices().size() > 0);
-    }
-
-    public void delete() {
-        IDialogService dialogService = getDialogService();
-        try {
-            Node node = ((JcrNodeModel) getModel()).getNode();
-            HippoSession session = (HippoSession) node.getSession();
-            if (session.pendingChanges(node, "nt:base").hasNext()) {
-                dialogService
-                        .show(new OnCloseDialog(getPluginContext(), dialogService, (JcrNodeModel) getModel(), this));
-            } else {
-                deleteEditor();
-            }
-        } catch (RepositoryException e) {
-            dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, e.getMessage()));
-            log.info(e.getClass().getName() + ": " + e.getMessage());
-        }
-    }
-
-    void deleteEditor() {
-        List<IFactoryService> services = factory.getServices();
-        if (services.size() == 1) {
-            services.get(0).delete(this);
-        }
     }
 
     class TitleDecorator implements ITitleDecorator, Serializable {

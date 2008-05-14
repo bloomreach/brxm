@@ -80,12 +80,12 @@ public class ListViewService extends RenderService {
     }
 
     @Override
-    public void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
-        super.init(context, serviceId, properties);
+    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+        super.init(context, properties);
         if (properties.get("item") != null) {
             tracker.open(context, properties.get("item").getStrings().get(0));
         } else {
-            log.warn("No item service id configured for {}", serviceId);
+            log.warn("No item id configured");
         }
     }
 

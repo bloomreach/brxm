@@ -13,47 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugin.composite;
+package org.hippoecm.frontend.plugin.perspective;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.core.impl.PluginConfig;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
-import org.hippoecm.frontend.service.IDynamicService;
-import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.frontend.util.ServiceTracker;
+import org.hippoecm.frontend.service.IViewService;
 
-public abstract class Perspective extends RenderPlugin implements ITitleDecorator, IDynamicService {
+public abstract class Perspective extends RenderPlugin implements ITitleDecorator, IViewService {
     private static final long serialVersionUID = 1L;
 
     public static final String TITLE = "perspective.title";
     public static final String PLUGINS = "perspective.plugins";
 
-    private ServiceTracker<IFactoryService> factory;
     private List<Plugin> plugins;
     private String title = "title";
 
     public Perspective() {
         plugins = new LinkedList<Plugin>();
-        factory = new ServiceTracker<IFactoryService>(IFactoryService.class);
     }
 
     @Override
-    public void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
-        super.init(context, serviceId, properties);
+    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+        super.init(context, properties);
 
         if (properties.get(TITLE) != null) {
             title = properties.get(TITLE).getStrings().get(0);
-        }
-
-        if (properties.get(Plugin.FACTORY_ID) != null) {
-            factory.open(context, properties.get(Plugin.FACTORY_ID).getStrings().get(0));
         }
 
         if (properties.get(PLUGINS) != null) {
@@ -74,8 +67,6 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
             plugins.remove(plugin);
         }
 
-        factory.close();
-
         title = "title";
 
         super.destroy();
@@ -87,17 +78,10 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
         return title;
     }
 
-    // IDynamicService
+    // IViewService
 
-    public boolean canDelete() {
-        return (factory.getServices().size() > 0);
-    }
-
-    public void delete() {
-        if (factory.getServices().size() > 0) {
-            IFactoryService factoryService = factory.getServices().get(0);
-            factoryService.delete(this);
-        }
+    public void view(IModel model) {
+        setModel(model);
     }
 
 }

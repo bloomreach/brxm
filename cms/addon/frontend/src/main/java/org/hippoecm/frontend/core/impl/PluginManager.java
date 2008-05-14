@@ -95,7 +95,9 @@ public class PluginManager implements Serializable {
         }
         list.add(service);
 
-        referenced.put(new Integer(nextReferenceId++), service);
+        if (!referenced.containsValue(service)) {
+            referenced.put(new Integer(nextReferenceId++), service);
+        }
 
         List<ServiceListener> notify = listeners.get(name);
         if (notify != null) {

@@ -27,6 +27,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.IViewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +42,15 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     protected AjaxLink discard;
     protected AjaxLink save;
     private JcrNodeModel model;
-    private ServiceReference<EditorPlugin> editor;
+    private ServiceReference<MultiEditorPlugin> factory;
+    private ServiceReference<IViewService> editor;
 
-    public OnCloseDialog(PluginContext context, IDialogService dialogWindow, JcrNodeModel model, EditorPlugin plugin) {
+    public OnCloseDialog(PluginContext context, IDialogService dialogWindow, JcrNodeModel model, MultiEditorPlugin plugin, IViewService editor) {
         super(context, dialogWindow);
 
         this.model = model;
-        this.editor = context.getReference(plugin);
+        this.factory = context.getReference(plugin);
+        this.editor = context.getReference(editor);
 
         this.ok.setVisible(false);
         this.cancel.setVisible(false);
@@ -68,8 +71,8 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 save();
-                EditorPlugin plugin = editor.getService();
-                plugin.deleteEditor();
+                MultiEditorPlugin plugin = factory.getService();
+                plugin.deleteEditor(OnCloseDialog.this.editor.getService());
                 closeDialog();
             }
         };
@@ -81,8 +84,8 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 discard();
-                EditorPlugin plugin = editor.getService();
-                plugin.deleteEditor();
+                MultiEditorPlugin plugin = factory.getService();
+                plugin.deleteEditor(OnCloseDialog.this.editor.getService());
                 closeDialog();
             }
         };
@@ -98,10 +101,6 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             }
         };
         add(donothing);
-    }
-
-    protected EditorPlugin getEditor() {
-        return editor.getService();
     }
 
     protected void save() {

@@ -15,8 +15,9 @@
  */
 package org.hippoecm.frontend.service;
 
-public interface IDynamicService {
-    boolean canDelete();
+import java.io.Serializable;
 
-    void delete();
+public interface IService extends Serializable {
+    
+    String getServiceId();
 }

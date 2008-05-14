@@ -30,7 +30,7 @@ import org.hippoecm.frontend.application.PluginRequestTarget;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
-import org.hippoecm.frontend.service.IDynamicService;
+import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.util.ServiceTracker;
@@ -94,7 +94,7 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     @Override
-    public void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
+    public void init(PluginContext context, Map<String, ParameterValue> properties) {
         tabsTracker.open(context, properties.get(TAB_ID).getStrings().get(0));
 
         if (tabs.size() > 0) {
@@ -102,7 +102,7 @@ public class TabsPlugin extends RenderPlugin {
             replace(tabbedPanel);
         }
 
-        super.init(context, serviceId, properties);
+        super.init(context, properties);
     }
 
     @Override
@@ -143,11 +143,9 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
-        if (tabbie.renderer instanceof IDynamicService) {
-            IDynamicService service = (IDynamicService) tabbie.renderer;
-            if (service.canDelete()) {
-                service.delete();
-            }
+        if(tabbie.factoryTracker.getServices().size() > 0) {
+            IFactoryService factory = tabbie.factoryTracker.getServices().get(0);
+            factory.delete(tabbie.renderer);
         }
     }
 
@@ -167,15 +165,19 @@ public class TabsPlugin extends RenderPlugin {
 
         IRenderService renderer;
         ServiceTracker titleTracker;
+        ServiceTracker<IFactoryService> factoryTracker;
         int lastSelected;
 
         Tab(IRenderService renderer) {
             this.renderer = renderer;
             titleTracker = new ServiceTracker(ITitleDecorator.class);
-            titleTracker.open(getPluginContext(), renderer.getDecoratorId());
+            titleTracker.open(getPluginContext(), renderer.getServiceId() + ".decorator");
+            factoryTracker = new ServiceTracker<IFactoryService>(IFactoryService.class);
+            factoryTracker.open(getPluginContext(), renderer.getServiceId() + ".factory");
         }
 
         void destroy() {
+            factoryTracker.close();
             titleTracker.close();
 
             // look for previously selected tab

@@ -19,19 +19,19 @@ import java.util.Map;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.plugin.composite.Perspective;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
-import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.plugin.perspective.Perspective;
+import org.hippoecm.frontend.service.IViewService;
 
 /**
  * Panel representing the content panel for the first tab.
  */
-public class EditPerspective extends Perspective implements IEditService {
+public class EditPerspective extends Perspective implements IViewService {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void init(PluginContext context, String serviceId, Map<String, ParameterValue> properties) {
-        super.init(context, serviceId, properties);
+    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+        super.init(context, properties);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class EditPerspective extends Perspective implements IEditService {
         super.destroy();
     }
 
-    public void edit(IModel model) {
+    public void view(IModel model) {
         // TODO Auto-generated method stub
 
     }

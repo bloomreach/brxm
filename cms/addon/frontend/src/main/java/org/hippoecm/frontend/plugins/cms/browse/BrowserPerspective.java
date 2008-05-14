@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
-import org.hippoecm.frontend.plugin.composite.Perspective;
+import org.hippoecm.frontend.plugin.perspective.Perspective;
 
 public class BrowserPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
