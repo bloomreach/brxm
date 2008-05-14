@@ -168,7 +168,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         virtualStates.clear();
         virtualNodes.clear();
         filteredChangeLog.invalidate();
-	if(!noUpdateChangeLog) {
+        if(!noUpdateChangeLog) {
             super.update(filteredChangeLog);
         }
     }
@@ -184,9 +184,9 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     }
 
     void refresh() throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
-	noUpdateChangeLog = true;
-	update();
-	noUpdateChangeLog = false;
+        noUpdateChangeLog = true;
+        update();
+        noUpdateChangeLog = false;
     }
 
     @Override

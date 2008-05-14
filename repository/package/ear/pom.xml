@@ -61,7 +61,7 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    
+
     <!-- End applications -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -152,6 +152,20 @@
       <type>jar</type>
     </dependency>
     
+    <!-- Reporting addon -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    
     <!-- CMS 7 addons-->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -178,35 +192,32 @@
       <type>jar</type>
     </dependency>
     
+    <!-- default content addon -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-defaultcontent-repository</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+
     <!-- hst add-on -->
-    <!--
-      <dependency>
+    <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-addon-repository</artifactId>
-      <version>1.01.00-SNAPSHOT</version>
+      <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
-      </dependency>
-    -->
-    
-    <!-- reporting add-on -->
-    <!--
-      <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
-      <version>${parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-sample-content</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
-      </dependency>
-      <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reporting-frontend</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-      </dependency>
-    -->      
+    </dependency>
+      
   </dependencies>
-  
+
   <build>
-    <!-- defaultGoal>package</defaultGoal -->
+    <defaultGoal>package</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -21,6 +21,8 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import junit.framework.TestCase;
 
@@ -45,11 +47,16 @@ public class PersistanceInheritanceTest extends TestCase
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node, root = session.getRootNode();
 
-        node = root.getNode("hippo:configuration");
-        node = node.getNode("hippo:documents");
-        node = node.addNode("test");
-        node.setProperty("jcr:statement","documents/?");
-        node.setProperty("jcr:language",javax.jcr.query.Query.XPATH);
+        QueryManager queryManager = session.getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery("documents/$name", Query.XPATH);
+        node = query.storeAsNode("/hippo:configuration/hippo:documents/test");
+        String statement = node.getProperty("jcr:statement").getString();
+        String language = node.getProperty("jcr:language").getString();
+        node.remove();
+        node = root.getNode("hippo:configuration/hippo:documents");
+        node = node.addNode("test", "hippo:ocmquery");
+        node.setProperty("jcr:statement",statement);
+        node.setProperty("jcr:language",language);
         node.setProperty("hippo:classname","org.hippoecm.repository.test.SubClass");
         Node types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.test.SubClass","hippo:type");

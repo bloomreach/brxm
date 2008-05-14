@@ -38,4 +38,58 @@
             <sv:value>admin</sv:value>
         </sv:property>
     </sv:node>
+    <sv:node sv:name="everybody">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:group</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:facetauths">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetauthfolder</sv:value>
+                
+                <sv:node sv:name="primarytypes-read">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:facetauth</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:permissions" sv:type="Long">
+                        <sv:value>1</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:facet" sv:type="String">
+                        <sv:value>jcr:primaryType</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:values" sv:type="String">
+                        <sv:value>rep:root</sv:value>
+                        <sv:value>hippo:facetsubsearch</sv:value>
+                        <sv:value>hippo:facetresult</sv:value>
+                        <sv:value>hippo:workflowfolder</sv:value>
+                        <sv:value>hippo:workflowcategory</sv:value>
+                        <sv:value>hippo:frontendplugin</sv:value>
+                        <sv:value>hippo:plugin</sv:value>
+                        <sv:value>hippo:pluginfolder</sv:value>
+                        <sv:value>hippo:application</sv:value>
+                        <sv:value>hippo:parameters</sv:value>
+                        <sv:value>hippo:page</sv:value>
+                    </sv:property>
+                </sv:node>
+
+                <sv:node sv:name="primarytypes-write">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:facetauth</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:permissions" sv:type="Long">
+                        <sv:value>7</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:facet" sv:type="String">
+                        <sv:value>jcr:primaryType</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:values" sv:type="String">
+                        <sv:value>nt:unstructured</sv:value>
+                        <sv:value>nt:folder</sv:value>
+                        <sv:value>hippo:facetsearch</sv:value>
+                        <sv:value>hippo:facetselect</sv:value>
+                        <sv:value>hippo:handle</sv:value>
+                    </sv:property>
+                </sv:node>
+            </sv:property>
+        </sv:node>
+    </sv:node>
 </sv:node>

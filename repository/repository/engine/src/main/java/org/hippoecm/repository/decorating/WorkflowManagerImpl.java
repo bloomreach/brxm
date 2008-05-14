@@ -302,7 +302,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             } finally {
                 StringBuffer sb = new StringBuffer();
                 sb.append("AUDIT workflow invocation ");
-		sb.append(uuid);
+                sb.append(uuid);
                 sb.append(".");
                 sb.append(upstream != null ? upstream.getClass().getName() : "<unknown>");
                 sb.append(".");

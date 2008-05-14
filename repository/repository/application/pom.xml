@@ -82,24 +82,6 @@
   <build>
     <defaultGoal>package</defaultGoal>
     <plugins>
-      <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>retrotranslator-maven-plugin</artifactId>
-        <version>1.0-alpha-2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>translate-war</goal>
-            </goals>
-            <configuration>
-              <classifier>jdk1.4</classifier>
-              <attach>true</attach>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      -->
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
@@ -117,16 +99,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>product</name>
-              <value>${basedir}/target/${artifactId}-${version}</value>
-            </property>
-          </systemProperties>
+          <skip>true</skip>
         </configuration>
       </plugin>
    </plugins>
@@ -134,11 +108,49 @@
 
   <profiles>
     <profile>
-      <id>test</id>
+      <id>tests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-repository-engine</artifactId>
+          <version>${parent.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>skip-tests</id>
       <activation>
         <property>
           <name>maven.test.skip</name>
-          <value>false</value>
+          <value>true</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-repository-engine</artifactId>
+            <version>${parent.version}</version>
+            <type>jar</type>
+            <classifier>test</classifier>
+            <scope>test</scope>
+            <optional>true</optional>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+    <profile>
+      <id>appserver-tests</id>
+      <activation>
+        <property>
+          <name>appserver.home</name>
         </property>
       </activation>
       <dependencies>
@@ -152,6 +164,105 @@
           <optional>true</optional>
         </dependency>
       </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <forkMode>always</forkMode>
+              <workingDirectory>${project.build.directory}</workingDirectory>
+              <systemProperties>
+                <property>
+                  <name>product</name>
+                  <value>${basedir}/target/${artifactId}-${version}.war</value>
+                </property>
+              </systemProperties>
+              <additionalClasspathElements>
+                <!-- FIXME: not all of these dependencies are needed, should be sorted out -->
+                <additionalClasspathElement>${appserver.home}/lib/appserv-deployment-client.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/Pack200Task.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/activation.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/admin-cli-ee.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/admin-cli.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-admin.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-cmp.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-deployment-client.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-ee.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-ext.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-jstl.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-jwsacc.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-launch.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-rt.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-se.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-tags.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-upgrade.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/appserv-ws.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/com-sun-commons-launcher.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/com-sun-commons-logging.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/dbschema.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/j2ee-svc.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/j2ee.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/javaee.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jesmf-plugin.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jhall.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jmac-api.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jmxremote_optional.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jsf-impl.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/jxta.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/mail.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/shoal-gms.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/sun-appserv-ant.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/toplink-essentials-agent.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/toplink-essentials.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/webservices-rt.jar</additionalClasspathElement>
+                <additionalClasspathElement>${appserver.home}/lib/webservices-tools.jar</additionalClasspathElement>
+              </additionalClasspathElements>
+              <skip>true</skip>
+              <!-- skipTests>true</skipTests -->
+            </configuration>
+            <executions>
+              <execution>
+                <id>testing</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <skipTests>false</skipTests>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>legacy</id>
+      <activation>
+        <jdk>1.4</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>retrotranslator-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>translate-war</goal>
+                </goals>
+                <configuration>
+                  <classifier>jdk1.4</classifier>
+                  <attach>true</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 

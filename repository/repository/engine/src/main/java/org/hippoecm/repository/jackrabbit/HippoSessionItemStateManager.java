@@ -49,10 +49,10 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
     }
 
     public void disposeAllTransientItemStates() {
-	/* It is imperative that the stateMgr.refresh() method is ONLY called after a 
-	 * super.disposeAllTransientItemStates().  This is the only way to guarantee
-	 * that there are in fact no changes in the changelog of the local ISM.
-	 */
+        /* It is imperative that the stateMgr.refresh() method is ONLY called after a 
+         * super.disposeAllTransientItemStates().  This is the only way to guarantee
+         * that there are in fact no changes in the changelog of the local ISM.
+         */
         super.disposeAllTransientItemStates();
         try {
             edit();

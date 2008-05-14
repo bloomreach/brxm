@@ -22,24 +22,24 @@
     <description>Minimal frontend application that connects to a remote repository.</description>
 
     <context-param>
-        <param-name>repository-directory</param-name>
+        <param-name>repository-address</param-name>
         <param-value>rmi://localhost:1099/hipporepository</param-value>
     </context-param>
 
     <!--Default application-->
-    <filter>
-        <filter-name>CMS</filter-name>
-        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+    <servlet>
+        <servlet-name>CMS</servlet-name>
+        <servlet-class>org.apache.wicket.protocol.http.WicketServlet</servlet-class>
         <init-param>
             <param-name>applicationClassName</param-name>
             <param-value>org.hippoecm.frontend.Main</param-value>
         </init-param>
-    </filter>
+    </servlet>
     
     <!--Builtin console-->
-    <filter>
-        <filter-name>Console</filter-name>
-        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+    <servlet>
+        <servlet-name>Console</servlet-name>
+        <servlet-class>org.apache.wicket.protocol.http.WicketServlet</servlet-class>
         <init-param>
             <param-name>applicationClassName</param-name>
             <param-value>org.hippoecm.frontend.Main</param-value>
@@ -48,17 +48,17 @@
             <param-name>config</param-name>
             <param-value>builtin</param-value>
         </init-param>
-    </filter>
-    
-    <filter-mapping>
-        <filter-name>CMS</filter-name>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CMS</servlet-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>Console</filter-name>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Console</servlet-name>
         <url-pattern>/console/*</url-pattern>
-    </filter-mapping>    
+    </servlet-mapping>    
     
     <!-- Timeout in minutes -->
     <session-config>

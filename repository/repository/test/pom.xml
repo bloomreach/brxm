@@ -177,19 +177,7 @@
               <value>${history.points}</value>
             </property>
           </systemProperties>
-          <skip>true</skip>
         </configuration>
-        <executions>
-          <execution>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -219,12 +207,9 @@
 
   <profiles>
     <profile>
-      <id>test</id>
+      <id>tests</id>
       <activation>
-        <property>
-          <name>maven.test.skip</name>
-          <value>false</value>
-        </property>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <dependencies>
         <dependency>
@@ -237,6 +222,28 @@
           <optional>true</optional>
         </dependency>
       </dependencies>
+    </profile>
+    <profile>
+      <id>skip-tests</id>
+      <activation>
+        <property>
+          <name>maven.test.skip</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-repository-engine</artifactId>
+            <version>${parent.version}</version>
+            <type>jar</type>
+            <classifier>test</classifier>
+            <scope>test</scope>
+            <optional>true</optional>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
     </profile>
   </profiles>
 
