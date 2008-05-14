@@ -42,19 +42,13 @@
 
     <div id="right">
     <h4>${defaultContext._path}/${defaultContext.articles._name}</h4>
-      <c:forEach var="handle" items="${defaultContext.articles}">
-    	<c:set var="item" value="${handle[handle._name]}"/>
-          ${item._name}<br/>
-      </c:forEach>
+	   	<hst:articles context="defaultContext"/>
 
     <h4>${defaultContext._path}/${defaultContext.news._name}</h4>
     	<hst:news context="defaultContext"/>
 
     <h4>${defaultContext._path}/${defaultContext.events._name}</h4>
-      <c:forEach var="handle" items="${defaultContext.events}">
-    	<c:set var="item" value="${handle[handle._name]}"/>
-          ${item._name}<br/>
-      </c:forEach>
+	   	<hst:events context="defaultContext"/>
     </div>
 
   </div>

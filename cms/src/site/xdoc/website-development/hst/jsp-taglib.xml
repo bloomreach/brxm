@@ -38,8 +38,13 @@
         <ul>
           <li>&lt;hst:access&gt;</li>
           <li>&lt;hst:include&gt;</li>
+          <li>&lt;hst:encodeURL&gt;</li>
+          <li>&lt;hst:documents&gt;</li>
+          <li>&lt;hst:articles&gt;</li>
+          <li>&lt;hst:news&gt;</li>
+          <li>&lt;hst:events&gt;</li>
         </ul>
-        <p>No extensive documentation is available as the taglib will undergo a redesign.</p> 
+        <p>No extensive documentation is available as the taglib is under development.</p> 
       </subsection>
     </section>
   </body>
