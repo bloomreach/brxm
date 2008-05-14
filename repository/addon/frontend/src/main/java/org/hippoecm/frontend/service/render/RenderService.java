@@ -122,7 +122,9 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
 
     @Override
     public Component setModel(IModel model) {
-        modelRef.setModel(model);
+        if (modelRef != null) {
+            modelRef.setModel(model);
+        }
         updateModel(model);
         return this;
     }

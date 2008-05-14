@@ -30,6 +30,7 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.ServiceTracker;
@@ -45,9 +46,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
-    public static final String EDITOR_ID = "workflow.editor";
-
-    private ServiceTracker<IViewService> editor;
+    private ServiceTracker<IViewService> viewers;
 
     @SuppressWarnings("unused")
     private String caption = "unknown document";
@@ -55,7 +54,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     public FullReviewedActionsWorkflowPlugin() {
 
-        editor = new ServiceTracker<IViewService>(IViewService.class);
+        viewers = new ServiceTracker<IViewService>(IViewService.class);
 
         add(new Label("caption", new PropertyModel(this, "caption")));
 
@@ -68,7 +67,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                List<IViewService> editors = editor.getServices();
+                List<IViewService> editors = viewers.getServices();
                 if (editors.size() > 0) {
                     editors.get(0).view(new JcrNodeModel(docNode));
                 }
@@ -164,16 +163,16 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     public void init(PluginContext context, Map<String, ParameterValue> properties) {
         super.init(context, properties);
-        if (properties.get(EDITOR_ID) != null) {
-            editor.open(context, properties.get(EDITOR_ID).getStrings().get(0));
+        if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
+            viewers.open(context, properties.get(WorkflowPlugin.VIEWER_ID).getStrings().get(0));
         } else {
-            log.warn("No editor ({}) specified", EDITOR_ID);
+            log.warn("No editor ({}) specified", WorkflowPlugin.VIEWER_ID);
         }
     }
 
     @Override
     public void destroy() {
-        editor.close();
+        viewers.close();
         super.destroy();
     }
 

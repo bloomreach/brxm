@@ -35,11 +35,31 @@ public class PluginManager implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
 
+    private static class RefCount implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        Serializable service;
+        int count;
+
+        RefCount(Serializable service) {
+            this.service = service;
+            count = 1;
+        }
+
+        void addRef() {
+            count++;
+        }
+
+        boolean release() {
+            return (--count == 0);
+        }
+    }
+
     private PluginPage page;
     private PluginFactory factory;
     private Map<String, List<Serializable>> services;
     private Map<String, List<ServiceListener>> listeners;
-    private Map<Integer, Serializable> referenced;
+    private Map<Integer, RefCount> referenced;
     private int nextReferenceId;
 
     public PluginManager(PluginPage page) {
@@ -47,7 +67,7 @@ public class PluginManager implements Serializable {
         factory = new PluginFactory();
         services = new HashMap<String, List<Serializable>>();
         listeners = new HashMap<String, List<ServiceListener>>();
-        referenced = new HashMap<Integer, Serializable>();
+        referenced = new HashMap<Integer, RefCount>();
         nextReferenceId = 0;
     }
 
@@ -61,11 +81,9 @@ public class PluginManager implements Serializable {
     }
 
     public <T extends Serializable> ServiceReference<T> getReference(T service) {
-        if (referenced.containsValue(service)) {
-            for (Map.Entry<Integer, Serializable> entry : referenced.entrySet()) {
-                if (entry.getValue() == service) {
-                    return new ServiceReference<T>(page, entry.getKey().intValue());
-                }
+        for (Map.Entry<Integer, RefCount> entry : referenced.entrySet()) {
+            if (entry.getValue().service == service) {
+                return new ServiceReference<T>(page, entry.getKey().intValue());
             }
         }
         log.warn("Referenced service was not registered");
@@ -73,11 +91,11 @@ public class PluginManager implements Serializable {
     }
 
     public <T extends Serializable> T getService(ServiceReference<T> reference) {
-        T result = (T) referenced.get(new Integer(reference.getId()));
-        if (result == null) {
+        RefCount refCount = referenced.get(new Integer(reference.getId()));
+        if (refCount == null) {
             log.warn("Referenced service is no longer registered");
         }
-        return result;
+        return (T) refCount.service;
     }
 
     public void registerService(Serializable service, String name) {
@@ -95,8 +113,11 @@ public class PluginManager implements Serializable {
         }
         list.add(service);
 
-        if (!referenced.containsValue(service)) {
-            referenced.put(new Integer(nextReferenceId++), service);
+        ServiceReference<Serializable> ref = getReference(service);
+        if (ref == null) {
+            referenced.put(new Integer(nextReferenceId++), new RefCount(service));
+        } else {
+            referenced.get(new Integer(ref.getId())).addRef();
         }
 
         List<ServiceListener> notify = listeners.get(name);
@@ -133,13 +154,10 @@ public class PluginManager implements Serializable {
                 services.remove(name);
             }
 
-            assert (referenced.containsValue(service));
-
-            for (Map.Entry<Integer, Serializable> entry : referenced.entrySet()) {
-                if (entry.getValue() == service) {
-                    referenced.remove(entry.getKey());
-                    break;
-                }
+            ServiceReference<Serializable> ref = getReference(service);
+            RefCount refCount = referenced.get(new Integer(ref.getId()));
+            if (refCount.release()) {
+                referenced.remove(new Integer(ref.getId()));
             }
         } else {
             log.error("unregistering a service that wasn't registered.");
