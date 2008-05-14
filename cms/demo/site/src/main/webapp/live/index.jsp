@@ -3,10 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="h" %>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%--
-    Copyright 2007 Hippo
+    Copyright 2007-2008 Hippo
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -36,9 +36,9 @@ Hottest news items:<p/>
   <c:forEach var="message" items="${selectedNewsItems['demo:query'].keyword['hot']}">
     <a href="message.jsp?message=${message._name}"><fmt:formatDate pattern="dd-MM-yy" value="${message['demo:date']}"/>&nbsp;${message['demo:title']}</a>
     <br/>
-    <h:access var="image" value="${message['demo:image']}">
+    <hst:context var="image" value="${message['demo:image']}">
       <img src="/images${image._path}" align="left"/>
-    </h:access>
+    </hst:context>
     ${message['demo:description']}
     <br clear="all"/><br/>
   </c:forEach>

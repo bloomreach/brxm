@@ -3,9 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="h" %>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>
 <%--
-    Copyright 2007 Hippo
+    Copyright 2007-2008 Hippo
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@
   <c:if test="${webpage._name == 'news'}"><a href="news.jsp">
     <b>News</b></a><font size="-2"><br/>
     <c:forEach var="iterator" items="${global['site/messages']}">
-      <h:access var="message" value="${iterator[iterator._name]}">
+      <hst:context var="message" value="${iterator[iterator._name]}">
         &nbsp;&nbsp;<a href="message.jsp?message=${message._name}">${message['demo:title']}</a><br/>
-      </h:access>
+      </hst:context>
     </c:forEach>
   </font></c:if>
   <c:if test="${webpage._name != 'news'}"><a href="news.jsp">News</a><br/></c:if>
