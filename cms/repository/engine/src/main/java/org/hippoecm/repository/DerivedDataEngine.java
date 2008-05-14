@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.HierarchyResolverImpl;
 
 import org.hippoecm.repository.ext.DerivedDataFunction;
 
@@ -201,7 +202,11 @@ public class DerivedDataEngine {
                                 } else
                                     parameters.put(propName, property.getValues());
                             } else if(propDef.isNodeType("hippo:resolvepropertyreference")) {
-                                Property property = ((HippoWorkspace)modified.getSession().getWorkspace()).getHierarchyResolver().getProperty(modified, propDef.getProperty("hippo:relPath").getString());
+                                /* FIXME: should read:
+                                 * Property property = ((HippoWorkspace)(modified.getSession().getWorkspace())).getHierarchyResolver().getProperty(modified, propDef.getProperty("hippo:relPath").getString());
+                                 * however this is broken because of a cast exception as the session is not wrapped
+                                 */
+                                Property property = new HierarchyResolverImpl().getProperty(modified, propDef.getProperty("hippo:relPath").getString());
                                 if(property != null) {
                                     if(property.getParent().isNodeType("mix:referenceable")) {
                                         dependencies.add(property.getParent().getUUID());

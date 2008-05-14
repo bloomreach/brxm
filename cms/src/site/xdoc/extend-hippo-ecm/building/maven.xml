@@ -27,7 +27,7 @@
 
       <subsection name="Install Maven">
         <p>
-          Hippo ECM is built using Maven 2 (version 2.0.6 or newer). Follow the
+          Hippo ECM is built using Maven 2 (version 2.0.8 or newer). Follow the
           <a href="http://maven.apache.org/download.html">Maven installation instructions</a>.
         </p>
 

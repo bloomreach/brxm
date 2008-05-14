@@ -45,7 +45,7 @@ public class ClientHierarchyResolver extends ClientObject implements HierarchyRe
 
     public Item getItem(Node ancestor, String path, boolean isProperty, Entry last) throws InvalidItemStateException, RepositoryException {
         try {
-	    RemoteHierarchyResolver.RemoteHierarchyResult result = remote.getItem(ancestor.getPath(), path, isProperty);
+            RemoteHierarchyResolver.RemoteHierarchyResult result = remote.getItem(ancestor.getPath(), path, isProperty);
             last.node = (Node) getItem(session, result.node);
             last.relPath = result.relPath;
             return getItem(session, result.item);

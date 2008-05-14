@@ -25,3 +25,16 @@
 [hippo:testdocument] > hippo:document
 + * = hippo:ntunstructured multiple
 - *
+
+[hippo:testderived] > hippo:derived mixin
+- hippo:c (Long) mandatory
+
+[hippo:testderiveddocument] > hippo:document
+- hippo:a (Long)
+- hippo:b (Long)
+
+[hippo:testmixin] mixin
+- hippo:a (String) mandatory
+
+[hippo:baddocument] > hippo:document, mix:referenceable
+- hippo:x (String)

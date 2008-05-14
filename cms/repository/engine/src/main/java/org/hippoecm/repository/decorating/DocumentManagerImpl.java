@@ -146,7 +146,7 @@ public class DocumentManagerImpl
     public Document getDocument(String category, String identifier) throws MappingException, RepositoryException {
         try {
             Node queryNode = session.getNodeByUUID(configuration).getNode(category);
-	    HippoQuery query = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(queryNode);
+            HippoQuery query = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(queryNode);
             QueryResult result;
             if(query.getArgumentCount() > 0) {
                 Map<String,String> arguments = new TreeMap<String,String>();

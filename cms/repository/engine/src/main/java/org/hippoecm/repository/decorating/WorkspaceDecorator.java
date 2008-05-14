@@ -90,7 +90,7 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
                               sessionImpl.impersonate(new SimpleCredentials("", new char[] { })));
             }
         } catch(RepositoryException ex) {
-        logger.warn("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
+            logger.warn("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
         }
     }
 

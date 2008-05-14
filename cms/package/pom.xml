@@ -43,7 +43,7 @@
     <module>skin</module>
     <module>war</module>
     <module>ear</module>    
-    <!--<module>test</module>-->
+    <module>test</module>
   </modules>
   
   <build>

@@ -40,8 +40,7 @@
   </scm>
 
   <dependencies>
-    <!-- Xinha html editor
-    (must be included before actual front-end application) -->
+    <!-- Xinha html editor (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha</artifactId>
@@ -54,9 +53,8 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-
-    <!-- Default application skin 
-    (must be included before actual front-end application) -->
+    
+    <!-- Default application skin (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-skin</artifactId>
@@ -201,7 +199,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-   
+
     <!-- hst add-on -->
     <dependency>
       <groupId>org.hippoecm.hst</groupId>

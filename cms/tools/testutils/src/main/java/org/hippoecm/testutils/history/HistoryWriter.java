@@ -150,15 +150,15 @@ public class HistoryWriter extends Suite implements XmlConstants {
     }
 
     public static void write(String name, String value, String unit) {
-	if (currentHistoryWriter != null) {
+        if (currentHistoryWriter != null) {
             currentHistoryWriter.writeInternal(name, value, unit, true);
         }
     }
 
     public static void write(String name, String value, String unit, boolean fuzzy) {
-	if (currentHistoryWriter != null) {
+        if (currentHistoryWriter != null) {
             currentHistoryWriter.writeInternal(name, value, unit, fuzzy);
-	}
+        }
     }
 
     public void writeInternal(String name, String value, String unit, boolean fuzzy) {
