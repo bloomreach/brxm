@@ -36,7 +36,7 @@
       <subsection name="Tags"> 
         <p>The following tags are availabe:</p> 
         <ul>
-          <li>&lt;hst:access&gt;</li>
+          <li>&lt;hst:context&gt;</li>
           <li>&lt;hst:include&gt;</li>
           <li>&lt;hst:encodeURL&gt;</li>
           <li>&lt;hst:documents&gt;</li>

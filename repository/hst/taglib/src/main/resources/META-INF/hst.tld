@@ -27,15 +27,25 @@
   <info>Hippo Site Toolkit tag library</info>
 
   <tag>
-    <name>access</name>
-    <tagclass>org.hippoecm.hst.taglib.AccessTag</tagclass>
+    <name>context</name>
+    <tagclass>org.hippoecm.hst.taglib.ContextTag</tagclass>
     <body-content>JSP</body-content>
     <attribute>
+  	  <description>The optional name by which to get a context object from request, 
+  	  		overriding the configured or default name.</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The required variable name by which a new context is set as request attribute.</description>
       <name>var</name>
       <required>true</required>
       <rtexprvalue>false</rtexprvalue>
     </attribute>
     <attribute>
+      <description>The required string location relative to the current context,
+      	or alternatively a context object, from which a new context is created.</description>
       <name>value</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
@@ -47,22 +57,22 @@
     <tagclass>org.hippoecm.hst.taglib.EncodeURLTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-      <description>The required value to encode</description>
+      <description>The required value to encode.</description>
       <name>value</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The variable name by which the encoded URL is set as request attribute. 
-      		If given, no output is written to the jsp directly</description>
+      <description>The optional variable name by which the encoded URL is set as request attribute. 
+      		If given, no output is written to the jsp directly.</description>
       <name>var</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The name by which to get a context object from request, that is then used 
-  	  		to initialize URL encoding, instead of using the default initialization as 
-  	  		done by URLMappingContextFilter</description>
+  	  <description>The optional name by which to get a context object from request or page context, 
+  	  		that is then used to initialize URL encoding, instead of using the default 
+  	  		initialization as done by the URL mapping filter.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -74,6 +84,7 @@
     <tagclass>org.hippoecm.hst.taglib.IncludeTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
+      <description>The required path that represents a node in the repository.</description>
       <name>path</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
@@ -85,19 +96,19 @@
     <tagclass>org.hippoecm.hst.taglib.DocumentsTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-  	  <description>The name by which to get a context object from request</description>
+  	  <description>The optional name by which to get a context object from request.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The location relative to the context, pointing to the news node applicable</description>
+  	  <description>The optional location, relative to the context, pointing to the documents node applicable.</description>
       <name>location</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The maximum number of documents to be shown</description>
+      <description>The optional maximum number of documents to be shown.</description>
       <name>maxDocuments</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -109,19 +120,19 @@
     <tagclass>org.hippoecm.hst.taglib.ArticlesTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-  	  <description>The name by which to get a context object from request</description>
+  	  <description>The optional name by which to get a context object from request.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The location relative to the context, pointing to the news node applicable</description>
+  	  <description>The optional location, relative to the context, pointing to the articles node applicable.</description>
       <name>location</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The maximum number of documents to be shown</description>
+      <description>The optional maximum number of documents to be shown.</description>
       <name>maxDocuments</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -133,19 +144,19 @@
     <tagclass>org.hippoecm.hst.taglib.EventsTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-  	  <description>The name by which to get a context object from request</description>
+  	  <description>The optional name by which to get a context object from request.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The location relative to the context, pointing to the news node applicable</description>
+  	  <description>The optional location, relative to the context, pointing to the events node applicable.</description>
       <name>location</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The maximum number of documents to be shown</description>
+      <description>The optional maximum number of documents to be shown.</description>
       <name>maxDocuments</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -157,19 +168,19 @@
     <tagclass>org.hippoecm.hst.taglib.NewsTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-  	  <description>The name by which to get a context object from request</description>
+  	  <description>The optional name by which to get a context object from request.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The location relative to the context, pointing to the news node applicable</description>
+  	  <description>The optional location, relative to the context, pointing to the news node applicable.</description>
       <name>location</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The maximum number of documents to be shown</description>
+      <description>The optional maximum number of documents to be shown.</description>
       <name>maxDocuments</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
