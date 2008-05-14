@@ -16,24 +16,24 @@
 package org.hippoecm.hst.taglib;
 
 /**
- * NewsTag showing news items from a certain location in the repository. 
+ * EventsTag showing events from a certain location in the repository. 
  */
-public class NewsTag extends DocumentsTag {
+public class EventsTag extends DocumentsTag {
     
     // javadoc from super
     protected String getDefaultLocation() {
-        return "news";
+        return "events";
     }
 
-    // javadoc from super
+    /** Get a default list of document properties. */
     protected String[] getDefaultDocumentProperties() { 
         return new String[] {"defaultcontent:title",
                              "defaultcontent:date",
                              "defaultcontent:introduction"};
     }    
 
-    // javadoc from super
-    protected String[] getDefaultDocumentPropertyTypes() { 
+    /** Get a default list of document properties types. */
+    protected String[] getDefaultDocumentPropertyStyles() { 
         return new String[] {PROPERTY_TYPE_LINK, 
                              PROPERTY_TYPE_DATE, 
                              PROPERTY_TYPE_STRING};

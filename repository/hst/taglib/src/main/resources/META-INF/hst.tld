@@ -81,6 +81,78 @@
   </tag>
 
   <tag>
+    <name>documents</name>
+    <tagclass>org.hippoecm.hst.taglib.DocumentsTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+  	  <description>The name by which to get a context object from request</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+  	  <description>The location relative to the context, pointing to the news node applicable</description>
+      <name>location</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The maximum number of documents to be shown</description>
+      <name>maxDocuments</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>articles</name>
+    <tagclass>org.hippoecm.hst.taglib.ArticlesTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+  	  <description>The name by which to get a context object from request</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+  	  <description>The location relative to the context, pointing to the news node applicable</description>
+      <name>location</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The maximum number of documents to be shown</description>
+      <name>maxDocuments</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+ <tag>
+    <name>events</name>
+    <tagclass>org.hippoecm.hst.taglib.EventsTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+  	  <description>The name by which to get a context object from request</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+  	  <description>The location relative to the context, pointing to the news node applicable</description>
+      <name>location</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The maximum number of documents to be shown</description>
+      <name>maxDocuments</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>news</name>
     <tagclass>org.hippoecm.hst.taglib.NewsTag</tagclass>
     <body-content>empty</body-content>
@@ -97,8 +169,8 @@
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The maximum number of news items to be shown</description>
-      <name>maxItems</name>
+      <description>The maximum number of documents to be shown</description>
+      <name>maxDocuments</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
