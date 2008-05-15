@@ -43,14 +43,12 @@ public class DocumentsTag extends SimpleTagSupport {
     
     private static final String DEFAULT_CONTEXT_NAME = "context";
     private static final Integer DEFAULT_MAX_DOCUMENTS = new Integer(5);
-    private static final String DEFAULT_DATE_FORMAT = "MM/dd/yyyy"; 
     
     private final String KEY_CONTEXT_NAME = getConfigurationKeyPrefix() + ".context.name";
     private final String KEY_LOCATION = getConfigurationKeyPrefix() + ".location";
     private final String KEY_MAX_DOCUMENTS = getConfigurationKeyPrefix() + ".max.documents";
     private final String KEY_DOCUMENT_PROPERTIES = getConfigurationKeyPrefix() + ".document.properties";
     private final String KEY_DOCUMENT_PROPERTY_TYPES = getConfigurationKeyPrefix() + ".document.property.types";
-    private final String KEY_FORMAT_DATE = getConfigurationKeyPrefix() + ".format.date";
     private final String KEY_DOCUMENT_VIEWFILE = getConfigurationKeyPrefix() + ".document.viewfile";
 
     private static final String CSS_CLASS_LIST = "hst-list";
@@ -64,7 +62,6 @@ public class DocumentsTag extends SimpleTagSupport {
     private Integer maxDocuments = null;
     private String[] documentProperties = null;
     private String[] documentPropertyTypes = null;
-    private String dateFormat = null;
     private String documentViewFile = null;
 
     /** Setter for the tag attribute 'context'. */
@@ -285,42 +282,22 @@ public class DocumentsTag extends SimpleTagSupport {
         return this.documentViewFile;
     }
 
-    private String getDateFormat() {
-       
-       // lazy, no setter
-       if (this.dateFormat == null) {
-       
-           // first by configuration
-           HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
-           String format = HSTConfiguration.get(request.getSession().getServletContext(), 
-                       KEY_FORMAT_DATE, false/*not required*/);
-           if (format != null) {
-               this.dateFormat = format;
-           }    
-
-           // second by default
-           if (this.dateFormat == null) {
-               this.dateFormat = DEFAULT_DATE_FORMAT;    
-           }
-       }
-       
-       return this.dateFormat;
-    }
-
     /** Output default HTML by configured or default properties */
     @SuppressWarnings("unchecked")
     private void doOutputDefault(Context context, PageContext pageContext) throws IOException, JspException {
 
         String[] documentProperties = getDocumentProperties();
         String[] documentPropertyTypes = getDocumentPropertyTypes();
-        URLPathTranslator urlPathTranslator = null;
-        SimpleDateFormat dateFormat = null;
 
         if (documentProperties.length != documentPropertyTypes.length) {
             throw new JspException("Number of document properties is different from the number " +
                     "of document property types: " + documentProperties + " and " + documentPropertyTypes);
         }    
         
+        URLPathTranslator urlPathTranslator = null;
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        PropertyFormatter propertyFormatter = new PropertyFormatter(request);
+
         StringBuffer buffer = new StringBuffer();
         
         buffer.append("<div class=\"");
@@ -356,7 +333,7 @@ public class DocumentsTag extends SimpleTagSupport {
                         
                         // create lazily within method
                         if (urlPathTranslator == null) {
-                            String contextPath = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
+                            String contextPath = request.getContextPath();
                             urlPathTranslator = new URLPathTranslator(contextPath, context.getURLBasePath(), context.getBaseLocation());
                         }   
 
@@ -375,22 +352,17 @@ public class DocumentsTag extends SimpleTagSupport {
                                 + ((property == null) ? "null" : (property.getClass().getName() + ", " + property)));
                         }
                         
-                        // create lazily within method
-                        if (dateFormat == null) {
-                            dateFormat = new SimpleDateFormat(getDateFormat());
-                        }    
-    
                         buffer.append("    <div class=\");");
                         buffer.append(CSS_CLASS_DOCUMENT_DATE);
                         buffer.append("\">");
-                        buffer.append(dateFormat.format(property));
+                        buffer.append(propertyFormatter.format(property));
                         buffer.append("</div>\n");
                     }
                     else {
                         buffer.append("    <div class=\");");
                         buffer.append(CSS_CLASS_DOCUMENT_TEXT);
                         buffer.append("\">");
-                        buffer.append(property);
+                        buffer.append(propertyFormatter.format(property));
                         buffer.append("</div>\n");
                     }
                 }    

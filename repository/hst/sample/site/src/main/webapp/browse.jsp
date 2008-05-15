@@ -30,16 +30,18 @@
 
   <jsp:include page="navigation.jsp"/>
 
- 	<c:set var="docContext" value="${context['../../hst-sample/documents']}"/>
-  <h4>Context: ${docContext._name}</h4>
-  <ul>
-    <c:forEach var="handle" items="${docContext}">
-      <c:set var="item" value="${handle[handle._name]}"/>
-      <li>
-      <a href="/${context['/documents']._name}/${item._name}">${item._path}</a>
-      </li>
-    </c:forEach>
-  </ul>
+	<hst:context var="docs" value="../../../documents">
+    	<h4>Context: <hst:content context="docs" property="_path"/></h4>
+  		<ul>
+	    <c:forEach var="handle" items="${docs}">
+		  <hst:context var="item" context="handle" value="${handle._name}">
+		      <li>
+		      <a href="<hst:encodeURL context="docs" value="${item._path}"/>">${item._path}</a>
+		      </li>
+			</hst:context>
+	    </c:forEach>
+	  </ul>
+	</hst:context>
 
   </div>
 </body></html>
