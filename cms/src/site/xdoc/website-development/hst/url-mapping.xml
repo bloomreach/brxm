@@ -33,18 +33,19 @@
           <p>For example, a <i>content URL</i> showing a news item would look like 
             <code>/myapp/news/new-version-released</code>, whereas a <i>page URL</i> with parameters would look like
             <code>/myapp/news/newsItem.jsp?item=1</code>.</p>  
-          <p>Having content URL instead of page URL has the benefit of being <i>readable</i> and 
+          <p>Having content URL instead of page URL has the benefits of being <i>readable</i> and 
               <i>bookmarkable</i>.</p>
         </subsection>
 
         <subsection name="How does it work?">
           <p>To use the URL mapping functionality, install web.xml filters with the name 
-            <code>org.hippoecm.hst.URLMappingContextFilter</code>. The filter's init-param
-            <code>urlMappingLocation</code>, defaulting to <code>/urlMapping</code>, indicates
-            the location of the document type mapping.</p>
+            <code>org.hippoecm.hst.URLMappingContextFilter</code>.</p>
             
            <p>This filter will go look for jsp files based on the URL. It will do that
-              first by direct node to page mapping and after that by document type mapping.</p>
+              first by direct node to page mapping and after that by document type mapping. 
+             For the latter the configuration parameter <code>repository.urlmapping.location</code>, 
+             defaulting to <code>/urlMapping</code>, indicates the location in the repository 
+             where document type mapping is set up.</p>
                
            <h4>1. Finding the repository node by URL</h4>
            <p>The incoming URL is translated to a repository location (a.k.a. path) 
@@ -60,7 +61,7 @@
               
           <h4>3. Document type mapping</h4>
           <p>If no <code>hst:page</code> mixin type is set on the node, all nodes in the location 
-            as described by <code>urlMappingLocation</code> are iterated. The property
+            as described by <code>repository.urlmapping.location</code> are iterated. The property
             <code>hst:nodetype</code> of those subnodes are read: if the value of that property 
             matches the type of the current document, a mapping node is found. To get the actual mapped jsp file, 
             a subnode by the fixed name of <code>hst:displaypage</code> that is marked as <code>hst:page</code>
@@ -98,10 +99,9 @@
             menu should have <code>a href</code> links that are reversed, i.e. the repository locations 
             should have been translated to valid URL's, that will be translated again to repository locations
             when the link is actually used. </p>
-          <p>There are two ways to create valid links in jsp; one is to do it manually using the 
-            <code>_urlBasePath</code> property of the context, the other is to use the response's 
-            <b>encodeUrl</b> method, that has been overridden by the HST. For the latter a piece of 
-            scriptlet is needed as no tag exists (yet) for the encodeURL method.</p>
+          <p>There are three ways to create valid links in jsp; one is to do it manually using the 
+            <code>_urlBasePath</code> property of the context, the second is to use the response's 
+            <b>encodeURL</b> method in scriptlet, the third is to use the tag <code>&lt;hst:encodeURL&gt;</code>.</p>
           <source><![CDATA[  ${context} points to /preview/content/news/
           
   <a href="/<contextPath>${context._urlBasePath}/${context._name}">Link to /news</a>
@@ -111,7 +111,12 @@
   <c:set var="newsURL" value="${context._path}" />					
   <c:set var="newsHref" 
          value="<%= response.encodeURL((String) pageContext.getAttribute("newsURL")) %>" />
-  <a href="${newsHref}">Link to /news</a>]]></source>
+  <a href="${newsHref}">Link to /news</a>
+            
+          or
+  
+  <a href="<hst:encodeURL value="${context._path}"/>">Link to /news</a>
+  ]]></source>
           <h4>URL's in document content</h4>
           <p>The HST automatically supports the rewriting of document links in the content of
             other documents. </p>                        
