@@ -16,29 +16,29 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <span wicket:id="browserBreadcrumbPlugin" class="Breadcrumb">breadcrumb</span>
-        <tr>
+    <table class="gridroot">
+      <tr>
         <td class="gridside">
           <div class="pluginbox">
-          <h2 class="search">Search</h2>
-         <div wicket:id="browserPlugin" class="Tree">tree here</div>
+            <h2 class="search">Search</h2>
+            <div wicket:id="browserPlugin" class="Tree">tree here</div>
           </div>
         </td>
         <td class="gridmiddle">
           <div class="pluginbox">
-          <h2 class="documents">Documents  
-          </h2>
-                     <div wicket:id="listPlugin" class="Doclist">documents here</div>
+            <h2 class="documents">Documents </h2>
+            <div wicket:id="listPlugin" class="Doclist">documents here</div>
           </div>
         </td>
         <td class="gridside">
           <div class="pluginbox">
-          <h2 class="actions">Actions  
-          </h2>
-          <div class="padding">
-          <div wicket:id="workflowsPlugin" class="Menu">workflow here</div>
-          </div>
+            <h2 class="actions">Actions </h2>
+            <div class="padding">
+              <div wicket:id="workflowsPlugin" class="Menu">workflow here</div>
+            </div>
           </div>
         </td>
-        </tr>
+      </tr>
+    </table>
   </wicket:panel>
 </html>
