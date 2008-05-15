@@ -41,7 +41,7 @@ position: relative;
 }
 table.gridroot{
 width: 100%;
-height: 100%;
+height: 1000px;
 border-spacing: 2px;
 border-collapse: separate;
 clear: both;
@@ -198,7 +198,6 @@ ul.tabs li {
   background:url('images/tabinactive.gif') no-repeat bottom left; 
   margin-right: 2px;
   width: 156px;
-  height: 30px;
   position: relative;
 }
 
