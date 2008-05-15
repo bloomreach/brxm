@@ -33,10 +33,12 @@
     <h3>${context._path}</h3>
 
     <div id="left">
-	  <hst:context var="docContext" value="../../../documents">
-        <h4>${docContext._path}</h4>
-	    <c:forEach var="item" items="${docContext}">
-	      ${item[item._name]['hstsample:title']}<br/>
+	  <hst:context var="docs" value="../../../documents">
+        <h4><hst:content context="docs" property="_path"/></h4>
+	    <c:forEach var="handle" items="${docs}">
+		  <hst:context var="item" context="handle" value="${handle._name}">
+		  	<hst:content context="item" property="hstsample:title"/><br/>
+		  </hst:context>
 	    </c:forEach>
       </hst:context>
     </div>

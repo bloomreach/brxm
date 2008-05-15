@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2008 Hippo.
+ * Copyright 2008 Hippo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,36 +15,27 @@
  */
 package org.hippoecm.hst.taglib;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.jstl.core.ConditionalTagSupport;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.core.HSTConfiguration;
 
-public class ContextTag extends ConditionalTagSupport {
+public class ContentTag extends SimpleTagSupport {
     
-    private static final String KEY_CONTEXT_NAME = "contexttag.context.name";
+    private static final String KEY_CONTEXT_NAME = "contenttag.context.name";
     private static final String DEFAULT_CONTEXT_NAME = "context";
-    private static final long serialVersionUID = 9184896455255819105L;
 
     private String contextName;
-    private String location;
-    private String variable;
+    private String property;
 
-    /** Setter for the tag attribute 'var'. */
-    public void setVar(String variable) {
-        this.variable = variable;
-    }
-
-    /** String setter for the tag attribute 'value'. */
-    public void setValue(String location) {
-        this.location = location;
-    }
-
-    /** Context setter for the tag attribute 'value'. */
-    public void setValue(Context context) {
-        this.location = (context == null ? null : context.getLocation());
+    /** String setter for the tag attribute 'property'. */
+    public void setProperty(String property) {
+        this.property = property;
     }
 
     /** Setter for the tag attribute 'context'. */
@@ -53,12 +44,9 @@ public class ContextTag extends ConditionalTagSupport {
     }
 
     @Override
-    protected boolean condition() throws JspTagException {
+    public void doTag() throws JspException {
         
-        if (location == null) {
-            return false;
-        }    
-
+        PageContext pageContext = (PageContext) this.getJspContext(); 
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
         // get context from request or page context
@@ -69,16 +57,29 @@ public class ContextTag extends ConditionalTagSupport {
             context = (Context) pageContext.getAttribute(contextName);
         }
         
+        // need it!
         if (context == null) {
-            throw new JspTagException("No context found in request by attribute name '" + contextName + "'.");
+            throw new JspException("No context found in request by attribute name '" + contextName + "'.");
         }
+
+        // get, check and write property
+        Object property = context.get(this.property);
         
-        Context newContext = new Context(context, location);
-        if (newContext.exists()) {
-            request.setAttribute(variable, newContext);
-            return true;
-        } else {
-            return false;
+        if (property == null) {
+            return;
+        }    
+            
+        // mustn't be a (sub) context
+        if (property instanceof Context) {
+            throw new JspException("Object gotten from " + context.getLocation() 
+                 + " by property " + this.property + " is not a property but a Context");
+        }
+            
+        try {
+            String propertyAsString = new PropertyFormatter(request).format(property);
+            pageContext.getOut().append(propertyAsString);
+        } catch (IOException ioe) {
+            throw new JspException(ioe);
         }
     }
     

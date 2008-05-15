@@ -34,8 +34,9 @@
         <source><![CDATA[<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>]]></source>
       </subsection>
       <subsection name="Tags"> 
-        <p>The following tags are availabe:</p> 
+        <p>The following tags are available:</p> 
         <ul>
+          <li>&lt;hst:content&gt;</li>
           <li>&lt;hst:context&gt;</li>
           <li>&lt;hst:include&gt;</li>
           <li>&lt;hst:encodeURL&gt;</li>

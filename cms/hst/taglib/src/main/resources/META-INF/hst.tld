@@ -27,6 +27,25 @@
   <info>Hippo Site Toolkit tag library</info>
 
   <tag>
+    <name>content</name>
+    <tagclass>org.hippoecm.hst.taglib.ContentTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+  	  <description>The optional name by which to get a context object from request, 
+  	  		overriding the configured or default name.</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The required name of the property to show.</description>
+      <name>property</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>context</name>
     <tagclass>org.hippoecm.hst.taglib.ContextTag</tagclass>
     <body-content>JSP</body-content>
