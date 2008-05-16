@@ -87,7 +87,7 @@ public class EditorForm extends Form {
 
             String type = node.getPrimaryNodeType().getName();
             TypeDescriptor typeDescriptor = typeConfig.getTypeDescriptor(type);
-            TemplateDescriptor templateDescriptor = templateConfig.getTemplate(typeDescriptor);
+            TemplateDescriptor templateDescriptor = templateConfig.getTemplate(typeDescriptor, TemplateConfig.EDIT_MODE);
 
             if (templateDescriptor != null) {
                 TemplateModel templateModel = new TemplateModel(templateDescriptor, model.getParentModel(), node

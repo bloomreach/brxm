@@ -42,12 +42,12 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         super(HippoNodeType.NAMESPACES_PATH);
     }
 
-    public TemplateDescriptor getTemplate(TypeDescriptor type) {
+    public TemplateDescriptor getTemplate(TypeDescriptor type, String mode) {
         if (type != null) {
             String typeName = type.getName();
             PluginDescriptor plugin = getPlugin(typeName);
             if (plugin != null) {
-                return new RepositoryTemplateDescriptor(type, plugin);
+                return new RepositoryTemplateDescriptor(type, plugin, mode);
             }
         }
         return null;
@@ -66,8 +66,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             }
 
             String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
-            if (prefix.length() > nsVersion.length() &&
-                    nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
+            if (prefix.length() > nsVersion.length()
+                    && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
                 type = type.substring(prefix.length());
                 prefix = prefix.substring(0, prefix.length() - nsVersion.length());
                 type = prefix + type;
@@ -105,7 +105,11 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
     }
 
     public TemplateDescriptor createTemplate(Node node, TypeDescriptor type) throws RepositoryException {
-        return new RepositoryTemplateDescriptor(type, nodeToDescriptor(node));
+        String mode = TemplateConfig.EDIT_MODE;
+        if (node.hasProperty(HippoNodeType.HIPPO_TEMPLATEMODE)) {
+            mode = node.getProperty(HippoNodeType.HIPPO_TEMPLATEMODE).getString();
+        }
+        return new RepositoryTemplateDescriptor(type, nodeToDescriptor(node), mode);
     }
 
     public void save(Node node, ItemDescriptor descriptor) {
@@ -123,14 +127,19 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         }
     }
 
-    static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, RepositoryTemplateDescriptor parent) {
+    static List<ItemDescriptor> getTemplateItems(PluginDescriptor plugin, String mode,
+            RepositoryTemplateDescriptor parent) {
         List<ItemDescriptor> items = new LinkedList<ItemDescriptor>();
         int itemId = 0;
         for (PluginDescriptor child : plugin.getChildren()) {
-            RepositoryItemDescriptor item = new RepositoryItemDescriptor(itemId++, child, parent);
-            String name = ((Descriptor) child).field;
-            if (name != null) {
-                item.field = name;
+            Descriptor descriptor = (Descriptor) child;
+            String childMode = mode;
+            if (descriptor.mode != null) {
+                childMode = descriptor.mode;
+            }
+            RepositoryItemDescriptor item = new RepositoryItemDescriptor(itemId++, child, childMode, parent);
+            if (descriptor.field != null) {
+                item.field = descriptor.field;
             }
             items.add(item);
         }
@@ -146,14 +155,19 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         private static final long serialVersionUID = 1L;
 
         String field;
+        String mode;
 
         Descriptor(Node node, String pluginId, String className) {
             super(node, pluginId, className);
 
             field = null;
+            mode = null;
             try {
                 if (node.hasProperty(HippoNodeType.HIPPO_FIELD)) {
                     field = node.getProperty(HippoNodeType.HIPPO_FIELD).getString();
+                }
+                if (node.hasProperty(HippoNodeType.HIPPO_TEMPLATEMODE)) {
+                    mode = node.getProperty(HippoNodeType.HIPPO_TEMPLATEMODE).getString();
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -167,8 +181,8 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         RepositoryTemplateDescriptor template;
         String field;
 
-        RepositoryItemDescriptor(int id, PluginDescriptor plugin, RepositoryTemplateDescriptor template) {
-            super(id, plugin);
+        RepositoryItemDescriptor(int id, PluginDescriptor plugin, String mode, RepositoryTemplateDescriptor template) {
+            super(id, plugin, mode);
             setTemplate(template);
             this.template = template;
             this.field = null;
@@ -181,20 +195,20 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
 
         @Override
         public List<ItemDescriptor> getItems() {
-            return getTemplateItems(getPlugin(), template);
+            return getTemplateItems(getPlugin(), getMode(), template);
         }
     }
 
     private static class RepositoryTemplateDescriptor extends TemplateDescriptor {
         private static final long serialVersionUID = 1L;
 
-        RepositoryTemplateDescriptor(TypeDescriptor type, PluginDescriptor plugin) {
-            super(type, plugin);
+        RepositoryTemplateDescriptor(TypeDescriptor type, PluginDescriptor plugin, String mode) {
+            super(type, plugin, mode);
         }
 
         @Override
         public List<ItemDescriptor> getItems() {
-            return getTemplateItems(getPlugin(), this);
+            return getTemplateItems(getPlugin(), getMode(), this);
         }
     }
 }

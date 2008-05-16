@@ -26,8 +26,8 @@ public class TemplateDescriptor extends ItemDescriptor {
 
     private TypeDescriptor type;
 
-    public TemplateDescriptor(TypeDescriptor type, PluginDescriptor plugin) {
-        super(0, plugin);
+    public TemplateDescriptor(TypeDescriptor type, PluginDescriptor plugin, String mode) {
+        super(0, plugin, mode);
 
         this.type = type;
     }

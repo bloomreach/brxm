@@ -25,6 +25,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.model.AbstractProvider;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -32,14 +33,16 @@ import org.hippoecm.frontend.widgets.AbstractView;
 public class TemplateView extends AbstractView {
     private static final long serialVersionUID = 1L;
 
+    private String mode;
     private FieldDescriptor descriptor;
     private Map<String, ParameterValue> config;
 
     public TemplateView(String wicketId, AbstractProvider provider, Plugin template, FieldDescriptor descriptor,
-            Map<String, ParameterValue> config) {
+            Map<String, ParameterValue> config, String mode) {
         super(wicketId, provider, template);
         this.descriptor = descriptor;
         this.config = config;
+        this.mode = mode;
         populate();
     }
 
@@ -59,7 +62,7 @@ public class TemplateView extends AbstractView {
                 plugin.onRemoveNode(model, target);
             }
         };
-        if (descriptor.isMandatory()) {
+        if (!TemplateConfig.EDIT_MODE.equals(mode) || descriptor.isMandatory()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -72,7 +75,7 @@ public class TemplateView extends AbstractView {
                 plugin.onMoveNodeUp(model, target);
             }
         };
-        if (!descriptor.isOrdered()) {
+        if (!TemplateConfig.EDIT_MODE.equals(mode) || !descriptor.isOrdered()) {
             upLink.setVisible(false);
         }
         if (item.getIndex() == 0) {

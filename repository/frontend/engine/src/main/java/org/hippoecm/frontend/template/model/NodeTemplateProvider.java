@@ -44,11 +44,11 @@ public class NodeTemplateProvider extends AbstractProvider<TemplateModel> implem
     private FieldDescriptor descriptor;
     private TemplateDescriptor template;
 
-    public NodeTemplateProvider(FieldDescriptor descriptor, TemplateEngine engine, JcrNodeModel nodeModel) {
+    public NodeTemplateProvider(FieldDescriptor descriptor, TemplateEngine engine, JcrNodeModel nodeModel, String mode) {
         super(nodeModel);
         this.descriptor = descriptor;
         TypeDescriptor type = engine.getTypeConfig().getTypeDescriptor(descriptor.getType());
-        this.template = engine.getTemplateConfig().getTemplate(type);
+        this.template = engine.getTemplateConfig().getTemplate(type, mode);
     }
 
     public FieldDescriptor getDescriptor() {

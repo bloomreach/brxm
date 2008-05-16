@@ -87,7 +87,7 @@ public class TemplateListPlugin extends Plugin {
             TypeConfig defaultTypeConfig = engine.getTypeConfig();
             for (String type : templateValue.getStrings()) {
                 TypeDescriptor typeDescriptor = defaultTypeConfig.getTypeDescriptor(type);
-                TemplateDescriptor template = templateConfig.getTemplate(typeDescriptor);
+                TemplateDescriptor template = templateConfig.getTemplate(typeDescriptor, itemModel.getDescriptor().getMode());
                 if (template != null) {
                     templateList.add(template);
                 }

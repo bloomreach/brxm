@@ -24,6 +24,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.TemplateEngine;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.template.model.ValueTemplateProvider;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -35,12 +36,14 @@ public class ValueView extends AbstractView {
 
     static final Logger log = LoggerFactory.getLogger(ValueView.class);
 
+    private String mode;
     private Map<String, ParameterValue> config;
 
     public ValueView(String id, ValueTemplateProvider dataProvider, PropertyFieldPlugin plugin,
-            Map<String, ParameterValue> config) {
+            Map<String, ParameterValue> config, String mode) {
         super(id, dataProvider, plugin);
         this.config = config;
+        this.mode = mode;
         populate();
     }
 
@@ -54,8 +57,9 @@ public class ValueView extends AbstractView {
         TemplateEngine engine = plugin.getPluginManager().getTemplateEngine();
         item.add(engine.createTemplate("value", templateModel, plugin, config));
 
-        //Remove value link
-        if (!provider.getDescriptor().isMandatory() || provider.getDescriptor().isMultiple()) {
+        // Remove value link
+        if (TemplateConfig.EDIT_MODE.equals(mode)
+                && (!provider.getDescriptor().isMandatory() || provider.getDescriptor().isMultiple())) {
             item.add(new AjaxLink("remove") {
                 private static final long serialVersionUID = 1L;
 

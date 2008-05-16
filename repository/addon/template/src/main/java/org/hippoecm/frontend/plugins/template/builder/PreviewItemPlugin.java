@@ -98,7 +98,8 @@ public class PreviewItemPlugin extends Plugin {
         ItemDescriptor delegate;
 
         public ItemFilter(ItemDescriptor delegate) {
-            super(delegate.getId(), new PluginDescriptor(HippoNodeType.HIPPO_ITEM, PreviewItemPlugin.class.getName()));
+            super(delegate.getId(), new PluginDescriptor(HippoNodeType.HIPPO_ITEM, PreviewItemPlugin.class.getName()),
+                    delegate.getMode());
 
             this.delegate = delegate;
         }
