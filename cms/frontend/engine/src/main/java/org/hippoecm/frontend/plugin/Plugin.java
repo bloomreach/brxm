@@ -67,7 +67,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         }
 
         StringBuffer sb;
-        
+
         cssClasses = null;
         ParameterValue classes = pluginDescriptor.getParameter("css");
         if (classes != null) {
@@ -80,7 +80,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
                 }
                 sb.append(cssClass);
             }
-            if(sb != null) {
+            if (sb != null) {
                 cssClasses = new String(sb);
             }
         }
@@ -117,6 +117,14 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
 
     public PluginDescriptor getDescriptor() {
         return pluginDescriptor;
+    }
+
+    @Override
+    public String getVariation() {
+        if (pluginDescriptor.getParameter("variation").getType() != ParameterValue.TYPE_UNKNOWN) {
+            return pluginDescriptor.getParameter("variation").getStrings().get(0);
+        }
+        return super.getVariation();
     }
 
     public PluginManager getPluginManager() {
