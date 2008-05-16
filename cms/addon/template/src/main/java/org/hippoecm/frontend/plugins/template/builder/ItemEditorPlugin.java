@@ -112,7 +112,7 @@ public class ItemEditorPlugin extends Plugin {
 
                 TemplateEngine engine = getPluginManager().getTemplateEngine();
                 TypeDescriptor typeDescriptor = engine.getTypeConfig().getTypeDescriptor(HippoNodeType.NT_FIELD);
-                TemplateDescriptor templateDescriptor = engine.getTemplateConfig().getTemplate(typeDescriptor);
+                TemplateDescriptor templateDescriptor = engine.getTemplateConfig().getTemplate(typeDescriptor, TemplateConfig.EDIT_MODE);
                 TemplateModel templateModel = new TemplateModel(templateDescriptor, nodeModel.getParentModel(),
                         nodeModel.getNode().getName(), nodeModel.getNode().getIndex());
                 return engine.createTemplate(wicketId, templateModel, this, null);
@@ -146,7 +146,7 @@ public class ItemEditorPlugin extends Plugin {
                         return result;
                     }
                 };
-                TemplateDescriptor templateDescriptor = templateConfig.getTemplate(typeDescriptor);
+                TemplateDescriptor templateDescriptor = templateConfig.getTemplate(typeDescriptor, TemplateConfig.EDIT_MODE);
                 if (!itemNode.hasNode(HippoNodeType.HIPPO_PARAMETERS)) {
                     itemNode.addNode(HippoNodeType.HIPPO_PARAMETERS, HippoNodeType.NT_PARAMETERS);
                 }
@@ -179,7 +179,7 @@ public class ItemEditorPlugin extends Plugin {
                     if (!itemNode.hasNode(HippoNodeType.HIPPO_PARAMETERS)) {
                         itemNode.addNode(HippoNodeType.HIPPO_PARAMETERS, HippoNodeType.NT_PARAMETERS);
                     }
-                    TemplateDescriptor templateDescriptor = templateConfig.getTemplate(typeDescriptor);
+                    TemplateDescriptor templateDescriptor = templateConfig.getTemplate(typeDescriptor, TemplateConfig.EDIT_MODE);
                     TemplateModel model = new TemplateModel(templateDescriptor, itemNodeModel,
                             HippoNodeType.HIPPO_PARAMETERS, 1);
 

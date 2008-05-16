@@ -40,19 +40,15 @@ public class BuiltinTemplateConfig implements TemplateConfig {
         this.typeConfig = typeConfig;
     }
 
-    public TemplateDescriptor getTemplate(TypeDescriptor type) {
-        return new BuiltinTemplateDescriptor(type);
-    }
-
-    public TemplateDescriptor getTemplate(TypeDescriptor type, String version) {
-        return new BuiltinTemplateDescriptor(type);
+    public TemplateDescriptor getTemplate(TypeDescriptor type, String mode) {
+        return new BuiltinTemplateDescriptor(type, mode);
     }
 
     class BuiltinTemplateDescriptor extends TemplateDescriptor {
         private static final long serialVersionUID = 1L;
 
-        public BuiltinTemplateDescriptor(TypeDescriptor type) {
-            super(type, new PluginDescriptor("template", NodeTemplatePlugin.class.getName()));
+        public BuiltinTemplateDescriptor(TypeDescriptor type, String mode) {
+            super(type, new PluginDescriptor("template", NodeTemplatePlugin.class.getName()), mode);
         }
 
         @Override
@@ -76,7 +72,7 @@ public class BuiltinTemplateConfig implements TemplateConfig {
                 parameters.put("caption", new ParameterValue(captionList));
                 pluginDescriptor.setParameters(parameters);
 
-                ItemDescriptor itemDescriptor = new ItemDescriptor(id++, pluginDescriptor);
+                ItemDescriptor itemDescriptor = new ItemDescriptor(id++, pluginDescriptor, getMode());
                 itemDescriptor.setField(entry.getKey());
                 itemDescriptor.setTemplate(this);
                 items.add(itemDescriptor);

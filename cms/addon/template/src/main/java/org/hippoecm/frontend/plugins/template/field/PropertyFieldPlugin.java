@@ -27,6 +27,7 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.ItemDescriptor;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.template.model.ValueTemplateProvider;
@@ -41,6 +42,7 @@ public class PropertyFieldPlugin extends Plugin {
     private FieldDescriptor field;
     private ValueTemplateProvider provider;
     private ValueView view;
+    private String mode;
 
     public PropertyFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new ItemModel(pluginModel), parentPlugin);
@@ -49,17 +51,18 @@ public class PropertyFieldPlugin extends Plugin {
         ItemDescriptor descriptor = (ItemDescriptor) model.getDescriptor();
 
         field = descriptor.getTemplate().getTypeDescriptor().getField(descriptor.getField());
+        mode = descriptor.getMode();
 
         ParameterValue captionValue = pluginDescriptor.getParameter("caption");
-        if(captionValue != null && captionValue.getStrings() != null && captionValue.getStrings().size() > 0) {
+        if (captionValue != null && captionValue.getStrings() != null && captionValue.getStrings().size() > 0) {
             add(new Label("name", captionValue.getStrings().get(0)));
         } else {
             add(new Label("name", ""));
         }
 
-        provider = new ValueTemplateProvider(field, getPluginManager().getTemplateEngine(), model.getNodeModel(), field
-                .getPath());
-        view = new ValueView("values", provider, this, pluginDescriptor.getParameters());
+        provider = new ValueTemplateProvider(field, getPluginManager().getTemplateEngine(), model.getNodeModel(), mode,
+                field.getPath());
+        view = new ValueView("values", provider, this, pluginDescriptor.getParameters(), mode);
         add(view);
 
         add(createAddLink());
@@ -116,7 +119,7 @@ public class PropertyFieldPlugin extends Plugin {
     // privates
 
     protected Component createAddLink() {
-        if (field.isMultiple() || (provider.size() == 0)) {
+        if (TemplateConfig.EDIT_MODE.equals(mode) && (field.isMultiple() || (provider.size() == 0))) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 

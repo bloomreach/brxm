@@ -15,11 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -38,15 +40,19 @@ public class ValueTemplatePlugin extends Plugin {
         TemplateModel model = (TemplateModel) getPluginModel();
         valueModel = model.getJcrPropertyValueModel();
 
-        TextFieldWidget widget = new TextFieldWidget("value", valueModel);
-        if (pluginDescriptor.getParameter("size") != null) {
-            ParameterValue parameter = pluginDescriptor.getParameter("size");
-            if (parameter.getStrings().size() == 1) {
-                widget.setSize(parameter.getStrings().get(0));
+        String mode = model.getTemplateDescriptor().getMode();
+        if (TemplateConfig.EDIT_MODE.equals(mode)) {
+            TextFieldWidget widget = new TextFieldWidget("value", valueModel);
+            if (pluginDescriptor.getParameter("size") != null) {
+                ParameterValue parameter = pluginDescriptor.getParameter("size");
+                if (parameter.getStrings().size() == 1) {
+                    widget.setSize(parameter.getStrings().get(0));
+                }
             }
+            add(widget);
+        } else {
+            add(new Label("value", valueModel));
         }
-        add(widget);
-
         setOutputMarkupId(true);
     }
 

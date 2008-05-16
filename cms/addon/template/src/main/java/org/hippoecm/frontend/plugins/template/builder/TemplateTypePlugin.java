@@ -32,6 +32,7 @@ import org.hippoecm.frontend.template.TemplateEngine;
 import org.hippoecm.frontend.template.TypeDescriptor;
 import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -68,7 +69,8 @@ public class TemplateTypePlugin extends Plugin {
             TypeConfig typeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT);
             if (!node.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
                 BuiltinTemplateConfig builtinConfig = new BuiltinTemplateConfig(typeConfig);
-                TemplateDescriptor descriptor = builtinConfig.getTemplate(typeConfig.getTypeDescriptor(node.getName()));
+                TemplateDescriptor descriptor = builtinConfig.getTemplate(typeConfig.getTypeDescriptor(node.getName()),
+                        TemplateConfig.EDIT_MODE);
 
                 Node template = node.addNode(HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.NT_HANDLE);
                 template = template.addNode(HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.NT_TEMPLATE);
@@ -81,7 +83,7 @@ public class TemplateTypePlugin extends Plugin {
             node = node.getNode(HippoNodeType.HIPPO_TEMPLATE).getNode(HippoNodeType.HIPPO_TEMPLATE);
 
             TypeDescriptor typeDescriptor = typeConfig.getTypeDescriptor(HippoNodeType.NT_TEMPLATE);
-            TemplateDescriptor templateDescriptor = engine.getTemplateConfig().getTemplate(typeDescriptor);
+            TemplateDescriptor templateDescriptor = engine.getTemplateConfig().getTemplate(typeDescriptor, TemplateConfig.EDIT_MODE);
 
             if (templateDescriptor != null) {
                 TemplateModel templateModel = new TemplateModel(templateDescriptor, new JcrNodeModel(node.getParent()),

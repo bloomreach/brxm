@@ -45,12 +45,12 @@ public class ValueTemplateProvider extends AbstractProvider<TemplateModel> imple
     private TemplateDescriptor template;
     private String path;
 
-    public ValueTemplateProvider(FieldDescriptor descriptor, TemplateEngine engine, JcrNodeModel nodeModel, String path) {
+    public ValueTemplateProvider(FieldDescriptor descriptor, TemplateEngine engine, JcrNodeModel nodeModel, String mode, String path) {
         super(nodeModel);
         this.descriptor = descriptor;
         this.path = path;
         TypeDescriptor type = engine.getTypeConfig().getTypeDescriptor(descriptor.getType());
-        this.template = engine.getTemplateConfig().getTemplate(type);
+        this.template = engine.getTemplateConfig().getTemplate(type, mode);
     }
 
     public FieldDescriptor getDescriptor() {

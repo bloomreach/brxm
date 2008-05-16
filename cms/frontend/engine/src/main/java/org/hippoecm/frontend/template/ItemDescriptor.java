@@ -35,12 +35,14 @@ public class ItemDescriptor implements IClusterable {
     private int id;
     private String field;
 
+    private String mode;
     private TemplateDescriptor template;
     private LinkedList<ItemDescriptor> items;
 
-    public ItemDescriptor(int id, PluginDescriptor plugin) {
+    public ItemDescriptor(int id, PluginDescriptor plugin, String mode) {
         this.id = id;
         this.plugin = plugin;
+        this.mode = mode;
         this.field = null;
         this.template = null;
         this.items = new LinkedList<ItemDescriptor>();
@@ -49,6 +51,7 @@ public class ItemDescriptor implements IClusterable {
     public ItemDescriptor(Map<String, Object> map) {
         this.id = ((Integer) map.get("id")).intValue();
         this.field = (String) map.get("field");
+        this.mode = (String) map.get("mode");
 
         this.items = new LinkedList<ItemDescriptor>();
         LinkedList<Map<String, Object>> itemList = (LinkedList<Map<String, Object>>) map.get("items");
@@ -71,6 +74,7 @@ public class ItemDescriptor implements IClusterable {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", new Integer(getId()));
         map.put("field", getField());
+        map.put("mode", getMode());
 
         LinkedList<Map<String, Object>> itemList = new LinkedList<Map<String, Object>>();
         for (ItemDescriptor item : getItems()) {
@@ -92,6 +96,10 @@ public class ItemDescriptor implements IClusterable {
 
     public int getId() {
         return id;
+    }
+
+    public String getMode() {
+        return mode;
     }
 
     public String getField() {

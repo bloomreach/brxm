@@ -28,6 +28,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.template.FieldDescriptor;
 import org.hippoecm.frontend.template.ItemDescriptor;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.template.model.NodeTemplateProvider;
 import org.hippoecm.frontend.template.model.TemplateModel;
@@ -42,6 +43,7 @@ public class NodeFieldPlugin extends Plugin {
     private FieldDescriptor field;
     private NodeTemplateProvider provider;
     private TemplateView view;
+    private String mode;
 
     public NodeFieldPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new ItemModel(pluginModel), parentPlugin);
@@ -50,16 +52,18 @@ public class NodeFieldPlugin extends Plugin {
         ItemDescriptor descriptor = (ItemDescriptor) model.getDescriptor();
 
         field = descriptor.getTemplate().getTypeDescriptor().getField(descriptor.getField());
+        mode = descriptor.getMode();
 
         List<String> captions = pluginDescriptor.getParameter("caption").getStrings();
-        if(captions != null && captions.size() > 0) {
+        if (captions != null && captions.size() > 0) {
             add(new Label("name", captions.get(0)));
         } else {
             add(new Label("name", ""));
         }
 
-        provider = new NodeTemplateProvider(field, getPluginManager().getTemplateEngine(), model.getNodeModel());
-        view = new TemplateView("field", provider, this, provider.getDescriptor(), pluginDescriptor.getParameters());
+        provider = new NodeTemplateProvider(field, getPluginManager().getTemplateEngine(), model.getNodeModel(), mode);
+        view = new TemplateView("field", provider, this, provider.getDescriptor(), pluginDescriptor.getParameters(),
+                mode);
         add(view);
 
         add(createAddLink());
@@ -120,7 +124,7 @@ public class NodeFieldPlugin extends Plugin {
     }
 
     protected Component createAddLink() {
-        if (field.isMultiple() || (provider.size() == 0)) {
+        if (TemplateConfig.EDIT_MODE.equals(mode) && (field.isMultiple() || (provider.size() == 0))) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 

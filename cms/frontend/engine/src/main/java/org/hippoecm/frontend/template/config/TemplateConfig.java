@@ -21,5 +21,7 @@ import org.hippoecm.frontend.template.TypeDescriptor;
 
 public interface TemplateConfig extends IClusterable {
 
-    public TemplateDescriptor getTemplate(TypeDescriptor type);
+    public final static String EDIT_MODE = "edit";
+
+    public TemplateDescriptor getTemplate(TypeDescriptor type, String mode);
 }

@@ -209,6 +209,7 @@
 [hippo:templateitem] > hippo:plugin orderable
 - hippo:renderer (string) mandatory
 - hippo:field (string)
+- hippo:templatemode (string)
 + hippo:item (hippo:templateitem) multiple
 
 [hippo:template] > hippo:templateitem, hippo:document orderable
