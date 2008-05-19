@@ -78,6 +78,13 @@ public class ServiceTracker<S extends Serializable> implements ServiceListener, 
         listeners.remove(listener);
     }
 
+    public S getService() {
+        if (services.size() > 0) {
+            return services.get(0).getService();
+        }
+        return null;
+    }
+
     public List<S> getServices() {
         List<S> result = new ArrayList<S>(services.size());
         for (ServiceReference<S> reference : services) {

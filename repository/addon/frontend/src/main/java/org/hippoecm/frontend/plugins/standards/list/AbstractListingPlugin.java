@@ -42,9 +42,9 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.plugins.cms.browse.list.JcrNodeModelComparator;
 import org.hippoecm.frontend.plugins.cms.browse.list.SortableDataAdapter;
@@ -94,7 +94,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Prov
     }
 
     @Override
-    public void init(PluginContext context, Map<String, ParameterValue> config) {
+    public void init(PluginContext context, IPluginConfig config) {
         super.init(context, config);
         createTableColumns();
     }

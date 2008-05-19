@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.service.render;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
@@ -24,9 +23,9 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.application.PluginRequestTarget;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.util.ServiceTracker;
@@ -45,8 +44,9 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     private boolean redraw;
     private String serviceId;
     private String wicketId;
+
     private PluginContext context;
-    private Map<String, ParameterValue> properties;
+    private IPluginConfig config;
     private Map<String, ServiceTracker<IRenderService>> children;
     private ModelReference modelRef;
     private IRenderService parent;
@@ -63,18 +63,18 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
         this.dialogTracker = new ServiceTracker<IDialogService>(IDialogService.class);
     }
 
-    protected void init(PluginContext context, Map<String, ParameterValue> properties) {
+    protected void init(PluginContext context, IPluginConfig properties) {
         this.context = context;
-        this.properties = properties;
+        this.config = properties;
 
-        if (properties.get(WICKET_ID) != null) {
-            this.serviceId = properties.get(WICKET_ID).getStrings().get(0);
+        if (properties.getString(WICKET_ID) != null) {
+            this.serviceId = properties.getString(WICKET_ID);
         } else {
             log.warn("No service id ({}) defined", WICKET_ID);
         }
 
-        if (properties.get(MODEL_ID) != null) {
-            String modelId = properties.get(MODEL_ID).getStrings().get(0);
+        if (properties.getString(MODEL_ID) != null) {
+            String modelId = properties.getString(MODEL_ID);
             if (modelId != null) {
                 this.modelRef = new ModelReference(modelId, this);
 
@@ -84,14 +84,14 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
             log.warn("No model ({}) defined for service {}", MODEL_ID, serviceId);
         }
 
-        if (properties.get(DIALOG_ID) != null) {
-            dialogTracker.open(context, properties.get(DIALOG_ID).getStrings().get(0));
+        if (properties.getString(DIALOG_ID) != null) {
+            dialogTracker.open(context, properties.getString(DIALOG_ID));
         } else {
             log.warn("No dialog service ({}) defined for service {}", DIALOG_ID, serviceId);
         }
 
         for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
-            entry.getValue().open(context, properties.get(entry.getKey()).getStrings().get(0));
+            entry.getValue().open(context, properties.getString(entry.getKey()));
         }
         context.registerService(this, serviceId);
     }
@@ -140,7 +140,7 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     }
 
     protected Object getProperty(String key) {
-        return properties.get(key);
+        return config.get(key);
     }
 
     protected void redraw() {
@@ -175,11 +175,7 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     }
 
     protected IDialogService getDialogService() {
-        List<IDialogService> dialogs = dialogTracker.getServices();
-        if (dialogs.size() > 0) {
-            return dialogs.get(0);
-        }
-        return null;
+        return dialogTracker.getService();
     }
 
     // implement IRenderService
@@ -224,8 +220,8 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     }
 
     public String getServiceId() {
-        if (properties.get(Plugin.SERVICE_ID) != null) {
-            return properties.get(Plugin.SERVICE_ID).getStrings().get(0);
+        if (config.getString(Plugin.SERVICE_ID) != null) {
+            return config.getString(Plugin.SERVICE_ID);
         } else {
             log.warn("No decorator id ({}) defined", Plugin.SERVICE_ID);
             return null;

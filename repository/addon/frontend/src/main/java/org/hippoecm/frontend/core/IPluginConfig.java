@@ -15,13 +15,9 @@
  */
 package org.hippoecm.frontend.core;
 
-import java.util.Map;
+import org.apache.wicket.util.value.IValueMap;
 
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
+public interface IPluginConfig extends IValueMap {
 
-public interface IPluginConfig extends Map<String, ParameterValue> {
-    
-    public ParameterValue get(String key);
-    
-    public ParameterValue put(String key, ParameterValue value);
+    IPluginConfig[] getConfigArray(String key);
 }

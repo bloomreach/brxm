@@ -17,13 +17,11 @@ package org.hippoecm.frontend.plugin.perspective;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.core.impl.PluginConfig;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IViewService;
@@ -42,19 +40,15 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
     }
 
     @Override
-    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+    public void init(PluginContext context, IPluginConfig properties) {
         super.init(context, properties);
 
-        if (properties.get(TITLE) != null) {
-            title = properties.get(TITLE).getStrings().get(0);
+        if (properties.getString(TITLE) != null) {
+            title = properties.getString(TITLE);
         }
 
-        if (properties.get(PLUGINS) != null) {
-            Map<String, ParameterValue> pluginConfigs = properties.get(PLUGINS).getMap();
-            for (Map.Entry<String, ParameterValue> entry : pluginConfigs.entrySet()) {
-                PluginConfig config = new PluginConfig();
-                config.putAll(entry.getValue().getMap());
-
+        if (properties.getConfigArray(PLUGINS) != null) {
+            for (IPluginConfig config : properties.getConfigArray(PLUGINS)) {
                 plugins.add(context.start(config));
             }
         }
