@@ -17,14 +17,13 @@ package org.hippoecm.frontend.service.render;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.application.PluginRequestTarget;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.util.ServiceTracker;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -80,10 +79,10 @@ public class ListViewService extends RenderService {
     }
 
     @Override
-    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+    public void init(PluginContext context, IPluginConfig properties) {
         super.init(context, properties);
         if (properties.get("item") != null) {
-            tracker.open(context, properties.get("item").getStrings().get(0));
+            tracker.open(context, properties.getString("item"));
         } else {
             log.warn("No item id configured");
         }

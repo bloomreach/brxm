@@ -38,7 +38,7 @@ public class RootPlugin extends RenderPlugin {
     public void start(PluginContext context) {
         super.start(context);
 
-        dialogService.init(context, context.getProperties().get(RenderService.DIALOG_ID).getStrings().get(0), "dialog");
+        dialogService.init(context, context.getProperties().getString(RenderService.DIALOG_ID), "dialog");
         replace(dialogService);
     }
 

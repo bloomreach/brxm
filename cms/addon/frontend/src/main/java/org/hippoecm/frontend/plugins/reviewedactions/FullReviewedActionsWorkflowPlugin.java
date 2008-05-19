@@ -15,19 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
 import org.hippoecm.frontend.plugin.workflow.WorkflowPlugin;
@@ -67,9 +64,9 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                List<IViewService> editors = viewers.getServices();
-                if (editors.size() > 0) {
-                    editors.get(0).view(new JcrNodeModel(docNode));
+                IViewService editor = viewers.getService();
+                if (editor != null) {
+                    editor.view(new JcrNodeModel(docNode));
                 }
             }
         });
@@ -161,10 +158,10 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     @Override
-    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+    public void init(PluginContext context, IPluginConfig properties) {
         super.init(context, properties);
         if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
-            viewers.open(context, properties.get(WorkflowPlugin.VIEWER_ID).getStrings().get(0));
+            viewers.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));
         } else {
             log.warn("No editor ({}) specified", WorkflowPlugin.VIEWER_ID);
         }

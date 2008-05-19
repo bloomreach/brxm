@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -27,8 +26,8 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.application.PluginRequestTarget;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
@@ -94,8 +93,8 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     @Override
-    public void init(PluginContext context, Map<String, ParameterValue> properties) {
-        tabsTracker.open(context, properties.get(TAB_ID).getStrings().get(0));
+    public void init(PluginContext context, IPluginConfig properties) {
+        tabsTracker.open(context, properties.getString(TAB_ID));
 
         if (tabs.size() > 0) {
             tabbedPanel = new TabbedPanel("tabs", this, tabs);
@@ -143,8 +142,8 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
-        if(tabbie.factoryTracker.getServices().size() > 0) {
-            IFactoryService factory = tabbie.factoryTracker.getServices().get(0);
+        IFactoryService factory = tabbie.factoryTracker.getService();
+        if (factory != null) {
             factory.delete(tabbie.renderer);
         }
     }

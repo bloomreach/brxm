@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import java.util.Map;
-
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.perspective.Perspective;
 import org.hippoecm.frontend.service.IViewService;
 
@@ -30,7 +28,7 @@ public class EditPerspective extends Perspective implements IViewService {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+    public void init(PluginContext context, IPluginConfig properties) {
         super.init(context, properties);
     }
 

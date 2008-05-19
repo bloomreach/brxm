@@ -15,21 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.ExtendedFolderDialog;
@@ -65,10 +62,10 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     @Override
-    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+    public void init(PluginContext context, IPluginConfig properties) {
         super.init(context, properties);
         if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
-            viewer.open(context, properties.get(WorkflowPlugin.VIEWER_ID).getStrings().get(0));
+            viewer.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));
         }
     }
 
@@ -118,9 +115,9 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     public void select(JcrNodeModel nodeModel) {
-        List<IViewService> viewers = viewer.getServices();
-        if (viewers.size() > 0) {
-            viewers.get(0).view(nodeModel);
+        IViewService view = viewer.getService();
+        if (view != null) {
+            view.view(nodeModel);
         }
     }
 }

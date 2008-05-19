@@ -15,23 +15,20 @@
  */
 package org.hippoecm.frontend.core.impl;
 
-import java.util.Hashtable;
-
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.core.IPluginConfig;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class PluginConfig extends Hashtable<String, ParameterValue> implements IPluginConfig {
+public class PluginConfig extends ValueMap implements IPluginConfig {
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(PluginConfig.class);
 
     public PluginConfig() {
     }
 
-    public ParameterValue get(String key) {
-        return super.get(key);
+    public IPluginConfig getConfig(String key) {
+        return (IPluginConfig) get(key);
     }
 
+    public IPluginConfig[] getConfigArray(String key) {
+        return (IPluginConfig[]) get(key);
+    }
 }

@@ -15,11 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.util.List;
-import java.util.Map;
-
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowDialogAction;
 import org.hippoecm.frontend.plugin.workflow.WorkflowPlugin;
@@ -62,10 +59,10 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
     }
 
     @Override
-    public void init(PluginContext context, Map<String, ParameterValue> properties) {
+    public void init(PluginContext context, IPluginConfig properties) {
         super.init(context, properties);
         if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
-            viewers.open(context, properties.get(WorkflowPlugin.VIEWER_ID).getStrings().get(0));
+            viewers.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));
         } else {
             log.warn("No editor ({}) specified", WorkflowPlugin.VIEWER_ID);
         }
@@ -78,13 +75,13 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
     }
 
     private void close() {
-        List<IViewService> services = viewers.getServices();
-        if (services.size() > 0) {
+        IViewService viewer = viewers.getService();
+        if (viewer != null) {
             ServiceTracker<IFactoryService> factoryTracker = new ServiceTracker<IFactoryService>(IFactoryService.class);
-            factoryTracker.open(getPluginContext(), services.get(0).getServiceId());
-            if (factoryTracker.getServices().size() > 0) {
-                IFactoryService factory = factoryTracker.getServices().get(0);
-                factory.delete(services.get(0));
+            factoryTracker.open(getPluginContext(), viewer.getServiceId());
+            IFactoryService factory = factoryTracker.getService();
+            if (factory != null) {
+                factory.delete(viewer);
             }
         } else {
             log.warn("No editor service found");

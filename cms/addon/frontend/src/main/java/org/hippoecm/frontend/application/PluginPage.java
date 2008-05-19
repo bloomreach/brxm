@@ -24,7 +24,6 @@ import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.ServiceListener;
 import org.hippoecm.frontend.core.impl.PluginConfig;
 import org.hippoecm.frontend.core.impl.PluginManager;
-import org.hippoecm.frontend.plugin.config.ConfigValue;
 import org.hippoecm.frontend.service.IRenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +45,11 @@ public class PluginPage extends WebPage implements ServiceListener, IRenderServi
         mgr = new PluginManager(this);
 
         PluginConfig config = new PluginConfig();
-        config.put("root", new ConfigValue("service.root"));
+        config.put("root", "service.root");
         mgr.registerListener(this, "service.root");
 
         config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue(Application.class.getName()));
+        config.put(Plugin.CLASSNAME, Application.class.getName());
         /* Plugin application = */mgr.start(config);
     }
 

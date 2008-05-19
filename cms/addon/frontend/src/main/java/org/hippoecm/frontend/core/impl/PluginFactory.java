@@ -34,7 +34,7 @@ public class PluginFactory implements Serializable {
     }
 
     public Plugin createPlugin(IPluginConfig config) {
-        String className = config.get(Plugin.CLASSNAME).getStrings().get(0);
+        String className = config.getString(Plugin.CLASSNAME);
         if (className != null) {
             try {
                 ClassLoader loader = ((UserSession) Session.get()).getClassLoader();

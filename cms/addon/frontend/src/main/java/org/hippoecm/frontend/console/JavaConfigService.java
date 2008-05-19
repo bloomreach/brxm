@@ -16,15 +16,12 @@
 package org.hippoecm.frontend.console;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.impl.PluginConfig;
-import org.hippoecm.frontend.plugin.config.ConfigValue;
 import org.hippoecm.frontend.plugin.editor.MultiEditorPlugin;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.perspective.Perspective;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.plugin.root.RootPlugin;
@@ -44,73 +41,70 @@ public class JavaConfigService implements Serializable {
         plugins = new LinkedList<PluginConfig>();
 
         PluginConfig config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.root.RootPlugin"));
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.root"));
-        config.put(RootPlugin.DIALOG_ID, new ConfigValue("service.dialog"));
-        config.put("content", new ConfigValue("service.content"));
+        config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugin.root.RootPlugin");
+        config.put(RenderPlugin.WICKET_ID, "service.root");
+        config.put(RootPlugin.DIALOG_ID, "service.dialog");
+        config.put("content", "service.content");
         plugins.add(config);
 
         config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin"));
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.content"));
-        config.put(TabsPlugin.TAB_ID, new ConfigValue("service.tab"));
+        config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin");
+        config.put(RenderPlugin.WICKET_ID, "service.content");
+        config.put(TabsPlugin.TAB_ID, "service.tab");
         plugins.add(config);
 
         config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective"));
-        config.put(RenderPlugin.SERVICE_ID, new ConfigValue("service.browse"));
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.tab"));
-        config.put(RenderPlugin.MODEL_ID, new ConfigValue("service.browse.node"));
-        config.put(Perspective.TITLE, new ConfigValue("browse"));
-        config.put("browserBreadcrumbPlugin", new ConfigValue("service.browse.breadcrumb"));
-        config.put("browserPlugin", new ConfigValue("service.browse.tree"));
-        config.put("listPlugin", new ConfigValue("service.browse.list"));
-        config.put("workflowsPlugin", new ConfigValue("service.browse.workflows"));
+        config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective");
+        config.put(RenderPlugin.SERVICE_ID, "service.browse");
+        config.put(RenderPlugin.WICKET_ID, "service.tab");
+        config.put(RenderPlugin.MODEL_ID, "service.browse.node");
+        config.put(Perspective.TITLE, "browse");
+        config.put("browserBreadcrumbPlugin", "service.browse.breadcrumb");
+        config.put("browserPlugin", "service.browse.tree");
+        config.put("listPlugin", "service.browse.list");
+        config.put("workflowsPlugin", "service.browse.workflows");
         plugins.add(config);
 
         config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.browser.BrowserPlugin"));
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.browse.tree"));
-        config.put(RenderPlugin.MODEL_ID, new ConfigValue("model.browse.node"));
+        config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugin.browser.BrowserPlugin");
+        config.put(RenderPlugin.WICKET_ID, "service.browse.tree");
+        config.put(RenderPlugin.MODEL_ID, "model.browse.node");
         plugins.add(config);
 
         config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue(
-                "org.hippoecm.frontend.plugins.cms.browse.list.DocumentListingPlugin"));
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.browse.list"));
-        config.put(RenderPlugin.MODEL_ID, new ConfigValue("model.browse.node"));
+        config.put(Plugin.CLASSNAME, 
+                "org.hippoecm.frontend.plugins.cms.browse.list.DocumentListingPlugin");
+        config.put(RenderPlugin.WICKET_ID, "service.browse.list");
+        config.put(RenderPlugin.MODEL_ID, "model.browse.node");
         plugins.add(config);
 
         config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.render.ListViewPlugin"));
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.browse.workflows"));
-        config.put("item", new ConfigValue("service.browse.workflows.workflow"));
+        config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugin.render.ListViewPlugin");
+        config.put(RenderPlugin.WICKET_ID, "service.browse.workflows");
+        config.put("item", "service.browse.workflows.workflow");
         plugins.add(config);
 
         config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.workflow.WorkflowPlugin"));
-        config.put(WorkflowPlugin.VIEWER_ID, new ConfigValue("service.edit"));
-        config.put(WorkflowPlugin.WORKFLOW_ID, new ConfigValue("workflows.id"));
-        config.put(RenderPlugin.MODEL_ID, new ConfigValue("model.browse.node"));
-        List<String> categories = new ArrayList<String>(2);
-        categories.add("internal");
-        categories.add("reviewed-action");
-        config.put(WorkflowPlugin.CATEGORIES, new ParameterValue(categories));
+        config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugin.workflow.WorkflowPlugin");
+        config.put(WorkflowPlugin.VIEWER_ID, "service.edit");
+        config.put(WorkflowPlugin.WORKFLOW_ID, "workflows.id");
+        config.put(RenderPlugin.MODEL_ID, "model.browse.node");
+        config.put(WorkflowPlugin.CATEGORIES, new String[] {"internal", "reviewed-action"});
 
         // instance properties
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.browse.workflows.workflow"));
-        config.put(RenderPlugin.DIALOG_ID, new ConfigValue("service.dialog"));
+        config.put(RenderPlugin.WICKET_ID, "service.browse.workflows.workflow");
+        config.put(RenderPlugin.DIALOG_ID, "service.dialog");
         plugins.add(config);
 
         config = new PluginConfig();
-        config.put(Plugin.CLASSNAME, new ConfigValue("org.hippoecm.frontend.plugin.editor.MultiEditorPlugin"));
-        config.put(MultiEditorPlugin.EDITOR_CLASS, new ConfigValue("org.hippoecm.frontend.plugin.editor.EditorPlugin"));
-        config.put(Plugin.SERVICE_ID, new ConfigValue("service.edit"));
-        config.put(RenderPlugin.DIALOG_ID, new ConfigValue("service.dialog"));
+        config.put(Plugin.CLASSNAME, "org.hippoecm.frontend.plugin.editor.MultiEditorPlugin");
+        config.put(MultiEditorPlugin.EDITOR_CLASS, "org.hippoecm.frontend.plugin.editor.EditorPlugin");
+        config.put(Plugin.SERVICE_ID, "service.edit");
+        config.put(RenderPlugin.DIALOG_ID, "service.dialog");
 
         // instance properties
-        config.put(RenderPlugin.WICKET_ID, new ConfigValue("service.tab"));
-        config.put(MultiEditorPlugin.EDITOR_ID, new ConfigValue("editor.id"));
+        config.put(RenderPlugin.WICKET_ID, "service.tab");
+        config.put(MultiEditorPlugin.EDITOR_ID, "editor.id");
         plugins.add(config);
     }
 

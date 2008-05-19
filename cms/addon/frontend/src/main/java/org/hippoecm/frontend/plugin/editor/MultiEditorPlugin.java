@@ -23,13 +23,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.core.IPluginConfig;
 import org.hippoecm.frontend.core.Plugin;
 import org.hippoecm.frontend.core.PluginContext;
 import org.hippoecm.frontend.core.impl.PluginConfig;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.config.ConfigValue;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.IFactoryService;
@@ -57,8 +56,8 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
     }
 
     private PluginContext context;
+    private IPluginConfig config;
     private ServiceTracker<IDialogService> dialogTracker;
-    private Map<String, ParameterValue> properties;
     private String editorClass;
     private Map<IModel, PluginEntry> editors;
     private int editCount;
@@ -71,16 +70,16 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
 
     public void start(PluginContext context) {
         this.context = context;
-        properties = context.getProperties();
+        config = context.getProperties();
 
-        if (properties.get(RenderService.DIALOG_ID) != null) {
-            dialogTracker.open(context, properties.get(RenderService.DIALOG_ID).getStrings().get(0));
+        if (config.get(RenderService.DIALOG_ID) != null) {
+            dialogTracker.open(context, config.getString(RenderService.DIALOG_ID));
         } else {
             log.warn("No dialog service ({}) defined", RenderService.DIALOG_ID);
         }
 
-        if (properties.get(EDITOR_CLASS) != null) {
-            editorClass = properties.get(EDITOR_CLASS).getStrings().get(0);
+        if (config.get(EDITOR_CLASS) != null) {
+            editorClass = config.getString(EDITOR_CLASS);
             try {
                 Class clazz = Class.forName(editorClass);
                 if (!IViewService.class.isAssignableFrom(clazz)) {
@@ -96,8 +95,8 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
             log.error("No editor class ({}) defined", EDITOR_CLASS);
         }
 
-        if (properties.get(Plugin.SERVICE_ID) != null) {
-            context.registerService(this, properties.get(Plugin.SERVICE_ID).getStrings().get(0));
+        if (config.get(Plugin.SERVICE_ID) != null) {
+            context.registerService(this, config.getString(Plugin.SERVICE_ID));
         } else {
             log.warn("No service id defined");
         }
@@ -112,8 +111,8 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
     }
 
     public String getServiceId() {
-        if (properties.get(Plugin.SERVICE_ID) != null) {
-            return properties.get(Plugin.SERVICE_ID).getStrings().get(0);
+        if (config.get(Plugin.SERVICE_ID) != null) {
+            return config.getString(Plugin.SERVICE_ID);
         }
         return null;
     }
@@ -121,18 +120,18 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
     public void view(final IModel model) {
         Plugin plugin;
         if (!editors.containsKey(model)) {
-            PluginConfig config = new PluginConfig();
-            String editorId = properties.get(EDITOR_ID).getStrings().get(0) + editCount;
-            config.put(Plugin.SERVICE_ID, new ConfigValue(editorId));
-            config.put(Plugin.CLASSNAME, new ConfigValue(editorClass));
+            PluginConfig editConfig = new PluginConfig();
+            String editorId = config.getString(EDITOR_ID) + editCount;
+            editConfig.put(Plugin.SERVICE_ID, editorId);
+            editConfig.put(Plugin.CLASSNAME, editorClass);
 
-            config.put(RenderPlugin.WICKET_ID, properties.get(RenderPlugin.WICKET_ID));
-            config.put(RenderPlugin.DIALOG_ID, properties.get(RenderPlugin.DIALOG_ID));
+            editConfig.put(RenderPlugin.WICKET_ID, config.get(RenderPlugin.WICKET_ID));
+            editConfig.put(RenderPlugin.DIALOG_ID, config.get(RenderPlugin.DIALOG_ID));
 
             String factoryId = editorId + ".factory";
             context.registerService(this, factoryId);
 
-            plugin = context.start(config);
+            plugin = context.start(editConfig);
             if (plugin instanceof IViewService) {
                 ((IViewService) plugin).view(model);
             }
