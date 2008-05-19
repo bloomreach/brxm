@@ -136,12 +136,12 @@
   </filter-mapping>
 
   <servlet>
-    <servlet-name>DirectAccessServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.DirectAccessServlet</servlet-class>
+    <servlet-name>BinariesServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.core.BinariesServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>DirectAccessServlet</servlet-name>
+    <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/images/*</url-pattern>
   </servlet-mapping>
   
