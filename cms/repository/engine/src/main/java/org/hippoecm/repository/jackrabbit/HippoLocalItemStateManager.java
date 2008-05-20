@@ -286,7 +286,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                      * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
                      * Since the parent EXTERNAL node can impose new constaints, like an inherited filter, we
                      * first need to remove all the childNodeEntries, and then populate it again
-                     */  
+                     */
                     if( (type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0) {
                         nodeState.removeAllChildNodeEntries();
                     }
@@ -308,7 +308,6 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     public PropertyState getPropertyState(PropertyId id) throws NoSuchItemStateException, ItemStateException {
         return super.getPropertyState(id);
     }
-
 
     int isVirtual(ItemState state) {
         if(state.isNode()) {
@@ -406,6 +405,26 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     }
                 }
             }
+        }
+
+        @Override
+        public void added(ItemState state) {
+            upstream.added(state);
+        }
+
+        @Override
+        public void modified(ItemState state) {
+            upstream.modified(state);
+        }
+
+        @Override
+        public void deleted(ItemState state) {
+            upstream.deleted(state);
+        }
+
+        @Override
+        public void modified(NodeReferences refs) {
+            upstream.modified(refs);
         }
 
         @Override public ItemState get(ItemId id) throws NoSuchItemStateException {

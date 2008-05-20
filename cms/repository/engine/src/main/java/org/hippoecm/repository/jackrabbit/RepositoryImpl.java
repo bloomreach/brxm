@@ -64,10 +64,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     public FacetedNavigationEngine getFacetedNavigationEngine() {
         if (facetedEngine == null) {
-            String msg = "Please configure your facetedEngine correctly. Application will fall back to default faceted engine, "
-                    + "but this is a very inefficient one. In your repository.xml (or workspace.xml if you have started the repository"
-                    + "already at least once) configure the correct class for SearchIndex. See Hippo ECM documentation 'SearchIndex configuration' "
-                    + "for further information.";
+            String msg = "Please configure your facetedEngine correctly. Application will fall back to default faceted engine, but this is a very inefficient one. In your repository.xml (or workspace.xml if you have started the repository already at least once) configure the correct class for SearchIndex. See Hippo ECM documentation 'SearchIndex configuration' for further information.";
             log.warn(msg);
             facetedEngine = new FacetedNavigationEngineWrapperImpl(new FacetedNavigationEngineFirstImpl());
         }
