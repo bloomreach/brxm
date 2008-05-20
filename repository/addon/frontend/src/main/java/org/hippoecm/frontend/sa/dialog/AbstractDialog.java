@@ -22,8 +22,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.ServiceReference;
-import org.hippoecm.frontend.service.IDialogService;
-import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.sa.service.IDialogService;
+import org.hippoecm.frontend.sa.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.login;
+package org.hippoecm.frontend.plugins.admin.login.sa;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.form.Button;
@@ -29,7 +29,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.sa.PluginPage;
-import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 
 public class LoginPlugin extends RenderPlugin {

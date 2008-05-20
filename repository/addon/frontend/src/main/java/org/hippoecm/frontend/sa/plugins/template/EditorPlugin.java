@@ -20,7 +20,7 @@ import org.hippoecm.frontend.sa.adapter.Adapter;
 import org.hippoecm.frontend.sa.core.IPlugin;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.impl.PluginConfig;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.sa.service.IViewService;
 
 public class EditorPlugin implements IPlugin, IViewService {
     private static final long serialVersionUID = 1L;

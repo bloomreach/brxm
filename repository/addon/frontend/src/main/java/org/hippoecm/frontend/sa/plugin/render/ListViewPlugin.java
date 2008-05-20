@@ -17,7 +17,7 @@ package org.hippoecm.frontend.sa.plugin.render;
 
 import org.hippoecm.frontend.sa.core.IPlugin;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.render.ListViewService;
+import org.hippoecm.frontend.sa.service.render.ListViewService;
 
 public class ListViewPlugin extends ListViewService implements IPlugin {
     private static final long serialVersionUID = 1L;

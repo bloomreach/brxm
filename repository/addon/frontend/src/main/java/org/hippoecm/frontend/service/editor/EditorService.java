@@ -19,8 +19,8 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.IViewService;
-import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.sa.service.IViewService;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 
 public class EditorService extends RenderService implements IViewService {
     private static final long serialVersionUID = 1L;

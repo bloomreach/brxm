@@ -13,11 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.sa.service;
 
-import java.io.Serializable;
+import org.apache.wicket.IClusterable;
 
-public interface IFactoryService extends Serializable {
+public class Message implements IClusterable {
+    private static final long serialVersionUID = 1L;
 
-    void delete(Serializable service);
+    private int type;
+    private ITopicService source;
+
+    public Message(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setSource(ITopicService source) {
+        this.source = source;
+    }
+
+    public ITopicService getSource() {
+        return source;
+    }
 }

@@ -15,8 +15,9 @@
  */
 package org.hippoecm.frontend.sa.core;
 
-import java.io.Serializable;
 import java.util.EventListener;
+
+import org.apache.wicket.IClusterable;
 
 public interface IServiceListener extends EventListener {
 
@@ -24,5 +25,5 @@ public interface IServiceListener extends EventListener {
     int CHANGED = 2;
     int REMOVE = 3;
 
-    void processEvent(int type, String name, Serializable service);
+    void processEvent(int type, String name, IClusterable service);
 }

@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service.render;
+package org.hippoecm.frontend.sa.service.render;
 
-import java.io.Serializable;
-
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.ITopicService;
-import org.hippoecm.frontend.service.Message;
-import org.hippoecm.frontend.service.topic.MessageListener;
-import org.hippoecm.frontend.service.topic.TopicService;
+import org.hippoecm.frontend.sa.service.ITopicService;
+import org.hippoecm.frontend.sa.service.Message;
+import org.hippoecm.frontend.sa.service.topic.IMessageListener;
+import org.hippoecm.frontend.sa.service.topic.TopicService;
 
-public class ModelReference<T extends IModel> implements Serializable, MessageListener {
+public class ModelReference<T extends IModel> implements IClusterable, IMessageListener {
     private static final long serialVersionUID = 1L;
 
     public static final int GET_MODEL = 1;

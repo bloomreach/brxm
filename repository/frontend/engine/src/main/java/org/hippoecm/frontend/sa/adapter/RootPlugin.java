@@ -15,25 +15,30 @@
  */
 package org.hippoecm.frontend.sa.adapter;
 
-import org.hippoecm.frontend.PluginPage;
+import org.hippoecm.frontend.LegacyPluginPage;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
+/**
+ * @deprecated from the start, needed for handling legacy plugins
+ * remove when all legacy plugins have been ported to new services architecture  
+ */
+@Deprecated
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
-    private PluginPage page;
+    private LegacyPluginPage page;
 
     public RootPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        page = new PluginPage();
+        page = new LegacyPluginPage();
         page.setRootPlugin(this);
     }
 
     @Override
-    public PluginPage getPluginPage() {
+    public LegacyPluginPage getPluginPage() {
         return page;
     }
 }

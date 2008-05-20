@@ -16,12 +16,12 @@
 package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.PluginPage;
+import org.hippoecm.frontend.LegacyPluginPage;
 
 public class PluginReference extends LoadableDetachableModel {
     private static final long serialVersionUID = 1L;
 
-    private PluginPage page;
+    private LegacyPluginPage page;
     private String pluginPath;
 
     public PluginReference(Plugin plugin) {

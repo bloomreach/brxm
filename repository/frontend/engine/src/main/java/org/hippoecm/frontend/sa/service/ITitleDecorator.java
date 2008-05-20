@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.sa.service;
 
-import org.apache.wicket.model.IModel;
+public interface ITitleDecorator {
 
-public interface IViewService<T extends IModel> extends IService {
-
-    void view(T model);
+    String getTitle();
 }

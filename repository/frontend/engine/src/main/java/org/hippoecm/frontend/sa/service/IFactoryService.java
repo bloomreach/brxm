@@ -13,21 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin.render;
+package org.hippoecm.frontend.sa.service;
 
-import org.hippoecm.frontend.sa.core.IPlugin;
-import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.render.RenderService;
+import org.apache.wicket.IClusterable;
 
-public class RenderPlugin extends RenderService implements IPlugin {
-    private static final long serialVersionUID = 1L;
+public interface IFactoryService extends IClusterable {
 
-    public void start(IPluginContext context) {
-        init(context, context.getProperties());
-    }
-
-    public void stop() {
-        destroy();
-    }
-
+    void delete(IClusterable service);
 }

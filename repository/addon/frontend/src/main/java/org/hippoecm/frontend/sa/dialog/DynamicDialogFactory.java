@@ -21,7 +21,7 @@ import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.dialog.error.ErrorDialog;
-import org.hippoecm.frontend.service.IDialogService;
+import org.hippoecm.frontend.sa.service.IDialogService;
 
 public class DynamicDialogFactory implements PageCreator {
     private static final long serialVersionUID = 1L;

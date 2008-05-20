@@ -15,17 +15,17 @@
  */
 package org.hippoecm.frontend.sa;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.sa.core.IServiceListener;
 import org.hippoecm.frontend.sa.core.impl.PluginConfig;
 import org.hippoecm.frontend.sa.core.impl.PluginManager;
 import org.hippoecm.frontend.sa.plugin.config.JavaConfigService;
-import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class PluginPage extends WebPage implements IServiceListener, IRenderServ
         UserSession session = (UserSession) getSession();
         if (session.getCredentials().equals(ANONYMOUS_CREDENTIALS)) {
             PluginConfig config = new PluginConfig();
-            config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.login.LoginPlugin");
+            config.put("plugin.class", "org.hippoecm.frontend.plugins.admin.login.sa.LoginPlugin");
             config.put("wicket.id", "service.root");
             mgr.start(config);
 
@@ -70,7 +70,7 @@ public class PluginPage extends WebPage implements IServiceListener, IRenderServ
         return root;
     }
 
-    public void processEvent(int type, String name, Serializable service) {
+    public void processEvent(int type, String name, IClusterable service) {
         switch (type) {
         case IServiceListener.ADDED:
             if (service instanceof IRenderService) {

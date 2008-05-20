@@ -15,17 +15,17 @@
  */
 package org.hippoecm.frontend.sa.plugin.config;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.core.impl.PluginConfig;
 
 /**
  * Hardcoded plugin configuration.
  * It uses only core plugins and shows the Hippo ECM Admin Console.
  */
-public class JavaConfigService implements Serializable {
+public class JavaConfigService implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private List<PluginConfig> plugins;

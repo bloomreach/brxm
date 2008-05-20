@@ -23,7 +23,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

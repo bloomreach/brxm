@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service.render;
+package org.hippoecm.frontend.sa.service.render;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,8 +24,8 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.sa.PluginRequestTarget;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.util.ServiceTracker;
+import org.hippoecm.frontend.sa.service.IRenderService;
+import org.hippoecm.frontend.sa.util.ServiceTracker;
 import org.hippoecm.frontend.sa.widgets.AbstractView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -35,7 +35,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.PrototypeWorkflowPlugin;
-import org.hippoecm.frontend.service.IDialogService;
+import org.hippoecm.frontend.sa.service.IDialogService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.PrototypeWorkflow;
 import org.slf4j.Logger;

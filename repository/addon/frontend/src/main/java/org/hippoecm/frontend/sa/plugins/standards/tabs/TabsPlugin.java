@@ -15,11 +15,11 @@
  */
 package org.hippoecm.frontend.sa.plugins.standards.tabs;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -28,11 +28,11 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.sa.PluginRequestTarget;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
-import org.hippoecm.frontend.service.IFactoryService;
-import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.frontend.util.ServiceTracker;
+import org.hippoecm.frontend.sa.plugin.RenderPlugin;
+import org.hippoecm.frontend.sa.service.IFactoryService;
+import org.hippoecm.frontend.sa.service.IRenderService;
+import org.hippoecm.frontend.sa.service.ITitleDecorator;
+import org.hippoecm.frontend.sa.util.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public class TabsPlugin extends RenderPlugin {
         tabsTracker.addListener(new ServiceTracker.IListener() {
             private static final long serialVersionUID = 1L;
 
-            public void onServiceAdded(String name, Serializable service) {
+            public void onServiceAdded(String name, IClusterable service) {
                 // add the plugin
                 ((IRenderService) service).bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 Tab tabbie = new Tab((IRenderService) service);
@@ -68,10 +68,10 @@ public class TabsPlugin extends RenderPlugin {
                 redraw();
             }
 
-            public void onServiceChanged(String name, Serializable service) {
+            public void onServiceChanged(String name, IClusterable service) {
             }
 
-            public void onRemoveService(String name, Serializable service) {
+            public void onRemoveService(String name, IClusterable service) {
                 Tab tabbie = findTabbie((IRenderService) service);
                 if (tabbie != null) {
                     tabs.remove(tabbie);
@@ -199,7 +199,7 @@ public class TabsPlugin extends RenderPlugin {
         // implement ITab interface
 
         public Model getTitle() {
-            List<Serializable> titles = titleTracker.getServices();
+            List<IClusterable> titles = titleTracker.getServices();
             if (titles.size() > 0) {
                 String fulltitle = ((ITitleDecorator) titles.get(0)).getTitle();
                 int length = fulltitle.length();

@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.frontend.PluginPage;
+import org.hippoecm.frontend.LegacyPluginPage;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.INotificationListener;
@@ -176,11 +176,11 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         }
     }
 
-    public PluginPage getPluginPage() {
+    public LegacyPluginPage getPluginPage() {
         if (parentPlugin != null) {
             return parentPlugin.getPluginPage();
         } else {
-            return (PluginPage) findParent(PluginPage.class);
+            return (LegacyPluginPage) findParent(LegacyPluginPage.class);
         }
     }
 

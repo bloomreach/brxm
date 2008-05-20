@@ -15,32 +15,32 @@
  */
 package org.hippoecm.frontend.sa.plugin.editor;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.impl.PluginConfig;
 import org.hippoecm.frontend.sa.dialog.ExceptionDialog;
-import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
-import org.hippoecm.frontend.service.IDialogService;
-import org.hippoecm.frontend.service.IFactoryService;
-import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.IViewService;
-import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.util.ServiceTracker;
+import org.hippoecm.frontend.sa.plugin.RenderPlugin;
+import org.hippoecm.frontend.sa.service.IDialogService;
+import org.hippoecm.frontend.sa.service.IFactoryService;
+import org.hippoecm.frontend.sa.service.IRenderService;
+import org.hippoecm.frontend.sa.service.IViewService;
+import org.hippoecm.frontend.sa.service.render.RenderService;
+import org.hippoecm.frontend.sa.util.ServiceTracker;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService, Serializable {
+public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService, IClusterable {
     private static final long serialVersionUID = 1L;
 
     public static final Logger log = LoggerFactory.getLogger(MultiEditorPlugin.class);
@@ -48,7 +48,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
     public static final String EDITOR_ID = "editor";
     public static final String EDITOR_CLASS = "editor.class";
 
-    private static class PluginEntry implements Serializable {
+    private static class PluginEntry implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         String id;
@@ -163,7 +163,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
         }
     }
 
-    public void delete(Serializable service) {
+    public void delete(IClusterable service) {
         IViewService viewer = (IViewService) service;
         Map.Entry<IModel, PluginEntry> entry = getPluginEntry(viewer);
         if (entry != null) {

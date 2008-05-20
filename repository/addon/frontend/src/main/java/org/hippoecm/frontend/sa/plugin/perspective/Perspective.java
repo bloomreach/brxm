@@ -19,12 +19,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
-import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.sa.plugin.RenderPlugin;
+import org.hippoecm.frontend.sa.service.ITitleDecorator;
+import org.hippoecm.frontend.sa.service.IViewService;
 
 public abstract class Perspective extends RenderPlugin implements ITitleDecorator, IViewService {
     private static final long serialVersionUID = 1L;
