@@ -142,10 +142,11 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
-        IFactoryService factory = tabbie.factoryTracker.getService();
+        tabbie.select(true);
+/*        IFactoryService factory = tabbie.factoryTracker.getService();
         if (factory != null) {
             factory.delete(tabbie.renderer);
-        }
+        } */
     }
 
     private Tab findTabbie(IRenderService service) {

@@ -13,31 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugin;
+package org.hippoecm.frontend.sa.adapter;
 
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.PluginPage;
+import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.frontend.plugin.PluginDescriptor;
 
-public class PluginReference extends LoadableDetachableModel {
+public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
     private PluginPage page;
-    private String pluginPath;
 
-    public PluginReference(Plugin plugin) {
-        super(plugin);
+    public RootPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+        super(pluginDescriptor, model, parentPlugin);
 
-        page = plugin.getPluginPage();
-        pluginPath = plugin.getPluginPath();
-    }
-
-    public Plugin getPlugin() {
-        return (Plugin) getObject();
+        page = new PluginPage();
+        page.setRootPlugin(this);
     }
 
     @Override
-    public Object load() {
-        Plugin root = page.getRootPlugin();
-        return root.getChildPlugin(pluginPath);
+    public PluginPage getPluginPage() {
+        return page;
     }
 }

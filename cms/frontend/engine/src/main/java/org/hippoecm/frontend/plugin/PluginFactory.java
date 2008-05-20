@@ -59,12 +59,14 @@ public class PluginFactory {
                         + descriptor.getClassName() + "' for id '" + descriptor + "'.";
                 plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
                 log.error(e.getMessage());
+                e.printStackTrace();
             } catch (Exception e) {
                 String message = e.getClass().getName() + ": " + e.getMessage() + "\n"
                         + "Failed to instantiate plugin '" + descriptor.getClassName() + "' for id '" + descriptor
                         + "'.";
                 plugin = new ErrorPlugin(descriptor, getErrorModel(message), parentPlugin);
                 log.error(e.getMessage());
+                e.printStackTrace();
             }
         }
         return plugin;

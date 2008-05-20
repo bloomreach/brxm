@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.INotificationListener;
@@ -67,7 +67,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         }
 
         StringBuffer sb;
-
+        
         cssClasses = null;
         ParameterValue classes = pluginDescriptor.getParameter("css");
         if (classes != null) {
@@ -80,7 +80,7 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
                 }
                 sb.append(cssClass);
             }
-            if (sb != null) {
+            if(sb != null) {
                 cssClasses = new String(sb);
             }
         }
@@ -176,11 +176,11 @@ public abstract class Plugin extends Panel implements INotificationListener, IRe
         }
     }
 
-    public Home getPluginPage() {
+    public PluginPage getPluginPage() {
         if (parentPlugin != null) {
             return parentPlugin.getPluginPage();
         } else {
-            return (Home) findParent(Home.class);
+            return (PluginPage) findParent(PluginPage.class);
         }
     }
 
