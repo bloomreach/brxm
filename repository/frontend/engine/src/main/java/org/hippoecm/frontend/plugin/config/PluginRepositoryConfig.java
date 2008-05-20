@@ -31,6 +31,10 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.core.impl.JcrPluginConfig instead 
+ */
+@Deprecated
 public class PluginRepositoryConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 

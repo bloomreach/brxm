@@ -126,8 +126,8 @@ public class Main extends WebApplication {
 
     @Override
     public Class getHomePage() {
-        String app = getConfigurationParameter("config", null);
-        if ("builtin".equals(app)) {
+        String servicesArchitecture = getConfigurationParameter("sa", null);
+        if (servicesArchitecture != null) {
             return PluginPage.class;
         }
         return Home.class;

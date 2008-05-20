@@ -301,4 +301,5 @@
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
 + hippo:frontend (hippo:application) = hippo:application
++ hippo:frontend_deprecated (hippo:application) = hippo:application
 + hippo:logging (hippo:logconfig) = hippo:logconfig

@@ -26,7 +26,9 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 /**
  * Hardcoded plugin configuration.
  * It uses only core plugins and shows the Hippo ECM Admin Console.
+ * @deprecated use org.hippoecm.frontend.sa.core.impl.JavaPluginConfig instead
  */
+@Deprecated
 public class PluginJavaConfig implements PluginConfig {
     private static final long serialVersionUID = 1L;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugin.config;
+package org.hippoecm.frontend.sa.core;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -21,16 +21,15 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.sa.core.impl.JavaPluginConfig;
+import org.hippoecm.frontend.sa.core.impl.JcrPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 
-/**
- * @deprecated use org.hippoecm.frontend.sa.core.PluginConfigFactory instead
- */
-@Deprecated
 public class PluginConfigFactory {
 
-    private PluginConfig pluginConfig;
+    private IPluginConfig pluginConfig;
     private String style;
 
     public PluginConfigFactory() {
@@ -38,13 +37,14 @@ public class PluginConfigFactory {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             String config = ((Main) Application.get()).getConfigurationParameter("config", null);
 
-            String basePath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "_deprecated";
+            //TODO: define constant
+            String basePath = "/" + HippoNodeType.CONFIGURATION_PATH + "/hippo:";
             Node baseNode = (Node) session.getItem(basePath);
 
             if (config == null && baseNode.hasNodes()) {
                 //Use the first frontend configuration node
                 Node configNode = baseNode.getNodes().nextNode();
-                pluginConfig = new PluginRepositoryConfig(configNode);
+                pluginConfig = new JcrPluginConfig(new JcrNodeModel(configNode));
                 if (configNode.hasProperty("hippo:style")) {
                     style = configNode.getProperty("hippo:style").getString();
                 }
@@ -52,23 +52,23 @@ public class PluginConfigFactory {
             } else if (baseNode.hasNode(config)) {
                 //Use specified configuration
                 Node configNode = baseNode.getNode(config);
-                pluginConfig = new PluginRepositoryConfig(configNode);
+                pluginConfig = new JcrPluginConfig(new JcrNodeModel(configNode));
                 if (configNode.hasProperty("hippo:style")) {
                     style = configNode.getProperty("hippo:style").getString();
                 }
 
             } else {
                 //Fall back to builtin configuration
-                pluginConfig = new PluginJavaConfig();
+                pluginConfig = new JavaPluginConfig();
             }
         } catch (RepositoryException e) {
             //Fall back to builtin configuration
-            pluginConfig = new PluginJavaConfig();
+            pluginConfig = new JavaPluginConfig();
         }
 
     }
 
-    public PluginConfig getPluginConfig() {
+    public IPluginConfig getPluginConfig() {
         return pluginConfig;
     }
 
