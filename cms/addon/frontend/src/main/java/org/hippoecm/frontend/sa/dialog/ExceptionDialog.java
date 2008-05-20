@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.ServiceReference;
-import org.hippoecm.frontend.service.IDialogService;
+import org.hippoecm.frontend.sa.service.IDialogService;
 
 public class ExceptionDialog extends WebPage {
 

@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.sa.service;
 
-import java.io.Serializable;
 
-import org.apache.wicket.Page;
+public interface ITopicService {
 
-public interface IDialogService extends Serializable {
-
-    void show(Page page);
-
-    void close();
+    void onPublish(Message message);
 }

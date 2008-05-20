@@ -13,10 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.sa.service;
 
+import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.sa.PluginRequestTarget;
 
-public interface ITopicService {
+public interface IRenderService extends IClusterable {
 
-    void onPublish(Message message);
+    void render(PluginRequestTarget target);
+
+    void focus(IRenderService child);
+
+    // Rendering hierarchy management
+
+    void bind(IRenderService parent, String id);
+
+    void unbind();
+
+    String getId();
+
+    IRenderService getParentService();
+
+    // Service id that is used to register decorators
+
+    String getServiceId();
 }

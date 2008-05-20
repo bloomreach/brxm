@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.sa.core;
 
-import java.io.Serializable;
+import org.apache.wicket.IClusterable;
 
 
 public interface IPluginContext {
 
     IPlugin start(IPluginConfig config);
 
-    <T extends Serializable> ServiceReference<T> getReference(T service);
+    <T extends IClusterable> ServiceReference<T> getReference(T service);
 
     IPluginConfig getProperties();
 
@@ -32,7 +32,7 @@ public interface IPluginContext {
      * @param name
      * @param service
      */
-    void registerService(Serializable service, String name);
+    void registerService(IClusterable service, String name);
 
     /**
      * Registers a service under the given name.
@@ -40,7 +40,7 @@ public interface IPluginContext {
      * @param name
      * @param service
      */
-    void unregisterService(Serializable service, String name);
+    void unregisterService(IClusterable service, String name);
 
     /**
      * Registers a service with the given name.

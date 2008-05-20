@@ -19,7 +19,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.perspective.Perspective;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.sa.service.IViewService;
 
 /**
  * Panel representing the content panel for the first tab.

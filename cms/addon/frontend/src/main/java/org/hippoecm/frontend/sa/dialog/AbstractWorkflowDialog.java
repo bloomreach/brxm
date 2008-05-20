@@ -23,7 +23,7 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.service.IDialogService;
+import org.hippoecm.frontend.sa.service.IDialogService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;

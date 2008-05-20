@@ -13,29 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.sa.service;
 
-import java.io.Serializable;
+import org.apache.wicket.model.IModel;
 
-import org.hippoecm.frontend.sa.PluginRequestTarget;
+public interface IViewService<T extends IModel> extends IService {
 
-public interface IRenderService extends Serializable {
-
-    void render(PluginRequestTarget target);
-
-    void focus(IRenderService child);
-
-    // Rendering hierarchy management
-
-    void bind(IRenderService parent, String id);
-
-    void unbind();
-
-    String getId();
-
-    IRenderService getParentService();
-
-    // Service id that is used to register decorators
-
-    String getServiceId();
+    void view(T model);
 }

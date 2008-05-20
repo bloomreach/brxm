@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service.render;
+package org.hippoecm.frontend.sa.service.render;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,12 +23,12 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.PluginRequestTarget;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.IDialogService;
-import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.util.ServiceTracker;
+import org.hippoecm.frontend.sa.service.IDialogService;
+import org.hippoecm.frontend.sa.service.IRenderService;
+import org.hippoecm.frontend.sa.util.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

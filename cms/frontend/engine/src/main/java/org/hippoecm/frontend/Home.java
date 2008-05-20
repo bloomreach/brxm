@@ -37,7 +37,12 @@ import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
-public class Home extends PluginPage {
+/**
+ * @deprecated Needed for handling legacy plugins, use org.hippoecm.frontend.sa.PluginPage instead.
+ * Remove when all legacy plugins have been ported to new services architecture  
+ */
+@Deprecated
+public class Home extends LegacyPluginPage {
     private static final long serialVersionUID = 1L;
 
     public static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=,password=");

@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.sa.core.impl;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.PluginPage;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPlugin;
@@ -30,18 +30,18 @@ import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginManager implements Serializable {
+public class PluginManager implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
 
-    private static class RefCount implements Serializable {
+    private static class RefCount implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        Serializable service;
+        IClusterable service;
         int count;
 
-        RefCount(Serializable service) {
+        RefCount(IClusterable service) {
             this.service = service;
             count = 1;
         }
@@ -57,7 +57,7 @@ public class PluginManager implements Serializable {
 
     private PluginPage page;
     private PluginFactory factory;
-    private Map<String, List<Serializable>> services;
+    private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceListener>> listeners;
     private Map<Integer, RefCount> referenced;
     private int nextReferenceId;
@@ -65,7 +65,7 @@ public class PluginManager implements Serializable {
     public PluginManager(PluginPage page) {
         this.page = page;
         factory = new PluginFactory();
-        services = new HashMap<String, List<Serializable>>();
+        services = new HashMap<String, List<IClusterable>>();
         listeners = new HashMap<String, List<IServiceListener>>();
         referenced = new HashMap<Integer, RefCount>();
         nextReferenceId = 0;
@@ -80,7 +80,7 @@ public class PluginManager implements Serializable {
         return plugin;
     }
 
-    public <T extends Serializable> ServiceReference<T> getReference(T service) {
+    public <T extends IClusterable> ServiceReference<T> getReference(T service) {
         for (Map.Entry<Integer, RefCount> entry : referenced.entrySet()) {
             if (entry.getValue().service == service) {
                 return new ServiceReference<T>(page, entry.getKey().intValue());
@@ -90,7 +90,7 @@ public class PluginManager implements Serializable {
         return null;
     }
 
-    public <T extends Serializable> T getService(ServiceReference<T> reference) {
+    public <T extends IClusterable> T getService(ServiceReference<T> reference) {
         RefCount refCount = referenced.get(new Integer(reference.getId()));
         if (refCount == null) {
             log.warn("Referenced service is no longer registered");
@@ -98,7 +98,7 @@ public class PluginManager implements Serializable {
         return (T) refCount.service;
     }
 
-    public void registerService(Serializable service, String name) {
+    public void registerService(IClusterable service, String name) {
         if (name == null) {
             log.error("service name is null");
             return;
@@ -106,14 +106,14 @@ public class PluginManager implements Serializable {
             log.info("registering " + service + " as " + name);
         }
 
-        List<Serializable> list = services.get(name);
+        List<IClusterable> list = services.get(name);
         if (list == null) {
-            list = new LinkedList<Serializable>();
+            list = new LinkedList<IClusterable>();
             services.put(name, list);
         }
         list.add(service);
 
-        ServiceReference<Serializable> ref = getReference(service);
+        ServiceReference<IClusterable> ref = getReference(service);
         if (ref == null) {
             referenced.put(new Integer(nextReferenceId++), new RefCount(service));
         } else {
@@ -130,7 +130,7 @@ public class PluginManager implements Serializable {
         }
     }
 
-    public void unregisterService(Serializable service, String name) {
+    public void unregisterService(IClusterable service, String name) {
         if (name == null) {
             log.error("service name is null");
             return;
@@ -138,7 +138,7 @@ public class PluginManager implements Serializable {
             log.info("unregistering " + service + " from " + name);
         }
 
-        List<Serializable> list = services.get(name);
+        List<IClusterable> list = services.get(name);
         if (list != null) {
             List<IServiceListener> notify = listeners.get(name);
             if (notify != null) {
@@ -154,7 +154,7 @@ public class PluginManager implements Serializable {
                 services.remove(name);
             }
 
-            ServiceReference<Serializable> ref = getReference(service);
+            ServiceReference<IClusterable> ref = getReference(service);
             RefCount refCount = referenced.get(new Integer(ref.getId()));
             if (refCount.release()) {
                 referenced.remove(new Integer(ref.getId()));
@@ -179,11 +179,11 @@ public class PluginManager implements Serializable {
         }
         list.add(listener);
 
-        List<Serializable> notify = services.get(name);
+        List<IClusterable> notify = services.get(name);
         if (notify != null) {
-            Iterator<Serializable> iter = notify.iterator();
+            Iterator<IClusterable> iter = notify.iterator();
             while (iter.hasNext()) {
-                Serializable service = iter.next();
+                IClusterable service = iter.next();
                 listener.processEvent(IServiceListener.ADDED, name, service);
             }
         }

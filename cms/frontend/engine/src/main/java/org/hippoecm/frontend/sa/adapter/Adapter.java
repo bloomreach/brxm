@@ -37,7 +37,7 @@ import org.hippoecm.frontend.sa.PluginRequestTarget;
 import org.hippoecm.frontend.sa.core.IPlugin;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.config.JcrTypeConfig;
 import org.hippoecm.frontend.template.config.MixedTypeConfig;
@@ -48,6 +48,11 @@ import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
+/**
+ * @deprecated from the start, needed for handling legacy plugins
+ * remove when all legacy plugins have been ported to new services architecture  
+ */
+@Deprecated
 public class Adapter extends Panel implements IRenderService {
     private static final long serialVersionUID = 1L;
 

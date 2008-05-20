@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service.topic;
+package org.hippoecm.frontend.sa.service;
 
-import java.io.Serializable;
+import org.apache.wicket.IClusterable;
 
-import org.hippoecm.frontend.service.Message;
-
-public interface MessageListener extends Serializable {
-
-    void onMessage(Message message);
+public interface IService extends IClusterable {
+    
+    String getServiceId();
 }

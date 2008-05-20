@@ -18,8 +18,14 @@ package org.hippoecm.frontend;
 import org.apache.wicket.markup.html.WebPage;
 import org.hippoecm.frontend.plugin.Plugin;
 
-public class PluginPage extends WebPage {
-
+/**
+ * @deprecated from the start, needed for handling legacy plugins
+ * remove when all legacy plugins have been ported to new services architecture  
+ */
+@Deprecated
+public class LegacyPluginPage extends WebPage {
+    private static final long serialVersionUID = 1L;
+    
     private Plugin rootPlugin;
 
     public void setRootPlugin(Plugin plugin) {

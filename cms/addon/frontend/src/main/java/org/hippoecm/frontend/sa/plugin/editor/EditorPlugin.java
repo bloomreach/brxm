@@ -15,15 +15,14 @@
  */
 package org.hippoecm.frontend.sa.plugin.editor;
 
-import java.io.Serializable;
-
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.sa.service.ITitleDecorator;
 import org.hippoecm.frontend.service.editor.EditorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public class EditorPlugin extends EditorService implements IPlugin {
         destroy();
     }
 
-    class TitleDecorator implements ITitleDecorator, Serializable {
+    class TitleDecorator implements ITitleDecorator, IClusterable {
         private static final long serialVersionUID = 1L;
 
         public String getTitle() {

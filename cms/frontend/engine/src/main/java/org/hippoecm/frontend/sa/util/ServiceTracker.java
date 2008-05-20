@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.util;
+package org.hippoecm.frontend.sa.util;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.IServiceListener;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceTracker<S extends Serializable> implements IServiceListener, Serializable {
+public class ServiceTracker<S extends IClusterable> implements IServiceListener, IClusterable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ServiceTracker.class);
@@ -37,7 +37,7 @@ public class ServiceTracker<S extends Serializable> implements IServiceListener,
     private List<ServiceReference<S>> services;
     private List<IListener<S>> listeners;
 
-    public interface IListener<S extends Serializable> extends Serializable {
+    public interface IListener<S extends IClusterable> extends IClusterable {
 
         void onServiceAdded(String name, S service);
 
@@ -93,7 +93,7 @@ public class ServiceTracker<S extends Serializable> implements IServiceListener,
         return result;
     }
 
-    public final void processEvent(int type, String name, Serializable service) {
+    public final void processEvent(int type, String name, IClusterable service) {
         if (this.name.equals(name) && clazz.isInstance(service)) {
             S casted = (S) service;
             switch (type) {

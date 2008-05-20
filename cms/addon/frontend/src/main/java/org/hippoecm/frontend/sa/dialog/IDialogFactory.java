@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.sa.dialog;
 
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
-import org.hippoecm.frontend.service.IDialogService;
+import org.hippoecm.frontend.sa.service.IDialogService;
 
 public interface IDialogFactory extends java.io.Serializable {
     public AbstractDialog createDialog(IDialogService dialogService);

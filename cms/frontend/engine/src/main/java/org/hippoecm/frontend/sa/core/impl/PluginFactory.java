@@ -15,17 +15,17 @@
  */
 package org.hippoecm.frontend.sa.core.impl;
 
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginFactory implements Serializable {
+public class PluginFactory implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginFactory.class);

@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.service.dialog;
 
 import org.hippoecm.frontend.sa.dialog.DialogWindow;
+import org.hippoecm.frontend.sa.service.IDialogService;
 import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.service.IDialogService;
 
 public class DialogService extends DialogWindow implements IDialogService {
     private static final long serialVersionUID = 1L;

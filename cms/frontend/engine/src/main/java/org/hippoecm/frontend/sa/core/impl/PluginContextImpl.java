@@ -15,16 +15,15 @@
  */
 package org.hippoecm.frontend.sa.core.impl;
 
-import java.io.Serializable;
-
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.PluginPage;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginConfig;
 import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.IServiceListener;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 
-public class PluginContextImpl implements IPluginContext, Serializable {
+public class PluginContextImpl implements IPluginContext, IClusterable {
     private static final long serialVersionUID = 1L;
 
     private PluginPage page;
@@ -44,15 +43,15 @@ public class PluginContextImpl implements IPluginContext, Serializable {
         return getManager().start(config);
     }
 
-    public <T extends Serializable> ServiceReference<T> getReference(T service) {
+    public <T extends IClusterable> ServiceReference<T> getReference(T service) {
         return getManager().getReference(service);
     }
 
-    public void registerService(Serializable service, String name) {
+    public void registerService(IClusterable service, String name) {
         getManager().registerService(service, name);
     }
 
-    public void unregisterService(Serializable service, String name) {
+    public void unregisterService(IClusterable service, String name) {
         getManager().unregisterService(service, name);
     }
 

@@ -15,12 +15,11 @@
  */
 package org.hippoecm.frontend.sa.core;
 
-import java.io.Serializable;
-
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.PluginPage;
 import org.hippoecm.frontend.sa.core.impl.PluginManager;
 
-public class ServiceReference<T extends Serializable> implements Serializable {
+public class ServiceReference<T extends IClusterable> implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private PluginPage page;
