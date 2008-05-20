@@ -55,7 +55,8 @@ public class ClassLoaderTest extends TestCase {
         }
         session.getRootNode().getNode("hippo:plugins").remove();
         session.save();
-        super.tearDown();
+        session.logout();
+        server.close();
     }
 
     public void testClassloader() throws Exception {
