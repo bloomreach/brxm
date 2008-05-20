@@ -45,7 +45,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.cms.browse.list.JcrNodeModelComparator;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.sa.plugins.cms.browse.list.SortableDataAdapter;
 import org.hippoecm.frontend.service.render.ProviderReference;
@@ -94,7 +94,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Prov
     }
 
     @Override
-    public void init(PluginContext context, IPluginConfig config) {
+    public void init(IPluginContext context, IPluginConfig config) {
         super.init(context, config);
         createTableColumns();
     }

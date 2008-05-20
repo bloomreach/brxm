@@ -18,7 +18,7 @@ package org.hippoecm.frontend.service.render;
 import java.io.Serializable;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.service.Message;
 import org.hippoecm.frontend.service.topic.MessageListener;
 import org.hippoecm.frontend.service.topic.TopicService;
@@ -61,7 +61,7 @@ public class ProviderReference implements Serializable, MessageListener {
         topic.addListener(this);
     }
 
-    public void init(PluginContext context) {
+    public void init(IPluginContext context) {
         topic.init(context);
         topic.publish(new ProviderMessage(GET_PROVIDER, null));
     }

@@ -27,8 +27,8 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.Plugin;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.impl.PluginConfig;
 import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.Message;
@@ -38,7 +38,7 @@ import org.hippoecm.frontend.service.topic.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
+public class WorkflowPlugin implements IPlugin, MessageListener, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
@@ -47,23 +47,23 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
     public static final String WORKFLOW_ID = "workflow.display";
     public static final String VIEWER_ID = "workflow.viewer";
 
-    private PluginContext context;
+    private IPluginContext context;
     private IPluginConfig config;
     private String[] categories;
     private String factoryId;
-    private Map<String, Plugin> workflows;
+    private Map<String, IPlugin> workflows;
     private Map<String, TopicService> models;
     private TopicService topic;
     private int wflCount;
 
     public WorkflowPlugin() {
-        workflows = new HashMap<String, Plugin>();
+        workflows = new HashMap<String, IPlugin>();
         models = new HashMap<String, TopicService>();
         wflCount = 0;
         topic = null;
     }
 
-    public void start(PluginContext context) {
+    public void start(IPluginContext context) {
         this.context = context;
         config = context.getProperties();
 
@@ -151,8 +151,8 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
         if (className.startsWith("org.hippoecm.frontend")) {
             className = "org.hippoecm.frontend.sa" + className.substring("org.hippoecm.frontend".length());
         }
-        wflConfig.put(Plugin.CLASSNAME, className);
-        wflConfig.put(Plugin.SERVICE_ID, workflowId);
+        wflConfig.put(IPlugin.CLASSNAME, className);
+        wflConfig.put(IPlugin.SERVICE_ID, workflowId);
         wflConfig.put(VIEWER_ID, config.get(VIEWER_ID));
 
         String modelId = workflowId + ".model";
@@ -175,14 +175,14 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
 
         context.registerService(this, workflowId + ".factory");
 
-        Plugin plugin = context.start(wflConfig);
+        IPlugin plugin = context.start(wflConfig);
         if (plugin != null) {
             workflows.put(workflowId, plugin);
         }
     }
 
     private void closeWorkflows() {
-        for (Map.Entry<String, Plugin> entry : workflows.entrySet()) {
+        for (Map.Entry<String, IPlugin> entry : workflows.entrySet()) {
             String workflowId = entry.getKey();
             entry.getValue().stop();
 
@@ -192,7 +192,7 @@ public class WorkflowPlugin implements Plugin, MessageListener, Serializable {
             topic.destroy();
             models.remove(entry.getKey());
         }
-        workflows = new HashMap<String, Plugin>();
+        workflows = new HashMap<String, IPlugin>();
     }
 
 }

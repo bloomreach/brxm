@@ -20,18 +20,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.sa.core.PluginContext;
-import org.hippoecm.frontend.sa.core.ServiceListener;
+import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.core.IServiceListener;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceTracker<S extends Serializable> implements ServiceListener, Serializable {
+public class ServiceTracker<S extends Serializable> implements IServiceListener, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ServiceTracker.class);
 
-    private PluginContext context;
+    private IPluginContext context;
     private String name;
     private Class clazz;
     private List<ServiceReference<S>> services;
@@ -54,7 +54,7 @@ public class ServiceTracker<S extends Serializable> implements ServiceListener, 
         listeners = new LinkedList<IListener<S>>();
     }
 
-    public void open(PluginContext context, String name) {
+    public void open(IPluginContext context, String name) {
         this.context = context;
         this.name = name;
         context.registerListener(this, name);
@@ -97,20 +97,20 @@ public class ServiceTracker<S extends Serializable> implements ServiceListener, 
         if (this.name.equals(name) && clazz.isInstance(service)) {
             S casted = (S) service;
             switch (type) {
-            case ServiceListener.ADDED:
+            case IServiceListener.ADDED:
                 services.add(context.getReference(casted));
                 for (IListener listener : listeners) {
                     listener.onServiceAdded(name, casted);
                 }
                 break;
 
-            case ServiceListener.CHANGED:
+            case IServiceListener.CHANGED:
                 for (IListener listener : listeners) {
                     listener.onServiceChanged(name, casted);
                 }
                 break;
 
-            case ServiceListener.REMOVE:
+            case IServiceListener.REMOVE:
                 services.remove(context.getReference(service));
                 for (IListener listener : listeners) {
                     listener.onRemoveService(name, casted);

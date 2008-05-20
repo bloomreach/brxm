@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.service.dialog;
 
 import org.hippoecm.frontend.sa.dialog.DialogWindow;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.service.IDialogService;
 
 public class DialogService extends DialogWindow implements IDialogService {
@@ -24,13 +24,13 @@ public class DialogService extends DialogWindow implements IDialogService {
 
     private String wicketId;
     private String serviceId;
-    private PluginContext context;
+    private IPluginContext context;
     
     public DialogService() {
         super("id");
     }
 
-    public void init(PluginContext context, String serviceId, String wicketId) {
+    public void init(IPluginContext context, String serviceId, String wicketId) {
         this.context = context;
         this.serviceId = serviceId;
         this.wicketId = wicketId;

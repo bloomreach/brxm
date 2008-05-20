@@ -20,19 +20,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.sa.core.PluginContext;
-import org.hippoecm.frontend.sa.core.ServiceListener;
+import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.core.IServiceListener;
 import org.hippoecm.frontend.service.ITopicService;
 import org.hippoecm.frontend.service.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TopicService implements ServiceListener, Serializable, ITopicService {
+public class TopicService implements IServiceListener, Serializable, ITopicService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(TopicService.class);
 
-    private PluginContext context;
+    private IPluginContext context;
     private String topic;
     private List<ITopicService> peers;
     private List<MessageListener> listeners;
@@ -43,7 +43,7 @@ public class TopicService implements ServiceListener, Serializable, ITopicServic
         this.listeners = new LinkedList<MessageListener>();
     }
 
-    public void init(PluginContext context) {
+    public void init(IPluginContext context) {
         this.context = context;
         context.registerListener(this, topic);
         context.registerService(this, topic);
@@ -64,7 +64,7 @@ public class TopicService implements ServiceListener, Serializable, ITopicServic
 
     public void processEvent(int type, String name, Serializable service) {
         switch (type) {
-        case ServiceListener.ADDED:
+        case IServiceListener.ADDED:
             if (topic.equals(name) && (service instanceof ITopicService)) {
                 if (service != this) {
                     peers.add((ITopicService) service);
@@ -74,7 +74,7 @@ public class TopicService implements ServiceListener, Serializable, ITopicServic
             }
             break;
 
-        case ServiceListener.REMOVE:
+        case IServiceListener.REMOVE:
             if (peers.contains(service)) {
                 peers.remove(service);
             }

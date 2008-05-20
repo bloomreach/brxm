@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.Plugin;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IViewService;
@@ -32,15 +32,15 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
     public static final String TITLE = "perspective.title";
     public static final String PLUGINS = "perspective.plugins";
 
-    private List<Plugin> plugins;
+    private List<IPlugin> plugins;
     private String title = "title";
 
     public Perspective() {
-        plugins = new LinkedList<Plugin>();
+        plugins = new LinkedList<IPlugin>();
     }
 
     @Override
-    public void init(PluginContext context, IPluginConfig properties) {
+    public void init(IPluginContext context, IPluginConfig properties) {
         super.init(context, properties);
 
         if (properties.getString(TITLE) != null) {
@@ -56,7 +56,7 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
 
     @Override
     public void destroy() {
-        for (Plugin plugin : plugins) {
+        for (IPlugin plugin : plugins) {
             plugin.stop();
             plugins.remove(plugin);
         }

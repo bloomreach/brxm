@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.sa.plugin.render;
 
-import org.hippoecm.frontend.sa.core.Plugin;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.service.render.ListViewService;
 
-public class ListViewPlugin extends ListViewService implements Plugin {
+public class ListViewPlugin extends ListViewService implements IPlugin {
     private static final long serialVersionUID = 1L;
 
-    public void start(PluginContext context) {
+    public void start(IPluginContext context) {
         init(context, context.getProperties());
     }
 

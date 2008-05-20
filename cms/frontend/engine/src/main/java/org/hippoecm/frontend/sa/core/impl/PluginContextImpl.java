@@ -19,12 +19,12 @@ import java.io.Serializable;
 
 import org.hippoecm.frontend.sa.PluginPage;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.Plugin;
-import org.hippoecm.frontend.sa.core.PluginContext;
-import org.hippoecm.frontend.sa.core.ServiceListener;
+import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.core.IServiceListener;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 
-public class PluginContextImpl implements PluginContext, Serializable {
+public class PluginContextImpl implements IPluginContext, Serializable {
     private static final long serialVersionUID = 1L;
 
     private PluginPage page;
@@ -40,7 +40,7 @@ public class PluginContextImpl implements PluginContext, Serializable {
         return properties;
     }
 
-    public Plugin start(IPluginConfig config) {
+    public IPlugin start(IPluginConfig config) {
         return getManager().start(config);
     }
 
@@ -56,11 +56,11 @@ public class PluginContextImpl implements PluginContext, Serializable {
         getManager().unregisterService(service, name);
     }
 
-    public void registerListener(ServiceListener listener, String name) {
+    public void registerListener(IServiceListener listener, String name) {
         getManager().registerListener(listener, name);
     }
 
-    public void unregisterListener(ServiceListener listener, String name) {
+    public void unregisterListener(IServiceListener listener, String name) {
         getManager().unregisterListener(listener, name);
     }
 

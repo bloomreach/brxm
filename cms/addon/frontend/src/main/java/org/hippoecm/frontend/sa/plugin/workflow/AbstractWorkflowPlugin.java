@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.sa.dialog.DialogLink;
@@ -72,7 +72,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
     }
 
     @Override
-    public PluginContext getPluginContext() {
+    public IPluginContext getPluginContext() {
         return super.getPluginContext();
     }
 

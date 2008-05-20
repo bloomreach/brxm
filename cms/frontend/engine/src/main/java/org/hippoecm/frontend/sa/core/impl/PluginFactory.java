@@ -20,7 +20,7 @@ import java.lang.reflect.Constructor;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.Plugin;
+import org.hippoecm.frontend.sa.core.IPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +33,8 @@ public class PluginFactory implements Serializable {
     public PluginFactory() {
     }
 
-    public Plugin createPlugin(IPluginConfig config) {
-        String className = config.getString(Plugin.CLASSNAME);
+    public IPlugin createPlugin(IPluginConfig config) {
+        String className = config.getString(IPlugin.CLASSNAME);
         if (className != null) {
             try {
                 ClassLoader loader = ((UserSession) Session.get()).getClassLoader();
@@ -42,7 +42,7 @@ public class PluginFactory implements Serializable {
                 Class[] formalArgs = new Class[] {};
                 Constructor constructor = clazz.getConstructor(formalArgs);
                 Object[] actualArgs = new Object[] {};
-                return (Plugin) constructor.newInstance(actualArgs);
+                return (IPlugin) constructor.newInstance(actualArgs);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 e.printStackTrace();

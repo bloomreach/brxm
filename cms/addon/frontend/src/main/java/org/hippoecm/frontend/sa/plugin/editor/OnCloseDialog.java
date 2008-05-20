@@ -22,7 +22,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.service.IDialogService;
@@ -45,7 +45,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     private ServiceReference<MultiEditorPlugin> factory;
     private ServiceReference<IViewService> editor;
 
-    public OnCloseDialog(PluginContext context, IDialogService dialogWindow, JcrNodeModel model, MultiEditorPlugin plugin, IViewService editor) {
+    public OnCloseDialog(IPluginContext context, IDialogService dialogWindow, JcrNodeModel model, MultiEditorPlugin plugin, IViewService editor) {
         super(context, dialogWindow);
 
         this.model = model;

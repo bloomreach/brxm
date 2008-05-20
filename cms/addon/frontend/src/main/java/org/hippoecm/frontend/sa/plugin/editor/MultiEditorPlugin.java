@@ -25,8 +25,8 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.Plugin;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.impl.PluginConfig;
 import org.hippoecm.frontend.sa.dialog.ExceptionDialog;
 import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
@@ -40,7 +40,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService, Serializable {
+public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService, Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final Logger log = LoggerFactory.getLogger(MultiEditorPlugin.class);
@@ -52,10 +52,10 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
         private static final long serialVersionUID = 1L;
 
         String id;
-        Plugin plugin;
+        IPlugin plugin;
     }
 
-    private PluginContext context;
+    private IPluginContext context;
     private IPluginConfig config;
     private ServiceTracker<IDialogService> dialogTracker;
     private String editorClass;
@@ -68,7 +68,7 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
         dialogTracker = new ServiceTracker(IDialogService.class);
     }
 
-    public void start(PluginContext context) {
+    public void start(IPluginContext context) {
         this.context = context;
         config = context.getProperties();
 
@@ -95,8 +95,8 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
             log.error("No editor class ({}) defined", EDITOR_CLASS);
         }
 
-        if (config.get(Plugin.SERVICE_ID) != null) {
-            context.registerService(this, config.getString(Plugin.SERVICE_ID));
+        if (config.get(IPlugin.SERVICE_ID) != null) {
+            context.registerService(this, config.getString(IPlugin.SERVICE_ID));
         } else {
             log.warn("No service id defined");
         }
@@ -111,19 +111,19 @@ public class MultiEditorPlugin implements Plugin, IViewService, IFactoryService,
     }
 
     public String getServiceId() {
-        if (config.get(Plugin.SERVICE_ID) != null) {
-            return config.getString(Plugin.SERVICE_ID);
+        if (config.get(IPlugin.SERVICE_ID) != null) {
+            return config.getString(IPlugin.SERVICE_ID);
         }
         return null;
     }
 
     public void view(final IModel model) {
-        Plugin plugin;
+        IPlugin plugin;
         if (!editors.containsKey(model)) {
             PluginConfig editConfig = new PluginConfig();
             String editorId = config.getString(EDITOR_ID) + editCount;
-            editConfig.put(Plugin.SERVICE_ID, editorId);
-            editConfig.put(Plugin.CLASSNAME, editorClass);
+            editConfig.put(IPlugin.SERVICE_ID, editorId);
+            editConfig.put(IPlugin.CLASSNAME, editorClass);
 
             editConfig.put(RenderPlugin.WICKET_ID, config.get(RenderPlugin.WICKET_ID));
             editConfig.put(RenderPlugin.DIALOG_ID, config.get(RenderPlugin.DIALOG_ID));
