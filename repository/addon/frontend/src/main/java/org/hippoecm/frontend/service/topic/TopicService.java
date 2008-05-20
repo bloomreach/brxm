@@ -20,9 +20,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.core.ServiceListener;
+import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.ServiceListener;
 import org.hippoecm.frontend.service.ITopicService;
+import org.hippoecm.frontend.service.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
