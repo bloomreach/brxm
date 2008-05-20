@@ -1,60 +1,102 @@
+div#content_main_home {
+width: 750px;
+}
+
+
+div#branding, div#nav_main, div#site_information {
+width : 100%; }
+
+
 /*
-  Copyright 2007 Hippo
-  
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-  http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+#content_main p.date, p.date {
+font-size:12px;
+line-height:21px;
+}
 */
 
-h1, h2, h3, h4, h5 {
-    padding: 0px;
-    margin: 10px 0px; 
+p.dateR {
+float:right ;
 }
 
-#canvas {
-  width: 80%;
-  margin: 0 auto 30px auto;
-  padding: 0 auto 30px;
-  text-align: left;
-  position: relative;
-  overflow: hidden;
+/*teaser*/
+div#teaser {
+width : 750px; 
+clear: left;
 }
-#block {
-  width: 100%;
-  background-color: #D0D0D0;
+div#teaser a{
+display: block;
+margin-bottom: 1px;
+height: 140px;
+background: none;
+border-bottom: 0px;
 }
-#menu {
-  width: 80%;
+div#teaser a img {display: inline}
+ul#branding {
+background: #225379;
+height: 145px;
 }
-#menu ul {
-  margin: 5px 0px;
+/* home specific */
+div#content_main_home div.content_sub{
+float: left;
+width: 240px;
+padding: 5px;
+}
+ul#branding li#middle{height: 115px; float: left; padding: 15px; width: 215px; border-right: 2px solid white}
+ul#branding li#left{height: 115px; padding: 15px; width: 215px; float: left; border-right: 2px solid white}
+ul#branding li#right{height: 115px; padding: 15px; width: 210px; float: left; border-right: 2px solid #225379;}
+
+
+ul#branding li ul li img{display: block; float: left; margin-top: 4px; margin-right: 4px;}
+ul#branding li span.brandingtitle{color: white; padding: 1px; text-transform: uppercase; color: white; font-size: 22px; letter-spacing: 3px;}
+ul#branding li span.brandingtitle a{color: white}
+ul#branding li ul li span {text-transform: none; font-size: 18px; letter-spacing: 0px;}
+ul#branding li ul li span a{line-height: 17px; font-size: 12px; letter-spacing: 2px;}
+
+ul#branding li ul li span.white, ul#branding li ul li span.white a{color: #dcecf4 }
+ul#branding li ul li span.blue, ul#branding li ul li span.blue a{color: #00a4e0 }
+ul#branding li ul {margin-top: 8px;}
+/* These are standard sIFR styles... do not modify */
+
+.sIFR-flash {
+	visibility: visible !important;
+	margin: 0;
 }
 
-#bar {
-  width: 100%;
-  float: center;
-  background-color: #4B83C8;
+.sIFR-replaced {
+	visibility: visible !important;
 }
-#earmarks {
-  width: 15%;
-  float: right;
+
+span.sIFR-alternate {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 0;
+	height: 0;
+	display: block;
+	overflow: hidden;
 }
-#left {
-  width: 45%;
-  float: left;
+
+/* Hide Adblock Object tab: the text should show up just fine, not poorly with a tab laid over it. */
+.sIFR-flash + div[adblocktab=true] {
+  display: none !important;
 }
-#right {
-  width: 45%;
-  float: right;
-}
-#menu ul li { list-style: none; text-decoration: none; }
-#menu a { text-decoration: none; }
-#earmarks a { text-decoration: none; }
+
+/* These "decoy" styles are used to hide the browser text before it is replaced... the negative-letter spacing in this case is used to make the browser text metrics match up with the sIFR text metrics since the sIFR text in this example is so much narrower... your own settings may vary... any weird sizing issues you may run into are usually fixed by tweaking these decoy styles */
+
+.sIFR-flash  ul#branding li ul li img{display: block; float: left; margin-top: 4px; margin-right: 4px;visibility: hidden !important;}
+.sIFR-flash  ul#branding li span.brandingtitle{color: white; padding: 1px; text-transform: uppercase; color: white; font-size: 22px; letter-spacing: 3px;visibility: hidden !important;}
+.sIFR-flash  ul#branding li span.brandingtitle a{color: white; visibility: hidden !important;}
+.sIFR-flash  ul#branding li ul li span {text-transform: none; font-size: 18px; letter-spacing: 0px; }
+.sIFR-flash  ul#branding li ul li span a{line-height: 17px; font-size: 12px; letter-spacing: 2px; }
+.sIFR-flash  ul#branding li ul li span.white, ul#branding li ul li span.white a{color: #dcecf4;}
+.sIFR-flash  ul#branding li ul li span.blue, ul#branding li ul li span.blue a{color: #00a4e0;}
+
+div#welcome{margin-bottom: 10px;height: 60px; margin-top: 2px; color: white; padding: 15px; background: #107ec0 url('http://static.hippo.nl/images/hippowhite.gif') no-repeat 650px 30px}
+div#welcome p#left{width: 219px; float: left;}
+div#welcome p#right{margin-left: 30px; width: 219px;float: left;}
+div#welcome p#welcome_text{width: 460px; float: left; font-family: verdana, arial, helvetica, sans-serif}
+
+/* home page news items */
+#content_main_home a{text-decoration: underline}
+#content_main_home h3 a{text-decoration: none}
+#content_main_home p{text-align: left;}
