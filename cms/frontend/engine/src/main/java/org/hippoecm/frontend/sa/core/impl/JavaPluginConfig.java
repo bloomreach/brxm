@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.hippoecm.frontend.sa.core.impl;
 
-<rep='internal'>
-<jcr='http://www.jcp.org/jcr/1.0'>
-<nt='http://www.jcp.org/jcr/nt/1.0'>
-<mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.hippoecm.org/nt/1.0'>
-<frontend='http://www.hippoecm.org/frontend/nt/1.0'>
+import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.sa.core.IPluginConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class JavaPluginConfig extends ValueMap implements IPluginConfig {
+    private static final long serialVersionUID = 1L;
 
-[frontend:plugin] > hippo:plugin
+    private static final Logger log = LoggerFactory.getLogger(JavaPluginConfig.class);
 
-[frontend:page] > nt:unstructured
-- frontend:style (string)
+    public JavaPluginConfig() {
+    }
 
+    public IPluginConfig[] getConfigArray(String key) {
+        return null;
+    }
 
-/* BEGIN DEPRECATED */
-[hippo:frontendplugin] > hippo:plugin
-- hippo:renderer (string) mandatory
-+ * (hippo:frontendplugin) = hippo:frontendplugin
-
-[hippo:page] > nt:unstructured
-- hippo:style (string)
-/* END DEPRECATED */
-
-
+}

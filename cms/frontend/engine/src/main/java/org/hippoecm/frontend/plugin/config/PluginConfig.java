@@ -18,6 +18,10 @@ package org.hippoecm.frontend.plugin.config;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.core.IPluginConfig instead
+ */
+@Deprecated
 public interface PluginConfig extends IClusterable {
     
     public PluginDescriptor getPlugin(String pluginId);
