@@ -76,7 +76,8 @@ span.sIFR-alternate {
 	overflow: hidden;
 }
 
-/* Hide Adblock Object tab: the text should show up just fine, not poorly with a tab laid over it. */
+/* Hide Adblock Object tab: the text should show up just fine, not poorly with a 
+   tab laid over it. */
 .sIFR-flash + div[adblocktab=true] {
   display: none !important;
 }
