@@ -14,7 +14,7 @@
   limitations under the License.
 */
 #canvas {
-  width: auto;
+  width: auto; 
   margin: 0 5%;
   background: transparent;
   float: none !important;
