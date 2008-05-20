@@ -21,12 +21,12 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
-import org.hippoecm.frontend.application.PluginRequestTarget;
-import org.hippoecm.frontend.core.IPluginConfig;
-import org.hippoecm.frontend.core.PluginContext;
+import org.hippoecm.frontend.sa.PluginRequestTarget;
+import org.hippoecm.frontend.sa.core.IPluginConfig;
+import org.hippoecm.frontend.sa.core.PluginContext;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.util.ServiceTracker;
-import org.hippoecm.frontend.widgets.AbstractView;
+import org.hippoecm.frontend.sa.widgets.AbstractView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

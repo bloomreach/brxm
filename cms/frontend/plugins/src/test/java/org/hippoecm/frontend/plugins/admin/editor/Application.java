@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.plugins.admin.editor;
 
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
@@ -29,7 +29,9 @@ import javax.jcr.nodetype.PropertyDefinition;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.util.tester.WicketTester;
+import org.apache.wicket.util.value.ValueMap;
 import org.easymock.MockControl;
+import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 
@@ -71,7 +73,7 @@ public class Application extends WicketTester.DummyWebApplication {
         private static final long serialVersionUID = 1L;
 
         public Session(Request request) {
-            super(request);
+            super(request, new JcrSessionModel(new ValueMap("username=,password=")));
         }
 
         @Override

@@ -22,9 +22,11 @@ import javax.jcr.RepositoryException;
 import javax.servlet.ServletContext;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
@@ -34,6 +36,10 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
+import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.sa.PluginPage;
+import org.hippoecm.frontend.sa.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -47,6 +53,8 @@ public class Main extends WebApplication {
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
+
+    public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=,password=");
 
     @Override
     protected void init() {
@@ -85,14 +93,14 @@ public class Main extends WebApplication {
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
             public IResourceStream locate(final Class clazz, final String path) {
                 ServletContext skinContext = getServletContext().getContext("/skin");
-                if(skinContext != null) {
+                if (skinContext != null) {
                     try {
                         URL url = skinContext.getResource("/" + path);
                         if (url != null) {
                             return new UrlResourceStream(url);
                         }
-                    } catch(MalformedURLException ex) {
-                        log.warn("malformed url for skin override "+ex.getMessage());
+                    } catch (MalformedURLException ex) {
+                        log.warn("malformed url for skin override " + ex.getMessage());
                     }
                 }
                 try {
@@ -100,8 +108,8 @@ public class Main extends WebApplication {
                     if (url != null) {
                         return new UrlResourceStream(url);
                     }
-                } catch(MalformedURLException ex) {
-                    log.warn("malformed url for skin override "+ex.getMessage());
+                } catch (MalformedURLException ex) {
+                    log.warn("malformed url for skin override " + ex.getMessage());
                 }
                 return oldLocator.locate(clazz, path);
             }
@@ -110,7 +118,7 @@ public class Main extends WebApplication {
 
     @Override
     protected void onDestroy() {
-        if(repository != null) {
+        if (repository != null) {
             repository.close();
             repository = null;
         }
@@ -118,12 +126,21 @@ public class Main extends WebApplication {
 
     @Override
     public Class getHomePage() {
+        String app = getConfigurationParameter("config", null);
+        if ("builtin".equals(app)) {
+            return PluginPage.class;
+        }
         return Home.class;
     }
 
     @Override
     public Session newSession(Request request, Response response) {
-        return new UserSession(request);
+        return new UserSession(request, new JcrSessionModel(DEFAULT_CREDENTIALS));
+    }
+
+    @Override
+    public AjaxRequestTarget newAjaxRequestTarget(final Page page) {
+        return new PluginRequestTarget(page);
     }
 
     public String getConfigurationParameter(String parameterName, String defaultValue) {

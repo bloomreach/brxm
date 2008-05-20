@@ -48,10 +48,6 @@ public class JcrSessionModel extends LoadableDetachableModel {
     private transient ClassLoader classLoader = null;
     private transient WorkflowManager workflowManager = null;
 
-    public JcrSessionModel() {
-        credentials = new ValueMap();
-    }
-
     public JcrSessionModel(ValueMap credentials) {
         this.credentials = credentials;
     }
@@ -81,7 +77,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
     public ValueMap getCredentials() {
         return credentials;
     }
-
+    
     public Session getSession() {
         try {
             Session session = (Session) getObject();

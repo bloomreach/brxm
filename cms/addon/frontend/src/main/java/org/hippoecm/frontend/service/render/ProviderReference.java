@@ -18,8 +18,8 @@ package org.hippoecm.frontend.service.render;
 import java.io.Serializable;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.service.topic.Message;
+import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.service.Message;
 import org.hippoecm.frontend.service.topic.MessageListener;
 import org.hippoecm.frontend.service.topic.TopicService;
 

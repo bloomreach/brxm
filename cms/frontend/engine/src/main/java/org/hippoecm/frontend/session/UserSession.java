@@ -37,9 +37,9 @@ public class UserSession extends WebSession {
 
     private JcrSessionModel jcrSessionModel;
 
-    public UserSession(Request request) {
+    public UserSession(Request request, JcrSessionModel jcrSession) {
         super(request);
-        jcrSessionModel = new JcrSessionModel();
+        jcrSessionModel = jcrSession;
         //Calling the dirty() method causes this wicket session to be reset in the http session
         //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
         dirty();

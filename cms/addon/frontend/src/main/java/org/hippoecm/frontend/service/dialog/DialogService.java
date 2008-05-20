@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.service.dialog;
 
-import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.sa.dialog.DialogWindow;
+import org.hippoecm.frontend.sa.core.PluginContext;
 import org.hippoecm.frontend.service.IDialogService;
 
 public class DialogService extends DialogWindow implements IDialogService {

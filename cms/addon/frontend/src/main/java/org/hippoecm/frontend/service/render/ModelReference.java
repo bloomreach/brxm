@@ -18,8 +18,9 @@ package org.hippoecm.frontend.service.render;
 import java.io.Serializable;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.core.PluginContext;
-import org.hippoecm.frontend.service.topic.Message;
+import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.service.ITopicService;
+import org.hippoecm.frontend.service.Message;
 import org.hippoecm.frontend.service.topic.MessageListener;
 import org.hippoecm.frontend.service.topic.TopicService;
 
@@ -85,7 +86,7 @@ public class ModelReference<T extends IModel> implements Serializable, MessageLi
         if (message instanceof ModelMessage) {
             switch (message.getType()) {
             case GET_MODEL:
-                TopicService source = ((ModelMessage) message).getSource();
+                ITopicService source = ((ModelMessage) message).getSource();
                 if (source != null) {
                     source.onPublish(new ModelMessage<T>(SET_MODEL, view.getModel()));
                 } else {
