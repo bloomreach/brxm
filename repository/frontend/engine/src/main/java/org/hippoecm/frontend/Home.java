@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -38,14 +37,12 @@ import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
-public class Home extends WebPage {
+public class Home extends PluginPage {
     private static final long serialVersionUID = 1L;
 
     public static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=,password=");
     public static final String ROOT_PLUGIN = "rootPlugin";
     public static final String LOGIN_PLUGIN = "loginPlugin";
-
-    private Plugin rootPlugin;
 
     public Home() {
 
@@ -76,8 +73,9 @@ public class Home extends WebPage {
         }
         JcrNodeModel rootModel = new JcrNodeModel(rootNode);
 
-        rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
+        Plugin rootPlugin = pluginFactory.createPlugin(rootPluginDescriptor, rootModel, null);
         rootPlugin.setPluginManager(pluginManager);
+        setRootPlugin(rootPlugin);
 
         String style = configFactory.getStyle();
         if (style != null) {
@@ -86,10 +84,6 @@ public class Home extends WebPage {
 
         add(rootPlugin);
         rootPlugin.addChildren();
-    }
-
-    public Plugin getRootPlugin() {
-        return rootPlugin;
     }
 
     private UserSession getValidUserSession() {
