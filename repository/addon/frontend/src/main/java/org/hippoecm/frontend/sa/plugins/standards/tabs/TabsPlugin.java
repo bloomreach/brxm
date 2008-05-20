@@ -27,7 +27,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.sa.PluginRequestTarget;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
@@ -93,7 +93,7 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     @Override
-    public void init(PluginContext context, IPluginConfig properties) {
+    public void init(IPluginContext context, IPluginConfig properties) {
         tabsTracker.open(context, properties.getString(TAB_ID));
 
         if (tabs.size() > 0) {

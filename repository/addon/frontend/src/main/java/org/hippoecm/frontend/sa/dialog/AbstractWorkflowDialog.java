@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.service.IDialogService;
@@ -52,7 +52,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, String title) {
         super(plugin.getPluginContext(), dialogWindow);
 
-        PluginContext context = plugin.getPluginContext();
+        IPluginContext context = plugin.getPluginContext();
         this.title = title;
         this.model = (WorkflowsModel) plugin.getModel();
         this.pluginRef = context.getReference(plugin);

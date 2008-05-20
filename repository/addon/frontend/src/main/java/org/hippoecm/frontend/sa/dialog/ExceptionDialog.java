@@ -19,7 +19,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.hippoecm.frontend.service.IDialogService;
 
@@ -27,7 +27,7 @@ public class ExceptionDialog extends WebPage {
 
     private ServiceReference<IDialogService> windowRef;
 
-    public ExceptionDialog(PluginContext context, IDialogService dialogService, String exception) {
+    public ExceptionDialog(IPluginContext context, IDialogService dialogService, String exception) {
         windowRef = context.getReference(dialogService);
 
         add(new Label("exception", exception));

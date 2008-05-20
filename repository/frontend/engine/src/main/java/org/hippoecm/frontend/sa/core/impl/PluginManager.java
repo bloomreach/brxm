@@ -24,8 +24,8 @@ import java.util.Map;
 
 import org.hippoecm.frontend.sa.PluginPage;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.Plugin;
-import org.hippoecm.frontend.sa.core.ServiceListener;
+import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IServiceListener;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class PluginManager implements Serializable {
     private PluginPage page;
     private PluginFactory factory;
     private Map<String, List<Serializable>> services;
-    private Map<String, List<ServiceListener>> listeners;
+    private Map<String, List<IServiceListener>> listeners;
     private Map<Integer, RefCount> referenced;
     private int nextReferenceId;
 
@@ -66,13 +66,13 @@ public class PluginManager implements Serializable {
         this.page = page;
         factory = new PluginFactory();
         services = new HashMap<String, List<Serializable>>();
-        listeners = new HashMap<String, List<ServiceListener>>();
+        listeners = new HashMap<String, List<IServiceListener>>();
         referenced = new HashMap<Integer, RefCount>();
         nextReferenceId = 0;
     }
 
-    public Plugin start(IPluginConfig config) {
-        Plugin plugin = factory.createPlugin(config);
+    public IPlugin start(IPluginConfig config) {
+        IPlugin plugin = factory.createPlugin(config);
         if (plugin != null) {
             PluginContextImpl context = new PluginContextImpl(page, config);
             plugin.start(context);
@@ -120,12 +120,12 @@ public class PluginManager implements Serializable {
             referenced.get(new Integer(ref.getId())).addRef();
         }
 
-        List<ServiceListener> notify = listeners.get(name);
+        List<IServiceListener> notify = listeners.get(name);
         if (notify != null) {
-            Iterator<ServiceListener> iter = notify.iterator();
+            Iterator<IServiceListener> iter = notify.iterator();
             while (iter.hasNext()) {
-                ServiceListener entry = iter.next();
-                entry.processEvent(ServiceListener.ADDED, name, service);
+                IServiceListener entry = iter.next();
+                entry.processEvent(IServiceListener.ADDED, name, service);
             }
         }
     }
@@ -140,12 +140,12 @@ public class PluginManager implements Serializable {
 
         List<Serializable> list = services.get(name);
         if (list != null) {
-            List<ServiceListener> notify = listeners.get(name);
+            List<IServiceListener> notify = listeners.get(name);
             if (notify != null) {
-                Iterator<ServiceListener> iter = notify.iterator();
+                Iterator<IServiceListener> iter = notify.iterator();
                 while (iter.hasNext()) {
-                    ServiceListener entry = iter.next();
-                    entry.processEvent(ServiceListener.REMOVE, name, service);
+                    IServiceListener entry = iter.next();
+                    entry.processEvent(IServiceListener.REMOVE, name, service);
                 }
             }
 
@@ -164,7 +164,7 @@ public class PluginManager implements Serializable {
         }
     }
 
-    public void registerListener(ServiceListener listener, String name) {
+    public void registerListener(IServiceListener listener, String name) {
         if (name == null) {
             log.error("listener name is null");
             return;
@@ -172,9 +172,9 @@ public class PluginManager implements Serializable {
             log.info("registering listener " + listener + " for " + name);
         }
 
-        List<ServiceListener> list = listeners.get(name);
+        List<IServiceListener> list = listeners.get(name);
         if (list == null) {
-            list = new LinkedList<ServiceListener>();
+            list = new LinkedList<IServiceListener>();
             listeners.put(name, list);
         }
         list.add(listener);
@@ -184,12 +184,12 @@ public class PluginManager implements Serializable {
             Iterator<Serializable> iter = notify.iterator();
             while (iter.hasNext()) {
                 Serializable service = iter.next();
-                listener.processEvent(ServiceListener.ADDED, name, service);
+                listener.processEvent(IServiceListener.ADDED, name, service);
             }
         }
     }
 
-    public void unregisterListener(ServiceListener listener, String name) {
+    public void unregisterListener(IServiceListener listener, String name) {
         if (name == null) {
             log.error("listener name is null");
             return;
@@ -197,7 +197,7 @@ public class PluginManager implements Serializable {
             log.info("unregistering listener " + listener + " for " + name);
         }
 
-        List<ServiceListener> list = listeners.get(name);
+        List<IServiceListener> list = listeners.get(name);
         if (list != null) {
             if (list.contains(listener)) {
                 list.remove(listener);

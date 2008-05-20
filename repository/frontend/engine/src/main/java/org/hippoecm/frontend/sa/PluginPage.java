@@ -21,7 +21,7 @@ import java.util.Iterator;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.sa.core.ServiceListener;
+import org.hippoecm.frontend.sa.core.IServiceListener;
 import org.hippoecm.frontend.sa.core.impl.PluginConfig;
 import org.hippoecm.frontend.sa.core.impl.PluginManager;
 import org.hippoecm.frontend.sa.plugin.config.JavaConfigService;
@@ -30,7 +30,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginPage extends WebPage implements ServiceListener, IRenderService {
+public class PluginPage extends WebPage implements IServiceListener, IRenderService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginPage.class);
@@ -72,7 +72,7 @@ public class PluginPage extends WebPage implements ServiceListener, IRenderServi
 
     public void processEvent(int type, String name, Serializable service) {
         switch (type) {
-        case ServiceListener.ADDED:
+        case IServiceListener.ADDED:
             if (service instanceof IRenderService) {
                 root = (IRenderService) service;
                 root.bind(this, "root");
@@ -82,7 +82,7 @@ public class PluginPage extends WebPage implements ServiceListener, IRenderServi
             }
             break;
 
-        case ServiceListener.REMOVE:
+        case IServiceListener.REMOVE:
             if (service == root) {
                 remove((Component) root);
                 root.unbind();

@@ -19,20 +19,20 @@ import java.lang.reflect.Constructor;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.dialog.error.ErrorDialog;
 import org.hippoecm.frontend.service.IDialogService;
 
 public class DynamicDialogFactory implements PageCreator {
     private static final long serialVersionUID = 1L;
 
-    private PluginContext context; 
+    private IPluginContext context; 
     private IDialogService window;
     private Class dialogClass;
     
     private IDialogFactory dialogFactory;
 
-    public DynamicDialogFactory(PluginContext context, IDialogService window, Class dialogClass) {
+    public DynamicDialogFactory(IPluginContext context, IDialogService window, Class dialogClass) {
         this.context = context;
         this.window = window;
         this.dialogClass = dialogClass;
@@ -49,7 +49,7 @@ public class DynamicDialogFactory implements PageCreator {
             result = dialogFactory.createDialog(window);
         } else if (dialogClass != null) {
             try {
-                Class[] formalArgs = new Class[] { PluginContext.class, IDialogService.class };
+                Class[] formalArgs = new Class[] { IPluginContext.class, IDialogService.class };
                 Constructor constructor = dialogClass.getConstructor(formalArgs);
                 Object[] actualArgs = new Object[] { context, window };
                 result = (AbstractDialog) constructor.newInstance(actualArgs);

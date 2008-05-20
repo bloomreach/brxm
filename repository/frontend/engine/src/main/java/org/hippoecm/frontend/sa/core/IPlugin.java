@@ -15,14 +15,13 @@
  */
 package org.hippoecm.frontend.sa.core;
 
-import java.io.Serializable;
-import java.util.EventListener;
+public interface IPlugin {
 
-public interface ServiceListener extends EventListener {
+    String SERVICE_ID = "service.pid";
 
-    int ADDED = 1;
-    int CHANGED = 2;
-    int REMOVE = 3;
+    String CLASSNAME = "plugin.class";
 
-    void processEvent(int type, String name, Serializable service);
+    void start(IPluginContext context);
+
+    void stop();
 }

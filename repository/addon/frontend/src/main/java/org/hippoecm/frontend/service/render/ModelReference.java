@@ -18,7 +18,7 @@ package org.hippoecm.frontend.service.render;
 import java.io.Serializable;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.service.ITopicService;
 import org.hippoecm.frontend.service.Message;
 import org.hippoecm.frontend.service.topic.MessageListener;
@@ -63,7 +63,7 @@ public class ModelReference<T extends IModel> implements Serializable, MessageLi
         topic.addListener(this);
     }
 
-    public void init(PluginContext context) {
+    public void init(IPluginContext context) {
         topic.init(context);
         ModelMessage message = new ModelMessage(GET_MODEL, null);
         message.setSource(topic);

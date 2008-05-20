@@ -21,21 +21,21 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.Plugin;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.editor.EditorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorPlugin extends EditorService implements Plugin {
+public class EditorPlugin extends EditorService implements IPlugin {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
     private TitleDecorator title;
 
-    public void start(PluginContext context) {
+    public void start(IPluginContext context) {
         IPluginConfig properties = context.getProperties();
         init(context, properties);
 
@@ -50,7 +50,7 @@ public class EditorPlugin extends EditorService implements Plugin {
     }
 
     public void stop() {
-        PluginContext context = getPluginContext();
+        IPluginContext context = getPluginContext();
 
         if (title != null) {
             context.unregisterService(title, getServiceId() + ".decorator");

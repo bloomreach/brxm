@@ -18,7 +18,7 @@ package org.hippoecm.frontend.service.editor;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.service.render.RenderService;
 
@@ -28,7 +28,7 @@ public class EditorService extends RenderService implements IViewService {
     private NodeEditor editor;
 
     @Override
-    public void init(PluginContext context, IPluginConfig properties) {
+    public void init(IPluginContext context, IPluginConfig properties) {
         editor = new NodeEditor("editor", new JcrNodeModel("/"));
         add(editor);
         super.init(context, properties);

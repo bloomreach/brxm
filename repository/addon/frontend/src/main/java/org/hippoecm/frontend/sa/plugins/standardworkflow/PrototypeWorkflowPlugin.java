@@ -23,7 +23,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.DialogLink;
 import org.hippoecm.frontend.sa.dialog.IDialogFactory;
@@ -62,7 +62,7 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     @Override
-    public void init(PluginContext context, IPluginConfig properties) {
+    public void init(IPluginContext context, IPluginConfig properties) {
         super.init(context, properties);
         if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
             viewer.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));

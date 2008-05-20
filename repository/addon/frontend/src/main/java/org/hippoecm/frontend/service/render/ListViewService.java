@@ -23,7 +23,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.sa.PluginRequestTarget;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.util.ServiceTracker;
 import org.hippoecm.frontend.sa.widgets.AbstractView;
@@ -79,7 +79,7 @@ public class ListViewService extends RenderService {
     }
 
     @Override
-    public void init(PluginContext context, IPluginConfig properties) {
+    public void init(IPluginContext context, IPluginConfig properties) {
         super.init(context, properties);
         if (properties.get("item") != null) {
             tracker.open(context, properties.getString("item"));

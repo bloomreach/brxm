@@ -18,9 +18,9 @@ package org.hippoecm.frontend.sa.core;
 import java.io.Serializable;
 
 
-public interface PluginContext {
+public interface IPluginContext {
 
-    Plugin start(IPluginConfig config);
+    IPlugin start(IPluginConfig config);
 
     <T extends Serializable> ServiceReference<T> getReference(T service);
 
@@ -48,7 +48,7 @@ public interface PluginContext {
      * @param name
      * @param service
      */
-    void registerListener(ServiceListener listener, String name);
+    void registerListener(IServiceListener listener, String name);
 
     /**
      * Unregisters a service with the given name.
@@ -56,6 +56,6 @@ public interface PluginContext {
      * @param name
      * @param service
      */
-    void unregisterListener(ServiceListener listener, String name);
+    void unregisterListener(IServiceListener listener, String name);
 
 }

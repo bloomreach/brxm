@@ -21,14 +21,14 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreat
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
 
     private PageCreator pageCreator;
     
-    public DialogLink(String id, IModel linktext, PluginContext context, Class clazz) {
+    public DialogLink(String id, IModel linktext, IPluginContext context, Class clazz) {
         super(id);
 
         final DialogWindow dialogWindow = new DialogWindow("dialog");

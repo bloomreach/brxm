@@ -24,8 +24,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.PluginRequestTarget;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.Plugin;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPlugin;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.util.ServiceTracker;
@@ -45,7 +45,7 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     private String serviceId;
     private String wicketId;
 
-    private PluginContext context;
+    private IPluginContext context;
     private IPluginConfig config;
     private Map<String, ServiceTracker<IRenderService>> children;
     private ModelReference modelRef;
@@ -63,7 +63,7 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
         this.dialogTracker = new ServiceTracker<IDialogService>(IDialogService.class);
     }
 
-    protected void init(PluginContext context, IPluginConfig properties) {
+    protected void init(IPluginContext context, IPluginConfig properties) {
         this.context = context;
         this.config = properties;
 
@@ -97,7 +97,7 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     }
 
     protected void destroy() {
-        PluginContext context = getPluginContext();
+        IPluginContext context = getPluginContext();
 
         context.unregisterService(this, serviceId);
         for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
@@ -135,7 +135,7 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
 
     // utility routines for subclasses
 
-    protected PluginContext getPluginContext() {
+    protected IPluginContext getPluginContext() {
         return context;
     }
 
@@ -220,10 +220,10 @@ public class RenderService extends Panel implements ModelReference.IView, IRende
     }
 
     public String getServiceId() {
-        if (config.getString(Plugin.SERVICE_ID) != null) {
-            return config.getString(Plugin.SERVICE_ID);
+        if (config.getString(IPlugin.SERVICE_ID) != null) {
+            return config.getString(IPlugin.SERVICE_ID);
         } else {
-            log.warn("No decorator id ({}) defined", Plugin.SERVICE_ID);
+            log.warn("No decorator id ({}) defined", IPlugin.SERVICE_ID);
             return null;
         }
     }

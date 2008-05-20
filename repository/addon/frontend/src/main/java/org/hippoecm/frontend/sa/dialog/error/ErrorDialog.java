@@ -18,14 +18,14 @@ package org.hippoecm.frontend.sa.dialog.error;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.service.IDialogService;
 
 public class ErrorDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    public ErrorDialog(PluginContext context, IDialogService dialogWindow, String message) {
+    public ErrorDialog(IPluginContext context, IDialogService dialogWindow, String message) {
         super(context, dialogWindow);
         add(new Label("message", message));
     }

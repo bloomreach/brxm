@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.sa.plugin.root;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.render.RenderPlugin;
 import org.hippoecm.frontend.service.dialog.DialogService;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -35,7 +35,7 @@ public class RootPlugin extends RenderPlugin {
     }
 
     @Override
-    public void start(PluginContext context) {
+    public void start(IPluginContext context) {
         super.start(context);
 
         dialogService.init(context, context.getProperties().getString(RenderService.DIALOG_ID), "dialog");

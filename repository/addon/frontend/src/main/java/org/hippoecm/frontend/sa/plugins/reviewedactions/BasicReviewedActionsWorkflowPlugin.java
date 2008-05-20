@@ -19,7 +19,7 @@ import javax.jcr.Node;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowDialogAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
@@ -82,7 +82,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     @Override
-    public void init(PluginContext context, IPluginConfig properties) {
+    public void init(IPluginContext context, IPluginConfig properties) {
         super.init(context, properties);
         if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
             viewers.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));

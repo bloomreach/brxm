@@ -20,7 +20,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.sa.core.PluginContext;
+import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.core.ServiceReference;
 import org.hippoecm.frontend.service.IDialogService;
 import org.hippoecm.frontend.service.ITitleDecorator;
@@ -37,7 +37,7 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
 
     private String exception = "";
 
-    public AbstractDialog(PluginContext context, IDialogService dialogWindow) {
+    public AbstractDialog(IPluginContext context, IDialogService dialogWindow) {
         this.windowRef = context.getReference(dialogWindow);
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
