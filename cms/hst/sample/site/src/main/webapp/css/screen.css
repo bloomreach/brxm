@@ -101,3 +101,33 @@ div#welcome p#welcome_text{width: 460px; float: left; font-family: verdana, aria
 #content_main_home a{text-decoration: underline}
 #content_main_home h3 a{text-decoration: none}
 #content_main_home p{text-align: left;}
+
+/* default HST documents tag classes */
+.hst-list {
+    width: 100%
+}
+
+.hst-list .hst-document {
+    border-bottom: 1px dotted #666;
+    margin-bottom: 0px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.hst-list .hst-document .hst-document-date, 
+.hst-list .hst-document .hst-document-link,
+.hst-list .hst-document .hst-document-text {
+    margin-bottom: 0px;
+    text-align: justify;
+}
+
+.hst-list .hst-document .hst-document-link {
+    display: inline
+}
+
+
+
+
+
+
+
