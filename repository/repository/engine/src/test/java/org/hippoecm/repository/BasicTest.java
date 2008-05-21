@@ -19,11 +19,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import junit.framework.TestCase;
+import org.hippoecm.repository.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
-public class BasicTest extends TestCase {
-
+public class BasicTest {
+    @Test
     public void testBasics() throws Exception {
+        boolean exceptionOccurred = false;
         Exception firstException = null;
         HippoRepositoryServer repositoryServer = null;
         HippoRepository repositoryClient = null;
@@ -43,8 +46,8 @@ public class BasicTest extends TestCase {
         } catch (RepositoryException ex) {
             fail("unexpected repository exception " + ex.getMessage());
             firstException = ex;
+            exceptionOccurred = true;
         } finally {
-            boolean exceptionOccurred = false;
             try {
                 if (repositoryClient != null) {
                     repositoryClient.close();
