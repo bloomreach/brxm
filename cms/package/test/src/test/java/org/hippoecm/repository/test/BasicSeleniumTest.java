@@ -32,7 +32,7 @@ public class BasicSeleniumTest {
 
     @Before
     public void setUp() throws Exception {
-        selenium = new DefaultSelenium("localhost", 4444, "*firefox", "http://localhost:8080/");
+        selenium = new DefaultSelenium("localhost", 4444, "*firefox", "http://localhost:4849/");
         selenium.start();
     }
 
@@ -49,7 +49,7 @@ public class BasicSeleniumTest {
 
     public void doLogin() throws Exception {
         try {
-            selenium.open("http://localhost:8080/");
+            selenium.open("http://localhost:4849/");
             assert(selenium.isTextPresent("Username"));
             assert(selenium.isTextPresent("Password"));
 
