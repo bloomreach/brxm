@@ -37,14 +37,9 @@ public class ContextTag extends ConditionalTagSupport {
         this.variable = variable;
     }
 
-    /** String setter for the tag attribute 'value'. */
-    public void setValue(String location) {
+    /** Setter for the tag attribute 'location'. */
+    public void setLocation(String location) {
         this.location = location;
-    }
-
-    /** Context setter for the tag attribute 'value'. */
-    public void setValue(Context context) {
-        this.location = (context == null ? null : context.getLocation());
     }
 
     /** Setter for the tag attribute 'context'. */

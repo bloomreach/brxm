@@ -63,9 +63,9 @@
       <rtexprvalue>false</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The required string location relative to the current context,
-      	or alternatively a context object, from which a new context is created.</description>
-      <name>value</name>
+      <description>The required string location relative to the current context
+      	from which a new context is created.</description>
+      <name>location</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
