@@ -22,7 +22,7 @@ public class EventsTag extends DocumentsTag {
     
     // javadoc from super
     protected String getDefaultLocation() {
-        return "events";
+        return "/events";
     }
 
     /** Get a default list of document properties. */
@@ -33,7 +33,7 @@ public class EventsTag extends DocumentsTag {
     }    
 
     /** Get a default list of document properties types. */
-    protected String[] getDefaultDocumentPropertyStyles() { 
+    protected String[] getDefaultDocumentPropertyTypes() {
         return new String[] {PROPERTY_TYPE_LINK, 
                              PROPERTY_TYPE_DATE, 
                              PROPERTY_TYPE_STRING};

@@ -16,7 +16,6 @@
 package org.hippoecm.hst.taglib;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
