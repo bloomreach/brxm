@@ -16,7 +16,6 @@
 package org.hippoecm.hst.taglib;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -141,7 +140,7 @@ public class DocumentsTag extends SimpleTagSupport {
     
     /** Get a default location where to find documents in the repository. */
     protected String getDefaultLocation() {
-        return "documents";
+        return "/documents";
     }
     
     /** Get a default list of document properties. */

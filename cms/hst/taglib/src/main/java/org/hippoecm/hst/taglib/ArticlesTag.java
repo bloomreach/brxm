@@ -16,18 +16,13 @@
 package org.hippoecm.hst.taglib;
 
 /**
- * EventsTag showing events from a certain location in the repository. 
+ * ArticlesTag showing articles from a certain location in the repository. 
  */
 public class ArticlesTag extends DocumentsTag {
     
     // javadoc from super
-    protected String getConfigurationKeyPrefix() {
-        return "articlestag";
-    }
-    
-    // javadoc from super
     protected String getDefaultLocation() {
-        return "articles";
+        return "/articles";
     }
 
     // javadoc from super

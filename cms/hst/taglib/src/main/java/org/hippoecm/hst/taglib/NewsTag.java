@@ -22,7 +22,7 @@ public class NewsTag extends DocumentsTag {
     
     // javadoc from super
     protected String getDefaultLocation() {
-        return "news";
+        return "/news";
     }
 
     // javadoc from super
