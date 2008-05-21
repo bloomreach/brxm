@@ -44,7 +44,7 @@
            <p>This filter will go look for jsp files based on the URL. It will do that
               first by direct node to page mapping and after that by document type mapping. 
              For the latter the configuration parameter <code>repository.urlmapping.location</code>, 
-             defaulting to <code>/urlMapping</code>, indicates the location in the repository 
+             defaulting to <code>/urlmapping</code>, indicates the location in the repository 
              where document type mapping is set up.</p>
                
            <h4>1. Finding the repository node by URL</h4>
@@ -115,8 +115,7 @@
             
           or
   
-  <a href="<hst:encodeURL value="${context._path}"/>">Link to /news</a>
-  ]]></source>
+  <a href="<hst:encodeURL value="${context._path}"/>">Link to /news</a>]]></source>
           <h4>URL's in document content</h4>
           <p>The HST automatically supports the rewriting of document links in the content of
             other documents. </p>                        

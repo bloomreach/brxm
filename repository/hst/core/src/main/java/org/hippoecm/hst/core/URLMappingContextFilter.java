@@ -40,7 +40,7 @@ public class URLMappingContextFilter extends ContextFilter {
 
     private String urlBasePath = "/";
     private String urlMappingLocation = null;
-    private static final String DEFAULT_URL_MAPPING_LOCATION = "/urlMapping";
+    private static final String DEFAULT_URL_MAPPING_LOCATION = "/urlmapping";
 
     public URLMappingContextFilter() {
         super();
