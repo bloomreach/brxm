@@ -35,7 +35,7 @@ public class PluginPage extends WebPage implements IServiceListener, IRenderServ
 
     private static final Logger log = LoggerFactory.getLogger(PluginPage.class);
 
-    public static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=,password=");
+    public static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=admin,password=admin");
 
     public static final String ROOT_PLUGIN = "rootPlugin";
     public static final String LOGIN_PLUGIN = "loginPlugin";

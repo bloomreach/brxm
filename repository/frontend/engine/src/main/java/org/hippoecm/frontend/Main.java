@@ -54,7 +54,7 @@ public class Main extends WebApplication {
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
 
-    public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=,password=");
+    public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=admin,password=admin");
 
     @Override
     protected void init() {
