@@ -325,6 +325,8 @@ public class DocumentsTag extends SimpleTagSupport {
             
             for (int i = 0; i < documentProperties.length; i++) {
                 
+                String tagName = (i == 0) ? "h3" : "p";
+                
                 Object property = documentContext.get(documentProperties[i]);
                 String propertyType = documentPropertyTypes[i];
                 
@@ -339,11 +341,15 @@ public class DocumentsTag extends SimpleTagSupport {
 
                         String translatedURL = urlPathTranslator.documentPathToURL(documentContext.getLocation());
                         
-                        buffer.append("    <div class=\"");
+                        buffer.append("    <");
+                        buffer.append(tagName);
+                        buffer.append(" class=\"");
                         buffer.append(CSS_CLASS_DOCUMENT_LINK);
                         buffer.append("\">");
                         buffer.append("<a href=\"").append(translatedURL).append("\">").append(property).append("</a>");
-                        buffer.append("</div>\n");
+                        buffer.append("</");
+                        buffer.append(tagName);
+                        buffer.append(">\n");
                     }
                     else if (PROPERTY_TYPE_DATE.equals(propertyType)) {
                         
@@ -352,18 +358,26 @@ public class DocumentsTag extends SimpleTagSupport {
                                 + ((property == null) ? "null" : (property.getClass().getName() + ", " + property)));
                         }
                         
-                        buffer.append("    <div class=\"");
+                        buffer.append("    <");
+                        buffer.append(tagName);
+                        buffer.append(" class=\"");
                         buffer.append(CSS_CLASS_DOCUMENT_DATE);
                         buffer.append("\">");
                         buffer.append(propertyFormatter.format(property));
-                        buffer.append("</div>\n");
+                        buffer.append("</");
+                        buffer.append(tagName);
+                        buffer.append(">\n");
                     }
                     else {
-                        buffer.append("    <div class=\"");
+                        buffer.append("    <");
+                        buffer.append(tagName);
+                        buffer.append(" class=\"");
                         buffer.append(CSS_CLASS_DOCUMENT_TEXT);
                         buffer.append("\">");
                         buffer.append(propertyFormatter.format(property));
-                        buffer.append("</div>\n");
+                        buffer.append("</");
+                        buffer.append(tagName);
+                        buffer.append(">\n");
                     }
                 }    
             }
