@@ -115,7 +115,13 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         
         while (currentNode != null) {
             
-            if (currentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
+            // directly, if pageFile has been set without hst:page mixin
+            if (currentNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
+                displayNode = currentNode;
+            }
+
+            // indirectly, via hst:page mixin
+            else if (currentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
                 displayNode = currentNode;
             }
             else {
@@ -128,7 +134,15 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
                         Node matchNode = iter.nextNode();
                         try {
                             Property prop = matchNode.getProperty(HSTNodeTypes.HST_NODETYPE);
-                            if (currentNode.isNodeType(prop.getString())) {
+    
+                            // directly, if pageFile has been set directly 
+                            if (matchNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
+                                displayNode = matchNode;
+                                break;
+                            }
+    
+                            // indirectly, get the displaypage subnode
+                            else if (currentNode.isNodeType(prop.getString())) {
                                 displayNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
                                 break;
                             }
