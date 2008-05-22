@@ -28,8 +28,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.sa.PluginPage;
-import org.hippoecm.frontend.sa.plugin.RenderPlugin;
+import org.hippoecm.frontend.sa.Home;
+import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 
 public class LoginPlugin extends RenderPlugin {
@@ -89,7 +89,7 @@ public class LoginPlugin extends RenderPlugin {
             userSession.setJcrCredentials(credentials);
             userSession.getJcrSession();
 
-            setResponsePage(PluginPage.class);
+            setResponsePage(Home.class);
         }
     }
 }

@@ -18,13 +18,13 @@ package org.hippoecm.frontend.sa.plugins.reviewedactions;
 import javax.jcr.Node;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowDialogAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IViewService;
-import org.hippoecm.frontend.sa.util.ServiceTracker;
+import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;

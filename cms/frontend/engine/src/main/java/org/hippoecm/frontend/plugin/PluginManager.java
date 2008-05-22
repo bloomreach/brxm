@@ -24,6 +24,10 @@ import org.hippoecm.frontend.template.config.TypeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.plugin.PluginManager instead
+ */
+@Deprecated
 public class PluginManager implements IClusterable {
     private static final long serialVersionUID = 1L;
 

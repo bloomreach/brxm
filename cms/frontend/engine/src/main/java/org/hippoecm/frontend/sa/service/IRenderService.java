@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.sa.service;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.PluginRequestTarget;
 
 public interface IRenderService extends IClusterable {
 

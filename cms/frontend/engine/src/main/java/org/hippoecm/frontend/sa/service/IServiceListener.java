@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core;
+package org.hippoecm.frontend.sa.service;
 
-public interface IPlugin {
+import java.util.EventListener;
 
-    String SERVICE_ID = "service.pid";
+import org.apache.wicket.IClusterable;
 
-    String CLASSNAME = "plugin.class";
+public interface IServiceListener extends EventListener {
 
-    void start(IPluginContext context);
+    int ADDED = 1;
+    int CHANGED = 2;
+    int REMOVE = 3;
 
-    void stop();
+    void processEvent(int type, String name, IClusterable service);
 }

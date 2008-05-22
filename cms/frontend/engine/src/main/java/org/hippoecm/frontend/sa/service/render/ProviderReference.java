@@ -17,9 +17,9 @@ package org.hippoecm.frontend.sa.service.render;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.service.IMessageListener;
 import org.hippoecm.frontend.sa.service.Message;
-import org.hippoecm.frontend.sa.service.topic.IMessageListener;
 import org.hippoecm.frontend.sa.service.topic.TopicService;
 
 public class ProviderReference implements IClusterable, IMessageListener {

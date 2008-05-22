@@ -24,18 +24,19 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.core.IPlugin;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.core.impl.PluginConfig;
+import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.sa.dialog.ExceptionDialog;
-import org.hippoecm.frontend.sa.plugin.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.IDialogService;
 import org.hippoecm.frontend.sa.service.IFactoryService;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.IViewService;
+import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.frontend.sa.service.render.RenderService;
-import org.hippoecm.frontend.sa.util.ServiceTracker;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,6 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
 
     private static class PluginEntry implements IClusterable {
         private static final long serialVersionUID = 1L;
-
         String id;
         IPlugin plugin;
     }
@@ -120,7 +120,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
     public void view(final IModel model) {
         IPlugin plugin;
         if (!editors.containsKey(model)) {
-            PluginConfig editConfig = new PluginConfig();
+            IPluginConfig editConfig = new JavaPluginConfig();
             String editorId = config.getString(EDITOR_ID) + editCount;
             editConfig.put(IPlugin.SERVICE_ID, editorId);
             editConfig.put(IPlugin.CLASSNAME, editorClass);

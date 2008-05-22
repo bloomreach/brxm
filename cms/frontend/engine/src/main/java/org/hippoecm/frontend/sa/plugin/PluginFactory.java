@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core.impl;
+package org.hippoecm.frontend.sa.plugin;
 
 import java.lang.reflect.Constructor;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.sa.core.IPlugin;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

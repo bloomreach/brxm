@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core;
-
-import java.util.EventListener;
+package org.hippoecm.frontend.sa.service;
 
 import org.apache.wicket.IClusterable;
 
-public interface IServiceListener extends EventListener {
+public interface IMessageListener extends IClusterable {
 
-    int ADDED = 1;
-    int CHANGED = 2;
-    int REMOVE = 3;
-
-    void processEvent(int type, String name, IClusterable service);
+    void onMessage(Message message);
 }

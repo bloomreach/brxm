@@ -20,8 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.core.IServiceListener;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.service.IMessageListener;
+import org.hippoecm.frontend.sa.service.IServiceListener;
 import org.hippoecm.frontend.sa.service.ITopicService;
 import org.hippoecm.frontend.sa.service.Message;
 import org.slf4j.Logger;

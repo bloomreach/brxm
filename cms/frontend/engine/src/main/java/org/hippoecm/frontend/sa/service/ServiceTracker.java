@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.util;
+package org.hippoecm.frontend.sa.service;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.core.IServiceListener;
-import org.hippoecm.frontend.sa.core.ServiceReference;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

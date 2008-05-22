@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core.impl;
+package org.hippoecm.frontend.sa.plugin.config.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,42 +39,17 @@ import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
+class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(JcrPluginConfig.class);
 
-    public JcrPluginConfig(JcrNodeModel nodeModel) {
+    JcrPluginConfig(JcrNodeModel nodeModel) {
         super(nodeModel);
-    }
-
-    public IPluginConfig[] getConfigArray(String key) {
-        try {
-            Node node = getNodeModel().getNode();
-            if (node != null) {
-                NodeIterator children = node.getNodes(key);
-                if (children.getSize() < Integer.MAX_VALUE) {
-                    IPluginConfig[] result = new IPluginConfig[(int) children.getSize()];
-                    int i = 0;
-                    while (children.hasNext()) {
-                        Node child = children.nextNode();
-                        result[i++] = new JcrPluginConfig(new JcrNodeModel(child));
-                    }
-                    return result;
-                } else {
-                    log.warn("Too many children");
-                }
-            } else {
-                log.warn("Node model is not valid");
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return null;
     }
 
     public void clear() {
@@ -490,28 +465,28 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     }
 
     public CharSequence getCharSequence(String key) {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO implement me
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     public Duration getDuration(String key) throws StringValueConversionException {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO implement me
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     public long getLong(String key) throws StringValueConversionException {
-        // TODO Auto-generated method stub
-        return 0;
+        // TODO implement me
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     public long getLong(String key, long defaultValue) throws StringValueConversionException {
-        // TODO Auto-generated method stub
-        return 0;
+        // TODO implement me
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     public Time getTime(String key) throws StringValueConversionException {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO implement me
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     public boolean isImmutable() {
@@ -519,7 +494,8 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     }
 
     public IValueMap makeImmutable() {
-        return null;
+        // TODO implement me
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     private Property getProperty(String key) throws RepositoryException {

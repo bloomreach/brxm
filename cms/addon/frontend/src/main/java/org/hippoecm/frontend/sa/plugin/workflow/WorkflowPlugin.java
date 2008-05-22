@@ -26,14 +26,14 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.sa.core.IPlugin;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.core.impl.PluginConfig;
-import org.hippoecm.frontend.sa.plugin.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.service.IMessageListener;
 import org.hippoecm.frontend.sa.service.Message;
 import org.hippoecm.frontend.sa.service.render.ModelReference;
-import org.hippoecm.frontend.sa.service.topic.IMessageListener;
 import org.hippoecm.frontend.sa.service.topic.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +141,7 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
             }
         }
 
-        PluginConfig wflConfig = new PluginConfig();
+        IPluginConfig wflConfig = new JavaPluginConfig();
         wflConfig.put(RenderPlugin.WICKET_ID, config.get(RenderPlugin.WICKET_ID));
         wflConfig.put(RenderPlugin.DIALOG_ID, config.get(RenderPlugin.DIALOG_ID));
 

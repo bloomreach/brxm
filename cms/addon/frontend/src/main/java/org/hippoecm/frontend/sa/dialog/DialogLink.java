@@ -21,7 +21,7 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreat
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;

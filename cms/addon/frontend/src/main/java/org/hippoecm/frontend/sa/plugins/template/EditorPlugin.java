@@ -17,9 +17,10 @@ package org.hippoecm.frontend.sa.plugins.template;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.adapter.Adapter;
-import org.hippoecm.frontend.sa.core.IPlugin;
-import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.core.impl.PluginConfig;
+import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.sa.service.IViewService;
 
 public class EditorPlugin implements IPlugin, IViewService {
@@ -33,10 +34,10 @@ public class EditorPlugin implements IPlugin, IViewService {
         this.context = context;
         this.serviceId = context.getProperties().getString("service.pid");
 
-        PluginConfig config = new PluginConfig();
-        config.add("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
-        config.add("legacy.plugin", "editPerspective");
-        config.add("wicket.id", context.getProperties().getString("wicket.id"));
+        IPluginConfig config = new JavaPluginConfig();
+        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
+        config.put("legacy.plugin", "editPerspective");
+        config.put("wicket.id", context.getProperties().getString("wicket.id"));
 
         adapter = new Adapter();
         adapter.init(context, config);

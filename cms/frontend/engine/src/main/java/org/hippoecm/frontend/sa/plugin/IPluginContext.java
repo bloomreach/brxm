@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core;
+package org.hippoecm.frontend.sa.plugin;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.IServiceListener;
+import org.hippoecm.frontend.sa.service.ServiceReference;
 
 
 public interface IPluginContext {

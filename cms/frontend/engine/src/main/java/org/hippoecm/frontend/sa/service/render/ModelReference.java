@@ -17,10 +17,10 @@ package org.hippoecm.frontend.sa.service.render;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.service.IMessageListener;
 import org.hippoecm.frontend.sa.service.ITopicService;
 import org.hippoecm.frontend.sa.service.Message;
-import org.hippoecm.frontend.sa.service.topic.IMessageListener;
 import org.hippoecm.frontend.sa.service.topic.TopicService;
 
 public class ModelReference<T extends IModel> implements IClusterable, IMessageListener {
