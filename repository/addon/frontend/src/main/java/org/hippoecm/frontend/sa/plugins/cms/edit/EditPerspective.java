@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.sa.plugins.cms.edit;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.perspective.Perspective;
 import org.hippoecm.frontend.sa.service.IViewService;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core.impl;
+package org.hippoecm.frontend.sa.plugin;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.PluginPage;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPlugin;
-import org.hippoecm.frontend.sa.core.IServiceListener;
-import org.hippoecm.frontend.sa.core.ServiceReference;
+import org.hippoecm.frontend.sa.Home;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.impl.PluginContext;
+import org.hippoecm.frontend.sa.service.IServiceListener;
+import org.hippoecm.frontend.sa.service.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +55,14 @@ public class PluginManager implements IClusterable {
         }
     }
 
-    private PluginPage page;
+    private Home page;
     private PluginFactory factory;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceListener>> listeners;
     private Map<Integer, RefCount> referenced;
     private int nextReferenceId;
 
-    public PluginManager(PluginPage page) {
+    public PluginManager(Home page) {
         this.page = page;
         factory = new PluginFactory();
         services = new HashMap<String, List<IClusterable>>();
@@ -74,7 +74,7 @@ public class PluginManager implements IClusterable {
     public IPlugin start(IPluginConfig config) {
         IPlugin plugin = factory.createPlugin(config);
         if (plugin != null) {
-            PluginContextImpl context = new PluginContextImpl(page, config);
+            PluginContext context = new PluginContext(page, config);
             plugin.start(context);
         }
         return plugin;

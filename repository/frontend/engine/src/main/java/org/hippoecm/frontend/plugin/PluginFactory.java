@@ -26,6 +26,10 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.plugin.PluginFactory instead
+ */
+@Deprecated
 public class PluginFactory {
 
     private static final Logger log = LoggerFactory.getLogger(PluginFactory.class);

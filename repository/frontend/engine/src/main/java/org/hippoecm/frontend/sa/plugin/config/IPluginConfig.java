@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.service.topic;
+package org.hippoecm.frontend.sa.plugin.config;
 
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.service.Message;
+import org.apache.wicket.util.value.IValueMap;
 
-public interface IMessageListener extends IClusterable {
-
-    void onMessage(Message message);
+public interface IPluginConfig extends IValueMap {
 }

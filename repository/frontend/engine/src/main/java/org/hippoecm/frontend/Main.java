@@ -38,8 +38,8 @@ import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.sa.PluginPage;
-import org.hippoecm.frontend.sa.PluginRequestTarget;
+import org.hippoecm.frontend.sa.Home;
+import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -128,7 +128,7 @@ public class Main extends WebApplication {
     public Class getHomePage() {
         String servicesArchitecture = getConfigurationParameter("sa", null);
         if (servicesArchitecture != null) {
-            return PluginPage.class;
+            return org.hippoecm.frontend.sa.Home.class;
         }
         return Home.class;
     }

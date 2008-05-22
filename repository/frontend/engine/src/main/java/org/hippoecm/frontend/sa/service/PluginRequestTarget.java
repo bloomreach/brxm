@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa;
+package org.hippoecm.frontend.sa.service;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +26,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.hippoecm.frontend.sa.Home;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,8 +73,8 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
         }
 
         Page page = getPage();
-        if (page instanceof PluginPage) {
-            ((PluginPage) page).render(this);
+        if (page instanceof Home) {
+            ((Home) page).render(this);
         }
 
         if (listeners != null) {

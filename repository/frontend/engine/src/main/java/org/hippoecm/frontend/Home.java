@@ -38,7 +38,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
 /**
- * @deprecated Needed for handling legacy plugins, use org.hippoecm.frontend.sa.PluginPage instead.
+ * @deprecated Needed for handling legacy plugins, use org.hippoecm.frontend.sa.Home instead.
  * Remove when all legacy plugins have been ported to new services architecture  
  */
 @Deprecated

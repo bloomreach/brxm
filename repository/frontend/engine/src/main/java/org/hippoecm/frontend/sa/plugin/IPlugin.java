@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin.config;
+package org.hippoecm.frontend.sa.plugin;
 
-import java.util.List;
 
-import org.hippoecm.frontend.sa.core.IPluginConfig;
+public interface IPlugin {
 
-public interface IPluginConfigService {
+    String SERVICE_ID = "service.pid";
 
-    public List<IPluginConfig> getPlugins();
+    String CLASSNAME = "plugin.class";
+
+    void start(IPluginContext context);
+
+    void stop();
 }

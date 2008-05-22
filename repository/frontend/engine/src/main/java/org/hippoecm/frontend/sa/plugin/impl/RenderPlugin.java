@@ -13,33 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core;
+package org.hippoecm.frontend.sa.plugin.impl;
 
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.PluginPage;
-import org.hippoecm.frontend.sa.core.impl.PluginManager;
+import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 
-public class ServiceReference<T extends IClusterable> implements IClusterable {
+public class RenderPlugin extends RenderService implements IPlugin {
     private static final long serialVersionUID = 1L;
 
-    private PluginPage page;
-    private int id;
-
-    public ServiceReference(PluginPage page, int id) {
-        this.page = page;
-        this.id = id;
+    public void start(IPluginContext context) {
+        init(context, context.getProperties());
     }
 
-    public T getService() {
-        PluginManager mgr = page.getPluginManager();
-        return mgr.getService(this);
+    public void stop() {
+        destroy();
     }
 
-    public PluginPage getPage() {
-        return page;
-    }
-
-    public int getId() {
-        return id;
-    }
 }

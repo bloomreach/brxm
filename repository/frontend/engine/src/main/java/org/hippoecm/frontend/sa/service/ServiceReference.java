@@ -13,22 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core.impl;
+package org.hippoecm.frontend.sa.service;
 
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
+import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.sa.Home;
+import org.hippoecm.frontend.sa.plugin.PluginManager;
 
-public class PluginConfig extends ValueMap implements IPluginConfig {
+public class ServiceReference<T extends IClusterable> implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    public PluginConfig() {
+    private Home page;
+    private int id;
+
+    public ServiceReference(Home page, int id) {
+        this.page = page;
+        this.id = id;
     }
 
-    public IPluginConfig getConfig(String key) {
-        return (IPluginConfig) get(key);
+    public T getService() {
+        PluginManager mgr = page.getPluginManager();
+        return mgr.getService(this);
     }
 
-    public IPluginConfig[] getConfigArray(String key) {
-        return (IPluginConfig[]) get(key);
+    public Home getPage() {
+        return page;
+    }
+
+    public int getId() {
+        return id;
     }
 }

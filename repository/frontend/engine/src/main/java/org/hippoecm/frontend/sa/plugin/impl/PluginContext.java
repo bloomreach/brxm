@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core.impl;
+package org.hippoecm.frontend.sa.plugin.impl;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.PluginPage;
-import org.hippoecm.frontend.sa.core.IPlugin;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.core.IServiceListener;
-import org.hippoecm.frontend.sa.core.ServiceReference;
+import org.hippoecm.frontend.sa.Home;
+import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.PluginManager;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.IServiceListener;
+import org.hippoecm.frontend.sa.service.ServiceReference;
 
-public class PluginContextImpl implements IPluginContext, IClusterable {
+public class PluginContext implements IPluginContext, IClusterable {
     private static final long serialVersionUID = 1L;
 
-    private PluginPage page;
+    private Home page;
     private IPluginConfig properties;
     private transient PluginManager manager = null;
 
-    public PluginContextImpl(PluginPage page, IPluginConfig config) {
+    public PluginContext(Home page, IPluginConfig config) {
         this.page = page;
         this.properties = config;
     }

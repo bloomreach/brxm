@@ -15,54 +15,43 @@
  */
 package org.hippoecm.frontend.sa;
 
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.sa.core.IServiceListener;
-import org.hippoecm.frontend.sa.core.impl.PluginConfig;
-import org.hippoecm.frontend.sa.core.impl.PluginManager;
-import org.hippoecm.frontend.sa.plugin.config.JavaConfigService;
+import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.sa.plugin.PluginManager;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.sa.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.sa.service.IRenderService;
+import org.hippoecm.frontend.sa.service.IServiceListener;
+import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginPage extends WebPage implements IServiceListener, IRenderService {
+public class Home extends WebPage implements IServiceListener, IRenderService {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(PluginPage.class);
-
-    public static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=admin,password=admin");
-
-    public static final String ROOT_PLUGIN = "rootPlugin";
-    public static final String LOGIN_PLUGIN = "loginPlugin";
+    private static final Logger log = LoggerFactory.getLogger(Home.class);
 
     private PluginManager mgr;
     private IRenderService root;
 
-    public PluginPage() {
-
-        root = null;
+    public Home() {
         mgr = new PluginManager(this);
-
         mgr.registerListener(this, "service.root");
 
-        UserSession session = (UserSession) getSession();
-        if (session.getCredentials().equals(ANONYMOUS_CREDENTIALS)) {
-            PluginConfig config = new PluginConfig();
-            config.put("plugin.class", "org.hippoecm.frontend.plugins.admin.login.sa.LoginPlugin");
-            config.put("wicket.id", "service.root");
-            mgr.start(config);
-
-        } else {
-            JavaConfigService configuration = new JavaConfigService();
-            Iterator<PluginConfig> iter = configuration.getPlugins().iterator();
-            while (iter.hasNext()) {
-                mgr.start(iter.next());
-            }
+        JcrSessionModel sessionModel = ((UserSession) getSession()).getJcrSessionModel();
+        PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
+        IPluginConfigService pluginConfigService = configFactory.getPluginConfigService();
+        mgr.registerService(pluginConfigService, "service.plugin.config");
+        
+        List<IPluginConfig> plugins = pluginConfigService.getPlugins("default");
+        for (IPluginConfig plugin : plugins) {
+            mgr.start(plugin);
         }
     }
 

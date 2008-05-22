@@ -34,6 +34,10 @@ import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.plugin.IPlugin instead
+ */
+@Deprecated
 public abstract class Plugin extends Panel implements INotificationListener, IRequestHandler {
 
     static final Logger log = LoggerFactory.getLogger(Plugin.class);

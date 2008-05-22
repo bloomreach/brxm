@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.sa.plugins.reviewedactions;
 
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowDialogAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IFactoryService;
 import org.hippoecm.frontend.sa.service.IViewService;
-import org.hippoecm.frontend.sa.util.ServiceTracker;
+import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.slf4j.Logger;

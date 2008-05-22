@@ -18,8 +18,8 @@ package org.hippoecm.frontend.sa.dialog.error;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.sa.core.IPluginContext;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.service.IDialogService;
 
 public class ErrorDialog extends AbstractDialog {

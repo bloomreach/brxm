@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.core;
+package org.hippoecm.frontend.sa.plugin.config;
 
-import org.apache.wicket.util.value.IValueMap;
+import java.util.List;
 
-public interface IPluginConfig extends IValueMap {
+import org.apache.wicket.IClusterable;
 
-    IPluginConfig[] getConfigArray(String key);
+public interface IPluginConfigService extends IClusterable {
+    public List<IPluginConfig> getPlugins(String key);
 }

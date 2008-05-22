@@ -13,40 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin.config;
+package org.hippoecm.frontend.sa.plugin.config.impl;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.core.impl.PluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 
-/**
- * Hardcoded plugin configuration.
- * It uses only core plugins and shows the Hippo ECM Admin Console.
- */
-public class JavaConfigService implements IClusterable {
+class ConsoleConfigService implements IPluginConfigService {
     private static final long serialVersionUID = 1L;
 
-    private List<PluginConfig> plugins;
+    private List<IPluginConfig> plugins;
 
-    public JavaConfigService() {
-        plugins = new LinkedList<PluginConfig>();
+    ConsoleConfigService() {
+        plugins = new LinkedList<IPluginConfig>();
 
-        PluginConfig config = new PluginConfig();
+        IPluginConfig config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.root.RootPlugin");
         config.put("wicket.id", "service.root");
         config.put("wicket.dialog", "service.dialog");
         config.put("content", "service.content");
         plugins.add(config);
 
-        config = new PluginConfig();
+        config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.standards.tabs.TabsPlugin");
         config.put("wicket.id", "service.content");
         config.put("tabs", "service.tab");
         plugins.add(config);
 
-        config = new PluginConfig();
+        config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.cms.browse.BrowserPerspective");
         config.put("service.pid", "service.browse");
         config.put("wicket.id", "service.tab");
@@ -58,26 +54,25 @@ public class JavaConfigService implements IClusterable {
         config.put("workflowsPlugin", "service.browse.workflows");
         plugins.add(config);
 
-        config = new PluginConfig();
+        config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.browser.BrowserPlugin");
         config.put("wicket.id", "service.browse.tree");
         config.put("wicket.model", "model.browse.node");
         plugins.add(config);
 
-        config = new PluginConfig();
-        config.put("plugin.class", 
-                "org.hippoecm.frontend.sa.plugins.cms.browse.list.DocumentListingPlugin");
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.cms.browse.list.DocumentListingPlugin");
         config.put("wicket.id", "service.browse.list");
         config.put("wicket.model", "model.browse.node");
         plugins.add(config);
 
-        config = new PluginConfig();
+        config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.render.ListViewPlugin");
         config.put("wicket.id", "service.browse.workflows");
         config.put("item", "service.browse.workflows.workflow");
         plugins.add(config);
 
-        config = new PluginConfig();
+        config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin");
         config.put("workflow.viewer", "service.edit");
         config.put("workflow.display", "workflows.id");
@@ -89,7 +84,7 @@ public class JavaConfigService implements IClusterable {
         config.put("wicket.dialog", "service.dialog");
         plugins.add(config);
 
-        config = new PluginConfig();
+        config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.editor.MultiEditorPlugin");
         config.put("editor.class", "org.hippoecm.frontend.sa.plugin.editor.EditorPlugin");
         config.put("editor.class", "org.hippoecm.frontend.sa.plugins.template.EditorPlugin");
@@ -102,7 +97,9 @@ public class JavaConfigService implements IClusterable {
         plugins.add(config);
     }
 
-    public List<PluginConfig> getPlugins() {
+    public List<IPluginConfig> getPlugins(String key) {
         return plugins;
     }
+    
+
 }

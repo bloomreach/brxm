@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.sa.plugin.root;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.hippoecm.frontend.sa.core.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.service.dialog.DialogService;
 

@@ -22,17 +22,17 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.PluginRequestTarget;
-import org.hippoecm.frontend.sa.core.IPlugin;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IDialogService;
 import org.hippoecm.frontend.sa.service.IRenderService;
-import org.hippoecm.frontend.sa.util.ServiceTracker;
+import org.hippoecm.frontend.sa.service.PluginRequestTarget;
+import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RenderService extends Panel implements ModelReference.IView, IRenderService {
+public abstract class RenderService extends Panel implements ModelReference.IView, IRenderService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RenderService.class);

@@ -27,6 +27,10 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.plugin.config.IPluginConfig instead
+ */
+@Deprecated
 public class PluginDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
 

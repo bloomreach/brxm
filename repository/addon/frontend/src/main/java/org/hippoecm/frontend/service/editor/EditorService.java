@@ -17,8 +17,8 @@ package org.hippoecm.frontend.service.editor;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.core.IPluginConfig;
-import org.hippoecm.frontend.sa.core.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 
