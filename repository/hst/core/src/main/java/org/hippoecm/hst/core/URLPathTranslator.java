@@ -114,27 +114,36 @@ public class URLPathTranslator {
         } 
         else {
 
-            // get the relativePath to construct the reversed url
-            String relativePath = documentPath;
-            while (relativePath.startsWith("/")) {
-                relativePath = relativePath.substring(1);
+            // get path absolute to the repositoryBaseLocation
+            String absolutePath = documentPath;
+            if (!absolutePath.startsWith("/")) {
+                absolutePath = "/" + absolutePath;
             }
             
             // if a JCR session is present, we can do a check
             if (jcrSession != null) {
+                
+                // path to check must not start with "/" 
+                String checkPath = this.repositoryBaseLocation + absolutePath;
+                while (checkPath.startsWith("/")) {
+                    checkPath = checkPath.substring(1);
+                }
+                
                 try {
-                    if (!jcrSession.getRootNode().hasNode(relativePath)) {
+                    if (!jcrSession.getRootNode().hasNode(checkPath)) {
 
                         // warn, the returned documentPath won't be valid!
-                        logger.warn("documentPath " + documentPath + " does not represent an absolute node");
+                        logger.warn("Path '" + checkPath 
+                                + "' does not represent an absolute node");
                     }
                 } catch (RepositoryException re) {
-                    throw new IllegalStateException("unexpected error getting node by path " + documentPath, re);
+                    throw new IllegalStateException("unexpected error getting node by path " 
+                            + checkPath, re);
                 }
             } 
             
             // reverse url
-            url = this.contextPath + this.urlBasePath + "/" + relativePath;
+            url = this.contextPath + this.urlBasePath + absolutePath;
         }
         
         // UTF-8 encoding
