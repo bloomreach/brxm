@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import java.util.HashMap;
 
+import java.io.File;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
@@ -24,8 +25,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-
-import junit.framework.TestCase;
 
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
@@ -37,34 +36,39 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 public class RedefineNodetypeTest extends TestCase {
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    private HippoRepository server;
-    private Session session;
-
-    public void setUp() throws RepositoryException {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
+    static private void delete(File path) {
+        if(path.exists()) {
+            if(path.isDirectory()) {
+                File[] files = path.listFiles();
+                for(int i=0; i<files.length; i++)
+                    delete(files[i]);
+            }
+            path.delete();
         }
     }
 
-    public void tearDown() throws Exception {
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
+    @Before
+    public void setUp() throws Exception {
+        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
+        for(int i=0; i<files.length; i++) {
+            File file = new File(files[i]);
+            delete(file);
         }
+        super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
         if(session.getRootNode().hasNode("hippo:configuration/hippo:namespaces/hippotest2")) {
             session.getRootNode().getNode("hippo:configuration/hippo:namespaces/hippotest2").remove();
             session.save();
         }
-        session.logout();
-        server.close();
+        super.tearDown();
     }
 
     private static void waitForRefresh(Session session, String prefix) throws PathNotFoundException, RepositoryException {
@@ -80,6 +84,7 @@ public class RedefineNodetypeTest extends TestCase {
         }
     }
     
+    @Test
     public void testRedefine() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test");
         try {
@@ -135,6 +140,7 @@ public class RedefineNodetypeTest extends TestCase {
         // 'return nodes list'
     }
 
+    @Test
     public void testWorkflow() throws RepositoryException, WorkflowException, RemoteException {
 
         String cnd1 =
