@@ -21,17 +21,23 @@ import java.util.List;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 
-class LoginConfigService implements IPluginConfigService {
+// Legacy cms application
+// REMOVE this class when all cms plugins have been ported to the new architecture
+class CmsConfigService implements IPluginConfigService {
     private static final long serialVersionUID = 1L;
 
     private List<IPluginConfig> plugins;
 
-    LoginConfigService() {
+    CmsConfigService() {
         plugins = new LinkedList<IPluginConfig>();
-        
+     
+        // wrap legacy cms plugins
         IPluginConfig config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.login.LoginPlugin");
-        config.put("wicket.id", "service.root");
+        config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
+        config.put("wicket.id", "service.root");                                  
+        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms");
+        config.put("legacy.plugin", "rootPlugin");
+        
         plugins.add(config);
     }
 
@@ -39,4 +45,5 @@ class LoginConfigService implements IPluginConfigService {
         return plugins;
     }
     
+
 }

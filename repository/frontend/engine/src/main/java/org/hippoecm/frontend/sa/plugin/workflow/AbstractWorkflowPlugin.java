@@ -33,9 +33,9 @@ import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.sa.dialog.DialogLink;
 import org.hippoecm.frontend.sa.dialog.IDialogFactory;
+import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
-import org.hippoecm.frontend.sa.service.IDialogService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
@@ -77,7 +77,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
     }
 
     protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
-            Visibility visible, final WorkflowDialogAction action) {
+            Visibility visible, final WorkflowAction action) {
         add(new EmptyPanel(dialogName));
 
         actions.put(dialogName, new Action(new DialogLink(dialogName, new Model(dialogLink), new IDialogFactory() {
@@ -96,7 +96,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
     }
 
     protected void addWorkflowAction(final String linkName, final String linkTitle, Visibility visible,
-            final WorkflowDialogAction action) {
+            final WorkflowAction action) {
         add(new EmptyPanel(linkName));
 
         actions.put(linkName, new Action(new AjaxLink(linkName, new Model(linkTitle)) {
@@ -141,7 +141,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
         updateActions();
     }
 
-    protected void addWorkflowAction(final String linkName, final String linkTitle, final WorkflowDialogAction action) {
+    protected void addWorkflowAction(final String linkName, final String linkTitle, final WorkflowAction action) {
         addWorkflowAction(linkName, linkTitle, new Visibility() {
             private static final long serialVersionUID = 1L;
 
@@ -152,7 +152,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
     }
 
     protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
-            final WorkflowDialogAction action) {
+            final WorkflowAction action) {
         addWorkflowDialog(dialogName, dialogTitle, dialogTitle, new Visibility() {
             private static final long serialVersionUID = 1L;
 

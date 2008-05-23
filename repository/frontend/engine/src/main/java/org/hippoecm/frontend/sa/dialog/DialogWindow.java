@@ -21,7 +21,6 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
-import org.hippoecm.frontend.sa.service.IDialogService;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
 
 public class DialogWindow extends ModalWindow implements PageCreator, IDialogService {

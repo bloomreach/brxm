@@ -15,10 +15,9 @@
  */
 package org.hippoecm.frontend.sa.plugin.workflow;
 
-import java.io.Serializable;
-
+import org.apache.wicket.IClusterable;
 import org.hippoecm.repository.api.Workflow;
 
-public interface WorkflowDialogAction extends Serializable {
+public interface WorkflowAction extends IClusterable {
     public void execute(Workflow workflow) throws Exception;
 }

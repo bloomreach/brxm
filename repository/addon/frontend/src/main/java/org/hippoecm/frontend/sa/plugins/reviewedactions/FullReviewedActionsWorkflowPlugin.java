@@ -26,7 +26,7 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.sa.service.ServiceTracker;
@@ -57,7 +57,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         add(new Label("status", new PropertyModel(this, "stateSummary")));
 
-        addWorkflowAction("edit-dialog", "Edit document", new WorkflowDialogAction() {
+        addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -77,7 +77,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public boolean isVisible() {
                 return !(stateSummary.equals("review") || stateSummary.equals("live"));
             }
-        }, new WorkflowDialogAction() {
+        }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -92,7 +92,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public boolean isVisible() {
                 return !(stateSummary.equals("review") || stateSummary.equals("new"));
             }
-        }, new WorkflowDialogAction() {
+        }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -107,7 +107,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public boolean isVisible() {
                 return !(stateSummary.equals("review") || stateSummary.equals("live"));
             }
-        }, new WorkflowDialogAction() {
+        }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -123,7 +123,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 return !(stateSummary.equals("review") || stateSummary.equals("live"));
 
             }
-        }, new WorkflowDialogAction() {
+        }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -138,7 +138,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public boolean isVisible() {
                 return !(stateSummary.equals("review") || stateSummary.equals("new"));
             }
-        }, new WorkflowDialogAction() {
+        }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -147,7 +147,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("delete-dialog", "Unpublish and/or delete", new WorkflowDialogAction() {
+        addWorkflowAction("delete-dialog", "Unpublish and/or delete", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
