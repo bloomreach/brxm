@@ -19,9 +19,10 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
+<hippostd='http://www.hippoecm.org/hippostd/nt/1.0'>
 
 [hippo:ntunstructured] > nt:unstructured
 
-[hippo:testdocument] > hippo:document
+[hippo:testdocument] > hippo:document, hippostd:publishable
 + * = hippo:ntunstructured multiple
 - *

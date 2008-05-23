@@ -60,7 +60,9 @@
 
 [hippo:handle] > nt:unstructured
 - hippo:discriminator (string) multiple
-+ * (hippo:document) = hippo:document multiple
++ * (hippo:document) = hippo:document multiple version
+
+[hippo:hardhandle] > mix:versionable mixin
 
 [hippo:facetlink] 
 - hippo:docbase (string) mandatory
@@ -283,7 +285,7 @@
   // A multivalue property that links to all the nodes that where used to
   // compute derived proper
 
-[hippo:harddocument] > hippo:derived, mix:referenceable mixin
+[hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin
 - hippo:paths (String) multiple mandatory
 
 [hippo:softdocument] mixin
@@ -313,6 +315,9 @@
 + * (hippo:logfolder) = hippo:logfolder
 + * (hippo:logitem) = hippo:logitem
 
+[hippo:queryfolder] > nt:base
++ * (nt:query) = hippo:query
+
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:ocmqueryfolder) = hippo:ocmqueryfolder mandatory
@@ -326,3 +331,4 @@
 + hippo:frontend (hippo:application) = hippo:application
 + hippo:frontend_deprecated (hippo:application) = hippo:application
 + hippo:logging (hippo:logconfig) = hippo:logconfig
++ hippo:queries (hippo:queryfolder) = hippo:queryfolder mandatory autocreated

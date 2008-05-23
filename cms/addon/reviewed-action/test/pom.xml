@@ -78,6 +78,18 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-tools-testutils</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+      <version>4.4</version>
+    </dependency>
 
     <!-- Testing needs a JTA implementation -->
     <dependency>
