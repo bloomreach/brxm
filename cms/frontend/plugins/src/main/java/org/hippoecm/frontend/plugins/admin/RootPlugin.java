@@ -22,6 +22,10 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 
+/**
+ * @deprecated Use org.hippoecm.frontend.plugins.console.RootPlugin instead
+ */
+@Deprecated
 public class RootPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

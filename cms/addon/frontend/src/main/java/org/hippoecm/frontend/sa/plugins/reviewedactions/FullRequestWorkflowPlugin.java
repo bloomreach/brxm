@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.sa.plugins.reviewedactions;
 
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
@@ -24,7 +24,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
     public FullRequestWorkflowPlugin() {
-        addWorkflowAction("acceptRequest-dialog", "Approve and execute request", new WorkflowDialogAction() {
+        addWorkflowAction("acceptRequest-dialog", "Approve and execute request", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -33,7 +33,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
         addWorkflowDialog("rejectRequest-dialog", "Reject request (with reason)", "Reject request (with reason)",
-                new WorkflowDialogAction() {
+                new WorkflowAction() {
                     private static final long serialVersionUID = 1L;
 
                     public void execute(Workflow wf) throws Exception {
@@ -41,7 +41,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                         workflow.rejectRequest(""); // FIXME
                     }
                 });
-        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowDialogAction() {
+        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {

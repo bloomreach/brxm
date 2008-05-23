@@ -22,7 +22,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.service.IDialogService;
 import org.hippoecm.frontend.sa.service.ServiceReference;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -36,10 +35,6 @@ import org.slf4j.LoggerFactory;
  * A dialog operating in a workflow context. Each workflow action should
  * extend this class and implement the doOk() method.
  *
- */
-/* FIXME: this class should be an inner class of
- * org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin as their
- * implementations are dependent.
  */
 public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
@@ -84,13 +79,10 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     @Override
     protected void ok() throws Exception {
-        // before saving (which possibly means deleting), find the handle
         JcrNodeModel handle = model.getNodeModel();
         while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
             handle = handle.getParentModel();
         }
-
-        // save the handle so that the workflow uses the correct content
         handle.getNode().save();
         execute();
 

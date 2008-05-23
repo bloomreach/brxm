@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.service.dialog;
+package org.hippoecm.frontend.sa.dialog;
 
-import org.hippoecm.frontend.sa.dialog.DialogWindow;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.service.IDialogService;
 
 public class DialogService extends DialogWindow implements IDialogService {
     private static final long serialVersionUID = 1L;

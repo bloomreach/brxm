@@ -49,10 +49,9 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
 /**
- * @deprecated from the start, needed for handling legacy plugins
+ * Needed for handling legacy plugins
  * remove when all legacy plugins have been ported to new services architecture  
  */
-@Deprecated
 public class Adapter extends Panel implements IRenderService {
     private static final long serialVersionUID = 1L;
 

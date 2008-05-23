@@ -21,7 +21,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.sa.service.ServiceTracker;
@@ -42,7 +42,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     public BasicReviewedActionsWorkflowPlugin() {
         viewers = new ServiceTracker<IViewService>(IViewService.class);
 
-        addWorkflowAction("edit-dialog", "Edit document", new WorkflowDialogAction() {
+        addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -55,7 +55,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 }
             }
         });
-        addWorkflowAction("requestPublication-dialog", "Request publication", new WorkflowDialogAction() {
+        addWorkflowAction("requestPublication-dialog", "Request publication", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -63,7 +63,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.requestPublication();
             }
         });
-        addWorkflowAction("requestDePublication-dialog", "Request unpublication", new WorkflowDialogAction() {
+        addWorkflowAction("requestDePublication-dialog", "Request unpublication", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -71,7 +71,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.requestDepublication();
             }
         });
-        addWorkflowAction("requestDeletion-dialog", "Request delete", new WorkflowDialogAction() {
+        addWorkflowAction("requestDeletion-dialog", "Request delete", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {

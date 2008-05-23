@@ -19,6 +19,10 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.session.UserSession;
 
+/**
+ * @deprecated Use org.hippoecm.frontend.plugins.login.LoginPlugin instead
+ */
+@Deprecated
 public class LoginPlugin extends Plugin {
 
     private static final long serialVersionUID = 1L;

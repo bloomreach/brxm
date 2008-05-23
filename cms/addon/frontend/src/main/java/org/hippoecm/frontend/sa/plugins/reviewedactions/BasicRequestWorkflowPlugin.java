@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.sa.plugins.reviewedactions;
 
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
@@ -24,7 +24,7 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
     public BasicRequestWorkflowPlugin() {
-        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowDialogAction() {
+        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {

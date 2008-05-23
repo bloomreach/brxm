@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.login.sa;
+package org.hippoecm.frontend.plugins.login;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.form.Button;

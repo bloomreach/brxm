@@ -18,7 +18,7 @@ package org.hippoecm.frontend.sa.plugins.reviewedactions;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.plugin.workflow.WorkflowDialogAction;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IFactoryService;
 import org.hippoecm.frontend.sa.service.IViewService;
@@ -38,7 +38,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
     public EditingReviewedActionsWorkflowPlugin() {
         viewers = new ServiceTracker<IViewService>(IViewService.class);
 
-        addWorkflowAction("save", "Save", new WorkflowDialogAction() {
+        addWorkflowAction("save", "Save", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -47,7 +47,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                 close();
             }
         });
-        addWorkflowAction("revert", "Revert", new WorkflowDialogAction() {
+        addWorkflowAction("revert", "Revert", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {

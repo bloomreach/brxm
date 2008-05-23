@@ -130,7 +130,7 @@ public class Main extends WebApplication {
         if (servicesArchitecture != null) {
             return org.hippoecm.frontend.sa.Home.class;
         }
-        return Home.class;
+        return org.hippoecm.frontend.Home.class;
     }
 
     @Override

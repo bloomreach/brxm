@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.sa.dialog;
 
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
-import org.hippoecm.frontend.sa.service.IDialogService;
 
-public interface IDialogFactory extends java.io.Serializable {
+public interface IDialogFactory extends IClusterable {
     public AbstractDialog createDialog(IDialogService dialogService);
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin.root;
+package org.hippoecm.frontend.plugins.console;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.sa.dialog.DialogService;
@@ -27,7 +27,9 @@ public class RootPlugin extends RenderPlugin {
     private DialogService dialogService;
 
     public RootPlugin() {
-        for (String extension : new String[] { "content" }) {
+        for (String extension : new String[] {
+            "breadcrumbPlugin", "menuPlugin", "logoutPlugin", "navigationPlugin", "contentPlugin" 
+        }) {
             addExtensionPoint(extension);
         }
         dialogService = new DialogService();

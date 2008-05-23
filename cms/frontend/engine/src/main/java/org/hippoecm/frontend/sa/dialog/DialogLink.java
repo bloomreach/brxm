@@ -31,26 +31,26 @@ public class DialogLink extends Panel {
     public DialogLink(String id, IModel linktext, IPluginContext context, Class clazz) {
         super(id);
 
-        final DialogWindow dialogWindow = new DialogWindow("dialog");
+        DialogWindow dialogWindow = new DialogWindow("dialog");
         pageCreator = new DynamicDialogFactory(context, dialogWindow, clazz);
-        panelAdders(linktext, dialogWindow);
+        add(linktext, dialogWindow);
     }
 
     public DialogLink(String id, IModel linktext, IDialogFactory dialogFactory) {
         super(id);
 
-        final DialogWindow dialogWindow = new DialogWindow("dialog");
+        DialogWindow dialogWindow = new DialogWindow("dialog");
         pageCreator = new DynamicDialogFactory(dialogWindow, dialogFactory);
-        panelAdders(linktext, dialogWindow);
+        add(linktext, dialogWindow);
     }
 
     public DialogLink(String id, IModel linktext, DialogWindow window) {
         super(id);
 
-        panelAdders(linktext, window);
+        add(linktext, window);
     }
 
-    private void panelAdders(IModel linktext, final DialogWindow dialogWindow) {
+    private void add(IModel linktext, final DialogWindow dialogWindow) {
         add(dialogWindow);
 
         AjaxLink link = new AjaxLink("dialog-link") {

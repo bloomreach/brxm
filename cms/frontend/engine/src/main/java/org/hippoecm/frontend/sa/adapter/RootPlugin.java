@@ -21,8 +21,9 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 /**
- * @deprecated from the start, needed for handling legacy plugins
- * remove when all legacy plugins have been ported to new services architecture  
+ * Needed for handling legacy plugins.
+ * Use org.hippoecm.frontend.plugins.root.RootPlugin when all
+ * legacy plugins have been ported to new services architecture  
  */
 @Deprecated
 public class RootPlugin extends Plugin {

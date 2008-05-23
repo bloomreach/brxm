@@ -63,11 +63,15 @@ public class PluginConfigFactory {
 
                 } else {
                     //Fall back to builtin configuration
-                    pluginConfigService = new ConsoleConfigService();
+                    pluginConfigService = new ExperimentalConfigService();
+                    //pluginConfigService = new ConsoleConfigService();
+                    //pluginConfigService = new CmsConfigService();
                 }
             } catch (RepositoryException e) {
                 //Fall back to builtin configuration
-                pluginConfigService = new ConsoleConfigService();
+                pluginConfigService = new ExperimentalConfigService();
+                //pluginConfigService = new ConsoleConfigService();
+                //pluginConfigService = new CmsConfigService();
             }
         }
     }

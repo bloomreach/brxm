@@ -21,6 +21,7 @@ import java.util.List;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 
+//The builtin console application
 class ConsoleConfigService implements IPluginConfigService {
     private static final long serialVersionUID = 1L;
 
@@ -28,72 +29,14 @@ class ConsoleConfigService implements IPluginConfigService {
 
     ConsoleConfigService() {
         plugins = new LinkedList<IPluginConfig>();
-
+        
+        // wrap legacy console plugins
         IPluginConfig config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.root.RootPlugin");
-        config.put("wicket.id", "service.root");
-        config.put("wicket.dialog", "service.dialog");
-        config.put("content", "service.content");
-        plugins.add(config);
-
-        config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.standards.tabs.TabsPlugin");
-        config.put("wicket.id", "service.content");
-        config.put("tabs", "service.tab");
-        plugins.add(config);
-
-        config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.cms.browse.BrowserPerspective");
-        config.put("service.pid", "service.browse");
-        config.put("wicket.id", "service.tab");
-        config.put("wicket.model", "service.browse.node");
-        config.put("perspective.title", "browse");
-        config.put("browserBreadcrumbPlugin", "service.browse.breadcrumb");
-        config.put("browserPlugin", "service.browse.tree");
-        config.put("listPlugin", "service.browse.list");
-        config.put("workflowsPlugin", "service.browse.workflows");
-        plugins.add(config);
-
-        config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.browser.BrowserPlugin");
-        config.put("wicket.id", "service.browse.tree");
-        config.put("wicket.model", "model.browse.node");
-        plugins.add(config);
-
-        config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.cms.browse.list.DocumentListingPlugin");
-        config.put("wicket.id", "service.browse.list");
-        config.put("wicket.model", "model.browse.node");
-        plugins.add(config);
-
-        config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.render.ListViewPlugin");
-        config.put("wicket.id", "service.browse.workflows");
-        config.put("item", "service.browse.workflows.workflow");
-        plugins.add(config);
-
-        config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin");
-        config.put("workflow.viewer", "service.edit");
-        config.put("workflow.display", "workflows.id");
-        config.put("wicket.model", "model.browse.node");
-        config.put("workflow.categories", new String[] {"internal", "reviewed-action"});
-
-        // instance properties
-        config.put("wicket.id", "service.browse.workflows.workflow");
-        config.put("wicket.dialog", "service.dialog");
-        plugins.add(config);
-
-        config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.editor.MultiEditorPlugin");
-        config.put("editor.class", "org.hippoecm.frontend.sa.plugin.editor.EditorPlugin");
-        config.put("editor.class", "org.hippoecm.frontend.sa.plugins.template.EditorPlugin");
-        config.put("service.pid", "service.edit");
-        config.put("wicket.dialog", "service.dialog");
-
-        // instance properties
-        config.put("wicket.id", "service.tab");
-        config.put("editor", "editor.id");
+        config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
+        config.put("wicket.id", "service.root");                                  
+        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:console");
+        config.put("legacy.plugin", "rootPlugin");
+        
         plugins.add(config);
     }
 
