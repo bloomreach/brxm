@@ -20,142 +20,81 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import junit.framework.TestCase;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HierarchyResolver;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.HippoSession;
 
-public class ReviewedActionsWorkflowTest extends TestCase {
+import org.hippoecm.repository.Utilities;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
+public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstractTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    private static final String LOREM = "Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
-
-    private HippoRepository server;
-    private Session session;
-    private WorkflowManager workflowMgr = null;
-
+    @Override
+    @Before
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
+        super.setUp();
 
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node, root = session.getRootNode();
-
-        // set up the workflow specification as a node "/hippo:configuration/hippo:workflows/default/reviewedactions"
-        node = root.getNode("hippo:configuration");
-        if (node.hasNode("hippo:workflows"))
-            node.getNode("hippo:workflows").remove();
-        node = node.addNode("hippo:workflows", "hippo:workflowfolder");
-        node.addMixin("mix:referenceable");
-        Node wfs = node.addNode("default", "hippo:workflowcategory");
-
-        node = wfs.addNode("reviewedactions", "hippo:workflow");
-        node.setProperty("hippo:nodetype", "hippo:testdocument");
-        node.setProperty("hippo:display", "Reviewed actions workflow");
-        node.setProperty("hippo:renderer", "org.hippoecm.frontend.reviewedactions.ReviewedActionsRenderer");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl");
-        Node types = node.getNode("hippo:types");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:testdocument");
-        node.setProperty("hippo:display", "PublishableDocument");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:request");
-        node.setProperty("hippo:display", "PublicationRequest");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublicationRequest");
-
-        node = wfs.addNode("reviewedrequests", "hippo:workflow");
-        node.setProperty("hippo:nodetype", "hippo:request");
-        node.setProperty("hippo:display", "Reviewed requests workflow");
-        node.setProperty("hippo:renderer", "org.hippoecm.frontend.reviewedactions.RequestWorkflowRenderer");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl");
-        types = node.getNode("hippo:types");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:testdocument");
-        node.setProperty("hippo:display", "PublishableDocument");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:request");
-        node.setProperty("hippo:display", "PublicationRequest");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublicationRequest");
-
-        session.save();
-
-        if (root.hasNode("documents"))
-            root.getNode("documents").remove();
-        node = root.addNode("documents");
+	if(!root.hasNode("test"))
+            node = root.addNode("test");
+	else
+	    node = root.getNode("test");
         node = node.addNode("myarticle", "hippo:handle");
         node.addMixin("mix:referenceable");
         node = node.addNode("myarticle", "hippo:testdocument");
         node.addMixin("hippo:harddocument");
         node.setProperty("content", LOREM);
-        node.setProperty("hippostd:username", "unknown-user");
-        node.setProperty("hippostd:state", "unpublished");
+        node.setProperty("hippostd:username", "admin");
+        node.setProperty("hippostd:state", "draft");
 
         session.save();
     }
 
+    @Override
+    @After
     public void tearDown() throws Exception {
-        session.getRootNode().getNode("documents").remove();
-        session.save();
-        server.close();
+        super.tearDown();
     }
 
-    private Workflow getWorkflow(Node node, String category) throws RepositoryException {
-        if (workflowMgr == null) {
-            HippoWorkspace wsp = (HippoWorkspace) node.getSession().getWorkspace();
-            workflowMgr = wsp.getWorkflowManager();
-        }
-        Node canonicalNode = ((HippoNode) node).getCanonicalNode();
-        return workflowMgr.getWorkflow(category, canonicalNode);
-    }
-
+    @Test
     public void testReviewedAction() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node node, root = session.getRootNode();
-
-         {
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle");
-            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            assertNotNull("No applicable workflow where there should be one", workflow);
+        {
+	    Utilities.dump(getNode("test"));
+	    assertTrue(session.getRootNode().hasNode("test"));
+	    assertTrue(session.getRootNode().getNode("test").hasNode("myarticle"));
+	    assertTrue(session.getRootNode().getNode("test").getNode("myarticle").hasNode("myarticle"));
+	    assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
+	    assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
+            node = getNode("test/myarticle/myarticle");
+            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             Document document = workflow.obtainEditableInstance();
             session.save();
             session.refresh(true);
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
-            assertEquals("admin", node.getProperty("hippostd:username").getString());
-            //Utilities.dump ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']"));
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
          }
         
-            // steps taken by an author
+        // steps taken by an author
         {
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle");
+            node = getNode("test/myarticle/myarticle");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             Document document = workflow.obtainEditableInstance();
             session.save();
             session.refresh(true);
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             assertTrue(node.getUUID().equals(document.getIdentity()));
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString() + ",");
             session.save();
             session.refresh(true);
 
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             reviewedWorkflow.commitEditableInstance();
             session.save();
@@ -166,45 +105,41 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             reviewedWorkflow.requestPublication();
             session.save();
             session.refresh(true);
-            //Utilities.dump(root.getNode("documents"));
         }
 
         // These steps would be taken by editor:
         {
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/request");
+            node = getNode("test/myarticle/request");
             FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.rejectRequest("comma should be a point");
             session.save();
             session.refresh(true);
-            assertTrue(((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/request").getProperty("reason").getString().equals("comma should be a point"));
-            //Utilities.dump(root.getNode("documents"));
+            assertTrue(getNode("test/myarticle/request").getProperty("reason").getString().equals("comma should be a point"));
         }
 
         // steps taken by an author
         {
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/request[@type='rejected']");
+            node = getNode("test/myarticle/request[@type='rejected']");
             BasicRequestWorkflow workflow = (BasicRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.cancelRequest();
             session.save();
             session.refresh(true);
-            //Utilities.dump(root.getNode("documents"));
         }
 
         // steps taken by an author
         {
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='unpublished']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.obtainEditableInstance();
             session.save();
             session.refresh(true);
-            //Utilities.dump(root.getNode("documents"));
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + "!");
 
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             reviewedWorkflow.commitEditableInstance();
             session.save();
@@ -215,35 +150,33 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             reviewedWorkflow.requestPublication();
             session.save();
             session.refresh(true);
-            //Utilities.dump(root.getNode("documents"));
         }
 
         // These steps would be taken by editor:
         {
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/request[@type='publish']");
+            node = getNode("test/myarticle/request[@type='publish']");
             FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             workflow.acceptRequest();
             session.save();
             session.refresh(true);
-            //Utilities.dump(root.getNode("documents"));
         }
 
         // These steps would be taken by editor:
         {
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle");
+            node = getNode("test/myarticle/myarticle");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             Document document = workflow.obtainEditableInstance();
             session.save();
             session.refresh(true);
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             assertTrue(node.getUUID().equals(document.getIdentity()));
             Property prop = node.getProperty("content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
             session.save();
             session.refresh(true);
 
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='draft']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             reviewedWorkflow.commitEditableInstance();            
             session.save();
@@ -254,12 +187,11 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             reviewedWorkflow.publish();
             session.save();
             session.refresh(true);
-            //Utilities.dump(root.getNode("documents"));
         }
 
         // These steps would be taken by author
         {
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='published']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             // cannot delete published document when request is present
             try {
@@ -272,14 +204,14 @@ public class ReviewedActionsWorkflowTest extends TestCase {
 
         // Test regarding Issue HREPTWO-688
         {  
-            Node node2 = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/request[@type='delete']");
+            Node node2 = getNode("test/myarticle/request[@type='delete']");
             FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node2, "default");
             requestWorkflow.cancelRequest();
             session.save();
             session.refresh(false);
              
             // now it should be possible
-            node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, "documents/myarticle/myarticle[@hippostd:state='published']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
 
             try {
@@ -289,7 +221,6 @@ public class ReviewedActionsWorkflowTest extends TestCase {
             }
             session.save();
             session.refresh(true);
-            //Utilities.dump(root.getNode("documents"));
         }
     }
 }

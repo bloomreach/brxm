@@ -18,19 +18,8 @@ package org.hippoecm.repository.api;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-public final class WorkflowContext {
-    Session session;
-    /**
-     * This constructor is not ment for public usage.
-     */
-    public WorkflowContext(Session session) {
-        this.session = session;
-    }
-    public Document getDocument(String category, String identifier) throws RepositoryException {
-        DocumentManager documentManager = ((HippoWorkspace)session.getWorkspace()).getDocumentManager();
-        return documentManager.getDocument(category, identifier);
-    }
-    public String getUsername() {
-        return session.getUserID();
-    }
+public interface WorkflowContext {
+    public Document getDocument(String category, String identifier) throws RepositoryException;
+    public Workflow getWorkflow(String category, Document document) throws RepositoryException;
+    public String getUsername();
 }

@@ -36,6 +36,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
     final public void setWorkflowContext(WorkflowContext context) {
         this.context = context;
     }
+
     final protected WorkflowContext getWorkflowContext() {
         return context;
     }
