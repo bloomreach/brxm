@@ -61,6 +61,7 @@ public class Webdav2JCRMigrator implements Plugin {
     private static final String DEFAULT_DOCUMENT_CONVERTER = "org.hippoecm.tools.migration.SimpleDocumentConverter";
 
     private static final String BATCH_SIZE_CONFIG = "batchsize";
+    private static final String VERBOSE_CONFIG = "verbose";
     private static final int DEFAULT_BATCH_SIZE = 1;
 
 
@@ -85,13 +86,17 @@ public class Webdav2JCRMigrator implements Plugin {
 
     private DocumentConverter documentConverter;
 
+    private long startTime;
+    private long timeSpendConverting = 0;
+    private long timeSpendSaving = 0;
+    private boolean verbose;
 
     //----------------------- webdav
     private HttpState httpState;
     private HttpClient httpClient;
 
     public void configure(WebdavBatchProcessor processor, Configuration config, PluginConfiguration pluginConfig) {
-
+        startTime = System.currentTimeMillis();
         // Fetch properties
         webdavRootUri = config.getRootUri();
 
@@ -101,6 +106,10 @@ public class Webdav2JCRMigrator implements Plugin {
             batchSize = Integer.parseInt(size);
         } catch (NumberFormatException e) {}
 
+        if(pluginConfig.getValue(VERBOSE_CONFIG).equals("true")) {
+            verbose = true;
+        }
+         
         // rmi connection
         rmiHost = pluginConfig.getValue(JCR_RMI_HOST);
         rmiPort = pluginConfig.getValue(JCR_RMI_PORT);
@@ -170,7 +179,6 @@ public class Webdav2JCRMigrator implements Plugin {
     }
 
     public void process(nl.hippo.webdav.batchprocessor.Node webdavNode) throws WebdavBatchProcessorException {
-
         if (webdavNode.getUri().equals(webdavRootUri)) {
             return;
         }
@@ -192,29 +200,43 @@ public class Webdav2JCRMigrator implements Plugin {
         }
         
         try {
-            System.out.println(batchCount + ". Converting WebDAV node: " + webdavNode.getUri() + " => " + jcrParentPath + "/" + nodeName);
             
             javax.jcr.Node parent = (javax.jcr.Node) session.getItem(jcrParentPath);
 
             if (!webdavNode.isCollection()) {
                 // Add content property
                 try {
-                    documentConverter.convertNodeToJCR(webdavNode, nodeName, parent);
+                    long start = System.currentTimeMillis();
+                    if(!parent.hasNode(nodeName)) {
+                        documentConverter.convertNodeToJCR(webdavNode, nodeName, parent);
+                    }
+                    timeSpendConverting += (System.currentTimeMillis() - start);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
                 // create nt:unstructured nodes if they don't exist
                 if (!parent.hasNode(nodeName)) {
-                    parent.addNode(nodeName);
-                }
+                    javax.jcr.Node n = parent.addNode(nodeName);
+                    n.addMixin("mix:referenceable");                
+                    }
             }
 
             batchCount++;
             if ((batchCount % batchSize) == 0 ) {
+                long start = System.currentTimeMillis();
                 session.save();
+                timeSpendSaving += (System.currentTimeMillis() - start);
+                System.out.println(batchCount + ". Converting WebDAV node: " + webdavNode.getUri() + " => " + jcrParentPath + "/" + nodeName);
+                if(verbose) {
+                    long totalTime = (System.currentTimeMillis() - startTime);
+                    System.out.println("total time running : \t" + totalTime/1000 + " sec \t" + "100%");
+                    System.out.println("average time per/doc : \t" + totalTime/batchCount + " ms ");
+                    System.out.println("total time saving : \t" + (timeSpendSaving)/1000 + " sec \t" + (int)(100*(timeSpendSaving+0.1)/totalTime) + "%");
+                    System.out.println("total time convert : \t" + (timeSpendConverting)/1000 + " sec \t" + (int)(100*(timeSpendConverting+0.1)/totalTime) + "%");
+                }
             }
-
+            
         } catch (PathNotFoundException e) {
             System.err.println("");
             System.err.println("JCR Path does not exist: " + e.getMessage());
@@ -225,6 +247,8 @@ public class Webdav2JCRMigrator implements Plugin {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
+
+
     }
 
 
