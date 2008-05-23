@@ -29,8 +29,8 @@
       security configuration
   -->
   <Security appName="Jackrabbit">
-    <AccessManager class="org.apache.jackrabbit.core.security.SimpleAccessManager"/>
-    <LoginModule class="org.apache.jackrabbit.core.security.SimpleLoginModule"/>
+    <AccessManager class="org.hippoecm.repository.security.HippoAccessManager"/>
+    <LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"/>
   </Security>
 
 
