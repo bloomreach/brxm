@@ -130,6 +130,6 @@ public class ContextFilter implements Filter {
      * Create a (initial) context object. 
      */
     Context createContext(Session jcrSession, HttpServletRequest request) {
-        return new Context(jcrSession, request.getContextPath(), this.repositoryBaseLocation);
+        return new Context(jcrSession, request.getContextPath(), request.getRequestURI(), this.repositoryBaseLocation);
     }
 }
