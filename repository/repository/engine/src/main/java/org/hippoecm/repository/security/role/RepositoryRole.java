@@ -15,11 +15,6 @@
  */
 package org.hippoecm.repository.security.role;
 
-import java.security.Principal;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -27,24 +22,28 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.FacetAuthHelper;
 import org.hippoecm.repository.security.RepositoryAAContext;
-import org.hippoecm.repository.security.principals.AdminPrincipal;
-import org.hippoecm.repository.security.principals.RolePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The role implementation storing the roles in the JCR Repository
+ */
 public class RepositoryRole implements Role {
 
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
     /**
      * The system/root session
      */
-    private Session rootSession;
+    private Session session;
 
     /**
      * The role node
      */
-    Node role;
+    Node roleNode;
 
     /**
      * The path from the root containing the users
@@ -62,14 +61,9 @@ public class RepositoryRole implements Role {
     private String roleId;
 
     /**
-     * The role's principals
+     * The jcr permissions of the current role
      */
-    private Set<Principal> principals = new HashSet<Principal>();
-
-    /**
-     * The admin role
-     */
-    private static final String ADMIN_ROLE_NAME = "admin";
+    private int permissions;
 
     /**
      * Logger
@@ -77,82 +71,79 @@ public class RepositoryRole implements Role {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     //------------------------< Interface Impl >--------------------------//
-
+    /**
+     * {@inheritDoc}
+     */
     public void init(AAContext context, String roleId) throws RoleNotFoundException {
-        this.rootSession = ((RepositoryAAContext) context).getRootSession();
-        this.rolePath = ((RepositoryAAContext) context).getRolesPath();
+        this.session = ((RepositoryAAContext) context).getRootSession();
+        this.rolePath = ((RepositoryAAContext) context).getPath();
         this.roleId = roleId;
+        loadRole();
         initialized = true;
-        setRole();
-        setPrincipals();
     }
 
-    public Set<Principal> getPrincipals() throws RoleNotFoundException {
-        if (!initialized) {
-            throw new RoleNotFoundException("Not initialized.");
-        }
-        if (role == null) {
-            throw new RoleNotFoundException("Role not set.");
-        }
-        return Collections.unmodifiableSet(principals);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public String getRoleId() throws RoleNotFoundException {
         if (!initialized) {
-            throw new RoleNotFoundException("Not initialized.");
+            throw new IllegalStateException("Not initialized.");
         }
         return roleId;
     }
 
-    //  ------------------------< Private Helper methods >--------------------------//
-
-    private void setRole() throws RoleNotFoundException {
+    /**
+     * {@inheritDoc}
+     */
+    public int getJCRPermissions() throws RoleNotFoundException {
         if (!initialized) {
-            throw new RoleNotFoundException("Not initialized.");
+            throw new IllegalStateException("Not initialized.");
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Searching for role: " + roleId);
-        }
+        return permissions;
+    }
+    
+    //  ------------------------< Private Helper methods >--------------------------//
+    /**
+     * Load the role from the repository and fetch the permissions for the role
+     * @throws RoleNotFoundException
+     */
+    private void loadRole() throws RoleNotFoundException {
+        permissions = 0;
+        log.debug("Searching for role: {}", roleId);
         String path = rolePath + "/" + roleId;
-
         try {
-            this.role = rootSession.getRootNode().getNode(path);
-            if (log.isDebugEnabled()) {
-                log.debug("Found role node: " + path);
+            roleNode = session.getRootNode().getNode(path);
+            log.debug("Found role node: {}", path);
+
+            try {
+                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRREAD).getBoolean()) {
+                    log.trace("Adding jcr read permissions for role: {}", roleId);
+                    permissions += READ;
+                }
+            } catch (PathNotFoundException e) {
+                // ignore, role doesn't has the permission 
+            }
+
+            try {
+                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRWRITE).getBoolean()) {
+                    log.trace("Adding jcr write permissions for role: {}", roleId);
+                    permissions += WRITE;
+                }
+            } catch (PathNotFoundException e) {
+                // ignore, role doesn't has the permission 
+            }
+
+            try {
+                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRREMOVE).getBoolean()) {
+                    log.trace("Adding jcr remove permissions for role: {}", roleId);
+                    permissions += REMOVE;
+                }
+            } catch (PathNotFoundException e) {
+                // ignore, role doesn't has the permission 
             }
         } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Role not found: " + path);
-            }
-            throw new RoleNotFoundException("Role not found: " + path);
+            log.debug("Role not found: {}", path);
+            throw new RoleNotFoundException("Role not found: {}" + path);
         }
     }
-
-    private void setPrincipals() throws RoleNotFoundException {
-        // add role principal
-        if (log.isDebugEnabled()) {
-            log.debug("Adding role principal: " + roleId);
-        }
-        principals.add(new RolePrincipal(roleId));
-        
-        // Special roles
-        if (ADMIN_ROLE_NAME.equals(roleId)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Adding admin principal.");
-            }
-            principals.add(new AdminPrincipal());
-        }
-
-        try {
-            Node facetAuthPath = role.getNode(HippoNodeType.FACETAUTH_PATH);
-            principals.addAll(FacetAuthHelper.getFacetAuths(facetAuthPath));
-        } catch (PathNotFoundException e) {
-            // no facet auths for role
-        } catch (RepositoryException e) {
-            // wrap error
-            throw new RoleNotFoundException("Error while getting role facets.", e);
-        }
-
-    }
-
 }

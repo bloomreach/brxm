@@ -17,8 +17,14 @@ package org.hippoecm.repository.security.role;
 
 import javax.jcr.RepositoryException;
 
-
+/**
+ * This exception is thrown when a role is reference that cannot be found in the repository
+ */
 public class RoleNotFoundException extends RepositoryException {
+
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
@@ -27,7 +33,7 @@ public class RoleNotFoundException extends RepositoryException {
      * detail message.
      */
     public RoleNotFoundException() {
-    super();
+        super();
     }
 
     /**
@@ -38,7 +44,7 @@ public class RoleNotFoundException extends RepositoryException {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public RoleNotFoundException(String message) {
-    super(message);
+        super(message);
     }
 
     /**
@@ -50,7 +56,7 @@ public class RoleNotFoundException extends RepositoryException {
      * @param rootCause root failure cause
      */
     public RoleNotFoundException(String message, Throwable rootCause) {
-    super(message, rootCause);
+        super(message, rootCause);
     }
 
     /**
@@ -59,7 +65,7 @@ public class RoleNotFoundException extends RepositoryException {
      * @param rootCause root failure cause
      */
     public RoleNotFoundException(Throwable rootCause) {
-    super(rootCause);
+        super(rootCause);
     }
 
 }

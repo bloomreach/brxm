@@ -43,7 +43,12 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-
+  
+  
+  <category additivity="false" name="org.hippoecm.security">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
 
   <category additivity="false" name="org.jpox.util">
     <level value="warn"/>

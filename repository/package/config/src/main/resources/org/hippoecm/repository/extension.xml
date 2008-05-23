@@ -15,93 +15,252 @@
   limitations under the License.
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-    xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
-    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-    xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-    sv:name="hippo:initialize">
+  xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
+  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  sv:name="hippo:initialize">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:initializefolder</sv:value>
+  </sv:property>
+
+
+  <!-- CMS frontend configuration-->
+  <sv:node sv:name="cms-frontend">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:initializefolder</sv:value>
+      <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>901</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>frontend-cms.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <!--CMS frontend configuration-->
-    <sv:node sv:name="cms-frontend">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>901</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>frontend-cms.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
-        </sv:property>
-    </sv:node>
 
-    <!--(DEPRECATED) CMS frontend configuration (DEPRECATED)-->
-    <sv:node sv:name="cms-frontend-deprecated">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>903</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>frontend-cms-deprecated.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend_deprecated</sv:value>
-        </sv:property>
-    </sv:node>
+  <!--(DEPRECATED) CMS frontend configuration (DEPRECATED)-->
+  <sv:node sv:name="cms-frontend-deprecated">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>903</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>frontend-cms-deprecated.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend_deprecated</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <!--Roles configuration-->
-    <sv:node sv:name="cms-roles">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>903</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>roles-config.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration</sv:value>
-        </sv:property>
-    </sv:node>
+  <!-- Users configuration -->
+  
+  <sv:node sv:name="user-admin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>905</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>user-admin.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+  </sv:node>
 
-    <!--User configuration-->
-    <sv:node sv:name="cms-users">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>904</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>users-config.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="user-editor">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>905</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>user-editor.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="user-author">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>905</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>user-author.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  
+  <!-- Groups configuration -->
 
-    <!--Group configuration-->
-    <sv:node sv:name="cms-groups">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:initializeitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>905</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>groups-config.xml</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="group-admin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>906</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>group-admin.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="group-editor">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>906</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>group-editor.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="group-author">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>906</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>group-author.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="group-everybody">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>907</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>group-everybody.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- Roles configuration -->
+  
+  <sv:node sv:name="role-jcrall">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>903</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>role-jcrall.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:roles</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="role-jcrread">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>904</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>role-jcrread.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:roles</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <!--Domains configuration -->
+  
+  <sv:node sv:name="domain-everywhere">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>908</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>domain-everywhere.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains</sv:value>
+    </sv:property>
+  </sv:node>
+
+
+  <sv:node sv:name="domain-defaultwrite">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>908</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>domain-defaultwrite.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="domain-defaultread">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>908</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>domain-defaultread.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="domain-hippodocuments">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>908</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>domain-hippodocuments.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains</sv:value>
+    </sv:property>
+  </sv:node>
 
 </sv:node>

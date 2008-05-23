@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,40 +15,41 @@
  */
 package org.hippoecm.repository.security.group;
 
-import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
+import javax.transaction.NotSupportedException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.FacetAuthHelper;
 import org.hippoecm.repository.security.RepositoryAAContext;
-import org.hippoecm.repository.security.role.RepositoryRole;
-import org.hippoecm.repository.security.role.Role;
-import org.hippoecm.repository.security.role.RoleNotFoundException;
-import org.hippoecm.repository.security.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A group stored in the JCR Repository
+ */
 public class RepositoryGroup implements Group {
+
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The system/root session
      */
-    private Session rootSession;
+    private Session session;
 
     /**
      * The path from the root containing the groups
      */
-    private String groupPath;
+    private String groupsPath;
 
     /**
      * The current group id
@@ -56,34 +57,24 @@ public class RepositoryGroup implements Group {
     private String groupId;
 
     /**
-     * The node containing the group
-     */
-    private Node group;
-
-    /**
      * Is the class initialized
      */
     private boolean initialized = false;
 
     /**
-     * The current group roles
-     */
-    private Set<Role> roles = new HashSet<Role>();
-
-    /**
-     * The group's principals
-     */
-    private Set<Principal> principals = new HashSet<Principal>();
-
-    /**
      * The group's members
      */
-    private Set<User> members = new HashSet<User>();
+    private Set<String> members = new HashSet<String>();
 
     /**
      * The current context
      */
     private RepositoryAAContext context;
+
+    /**
+     * The wildcard string that matches everything or every user
+     */
+    private static final String WILDCARD = "*";
 
     /**
      * Logger
@@ -92,133 +83,92 @@ public class RepositoryGroup implements Group {
 
 
     //------------------------< Interface Impl >--------------------------//
-
-    public void init(AAContext context, String groupId) throws GroupNotFoundException {
+    /**
+     * {@inheritDoc}
+     */
+    public void init(AAContext context, String groupId) throws GroupException {
         this.context = (RepositoryAAContext) context;
-        this.rootSession = this.context.getRootSession();
-        this.groupPath = this.context.getGroupsPath();
+        this.session = this.context.getRootSession();
+        this.groupsPath = this.context.getPath();
         this.groupId = groupId;
+        setMembers();
         initialized = true;
-        setGroup();
-        setRoles();
-        setPrincipals();
-
     }
-    public String getGroupId() throws GroupNotFoundException {
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getGroupId() throws GroupException {
         if (!initialized) {
-            throw new GroupNotFoundException("Not initialized.");
+            throw new IllegalStateException("Not initialized.");
         }
         return groupId;
     }
 
-    public Set<User> getMembers() throws GroupNotFoundException {
+    /**
+     * {@inheritDoc}
+     */
+    public Set<String> listMemebers() throws GroupException {
         if (!initialized) {
-            throw new GroupNotFoundException("Not initialized.");
-        }
-        if (group == null) {
-            throw new GroupNotFoundException("Group not set.");
+            throw new IllegalStateException("Not initialized.");
         }
         return Collections.unmodifiableSet(members);
     }
 
-    public Set<Principal> getPrincipals() throws GroupNotFoundException {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isMemeber(String userId) throws GroupException {
         if (!initialized) {
-            throw new GroupNotFoundException("Not initialized.");
+            throw new IllegalStateException("Not initialized.");
         }
-        if (group == null) {
-            throw new GroupNotFoundException("Group not set.");
+        Set<String> memebers = listMemebers();
+        for (String member : memebers) {
+            if (WILDCARD.equals(member)) {
+                return true;
+            }
+            if (member.equals(userId)) {
+                return true;
+            }
         }
-        return Collections.unmodifiableSet(principals);
+        return false;
     }
 
-    public Set<Role> getRoles() throws GroupNotFoundException {
-        if (!initialized) {
-            throw new GroupNotFoundException("Not initialized.");
-        }
-        if (group == null) {
-            throw new GroupNotFoundException("Group not set.");
-        }
-        return Collections.unmodifiableSet(roles);
+    /**
+     * {@inheritDoc}
+     */
+    public boolean addMember(String userId) throws NotSupportedException, GroupException {
+        throw new NotSupportedException("Not implemented yet.");
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
+    public boolean deleteMember(String userid) throws NotSupportedException, GroupException {
+        throw new NotSupportedException("Not implemented yet.");
+    }
+    
     //------------------------< Private Helper methods >--------------------------//
-
-    private void setGroup() throws GroupNotFoundException {
-        if (!initialized) {
-            throw new GroupNotFoundException("Not initialized.");
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Searching for group: " + groupId);
-        }
-        String path = groupPath + "/" + groupId;
-
+    /**
+     * Get the members of the group from the repository and add them to the group
+     */
+    private void setMembers() throws GroupException {
+        log.debug("Searching for group: {}", groupId);
+        String path = groupsPath + "/" + groupId;
         try {
-            this.group = rootSession.getRootNode().getNode(path);
-            if (log.isDebugEnabled()) {
-                log.debug("Found group node: " + path);
-            }
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Group not found: " + path);
-            }
-            throw new GroupNotFoundException("Role not found: " + path);
-        }
-
-    }
-
-    private void setRoles() {
-        try {
-            Value[] roles = group.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
-
-            for (Value roleVal : roles) {
-                String roleId;
+            Node groupNode = session.getRootNode().getNode(path);
+            log.debug("Found group node: {}", path);
+            Value[] memberValues = groupNode.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
+            for (Value member : memberValues) {
                 try {
-                    roleId = roleVal.getString();
+                    members.add(member.getString());
+                    log.debug("Added memeber: {} for group: {}", member.getString(), groupId);
                 } catch (ValueFormatException e) {
-                    log.warn("Invalid role for group: " + groupId, e);
-                    continue;
-                }
-
-                try {
-                    Role role = new RepositoryRole();
-                    role.init(context, roleId);
-                    this.roles.add(role);
-                } catch (RoleNotFoundException e) {
-                    // too bad...
-                    log.warn("Role: " + roleId + "not found for group: " + groupId);
+                    log.warn("Invalid member userId for group node: " + path, e);
                 }
             }
-        } catch (PathNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("No roles found for group: " + groupId);
-            }
         } catch (RepositoryException e) {
-            log.error("Error while trying to get roles for group: " + groupId, e);
+            log.warn("Group node not found: {}", path);
         }
-
-        for (Role role : this.roles) {
-            try {
-                this.principals.addAll(role.getPrincipals());
-            } catch (RoleNotFoundException e) {
-                // this shouldn't happen, we just initialized the roles
-                log.error("Role not found for user after init: " + groupId);
-            }
-        }
-
     }
-
-    private void setPrincipals() throws GroupNotFoundException {
-        try {
-            Node facetAuthPath = group.getNode(HippoNodeType.FACETAUTH_PATH);
-            principals.addAll(FacetAuthHelper.getFacetAuths(facetAuthPath));
-        } catch (PathNotFoundException e) {
-            // no facet auths for user
-        } catch (RepositoryException e) {
-            // wrap error
-            throw new GroupNotFoundException("Error while getting group facetauth rules.", e);
-        }
-
-    }
-
 }

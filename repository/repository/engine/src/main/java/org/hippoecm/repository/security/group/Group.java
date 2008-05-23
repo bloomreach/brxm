@@ -15,25 +15,58 @@
  */
 package org.hippoecm.repository.security.group;
 
-import java.security.Principal;
 import java.util.Set;
 
+import javax.transaction.NotSupportedException;
+
 import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.role.Role;
-import org.hippoecm.repository.security.user.User;
 
 public interface Group {
+    /**
+     * Initialize the group and (optionally) set the members
+     * @param context the current AAContext
+     * @param groupId initialize the group with the given groupId
+     * @throws GroupException
+     */
+    public void init(AAContext context, String groupId) throws GroupException;
 
+    /**
+     * Get the unique group id
+     * @return String
+     * @throws GroupException
+     */
+    public String getGroupId() throws GroupException;
 
-    //------------------------< Interface Impl >--------------------------//
-    public void init(AAContext context, String GroupId) throws GroupNotFoundException;
-
-    public String getGroupId() throws GroupNotFoundException;
-
-    public Set<User> getMembers() throws GroupNotFoundException;
-
-    public Set<Role> getRoles() throws GroupNotFoundException;
-
-    public Set<Principal> getPrincipals() throws GroupNotFoundException;
-
+    /**
+     * Get the members for this group as a list of UserId's
+     * @return
+     * @throws GroupException
+     */
+    public Set<String> listMemebers() throws GroupException;
+    
+    /**
+     * Check if a user is a member of the group
+     * @param userId the userId
+     * @return true if the user is a memeber
+     * @throws GroupException
+     */
+    public boolean isMemeber(String userId) throws GroupException;
+    
+    /**
+     * 
+     * @param userId
+     * @return
+     * @throws NotSupportedException
+     * @throws GroupException
+     */
+    public boolean addMember(String userId) throws NotSupportedException, GroupException;
+    
+    /**
+     * 
+     * @param userId
+     * @return
+     * @throws NotSupportedException
+     * @throws GroupException
+     */
+    public boolean deleteMember(String userId) throws NotSupportedException, GroupException;
 }

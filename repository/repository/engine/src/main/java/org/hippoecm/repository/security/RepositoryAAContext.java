@@ -23,25 +23,19 @@ import javax.jcr.Session;
  */
 public class RepositoryAAContext implements AAContext {
 
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
     /**
      * The system/root session
      */
     private final Session rootSession;
 
     /**
-     * The path from the root containing the users
+     * The path from the root containing the information for this context
      */
-    private final String usersPath;
-
-    /**
-     * The path from the root containing the groups
-     */
-    private final String groupsPath;
-
-    /**
-     * The path from the root containing the roles
-     */
-    private final String rolesPath;
+    private final String path;
 
     /**
      * Initialize the context for the repository based authentication and authorization
@@ -50,11 +44,9 @@ public class RepositoryAAContext implements AAContext {
      * @param groupsPath String The path containing the groups
      * @param rolesPath String The path containing the roles
      */
-    public RepositoryAAContext(Session rootSession, String usersPath, String groupsPath, String rolesPath) {
+    public RepositoryAAContext(Session rootSession, String path) {
         this.rootSession = rootSession;
-        this.usersPath = usersPath;
-        this.groupsPath = groupsPath;
-        this.rolesPath = rolesPath;
+        this.path = path;
     }
 
     /**
@@ -66,27 +58,10 @@ public class RepositoryAAContext implements AAContext {
     }
 
     /**
-     * Get the usersPath
+     * Get the path in of the node that holds the configuration
      * @return
      */
-    public String getUsersPath() {
-        return usersPath;
+    public String getPath() {
+        return path;
     }
-
-    /**
-     * Get the group path
-     * @return String the group path
-     */
-    public String getGroupsPath() {
-        return groupsPath;
-    }
-
-    /**
-     * Get the role path
-     * @return String the role path
-     */
-    public String getRolesPath() {
-        return rolesPath;
-    }
-
 }

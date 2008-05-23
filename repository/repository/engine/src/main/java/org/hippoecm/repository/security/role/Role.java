@@ -15,16 +15,47 @@
  */
 package org.hippoecm.repository.security.role;
 
-import java.security.Principal;
-import java.util.Set;
-
 import org.hippoecm.repository.security.AAContext;
 
+/**
+ * A role a user has on a domain.
+ */
 public interface Role {
 
+    /**
+     * READ JCR permission constant
+     */
+    static final int READ = 1;
+
+    /**
+     * WRITE JCR permission constant
+     */
+    static final int WRITE = 2;
+
+    /**
+     * REMOVE JCR permission constant
+     */
+    static final int REMOVE = 4;
+
+    /**
+     * Initialize the role from the backend
+     * @param context the context containing params needed by the backend
+     * @param roleId the unique role id
+     * @throws RoleNotFoundException
+     */
     public void init(AAContext context, String roleId) throws RoleNotFoundException;
 
-    public Set<Principal> getPrincipals() throws RoleNotFoundException;
-
+    /**
+     * Get the unique role id
+     * @return the unique role id string
+     * @throws RoleNotFoundException
+     */
     public String getRoleId() throws RoleNotFoundException;
+    
+    /**
+     * Get the JCR permissions assigned to the current role
+     * @return
+     * @throws RoleNotFoundException
+     */
+    public int getJCRPermissions() throws RoleNotFoundException;
 }

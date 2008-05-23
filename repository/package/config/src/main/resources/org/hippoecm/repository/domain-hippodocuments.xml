@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Copyright 2007 Hippo
-
+    
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-
+    
     http://www.apache.org/licenses/LICENSE-2.0
-
+    
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS"
     BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,25 +23,41 @@
     xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
     xmlns:hippo="http://www.hippoecm.org/nt/1.0"
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
-    sv:name="hippo:users">
+    sv:name="hippodocuments">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:userfolder</sv:value>
+        <sv:value>hippo:domain</sv:value>
     </sv:property>
-    <sv:node sv:name="demo">
+    <sv:node sv:name="hippo:domainrule">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:user</sv:value>
+            <sv:value>hippo:domainrule</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:password" sv:type="String">
-            <sv:value>demo</sv:value>
-        </sv:property>
+        <sv:node sv:name="hippo:facetrule">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:facetrule</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:facet" sv:type="String">
+                <sv:value>nodetype</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:type" sv:type="String">
+                <sv:value>Name</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:value" sv:type="String">
+                <sv:value>hippo:document</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:equals" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+        </sv:node>
     </sv:node>
-    <sv:node sv:name="admin">
+    <sv:node sv:name="hippo:authrole">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:user</sv:value>
+            <sv:value>hippo:authrole</sv:value>
         </sv:property>
-        <!-- password is "admin" -->
-        <sv:property sv:name="hippo:password" sv:type="String">
-            <sv:value>$SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=</sv:value>
+        <sv:property sv:name="hippo:groups" sv:type="String">
+            <sv:value>editor</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:role" sv:type="String">
+            <sv:value>jcrall</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

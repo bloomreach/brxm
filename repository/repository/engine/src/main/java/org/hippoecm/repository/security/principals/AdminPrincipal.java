@@ -18,15 +18,18 @@ package org.hippoecm.repository.security.principals;
 import java.io.Serializable;
 import java.security.Principal;
 
-import org.apache.jackrabbit.core.security.AnonymousPrincipal;
-
 /**
  * The admin principal gives read, write and remove privileges
  * to the whole repository except from the jcr namespace nodes
  * and attributes, which require SystemPrincipal.
  */
+@Deprecated
 public class AdminPrincipal implements Principal, Serializable {
 
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
     private static final long serialVersionUID = 1L;
 
     private static final String ADMIN_USER = "admin";
@@ -45,7 +48,7 @@ public class AdminPrincipal implements Principal, Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof AnonymousPrincipal) {
+        if (obj instanceof AdminPrincipal) {
             return true;
         }
         return false;

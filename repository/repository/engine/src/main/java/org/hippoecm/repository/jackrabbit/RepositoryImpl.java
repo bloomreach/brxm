@@ -78,22 +78,26 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,
             org.apache.jackrabbit.core.SessionImpl session, Subject subject) {
         FacetedNavigationEngine facetedEngine = getFacetedNavigationEngine();
-        Set principals = subject.getPrincipals(FacetAuthPrincipal.class);
-        Map<Name, String[]> authorizationQuery = new HashMap<Name, String[]>();
-        for (Iterator i = principals.iterator(); i.hasNext();) {
-            FacetAuthPrincipal p = (FacetAuthPrincipal) i.next();
-            log.info("FacetAuthPrincipal for authorizationQuery: " + p.getName());
-            authorizationQuery.put(p.getFacet(), p.getValues());
-        }
-        FacetedNavigationEngine.Context facetedContext;
+//        Set principals = subject.getPrincipals(FacetAuthPrincipal.class);
+//        Map<Name, String[]> authorizationQuery = new HashMap<Name, String[]>();
+//        for (Iterator i = principals.iterator(); i.hasNext();) {
+//            FacetAuthPrincipal p = (FacetAuthPrincipal) i.next();
+//            log.info("FacetAuthPrincipal for authorizationQuery: " + p.getName());
+//            authorizationQuery.put(p.getFacet(), p.getValues());
+//        }
 
         // TODO: This is a TEMPORARY hack: it uses "null" for the authorizationQuery to allow everything for admin users
-        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()
-                || !subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
-            facetedContext = facetedEngine.prepare(session.getUserID(), null, null, session);
-        } else {
-            facetedContext = facetedEngine.prepare(session.getUserID(), authorizationQuery, null, session);
-        }
+        FacetedNavigationEngine.Context facetedContext;
+        facetedContext = facetedEngine.prepare(session.getUserID(), null, null, session);
+//        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()
+//                || !subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
+//            facetedContext = facetedEngine.prepare(session.getUserID(), null, null, session);
+//        } else {
+//            facetedContext = facetedEngine.prepare(session.getUserID(), authorizationQuery, null, session);
+//        }
+        
+        
+        
         stateMgr.initialize(session.getNamespaceResolver(), session.getHierarchyManager(), facetedEngine,
                 facetedContext);
     }

@@ -78,7 +78,18 @@ public class RepositoryLoginTest extends TestCase {
 
     public void tearDown() throws RepositoryException {
         if (users != null) {
-            users.remove();
+            if (users.hasNode(TESTUSER_ID_PLAIN)) {
+                users.getNode(TESTUSER_ID_PLAIN).remove();
+            }
+            if (users.hasNode(TESTUSER_ID_MD5)) {
+                users.getNode(TESTUSER_ID_MD5).remove();
+            }
+            if (users.hasNode(TESTUSER_ID_SHA1)) {
+                users.getNode(TESTUSER_ID_SHA1).remove();
+            }
+            if (users.hasNode(TESTUSER_ID_SHA256)) {
+                users.getNode(TESTUSER_ID_SHA256).remove();
+            }
         }
         if (serverSession != null) {
             serverSession.save();
