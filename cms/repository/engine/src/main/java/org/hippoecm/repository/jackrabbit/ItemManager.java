@@ -186,7 +186,7 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
         if (id.equals(rootNodeId)) {
             // special handling required for root node
             item = createNodeInstance((NodeState) state, rootNodeDef);
-        } else if (state.isNode()) {
+        } else if (state != null && state.isNode()) {
             item = createNodeInstance((NodeState) state);
         } else {
             item = null;
