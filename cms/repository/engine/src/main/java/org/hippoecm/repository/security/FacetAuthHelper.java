@@ -15,77 +15,37 @@
  */
 package org.hippoecm.repository.security;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Help class for resolving facet auth principals from jcr nodes
  */
 public class FacetAuthHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(FacetAuthHelper.class);
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
-    /**
-     * Get the set of FacetAuthPrincipals from a path containing the facet auth nodes
-     * @param facetAuthPath
-     * @return Set a set of FacetAuthPrincipals
-     * @throws RepositoryException
-     */
-    public static Set<FacetAuthPrincipal> getFacetAuths(Node facetAuthPath) throws RepositoryException {
-        NodeIterator nodeIter = facetAuthPath.getNodes();
-        Set<FacetAuthPrincipal> principals = new HashSet<FacetAuthPrincipal>();
-        while (nodeIter.hasNext()) {
-            Node fa = (Node) nodeIter.next();
-            Long permissions = fa.getProperty(HippoNodeType.HIPPO_PERMISSIONS).getLong();
-            String facet = fa.getProperty(HippoNodeType.HIPPO_FACET).getString();
-            Name facetName = resolveName(facetAuthPath.getSession(), facet);
-            Value[] facetValues = fa.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
-            String[] values = new String[facetValues.length];
-            for (int i = 0; i < facetValues.length; i++) {
-                if (facet.equalsIgnoreCase("nodetype") || facet.equals(JcrConstants.JCR_PRIMARYTYPE) || facet.equals(JcrConstants.JCR_MIXINTYPES)) {
-                    // Convert the values of these type to their string representation of the name
-                    values[i] = resolveName(facetAuthPath.getSession(), facetValues[i].getString()).toString();
-                } else {
-                    values[i] = facetValues[i].getString();
-                }
-            }
-            principals.add(new FacetAuthPrincipal(facetName, values, permissions));
-        }
-        return Collections.unmodifiableSet(principals);
-    }
-    
+    /** The wildcard to match everything */
+    public final static String WILDCARD = "*";
+  
     /**
      * Get the Name from the node type string short notation
      * @param session The session
      * @param nodeTypeName The node type name
      * @return the name
      */
-    private static Name resolveName(Session session, String nodeTypeName) {
+    public static Name resolveName(Session session, String nodeTypeName) throws RepositoryException {
         Name name;
         name = NameFactoryImpl.getInstance().create("", nodeTypeName);
         int i = nodeTypeName.indexOf(":");
         if (i > 0) {
-            try {
-                name = NameFactoryImpl.getInstance().create(session.getNamespaceURI(nodeTypeName.substring(0, i)),
-                        nodeTypeName.substring(i + 1));
-            } catch (RepositoryException e) {
-                log.warn("Unable to find URI for namespace: " + nodeTypeName.substring(0, i));
-            }
+            name = NameFactoryImpl.getInstance().create(session.getNamespaceURI(nodeTypeName.substring(0, i)),
+                    nodeTypeName.substring(i + 1));
         }
         return name;
     }

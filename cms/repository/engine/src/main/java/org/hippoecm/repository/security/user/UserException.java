@@ -17,16 +17,21 @@ package org.hippoecm.repository.security.user;
 
 import javax.jcr.RepositoryException;
 
-public class UserNotFoundException extends RepositoryException {
+public class UserException extends RepositoryException {
 
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
+    /** Serial id */
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new instance of this class with <code>null</code> as its
      * detail message.
      */
-    public UserNotFoundException() {
-    super();
+    public UserException() {
+        super();
     }
 
     /**
@@ -36,8 +41,8 @@ public class UserNotFoundException extends RepositoryException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public UserNotFoundException(String message) {
-    super(message);
+    public UserException(String message) {
+        super(message);
     }
 
     /**
@@ -48,8 +53,8 @@ public class UserNotFoundException extends RepositoryException {
      *                  later retrieval by the {@link #getMessage()} method.
      * @param rootCause root failure cause
      */
-    public UserNotFoundException(String message, Throwable rootCause) {
-    super(message, rootCause);
+    public UserException(String message, Throwable rootCause) {
+        super(message, rootCause);
     }
 
     /**
@@ -57,8 +62,8 @@ public class UserNotFoundException extends RepositoryException {
      *
      * @param rootCause root failure cause
      */
-    public UserNotFoundException(Throwable rootCause) {
-    super(rootCause);
+    public UserException(Throwable rootCause) {
+        super(rootCause);
     }
 
 }

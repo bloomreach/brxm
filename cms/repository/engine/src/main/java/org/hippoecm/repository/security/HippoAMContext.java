@@ -17,9 +17,11 @@ import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
  *
  * @see AccessManager#init(AMContext)
  */
-
 public class HippoAMContext extends AMContext {
-    
+
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * NodeTypeRegistry for resolving superclass node types

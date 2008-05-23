@@ -31,8 +31,13 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 
+@Deprecated
 public class SimpleAccessManager extends org.apache.jackrabbit.core.security.SimpleAccessManager implements AccessManager {
 
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
     private boolean initialized;
 
     /**

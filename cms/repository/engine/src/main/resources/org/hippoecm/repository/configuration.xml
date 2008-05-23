@@ -39,6 +39,30 @@
       <sv:value>hippo:workflowfolder</sv:value>
     </sv:property>
   </sv:node>
+  
+  <sv:node sv:name="hippo:domains">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:domainfolder</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="hippo:users">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:userfolder</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="hippo:groups">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:groupfolder</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="hippo:roles">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:rolefolder</sv:value>
+    </sv:property>
+  </sv:node>
 
   <sv:node sv:name="hippo:frontend">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

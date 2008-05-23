@@ -19,9 +19,9 @@ import java.io.Serializable;
 import java.security.Principal;
 
 /**
- * The role principal holds a role assigned to a user or group
+ * The group principal holds a group of which a user is a member
  */
-public class RolePrincipal implements Principal, Serializable {
+public class GroupPrincipal implements Principal, Serializable {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
@@ -33,19 +33,19 @@ public class RolePrincipal implements Principal, Serializable {
      * The name of the role
      */
     private final String name;
-
+    
     /**
      * The hash code
      */
     private transient int hash;
-    
+
     /**
-     * Creates a <code>RolePrincipal</code> with the given name.
+     * Creates a <code>GroupPrincipal</code> with the given name.
      *
      * @param name the name of this principal
      * @throws IllegalArgumentException if <code>name</code> is <code>null</code>.
      */
-    public RolePrincipal(String name) throws IllegalArgumentException {
+    public GroupPrincipal(String name) throws IllegalArgumentException {
         if (name == null) {
             throw new IllegalArgumentException("name can not be null");
         }
@@ -58,12 +58,12 @@ public class RolePrincipal implements Principal, Serializable {
     public String getName() {
         return name;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     public String toString() {
-        return ("RolePrincipal: " + name);
+        return ("GroupPrincipal: " + name);
     }
 
     /**
@@ -77,12 +77,12 @@ public class RolePrincipal implements Principal, Serializable {
             return true;
         }
         if (obj.getClass() == getClass()) {
-            RolePrincipal other = (RolePrincipal) obj;
+            GroupPrincipal other = (GroupPrincipal) obj;
             return name.equals(other.name);
         }
         return false;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -92,5 +92,4 @@ public class RolePrincipal implements Principal, Serializable {
         }
         return hash;
     }
-
 }

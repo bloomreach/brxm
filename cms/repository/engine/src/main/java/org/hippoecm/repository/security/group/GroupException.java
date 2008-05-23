@@ -18,7 +18,11 @@ package org.hippoecm.repository.security.group;
 import javax.jcr.RepositoryException;
 
 
-public class GroupNotFoundException extends RepositoryException {
+public class GroupException extends RepositoryException {
+
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
     
     private static final long serialVersionUID = 1L;
 
@@ -26,8 +30,8 @@ public class GroupNotFoundException extends RepositoryException {
      * Constructs a new instance of this class with <code>null</code> as its
      * detail message.
      */
-    public GroupNotFoundException() {
-    super();
+    public GroupException() {
+        super();
     }
 
     /**
@@ -37,8 +41,8 @@ public class GroupNotFoundException extends RepositoryException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public GroupNotFoundException(String message) {
-    super(message);
+    public GroupException(String message) {
+        super(message);
     }
 
     /**
@@ -49,8 +53,8 @@ public class GroupNotFoundException extends RepositoryException {
      *                  later retrieval by the {@link #getMessage()} method.
      * @param rootCause root failure cause
      */
-    public GroupNotFoundException(String message, Throwable rootCause) {
-    super(message, rootCause);
+    public GroupException(String message, Throwable rootCause) {
+        super(message, rootCause);
     }
 
     /**
@@ -58,8 +62,8 @@ public class GroupNotFoundException extends RepositoryException {
      *
      * @param rootCause root failure cause
      */
-    public GroupNotFoundException(Throwable rootCause) {
-    super(rootCause);
+    public GroupException(Throwable rootCause) {
+        super(rootCause);
     }
 
 }

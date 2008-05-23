@@ -85,6 +85,15 @@
     <level value="debug"/>
     <appender-ref ref="root"/>
   </category>
+  
+  <category additivity="true" name="org.hippoecm.repository.security">
+    <level value="info"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="true" name="org.hippoecm.repository.security.HippoAccessManager">
+    <level value="info"/>
+    <appender-ref ref="root"/>
+  </category>
 
   <root>
     <level value="warn"/>

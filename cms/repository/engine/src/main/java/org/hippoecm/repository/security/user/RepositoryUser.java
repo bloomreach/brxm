@@ -15,49 +15,39 @@
  */
 package org.hippoecm.repository.security.user;
 
-import java.security.Principal;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
+import javax.transaction.NotSupportedException;
 
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.PasswordHelper;
 import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.FacetAuthHelper;
 import org.hippoecm.repository.security.RepositoryAAContext;
-import org.hippoecm.repository.security.group.Group;
-import org.hippoecm.repository.security.group.GroupNotFoundException;
-import org.hippoecm.repository.security.group.RepositoryGroup;
-import org.hippoecm.repository.security.role.RepositoryRole;
-import org.hippoecm.repository.security.role.Role;
-import org.hippoecm.repository.security.role.RoleNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A User stored in the JCR Repository
+ */
 public class RepositoryUser implements User {
+
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The system/root session
      */
-    private Session rootSession;
+    private Session session;
 
     /**
      * The path from the root containing the users
      */
     private String usersPath;
-
-    /**
-     * The path from the root containing the groups
-     */
-    private String groupsPath;
 
     /**
      * Is the class initialized
@@ -75,21 +65,6 @@ public class RepositoryUser implements User {
     private Node user;
 
     /**
-     * The  user's groups
-     */
-    private Set<Group> memberships = new HashSet<Group>();
-
-    /**
-     * The  user's roles
-     */
-    private Set<Role> roles = new HashSet<Role>();
-
-    /**
-     * The user's principals
-     */
-    private Set<Principal> principals = new HashSet<Principal>();
-
-    /**
      * Logger
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -98,220 +73,103 @@ public class RepositoryUser implements User {
      * The AA context
      */
     private RepositoryAAContext context;
-
+    
     //------------------------< Interface Impl >--------------------------//
-    public void init(AAContext context, String userId) throws UserNotFoundException {
-        this.context = (RepositoryAAContext) context;
-        this.rootSession = this.context.getRootSession();
-        this.usersPath = this.context.getUsersPath();
-        this.groupsPath = this.context.getGroupsPath();
-        this.userId = userId;
-        this.initialized = true;
+    /**
+     * {@inheritDoc}
+     */
+    public void init(AAContext context, String userId) throws UserException {
         if (userId == null) {
-            // the anonymous user
-            setMemberships();
-        } else {
-            setUser();
-            setPrincipals();
-            setRoles();
-            setMemberships();
+            throw new IllegalArgumentException("UserId must be non-null");
         }
+        this.context = (RepositoryAAContext) context;
+        this.session = this.context.getRootSession();
+        this.usersPath = this.context.getPath();
+        this.userId = userId;
+        loadUser();
+        this.initialized = true;
     }
 
-    public Set<Group> getMemberships() throws UserNotFoundException {
+    /**
+     * {@inheritDoc}
+     */
+    public String getUserID() throws UserException {
         if (!initialized) {
-            throw new UserNotFoundException("Not initialized.");
-        }
-//        if (user == null) {
-//            throw new UserNotFoundException("User not set.");
-//        }
-        return Collections.unmodifiableSet(memberships);
-    }
-
-    public Set<Principal> getPrincipals() throws UserNotFoundException {
-        if (!initialized) {
-            throw new UserNotFoundException("Not initialized.");
-        }
-//        if (user == null) {
-//            throw new UserNotFoundException("User not set.");
-//        }
-        return Collections.unmodifiableSet(principals);
-    }
-
-    public Set<Role> getRoles() throws UserNotFoundException {
-        if (!initialized) {
-            throw new UserNotFoundException("Not initialized.");
-        }
-//        if (user == null) {
-//            throw new UserNotFoundException("User not set.");
-//        }
-        return Collections.unmodifiableSet(roles);
-    }
-
-    public String getUserID() throws UserNotFoundException {
-        if (!initialized) {
-            throw new UserNotFoundException("Not initialized.");
-        }
-        if (user == null) {
-            throw new UserNotFoundException("User not set.");
+            throw new UserException("Not initialized.");
         }
         return userId;
     }
 
-    //------------------------< Public impl >--------------------------//
-    public String getPasswordHash() throws UserNotFoundException {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean checkPassword(char[] password) throws UserException {
         if (!initialized) {
-            throw new UserNotFoundException("Not initialized.");
+            throw new IllegalStateException("Not initialized.");
         }
-        if (user == null) {
-            throw new UserNotFoundException("User not set.");
+        try {
+            return PasswordHelper.checkHash(new String(password), getPasswordHash());
+        } catch (NoSuchAlgorithmException e) {
+            throw new UserException("Unknown algorithm: " + e.getMessage(), e);
+        } catch (UnsupportedEncodingException e) {
+            throw new UserException("Unsupported encoding: " + e.getMessage(), e);
         }
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setPassword(char[] password) throws NotSupportedException {
+        throw new NotSupportedException("Not implemented");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isActive() throws UserException {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setActive(boolean active) throws NotSupportedException, UserException {
+        throw new NotSupportedException("Not implemented");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProperty(String key, String value) throws NotSupportedException, UserException {
+        throw new NotSupportedException("Not implemented");
+    }
+
+    //------------------------< Private Helper methods >--------------------------// 
+    /**
+     * Find the user in the repository and set the user field
+     */
+    private void loadUser() throws UserException {
+        log.debug("Searching for user: {}", userId);
+        String path = usersPath + "/" + userId;
+        try {
+            user = session.getRootNode().getNode(path);
+            log.debug("Found user node: {}", path);
+        } catch (RepositoryException e) {
+            log.debug("User not found: {}", path);
+            throw new UserException("User not found: " + path);
+        }
+    }
+    
+    /**
+     * Get the (optionally) hashed password of the user
+     * @return the password hash
+     * @throws UserException
+     */
+    private String getPasswordHash() throws UserException {
         try {
             return user.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
         } catch (RepositoryException e) {
-            throw new UserNotFoundException("User password not set.", e);
+            throw new UserException("User password not set.", e);
         }
     }
-
-    //------------------------< Private Helper methods >--------------------------//
-
-    private void setUser() throws UserNotFoundException {
-        if (!initialized) {
-            throw new UserNotFoundException("Not initialized.");
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Searching for user: " + userId);
-        }
-        String path = usersPath + "/" + userId;
-
-        try {
-            this.user = rootSession.getRootNode().getNode(path);
-            if (log.isDebugEnabled()) {
-                log.debug("Found user node: " + path);
-            }
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("User not found: " + path);
-            }
-            throw new UserNotFoundException("User not found: " + path);
-        }
-
-    }
-
-    private void setPrincipals() throws UserNotFoundException {
-        if (!initialized) {
-            throw new UserNotFoundException("Not initialized.");
-        }
-        // set the user principal
-        principals.add(new UserPrincipal(userId));
-        try {
-            // principals from user
-            Node facetAuthPath = user.getNode(HippoNodeType.FACETAUTH_PATH);
-            principals.addAll(FacetAuthHelper.getFacetAuths(facetAuthPath));
-        } catch (PathNotFoundException e) {
-            // no facet auths for user
-        } catch (RepositoryException e) {
-            // wrap error
-            throw new UserNotFoundException("Error while getting user facet auth rules.", e);
-        }
-    }
-
-    // TODO: use some kind of query
-    private void setMemberships() throws UserNotFoundException {
-        if (!initialized) {
-            throw new UserNotFoundException("Not initialized.");
-        }
-        try {
-            // TODO: use query to find the correct groups, for now just loop over all
-            NodeIterator groupsIter = rootSession.getRootNode().getNode(groupsPath).getNodes();
-            while (groupsIter.hasNext()) {
-                boolean isMember = false;
-                Node group = (Node) groupsIter.next();
-                // emptyp group
-                if (group.getName().endsWith("everybody")) {
-                    isMember = true;
-                } else if (!group.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
-                    continue;
-                } else {
-                    // check membership
-                    Value[] memberValues = group.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
-                    for (int i = 0; i < memberValues.length; i++) {
-                        if (memberValues[i].getString().equals(userId)) {
-                            isMember = true;
-                            break;
-                        }
-                    }
-                }
-                if (!isMember) {
-                    continue;
-                }
-                RepositoryGroup membership = new RepositoryGroup();
-                try {
-                    membership.init(context, group.getName());
-                    memberships.add(membership);
-                } catch (GroupNotFoundException e) {
-                    log.warn("Unable to add group: " + group.getName(), e);
-                }
-            }
-        } catch (PathNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("No memberships found for user: " + userId);
-            }
-        } catch (RepositoryException e) {
-            log.warn("Unable to set memberships with path: " + groupsPath, e);
-        }
-
-        // add the principals to the user
-        for (Group group : this.memberships) {
-            try {
-                this.principals.addAll(group.getPrincipals());
-            } catch (GroupNotFoundException e) {
-                // this shouldn't happen, we just initialized the roles
-                log.error("Unable to add principals for group for user: " + userId, e);
-            }
-        }
-    }
-
-    private void setRoles() {
-        try {
-            Value[] roles = user.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
-
-            for (Value roleVal : roles) {
-                String roleId;
-                try {
-                    roleId = roleVal.getString();
-                } catch (ValueFormatException e) {
-                    log.warn("Invalid role for user: " + userId, e);
-                    continue;
-                }
-
-                try {
-                    Role role = new RepositoryRole();
-                    role.init(context, roleId);
-                    this.roles.add(role);
-                } catch (RoleNotFoundException e) {
-                    // too bad...
-                    log.warn("Role: " + roleId + "not found for user: " + userId);
-                }
-            }
-        } catch (PathNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("No roles found for user: " + userId);
-            }
-        } catch (RepositoryException e) {
-            log.error("Error while trying to get roles for user: " + userId, e);
-        }
-
-        // add the principals to the user
-        for (Role role : this.roles) {
-            try {
-                this.principals.addAll(role.getPrincipals());
-            } catch (RoleNotFoundException e) {
-                // this shouldn't happen, we just initialized the roles
-                log.error("Unable to add principals for role for user: " + userId, e);
-            }
-        }
-    }
-
 }

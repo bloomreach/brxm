@@ -127,13 +127,7 @@
 
 [hippo:application] > nt:unstructured orderable
 
-[hippo:facetauth] > nt:base
-- hippo:facet (string)  mandatory
-- hippo:values (string) mandatory multiple
-- hippo:permissions (long) mandatory
 
-[hippo:facetauthfolder] > nt:base
-+ * (hippo:facetauth) = hippo:facetauth
 
 [hippo:usersettings] > nt:base
 - hippo:path (string)
@@ -147,21 +141,43 @@
 - hippo:pagesize (long) = '10' mandatory autocreated 
 - hippo:viewsize (long) = '10' mandatory autocreated 
 + * (hippo:listingpropnode) = hippo:listingpropnode  
- 
+
+
+
+//////////////////////////////////////////////////
+///////// Users, groups and authorizaion /////////
+//////////////////////////////////////////////////
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
-- hippo:roles (string) multiple
-+ hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
+- hippo:active (boolean) = true mandatory autocreated
 + * (hippo:listing) = hippo:listing
 + * (hippo:usersettings) = hippo:usersettings
   
 [hippo:group] > nt:base
 - hippo:members (string) multiple
-- hippo:roles (string) multiple
-+ hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
 
 [hippo:role] > nt:base
-+ hippo:facetauths (hippo:facetauthfolder) = hippo:facetauthfolder
+- hippo:jcrread (boolean)  = 'true' mandatory autocreated
+- hippo:jcrwrite (boolean)  = 'false' mandatory autocreated
+- hippo:jcrremove (boolean)  = 'false' mandatory autocreated
+
+[hippo:authrole] > nt:base
+- hippo:users (string) multiple
+- hippo:groups (string) multiple
+- hippo:role (string) mandatory
+
+[hippo:facetrule] > nt:base
+- hippo:facet (string) mandatory 
+- hippo:value (string) mandatory 
+- hippo:type (string) = 'String' mandatory < 'String', 'Name'
+- hippo:equals (boolean) = 'true' mandatory autocreated
+
+[hippo:domainrule] > nt:base
++ hippo:facetrule (hippo:facetrule) = hippo:facetrule multiple
+
+[hippo:domain] > nt:base
++ hippo:domainrule (hippo:domainrule) = hippo:domainrule multiple 
++ hippo:authrole (hippo:authrole) = hippo:authrole multiple
 
 [hippo:userfolder] > nt:base
 + * (hippo:user) = hippo:user
@@ -171,6 +187,12 @@
 
 [hippo:rolefolder] > nt:base
 + * (hippo:role) = hippo:role
+
+[hippo:domainfolder] > nt:base
++ * (hippo:domain) = hippo:domain
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 [hippo:parameters] > nt:base 
 - * (string) multiple
@@ -299,6 +321,7 @@
 + hippo:users (hippo:userfolder) = hippo:userfolder
 + hippo:roles (hippo:rolefolder) = hippo:rolefolder
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
++ hippo:domains (hippo:domainfolder) = hippo:domainfolder
 + hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
 + hippo:frontend (hippo:application) = hippo:application
 + hippo:frontend_deprecated (hippo:application) = hippo:application

@@ -17,17 +17,49 @@ package org.hippoecm.repository.security.principals;
 
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.security.domain.DomainRule;
 
+/**
+ * The facet auth principal holding the domain rules, roles and
+ * JCR permissions for a domain
+ */
 public class FacetAuthPrincipal implements Serializable, Principal {
 
+    /** SVN id placeholder */
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
+    /**
+     * Serial verion id
+     */
     private static final long serialVersionUID = 1L;
+    
+    /**
+     * The name representing the domain
+     */
     private final String name;
-    private final Name facet;
-    private final String[] values;
-    private final long permissions;
+    
+    /**
+     * The set of domain rules for the domain
+     * @see DomainRule
+     */
+    private final Set<DomainRule> rules;
+    
+    /**
+     * The set of roles of the user for the domain 
+     */
+    private final Set<String> roles;
+    
+    /**
+     * The JCR permissions of the user for the domain
+     */
+    private final int permissions;
 
+    
     /**
      * Creates a <code>UserPrincipal</code> with the given name.
      *
@@ -36,25 +68,67 @@ public class FacetAuthPrincipal implements Serializable, Principal {
      * @param permissionss
      * @throws IllegalArgumentException if <code>name</code> is <code>null</code>.
      */
-    public FacetAuthPrincipal(Name facet, String[] values, long permissions) throws IllegalArgumentException {
-        if (facet == null) {
+    public FacetAuthPrincipal(String domain, Set<DomainRule> domainRules, Set<String> roles, int permissions) throws IllegalArgumentException {
+        if (domain == null) {
             throw new IllegalArgumentException("facet can not be null");
         }
-        if (values == null){
+        if (domainRules == null){
             throw new IllegalArgumentException("values can not be null");
         }
-        if (values.length == 0) {
+        if (domainRules.size() == 0) {
             throw new IllegalArgumentException("values must contain at least one values");
         }
+        if (roles == null){
+            throw new IllegalArgumentException("roles can not be null");
+        }
 
-
-        // adding values
-        this.facet = facet;
-        this.values = values.clone();
-        this.name = buildString(facet, values, permissions);
+        // assigning values
+        this.name = domain;
+        this.roles = Collections.unmodifiableSet(roles);
+        this.rules = Collections.unmodifiableSet(domainRules);
         this.permissions = permissions;
     }
 
+  
+
+
+    //------------------------------------------------------------< Principal >
+    /**
+     * {@inheritDoc}
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Get the set of roles
+     * @return the roles the user has for the domain
+     */
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    /**
+     * Get the set of domain rules defining the domain
+     * @return the domain rules defining the domain
+     */
+    public Set<DomainRule> getRules() {
+        return rules;
+    }
+
+    /**
+     * Get the JCR permissions
+     * @return the JCR permissions the user has for the domain
+     */
+    public int getPermissions() {
+        return permissions;
+    }
+    
+    
+    
+    
+    
+    
     /**
      * String for pretty printing and generating the hashcode
      * @param facet
@@ -96,25 +170,5 @@ public class FacetAuthPrincipal implements Serializable, Principal {
 
     public int hashCode() {
         return name.hashCode();
-    }
-
-    //------------------------------------------------------------< Principal >
-    /**
-     * {@inheritDoc}
-     */
-    public String getName() {
-        return name;
-    }
-
-    public Name getFacet() {
-        return facet;
-    }
-
-    public String[] getValues() {
-        return values.clone();
-    }
-
-    public long getPermissions() {
-        return permissions;
     }
 }
