@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Collection;
@@ -49,17 +51,21 @@ public class Context extends AbstractMap {
 
     private final Session session;
     private final String contextPath;
+    private final String requestURI; 
     private final String urlBasePath;
     private final String baseLocation;
     private String relativeLocation;
     int index = -1;
+
     private HippoQuery query;
     private List<String> arguments;
     private DocumentPathReplacer pathReplacer;
     
-    public Context(final Session jcrSession, final String contextPath, final String urlBasePath, final String baseLocation) {
+    public Context(final Session jcrSession, final String contextPath, 
+            final String requestURI, final String urlBasePath, final String baseLocation) {
         this.session = jcrSession;
         this.contextPath = contextPath;
+        this.requestURI = requestURI;
         this.urlBasePath = urlBasePath;
         this.baseLocation = baseLocation;
         this.relativeLocation = null;
@@ -69,13 +75,14 @@ public class Context extends AbstractMap {
         this(parent, relativePath, -1);
     }
     
-    Context(final Session jcrSession, final String contextPath, final String baseLocation) {
+    Context(final Session jcrSession, final String contextPath, 
+            final String requestURI, final String baseLocation) {
         // create with urlBasePath same as baseLocation
-        this(jcrSession, contextPath, baseLocation, baseLocation);
+        this(jcrSession, contextPath, requestURI, baseLocation, baseLocation);
     }
 
     Context(Context parent, String relativeLocation, int index) {
-        this(parent.session, parent.contextPath, parent.urlBasePath, parent.baseLocation); 
+        this(parent.session, parent.contextPath, parent.requestURI, parent.urlBasePath, parent.baseLocation); 
         
         if (relativeLocation.startsWith("/")) {
             setRelativeLocation(relativeLocation);
@@ -89,7 +96,7 @@ public class Context extends AbstractMap {
     }
 
     Context(Context parent, HippoQuery query, List arguments) {
-        this(parent.session, parent.contextPath, parent.urlBasePath, parent.baseLocation);
+        this(parent.session, parent.contextPath, parent.requestURI, parent.urlBasePath, parent.baseLocation);
         this.query = query;
         this.arguments = arguments;
     }
@@ -113,6 +120,13 @@ public class Context extends AbstractMap {
 
     public String getBaseLocation() {
         return baseLocation;
+    }
+
+    /**
+     * Get the original requestURI, before any redirection or forwarding. 
+     */
+    public String getRequestURI() {
+        return requestURI;
     }
 
     public void setRelativeLocation(String relativeLocation) {
@@ -292,6 +306,12 @@ public class Context extends AbstractMap {
                         switch(property.getType()) {
                         case PropertyType.DATE:
                             result = property.getDate().getTime();
+                            break;
+                        case PropertyType.DOUBLE:
+                            result = BigDecimal.valueOf(property.getDouble());
+                            break;
+                        case PropertyType.LONG:
+                            result = BigInteger.valueOf(property.getLong());
                             break;
                         case PropertyType.STRING:
                             String value = property.getString();

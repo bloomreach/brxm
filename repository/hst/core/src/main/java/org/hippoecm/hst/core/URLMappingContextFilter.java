@@ -125,7 +125,8 @@ public class URLMappingContextFilter extends ContextFilter {
 
     // javadoc from super
     Context createContext(Session jcrSession, HttpServletRequest request) {
-        return new Context(jcrSession, request.getContextPath(), this.urlBasePath, this.repositoryBaseLocation);
+        return new Context(jcrSession, request.getContextPath(),request.getRequestURI(),
+                this.urlBasePath, this.repositoryBaseLocation);
     }
 
     private String getURLMappingLocation(HttpServletRequest request) {
