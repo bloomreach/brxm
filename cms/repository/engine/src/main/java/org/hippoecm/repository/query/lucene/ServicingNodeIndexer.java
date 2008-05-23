@@ -81,6 +81,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         // index the jackrabbit way
         Document doc = super.createDoc();
         // plus index our facet specifics
+        
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
             Name propName = (Name) it.next();
@@ -144,7 +145,12 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 }
                 break;
             case PropertyType.NAME:
-                // never facet;
+                if (name.equals(NameConstants.JCR_PRIMARYTYPE)){
+                    indexNodeTypeNameFacet(doc,ServicingFieldNames.HIPPO_PRIMARYTYPE ,value.getQName());  
+                }
+                else if(name.equals(NameConstants.JCR_MIXINTYPES)) {
+                    indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_MIXINTYPE ,value.getQName()); 
+                }
                 break;
             default:
                 throw new IllegalArgumentException("illegal internal value type");
@@ -163,15 +169,19 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 Field.TermVector.YES));
     }
 
+    protected void indexNodeTypeNameFacet(Document doc, String fieldName, Object internalValue) {
+        try {
+            Name qualiName = (Name) internalValue;
+            String normValue = mappings.getPrefix(qualiName.getNamespaceURI())
+                    + ":" + qualiName.getLocalName();
+            doc.add(new Field(fieldName,normValue,Field.Store.NO,Field.Index.NO_NORMS));
+        } catch (NamespaceException e) {
+            // will never happen
+        }
+    }
+    
     private void indexPath(Document doc, InternalValue[] values, Name name) {
-        // index root node path
-        
-        doc.add(new Field(ServicingFieldNames.HIPPO_PATH,
-                "/",
-                Field.Store.NO,
-                Field.Index.NO_NORMS,
-                Field.TermVector.NO));
-        
+       
         // index each level of the path for searching
         for (int i = 0; i < values.length; i++) {
             InternalValue value = values[i];

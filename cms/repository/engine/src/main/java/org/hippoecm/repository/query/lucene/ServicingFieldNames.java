@@ -27,7 +27,18 @@ public class ServicingFieldNames {
      * Prefix for all field names that are facet properties.
      */
     public static final String HIPPO_FACET = "HIPPOFACET:".intern();
+    
+    /**
+     * Prefix for all field names that are primary type.
+     */
+    public static final String HIPPO_PRIMARYTYPE = "_:HIPPO_PT_FACET".intern();
 
+    /**
+     * Prefix for all field names that are mixin type.
+     */
+    public static final String HIPPO_MIXINTYPE = "_:HIPPO_MI_FACET".intern();
+
+    
     /**
      * Prefix for all field names that are path properties.
      */
