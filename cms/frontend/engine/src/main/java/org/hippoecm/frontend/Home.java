@@ -45,7 +45,8 @@ import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 public class Home extends LegacyPluginPage {
     private static final long serialVersionUID = 1L;
 
-    public static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=admin,password=admin");
+    public static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=,password=");
+
     public static final String ROOT_PLUGIN = "rootPlugin";
     public static final String LOGIN_PLUGIN = "loginPlugin";
 

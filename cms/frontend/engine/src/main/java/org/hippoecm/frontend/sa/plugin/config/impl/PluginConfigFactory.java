@@ -29,7 +29,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginConfigFactory {
 
-    private static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=admin,password=admin");
+    //private static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=admin,password=admin");
+    private static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=,password=");
+    
 
     private String style;
     private IPluginConfigService pluginConfigService;

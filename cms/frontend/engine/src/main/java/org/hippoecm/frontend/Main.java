@@ -53,8 +53,7 @@ public class Main extends WebApplication {
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
-
-    public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=admin,password=admin");
+    public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=,password=");
 
     @Override
     protected void init() {
