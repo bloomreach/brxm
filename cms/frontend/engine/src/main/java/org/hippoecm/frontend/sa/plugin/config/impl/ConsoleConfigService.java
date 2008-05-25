@@ -30,14 +30,38 @@ class ConsoleConfigService implements IPluginConfigService {
     ConsoleConfigService() {
         plugins = new LinkedList<IPluginConfig>();
         
-        // wrap legacy console plugins
         IPluginConfig config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
-        config.put("wicket.id", "service.root");                                  
-        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:console");
-        config.put("legacy.plugin", "rootPlugin");
-        
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.RootPlugin");
+        config.put("wicket.id", "service.root");
+        config.put("wicket.dialog", "service.dialog");
+        config.put("browserPlugin", "service.browser");
+        config.put("breadcrumbPlugin", "service.breadcrumb");
+        config.put("editorPlugin", "service.editor");
         plugins.add(config);
+        
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.browser.BrowserPlugin");
+        config.put("wicket.id", "service.browser");
+        config.put("wicket.model", "service.model");
+        plugins.add(config);
+
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.breadcrumb.BreadcrumbPlugin");
+        config.put("wicket.id", "service.breadcrumb");
+        config.put("wicket.model", "service.model");
+        plugins.add(config);
+        
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.editor.EditorPlugin");
+        config.put("wicket.id", "service.editor");
+        config.put("wicket.model", "service.model");
+        plugins.add(config);
+        
+//        config = new JavaPluginConfig();
+//        config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
+//        config.put("wicket.id", "service.logout");
+//        config.put("wicket.model", "service.model");
+//        plugins.add(config);
     }
 
     public List<IPluginConfig> getPlugins(String key) {

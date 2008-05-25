@@ -28,7 +28,8 @@ public class RootPlugin extends RenderPlugin {
 
     public RootPlugin() {
         for (String extension : new String[] {
-            "breadcrumbPlugin", "menuPlugin", "logoutPlugin", "navigationPlugin", "contentPlugin" 
+            //"breadcrumbPlugin", "menuPlugin", "logoutPlugin", "navigationPlugin", "editorPlugin"
+                "browserPlugin", "breadcrumbPlugin", "editorPlugin"
         }) {
             addExtensionPoint(extension);
         }

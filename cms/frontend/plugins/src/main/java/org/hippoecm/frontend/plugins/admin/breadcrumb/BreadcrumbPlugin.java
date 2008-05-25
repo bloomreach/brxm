@@ -25,7 +25,9 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 
 /**
  * A simple plugin displaying the complete JCR path of the current JcrNodeModel.
+ * @deprecated Use org.hippoecm.frontend.plugins.console.breadcrumb.BreadcrumbPlugin instead
  */
+@Deprecated
 public class BreadcrumbPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
