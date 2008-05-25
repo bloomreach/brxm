@@ -85,6 +85,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, dialogTitle) {
+                    @Override
                     protected void execute() throws Exception {
                         action.execute(getWorkflow());
                     }

@@ -22,6 +22,10 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.tree.AbstractTreePlugin;
 
+/**
+ * @deprecated Use org.hippoecm.frontend.plugins.console.browser.BrowserPlugin instead
+ */
+@Deprecated
 public class BrowserPlugin extends AbstractTreePlugin {
 
     private static final long serialVersionUID = 1L;

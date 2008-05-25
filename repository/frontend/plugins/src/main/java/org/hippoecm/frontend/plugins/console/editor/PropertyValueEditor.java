@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.editor;
+package org.hippoecm.frontend.plugins.console.editor;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
@@ -34,10 +34,6 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated Use org.hippoecm.frontend.plugins.console.editor.* instead
- */
-@Deprecated
 public class PropertyValueEditor extends DataView {
     private static final long serialVersionUID = 1L;
 
@@ -51,7 +47,6 @@ public class PropertyValueEditor extends DataView {
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
 
-    // Implement DataView
     @Override
     protected void populateItem(Item item) {
         try {
@@ -107,6 +102,8 @@ public class PropertyValueEditor extends DataView {
         }
     }
 
+    // privates
+    
     private boolean isBinary(Property property) throws RepositoryException {
         boolean isBinary;
         if (property.getDefinition().isMultiple()) {

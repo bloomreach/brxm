@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.editor;
+package org.hippoecm.frontend.plugins.console.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -33,69 +32,66 @@ import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListItemModel;
 import org.apache.wicket.markup.html.list.ListView;
-import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated Use org.hippoecm.frontend.plugins.console.editor.* instead
- */
-@Deprecated
-public abstract class NodeTypesEditor extends CheckGroup {
+public class NodeTypesEditor extends CheckGroup {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(NodeTypesEditor.class);
 
-    private ArrayList<String> current;
+    private JcrNodeModel nodeModel;
 
-    public NodeTypesEditor(String id, JcrNodeTypesProvider provider) {
-        super(id, new ArrayList<String>());
-
-        current = new ArrayList<String>();
-
-        setProvider(provider);
+    public NodeTypesEditor(String id, List<String> nodeTypes, JcrNodeModel nodeModel) {
+        super(id, nodeTypes);
+        this.nodeModel = nodeModel;
 
         add(new ListView("type", getAllNodeTypes()) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void populateItem(ListItem item) {
                 ListItemModel model = (ListItemModel) item.getModel();
-
-                String type = (String) model.getObject();
 
                 Check check = new Check("check", model);
                 item.add(check);
 
+                String type = (String) model.getObject();
                 check.add(new Label("name", type));
             }
         });
     }
-
-    protected abstract void onAddNodeType(String name);
-
-    protected abstract void onRemoveNodeType(String name);
+    
+    @Override
+    public void onModelChanged() {
+        
+    }
 
     @Override
-    protected void onSelectionChanged(Collection newSelection) {
-        Iterator<String> iterator = newSelection.iterator();
-        Set<String> removed = new HashSet<String>(current);
-        while (iterator.hasNext()) {
-            String type = iterator.next();
-            if (removed.contains(type)) {
-                removed.remove(type);
-            }
-            else {
-                onAddNodeType(type);
-                current.add(type);
-            }
-        }
+    protected void onSelectionChanged(Collection selection) {
+        if (getModelObject() instanceof List && nodeModel != null) {
+            try {
+                Set<String> actualTypes = new HashSet<String>();
+                NodeType[] nodeTypes = nodeModel.getNode().getMixinNodeTypes();
+                for (NodeType nodeType : nodeTypes) {
+                    actualTypes.add(nodeType.getName());
+                }
 
-        iterator = removed.iterator();
-        while (iterator.hasNext()) {
-            String type = iterator.next();
-            onRemoveNodeType(type);
-            current.remove(type);
+                HashSet toBeAdded = new HashSet<String>(selection);
+                toBeAdded.removeAll(actualTypes);
+                for (String add : new ArrayList<String>(toBeAdded)){
+                    nodeModel.getNode().addMixin(add);
+                }
+                
+                actualTypes.removeAll(new HashSet<String>(selection));
+                for (String remove : new ArrayList<String>(actualTypes)){
+                    nodeModel.getNode().removeMixin(remove);
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
         }
     }
 
@@ -104,30 +100,24 @@ public abstract class NodeTypesEditor extends CheckGroup {
         return true;
     }
 
-    public void setProvider(JcrNodeTypesProvider provider) {
-        current.clear();
-        Iterator<NodeType> types = provider.iterator(0, provider.size());
-        while(types.hasNext()) {
-            NodeType type = types.next();
-            current.add(type.getName());
-        }
-        ArrayList<String> selected = (ArrayList<String>) getModelObject();
-        selected.clear();
-        selected.addAll(current);
-    }
-
+    // (package) privates
+    
     private List<String> getAllNodeTypes() {
         List<String> list = new ArrayList<String>();
         try {
             UserSession session = (UserSession) getSession();
             NodeTypeManager ntmgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
             NodeTypeIterator iterator = ntmgr.getMixinNodeTypes();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 list.add(iterator.nextNodeType().getName());
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
         return list;
+    }
+
+    void setNodeModel(JcrNodeModel newModel) {
+        this.nodeModel = newModel;   
     }
 }

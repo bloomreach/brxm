@@ -32,6 +32,10 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated Use org.hippoecm.frontend.plugins.console.editor.* instead
+ */
+@Deprecated
 public class NodeEditor extends Form implements INotificationListener {
     private static final long serialVersionUID = 1L;
 

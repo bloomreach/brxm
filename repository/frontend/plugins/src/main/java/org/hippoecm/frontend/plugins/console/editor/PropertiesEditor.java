@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.editor;
+package org.hippoecm.frontend.plugins.console.editor;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -26,25 +26,19 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated Use org.hippoecm.frontend.plugins.console.editor.* instead
- */
-@Deprecated
 public class PropertiesEditor extends DataView {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(PropertiesEditor.class);
 
-    private JcrPropertiesProvider provider;
 
-    public PropertiesEditor(String id, JcrPropertiesProvider model) {
+    public PropertiesEditor(String id, IDataProvider model) {
         super(id, model);
-        provider = model;
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
 
@@ -112,10 +106,6 @@ public class PropertiesEditor extends DataView {
                 target.addComponent(editor);
             }
         };
-    }
-
-    public void setProvider(JcrPropertiesProvider provider) {
-        this.provider.setChainedModel(provider.getChainedModel());
     }
 
 }

@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.editor;
+package org.hippoecm.frontend.plugins.console.editor;
 
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 
-/**
- * @deprecated Use org.hippoecm.frontend.plugins.console.editor.* instead
- */
-@Deprecated
-public class EditorPlugin extends Plugin {
+public class EditorPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     private NodeEditor editor;
 
-    public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
-
-        editor = new NodeEditor("editor", (JcrNodeModel) getPluginModel(), getTopChannel());
+    public EditorPlugin() {
+        editor = new NodeEditor("editor");
         add(editor);
+    }
+    
+    @Override
+    public void onModelChanged() {
+        super.onModelChanged();
+        editor.setModel(getModel());
     }
 }

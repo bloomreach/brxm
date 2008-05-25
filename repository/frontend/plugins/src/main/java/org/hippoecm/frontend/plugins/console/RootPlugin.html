@@ -16,22 +16,23 @@
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:head>
         <title>SA Console</title>
-    </wicket:head>    
+    </wicket:head>
     <wicket:panel>
         <table width="99%">
             <tr valign="top">
                 <td align="left">
-                    <div wicket:id="breadcrumbPlugin"></div>
-                    <div wicket:id="menuPlugin"></div>
+                    <div wicket:id="breadcrumbPlugin"/>
+                    <!--<div wicket:id="menuPlugin"></div>-->
                 </td>
-                <td align="right">
+                <!--<td align="right">
                     <div wicket:id="logoutPlugin"></div>
-                </td>
+                </td>-->
             </tr>
         </table>
         <hr/>
-        <div style="max-height: 800px; overflow: auto; float: left; width: 360px;" wicket:id="navigationPlugin"></div>
-        <div style="max-height: 800px; overflow: auto;" wicket:id="contentPlugin"></div>
-        <div wicket:id="dialog"></div>
+        <div style="max-height: 800px; overflow: auto; float: left; width: 360px;"
+            wicket:id="browserPlugin"/>
+        <div style="max-height: 800px; overflow: auto;" wicket:id="editorPlugin"/>
+        <div wicket:id="dialog"/>
     </wicket:panel>
 </html>
