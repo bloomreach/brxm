@@ -22,13 +22,13 @@ import java.util.List;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.service.IMessageListener;
-import org.hippoecm.frontend.sa.service.IServiceListener;
+import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.ITopicService;
 import org.hippoecm.frontend.sa.service.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TopicService implements IServiceListener, IClusterable, ITopicService {
+public class TopicService implements IServiceTracker<TopicService>, IClusterable, ITopicService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(TopicService.class);
@@ -46,13 +46,13 @@ public class TopicService implements IServiceListener, IClusterable, ITopicServi
 
     public void init(IPluginContext context) {
         this.context = context;
-        context.registerListener(this, topic);
+        context.registerTracker(this, topic);
         context.registerService(this, topic);
     }
 
     public void destroy() {
         context.unregisterService(this, topic);
-        context.unregisterListener(this, topic);
+        context.unregisterTracker(this, topic);
     }
 
     public void addListener(IMessageListener listener) {
@@ -63,24 +63,20 @@ public class TopicService implements IServiceListener, IClusterable, ITopicServi
         listeners.remove(listener);
     }
 
-    public void processEvent(int type, String name, IClusterable service) {
-        switch (type) {
-        case IServiceListener.ADDED:
-            if (topic.equals(name) && (service instanceof ITopicService)) {
-                if (service != this) {
-                    peers.add((ITopicService) service);
-                }
-            } else {
-                log.error("unknown service was added");
-            }
-            break;
 
-        case IServiceListener.REMOVE:
-            if (peers.contains(service)) {
-                peers.remove(service);
-            }
-            break;
+    public void addService(TopicService service, String name) {
+        if (service != this) {
+            peers.add((ITopicService) service);
         }
+    }
+
+    public void removeService(TopicService service, String name) {
+        if (peers.contains(service)) {
+            peers.remove(service);
+        }
+    }
+
+    public void updateService(TopicService service, String name) {
     }
 
     public void publish(Message message) {
@@ -97,4 +93,5 @@ public class TopicService implements IServiceListener, IClusterable, ITopicServi
             listener.onMessage(message);
         }
     }
+
 }

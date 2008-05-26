@@ -28,7 +28,9 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.IMessageListener;
@@ -51,13 +53,13 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
     private IPluginConfig config;
     private String[] categories;
     private String factoryId;
-    private Map<String, IPlugin> workflows;
+    private Map<String, IPluginControl> workflows;
     private Map<String, TopicService> models;
     private TopicService topic;
     private int wflCount;
 
     public WorkflowPlugin() {
-        workflows = new HashMap<String, IPlugin>();
+        workflows = new HashMap<String, IPluginControl>();
         models = new HashMap<String, TopicService>();
         wflCount = 0;
         topic = null;
@@ -158,6 +160,9 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
         String modelId = workflowId + ".model";
         wflConfig.put(RenderPlugin.MODEL_ID, modelId);
 
+        JavaClusterConfig clusterConfig = new JavaClusterConfig();
+        clusterConfig.addPlugin(wflConfig);
+
         TopicService modelTopic = new TopicService(modelId);
         modelTopic.addListener(new IMessageListener() {
             private static final long serialVersionUID = 1L;
@@ -175,16 +180,16 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
 
         context.registerService(this, workflowId + ".factory");
 
-        IPlugin plugin = context.start(wflConfig);
+        IPluginControl plugin = context.start(clusterConfig);
         if (plugin != null) {
             workflows.put(workflowId, plugin);
         }
     }
 
     private void closeWorkflows() {
-        for (Map.Entry<String, IPlugin> entry : workflows.entrySet()) {
+        for (Map.Entry<String, IPluginControl> entry : workflows.entrySet()) {
             String workflowId = entry.getKey();
-            entry.getValue().stop();
+            entry.getValue().stopPlugin();
 
             context.unregisterService(this, workflowId + ".factory");
 
@@ -192,7 +197,7 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
             topic.destroy();
             models.remove(entry.getKey());
         }
-        workflows = new HashMap<String, IPlugin>();
+        workflows = new HashMap<String, IPluginControl>();
     }
 
 }

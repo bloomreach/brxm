@@ -72,7 +72,7 @@ class ExperimentalConfigService implements IPluginConfigService {
         plugins.add(config);
 
         config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.render.ListViewPlugin");
+        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.impl.ListViewPlugin");
         config.put("wicket.id", "service.browse.workflows");
         config.put("item", "service.browse.workflows.workflow");
         plugins.add(config);

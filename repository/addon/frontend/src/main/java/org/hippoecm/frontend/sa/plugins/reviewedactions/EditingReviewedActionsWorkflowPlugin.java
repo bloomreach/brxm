@@ -16,13 +16,11 @@
 package org.hippoecm.frontend.sa.plugins.reviewedactions;
 
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IFactoryService;
 import org.hippoecm.frontend.sa.service.IViewService;
-import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.slf4j.Logger;
@@ -33,11 +31,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
 
     private static Logger log = LoggerFactory.getLogger(EditingReviewedActionsWorkflowPlugin.class);
 
-    private ServiceTracker<IViewService> viewers;
-
     public EditingReviewedActionsWorkflowPlugin() {
-        viewers = new ServiceTracker<IViewService>(IViewService.class);
-
         addWorkflowAction("save", "Save", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
@@ -58,28 +52,11 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
         });
     }
 
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
-        super.init(context, properties);
-        if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
-            viewers.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));
-        } else {
-            log.warn("No editor ({}) specified", WorkflowPlugin.VIEWER_ID);
-        }
-    }
-
-    @Override
-    public void destroy() {
-        viewers.close();
-        super.destroy();
-    }
-
     private void close() {
-        IViewService viewer = viewers.getService();
+        IPluginContext context = getPluginContext();
+        IViewService viewer = context.getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
         if (viewer != null) {
-            ServiceTracker<IFactoryService> factoryTracker = new ServiceTracker<IFactoryService>(IFactoryService.class);
-            factoryTracker.open(getPluginContext(), viewer.getServiceId());
-            IFactoryService factory = factoryTracker.getService();
+            IFactoryService factory = context.getService(viewer.getServiceId());
             if (factory != null) {
                 factory.delete(viewer);
             }

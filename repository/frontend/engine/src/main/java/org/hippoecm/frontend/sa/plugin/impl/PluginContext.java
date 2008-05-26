@@ -15,13 +15,16 @@
  */
 package org.hippoecm.frontend.sa.plugin.impl;
 
+import java.util.List;
+
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.Home;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.PluginManager;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.IServiceListener;
+import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.ServiceReference;
 
 public class PluginContext implements IPluginContext, IClusterable {
@@ -40,8 +43,31 @@ public class PluginContext implements IPluginContext, IClusterable {
         return properties;
     }
 
-    public IPlugin start(IPluginConfig config) {
-        return getManager().start(config);
+    public IPluginControl start(IClusterConfig cluster) {
+        PluginManager mgr = getManager();
+        final IPluginControl[] controls = new IPluginControl[cluster.getPlugins().size()];
+        int i = 0;
+        for(IPluginConfig config : cluster.getPlugins()) {
+            controls[i++] = mgr.start(config);
+        }
+
+        return new IPluginControl() {
+            private static final long serialVersionUID = 1L;
+
+            public void stopPlugin() {
+                for(IPluginControl control : controls) {
+                    control.stopPlugin();
+                }
+            }
+        };
+    }
+
+    public <T extends IClusterable> T getService(String name) {
+        return (T) getManager().getService(name);
+    }
+
+    public <T extends IClusterable> List<T> getServices(String name) {
+        return getManager().getServices(name);
     }
 
     public <T extends IClusterable> ServiceReference<T> getReference(T service) {
@@ -56,12 +82,12 @@ public class PluginContext implements IPluginContext, IClusterable {
         getManager().unregisterService(service, name);
     }
 
-    public void registerListener(IServiceListener listener, String name) {
-        getManager().registerListener(listener, name);
+    public void registerTracker(IServiceTracker listener, String name) {
+        getManager().registerTracker(listener, name);
     }
 
-    public void unregisterListener(IServiceListener listener, String name) {
-        getManager().unregisterListener(listener, name);
+    public void unregisterTracker(IServiceTracker listener, String name) {
+        getManager().unregisterTracker(listener, name);
     }
 
     private PluginManager getManager() {

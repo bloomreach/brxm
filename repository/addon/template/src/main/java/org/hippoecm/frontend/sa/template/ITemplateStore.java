@@ -16,10 +16,11 @@
 package org.hippoecm.frontend.sa.template;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 
 public interface ITemplateStore extends IClusterable {
 
     public final static String EDIT_MODE = "edit";
 
-    public ITemplateConfig getTemplate(TypeDescriptor type, String mode);
+    public IClusterConfig getTemplate(TypeDescriptor type, String mode);
 }

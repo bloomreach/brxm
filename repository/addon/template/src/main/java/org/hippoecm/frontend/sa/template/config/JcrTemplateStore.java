@@ -16,15 +16,15 @@
 package org.hippoecm.frontend.sa.template.config;
 
 import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.plugin.impl.ListViewPlugin;
-import org.hippoecm.frontend.sa.template.ITemplateConfig;
+import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.ITemplateStore;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
-import org.hippoecm.frontend.sa.template.impl.JavaTemplateConfig;
 import org.hippoecm.frontend.sa.template.plugins.ValueTemplatePlugin;
 import org.hippoecm.frontend.sa.template.plugins.field.FieldPlugin;
 import org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin;
@@ -32,40 +32,40 @@ import org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin;
 public class JcrTemplateStore implements ITemplateStore {
     private static final long serialVersionUID = 1L;
 
-    public ITemplateConfig getTemplate(TypeDescriptor type, String mode) {
+    public IClusterConfig getTemplate(TypeDescriptor type, String mode) {
         if (type.getName().equals("defaultcontent:article")) {
-            IPluginConfig[] plugins = new IPluginConfig[1];
-
-            plugins[0] = new JavaPluginConfig();
-            plugins[0].put(IPlugin.CLASSNAME, PropertyFieldPlugin.class.getName());
-            plugins[0].put(ITemplateEngine.MODE, mode);
-            plugins[0].put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
-            plugins[0].put(FieldPlugin.FIELD, "title");
-            plugins[0].put(ListViewPlugin.ITEM, "template:item");
-            plugins[0].put(RenderPlugin.WICKET_ID, "template:" + RenderPlugin.WICKET_ID);
-            plugins[0].put(RenderPlugin.MODEL_ID, "template:" + RenderPlugin.MODEL_ID);
-            plugins[0].put("template." + RenderPlugin.WICKET_ID, "template:item");
-
-            JavaTemplateConfig template = new JavaTemplateConfig(plugins);
+            JavaClusterConfig template = new JavaClusterConfig();
             template.put(RenderPlugin.MODEL_ID, "{template}.model");
             template.put("item", "{template}.item");
+
+            IPluginConfig plugin = new JavaPluginConfig();
+            plugin.put(IPlugin.CLASSNAME, PropertyFieldPlugin.class.getName());
+            plugin.put(ITemplateEngine.MODE, mode);
+            plugin.put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
+            plugin.put(FieldPlugin.FIELD, "title");
+            plugin.put(ListViewPlugin.ITEM, "template:item");
+            plugin.put(RenderPlugin.WICKET_ID, "template:" + RenderPlugin.WICKET_ID);
+            plugin.put(RenderPlugin.MODEL_ID, "template:" + RenderPlugin.MODEL_ID);
+            plugin.put("template." + RenderPlugin.WICKET_ID, "template:item");
+            template.addPlugin(plugin);
+
             return template;
         } else if (type.getName().equals("String")) {
-            IPluginConfig[] plugins = new IPluginConfig[1];
-
-            plugins[0] = new JavaPluginConfig();
-            plugins[0].put(IPlugin.CLASSNAME, ValueTemplatePlugin.class.getName());
-            plugins[0].put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
-            plugins[0].put(ITemplateEngine.MODE, mode);
-            plugins[0].put(RenderPlugin.WICKET_ID, "template:" + RenderPlugin.WICKET_ID);
-            plugins[0].put(RenderPlugin.MODEL_ID, "template:" + RenderPlugin.MODEL_ID);
-
-            JavaTemplateConfig template = new JavaTemplateConfig(plugins);
+            JavaClusterConfig template = new JavaClusterConfig();
             template.addProperty(RenderPlugin.WICKET_ID);
             template.put(RenderPlugin.MODEL_ID, "{template}.model");
+
+            IPluginConfig plugin = new JavaPluginConfig();
+            plugin.put(IPlugin.CLASSNAME, ValueTemplatePlugin.class.getName());
+            plugin.put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
+            plugin.put(ITemplateEngine.MODE, mode);
+            plugin.put(RenderPlugin.WICKET_ID, "template:" + RenderPlugin.WICKET_ID);
+            plugin.put(RenderPlugin.MODEL_ID, "template:" + RenderPlugin.MODEL_ID);
+            template.addPlugin(plugin);
+
             return template;
         }
-        return new JavaTemplateConfig(new IPluginConfig[0]);
+        return new JavaClusterConfig();
     }
 
 }

@@ -17,7 +17,8 @@ package org.hippoecm.frontend.sa.template;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginControl;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 
 public interface ITemplateEngine extends IClusterable {
 
@@ -31,7 +32,7 @@ public interface ITemplateEngine extends IClusterable {
 
     TypeDescriptor getType(IModel model);
 
-    ITemplateConfig getTemplate(TypeDescriptor type, String mode);
+    IClusterConfig getTemplate(TypeDescriptor type, String mode);
 
-    IPlugin start(ITemplateConfig config, IModel model);
+    IPluginControl start(IClusterConfig config, IModel model);
 }

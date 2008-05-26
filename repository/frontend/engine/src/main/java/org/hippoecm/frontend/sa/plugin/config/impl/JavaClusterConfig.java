@@ -15,9 +15,36 @@
  */
 package org.hippoecm.frontend.sa.plugin.config.impl;
 
-import org.apache.wicket.util.value.ValueMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
-public class JavaPluginConfig extends ValueMap implements IPluginConfig {
+public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfig {
     private static final long serialVersionUID = 1L;
+
+    private List<String> keys;
+    private List<IPluginConfig> configs;
+
+    public JavaClusterConfig() {
+        configs = new LinkedList<IPluginConfig>();
+        keys = new LinkedList<String>();
+    }
+
+    public void addPlugin(IPluginConfig config) {
+        configs.add(config);
+    }
+
+    public void addProperty(String key) {
+        keys.add(key);
+    }
+
+    public List<IPluginConfig> getPlugins() {
+        return configs;
+    }
+
+    public List<String> getPropertyKeys() {
+        return keys;
+    }
 }

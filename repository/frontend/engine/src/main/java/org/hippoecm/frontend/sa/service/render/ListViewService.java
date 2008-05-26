@@ -62,31 +62,29 @@ public class ListViewService extends RenderService {
             }
         };
         add(view);
-
-        tracker = new ServiceTracker<IRenderService>(IRenderService.class);
-        tracker.addListener(new ServiceTracker.IListener<IRenderService>() {
-            private static final long serialVersionUID = 1L;
-
-            public void onServiceAdded(String name, IRenderService service) {
-                services.add(service);
-                redraw();
-            }
-
-            public void onServiceChanged(String name, IRenderService service) {
-            }
-
-            public void onRemoveService(String name, IRenderService service) {
-                services.remove(service);
-                redraw();
-            }
-        });
     }
 
     @Override
     public void init(IPluginContext context, IPluginConfig properties) {
         super.init(context, properties);
         if (properties.get("item") != null) {
-            tracker.open(context, properties.getString("item"));
+            tracker = new ServiceTracker<IRenderService>(IRenderService.class) {
+                private static final long serialVersionUID = 1L;
+
+                public void onServiceAdded(IRenderService service, String name) {
+                    services.add(service);
+                    redraw();
+                }
+
+                public void onServiceChanged(IRenderService service, String name) {
+                }
+
+                public void onRemoveService(IRenderService service, String name) {
+                    services.remove(service);
+                    redraw();
+                }
+            };
+            context.registerTracker(tracker, properties.getString("item"));
         } else {
             log.warn("No item id configured");
         }
@@ -94,7 +92,11 @@ public class ListViewService extends RenderService {
 
     @Override
     public void destroy() {
-        tracker.close();
+        if (tracker != null) {
+            getPluginContext().unregisterTracker(tracker, getPluginConfig().getString("item"));
+            tracker = null;
+        }
+        super.destroy();
     }
 
     @Override

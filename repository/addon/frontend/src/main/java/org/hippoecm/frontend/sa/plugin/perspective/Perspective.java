@@ -22,11 +22,9 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
 import org.hippoecm.frontend.sa.service.IViewService;
-import org.hippoecm.frontend.sa.service.ServiceTracker;
 
 public abstract class Perspective extends RenderPlugin implements ITitleDecorator, IViewService {
     private static final long serialVersionUID = 1L;
@@ -36,11 +34,9 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
 
     private List<IPlugin> plugins;
     private String title = "title";
-    private ServiceTracker<IPluginConfigService> pluginConfigTracker;
 
     public Perspective() {
         plugins = new LinkedList<IPlugin>();
-        pluginConfigTracker = new ServiceTracker<IPluginConfigService>(IPluginConfigService.class);
     }
 
     @Override
@@ -59,8 +55,7 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
         // TODO: uncomment this when IPluginConfigService.getPlugins(String key)
         // actually uses the key, currently it returns ALL configured IPluginConfigs
         
-//        pluginConfigTracker.open(context, "service.plugin.config");
-//        IPluginConfigService pluginConfigService = pluginConfigTracker.getService();
+//        IPluginConfigService pluginConfigService = getPluginContext().getService("service.plugin.config");
 //        for (IPluginConfig config : pluginConfigService.getPlugins(PLUGINS)) {
 //            IPlugin plugin = context.start(config); 
 //            plugins.add(plugin);

@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.sa.template.editor;
 
-import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
@@ -30,7 +30,7 @@ public class EditorPlugin extends RenderPlugin implements IViewService {
     private EditorForm form;
 
     public EditorPlugin() {
-        add(new EmptyPanel("form"));
+        add(new Form("form"));
         form = null;
     }
 

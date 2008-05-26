@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.sa.template.editor;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -22,12 +25,13 @@ import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.sa.service.ServiceTracker;
-import org.hippoecm.frontend.sa.template.ITemplateConfig;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.ITemplateStore;
 import org.hippoecm.frontend.sa.template.ITypeStore;
@@ -43,8 +47,9 @@ public class EditorForm extends Form {
     private IPluginContext context;
     private IPluginConfig config;
 
-    private IPlugin template;
+    private IPluginControl template;
     private ServiceTracker<IRenderService> fieldTracker;
+    private List<IRenderService> fields;
     private TemplateEngine engine;
     private String engineId;
 
@@ -67,33 +72,35 @@ public class EditorForm extends Form {
         engine = new TemplateEngine(context, engineId, typeStore, templateConfig);
         context.registerService(engine, engineId);
 
-        fieldTracker = new ServiceTracker<IRenderService>(IRenderService.class);
-        fieldTracker.addListener(new ServiceTracker.IListener<IRenderService>() {
+        fields = new LinkedList<IRenderService>();
+        fieldTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
             private static final long serialVersionUID = 1L;
 
-            public void onRemoveService(String name, IRenderService service) {
+            public void onRemoveService(IRenderService service, String name) {
                 replace(new EmptyPanel("template"));
                 service.unbind();
+                fields.remove(service);
             }
 
-            public void onServiceAdded(String name, IRenderService service) {
+            public void onServiceAdded(IRenderService service, String name) {
                 service.bind(parent, "template");
                 replace((Component) service);
+                fields.add(service);
             }
 
-            public void onServiceChanged(String name, IRenderService service) {
+            public void onServiceChanged(IRenderService service, String name) {
             }
-        });
-        fieldTracker.open(context, engineId + ".wicket.root");
+        };
+        context.registerTracker(fieldTracker, engineId + ".wicket.root");
 
         template = createTemplate();
     }
 
     public void destroy() {
         context.unregisterService(engine, config.getString(ITemplateEngine.ENGINE));
-        fieldTracker.close();
+        context.unregisterTracker(fieldTracker, engineId + ".wicket.root");
         if (template != null) {
-            template.stop();
+            template.stopPlugin();
         }
     }
 
@@ -101,26 +108,26 @@ public class EditorForm extends Form {
     public void onModelChanged() {
         super.onModelChanged();
         if (template != null) {
-            template.stop();
+            template.stopPlugin();
         }
         template = createTemplate();
     }
 
     public void render(PluginRequestTarget target) {
-        for (IRenderService child : fieldTracker.getServices()) {
+        for (IRenderService child : fields) {
             child.render(target);
         }
     }
 
-    protected IPlugin createTemplate() {
+    protected IPluginControl createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
         TypeDescriptor type = engine.getType(model);
 
         if (type != null) {
-            ITemplateConfig templateConfig = engine.getTemplate(type, ITemplateStore.EDIT_MODE);
-            templateConfig.put(RenderPlugin.DIALOG_ID, config.getString(RenderPlugin.DIALOG_ID));
-            templateConfig.put(RenderPlugin.WICKET_ID, engineId + ".wicket.root");
-            return engine.start(templateConfig, model);
+            IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateStore.EDIT_MODE);
+            clusterConfig.put(RenderPlugin.DIALOG_ID, config.getString(RenderPlugin.DIALOG_ID));
+            clusterConfig.put(RenderPlugin.WICKET_ID, engineId + ".wicket.root");
+            return engine.start(clusterConfig, model);
         } else {
             return null;
         }

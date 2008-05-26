@@ -26,15 +26,12 @@ import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.DialogLink;
 import org.hippoecm.frontend.sa.dialog.IDialogFactory;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.ExtendedFolderDialog;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.FolderDialog;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.PrototypeDialog;
 import org.hippoecm.frontend.sa.service.IViewService;
-import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +41,7 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(PrototypeWorkflowPlugin.class);
 
-    private ServiceTracker<IViewService> viewer;
-
     public PrototypeWorkflowPlugin() {
-        viewer = new ServiceTracker<IViewService>(IViewService.class);
-
         add(new EmptyPanel("addDocument-dialog"));
         add(new EmptyPanel("addFolder-dialog"));
 
@@ -59,20 +52,6 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
                 return new ExtendedFolderDialog(PrototypeWorkflowPlugin.this, dialogService);
             }
         }));
-    }
-
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
-        super.init(context, properties);
-        if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
-            viewer.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));
-        }
-    }
-
-    @Override
-    public void destroy() {
-        viewer.close();
-        super.destroy();
     }
 
     @Override
@@ -115,7 +94,7 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     public void select(JcrNodeModel nodeModel) {
-        IViewService view = viewer.getService();
+        IViewService view = getPluginContext().getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
         if (view != null) {
             view.view(nodeModel);
         }

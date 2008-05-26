@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.template;
+package org.hippoecm.frontend.sa.plugin.config;
 
 import java.util.List;
 
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
-public interface ITemplateConfig extends IPluginConfig {
+public interface IClusterConfig extends IPluginConfig {
 
     List<IPluginConfig> getPlugins();
 
