@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin;
+package org.hippoecm.frontend.sa.template;
+
+import java.util.List;
 
 import org.apache.wicket.IClusterable;
 
-public interface IPlugin extends IClusterable {
+public interface ITypeStore extends IClusterable {
 
-    String SERVICE_ID = "service.pid";
+    TypeDescriptor getTypeDescriptor(String name);
 
-    String CLASSNAME = "plugin.class";
-
-    void start(IPluginContext context);
-
-    void stop();
+    List<TypeDescriptor> getTypes(String namespace);
 }

@@ -15,23 +15,8 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <tr>
-      <td rowspan="1" class="gridmiddle" style="background: #e1e1e1;">
-        <!--<h2 class="edit">edit</h2>-->
-        <form style="padding: 8px;" wicket:id="form">
-          <div class="templateeditor" style="background: white" wicket:id="template">[ template goes
-            here ]</div>
-        </form>
-      </td>
-      <td class="gridside">
-        <div class="pluginbox">
-          <h2 class="actions">Actions</h2>
-          <div class="padding" wicket:id="editworkflowsPlugin">workflow here</div>
-        </div>
-        <div class="pluginbox">
-          <h2 class="edititem">Edit Template Item</h2>
-        </div>
-      </td>
-    </tr>
+    <form wicket:id="form">
+      <div wicket:id="template">[ template goes here ]</div>
+    </form>
   </wicket:panel>
 </html>

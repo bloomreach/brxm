@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2007 Hippo
+    * Copyright 2008 Hippo
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -15,23 +15,12 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <tr>
-      <td rowspan="1" class="gridmiddle" style="background: #e1e1e1;">
-        <!--<h2 class="edit">edit</h2>-->
-        <form style="padding: 8px;" wicket:id="form">
-          <div class="templateeditor" style="background: white" wicket:id="template">[ template goes
-            here ]</div>
-        </form>
-      </td>
-      <td class="gridside">
-        <div class="pluginbox">
-          <h2 class="actions">Actions</h2>
-          <div class="padding" wicket:id="editworkflowsPlugin">workflow here</div>
-        </div>
-        <div class="pluginbox">
-          <h2 class="edititem">Edit Template Item</h2>
-        </div>
-      </td>
-    </tr>
+    <h3 wicket:id="name">[ field name ]</h3>
+    <div wicket:id="view">
+      <a wicket:id="remove">(delete)</a>
+      <a wicket:id="up">(up)</a>
+      <div wicket:id="item">[ field goes here ]</div>
+    </div>
+    <a wicket:id="add">(add)</a>
   </wicket:panel>
 </html>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.template;
+package org.hippoecm.frontend.sa.template.editor;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.adapter.Adapter;
@@ -23,7 +23,7 @@ import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.sa.service.IViewService;
 
-public class EditorPlugin implements IPlugin, IViewService {
+public class LegacyEditorPlugin implements IPlugin, IViewService {
     private static final long serialVersionUID = 1L;
 
     private IPluginContext context;

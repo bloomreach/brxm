@@ -197,6 +197,9 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
       </sv:node>
 
       <sv:node sv:name="hippo:prototype">
@@ -222,6 +225,9 @@
           <sv:value>introduction</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
       </sv:node>
@@ -416,6 +422,9 @@
           <sv:value>body</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
       </sv:node>
@@ -651,6 +660,9 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
       </sv:node>
 
     </sv:node>
@@ -767,6 +779,7 @@
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>fc4d576f-5491-41dd-889d-db98147e8da0</sv:value>
     </sv:property>
+    
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -835,6 +848,7 @@
         <!-- end hippo query -->
       </sv:node>
     </sv:node>
+
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -860,8 +874,12 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>

@@ -91,8 +91,7 @@ class ExperimentalConfigService implements IPluginConfigService {
 
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.editor.MultiEditorPlugin");
-        config.put("editor.class", "org.hippoecm.frontend.sa.plugin.editor.EditorPlugin");
-        config.put("editor.class", "org.hippoecm.frontend.sa.plugins.template.EditorPlugin");
+        config.put("editor.class", "org.hippoecm.frontend.sa.template.editor.EditorPlugin");
         config.put("service.pid", "service.edit");
         config.put("wicket.dialog", "service.dialog");
 

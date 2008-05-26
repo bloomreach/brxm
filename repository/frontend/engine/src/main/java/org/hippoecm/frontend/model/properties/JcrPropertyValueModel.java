@@ -199,7 +199,7 @@ public class JcrPropertyValueModel extends Model {
         return new HashCodeBuilder(33, 113).append(value).append(index).toHashCode();
     }
 
-    private void setIndex(int index) {
+    public void setIndex(int index) {
         try {
             if (propertyModel.getProperty().getDefinition().isMultiple()) {
                 this.index = index;

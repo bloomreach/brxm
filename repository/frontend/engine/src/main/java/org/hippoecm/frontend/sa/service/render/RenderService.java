@@ -139,6 +139,10 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
         return context;
     }
 
+    protected IPluginConfig getPluginConfig() {
+        return config;
+    }
+
     protected Object getProperty(String key) {
         return config.get(key);
     }

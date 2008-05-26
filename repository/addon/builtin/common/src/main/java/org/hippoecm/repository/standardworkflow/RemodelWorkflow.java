@@ -18,7 +18,6 @@ package org.hippoecm.repository.standardworkflow;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;

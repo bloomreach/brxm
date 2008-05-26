@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin;
+package org.hippoecm.frontend.sa.template;
 
-import org.apache.wicket.IClusterable;
+import java.util.List;
 
-public interface IPlugin extends IClusterable {
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
-    String SERVICE_ID = "service.pid";
+public interface ITemplateConfig extends IPluginConfig {
 
-    String CLASSNAME = "plugin.class";
+    List<IPluginConfig> getPlugins();
 
-    void start(IPluginContext context);
+    List<String> getPropertyKeys();
 
-    void stop();
 }
