@@ -74,15 +74,13 @@ public class CmsJcrTree extends JcrTree {
                 if (treeNode.getNodeModel() != null) {
                     HippoNode jcrNode = treeNode.getNodeModel().getNode();
                     if (jcrNode.getCanonicalNode() == null) {
-                        typeOfNode = IS_VIRTUAL_DOCUMENT;
-                        if (jcrNode.hasNodes()) {
+                        //typeOfNode = IS_VIRTUAL_DOCUMENT;
+                        //if (jcrNode.hasNodes()) {
                             typeOfNode = IS_VIRTUAL_FOLDER;
-                        }
+                        //}
                     } else {
-                        if (!jcrNode.getCanonicalNode().isSame(jcrNode) && jcrNode.hasNodes()) {
+                        if (!jcrNode.getCanonicalNode().isSame(jcrNode)) {
                             typeOfNode = IS_VIRTUAL_FOLDER;
-                        } else if (!jcrNode.getCanonicalNode().isSame(jcrNode)) {
-                            typeOfNode = IS_VIRTUAL_DOCUMENT;
                         } else if (jcrNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                             typeOfNode = IS_HANDLE_NODE;
                         }
@@ -173,7 +171,7 @@ public class CmsJcrTree extends JcrTree {
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
                 }
-
+                
                 if (node.isLeaf() == false && node.getChildCount() > 0 && !isRootNode) {
                     cssClassInner = isNodeExpanded(node) ? "minus" : "plus";
                 } else {
