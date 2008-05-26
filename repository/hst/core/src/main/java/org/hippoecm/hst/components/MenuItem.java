@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.taglib;
+package org.hippoecm.hst.components;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,11 +23,16 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.util.HSTNodeTypes;
 import org.hippoecm.repository.api.HippoNodeType;
 
+/**
+ * Menu item component used by the menu component.  
+ */
 public class MenuItem {
 
     private final List<MenuItem> menuItems = new ArrayList<MenuItem>();
+    
     private final int level;
     private final String path;
     private final String label;
@@ -42,8 +47,8 @@ public class MenuItem {
         this.level = level;
         try {
             String label;
-            if (node.hasProperty(Menu.PROPERTY_MENU_LABEL)) {
-                label = node.getProperty(Menu.PROPERTY_MENU_LABEL).getString();
+            if (node.hasProperty(HSTNodeTypes.PROPERTY_MENU_LABEL)) {
+                label = node.getProperty(HSTNodeTypes.PROPERTY_MENU_LABEL).getString();
             }
             else {
                 
@@ -116,7 +121,7 @@ public class MenuItem {
                 
                 // on level higher than 0, absence of the property means to  
                 // create one if it concerns a document handle or folder 
-                if (!subNode.hasProperty(Menu.PROPERTY_IS_MENU_ITEM)) {
+                if (!subNode.hasProperty(HSTNodeTypes.PROPERTY_IS_MENU_ITEM)) {
 
                     // skip documents as there are multiple variants
                     if (subNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -130,7 +135,7 @@ public class MenuItem {
                 }
                 else {
                     // check flag
-                    if (subNode.getProperty(Menu.PROPERTY_IS_MENU_ITEM).getBoolean()) {
+                    if (subNode.getProperty(HSTNodeTypes.PROPERTY_IS_MENU_ITEM).getBoolean()) {
                         menuItems.add(new MenuItem(subNode, this.getLevel() + 1));
                     }
                }

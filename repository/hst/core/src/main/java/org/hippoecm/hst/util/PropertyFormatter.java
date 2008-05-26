@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.taglib;
+package org.hippoecm.hst.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -74,6 +74,4 @@ public class PropertyFormatter {
     
         return this.dateFormat;
      }
-
-
 }

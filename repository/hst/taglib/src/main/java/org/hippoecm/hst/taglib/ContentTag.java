@@ -24,6 +24,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.core.HSTConfiguration;
+import org.hippoecm.hst.util.PropertyFormatter;
 
 public class ContentTag extends SimpleTagSupport {
     
