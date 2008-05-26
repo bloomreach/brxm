@@ -1,6 +1,0 @@
-DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED
-
-This addon has been deprecated and will be removed once the CMS addons reach the same level of functionality.
-
-DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED
-  
