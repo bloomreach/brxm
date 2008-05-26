@@ -1,0 +1,62 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1.jar" sourcepath="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/adcb/.m2/repository/commons-collections/commons-collections/3.1/commons-collections-3.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.1/commons-lang-2.1.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.1/commons-lang-2.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/adcb/.m2/repository/commons-lang/commons-lang/2.1/commons-lang-2.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/geronimo-spec/geronimo-spec-jta/1.0.1B-rc2/geronimo-spec-jta-1.0.1B-rc2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hippoecm/hippo-ecm-addon-builtin-common/2.01.00-SNAPSHOT/hippo-ecm-addon-builtin-common-2.01.00-SNAPSHOT.jar" sourcepath="M2_REPO/org/hippoecm/hippo-ecm-addon-builtin-common/2.01.00-SNAPSHOT/hippo-ecm-addon-builtin-common-2.01.00-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hippoecm/hippo-ecm-api/2.01.00-SNAPSHOT/hippo-ecm-api-2.01.00-SNAPSHOT.jar" sourcepath="M2_REPO/org/hippoecm/hippo-ecm-api/2.01.00-SNAPSHOT/hippo-ecm-api-2.01.00-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hippoecm/hippo-ecm-frontend-engine/2.01.00-SNAPSHOT/hippo-ecm-frontend-engine-2.01.00-SNAPSHOT.jar" sourcepath="M2_REPO/org/hippoecm/hippo-ecm-frontend-engine/2.01.00-SNAPSHOT/hippo-ecm-frontend-engine-2.01.00-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hippoecm/hippo-ecm-repository-connector/2.01.00-SNAPSHOT/hippo-ecm-repository-connector-2.01.00-SNAPSHOT.jar" sourcepath="M2_REPO/org/hippoecm/hippo-ecm-repository-connector/2.01.00-SNAPSHOT/hippo-ecm-repository-connector-2.01.00-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/devlib/schmidt/imageinfo/1.7/imageinfo-1.7.jar" sourcepath="M2_REPO/org/devlib/schmidt/imageinfo/1.7/imageinfo-1.7-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/jackrabbit/jackrabbit-api/1.4/jackrabbit-api-1.4.jar" sourcepath="M2_REPO/org/apache/jackrabbit/jackrabbit-api/1.4/jackrabbit-api-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/jackrabbit/jackrabbit-classloader/1.4/jackrabbit-classloader-1.4.jar" sourcepath="M2_REPO/org/apache/jackrabbit/jackrabbit-classloader/1.4/jackrabbit-classloader-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/jackrabbit/jackrabbit-jcr-commons/1.4/jackrabbit-jcr-commons-1.4.jar" sourcepath="M2_REPO/org/apache/jackrabbit/jackrabbit-jcr-commons/1.4/jackrabbit-jcr-commons-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4/jackrabbit-jcr-rmi-1.4.jar" sourcepath="M2_REPO/org/apache/jackrabbit/jackrabbit-jcr-rmi/1.4/jackrabbit-jcr-rmi-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/jcl104-over-slf4j/1.4.0/jcl104-over-slf4j-1.4.0.jar" sourcepath="M2_REPO/org/slf4j/jcl104-over-slf4j/1.4.0/jcl104-over-slf4j-1.4.0-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/jcr/jcr/1.0/jcr-1.0.jar" sourcepath="M2_REPO/javax/jcr/jcr/1.0/jcr-1.0-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/adcb/.m2/repository/javax/jcr/jcr/1.0/jcr-1.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/javax/jdo/jdo2-api/2.0/jdo2-api-2.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/1.4/joda-time-1.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/jpox/jpox-core/1.2.0-beta-3/jpox-core-1.2.0-beta-3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar" sourcepath="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.4.0/slf4j-api-1.4.0.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.4.0/slf4j-api-1.4.0-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.4.0/slf4j-log4j12-1.4.0.jar" sourcepath="M2_REPO/org/slf4j/slf4j-log4j12/1.4.0/slf4j-log4j12-1.4.0-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/velocity/velocity/1.4/velocity-1.4.jar" sourcepath="M2_REPO/velocity/velocity/1.4/velocity-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/velocity/velocity-dep/1.4/velocity-dep-1.4.jar" sourcepath="M2_REPO/velocity/velocity-dep/1.4/velocity-dep-1.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/wicket/wicket/1.3.2/wicket-1.3.2.jar" sourcepath="M2_REPO/org/apache/wicket/wicket/1.3.2/wicket-1.3.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/adcb/.m2/repository/org/apache/wicket/wicket/1.3.2/wicket-1.3.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/wicket/wicket-datetime/1.3.2/wicket-datetime-1.3.2.jar" sourcepath="M2_REPO/org/apache/wicket/wicket-datetime/1.3.2/wicket-datetime-1.3.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/adcb/.m2/repository/org/apache/wicket/wicket-datetime/1.3.2/wicket-datetime-1.3.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/wicket/wicket-extensions/1.3.2/wicket-extensions-1.3.2.jar" sourcepath="M2_REPO/org/apache/wicket/wicket-extensions/1.3.2/wicket-extensions-1.3.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/adcb/.m2/repository/org/apache/wicket/wicket-extensions/1.3.2/wicket-extensions-1.3.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/wicket/wicket-velocity/1.3.1/wicket-velocity-1.3.1.jar" sourcepath="M2_REPO/org/apache/wicket/wicket-velocity/1.3.1/wicket-velocity-1.3.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/adcb/.m2/repository/org/apache/wicket/wicket-velocity/1.3.1/wicket-velocity-1.3.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/wicketstuff/wicketstuff-yui/1.3.0-SNAPSHOT/wicketstuff-yui-1.3.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.8.1/xercesImpl-2.8.1.jar" sourcepath="M2_REPO/xerces/xercesImpl/2.8.1/xercesImpl-2.8.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.3.03/xml-apis-1.3.03.jar"/>
+</classpath>
