@@ -108,134 +108,67 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
     }
 
     @Test
-    public void testSimple() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node node, root = session.getRootNode();
-
-        if (!root.hasNode("test")) {
-            node = root.addNode("test");
-        } else {
-            node = root.getNode("test");
-        }
-        node.addMixin("mix:versionable");
-        session.save();
-        node.checkin();
-    }
-
-    @Test
-    public void testVersion() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        VersionWorkflow versionwf;
-        FullReviewedActionsWorkflow publishwf;
-        Document document;
-
-        Node node, root = session.getRootNode().getNode("test");
-
-        node = root.getNode("baredocument");
-        assertNotNull(node);
-        versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
-        versionwf.version();
-        session.refresh(false);
-
-        node = root.getNode("baredocument");
-        node.checkout();
-        node.setProperty("hippostd:username", node.getProperty("hippostd:username").getString() + ".");
-        session.save();
-
-        versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
-        versionwf.version();
-        session.refresh(false);
-
-        node = root.getNode("baredocument");
-        node.checkout();
-        node.setProperty("hippostd:username", node.getProperty("hippostd:username").getString() + ".");
-        session.save();
-
-        versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
-        versionwf.version();
-        session.refresh(false);
-
-        node = root.getNode("baredocument");
-        node.checkout();
-        node.setProperty("hippostd:username", node.getProperty("hippostd:username").getString() + ".");
-        session.save();
-        versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
-        versionwf.version();
-        session.refresh(false);
-
-        node = root.getNode("baredocument");
-        node.checkout();
-        node.setProperty("hippostd:username", node.getProperty("hippostd:username").getString() + ".");
-        session.save();
-        versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
-        Map<Calendar, Set<String>> history = versionwf.list();
-        int count = 0;
-        for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {
-            document = versionwf.retrieve(entry.getKey());
-            Node version = session.getNodeByUUID(document.getIdentity());
-            if (count > 0) {
-                assertEquals("admin" + "...........".substring(1, count++), version.getNode("jcr:frozenNode").getProperty("hippostd:username").getString());
-            } else {
-                ++count;
-            }
-        }
-        assertEquals(5, count);
-    }
-
-    @Ignore
     public void testVersioning() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node node, root = session.getRootNode();
         Document document;
         Vector<String> expected = new Vector<String>();
 
-        node = getNode("test/versiondocument/versiondocument");
-        VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
-        versionwf.version();
-        session.refresh(false);
-
         edit();
-
         publish();
         expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
 
         edit();
-
-        publish();
-        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
-
-        /*
-        depublish();
-
-        edit();
-        */
-
         publish();
         expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
 
         edit();
+        publish();
+        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
 
+        edit();
+        edit();
+        publish();
+        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
+
+        /*depublish();
+        edit();
+        edit();
+        version();
+        edit();
+        version();
+
+        publish();
+        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());*/
+
+        edit();
         publish();
         expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
 
         node = getNode("test/versiondocument/versiondocument[@hippostd:state='published']");
         assertNotNull(node);
-        versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
+        VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
         Map<Calendar, Set<String>> history = versionwf.list();
         Vector<String> versions = new Vector<String>();
         for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {
             document = versionwf.retrieve(entry.getKey());
             if(document != null) {
                 Node version = session.getNodeByUUID(document.getIdentity());
-                Utilities.dump(System.err, version.getNode("jcr:frozenNode"));
-                versions.add(version.getNode("jcr:frozenNode").getProperty("hippostd:language").getString());
+                versions.add(version.getProperty("hippostd:language").getString());
             } else {
                 versions.add("--");
             }
         }
 
-        //assertEquals(expected.size(), versions.size());
-        for(int i=0; i<expected.size(); i++)
-            System.err.println("EXPECTED "+expected.get(i));
-        // assertEquals(expected.get(i), versions.get(i));
-
+        for (int i = 0; i < versions.size(); i++) {
+            System.err.println("G " + versions.get(i));
+        }
+        for (int i = 0; i < expected.size(); i++) {
+            System.err.println("E " + expected.get(i));
+        }
+        assertEquals(expected.size(), versions.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertEquals(expected.get(i), versions.get(i));
+        }
     }
 
     private void edit() throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -295,9 +228,20 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         session.refresh(false);
     }
 
+    private void version() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node node = getNode("test/versiondocument/versiondocument");
+        VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
+        assertNotNull(versionwf);
+        versionwf.version();
+        session.save();
+        session.refresh(false);
+    }
+
     private void depublish() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         // publish
         Node node = getNode("test/versiondocument/versiondocument[@hippostd:state='published']");
+        node.getParent().checkout();
+        node.checkout();
         FullReviewedActionsWorkflow publishwf = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
         publishwf.depublish();
         session.save();
