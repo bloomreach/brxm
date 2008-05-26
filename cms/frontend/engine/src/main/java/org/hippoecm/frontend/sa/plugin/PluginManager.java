@@ -25,7 +25,7 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.Home;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.impl.PluginContext;
-import org.hippoecm.frontend.sa.service.IServiceListener;
+import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class PluginManager implements IClusterable {
     private Home page;
     private PluginFactory factory;
     private Map<String, List<IClusterable>> services;
-    private Map<String, List<IServiceListener>> listeners;
+    private Map<String, List<IServiceTracker>> listeners;
     private Map<Integer, RefCount> referenced;
     private int nextReferenceId;
 
@@ -66,18 +66,36 @@ public class PluginManager implements IClusterable {
         this.page = page;
         factory = new PluginFactory();
         services = new HashMap<String, List<IClusterable>>();
-        listeners = new HashMap<String, List<IServiceListener>>();
+        listeners = new HashMap<String, List<IServiceTracker>>();
         referenced = new HashMap<Integer, RefCount>();
         nextReferenceId = 0;
     }
 
-    public IPlugin start(IPluginConfig config) {
-        IPlugin plugin = factory.createPlugin(config);
+    public IPluginControl start(IPluginConfig config) {
+        final IPlugin plugin = factory.createPlugin(config);
         if (plugin != null) {
             PluginContext context = new PluginContext(page, config);
             plugin.start(context);
         }
-        return plugin;
+        return new IPluginControl() {
+            private static final long serialVersionUID = 1L;
+
+            public void stopPlugin() {
+                plugin.stop();
+            }
+        };
+    }
+    
+    public <T extends IClusterable> T getService(String name) {
+        List<IClusterable> list = services.get(name);
+        if(list != null && list.size() > 0) {
+            return (T) list.get(0);
+        }
+        return null;
+    }
+
+    public <T extends IClusterable> List<T> getServices(String name) {
+        return (List<T>) services.get(name);
     }
 
     public <T extends IClusterable> ServiceReference<T> getReference(T service) {
@@ -118,12 +136,12 @@ public class PluginManager implements IClusterable {
             referenced.get(new Integer(ref.getId())).addRef();
         }
 
-        List<IServiceListener> notify = listeners.get(name);
+        List<IServiceTracker> notify = listeners.get(name);
         if (notify != null) {
-            Iterator<IServiceListener> iter = notify.iterator();
+            Iterator<IServiceTracker> iter = notify.iterator();
             while (iter.hasNext()) {
-                IServiceListener entry = iter.next();
-                entry.processEvent(IServiceListener.ADDED, name, service);
+                IServiceTracker tracker = iter.next();
+                tracker.addService(service, name);
             }
         }
     }
@@ -138,12 +156,12 @@ public class PluginManager implements IClusterable {
 
         List<IClusterable> list = services.get(name);
         if (list != null) {
-            List<IServiceListener> notify = listeners.get(name);
+            List<IServiceTracker> notify = listeners.get(name);
             if (notify != null) {
-                Iterator<IServiceListener> iter = notify.iterator();
+                Iterator<IServiceTracker> iter = notify.iterator();
                 while (iter.hasNext()) {
-                    IServiceListener entry = iter.next();
-                    entry.processEvent(IServiceListener.REMOVE, name, service);
+                    IServiceTracker tracker = iter.next();
+                    tracker.removeService(service, name);
                 }
             }
 
@@ -162,7 +180,7 @@ public class PluginManager implements IClusterable {
         }
     }
 
-    public void registerListener(IServiceListener listener, String name) {
+    public void registerTracker(IServiceTracker listener, String name) {
         if (name == null) {
             log.error("listener name is null");
             return;
@@ -170,9 +188,9 @@ public class PluginManager implements IClusterable {
             log.info("registering listener " + listener + " for " + name);
         }
 
-        List<IServiceListener> list = listeners.get(name);
+        List<IServiceTracker> list = listeners.get(name);
         if (list == null) {
-            list = new LinkedList<IServiceListener>();
+            list = new LinkedList<IServiceTracker>();
             listeners.put(name, list);
         }
         list.add(listener);
@@ -182,12 +200,12 @@ public class PluginManager implements IClusterable {
             Iterator<IClusterable> iter = notify.iterator();
             while (iter.hasNext()) {
                 IClusterable service = iter.next();
-                listener.processEvent(IServiceListener.ADDED, name, service);
+                listener.addService(service, name);
             }
         }
     }
 
-    public void unregisterListener(IServiceListener listener, String name) {
+    public void unregisterTracker(IServiceTracker listener, String name) {
         if (name == null) {
             log.error("listener name is null");
             return;
@@ -195,7 +213,7 @@ public class PluginManager implements IClusterable {
             log.info("unregistering listener " + listener + " for " + name);
         }
 
-        List<IServiceListener> list = listeners.get(name);
+        List<IServiceTracker> list = listeners.get(name);
         if (list != null) {
             if (list.contains(listener)) {
                 list.remove(listener);

@@ -15,15 +15,14 @@
  */
 package org.hippoecm.frontend.sa.service;
 
-import java.util.EventListener;
-
 import org.apache.wicket.IClusterable;
 
-public interface IServiceListener extends EventListener {
+public interface IServiceTracker<S extends IClusterable> extends IClusterable {
 
-    int ADDED = 1;
-    int CHANGED = 2;
-    int REMOVE = 3;
+    void addService(S service, String name);
 
-    void processEvent(int type, String name, IClusterable service);
+    void removeService(S service, String name);
+
+    void updateService(S service, String name);
+
 }

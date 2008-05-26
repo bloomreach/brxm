@@ -15,15 +15,21 @@
  */
 package org.hippoecm.frontend.sa.plugin;
 
-import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.IServiceListener;
-import org.hippoecm.frontend.sa.service.ServiceReference;
+import java.util.List;
 
+import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.IServiceTracker;
+import org.hippoecm.frontend.sa.service.ServiceReference;
 
 public interface IPluginContext {
 
-    IPlugin start(IPluginConfig config);
+    IPluginControl start(IClusterConfig cluster);
+    
+    <T extends IClusterable> T getService(String name);
+
+    <T extends IClusterable> List<T> getServices(String name);
 
     <T extends IClusterable> ServiceReference<T> getReference(T service);
 
@@ -51,7 +57,7 @@ public interface IPluginContext {
      * @param name
      * @param service
      */
-    void registerListener(IServiceListener listener, String name);
+    void registerTracker(IServiceTracker listener, String name);
 
     /**
      * Unregisters a service with the given name.
@@ -59,6 +65,6 @@ public interface IPluginContext {
      * @param name
      * @param service
      */
-    void unregisterListener(IServiceListener listener, String name);
+    void unregisterTracker(IServiceTracker listener, String name);
 
 }

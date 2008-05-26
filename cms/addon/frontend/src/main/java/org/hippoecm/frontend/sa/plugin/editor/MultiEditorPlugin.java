@@ -24,18 +24,18 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.sa.dialog.ExceptionDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.IFactoryService;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.IViewService;
-import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
@@ -52,12 +52,11 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
     private static class PluginEntry implements IClusterable {
         private static final long serialVersionUID = 1L;
         String id;
-        IPlugin plugin;
+        IPluginControl plugin;
     }
 
     private IPluginContext context;
     private IPluginConfig config;
-    private ServiceTracker<IDialogService> dialogTracker;
     private String editorClass;
     private Map<IModel, PluginEntry> editors;
     private int editCount;
@@ -65,18 +64,11 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
     public MultiEditorPlugin() {
         editors = new HashMap<IModel, PluginEntry>();
         editCount = 0;
-        dialogTracker = new ServiceTracker(IDialogService.class);
     }
 
     public void start(IPluginContext context) {
         this.context = context;
         config = context.getProperties();
-
-        if (config.get(RenderService.DIALOG_ID) != null) {
-            dialogTracker.open(context, config.getString(RenderService.DIALOG_ID));
-        } else {
-            log.warn("No dialog service ({}) defined", RenderService.DIALOG_ID);
-        }
 
         if (config.get(EDITOR_CLASS) != null) {
             editorClass = config.getString(EDITOR_CLASS);
@@ -104,10 +96,9 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
 
     public void stop() {
         for (Map.Entry<IModel, PluginEntry> entry : editors.entrySet()) {
-            entry.getValue().plugin.stop();
+            entry.getValue().plugin.stopPlugin();
             editors.remove(entry.getKey());
         }
-        dialogTracker.close();
     }
 
     public String getServiceId() {
@@ -118,7 +109,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
     }
 
     public void view(final IModel model) {
-        IPlugin plugin;
+        IPluginControl plugin;
         if (!editors.containsKey(model)) {
             IPluginConfig editConfig = new JavaPluginConfig();
             String editorId = config.getString(EDITOR_ID) + editCount;
@@ -131,9 +122,15 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
             String factoryId = editorId + ".factory";
             context.registerService(this, factoryId);
 
-            plugin = context.start(editConfig);
-            if (plugin instanceof IViewService) {
-                ((IViewService) plugin).view(model);
+            JavaClusterConfig clusterConfig = new JavaClusterConfig();
+            clusterConfig.addPlugin(editConfig);
+            plugin = context.start(clusterConfig);
+
+            IViewService viewer = context.getService(editorId);
+            if (viewer != null) {
+                viewer.view(model);
+            } else {
+                log.warn("Configured editor does not provide an IViewService");
             }
 
             PluginEntry entry = new PluginEntry();
@@ -156,7 +153,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
             String editorId = entry.getValue().id;
             context.unregisterService(this, editorId + ".factory");
 
-            entry.getValue().plugin.stop();
+            entry.getValue().plugin.stopPlugin();
             editors.remove(entry.getKey());
         } else {
             log.error("unknown editor " + service + " delete is ignored");
@@ -167,10 +164,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
         IViewService viewer = (IViewService) service;
         Map.Entry<IModel, PluginEntry> entry = getPluginEntry(viewer);
         if (entry != null) {
-            IDialogService dialogService = null;
-            if (dialogTracker.getServices().size() > 0) {
-                dialogService = dialogTracker.getServices().get(0);
-            }
+            IDialogService dialogService = context.getService(config.getString(RenderService.DIALOG_ID));
 
             try {
                 Node node = ((JcrNodeModel) entry.getKey()).getNode();

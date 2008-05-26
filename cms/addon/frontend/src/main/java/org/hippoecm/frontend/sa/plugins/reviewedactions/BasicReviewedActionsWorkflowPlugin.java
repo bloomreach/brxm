@@ -24,7 +24,6 @@ import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IViewService;
-import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
@@ -37,11 +36,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
-    private ServiceTracker<IViewService> viewers;
-
     public BasicReviewedActionsWorkflowPlugin() {
-        viewers = new ServiceTracker<IViewService>(IViewService.class);
-
         addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
@@ -49,7 +44,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                IViewService viewer = viewers.getService();
+                IViewService viewer = getPluginContext().getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
                 if (viewer != null) {
                     viewer.view(new JcrNodeModel(docNode));
                 }
@@ -84,15 +79,6 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     public void init(IPluginContext context, IPluginConfig properties) {
         super.init(context, properties);
-        if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
-            viewers.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));
-        }
-    }
-
-    @Override
-    public void destroy() {
-        viewers.close();
-        super.destroy();
     }
 
 }

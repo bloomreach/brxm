@@ -15,106 +15,46 @@
  */
 package org.hippoecm.frontend.sa.service;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceTracker<S extends IClusterable> implements IServiceListener, IClusterable {
+public class ServiceTracker<S extends IClusterable> implements IServiceTracker<S> {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ServiceTracker.class);
 
-    private IPluginContext context;
-    private String name;
     private Class clazz;
-    private List<ServiceReference<S>> services;
-    private List<IListener<S>> listeners;
-
-    public interface IListener<S extends IClusterable> extends IClusterable {
-
-        void onServiceAdded(String name, S service);
-
-        void onServiceChanged(String name, S service);
-
-        void onRemoveService(String name, S service);
-
-    }
 
     public ServiceTracker(Class clazz) {
         this.clazz = clazz;
-
-        services = new LinkedList<ServiceReference<S>>();
-        listeners = new LinkedList<IListener<S>>();
     }
 
-    public void open(IPluginContext context, String name) {
-        this.context = context;
-        this.name = name;
-        context.registerListener(this, name);
-    }
-
-    public void close() {
-        if (context != null) {
-            context.unregisterListener(this, name);
-            services = new LinkedList<ServiceReference<S>>();
-            context = null;
-        } else {
-            log.warn("Wasn't open");
+    public void addService(IClusterable service, String name) {
+        if (clazz.isInstance(service)) {
+            onServiceAdded((S) service, name);
         }
     }
 
-    public void addListener(IListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(IListener listener) {
-        listeners.remove(listener);
-    }
-
-    public S getService() {
-        if (services.size() > 0) {
-            return services.get(0).getService();
-        }
-        return null;
-    }
-
-    public List<S> getServices() {
-        List<S> result = new ArrayList<S>(services.size());
-        for (ServiceReference<S> reference : services) {
-            result.add(reference.getService());
-        }
-        return result;
-    }
-
-    public final void processEvent(int type, String name, IClusterable service) {
-        if (this.name.equals(name) && clazz.isInstance(service)) {
-            S casted = (S) service;
-            switch (type) {
-            case IServiceListener.ADDED:
-                services.add(context.getReference(casted));
-                for (IListener listener : listeners) {
-                    listener.onServiceAdded(name, casted);
-                }
-                break;
-
-            case IServiceListener.CHANGED:
-                for (IListener listener : listeners) {
-                    listener.onServiceChanged(name, casted);
-                }
-                break;
-
-            case IServiceListener.REMOVE:
-                services.remove(context.getReference(service));
-                for (IListener listener : listeners) {
-                    listener.onRemoveService(name, casted);
-                }
-                break;
-            }
+    public void removeService(IClusterable service, String name) {
+        if (clazz.isInstance(service)) {
+            onRemoveService((S) service, name);
         }
     }
+
+    public void updateService(IClusterable service, String name) {
+        if (clazz.isInstance(service)) {
+            onServiceChanged((S) service, name);
+        }
+    }
+
+    protected void onServiceAdded(S service, String name) {
+    }
+
+    protected void onServiceChanged(S service, String name) {
+    }
+
+    protected void onRemoveService(S service, String name) {
+    }
+
 }

@@ -15,9 +15,12 @@
  */
 package org.hippoecm.frontend.sa.service;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
-public interface IViewService<T extends IModel> extends IService {
+public interface IViewService<T extends IModel> extends IClusterable {
+
+    String getServiceId();
 
     void view(T model);
 }

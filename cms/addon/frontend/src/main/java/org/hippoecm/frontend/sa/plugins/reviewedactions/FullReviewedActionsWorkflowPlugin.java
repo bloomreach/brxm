@@ -23,13 +23,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IViewService;
-import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -43,15 +40,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
-    private ServiceTracker<IViewService> viewers;
-
     @SuppressWarnings("unused")
     private String caption = "unknown document";
     private String stateSummary = "UNKNOWN";
 
     public FullReviewedActionsWorkflowPlugin() {
-
-        viewers = new ServiceTracker<IViewService>(IViewService.class);
 
         add(new Label("caption", new PropertyModel(this, "caption")));
 
@@ -64,7 +57,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                IViewService editor = viewers.getService();
+                IViewService editor = getPluginContext().getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
                 if (editor != null) {
                     editor.view(new JcrNodeModel(docNode));
                 }
@@ -155,22 +148,6 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.delete();
             }
         });
-    }
-
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
-        super.init(context, properties);
-        if (properties.get(WorkflowPlugin.VIEWER_ID) != null) {
-            viewers.open(context, properties.getString(WorkflowPlugin.VIEWER_ID));
-        } else {
-            log.warn("No editor ({}) specified", WorkflowPlugin.VIEWER_ID);
-        }
-    }
-
-    @Override
-    public void destroy() {
-        viewers.close();
-        super.destroy();
     }
 
     @Override

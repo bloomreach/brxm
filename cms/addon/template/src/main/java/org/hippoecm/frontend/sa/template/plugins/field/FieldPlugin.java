@@ -24,14 +24,13 @@ import java.util.Set;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.impl.ListViewPlugin;
-import org.hippoecm.frontend.sa.service.ServiceTracker;
+import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.template.FieldDescriptor;
-import org.hippoecm.frontend.sa.template.ITemplateConfig;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
 import org.hippoecm.frontend.sa.template.model.AbstractProvider;
@@ -49,19 +48,15 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     protected FieldDescriptor field;
     protected AbstractProvider<C> provider;
 
-    private ServiceTracker<ITemplateEngine> engineTracker;
     private String fieldName;
     private TemplateController controller;
 
     protected FieldPlugin() {
-        engineTracker = new ServiceTracker<ITemplateEngine>(ITemplateEngine.class);
         controller = new TemplateController();
     }
 
     @Override
     public void init(IPluginContext context, IPluginConfig config) {
-        engineTracker.open(context, config.getString(ITemplateEngine.ENGINE));
-
         mode = config.getString(ITemplateEngine.MODE);
         fieldName = config.getString(FieldPlugin.FIELD);
 
@@ -72,14 +67,13 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     public void destroy() {
         controller.stop();
         super.destroy();
-        engineTracker.close();
     }
 
     @Override
     public void onModelChanged() {
         super.onModelChanged();
 
-        ITemplateEngine engine = engineTracker.getService();
+        ITemplateEngine engine = getTemplateEngine(); 
         if (engine != null) {
             P model = (P) getModel();
             TypeDescriptor type = engine.getType(model);
@@ -126,10 +120,10 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     }
 
     protected ITemplateEngine getTemplateEngine() {
-        return engineTracker.getService();
+        return getPluginContext().getService(getPluginConfig().getString(ITemplateEngine.ENGINE)); 
     }
 
-    protected void configureTemplate(ITemplateConfig config, C model) {
+    protected void configureTemplate(IClusterConfig config, C model) {
         final IPluginConfig myConfig = getPluginConfig();
 
         for (String property : config.getPropertyKeys()) {
@@ -146,10 +140,10 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     private class TemplateController implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        private Map<C, IPlugin> plugins;
+        private Map<C, IPluginControl> plugins;
 
         TemplateController() {
-            plugins = new HashMap<C, IPlugin>();
+            plugins = new HashMap<C, IPluginControl>();
         }
 
         void start(AbstractProvider<C> provider) {
@@ -183,16 +177,16 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
 
         private void addModel(final C model) {
             ITemplateEngine engine = getTemplateEngine();
-            ITemplateConfig config = engine.getTemplate(engine.getType(field.getType()), mode);
+            IClusterConfig config = engine.getTemplate(engine.getType(field.getType()), mode);
             FieldPlugin.this.configureTemplate(config, model);
-            IPlugin plugin = engine.start(config, model);
+            IPluginControl plugin = engine.start(config, model);
             plugins.put(model, plugin);
         }
 
         private void removeModel(C model) {
-            IPlugin plugin = plugins.remove(model);
+            IPluginControl plugin = plugins.remove(model);
             if (plugin != null) {
-                plugin.stop();
+                plugin.stopPlugin();
             }
         }
     }

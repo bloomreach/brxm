@@ -15,24 +15,18 @@
  */
 package org.hippoecm.frontend.sa.template.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.sa.plugin.IPluginControl;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.Message;
 import org.hippoecm.frontend.sa.service.render.ModelReference;
 import org.hippoecm.frontend.sa.service.render.ModelReference.ModelMessage;
 import org.hippoecm.frontend.sa.service.topic.TopicService;
-import org.hippoecm.frontend.sa.template.ITemplateConfig;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.ITemplateStore;
 import org.hippoecm.frontend.sa.template.ITypeStore;
@@ -45,67 +39,13 @@ public class TemplateEngine implements ITemplateEngine {
 
     private static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
-    private class TemplateConfigWrapper extends JavaPluginConfig implements ITemplateConfig {
-        private static final long serialVersionUID = 1L;
-
-        private ITemplateConfig upstream;
-        private Map<String, String> variables;
-
-        TemplateConfigWrapper(ITemplateConfig upstream) {
-            this.upstream = upstream;
-
-            variables = new HashMap<String, String>();
-            String templateId = serviceId + "." + (templateCount++);
-            variables.put(ITemplateEngine.TEMPLATE, templateId);
-
-            put(ITemplateEngine.ENGINE, serviceId);
-        }
-
-        public List<IPluginConfig> getPlugins() {
-            return upstream.getPlugins();
-        }
-
-        public List<String> getPropertyKeys() {
-            return upstream.getPropertyKeys();
-        }
-
-        @Override
-        public Object get(Object key) {
-            Object obj = super.get(key);
-            if (obj != null) {
-                return obj;
-            }
-
-            obj = upstream.get(key);
-            if ((obj != null) && (obj instanceof String)) {
-                // Intercept values of the form "{" + variable + "}" + ...
-                // These values are rewritten using the variables
-                String value = (String) obj;
-                if (value.charAt(0) == '{') {
-                    String variable = value.substring(1, value.indexOf('}'));
-                    Object origValue = variables.get(variable);
-                    if (origValue != null) {
-                        String result = origValue + value.substring(value.indexOf('}') + 1);
-                        log.debug("Rewriting value {} to {}", value, result);
-                        return result;
-                    } else {
-                        log.warn("Unknown variable {} used in key {}", variable, key);
-                    }
-                }
-            }
-            return obj;
-        }
-
-    }
-
     private IPluginContext context;
     private ITypeStore typeStore;
     private ITemplateStore templateStore;
     private String serviceId;
     private int templateCount = 0;
 
-    public TemplateEngine(IPluginContext context, String serviceId, ITypeStore typeStore,
-            ITemplateStore templateStore) {
+    public TemplateEngine(IPluginContext context, String serviceId, ITypeStore typeStore, ITemplateStore templateStore) {
         this.context = context;
         this.typeStore = typeStore;
         this.templateStore = templateStore;
@@ -130,11 +70,12 @@ public class TemplateEngine implements ITemplateEngine {
         return null;
     }
 
-    public ITemplateConfig getTemplate(TypeDescriptor type, String mode) {
-        return new TemplateConfigWrapper(templateStore.getTemplate(type, mode));
+    public IClusterConfig getTemplate(TypeDescriptor type, String mode) {
+        String templateId = serviceId + "." + (templateCount++);
+        return new JavaTemplateConfig(templateStore.getTemplate(type, mode), serviceId, templateId);
     }
 
-    public IPlugin start(final ITemplateConfig template, final IModel model) {
+    public IPluginControl start(final IClusterConfig template, final IModel model) {
         String modelId = template.getString(RenderPlugin.MODEL_ID);
         final TopicService topic = new TopicService(modelId) {
             private static final long serialVersionUID = 1L;
@@ -149,51 +90,6 @@ public class TemplateEngine implements ITemplateEngine {
         };
         topic.init(context);
 
-        List<IPluginConfig> configs = template.getPlugins();
-        final IPlugin[] plugins = new IPlugin[configs.size()];
-        int i = 0;
-        for (final IPluginConfig conf : configs) {
-            plugins[i++] = context.start(new JavaPluginConfig() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Object get(Object key) {
-                    Object obj = conf.get(key);
-                    if ((obj != null) && (obj instanceof String)) {
-                        // values of the form scope + ":" + ... refer to keys in other scopes 
-                        // Only the "template" scope is recognized.
-                        String value = (String) obj;
-                        if (value.indexOf(':') > 0) {
-                            String scope = value.substring(0, value.indexOf(':'));
-                            if ("template".equals(scope)) {
-                                return template.get(value.substring(value.indexOf(':') + 1));
-                            } else {
-                                log.warn("Unknown scope {} used in key {}", scope, key);
-                            }
-                        }
-                    }
-                    return obj;
-                }
-
-                @Override
-                public Object put(Object key, Object value) {
-                    return conf.put(key, value);
-                }
-            });
-        }
-
-        return new IPlugin() {
-            private static final long serialVersionUID = 1L;
-
-            public void start(IPluginContext context) {
-            }
-
-            public void stop() {
-                for (IPlugin plugin : plugins) {
-                    plugin.stop();
-                }
-                topic.destroy();
-            }
-        };
+        return context.start(template);
     }
 }

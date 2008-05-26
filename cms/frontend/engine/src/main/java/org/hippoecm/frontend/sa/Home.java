@@ -18,21 +18,21 @@ package org.hippoecm.frontend.sa;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.sa.plugin.PluginManager;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.sa.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.sa.service.IRenderService;
-import org.hippoecm.frontend.sa.service.IServiceListener;
+import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Home extends WebPage implements IServiceListener, IRenderService {
+public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(Home.class);
@@ -41,8 +41,10 @@ public class Home extends WebPage implements IServiceListener, IRenderService {
     private IRenderService root;
 
     public Home() {
+        add(new EmptyPanel("root"));
+
         mgr = new PluginManager(this);
-        mgr.registerListener(this, "service.root");
+        mgr.registerTracker(this, "service.root");
 
         JcrSessionModel sessionModel = ((UserSession) getSession()).getJcrSessionModel();
         PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
@@ -57,28 +59,6 @@ public class Home extends WebPage implements IServiceListener, IRenderService {
 
     private IRenderService getRootPlugin() {
         return root;
-    }
-
-    public void processEvent(int type, String name, IClusterable service) {
-        switch (type) {
-        case IServiceListener.ADDED:
-            if (service instanceof IRenderService) {
-                root = (IRenderService) service;
-                root.bind(this, "root");
-                add((Component) root);
-            } else {
-                log.error("root plugin is not a RenderService");
-            }
-            break;
-
-        case IServiceListener.REMOVE:
-            if (service == root) {
-                remove((Component) root);
-                root.unbind();
-                root = null;
-            }
-            break;
-        }
     }
 
     public void render(PluginRequestTarget target) {
@@ -108,4 +88,20 @@ public class Home extends WebPage implements IServiceListener, IRenderService {
     public final PluginManager getPluginManager() {
         return mgr;
     }
+
+    public void addService(IRenderService service, String name) {
+        root = service;
+        root.bind(this, "root");
+        replace((Component) root);
+    }
+
+    public void removeService(IRenderService service, String name) {
+        replace(new EmptyPanel("root"));
+        root.unbind();
+        root = null;
+    }
+
+    public void updateService(IRenderService service, String name) {
+    }
+
 }

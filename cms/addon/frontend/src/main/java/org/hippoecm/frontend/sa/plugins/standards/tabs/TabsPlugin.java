@@ -28,7 +28,6 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
-import org.hippoecm.frontend.sa.service.IFactoryService;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
@@ -47,44 +46,10 @@ public class TabsPlugin extends RenderPlugin {
 
     private TabbedPanel tabbedPanel;
     private List<Tab> tabs;
-    private ServiceTracker tabsTracker;
+    private ServiceTracker<IRenderService> tabsTracker;
     private int selectCount;
 
     public TabsPlugin() {
-        tabsTracker = new ServiceTracker(IRenderService.class);
-        tabsTracker.addListener(new ServiceTracker.IListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onServiceAdded(String name, IClusterable service) {
-                // add the plugin
-                ((IRenderService) service).bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
-                Tab tabbie = new Tab((IRenderService) service);
-                if (tabs.size() == 0) {
-                    tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs);
-                    replace(tabbedPanel);
-                }
-                tabs.add(tabbie);
-                tabbie.select(true);
-                redraw();
-            }
-
-            public void onServiceChanged(String name, IClusterable service) {
-            }
-
-            public void onRemoveService(String name, IClusterable service) {
-                Tab tabbie = findTabbie((IRenderService) service);
-                if (tabbie != null) {
-                    tabs.remove(tabbie);
-                    tabbie.destroy();
-                    ((IRenderService) service).unbind();
-                    if (tabs.size() == 0) {
-                        replace(new EmptyPanel("tabs"));
-                        tabbedPanel = null;
-                    }
-                    redraw();
-                }
-            }
-        });
 
         tabs = new ArrayList<Tab>();
         add(new EmptyPanel("tabs"));
@@ -94,7 +59,37 @@ public class TabsPlugin extends RenderPlugin {
 
     @Override
     public void init(IPluginContext context, IPluginConfig properties) {
-        tabsTracker.open(context, properties.getString(TAB_ID));
+        tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
+            private static final long serialVersionUID = 1L;
+
+            public void onServiceAdded(IRenderService service, String name) {
+                // add the plugin
+                service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
+                Tab tabbie = new Tab(service);
+                if (tabs.size() == 0) {
+                    tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs);
+                    replace(tabbedPanel);
+                }
+                tabs.add(tabbie);
+                tabbie.select(true);
+                redraw();
+            }
+
+            public void onRemoveService(IRenderService service, String name) {
+                Tab tabbie = findTabbie(service);
+                if (tabbie != null) {
+                    tabs.remove(tabbie);
+                    tabbie.destroy();
+                    service.unbind();
+                    if (tabs.size() == 0) {
+                        replace(new EmptyPanel("tabs"));
+                        tabbedPanel = null;
+                    }
+                    redraw();
+                }
+            }
+        };
+        context.registerTracker(tabsTracker, properties.getString(TAB_ID));
 
         if (tabs.size() > 0) {
             tabbedPanel = new TabbedPanel("tabs", this, tabs);
@@ -107,7 +102,7 @@ public class TabsPlugin extends RenderPlugin {
     @Override
     public void destroy() {
         super.destroy();
-        tabsTracker.close();
+        getPluginContext().unregisterTracker(tabsTracker, getPluginConfig().getString(TAB_ID));
         if (tabs.size() > 0) {
             replace(new EmptyPanel("tabs"));
             tabbedPanel = null;
@@ -164,22 +159,13 @@ public class TabsPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         IRenderService renderer;
-        ServiceTracker titleTracker;
-        ServiceTracker<IFactoryService> factoryTracker;
         int lastSelected;
 
         Tab(IRenderService renderer) {
             this.renderer = renderer;
-            titleTracker = new ServiceTracker(ITitleDecorator.class);
-            titleTracker.open(getPluginContext(), renderer.getServiceId() + ".decorator");
-            factoryTracker = new ServiceTracker<IFactoryService>(IFactoryService.class);
-            factoryTracker.open(getPluginContext(), renderer.getServiceId() + ".factory");
         }
 
         void destroy() {
-            factoryTracker.close();
-            titleTracker.close();
-
             // look for previously selected tab
             int lastCount = 0;
             Tab lastTab = null;
@@ -199,8 +185,8 @@ public class TabsPlugin extends RenderPlugin {
         // implement ITab interface
 
         public Model getTitle() {
-            List<IClusterable> titles = titleTracker.getServices();
-            if (titles.size() > 0) {
+            List<IClusterable> titles = getPluginContext().getServices(renderer.getServiceId() + ".decorator");
+            if (titles != null && titles.size() > 0) {
                 String fulltitle = ((ITitleDecorator) titles.get(0)).getTitle();
                 int length = fulltitle.length();
                 String appendix = (length < (MAX_TAB_TITLE_LENGTH + 1) ? "" : "..");

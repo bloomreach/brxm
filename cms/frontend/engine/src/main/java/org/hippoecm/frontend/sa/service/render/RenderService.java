@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.sa.service.render;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
@@ -43,14 +45,14 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
 
     private boolean redraw;
     private String serviceId;
+    private String wicketServiceId;
     private String wicketId;
 
     private IPluginContext context;
     private IPluginConfig config;
-    private Map<String, ServiceTracker<IRenderService>> children;
+    private Map<String, ExtensionPoint> children;
     private ModelReference modelRef;
     private IRenderService parent;
-    private ServiceTracker<IDialogService> dialogTracker;
 
     public RenderService() {
         super("id");
@@ -59,8 +61,7 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
 
         wicketId = "service.render";
 
-        this.children = new HashMap<String, ServiceTracker<IRenderService>>();
-        this.dialogTracker = new ServiceTracker<IDialogService>(IDialogService.class);
+        this.children = new HashMap<String, ExtensionPoint>();
     }
 
     protected void init(IPluginContext context, IPluginConfig properties) {
@@ -68,7 +69,7 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
         this.config = properties;
 
         if (properties.getString(WICKET_ID) != null) {
-            this.serviceId = properties.getString(WICKET_ID);
+            this.wicketServiceId = properties.getString(WICKET_ID);
         } else {
             log.warn("No service id ({}) defined", WICKET_ID);
         }
@@ -81,30 +82,35 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
                 modelRef.init(context);
             }
         } else {
-            log.warn("No model ({}) defined for service {}", MODEL_ID, serviceId);
+            log.warn("No model ({}) defined for service {}", MODEL_ID, wicketServiceId);
         }
 
-        if (properties.getString(DIALOG_ID) != null) {
-            dialogTracker.open(context, properties.getString(DIALOG_ID));
+        for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
+            context.registerTracker(entry.getValue(), config.getString(entry.getKey()));
+        }
+
+        if (config.getString(IPlugin.SERVICE_ID) != null) {
+            serviceId = config.getString(IPlugin.SERVICE_ID);
+            context.registerService(this, serviceId);
         } else {
-            log.warn("No dialog service ({}) defined for service {}", DIALOG_ID, serviceId);
+            log.warn("No unique service id ({}) defined", IPlugin.SERVICE_ID);
         }
 
-        for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
-            entry.getValue().open(context, properties.getString(entry.getKey()));
-        }
-        context.registerService(this, serviceId);
+        context.registerService(this, wicketServiceId);
     }
 
     protected void destroy() {
         IPluginContext context = getPluginContext();
 
-        context.unregisterService(this, serviceId);
-        for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
-            entry.getValue().close();
+        if (serviceId != null) {
+            serviceId = null;
+            context.unregisterService(this, serviceId);
         }
 
-        dialogTracker.close();
+        for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
+            context.unregisterTracker(entry.getValue(), config.getString(entry.getKey()));
+        }
+        context.unregisterService(this, wicketServiceId);
 
         if (modelRef != null) {
             modelRef.destroy();
@@ -152,24 +158,8 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     }
 
     protected void addExtensionPoint(final String extension) {
-        ServiceTracker<IRenderService> tracker = new ServiceTracker<IRenderService>(IRenderService.class);
-        tracker.addListener(new ServiceTracker.IListener<IRenderService>() {
-            private static final long serialVersionUID = 1L;
-
-            public void onServiceAdded(String name, IRenderService service) {
-                service.bind(RenderService.this, extension);
-                replace((Component) service);
-            }
-
-            public void onServiceChanged(String name, IRenderService service) {
-            }
-
-            public void onRemoveService(String name, IRenderService service) {
-                replace(new EmptyPanel(extension));
-                service.unbind();
-            }
-        });
-        children.put(extension, tracker);
+        ExtensionPoint extPt = new ExtensionPoint(extension);
+        children.put(extension, extPt);
         add(new EmptyPanel(extension));
     }
 
@@ -179,7 +169,7 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     }
 
     protected IDialogService getDialogService() {
-        return dialogTracker.getService();
+        return context.getService(config.getString(DIALOG_ID));
     }
 
     // implement IRenderService
@@ -190,8 +180,8 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
             pluginTarget.addComponent(this);
             redraw = false;
         }
-        for (Map.Entry<String, ServiceTracker<IRenderService>> entry : children.entrySet()) {
-            for (IRenderService service : entry.getValue().getServices()) {
+        for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
+            for (IRenderService service : entry.getValue().getChildren()) {
                 service.render(target);
             }
         }
@@ -224,12 +214,39 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     }
 
     public String getServiceId() {
-        if (config.getString(IPlugin.SERVICE_ID) != null) {
-            return config.getString(IPlugin.SERVICE_ID);
-        } else {
-            log.warn("No decorator id ({}) defined", IPlugin.SERVICE_ID);
-            return null;
-        }
+        return serviceId;
     }
 
+    private class ExtensionPoint extends ServiceTracker<IRenderService> {
+        private static final long serialVersionUID = 1L;
+
+        private List<IRenderService> list;
+        private String extension;
+
+        ExtensionPoint(String extension) {
+            super(IRenderService.class);
+            this.extension = extension;
+            this.list = new LinkedList<IRenderService>();
+        }
+
+        List<IRenderService> getChildren() {
+            return list;
+        }
+
+        public void onServiceAdded(IRenderService service, String name) {
+            service.bind(RenderService.this, extension);
+            replace((Component) service);
+            list.add(service);
+        }
+
+        public void onServiceChanged(IRenderService service, String name) {
+        }
+
+        public void onRemoveService(IRenderService service, String name) {
+            replace(new EmptyPanel(extension));
+            service.unbind();
+            list.remove(service);
+        }
+
+    }
 }
