@@ -86,7 +86,15 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     @Override
     protected int loadChildcount() throws RepositoryException {
-        return loadChildren().size();
+        HippoNode jcrNode = nodeModel.getNode();
+        if (jcrNode.isNodeType(HippoNodeType.NT_FACETRESULT) 
+                || jcrNode.isNodeType(HippoNodeType.NT_FACETSEARCH)
+                || jcrNode.getCanonicalNode() == null 
+                || !jcrNode.getCanonicalNode().isSame(jcrNode) ) {
+            return  1;
+        } else {
+            return loadChildren().size();
+        }
     }
 
     @Override
@@ -104,6 +112,20 @@ public class FolderTreeNode extends AbstractTreeNode {
     @Override
     public boolean isLeaf() {
         return false;
+    }
+    
+    @Override
+    public int getChildCount() {
+        HippoNode jcrNode = this.nodeModel.getNode();
+        try {
+            // do not count for virtual nodes w.r.t performance
+            if (jcrNode.getCanonicalNode() == null || !jcrNode.getCanonicalNode().isSame(jcrNode)) {
+               return 1;
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+       return super.getChildCount();
     }
 
     public TreeNode getParent() {
