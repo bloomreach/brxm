@@ -28,7 +28,7 @@ import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
-import org.hippoecm.frontend.sa.plugin.render.ListViewPlugin;
+import org.hippoecm.frontend.sa.plugin.impl.ListViewPlugin;
 import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.frontend.sa.template.FieldDescriptor;
 import org.hippoecm.frontend.sa.template.ITemplateConfig;

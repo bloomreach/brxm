@@ -19,7 +19,7 @@ import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
-import org.hippoecm.frontend.sa.plugin.render.ListViewPlugin;
+import org.hippoecm.frontend.sa.plugin.impl.ListViewPlugin;
 import org.hippoecm.frontend.sa.template.ITemplateConfig;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.ITemplateStore;
