@@ -54,10 +54,10 @@ public class BasicSeleniumTest {
             assert(selenium.isTextPresent("Password"));
 
             // enter username
-            selenium.type("username3", "demo");
+            selenium.type("username3", "admin");
 
             // enter password
-            selenium.type("password4", "demo");
+            selenium.type("password4", "admin");
 
             // click ok
             selenium.click("submit5");
