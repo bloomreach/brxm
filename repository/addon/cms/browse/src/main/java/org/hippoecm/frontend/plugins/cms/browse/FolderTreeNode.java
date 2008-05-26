@@ -87,6 +87,7 @@ public class FolderTreeNode extends AbstractTreeNode {
     @Override
     protected int loadChildcount() throws RepositoryException {
         HippoNode jcrNode = nodeModel.getNode();
+        // do not count for virtual nodes w.r.t performance
         if (jcrNode.isNodeType(HippoNodeType.NT_FACETRESULT) 
                 || jcrNode.isNodeType(HippoNodeType.NT_FACETSEARCH)
                 || jcrNode.getCanonicalNode() == null 
