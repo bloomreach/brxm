@@ -38,22 +38,22 @@ public class DialogWindow extends ModalWindow implements PageCreator, IDialogSer
         return page;
     }
 
-    public void show(Page page) {
-        this.page = page;
+    public void show(Page aPage) {
+        this.page = aPage;
 
         if (page instanceof ITitleDecorator) {
             setTitle(((ITitleDecorator) page).getTitle());
         }
 
         IRequestTarget target = RequestCycle.get().getRequestTarget();
-        if (target instanceof AjaxRequestTarget) {
+        if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             show((AjaxRequestTarget) target);
         }
     }
 
     public void close() {
         IRequestTarget target = RequestCycle.get().getRequestTarget();
-        if (target instanceof AjaxRequestTarget) {
+        if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             close((AjaxRequestTarget) target);
         }
     }

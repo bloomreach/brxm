@@ -37,6 +37,7 @@ class ConsoleConfigService implements IPluginConfigService {
         config.put("browserPlugin", "service.browser");
         config.put("breadcrumbPlugin", "service.breadcrumb");
         config.put("editorPlugin", "service.editor");
+        config.put("logoutPlugin", "service.logout");
         plugins.add(config);
         
         config = new JavaPluginConfig();
@@ -57,11 +58,12 @@ class ConsoleConfigService implements IPluginConfigService {
         config.put("wicket.model", "service.model");
         plugins.add(config);
         
-//        config = new JavaPluginConfig();
-//        config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
-//        config.put("wicket.id", "service.logout");
-//        config.put("wicket.model", "service.model");
-//        plugins.add(config);
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
+        config.put("wicket.id", "service.logout");
+        config.put("wicket.model", "service.model");
+        config.put("wicket.dialog", "service.dialog");
+        plugins.add(config);
     }
 
     public List<IPluginConfig> getPlugins(String key) {

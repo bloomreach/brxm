@@ -28,13 +28,18 @@ public class DynamicDialogFactory implements PageCreator {
     private IPluginContext context; 
     private IDialogService window;
     private Class dialogClass;
-    
+
+    private AbstractDialog dialog;
     private IDialogFactory dialogFactory;
 
     public DynamicDialogFactory(IPluginContext context, IDialogService window, Class dialogClass) {
         this.context = context;
         this.window = window;
         this.dialogClass = dialogClass;
+    }
+
+    public DynamicDialogFactory(AbstractDialog dialog) {
+        this.dialog = dialog;
     }
 
     public DynamicDialogFactory(IDialogService window, IDialogFactory dialogFactory) {
@@ -44,7 +49,9 @@ public class DynamicDialogFactory implements PageCreator {
 
     public Page createPage() {
         AbstractDialog result = null;
-        if (dialogFactory != null) {
+        if (dialog != null) {
+            result = dialog;
+        } else if (dialogFactory != null) {
             result = dialogFactory.createDialog(window);
         } else if (dialogClass != null) {
             try {
@@ -60,8 +67,8 @@ public class DynamicDialogFactory implements PageCreator {
             String msg = "No dialog renderer specified";
             result = new ErrorDialog(context, window, msg);
         }
-        
+
         return result;
     }
-    
+
 }

@@ -50,6 +50,7 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
             public void onClick(AjaxRequestTarget target) {
                 try {
                     ok();
+                    closeDialog();
                 } catch (Exception e) {
                     String msg = e.getClass().getName() + ": " + e.getMessage();
                     log.error(msg);
