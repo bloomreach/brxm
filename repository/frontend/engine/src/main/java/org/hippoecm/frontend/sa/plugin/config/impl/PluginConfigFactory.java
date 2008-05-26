@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -29,13 +28,11 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginConfigFactory {
 
-    private static final ValueMap ANONYMOUS_CREDENTIALS = new ValueMap("username=,password=");    
-
     private String style;
     private IPluginConfigService pluginConfigService;
 
     public PluginConfigFactory(JcrSessionModel sessionModel) {
-        if (sessionModel.getCredentials().equals(ANONYMOUS_CREDENTIALS)) {
+        if (sessionModel.getCredentials().equals(Main.DEFAULT_CREDENTIALS)) {
             pluginConfigService = new LoginConfigService();
         } else {
             try {
@@ -63,8 +60,8 @@ public class PluginConfigFactory {
 
                 } else {
                     //Fall back to builtin configuration
-                    pluginConfigService = new ExperimentalConfigService();
-                    //pluginConfigService = new ConsoleConfigService();
+                    //pluginConfigService = new ExperimentalConfigService();
+                    pluginConfigService = new ConsoleConfigService();
                     //pluginConfigService = new CmsConfigService();
                 }
             } catch (RepositoryException e) {
