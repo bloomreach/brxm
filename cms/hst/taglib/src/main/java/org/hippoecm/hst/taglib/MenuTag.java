@@ -28,6 +28,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.hippoecm.hst.components.Menu;
+import org.hippoecm.hst.components.MenuItem;
 import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.core.HSTConfiguration;
 import org.hippoecm.hst.core.URLPathTranslator;

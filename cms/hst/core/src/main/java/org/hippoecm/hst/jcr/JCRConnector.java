@@ -160,7 +160,7 @@ public class JCRConnector {
 
         SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {
 // FIXME set debug back to info when this wrapper is again stored in session                
-            logger.debug("connecting to repository at " + location + " as " + username);
+//            logger.debug("connecting to repository at " + location + " as " + username);
 
             HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
@@ -168,7 +168,7 @@ public class JCRConnector {
                 jcrSession = repository.login(username, (password != null ? password.toCharArray() : null));
 
 // FIXME set debug back to info when this wrapper is again stored in session                
-                logger.debug("logged in as " + username);
+//                logger.debug("logged in as " + username);
             } catch(LoginException ex) {
                 logger.warn("login as " + username + " failed, trying as anonymous.");
                 jcrSession = repository.login();

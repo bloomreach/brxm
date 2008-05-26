@@ -1,0 +1,40 @@
+
+Functionalities
+x Dynamic navigation 
+- Sitemap from repository
+- Related items (dynamic or hand-picked)
+- Search
+- Reactions/comments
+- Send-a-friend (url of the page)
+- RSS (with Rome?)
+- Login authentication (with ACEGI)
+- Newsletter subscription, in combination with standalone newsletter mailer?
+- Blog
+- Internationalization
+- <include> tag URL-mapping: possibly map to different jsp-files, e.g. via 
+  property hst:includePageFile
+- Support for formatting of number properties; already done in Context but also
+  in the hst:content tag
+  
+Tags
+x <hst:context>
+x <hst:documents>
+x	<hst:articles>
+x	<hst:events>
+x	<hst:news>
+x <hst:encodeURL>
+x <hst:content>
+x <hst:menu>
+
+  <hst:sitemap>
+  <hst:image>
+  <hst:pager>
+  
+? <hst:poll>
+? <hst:format> with i18n and formatting dates and numbers. Or Jakarta i18n??
+	
+Projects
+ - Create sample site without URL-mapping, same repository 
+ - Remove demo site?
+
+	

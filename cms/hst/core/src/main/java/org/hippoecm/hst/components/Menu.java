@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.taglib;
+package org.hippoecm.hst.components;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.util.HSTNodeTypes;
 import org.hippoecm.hst.jcr.JCRConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +36,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class Menu {
-
-    static final String PROPERTY_IS_MENU_ITEM = "hst:isMenuItem";
-    static final String PROPERTY_MENU_LABEL = "hst:menuLabel";
 
     static final Logger logger = LoggerFactory.getLogger(Menu.class);
 
@@ -114,8 +112,8 @@ public class Menu {
           
                 // on level 0, absence of the property means not to create one
                 // so only documents and folder with the flag up
-                if (node.hasProperty(PROPERTY_IS_MENU_ITEM)) {
-                    if (node.getProperty(PROPERTY_IS_MENU_ITEM).getBoolean()) {
+                if (node.hasProperty(HSTNodeTypes.PROPERTY_IS_MENU_ITEM)) {
+                    if (node.getProperty(HSTNodeTypes.PROPERTY_IS_MENU_ITEM).getBoolean()) {
                         menuItems.add(new MenuItem(node, 0/*level*/));
                     }
                 }    

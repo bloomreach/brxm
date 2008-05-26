@@ -15,9 +15,9 @@
   limitations under the License.
 -->
 <!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd">
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
 
   <tlib-version>1.0</tlib-version>
   <jsp-version>1.2</jsp-version>
@@ -31,8 +31,8 @@
     <tagclass>org.hippoecm.hst.taglib.ContentTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-  	  <description>The optional name by which to get a context object from request, 
-  	  		overriding the configured or default name.</description>
+      <description>The optional name by which to get a context object from request, overriding the
+        configured or default name.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>false</rtexprvalue>
@@ -50,8 +50,8 @@
     <tagclass>org.hippoecm.hst.taglib.ContextTag</tagclass>
     <body-content>JSP</body-content>
     <attribute>
-  	  <description>The optional name by which to get a context object from request, 
-  	  		overriding the configured or default name.</description>
+      <description>The optional name by which to get a context object from request, overriding the
+        configured or default name.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>false</rtexprvalue>
@@ -63,8 +63,8 @@
       <rtexprvalue>false</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The required string location relative to the current context
-      	from which a new context is created.</description>
+      <description>The required string location relative to the current context from which a new
+        context is created.</description>
       <name>location</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
@@ -82,22 +82,22 @@
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The optional variable name by which the encoded URL is set as request attribute. 
-      		If given, no output is written to the jsp directly.</description>
+      <description>The optional variable name by which the encoded URL is set as request attribute.
+        If given, no output is written to the jsp directly.</description>
       <name>var</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The optional name by which to get a context object from request or page context, 
-  	  		that is then used to initialize URL encoding, instead of using the default 
-  	  		initialization as done by the URL mapping filter.</description>
+      <description>The optional name by which to get a context object from request or page context,
+        that is then used to initialize URL encoding, instead of using the default initialization as
+        done by the URL mapping filter.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
-  
+
   <tag>
     <name>include</name>
     <tagclass>org.hippoecm.hst.taglib.IncludeTag</tagclass>
@@ -106,6 +106,46 @@
       <description>The required path that represents a node in the repository.</description>
       <name>path</name>
       <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>menu</name>
+    <tagclass>org.hippoecm.hst.taglib.MenuTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>The optional name by which to get a context object from request.</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The optional location, relative to the context, pointing to the 
+        starting location where to search for menu items at level 0.</description>
+      <name>location</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The optional level indicating the starting level from which    
+        default output is generated.</description>
+      <name>level</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The optional depth indicating, in combination with the level 
+        attribute, the end level to which default output is generated.</description>
+      <name>depth</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The optional id of this menu that reoccurs as id of the ul  
+        tag of the default output.</description>
+      <name>id</name>
+      <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
@@ -121,7 +161,7 @@
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The optional location, relative to the context, pointing to the documents node applicable.</description>
+      <description>The optional location, relative to the context, pointing to the documents node applicable.</description>
       <name>location</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -139,13 +179,14 @@
     <tagclass>org.hippoecm.hst.taglib.ArticlesTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-  	  <description>The optional name by which to get a context object from request.</description>
+      <description>The optional name by which to get a context object from request.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The optional location, relative to the context, pointing to the articles node applicable.</description>
+      <description>The optional location, relative to the context, pointing to the 
+        articles node applicable.</description>
       <name>location</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -158,18 +199,19 @@
     </attribute>
   </tag>
 
- <tag>
+  <tag>
     <name>events</name>
     <tagclass>org.hippoecm.hst.taglib.EventsTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-  	  <description>The optional name by which to get a context object from request.</description>
+      <description>The optional name by which to get a context object from request.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The optional location, relative to the context, pointing to the events node applicable.</description>
+      <description>The optional location, relative to the context, pointing to the events node
+        applicable.</description>
       <name>location</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -187,13 +229,14 @@
     <tagclass>org.hippoecm.hst.taglib.NewsTag</tagclass>
     <body-content>empty</body-content>
     <attribute>
-  	  <description>The optional name by which to get a context object from request.</description>
+      <description>The optional name by which to get a context object from request.</description>
       <name>context</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-  	  <description>The optional location, relative to the context, pointing to the news node applicable.</description>
+      <description>The optional location, relative to the context, pointing to the news node
+        applicable.</description>
       <name>location</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -210,7 +253,8 @@
   <function>
     <name>concat</name>
     <function-class>org.hippoecm.hst.taglib.Helper</function-class>
-    <function-signature>java.lang.String concat(java.lang.String, java.lang.String)</function-signature>
+    <function-signature>java.lang.String concat(java.lang.String,
+    java.lang.String)</function-signature>
   </function>
 
 </taglib>

@@ -30,6 +30,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.core.HSTConfiguration;
 import org.hippoecm.hst.core.URLPathTranslator;
+import org.hippoecm.hst.util.PropertyFormatter;
 
 /**
  * Documents Tag showing documents from a certain location in the repository. 
@@ -391,7 +392,7 @@ public class DocumentsTag extends SimpleTagSupport {
         pageContext.getOut().append(buffer);
     }
 
-    /** Ouput documents by including (jsp) files */
+    /** Output documents by including (jsp) files */
     @SuppressWarnings("unchecked")
     private void doOutputByIncludes(Context context, PageContext pageContext, String documentViewFile) 
                                 throws JspException, ServletException, IOException {
