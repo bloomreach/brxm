@@ -48,6 +48,7 @@
     <module>maven-skin</module>
     <module>hst</module>
     <module>demo</module>
+    <module>archetypes</module>
   </modules>
 
   <properties>
