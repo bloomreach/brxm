@@ -95,10 +95,12 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
         }   
 
         Node documentNode = session.getRootNode().getNode(documentPath);
+        Node handleNode = null;
  
         // if the requested document node is a handle go one level deeper.
         try {
             if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                handleNode = documentNode;
                 documentNode = documentNode.getNode(documentNode.getName());
             }
         } catch (PathNotFoundException ex) {
@@ -121,10 +123,21 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
                 displayNode = currentNode;
             }
 
+            // directly on handle
+            else if ((handleNode != null) && handleNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
+                displayNode = handleNode;
+            }
+
             // indirectly, via hst:page mixin
             else if (currentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
                 displayNode = currentNode;
             }
+
+            // indirectly on handle
+            else if ((handleNode != null) && handleNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
+                displayNode = handleNode;
+            }
+            
             else {
                 
                 // find node by type in mappingLocation
@@ -136,15 +149,19 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
                         try {
                             Property prop = matchNode.getProperty(HSTNodeTypes.HST_NODETYPE);
     
-                            // directly, if pageFile has been set directly 
-                            if (matchNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
-                                displayNode = matchNode;
-                                break;
-                            }
-    
-                            // indirectly, get the displaypage subnode
-                            else if (currentNode.isNodeType(prop.getString())) {
-                                displayNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
+                            // match by type?
+                            if (currentNode.isNodeType(prop.getString())) {
+                                
+                                // directly, if pageFile has been set directly 
+                                if (matchNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
+                                    displayNode = matchNode;
+                                }
+        
+                                // indirectly, get the hst:displaypage subnode
+                                else {
+                                    displayNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
+                                }
+                                
                                 break;
                             }
                         } catch (PathNotFoundException ex) {
