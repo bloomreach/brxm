@@ -39,11 +39,6 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     public JcrItemModel(Item item) {
         super(item);
-        try {
-            this.path = item.getPath();
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
     }
 
     public JcrItemModel(String path) {
@@ -52,22 +47,40 @@ public class JcrItemModel extends LoadableDetachableModel {
     }
 
     public String getPath() {
+        if (path == null && isAttached()) {
+            Item item = (Item) getObject();
+            if (item != null) {
+                try {
+                    path = item.getPath();
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+            }
+        }
         return path;
     }
 
     public boolean exists() {
-        boolean result = false;
-        try {
-            UserSession sessionProvider = (UserSession) Session.get();
-            result = sessionProvider.getJcrSession().itemExists(path);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+        if (path == null) {
+            if (isAttached()) {
+                return getObject() != null;
+            } else {
+                return false;
+            }
+        } else {
+            boolean result = false;
+            try {
+                UserSession sessionProvider = (UserSession) Session.get();
+                result = sessionProvider.getJcrSession().itemExists(path);
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+            return result;
         }
-        return result;
     }
 
     public JcrItemModel getParentModel() {
-        int idx = path.lastIndexOf('/');
+        int idx = getPath().lastIndexOf('/');
         if (idx > 0) {
             String parent = path.substring(0, path.lastIndexOf('/'));
             return new JcrItemModel(parent);
@@ -87,20 +100,37 @@ public class JcrItemModel extends LoadableDetachableModel {
     @Override
     protected Object load() {
         Item result = null;
-        try {
-            UserSession sessionProvider = (UserSession) Session.get();
-            result = sessionProvider.getJcrSession().getItem(path);
-        } catch (RepositoryException e) {
-            log.warn("failed to load " + e.getMessage());
+        if (path != null) {
+            try {
+                UserSession sessionProvider = (UserSession) Session.get();
+                result = sessionProvider.getJcrSession().getItem(path);
+            } catch (RepositoryException e) {
+                log.warn("failed to load " + e.getMessage());
+            }
+        } else {
+            log.error("No path info present");
         }
         return result;
+    }
+
+    @Override
+    public void detach() {
+        if (isAttached()) {
+            Item item = (Item) getObject();
+            try {
+                path = item.getPath();
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        }
+        super.detach();
     }
 
     // override Object
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", path).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", getPath()).toString();
     }
 
     @Override
@@ -112,7 +142,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             return true;
         }
         JcrItemModel itemModel = (JcrItemModel) object;
-        return new EqualsBuilder().append(normalizePath(path), normalizePath(itemModel.path)).isEquals();
+        return new EqualsBuilder().append(normalizePath(getPath()), normalizePath(itemModel.getPath())).isEquals();
     }
 
     @Override
@@ -121,7 +151,7 @@ public class JcrItemModel extends LoadableDetachableModel {
     }
 
     private static String normalizePath(String path) {
-        if (path.length() > 0) {
+        if (path != null && path.length() > 0) {
             if (path.charAt(path.length() - 1) == ']') {
                 return path;
             }

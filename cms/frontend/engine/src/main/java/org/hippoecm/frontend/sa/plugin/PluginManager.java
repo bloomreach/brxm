@@ -81,13 +81,11 @@ public class PluginManager implements IClusterable {
     }
 
     public <T extends IClusterable> ServiceReference<T> getReference(T service) {
-        for (Map.Entry<Integer, RefCount> entry : referenced.entrySet()) {
-            if (entry.getValue().service == service) {
-                return new ServiceReference<T>(page, entry.getKey().intValue());
-            }
+        ServiceReference<T> ref = internalGetReference(service);
+        if (ref == null) {
+            log.warn("Referenced service was not registered");
         }
-        log.warn("Referenced service was not registered");
-        return null;
+        return ref;
     }
 
     public <T extends IClusterable> T getService(ServiceReference<T> reference) {
@@ -113,7 +111,7 @@ public class PluginManager implements IClusterable {
         }
         list.add(service);
 
-        ServiceReference<IClusterable> ref = getReference(service);
+        ServiceReference<IClusterable> ref = internalGetReference(service);
         if (ref == null) {
             referenced.put(new Integer(nextReferenceId++), new RefCount(service));
         } else {
@@ -154,7 +152,7 @@ public class PluginManager implements IClusterable {
                 services.remove(name);
             }
 
-            ServiceReference<IClusterable> ref = getReference(service);
+            ServiceReference<IClusterable> ref = internalGetReference(service);
             RefCount refCount = referenced.get(new Integer(ref.getId()));
             if (refCount.release()) {
                 referenced.remove(new Integer(ref.getId()));
@@ -210,4 +208,12 @@ public class PluginManager implements IClusterable {
         }
     }
 
+    private <T extends IClusterable> ServiceReference<T> internalGetReference(T service) {
+        for (Map.Entry<Integer, RefCount> entry : referenced.entrySet()) {
+            if (entry.getValue().service == service) {
+                return new ServiceReference<T>(page, entry.getKey().intValue());
+            }
+        }
+        return null;
+    }
 }

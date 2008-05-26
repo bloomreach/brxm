@@ -35,11 +35,33 @@ public class ListViewService extends RenderService {
 
     private static final Logger log = LoggerFactory.getLogger(ListViewService.class);
 
+    public static final String ITEM = "item";
+
     private List<IRenderService> services;
     private ServiceTracker<IRenderService> tracker;
 
     public ListViewService() {
         services = new LinkedList<IRenderService>();
+
+        final AbstractView view = new AbstractView("view", new ListDataProvider(services)) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(Item item) {
+                IRenderService renderer = (IRenderService) item.getModelObject();
+                renderer.bind(ListViewService.this, "item");
+                item.add((Component) renderer);
+                ListViewService.this.onAddRenderService(item, renderer);
+            }
+
+            @Override
+            protected void destroyItem(Item item) {
+                IRenderService renderer = (IRenderService) item.get("item");
+                ListViewService.this.onRemoveRenderService(item, renderer);
+                renderer.unbind();
+            }
+        };
+        add(view);
 
         tracker = new ServiceTracker<IRenderService>(IRenderService.class);
         tracker.addListener(new ServiceTracker.IListener<IRenderService>() {
@@ -58,24 +80,6 @@ public class ListViewService extends RenderService {
                 redraw();
             }
         });
-
-        AbstractView view = new AbstractView("view", new ListDataProvider(services)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void populateItem(Item item) {
-                IRenderService renderer = (IRenderService) item.getModelObject();
-                renderer.bind(ListViewService.this, "item");
-                item.add((Component) renderer);
-            }
-
-            @Override
-            protected void destroyItem(Item item) {
-                IRenderService renderer = (IRenderService) item.get("item");
-                renderer.unbind();
-            }
-        };
-        add(view);
     }
 
     @Override
@@ -99,5 +103,11 @@ public class ListViewService extends RenderService {
         for (IRenderService child : services) {
             child.render(target);
         }
+    }
+
+    protected void onAddRenderService(Item item, IRenderService renderer) {
+    }
+
+    protected void onRemoveRenderService(Item item, IRenderService renderer) {
     }
 }
