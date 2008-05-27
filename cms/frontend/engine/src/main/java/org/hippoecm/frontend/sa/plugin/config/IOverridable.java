@@ -17,9 +17,10 @@ package org.hippoecm.frontend.sa.plugin.config;
 
 import java.util.List;
 
+public interface IOverridable {
 
-public interface IClusterConfig extends IPluginConfig {
+    public void addOverride(String key);
 
-    public List<IPluginConfig> getPlugins();
+    public List<String> getOverrides();
 
 }

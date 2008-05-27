@@ -28,11 +28,13 @@ import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.service.render.ListViewPlugin;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.FieldDescriptor;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
+import org.hippoecm.frontend.sa.template.impl.JavaTemplateConfig;
 import org.hippoecm.frontend.sa.template.model.AbstractProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +118,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     protected void configureTemplate(IClusterConfig config, C model) {
         final IPluginConfig myConfig = getPluginConfig();
 
-        for (String property : config.getPropertyKeys()) {
+        for (String property : ((JavaTemplateConfig)config).getOverrides()) {
             Object value = myConfig.get("template." + property);
             if (value != null) {
                 config.put(property, value);

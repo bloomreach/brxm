@@ -15,10 +15,11 @@
  */
 package org.hippoecm.frontend.sa.plugin.config;
 
-import java.util.List;
-
 import org.apache.wicket.IClusterable;
 
 public interface IPluginConfigService extends IClusterable {
-    public List<IPluginConfig> getPlugins(String key);
+    
+    public IClusterConfig getDefaultCluster();
+    
+    public IClusterConfig getPlugins(String key);
 }

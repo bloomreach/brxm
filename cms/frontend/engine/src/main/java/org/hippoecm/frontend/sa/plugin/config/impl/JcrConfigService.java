@@ -15,51 +15,46 @@
  */
 package org.hippoecm.frontend.sa.plugin.config.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RepositoryConfigService implements IPluginConfigService {
+public class JcrConfigService implements IPluginConfigService {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(RepositoryConfigService.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrConfigService.class);
 
     private JcrNodeModel model;
+    private String defaultKey;
 
-    RepositoryConfigService(JcrNodeModel model) {
+    public JcrConfigService(JcrNodeModel model, String defaultKey) {
         this.model = model;
+        this.defaultKey = defaultKey;
     }
 
-    public List<IPluginConfig> getPlugins(String key) {
+    public IClusterConfig getPlugins(String key) {
+        IClusterConfig cluster;
         try {
-            Node node = model.getNode();
-            if (node != null) {
-                NodeIterator children = node.getNodes(key);
-                if (children.getSize() < Integer.MAX_VALUE) {
-                    List<IPluginConfig> result = new ArrayList<IPluginConfig>();
-                    while (children.hasNext()) {
-                        Node child = children.nextNode();
-                        result.add(new JcrPluginConfig(new JcrNodeModel(child)));
-                    }
-                    return result;
-                } else {
-                    log.warn("Too many children");
-                }
+            if (model.getNode().hasNode(key)) {
+                Node clusterNode = model.getNode().getNode(key);
+                JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
+                cluster = new JcrClusterConfig(clusterNodeModel);
             } else {
-                log.warn("Node model is not valid");
+                cluster = getDefaultCluster();
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+            cluster = getDefaultCluster();
         }
-        return null;
+        return cluster;
+    }
+
+    public IClusterConfig getDefaultCluster() {
+        return getPlugins(defaultKey);
     }
 
 }

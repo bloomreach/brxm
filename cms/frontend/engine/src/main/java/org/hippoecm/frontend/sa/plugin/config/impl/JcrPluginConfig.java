@@ -43,12 +43,12 @@ import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
+public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(JcrPluginConfig.class);
 
-    JcrPluginConfig(JcrNodeModel nodeModel) {
+    public JcrPluginConfig(JcrNodeModel nodeModel) {
         super(nodeModel);
     }
 
