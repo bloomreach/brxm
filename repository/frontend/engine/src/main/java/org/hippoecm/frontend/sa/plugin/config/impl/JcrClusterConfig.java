@@ -18,34 +18,45 @@ package org.hippoecm.frontend.sa.plugin.config.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.sa.plugin.config.IOverridable;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
-public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfig, IOverridable {
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig {
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(JcrClusterConfig.class);
 
     private List<IPluginConfig> configs;
-    private List<String> overrides;
 
-    public JavaClusterConfig() {
+    public JcrClusterConfig(JcrNodeModel nodeModel) {
+        super(nodeModel);
+
         configs = new LinkedList<IPluginConfig>();
-        overrides = new LinkedList<String>();
+        try {
+            Node node = nodeModel.getNode();
+            NodeIterator children = node.getNodes();
+            while (children.hasNext()) {
+                Node child = children.nextNode();
+                addPlugin(new JcrPluginConfig(new JcrNodeModel(child)));
+             }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
     }
 
     public void addPlugin(IPluginConfig config) {
         configs.add(config);
     }
 
+
     public List<IPluginConfig> getPlugins() {
         return configs;
     }
 
-    public void addOverride(String key) {
-        overrides.add(key);
-    }
-
-    public List<String> getOverrides() {
-        return overrides;
-    }
 }

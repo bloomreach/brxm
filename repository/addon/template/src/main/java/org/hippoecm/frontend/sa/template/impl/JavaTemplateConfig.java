@@ -27,7 +27,7 @@ import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JavaTemplateConfig extends JavaClusterConfig implements IClusterConfig {
+public class JavaTemplateConfig extends JavaClusterConfig {
     private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(JavaTemplateConfig.class);
@@ -73,10 +73,6 @@ public class JavaTemplateConfig extends JavaClusterConfig implements IClusterCon
         variables.put(ITemplateEngine.TEMPLATE, templateId);
 
         put(ITemplateEngine.ENGINE, serviceId);
-    }
-
-    public List<String> getPropertyKeys() {
-        return upstream.getPropertyKeys();
     }
 
     @Override

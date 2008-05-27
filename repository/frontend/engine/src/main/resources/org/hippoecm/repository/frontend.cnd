@@ -21,12 +21,10 @@
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <frontend='http://www.hippoecm.org/frontend/nt/1.0'>
 
-
 [frontend:plugin] > hippo:plugin
 
-[frontend:page] > nt:unstructured
-- frontend:style (string)
-
+[frontend:pluginfolder] > nt:base
++ * (frontend:plugin) = frontend:plugin
 
 /* BEGIN DEPRECATED */
 [hippo:frontendplugin] > hippo:plugin

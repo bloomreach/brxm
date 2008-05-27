@@ -15,12 +15,12 @@
  */
 package org.hippoecm.frontend.sa;
 
-import java.util.List;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.sa.plugin.config.impl.PluginConfigFactory;
@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 
 public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService {
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(Home.class);
 
     private PluginManager mgr;
     private IRenderService root;
@@ -51,18 +49,18 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         IPluginConfigService pluginConfigService = configFactory.getPluginConfigService();
         mgr.registerService(pluginConfigService, "service.plugin.config");
         
-        List<IPluginConfig> plugins = pluginConfigService.getPlugins("default");
-        for (IPluginConfig plugin : plugins) {
+        IClusterConfig pluginCluster;
+        if (sessionModel.getCredentials().equals(Main.DEFAULT_CREDENTIALS)) {
+            pluginCluster = pluginConfigService.getPlugins("login");
+        } else {
+            pluginCluster = pluginConfigService.getDefaultCluster();
+        }
+        for (IPluginConfig plugin : pluginCluster.getPlugins()) {
             mgr.start(plugin);
         }
     }
-
-    private IRenderService getRootPlugin() {
-        return root;
-    }
-
+    
     public void render(PluginRequestTarget target) {
-        IRenderService root = getRootPlugin();
         if (root != null) {
             root.render(target);
         }

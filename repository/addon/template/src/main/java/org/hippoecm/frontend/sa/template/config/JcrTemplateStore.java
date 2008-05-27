@@ -52,7 +52,7 @@ public class JcrTemplateStore implements ITemplateStore {
             return template;
         } else if (type.getName().equals("String")) {
             JavaClusterConfig template = new JavaClusterConfig();
-            template.addProperty(RenderService.WICKET_ID);
+            template.addOverride(RenderService.WICKET_ID);
             template.put(RenderService.MODEL_ID, "{template}.model");
 
             IPluginConfig plugin = new JavaPluginConfig();

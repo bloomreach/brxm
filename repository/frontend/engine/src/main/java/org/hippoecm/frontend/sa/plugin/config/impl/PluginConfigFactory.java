@@ -28,57 +28,34 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class PluginConfigFactory {
 
-    private String style;
     private IPluginConfigService pluginConfigService;
 
     public PluginConfigFactory(JcrSessionModel sessionModel) {
-        if (sessionModel.getCredentials().equals(Main.DEFAULT_CREDENTIALS)) {
-            pluginConfigService = new LoginConfigService();
-        } else {
-            try {
-                Session session = sessionModel.getSession();
-                String config = ((Main) Application.get()).getConfigurationParameter("config", null);
+        try {
+            Session session = sessionModel.getSession();
+            String config = ((Main) Application.get()).getConfigurationParameter("config", null);
 
-                String basePath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-                Node baseNode = (Node) session.getItem(basePath);
+            String basePath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
+            Node baseNode = (Node) session.getItem(basePath);
 
-                if (config == null && baseNode.hasNodes()) {
-                    //Use the first frontend configuration node
-                    Node configNode = baseNode.getNodes().nextNode();
-                    pluginConfigService = new RepositoryConfigService(new JcrNodeModel(configNode));
-                    if (configNode.hasProperty("hippo:style")) {
-                        style = configNode.getProperty("hippo:style").getString();
-                    }
+            if (config == null && baseNode.hasNodes()) {
+                Node configNode = baseNode.getNodes().nextNode();
+                pluginConfigService = new JcrConfigService(new JcrNodeModel(baseNode), configNode.getName());
+            } else if (baseNode.hasNode(config)) {
+                pluginConfigService = new JcrConfigService(new JcrNodeModel(baseNode), config);
 
-                } else if (baseNode.hasNode(config)) {
-                    //Use specified configuration
-                    Node configNode = baseNode.getNode(config);
-                    pluginConfigService = new RepositoryConfigService(new JcrNodeModel(configNode));
-                    if (configNode.hasProperty("hippo:style")) {
-                        style = configNode.getProperty("hippo:style").getString();
-                    }
-
-                } else {
-                    //Fall back to builtin configuration
-                    //pluginConfigService = new ExperimentalConfigService();
-                    pluginConfigService = new ConsoleConfigService();
-                    //pluginConfigService = new CmsConfigService();
-                }
-            } catch (RepositoryException e) {
+            } else {
                 //Fall back to builtin configuration
-                //pluginConfigService = new ExperimentalConfigService();
-                pluginConfigService = new ConsoleConfigService();
-                //pluginConfigService = new CmsConfigService();
+                pluginConfigService = new JavaConfigService();
             }
+        } catch (RepositoryException e) {
+            //Fall back to builtin configuration
+            pluginConfigService = new JavaConfigService();
         }
     }
 
     public IPluginConfigService getPluginConfigService() {
         return pluginConfigService;
-    }
-
-    public String getStyle() {
-        return style;
     }
 
 }
