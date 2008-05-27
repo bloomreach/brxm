@@ -23,7 +23,7 @@ import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.service.ServiceReference;
 
 public class ExceptionDialog extends WebPage {
-
+    private static final long serialVersionUID = 1L;
     private ServiceReference<IDialogService> windowRef;
 
     public ExceptionDialog(IPluginContext context, IDialogService dialogService, String exception) {

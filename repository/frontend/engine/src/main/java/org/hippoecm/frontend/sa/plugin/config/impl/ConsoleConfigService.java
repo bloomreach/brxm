@@ -37,6 +37,7 @@ class ConsoleConfigService implements IPluginConfigService {
         config.put("browserPlugin", "service.browser");
         config.put("breadcrumbPlugin", "service.breadcrumb");
         config.put("editorPlugin", "service.editor");
+        config.put("menuPlugin", "service.menu");
         config.put("logoutPlugin", "service.logout");
         plugins.add(config);
         
@@ -56,6 +57,13 @@ class ConsoleConfigService implements IPluginConfigService {
         config.put("plugin.class", "org.hippoecm.frontend.plugins.console.editor.EditorPlugin");
         config.put("wicket.id", "service.editor");
         config.put("wicket.model", "service.model");
+        plugins.add(config);
+        
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.menu.MenuPlugin");
+        config.put("wicket.id", "service.menu");
+        config.put("wicket.model", "service.model");
+        config.put("wicket.dialog", "service.dialog");
         plugins.add(config);
         
         config = new JavaPluginConfig();

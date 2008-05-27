@@ -18,13 +18,14 @@ package org.hippoecm.frontend.plugins.logout;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.sa.dialog.DialogWindow;
-import org.hippoecm.frontend.sa.dialog.DynamicDialogFactory;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
@@ -41,7 +42,12 @@ public class LogoutLink extends Panel {
 
         final DialogWindow dialogWindow = new DialogWindow("dialog");        
         final LogoutDialog dialog = new LogoutDialog(context, window);
-        dialogWindow.setPageCreator(new DynamicDialogFactory(dialog));
+        dialogWindow.setPageCreator(new PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return dialog;
+            }
+        });
         add(dialogWindow);
         
         dialogWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {

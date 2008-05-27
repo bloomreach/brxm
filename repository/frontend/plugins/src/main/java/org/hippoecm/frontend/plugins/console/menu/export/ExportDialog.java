@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.export;
+package org.hippoecm.frontend.plugins.console.menu.export;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,39 +33,29 @@ import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.Model;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.sa.dialog.AbstractDialog;
+import org.hippoecm.frontend.sa.dialog.IDialogService;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.w3c.dom.Document;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
- */
-@Deprecated
 public class ExportDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 
-	public ExportDialog(DialogWindow dialogWindow) {
-		super(dialogWindow);
-
-		final JcrNodeModel nodeModel = dialogWindow.getNodeModel();
-
-		String path;
-		try {
-			path = nodeModel.getNode().getPath();
-		} catch (RepositoryException e) {
-			path = e.getMessage();
-		}
-		dialogWindow.setTitle("Export " + path);
+    private MenuPlugin plugin;
+    
+	public ExportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
+        super(context, dialogWindow);     
+        this.plugin = plugin;
+        
+        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
 		DownloadExportLink link = new DownloadExportLink("download-link", nodeModel);
 		link.add(new Label("download-link-text", "Download"));
 		add(link);
 		
 		final MultiLineLabel dump = new MultiLineLabel("dump", "");
-		//dump.setVisible(false);
 		dump.setOutputMarkupId(true);
 		add(dump);
 		
@@ -85,7 +75,6 @@ public class ExportDialog extends AbstractDialog {
 					export = e.getMessage();
 				}
 				dump.setModel(new Model(export));
-				//dump.setVisible(true);
 				target.addComponent(dump);
 			}
 		};
@@ -97,17 +86,29 @@ public class ExportDialog extends AbstractDialog {
 
 	@Override
 	public void ok() {
-		Channel channel = getChannel();
-		if (channel != null) {
-			Request request = channel.createRequest("select", getDialogWindow()
-					.getNodeModel());
-			channel.send(request);
-		}
+//		Channel channel = getChannel();
+//		if (channel != null) {
+//			Request request = channel.createRequest("select", getDialogWindow().getNodeModel());
+//			channel.send(request);
+//		}
 	}
 
 	@Override
 	public void cancel() {
 	}
+    
+    public String getTitle() {
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        String path;
+        try {
+            path = nodeModel.getNode().getPath();
+        } catch (RepositoryException e) {
+            path = e.getMessage();
+        }
+        return "Export " + path;
+    }
+
+    // privates
 
 	private String prettyPrint(byte[] bytes) throws Exception {
 		Source source = new StreamSource(new ByteArrayInputStream(bytes));

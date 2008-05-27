@@ -32,10 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A panel containing a logout link, which on "click", shows a confirmation pop up if there are
- * pending changes, or immediately logs out if there are no pending changes.
- *
+ * @deprecated use org.hippoecm.frontend.plugins.logout.* instead
  */
+@Deprecated
 public class LogoutLink extends Panel {
     private static final long serialVersionUID = 1L;
 

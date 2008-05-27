@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.save;
+package org.hippoecm.frontend.plugins.console.menu.reset;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -22,27 +22,24 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.sa.dialog.AbstractDialog;
+import org.hippoecm.frontend.sa.dialog.IDialogService;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
- */
-@Deprecated
-public class SaveDialog extends AbstractDialog {
+public class ResetDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private boolean hasPendingChanges;
+    private MenuPlugin plugin;
 
-    public SaveDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
-        dialogWindow.setTitle("Save Session");
-
+    public ResetDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
+        super(context, dialogWindow);    
+        this.plugin = plugin;
+        
         Component message;
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         try {
         	NodeIterator it = nodeModel.getNode().pendingChanges();
             hasPendingChanges = it.hasNext();
@@ -54,39 +51,40 @@ public class SaveDialog extends AbstractDialog {
             	}
                 message = new MultiLineLabel("message", buf.toString());
             } else {
-                message = new Label("message", "There are no pending changes");
-                ok.setVisible(false);
+            	message = new Label("message", "There are no pending changes");
+            	ok.setVisible(false);
             }
         } catch (RepositoryException e) {
-            message = new Label("message", "exception: " + e.getMessage());
-            ok.setVisible(false);
+        	message = new Label("message", "exception: " + e.getMessage());
+        	ok.setVisible(false);
         }
         add(message);
     }
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
-        Node saveNode = nodeModel.getNode();
-        if (hasPendingChanges) {
-            while (saveNode.isNew()) {
-                saveNode = saveNode.getParent();
-            }
-            saveNode.save();
+        JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
 
-            Channel channel = getChannel();
-            if (channel != null) {
-                Request request = channel.createRequest("save", new JcrNodeModel(saveNode));
-                channel.send(request);
+        // The actual JCR refresh
+        nodeModel.getNode().refresh(false);
 
-                request = channel.createRequest("flush", new JcrNodeModel(saveNode));
-                channel.send(request);
-            }
-        }
+//        Channel channel = getChannel();
+//        if (channel != null) {
+//            Request request = channel.createRequest("select", nodeModel);
+//            channel.send(request);
+//            if (hasPendingChanges) {
+//                request = channel.createRequest("flush", nodeModel.findRootModel());
+//                channel.send(request);
+//            }
+//        }
     }
 
     @Override
     public void cancel() {
+    }
+
+    public String getTitle() {
+        return "Refresh Session (undo changes)";
     }
 
 }

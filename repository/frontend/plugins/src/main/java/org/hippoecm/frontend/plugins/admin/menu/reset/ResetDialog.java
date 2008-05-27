@@ -28,6 +28,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
+ */
+@Deprecated
 public class ResetDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
