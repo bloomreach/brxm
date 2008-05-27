@@ -51,7 +51,7 @@ public class AuthorizationQuery {
      */
     private BooleanQuery query;
 
-    public AuthorizationQuery(Set<FacetAuthPrincipal> facetAuths, Map<String, String> facetsQueryMap,
+    public AuthorizationQuery(Set<FacetAuthPrincipal> facetAuths,
             NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig) {
         this.query = new BooleanQuery(true);
 
