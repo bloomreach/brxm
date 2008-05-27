@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.hst.jcr.JCRConnector;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoNode;
 
@@ -55,14 +56,21 @@ public class Context extends AbstractMap {
     private final String urlBasePath;
     private final String baseLocation;
     private String relativeLocation;
-    int index = -1;
+    private int index = -1;
 
     private HippoQuery query;
     private List<String> arguments;
     private DocumentPathReplacer pathReplacer;
     
     public Context(final Session jcrSession, final String contextPath, 
-            final String requestURI, final String urlBasePath, final String baseLocation) {
+            final String requestURI, final String baseLocation) {
+        // create with urlBasePath same as baseLocation
+        this(jcrSession, contextPath, requestURI, baseLocation, baseLocation);
+    }
+
+    public Context(final Session jcrSession, final String contextPath, 
+            final String requestURI, final String urlBasePath, 
+            final String baseLocation) {
         this.session = jcrSession;
         this.contextPath = contextPath;
         this.requestURI = requestURI;
@@ -75,13 +83,7 @@ public class Context extends AbstractMap {
         this(parent, relativePath, -1);
     }
     
-    Context(final Session jcrSession, final String contextPath, 
-            final String requestURI, final String baseLocation) {
-        // create with urlBasePath same as baseLocation
-        this(jcrSession, contextPath, requestURI, baseLocation, baseLocation);
-    }
-
-    Context(Context parent, String relativeLocation, int index) {
+    private Context(Context parent, String relativeLocation, int index) {
         this(parent.session, parent.contextPath, parent.requestURI, parent.urlBasePath, parent.baseLocation); 
         
         if (relativeLocation.startsWith("/")) {
@@ -95,12 +97,15 @@ public class Context extends AbstractMap {
         this.index = index;
     }
 
-    Context(Context parent, HippoQuery query, List arguments) {
+    private Context(Context parent, HippoQuery query, List arguments) {
         this(parent.session, parent.contextPath, parent.requestURI, parent.urlBasePath, parent.baseLocation);
         this.query = query;
         this.arguments = arguments;
     }
 
+    /**
+     * Get the total location of the current context.
+     */
     public String getLocation() {
         
         if (relativeLocation == null) {
@@ -114,10 +119,19 @@ public class Context extends AbstractMap {
         }   
     }
 
+    /**
+     * Get the begin part of the URL path, on which the currently active filter 
+     * matches.
+     */
     public String getURLBasePath() {
         return urlBasePath;
     }
 
+    /** 
+     * Get the base location that is the location a.k.a. path in the repository
+     * where the current context points to and is in normal configuration the  
+     * base location of a virtual tree. 
+     */
     public String getBaseLocation() {
         return baseLocation;
     }
@@ -339,12 +353,45 @@ public class Context extends AbstractMap {
         
         // lazy
         if (pathReplacer == null) {
-            pathReplacer = new DocumentPathReplacer(this.contextPath, this.urlBasePath, this.baseLocation);
+            
+            // don't use the baseLocation as it might be a virtual tree and
+            // internal links have links from the real content base location 
+            pathReplacer = new DocumentPathReplacer(this.contextPath, this.urlBasePath, 
+                    getContentBaseLocation());
         }
         
         return pathReplacer;
     }
 
+    /** Determine the real content base location from a possible virtual tree
+     *  base location. */
+    private String getContentBaseLocation() {
+        
+        String contentBaseLocation = baseLocation;
+        
+        try {
+            Item item = JCRConnector.getItem(this.session, this.baseLocation);
+            
+            if (item.isNode()) {
+                Node node = (Node) item;
+
+                // if it is a virtual tree, determine the real content base location
+                if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    if (node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                        
+                        Node contentBaseNode = session.getNodeByUUID(
+                                node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
+    
+                        contentBaseLocation = contentBaseNode.getPath();
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return contentBaseLocation;
+    }
 
     private class EntrySet extends AbstractSet {
         private Set<String> set;
