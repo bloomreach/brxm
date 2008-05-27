@@ -17,10 +17,12 @@ package org.hippoecm.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
   implements FacetedNavigationEngine<Q,C>
@@ -31,8 +33,8 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     this.upstream = upstream;
   }
 
-  public C prepare(String principal, Map<Name,String[]> authorizationQuery, List<Q> initialQueries, Session session) {
-    Context context = upstream.prepare(principal, authorizationQuery, initialQueries, session);
+  public C prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<Q> initialQueries, Session session) {
+    Context context = upstream.prepare(principal, facetAuths, initialQueries, session);
     return (C) context;
   }
 

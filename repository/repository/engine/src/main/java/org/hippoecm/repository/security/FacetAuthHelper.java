@@ -41,11 +41,12 @@ public class FacetAuthHelper {
      */
     public static Name resolveName(Session session, String nodeTypeName) throws RepositoryException {
         Name name;
-        name = NameFactoryImpl.getInstance().create("", nodeTypeName);
         int i = nodeTypeName.indexOf(":");
         if (i > 0) {
             name = NameFactoryImpl.getInstance().create(session.getNamespaceURI(nodeTypeName.substring(0, i)),
                     nodeTypeName.substring(i + 1));
+        } else {
+            name = NameFactoryImpl.getInstance().create("", nodeTypeName);
         }
         return name;
     }

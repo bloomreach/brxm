@@ -531,6 +531,10 @@ public class HippoAccessManager implements AccessManager {
      * {@inheritDoc}
      */
     public boolean isGranted(ItemId id, int permissions) throws RepositoryException {
+//        if(true) {
+//            return true;
+//        }
+        
         if (!initialized) {
             throw new IllegalStateException("not initialized");
         }

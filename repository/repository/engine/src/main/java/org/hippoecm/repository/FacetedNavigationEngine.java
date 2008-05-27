@@ -19,11 +19,13 @@ package org.hippoecm.repository;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 /**
 
@@ -288,7 +290,8 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @param initialQueries A list of initial queries later used in the #view methods
      * @see #unprepare(C)
      */
-    public C prepare(String principal, Map<Name,String[]> authorizationQuery, List<Q> initialQueries, Session session);
+    
+    public C prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<Q> initialQueries, Session session);
 
     /**
      * This method is called when a user logouts from the system.
