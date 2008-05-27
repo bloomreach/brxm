@@ -114,6 +114,10 @@ public class FacetRule implements Serializable {
         } else {
             throw new IllegalArgumentException("Unknown type: " + typeProp);
         }
+        
+        if (facetValue.equals(FacetAuthHelper.WILDCARD) && !equals) {
+            throw new RepositoryException("Not-equals and wildcard value not allowed together.");
+        }
         value = facetValue;
         type = jcrType;
 
