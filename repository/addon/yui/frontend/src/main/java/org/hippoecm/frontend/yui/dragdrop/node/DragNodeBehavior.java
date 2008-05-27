@@ -3,20 +3,25 @@ package org.hippoecm.frontend.yui.dragdrop.node;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 
 public class DragNodeBehavior extends NodeDragDropBehavior {
     private static final long serialVersionUID = 1L;
-    
+
     public DragNodeBehavior() {
         super();
     }
-    
-    public DragNodeBehavior(String nodePath) {
-        super(nodePath);
+
+    public DragNodeBehavior(JcrNodeModel nodeModel) {
+        super(nodeModel);
     }
-    
+
+    public DragNodeBehavior(JcrNodeModel nodeModel, String... groups) {
+        super(nodeModel, groups);
+    }
+
     @Override
     public void onDrop(AjaxRequestTarget target) {
         if (getPlugin().getTopChannel() != null) {
@@ -31,7 +36,7 @@ public class DragNodeBehavior extends NodeDragDropBehavior {
             notification.getContext().apply(target);
         }
     }
-    
+
     @Override
     protected String getHeaderContributorFilename() {
         return "DragNode.js";
