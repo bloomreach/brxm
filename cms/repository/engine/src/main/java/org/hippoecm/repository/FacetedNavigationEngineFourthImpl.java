@@ -35,6 +35,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searchable;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.CachingFacetResultCollector;
@@ -44,7 +45,7 @@ import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.ParallelMultiSearcher;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.hippoecm.repository.decorating.RepositoryDecorator;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
   implements FacetedNavigationEngine<FacetedNavigationEngineFourthImpl.QueryImpl, FacetedNavigationEngineFourthImpl.ContextImpl>
@@ -82,11 +83,11 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
   class ContextImpl extends FacetedNavigationEngine.Context {
     Session session;
     String principal;
-    Map<Name,String[]> authorizationQuery;
-    ContextImpl(Session session, String principal, Map<Name,String[]> authorizationQuery) {
+    Set<FacetAuthPrincipal> facetAuths;
+    ContextImpl(Session session, String principal, Set<FacetAuthPrincipal> facetAuths) {
       this.session = session;
       this.principal = principal;
-      this.authorizationQuery = authorizationQuery;
+      this.facetAuths = facetAuths;
     }
   }
 
@@ -96,8 +97,8 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
       this.tfvCache = new WeakHashMap<IndexReader, Map<String,Map<Integer, String[]>>>();
   }
 
-  public ContextImpl prepare(String principal, Map<Name,String[]> authorizationQuery, List<QueryImpl> initialQueries, Session session) {
-    return new ContextImpl(session, principal, authorizationQuery);
+  public ContextImpl prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<QueryImpl> initialQueries, Session session) {
+    return new ContextImpl(session, principal, facetAuths);
   }
   public void unprepare(ContextImpl authorization) {
     // deliberate ignore
@@ -118,14 +119,14 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
     // deliberate ignore
   }
 
-  public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
+  public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
                    Map<String,String> facetsQueryMap, QueryImpl openQuery,
                    Map<String,Map<String,Count>> resultset,
                    Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
                    HitsRequested hitsRequested) throws UnsupportedOperationException
   {
     try {
-      Session session = authorization.session;
+      Session session = contextImpl.session;
       RepositoryImpl repository = (RepositoryImpl) RepositoryDecorator.unwrap(session.getRepository());
       SearchManager searchManager = repository.getSearchManager(session.getWorkspace().getName()) ;
       NamespaceMappings nsMappings = getNamespaceMappings();
@@ -140,11 +141,11 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
        * is again a facetsQuery)
        */
 
-      AuthorizationQuery authorizationQuery = new AuthorizationQuery(authorization.authorizationQuery,
+      AuthorizationQuery authorizationQuery = new AuthorizationQuery(contextImpl.facetAuths,
                                                                      facetsQueryMap ,
                                                                      nsMappings,
-                                                                     (ServicingIndexingConfiguration)getIndexingConfig(),
-                                                                     false);
+                                                                     (ServicingIndexingConfiguration)getIndexingConfig()
+                                                                      );
 
       FacetResultCollector collector = null;
       CachingFacetResultCollector cachingCollector = null;

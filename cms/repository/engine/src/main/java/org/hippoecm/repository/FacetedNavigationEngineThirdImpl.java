@@ -23,9 +23,6 @@ import java.util.Set;
 
 import javax.jcr.Session;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
@@ -34,10 +31,9 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
-
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
@@ -48,6 +44,9 @@ import org.hippoecm.repository.query.lucene.FixedScoreTermQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
   implements FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl,
@@ -86,11 +85,11 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     class ContextImpl extends FacetedNavigationEngine.Context {
         Session session;
         String principal;
-        Map<Name,String[]> authorizationQuery;
-        ContextImpl(Session session, String principal, Map<Name,String[]> authorizationQuery) {
+        Set<FacetAuthPrincipal> facetAuths;
+        ContextImpl(Session session, String principal, Set<FacetAuthPrincipal> facetAuths) {
             this.session = session;
             this.principal = principal;
-            this.authorizationQuery = authorizationQuery;
+            this.facetAuths = facetAuths;
         }
     }
 
@@ -100,8 +99,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     public FacetedNavigationEngineThirdImpl() {
     }
 
-    public ContextImpl prepare(String principal, Map<Name,String[]> authorizationQuery, List<QueryImpl> initialQueries, Session session) {
-        return new ContextImpl(session, principal, authorizationQuery);
+    public ContextImpl prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<QueryImpl> initialQueries, Session session) {
+        return new ContextImpl(session, principal, facetAuths);
     }
     public void unprepare(ContextImpl authorization) {
         // deliberate ignore
@@ -122,7 +121,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         // deliberate ignore
     }
 
-    public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
+    public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
                        Map<String,String> facetsQueryMap, QueryImpl openQuery,
                        Map<String,Map<String,Count>> resultset,
                        Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
@@ -149,9 +148,9 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          * is again a facetsQuery)
          */
 
-        AuthorizationQuery authorizationQuery = new AuthorizationQuery(authorization.authorizationQuery,
-                   facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig(), true);
-
+        AuthorizationQuery authorizationQuery = new AuthorizationQuery(contextImpl.facetAuths,
+                   facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
+        
         BooleanQuery searchQuery = new BooleanQuery(true);
 
         if(facetsQuery.getQuery().clauses().size() > 0){
@@ -170,7 +169,12 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         IndexReader indexReader = null;
         IndexSearcher searcher = null; ;
         try {
-            indexReader = getIndex().getIndexReader();
+            /*
+             * if getIndexReader(true) you will also get version storage index which
+             * cannot be used for facet searches, therefore set 'false'
+             */ 
+            //indexReader = getIndex().getIndexReader();
+            indexReader = getIndexReader(false);
             searcher = new IndexSearcher(indexReader);
             searcher.setSimilarity(new FixedScoreSimilarity());
             // In principle, below, there is always one facet
@@ -180,10 +184,6 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                      * Nodes not having this facet, still should be counted if they are a hit
                      * in the query without this facet. Therefor, first get the count query without
                      * FacetPropExistsQuery.
-                     */
-                    /*
-                     * TODO : test wether the two queries below must be done with somehow synchronizing
-                     * indexReader because other threads can change the indexReader (BitSet's used by this shared indexreader)
                      */
                     int numHits = searcher.search(searchQuery).length();
                     /*
@@ -216,7 +216,6 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     log.debug("lucene query: " + searchQuery.toString() + " took "
                             + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() + " results");
                 }
-
             }
 
         } catch (IllegalNameException e) {

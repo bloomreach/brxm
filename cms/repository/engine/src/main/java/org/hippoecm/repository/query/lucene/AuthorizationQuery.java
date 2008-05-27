@@ -15,20 +15,27 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import javax.jcr.NamespaceException;
+import javax.jcr.PropertyType;
 
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.hippoecm.repository.security.domain.DomainRule;
+import org.hippoecm.repository.security.domain.FacetRule;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,85 +51,132 @@ public class AuthorizationQuery {
      */
     private BooleanQuery query;
 
-    /**
-     *
-     * @param authorizationQuery The facets + value[] combination the logged in user is allowed to see
-     * @param nsMappings nameSpace mappings to find the lucene field names
-     * @param indexingConfig the index configuration
-     */
-    public AuthorizationQuery(Map<Name, String[]> authorizationQuery, NamespaceMappings nsMappings,
-            ServicingIndexingConfiguration indexingConfig) {
-        this(authorizationQuery, null, nsMappings, indexingConfig, true);
-    }
-
-    /**
-     * This is the authorization query constructor. For efficient queries, the requested facetsQueryMap is added, to
-     * be able to remove redundant searches.
-     *
-     * @param authorizationQuery The facets + value[] combination the logged in user is allowed to see
-     * @param facetsQueryMap The currently requested facetQueryMap. This map is used to optimize the lucene query
-     * @param nsMappings nameSpace mappings to find the lucene field names
-     * @param indexingConfig the index configuration
-     * @param facetsORed Wether different facet fields are OR-ed or AND-ed. Most efficient is OR-ed
-     */
-    public AuthorizationQuery(Map<Name, String[]> authorizationQuery, Map<String, String> facetsQueryMap,
-            NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig, boolean facetsORed) {
+    public AuthorizationQuery(Set<FacetAuthPrincipal> facetAuths, Map<String, String> facetsQueryMap,
+            NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig) {
         this.query = new BooleanQuery(true);
 
-        if (authorizationQuery != null && authorizationQuery.size() != 0) {
+        Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
+        while (facetAuthsIt.hasNext()) {
+            // TODO test for facetAuthPrincipal wether 'read' is bit is set to 1 in ROLE 
+            FacetAuthPrincipal facetAuthPrincipal = facetAuthsIt.next();
+            Iterator<DomainRule> domainRulesIt = facetAuthPrincipal.getRules().iterator();
 
-            for (Map.Entry<Name, String[]> entry : authorizationQuery.entrySet()) {
-                String internalName = "";
-                try {
-                    if (indexingConfig.isFacet(entry.getKey())) {
-                        internalName = ServicingNameFormat.getInternalFacetName(entry.getKey(), nsMappings);
-                        String[] facetValues = entry.getValue();
-                        BooleanQuery orQuery = new BooleanQuery(true);
-                        Set tmpContainsSet = new HashSet();
-                        for (int i = 0; i < facetValues.length; i++) {
-//                            if (facetsQueryMap.containsKey(entry.getKey())
-//                                    && facetsQueryMap.get(entry.getKey()).equals(facetValues[i])) {
-//                                // the facetsQueryMap already accounts for the part in the authorization for this facet. Disregard this part
-//                                // for performance
-//                                orQuery = null;
-//                            }
-                            // add to tmp set to check wether already added. Multiplicity slows queries down
-                            if (orQuery != null && tmpContainsSet.add(facetValues[i])) {
-                                Query wq = new WildcardQuery(new Term(internalName, facetValues[i] + "?"));
-                                /*
-                                 * TODO HREPTWO-652 : when lucene 2.3.x or higher is used, replace wildcardquery 
-                                 * below with FixedScoreTermQuery without wildcard, and use payload to get the type
-                                 */  
-                                //Query q = new FixedScoreTermQuery(new Term(internalName, facetValues[i]));
-                                orQuery.add(wq, Occur.SHOULD);
-                            }
-                        }
-                        if (orQuery != null && facetsORed) {
-                            this.query.add(orQuery, Occur.SHOULD);
-                        } else if (orQuery != null) {
-                            this.query.add(orQuery, Occur.MUST);
-                        }
+            while (domainRulesIt.hasNext()) {
+                DomainRule domainRule = domainRulesIt.next();
+                Iterator<FacetRule> facetRuleIt = domainRule.getFacetRules().iterator();
 
-                    } else {
-                        log.warn("Property " + entry.getKey().getNamespaceURI() + ":" + entry.getKey().getLocalName()
-                                + " not allowed for facetted search. "
-                                + "Add the property to the indexing configuration to be defined as FACET");
+                BooleanQuery facetQuery = new BooleanQuery(true);
+                while (facetRuleIt.hasNext()) {
+                    FacetRule facetRule = facetRuleIt.next();
+
+                    Query q = getFacetRuleQuery(facetRule, indexingConfig, nsMappings);
+                    if (q == null) {
+                        continue;
                     }
-
-                } catch (IllegalNameException e) {
-                    log.error(e.toString());
+                    facetQuery.add(q, Occur.MUST);
                 }
-            }
-        } else {
-            // TODO: Fix this hack. It uses "null" for the authorizationQuery to allow everything for admin users
-            if (authorizationQuery != null) {
-                this.query.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST_NOT);
+                query.add(facetQuery, Occur.SHOULD);
             }
         }
+    }
+
+    private Query getFacetRuleQuery(FacetRule facetRule, ServicingIndexingConfiguration indexingConfig,
+            NamespaceMappings nsMappings) {
+        switch (facetRule.getType()) {
+        case PropertyType.STRING: 
+            Name nodeName = facetRule.getFacetName();
+            try {
+                if (indexingConfig.isFacet(nodeName)) {
+                    String internalFieldName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
+                    String internalNameTerm = nsMappings.translatePropertyName(nodeName);
+                    if (facetRule.getValue().equals("*")) {
+                        if(facetRule.isEqual()) {
+                            return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,internalNameTerm));
+                        } else {
+                            // * in combination with unequal should never return a hit (though should not be possible 
+                            // to exist anyway )
+                            return QueryHelper.getNoHitsQuery();
+                        }
+                    } else {
+                        Query wq = new WildcardQuery(new Term(internalFieldName, facetRule.getValue() + "?"));
+                        if(facetRule.isEqual()) {
+                            return wq;
+                        } else {
+                            BooleanQuery b = new BooleanQuery(false);
+                            Query propExists = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,internalNameTerm));
+                            b.add(propExists, Occur.MUST);
+                            b.add(wq, Occur.MUST_NOT);
+                            return b;
+                        }
+                    }
+                } else {
+                    log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName()
+                            + " not allowed for facetted search. "
+                            + "Add the property to the indexing configuration to be defined as FACET");
+                }
+            } catch (IllegalNameException e) {
+                log.error(e.toString());
+            }
+            break;
+        case PropertyType.NAME: 
+            String nodeNameString = facetRule.getFacet();
+            if (facetRule.getValue().equals("*")) {
+                if(facetRule.isEqual()) {
+                    return new MatchAllDocsQuery();
+                } else {
+                    return QueryHelper.getNoHitsQuery();
+                }
+            } else if ("nodetype".equals(nodeNameString)) {
+                if(facetRule.isEqual()) {
+                    return new MatchAllDocsQuery();
+                } else {
+                    log.error("invalid combination of hippo:facet='nodetype' and hippo:equals='false'");
+                    return QueryHelper.getNoHitsQuery();
+                }
+            } else if (nodeNameString.equals("jcr:primaryType")) {
+                return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE,facetRule,nsMappings);
+                
+            } else if (nodeNameString.equals("jcr:mixinTypes")) {
+                return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE,facetRule,nsMappings);
+            } else {
+                log.error("hippo:facet must be either 'nodetype', 'jcr:primaryType' " +
+                		"or 'jcr:mixinTypes' when hippo:type = Name \n Ignoring facetrule");
+            }
+            break;
+        }
+        log.error("Incorrect FacetRule: returning a match zero nodes query");
+        return QueryHelper.getNoHitsQuery();
+    }
+
+    private Query getNodeTypeQuery(String luceneFieldName, FacetRule facetRule, NamespaceMappings nsMappings) {
+        try {
+        String termValue = getTermValue(facetRule.getValue(), nsMappings);
+        Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, termValue));
+        if(facetRule.isEqual()) {
+            return nodetypeQuery;
+        } else {
+            return QueryHelper.negateQuery(nodetypeQuery);
+        }
+        } catch (NamespaceException e) {
+            log.error(e.getMessage() +" \n returning zero node matching query");
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage() +" \n returning zero node matching query");
+        }
+        return QueryHelper.getNoHitsQuery();
+    }
+
+    private String getTermValue(String nameString, NamespaceMappings nsMappings) throws NamespaceException {
+        Name facetNodeType = NameFactoryImpl.getInstance().create(nameString);
+        return nsMappings.getPrefix(facetNodeType.getNamespaceURI()) + ":" + facetNodeType.getLocalName();
     }
 
     public BooleanQuery getQuery() {
         return query;
     }
-
+    
+    @Override
+    public String toString(){
+        return "authorisation query: " + query.toString();
+    }
+    
 }

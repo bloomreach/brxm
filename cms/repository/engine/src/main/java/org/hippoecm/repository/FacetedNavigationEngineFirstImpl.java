@@ -15,10 +15,12 @@
  */
 package org.hippoecm.repository;
 
+import java.security.Principal;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -30,6 +32,7 @@ import javax.jcr.query.RowIterator;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 public class FacetedNavigationEngineFirstImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineFirstImpl.QueryImpl,
@@ -64,24 +67,16 @@ public class FacetedNavigationEngineFirstImpl
     class ContextImpl extends FacetedNavigationEngine.Context {
         Session session;
         String principal;
-        Map<Name,String[]> authorizationQuery;
-        ContextImpl(Session session, String principal, Map<Name,String[]> authorizationQuery) {
+        Set<FacetAuthPrincipal> facetAuths;
+        ContextImpl(Session session, String principal, Set<FacetAuthPrincipal> facetAuths) {
             this.session = session;
             this.principal = principal;
-            this.authorizationQuery = authorizationQuery;
+            this.facetAuths = facetAuths;
         }
         public String toString() {
             StringBuffer sb = null;
-            if(authorizationQuery != null) {
-                for(Map.Entry<Name,String[]> authorizationEntry : authorizationQuery.entrySet()) {
-                    if(sb == null)
-                        sb = new StringBuffer();
-                    else
-                        sb.append("||");
-                    sb.append(authorizationEntry.getKey());
-                    sb.append("=");
-                    sb.append(authorizationEntry.getValue());
-                }
+            if(facetAuths != null) {
+                sb.append("+authorization-query+");
             } else
                 sb = new StringBuffer("(null)");
             sb.insert(0,"query=");
@@ -97,9 +92,9 @@ public class FacetedNavigationEngineFirstImpl
     public FacetedNavigationEngineFirstImpl() {
     }
 
-    public ContextImpl prepare(String principal, Map<Name,String[]> authorizationQuery, List<QueryImpl> initialQueries,
+    public ContextImpl prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<QueryImpl> initialQueries,
                                Session session) {
-        return new ContextImpl(session, principal, authorizationQuery);
+        return new ContextImpl(session, principal, facetAuths);
     }
 
     public void unprepare(ContextImpl authorization) {
