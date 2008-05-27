@@ -17,6 +17,10 @@ package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.IClusterable;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public interface IDialogFactory extends IClusterable {
     public AbstractDialog createDialog(DialogWindow dialogWindow);
 }

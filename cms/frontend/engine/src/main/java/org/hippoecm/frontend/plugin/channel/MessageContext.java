@@ -28,6 +28,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public class MessageContext implements IClusterable {
     private static final long serialVersionUID = 1L;
 

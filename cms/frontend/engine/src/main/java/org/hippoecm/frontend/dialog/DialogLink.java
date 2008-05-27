@@ -24,6 +24,10 @@ import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
 
