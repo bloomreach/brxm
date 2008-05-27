@@ -58,8 +58,10 @@ public class JcrTreeNode extends AbstractTreeNode {
     @Override
     protected int loadChildcount() throws RepositoryException {
         int result;
-        Node node = nodeModel.getNode();
-        if (node.isNodeType(HippoNodeType.NT_FACETRESULT) || node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
+        HippoNode node = nodeModel.getNode();
+        if (node.isNodeType(HippoNodeType.NT_FACETRESULT) 
+            || node.isNodeType(HippoNodeType.NT_FACETSEARCH)
+            || node.getCanonicalNode() == null) {
             result = 1;
         } else {
             result = (int) node.getNodes().getSize();
