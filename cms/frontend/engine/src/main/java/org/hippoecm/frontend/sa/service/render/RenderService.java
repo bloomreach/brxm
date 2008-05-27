@@ -211,15 +211,18 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
             return list;
         }
 
+        @Override
         public void onServiceAdded(IRenderService service, String name) {
             service.bind(RenderService.this, extension);
             replace((Component) service);
             list.add(service);
         }
 
+        @Override
         public void onServiceChanged(IRenderService service, String name) {
         }
 
+        @Override
         public void onRemoveService(IRenderService service, String name) {
             replace(new EmptyPanel(extension));
             service.unbind();

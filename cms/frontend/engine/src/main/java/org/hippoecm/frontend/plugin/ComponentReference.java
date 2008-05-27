@@ -19,8 +19,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.LoadableDetachableModel;
 
 /**
- * Use this class to store references to a component in a different page.
+ * @deprecated use org.hippoecm.frontend.sa.* instead
  */
+@Deprecated
 public class ComponentReference extends LoadableDetachableModel {
     private static final long serialVersionUID = 1L;
 

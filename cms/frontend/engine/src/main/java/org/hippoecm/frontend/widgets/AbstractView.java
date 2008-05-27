@@ -27,6 +27,10 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.Plugin;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.widgets.AbstractView instead
+ */
+@Deprecated
 public abstract class AbstractView extends DataView {
 
     private Plugin plugin;

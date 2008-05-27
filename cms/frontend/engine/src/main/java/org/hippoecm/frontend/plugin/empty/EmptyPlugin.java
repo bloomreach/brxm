@@ -19,6 +19,10 @@ import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
+/**
+ * @deprecated use org.apache.wicket.markup.html.panel.EmptyPanel instead
+ */
+@Deprecated
 public class EmptyPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

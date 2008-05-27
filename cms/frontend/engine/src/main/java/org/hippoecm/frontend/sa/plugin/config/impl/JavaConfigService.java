@@ -134,7 +134,7 @@ public class JavaConfigService implements IPluginConfigService {
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.browser.BrowserPlugin");
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.browser.BrowserPlugin");
         config.put("wicket.id", "service.browse.tree");
         config.put("wicket.model", "model.browse.node");
         plugins.addPlugin(config);

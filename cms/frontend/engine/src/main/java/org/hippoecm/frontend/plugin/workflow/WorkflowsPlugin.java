@@ -53,6 +53,10 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.api.HippoNodeType;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public class WorkflowsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

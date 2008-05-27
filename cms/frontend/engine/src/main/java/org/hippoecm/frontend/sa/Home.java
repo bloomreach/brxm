@@ -23,14 +23,13 @@ import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaConfigService;
 import org.hippoecm.frontend.sa.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.sa.plugin.impl.PluginManager;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService {
     private static final long serialVersionUID = 1L;
@@ -51,7 +50,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         
         IClusterConfig pluginCluster;
         if (sessionModel.getCredentials().equals(Main.DEFAULT_CREDENTIALS)) {
-            pluginCluster = pluginConfigService.getPlugins("login");
+            pluginCluster = new JavaConfigService().getPlugins("login");
         } else {
             pluginCluster = pluginConfigService.getDefaultCluster();
         }

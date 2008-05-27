@@ -117,10 +117,12 @@ public class JcrItemModel extends LoadableDetachableModel {
     public void detach() {
         if (isAttached()) {
             Item item = (Item) getObject();
-            try {
-                path = item.getPath();
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+            if (item != null) {
+                try {
+                    path = item.getPath();
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
             }
         }
         super.detach();

@@ -20,6 +20,10 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.Workflow;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public interface WorkflowAction extends IClusterable {
     public Request execute(Channel channel, Workflow workflow) throws Exception;
 }
