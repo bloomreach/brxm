@@ -41,6 +41,10 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public class AbstractWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

@@ -16,10 +16,14 @@
 package org.hippoecm.frontend.sa.plugin;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.sa.plugin.error.ErrorPlugin;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,19 +38,36 @@ public class PluginFactory implements IClusterable {
 
     public IPlugin createPlugin(IPluginContext context, IPluginConfig config) {
         String className = config.getString(IPlugin.CLASSNAME);
-        if (className != null) {
+        IPlugin plugin = null;
+        String message = null;
+        if (className == null) {
+            message = "No plugin classname configured, please set plugin configuration parameter " + IPlugin.CLASSNAME;
+        } else {
             try {
                 ClassLoader loader = ((UserSession) Session.get()).getClassLoader();
                 Class clazz = Class.forName(className, true, loader);
                 Class[] formalArgs = new Class[] { IPluginContext.class, IPluginConfig.class };
                 Constructor constructor = clazz.getConstructor(formalArgs);
                 Object[] actualArgs = new Object[] { context, config };
-                return (IPlugin) constructor.newInstance(actualArgs);
-            } catch (Exception e) {
+                plugin = (IPlugin) constructor.newInstance(actualArgs);
+            } catch (InvocationTargetException e) {
+                message = e.getTargetException().getClass().getName() + ": "
+                        + e.getTargetException().getMessage();
                 log.error(e.getMessage());
-                e.printStackTrace();
+            } catch (Exception e) {
+                message = e.getClass().getName() + ": " + e.getMessage();
+                log.error(e.getMessage());
             }
         }
-        return null;
+        if (plugin == null && message != null) {
+            message +=  "\nFailed to instantiate plugin '" + className + 
+            "' for id '" + config.getString(RenderService.WICKET_ID) + "'.";
+            
+            IPluginConfig errorConfig = new JavaPluginConfig();
+            errorConfig.put(ErrorPlugin.ERROR_MESSAGE, message);
+            errorConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
+            plugin = new ErrorPlugin(context, errorConfig);
+        }
+        return plugin;
     }
 }

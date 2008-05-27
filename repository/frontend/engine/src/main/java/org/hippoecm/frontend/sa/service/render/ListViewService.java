@@ -68,14 +68,17 @@ public class ListViewService extends RenderService {
             tracker = new ServiceTracker<IRenderService>(IRenderService.class) {
                 private static final long serialVersionUID = 1L;
 
+                @Override
                 public void onServiceAdded(IRenderService service, String name) {
                     services.add(service);
                     redraw();
                 }
 
+                @Override
                 public void onServiceChanged(IRenderService service, String name) {
                 }
 
+                @Override
                 public void onRemoveService(IRenderService service, String name) {
                     services.remove(service);
                     redraw();

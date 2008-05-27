@@ -51,14 +51,4 @@ public class LogoutDialog extends AbstractDialog implements ITitleDecorator {
     protected void cancel() {
         logout = false;
     }
-
-//    @Override
-//    protected void closeDialog() {
-//        super.closeDialog();
-//        if (logout) {
-//            UserSession userSession = (UserSession) getSession();
-//            userSession.logout();            
-//        }
-//    }
-
 }

@@ -18,6 +18,10 @@ package org.hippoecm.frontend.plugin;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.LegacyPluginPage;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public class PluginReference extends LoadableDetachableModel {
     private static final long serialVersionUID = 1L;
 

@@ -90,6 +90,7 @@ public class Main extends WebApplication {
         IResourceSettings resourceSettings = getResourceSettings();
         final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
+            @Override
             public IResourceStream locate(final Class clazz, final String path) {
                 ServletContext skinContext = getServletContext().getContext("/skin");
                 if (skinContext != null) {

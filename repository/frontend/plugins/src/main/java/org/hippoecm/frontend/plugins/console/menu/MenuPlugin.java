@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console.menu;
 
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.export.ExportDialog;
@@ -38,14 +37,6 @@ public class MenuPlugin extends RenderPlugin {
     public MenuPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new EmptyPanel("node-dialog"));
-        add(new EmptyPanel("delete-dialog"));
-        add(new EmptyPanel("save-dialog"));
-        add(new EmptyPanel("reset-dialog"));
-        add(new EmptyPanel("export-dialog"));
-        add(new EmptyPanel("property-dialog"));
-        add(new EmptyPanel("rename-dialog"));
-
         IDialogService dialogService = getDialogService();
 
         IDialogFactory dialogFactory = new IDialogFactory() {
@@ -55,7 +46,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new NodeDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        replace(new DialogLink("node-dialog", new Model("Add Node"), dialogFactory, dialogService));
+        add(new DialogLink("node-dialog", new Model("Add Node"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -64,7 +55,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new DeleteDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        replace(new DialogLink("delete-dialog", new Model("Delete Node"), dialogFactory, dialogService));
+        add(new DialogLink("delete-dialog", new Model("Delete Node"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -73,7 +64,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new SaveDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        replace(new DialogLink("save-dialog", new Model("Save"), dialogFactory, dialogService));
+        add(new DialogLink("save-dialog", new Model("Save"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -82,7 +73,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new ResetDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        replace(new DialogLink("reset-dialog", new Model("Reset"), dialogFactory, dialogService));
+        add(new DialogLink("reset-dialog", new Model("Reset"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -91,7 +82,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new ExportDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        replace(new DialogLink("export-dialog", new Model("Export Node"), dialogFactory, dialogService));
+        add(new DialogLink("export-dialog", new Model("Export Node"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -100,7 +91,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new PropertyDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        replace(new DialogLink("property-dialog", new Model("Add Property"), dialogFactory, dialogService));
+        add(new DialogLink("property-dialog", new Model("Add Property"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -109,7 +100,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new RenameDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        replace(new DialogLink("rename-dialog", new Model("Rename Node"), dialogFactory, dialogService));
+        add(new DialogLink("rename-dialog", new Model("Rename Node"), dialogFactory, dialogService));
 
         //  
         //  dialogFactory = new IDialogFactory() {
@@ -118,7 +109,7 @@ public class MenuPlugin extends RenderPlugin {
         //          return null;
         //      }
         //  };
-        //  replace(new DialogLink("move-dialog", new Model("Move Node"), dialogFactory, dialogService));
+        //  add(new DialogLink("move-dialog", new Model("Move Node"), dialogFactory, dialogService));
         //  
         //  dialogFactory = new IDialogFactory() {
         //      private static final long serialVersionUID = 1L;
@@ -126,7 +117,7 @@ public class MenuPlugin extends RenderPlugin {
         //          return null;
         //      }
         //  };
-        //  replace(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
+        //  add(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
         //  
         //  
         //  

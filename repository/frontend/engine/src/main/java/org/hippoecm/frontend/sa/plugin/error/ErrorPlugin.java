@@ -13,35 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugin.error;
-
-import java.util.Map;
+package org.hippoecm.frontend.sa.plugin.error;
 
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 
-/**
- * @deprecated use org.hippoecm.frontend.sa.plugin.error.* instead
- */
-@Deprecated
-public class ErrorPlugin extends Plugin {
+public class ErrorPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
+    
+    public static final String ERROR_MESSAGE = "error.message";
 
-    public ErrorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, null);
-        Map<String, Object> map = model.getMapRepresentation();
-        String message = (String) map.get("error");
+    public ErrorPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        String message = config.getString(ERROR_MESSAGE);
         if(message == null) {
             message = "An error occurred.  No further details available";
         }
         add(new MultiLineLabel("message", message));
-    }
-
-    @Override
-    public void addChildren() {
-
     }
 
 }
