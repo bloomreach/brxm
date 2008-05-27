@@ -22,6 +22,10 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.session.UserSession;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.logout.* instead
+ */
+@Deprecated
 public class LogoutDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 

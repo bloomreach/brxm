@@ -85,13 +85,14 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, dialogTitle) {
+                    private static final long serialVersionUID = 1L;
                     @Override
                     protected void execute() throws Exception {
                         action.execute(getWorkflow());
                     }
                 };
             }
-        }), visible));
+        }, getDialogService()), visible));
 
         updateActions();
     }

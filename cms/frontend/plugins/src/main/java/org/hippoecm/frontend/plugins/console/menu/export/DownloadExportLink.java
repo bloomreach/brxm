@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.export;
+package org.hippoecm.frontend.plugins.console.menu.export;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -35,10 +35,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
- */
-@Deprecated
 public class DownloadExportLink extends Link {
     private static final long serialVersionUID = 1L;
 

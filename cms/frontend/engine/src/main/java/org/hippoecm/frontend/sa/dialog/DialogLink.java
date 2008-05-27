@@ -15,45 +15,29 @@
  */
 package org.hippoecm.frontend.sa.dialog;
 
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
 
 public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
-
-    private PageCreator pageCreator;
     
-    public DialogLink(String id, IModel linktext, IPluginContext context, Class clazz) {
+    public DialogLink(String id, IModel linktext, final IDialogFactory dialogFactory, final IDialogService dialogService) {
         super(id);
 
-        DialogWindow dialogWindow = new DialogWindow("dialog");
-        pageCreator = new DynamicDialogFactory(context, dialogWindow, clazz);
-        add(linktext, dialogWindow);
-    }
+        final DialogWindow dialogWindow = new DialogWindow("dialog");
+        final PageCreator pageCreator = new PageCreator() {
+            private static final long serialVersionUID = 1L;
+            public Page createPage() {
+                return dialogFactory.createDialog(dialogService);
+            }
+        };
 
-    public DialogLink(String id, IModel linktext, IDialogFactory dialogFactory) {
-        super(id);
-
-        DialogWindow dialogWindow = new DialogWindow("dialog");
-        pageCreator = new DynamicDialogFactory(dialogWindow, dialogFactory);
-        add(linktext, dialogWindow);
-    }
-
-    public DialogLink(String id, IModel linktext, DialogWindow window) {
-        super(id);
-
-        add(linktext, window);
-    }
-
-    private void add(IModel linktext, final DialogWindow dialogWindow) {
-        add(dialogWindow);
-
-        AjaxLink link = new AjaxLink("dialog-link") {
+        final AjaxLink link = new AjaxLink("dialog-link") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -61,8 +45,9 @@ public class DialogLink extends Panel {
                 dialogWindow.show(pageCreator.createPage());
             }
         };
+        
+        add(dialogWindow);
         add(link);
-
         link.add(new Label("dialog-link-text", linktext));
     }
 

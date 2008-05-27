@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.property;
+package org.hippoecm.frontend.plugins.console.menu.property;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,25 +31,19 @@ import org.apache.jackrabbit.value.NameValue;
 import org.apache.jackrabbit.value.PathValue;
 import org.apache.jackrabbit.value.ReferenceValue;
 import org.apache.jackrabbit.value.StringValue;
-
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.PropertyModel;
-
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.sa.dialog.AbstractDialog;
+import org.hippoecm.frontend.sa.dialog.IDialogService;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
- */
-@Deprecated
 public class PropertyDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
@@ -59,11 +53,13 @@ public class PropertyDialog extends AbstractDialog {
     private String value;
     private Boolean isMultiple = Boolean.FALSE;
     private String type;
+    
+    private MenuPlugin plugin;
 
-    public PropertyDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
-        dialogWindow.setTitle("Add a new Property");
-
+    public PropertyDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
+        super(context, dialogWindow);     
+        this.plugin = plugin;
+        
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
             private static final long serialVersionUID = 1L;
 
@@ -95,14 +91,11 @@ public class PropertyDialog extends AbstractDialog {
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
         add(new TextAreaWidget("value", new PropertyModel(this, "value")));
-        if (dialogWindow.getNodeModel().getNode() == null) {
-            ok.setVisible(false);
-        }
     }
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         Value jcrValue = getJcrValue();
         if (isMultiple.booleanValue()) {
@@ -114,16 +107,21 @@ public class PropertyDialog extends AbstractDialog {
             nodeModel.getNode().setProperty(name, jcrValue);
         }
 
-        Channel channel = getChannel();
-        if (channel != null) {
-            Request request = channel.createRequest("select", nodeModel);
-            channel.send(request);
-        }
+//        Channel channel = getChannel();
+//        if (channel != null) {
+//            Request request = channel.createRequest("select", nodeModel);
+//            channel.send(request);
+//        }
     }
 
     @Override
     public void cancel() {
     }
+    
+    public String getTitle() {
+        return "Add a new Property";
+    }
+
 
     public String getName() {
         return name;
@@ -196,4 +194,5 @@ public class PropertyDialog extends AbstractDialog {
         }
         return null;
     }
+
 }

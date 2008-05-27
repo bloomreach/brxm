@@ -33,6 +33,10 @@ import org.hippoecm.frontend.plugins.admin.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.admin.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.admin.menu.save.SaveDialog;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
+ */
+@Deprecated
 public class MenuPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

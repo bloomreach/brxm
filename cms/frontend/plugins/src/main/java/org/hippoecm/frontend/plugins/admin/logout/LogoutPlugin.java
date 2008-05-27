@@ -24,6 +24,10 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.session.UserSession;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.logout.* instead
+ */
+@Deprecated
 public class LogoutPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

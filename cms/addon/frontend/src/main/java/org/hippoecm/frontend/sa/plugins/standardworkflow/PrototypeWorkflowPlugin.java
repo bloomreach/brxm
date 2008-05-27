@@ -51,7 +51,7 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new ExtendedFolderDialog(PrototypeWorkflowPlugin.this, dialogService);
             }
-        }));
+        }, getDialogService()));
     }
 
     @Override
@@ -72,14 +72,14 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
                     public AbstractDialog createDialog(IDialogService dialogService) {
                         return new PrototypeDialog(PrototypeWorkflowPlugin.this, dialogService, title);
                     }
-                }));
+                }, getDialogService()));
                 replace(new DialogLink("addFolder-dialog", new Model("Add folder"), new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
                     public AbstractDialog createDialog(IDialogService dialogService) {
                         return new FolderDialog(PrototypeWorkflowPlugin.this, dialogService);
                     }
-                }));
+                }, getDialogService()));
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("folder " + ((WorkflowsModel) getModel()).getNodeModel().getNode().getPath()

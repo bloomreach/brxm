@@ -13,41 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.menu.rename;
+package org.hippoecm.frontend.plugins.console.menu.rename;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.sa.dialog.AbstractDialog;
+import org.hippoecm.frontend.sa.dialog.IDialogService;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
- */
-@Deprecated
 public class RenameDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(RenameDialog.class);
 
-    /**
-     * The name of the current node represented in the dialog
-     */
+    private MenuPlugin plugin;
     private String name;
 
-    public RenameDialog(DialogWindow dialogWindow) {
-        super(dialogWindow);
-        dialogWindow.setTitle("Rename Node");
+    public RenameDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
+        super(context, dialogWindow);
+        this.plugin = plugin;
 
-        JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         try {
             // get name of current node
             name = nodeModel.getNode().getName();
@@ -63,7 +57,7 @@ public class RenameDialog extends AbstractDialog {
 
     @Override
     protected void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = getDialogWindow().getNodeModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         if (nodeModel.getParentModel() != null) {
             JcrNodeModel parentModel = nodeModel.getParentModel();
@@ -78,20 +72,24 @@ public class RenameDialog extends AbstractDialog {
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(oldPath, newPath);
 
-            Channel channel = getChannel();
-            if(channel != null) {
-                JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
-                Request request = channel.createRequest("flush", parentModel);
-                channel.send(request);
-
-                request = channel.createRequest("select", newNodeModel);
-                channel.send(request);
-            }
+//            Channel channel = getChannel();
+//            if(channel != null) {
+//                JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
+//                Request request = channel.createRequest("flush", parentModel);
+//                channel.send(request);
+//
+//                request = channel.createRequest("select", newNodeModel);
+//                channel.send(request);
+//            }
         }
     }
 
     @Override
     protected void cancel() {
+    }
+
+    public String getTitle() {
+        return "Rename Node";
     }
 
     public String getName() {
