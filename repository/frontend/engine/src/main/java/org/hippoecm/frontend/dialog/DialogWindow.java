@@ -31,6 +31,10 @@ import org.hippoecm.frontend.plugin.channel.MessageContext;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public class DialogWindow extends ModalWindow implements INotificationListener, IRequestHandler {
     private static final long serialVersionUID = 1L;
 

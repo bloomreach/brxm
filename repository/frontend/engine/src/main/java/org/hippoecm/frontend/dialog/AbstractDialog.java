@@ -28,6 +28,10 @@ import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public abstract class AbstractDialog extends WebPage {
 
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);

@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugin.channel;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public interface IRequestHandler {
     public void handle(Request request);
 }

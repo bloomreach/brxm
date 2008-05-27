@@ -18,6 +18,10 @@ package org.hippoecm.frontend.dialog;
 import org.apache.wicket.Page;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public class DialogPageCreator implements PageCreator {
 
     private static final long serialVersionUID = 1L;

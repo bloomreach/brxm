@@ -32,6 +32,10 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     static protected Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
