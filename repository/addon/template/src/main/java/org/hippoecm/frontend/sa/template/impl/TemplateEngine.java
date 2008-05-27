@@ -22,9 +22,9 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.Message;
 import org.hippoecm.frontend.sa.service.render.ModelReference;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.service.render.ModelReference.ModelMessage;
 import org.hippoecm.frontend.sa.service.topic.TopicService;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
@@ -76,7 +76,7 @@ public class TemplateEngine implements ITemplateEngine {
     }
 
     public IPluginControl start(final IClusterConfig template, final IModel model) {
-        String modelId = template.getString(RenderPlugin.MODEL_ID);
+        String modelId = template.getString(RenderService.MODEL_ID);
         final TopicService topic = new TopicService(modelId) {
             private static final long serialVersionUID = 1L;
 

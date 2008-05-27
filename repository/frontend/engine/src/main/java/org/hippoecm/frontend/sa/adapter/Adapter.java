@@ -159,7 +159,7 @@ public class Adapter extends Panel implements IRenderService {
     }
 
     public String getServiceId() {
-        return context.getProperties().getString(IPlugin.SERVICE_ID);
+        return config.getString(IPlugin.SERVICE_ID);
     }
 
     public void render(PluginRequestTarget target) {

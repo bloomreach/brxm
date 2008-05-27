@@ -18,7 +18,8 @@ package org.hippoecm.frontend.plugins.console;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.sa.dialog.DialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 
 public class RootPlugin extends RenderPlugin {
@@ -26,29 +27,16 @@ public class RootPlugin extends RenderPlugin {
 
     private DialogService dialogService;
 
-    public RootPlugin() {
+    public RootPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
         for (String extension : new String[] {
             "browserPlugin", "breadcrumbPlugin", "editorPlugin", "logoutPlugin", "menuPlugin"
         }) {
             addExtensionPoint(extension);
         }
         dialogService = new DialogService();
-        add(new EmptyPanel("dialog"));
+        dialogService.init(context, config.getString(RenderService.DIALOG_ID), "dialog");
+        add(dialogService);
     }
 
-    @Override
-    public void start(IPluginContext context) {
-        super.start(context);
-
-        dialogService.init(context, context.getProperties().getString(RenderService.DIALOG_ID), "dialog");
-        replace(dialogService);
-    }
-
-    @Override
-    public void stop() {
-        replace(new EmptyPanel("dialog"));
-        dialogService.destroy();
-
-        super.stop();
-    }
 }

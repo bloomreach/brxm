@@ -70,7 +70,7 @@ class ConsoleConfigService implements IPluginConfigService {
         config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
         config.put("wicket.id", "service.logout");
         config.put("wicket.model", "service.model");
-        config.put("wicket.dialog", "service.dialog");
+        config.put("wicket.dialog", "service.logout.dialog");
         plugins.add(config);
     }
 

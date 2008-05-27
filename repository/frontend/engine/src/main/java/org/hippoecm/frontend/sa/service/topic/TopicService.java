@@ -63,10 +63,15 @@ public class TopicService implements IServiceTracker<TopicService>, IClusterable
         listeners.remove(listener);
     }
 
-
     public void addService(TopicService service, String name) {
         if (service != this) {
             peers.add((ITopicService) service);
+            if (peers.size() == 1) {
+                for (Iterator<IMessageListener> iter = listeners.iterator(); iter.hasNext();) {
+                    IMessageListener listener = iter.next();
+                    listener.onConnect();
+                }
+            }
         }
     }
 

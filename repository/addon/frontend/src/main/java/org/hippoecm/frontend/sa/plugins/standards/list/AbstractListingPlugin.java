@@ -46,9 +46,9 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.cms.browse.list.JcrNodeModelComparator;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.plugins.cms.browse.list.SortableDataAdapter;
 import org.hippoecm.frontend.sa.service.render.ProviderReference;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -85,24 +85,16 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Prov
     private SortableDataAdapter<JcrNodeModel> provider;
     private Map<String, Comparator<? super JcrNodeModel>> compare;
 
-    public AbstractListingPlugin() {
+    public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         compare = new HashMap<String, Comparator<? super JcrNodeModel>>();
         compare.put("name", new JcrNodeModelComparator("name"));
         compare.put(JcrConstants.JCR_PRIMARYTYPE, new JcrNodeModelComparator(JcrConstants.JCR_PRIMARYTYPE));
         compare.put("state", new JcrNodeModelComparator("state"));
         add(new EmptyPanel("table"));
-    }
 
-    @Override
-    public void init(IPluginContext context, IPluginConfig config) {
-        super.init(context, config);
         createTableColumns();
-    }
-
-    @Override
-    public void destroy() {
-        replace(new EmptyPanel("table"));
-        super.destroy();
     }
 
     // implement ProviderReference.IView

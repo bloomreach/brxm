@@ -20,28 +20,19 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 
 public class EditorPlugin extends RenderPlugin implements IViewService {
     private static final long serialVersionUID = 1L;
 
     private EditorForm form;
 
-    public EditorPlugin() {
+    public EditorPlugin(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
         add(new Form("form"));
         form = null;
-    }
-
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
-        super.init(context, properties);
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
     }
 
     public void view(IModel model) {
@@ -60,7 +51,7 @@ public class EditorPlugin extends RenderPlugin implements IViewService {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if(form != null) {
+        if (form != null) {
             form.render(target);
         }
     }

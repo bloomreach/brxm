@@ -22,9 +22,9 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
 import org.hippoecm.frontend.sa.service.IViewService;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 
 public abstract class Perspective extends RenderPlugin implements ITitleDecorator, IViewService {
     private static final long serialVersionUID = 1L;
@@ -35,22 +35,13 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
     private List<IPlugin> plugins;
     private String title = "title";
 
-    public Perspective() {
+    public Perspective(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         plugins = new LinkedList<IPlugin>();
-    }
-
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
-        super.init(context, properties);
-
-        if (properties.getString(TITLE) != null) {
-            title = properties.getString(TITLE);
+        if (config.getString(TITLE) != null) {
+            title = config.getString(TITLE);
         }
-    }
-    
-    @Override
-    public void start(IPluginContext context) {
-        super.start(context);
         
         // TODO: uncomment this when IPluginConfigService.getPlugins(String key)
         // actually uses the key, currently it returns ALL configured IPluginConfigs
@@ -61,17 +52,6 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
 //            plugins.add(plugin);
 //            plugin.start(context);
 //        }
-    }
-
-    @Override
-    public void destroy() {
-        for (IPlugin plugin : plugins) {
-            plugin.stop();
-            plugins.remove(plugin);
-        }
-
-        title = "title";
-        super.destroy();
     }
 
     // ITitleDecorator

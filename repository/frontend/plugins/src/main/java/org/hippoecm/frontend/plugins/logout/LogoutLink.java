@@ -26,7 +26,6 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreat
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.sa.dialog.DialogWindow;
-import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -37,11 +36,12 @@ public class LogoutLink extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(LogoutLink.class);
 
-    public LogoutLink(String id, IPluginContext context, IDialogService window) {
+    public LogoutLink(String id, IPluginContext context, String dialogId) {
         super(id);
 
-        final DialogWindow dialogWindow = new DialogWindow("dialog");        
-        final LogoutDialog dialog = new LogoutDialog(context, window);
+        final DialogWindow dialogWindow = new DialogWindow("dialog");
+        context.registerService(dialogWindow, dialogId);
+        final LogoutDialog dialog = new LogoutDialog(context, dialogWindow);
         dialogWindow.setPageCreator(new PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {

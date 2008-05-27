@@ -30,12 +30,12 @@ public class ModelReference<T extends IModel> implements IClusterable, IMessageL
     public static final int SET_MODEL = 2;
 
     public interface IView<T extends IModel> {
-        
+
         T getModel();
-        
+
         void updateModel(T model);
     }
-    
+
     public static class ModelMessage<T extends IModel> extends Message {
         private static final long serialVersionUID = 1L;
 
@@ -64,6 +64,9 @@ public class ModelReference<T extends IModel> implements IClusterable, IMessageL
 
     public void init(IPluginContext context) {
         topic.init(context);
+    }
+
+    public void onConnect() {
         ModelMessage message = new ModelMessage(GET_MODEL, null);
         message.setSource(topic);
         topic.publish(message);
@@ -71,10 +74,6 @@ public class ModelReference<T extends IModel> implements IClusterable, IMessageL
 
     public void destroy() {
         topic.destroy();
-    }
-
-    public T getModel() {
-        return view.getModel();
     }
 
     public void setModel(T model) {

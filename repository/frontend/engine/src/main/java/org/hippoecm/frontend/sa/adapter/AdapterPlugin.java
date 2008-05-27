@@ -26,29 +26,23 @@ import org.hippoecm.frontend.sa.service.IViewService;
 public class AdapterPlugin implements IPlugin, IViewService {
     private static final long serialVersionUID = 1L;
 
-    private IPluginContext context;
+    private IPluginConfig config;
     private Adapter adapter;
     private String serviceId;
 
-    public void start(IPluginContext context) {
-        this.context = context;
-        this.serviceId = context.getProperties().getString("service.pid");
+    public AdapterPlugin(IPluginContext context, IPluginConfig config) {
+        this.config = config;
+        this.serviceId = config.getString("service.pid");
 
-        IPluginConfig config = new JavaPluginConfig();
-        config.put("legacy.base", context.getProperties().getString("legacy.base"));
-        config.put("legacy.plugin", context.getProperties().getString("legacy.plugin"));
-        config.put("wicket.id", context.getProperties().getString("wicket.id"));
+        IPluginConfig rootConfig = new JavaPluginConfig();
+        rootConfig.put("legacy.base", config.getString("legacy.base"));
+        rootConfig.put("legacy.plugin", config.getString("legacy.plugin"));
+        rootConfig.put("wicket.id", config.getString("wicket.id"));
 
         adapter = new Adapter();
-        adapter.init(context, config);
+        adapter.init(context, rootConfig);
 
         context.registerService(this, serviceId);
-    }
-
-    public void stop() {
-        adapter.destroy();
-
-        context.unregisterService(this, serviceId);
     }
 
     public void view(IModel model) {
@@ -56,6 +50,6 @@ public class AdapterPlugin implements IPlugin, IViewService {
     }
 
     public String getServiceId() {
-        return context.getProperties().getString("service.pid");
+        return config.getString("service.pid");
     }
 }

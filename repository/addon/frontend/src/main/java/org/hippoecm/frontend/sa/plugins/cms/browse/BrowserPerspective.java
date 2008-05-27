@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.sa.plugins.cms.browse;
 
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.perspective.Perspective;
 
 public class BrowserPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
 
-    public BrowserPerspective() {
+    public BrowserPerspective(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         addExtensionPoint("browserBreadcrumbPlugin");
         addExtensionPoint("browserPlugin");
         addExtensionPoint("listPlugin");

@@ -27,17 +27,11 @@ public class EditorService extends RenderService implements IViewService {
 
     private NodeEditor editor;
 
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
+    public EditorService(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
+
         editor = new NodeEditor("editor", new JcrNodeModel("/"));
         add(editor);
-        super.init(context, properties);
-    }
-
-    @Override
-    public void destroy() {
-        remove(editor);
-        super.destroy();
     }
 
     @Override

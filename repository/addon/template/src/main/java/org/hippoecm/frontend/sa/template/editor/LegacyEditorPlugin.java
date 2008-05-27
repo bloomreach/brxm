@@ -27,17 +27,19 @@ public class LegacyEditorPlugin implements IPlugin, IViewService {
     private static final long serialVersionUID = 1L;
 
     private IPluginContext context;
+    private IPluginConfig properties;
     private Adapter adapter;
     private String serviceId;
 
-    public void start(IPluginContext context) {
+    public LegacyEditorPlugin(IPluginContext context, IPluginConfig properties) {
         this.context = context;
-        this.serviceId = context.getProperties().getString("service.pid");
+        this.properties = properties;
+        this.serviceId = properties.getString("service.pid");
 
         IPluginConfig config = new JavaPluginConfig();
         config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
         config.put("legacy.plugin", "editPerspective");
-        config.put("wicket.id", context.getProperties().getString("wicket.id"));
+        config.put("wicket.id", properties.getString("wicket.id"));
 
         adapter = new Adapter();
         adapter.init(context, config);
@@ -56,6 +58,6 @@ public class LegacyEditorPlugin implements IPlugin, IViewService {
     }
 
     public String getServiceId() {
-        return context.getProperties().getString("service.pid");
+        return properties.getString("service.pid");
     }
 }

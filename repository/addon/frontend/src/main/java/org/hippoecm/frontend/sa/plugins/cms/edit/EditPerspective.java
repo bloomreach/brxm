@@ -27,14 +27,8 @@ import org.hippoecm.frontend.sa.service.IViewService;
 public class EditPerspective extends Perspective implements IViewService {
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
-        super.init(context, properties);
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
+    public EditPerspective(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
     }
 
     public void view(IModel model) {

@@ -20,8 +20,8 @@ import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.ListViewPlugin;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.service.render.ListViewService;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.ITemplateStore;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
@@ -35,7 +35,7 @@ public class JcrTemplateStore implements ITemplateStore {
     public IClusterConfig getTemplate(TypeDescriptor type, String mode) {
         if (type.getName().equals("defaultcontent:article")) {
             JavaClusterConfig template = new JavaClusterConfig();
-            template.put(RenderPlugin.MODEL_ID, "{template}.model");
+            template.put(RenderService.MODEL_ID, "{template}.model");
             template.put("item", "{template}.item");
 
             IPluginConfig plugin = new JavaPluginConfig();
@@ -43,24 +43,24 @@ public class JcrTemplateStore implements ITemplateStore {
             plugin.put(ITemplateEngine.MODE, mode);
             plugin.put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
             plugin.put(FieldPlugin.FIELD, "title");
-            plugin.put(ListViewPlugin.ITEM, "template:item");
-            plugin.put(RenderPlugin.WICKET_ID, "template:" + RenderPlugin.WICKET_ID);
-            plugin.put(RenderPlugin.MODEL_ID, "template:" + RenderPlugin.MODEL_ID);
-            plugin.put("template." + RenderPlugin.WICKET_ID, "template:item");
+            plugin.put(ListViewService.ITEM, "template:item");
+            plugin.put(RenderService.WICKET_ID, "template:" + RenderService.WICKET_ID);
+            plugin.put(RenderService.MODEL_ID, "template:" + RenderService.MODEL_ID);
+            plugin.put("template." + RenderService.WICKET_ID, "template:item");
             template.addPlugin(plugin);
 
             return template;
         } else if (type.getName().equals("String")) {
             JavaClusterConfig template = new JavaClusterConfig();
-            template.addProperty(RenderPlugin.WICKET_ID);
-            template.put(RenderPlugin.MODEL_ID, "{template}.model");
+            template.addProperty(RenderService.WICKET_ID);
+            template.put(RenderService.MODEL_ID, "{template}.model");
 
             IPluginConfig plugin = new JavaPluginConfig();
             plugin.put(IPlugin.CLASSNAME, ValueTemplatePlugin.class.getName());
             plugin.put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
             plugin.put(ITemplateEngine.MODE, mode);
-            plugin.put(RenderPlugin.WICKET_ID, "template:" + RenderPlugin.WICKET_ID);
-            plugin.put(RenderPlugin.MODEL_ID, "template:" + RenderPlugin.MODEL_ID);
+            plugin.put(RenderService.WICKET_ID, "template:" + RenderService.WICKET_ID);
+            plugin.put(RenderService.MODEL_ID, "template:" + RenderService.MODEL_ID);
             template.addPlugin(plugin);
 
             return template;

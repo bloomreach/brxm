@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.ServiceReference;
 
@@ -32,8 +31,6 @@ public interface IPluginContext {
     <T extends IClusterable> List<T> getServices(String name);
 
     <T extends IClusterable> ServiceReference<T> getReference(T service);
-
-    IPluginConfig getProperties();
 
     /**
      * Registers a service with the given name.

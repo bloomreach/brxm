@@ -23,7 +23,4 @@ public interface IPlugin extends IClusterable {
 
     String CLASSNAME = "plugin.class";
 
-    void start(IPluginContext context);
-
-    void stop();
 }

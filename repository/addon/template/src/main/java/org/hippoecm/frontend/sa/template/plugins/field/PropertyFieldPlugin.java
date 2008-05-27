@@ -43,17 +43,12 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     static final Logger log = LoggerFactory.getLogger(PropertyFieldPlugin.class);
 
-    public PropertyFieldPlugin() {
-        add(new Label("name", ""));
-        add(new Label("add", ""));
-    }
-
-    @Override
-    public void init(IPluginContext context, IPluginConfig config) {
-        super.init(context, config);
+    public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
         String caption = config.getString("caption");
-        replace(new Label("name", caption));
+        add(new Label("name", caption));
+        add(new Label("add", ""));
     }
 
     @Override

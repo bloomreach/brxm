@@ -35,7 +35,8 @@ import org.hippoecm.frontend.sa.dialog.DialogLink;
 import org.hippoecm.frontend.sa.dialog.IDialogFactory;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
@@ -67,7 +68,8 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
     private Map<String, Action> actions;
 
-    public AbstractWorkflowPlugin() {
+    public AbstractWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
         actions = new HashMap<String, Action>();
     }
 

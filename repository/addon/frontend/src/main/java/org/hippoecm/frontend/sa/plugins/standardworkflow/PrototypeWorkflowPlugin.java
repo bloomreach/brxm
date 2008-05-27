@@ -26,6 +26,8 @@ import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.DialogLink;
 import org.hippoecm.frontend.sa.dialog.IDialogFactory;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.ExtendedFolderDialog;
@@ -41,7 +43,9 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(PrototypeWorkflowPlugin.class);
 
-    public PrototypeWorkflowPlugin() {
+    public PrototypeWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         add(new EmptyPanel("addDocument-dialog"));
         add(new EmptyPanel("addFolder-dialog"));
 
