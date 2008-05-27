@@ -68,7 +68,7 @@ import static org.junit.Assert.*;
   org.hippoecm.repository.HippoNodeTypeSanityTest.class,
   org.hippoecm.repository.HippoQueryTest.class,
   org.hippoecm.repository.PendingChangesTest.class,
-  org.hippoecm.repository.PhysicalExportSystemView.class,
+  org.hippoecm.repository.PhysicalExportSystemViewTest.class,
   org.hippoecm.repository.RepositoryLoginTest.class,
   org.hippoecm.repository.RepositoryRolesTest.class,
   org.hippoecm.repository.TransactionTest.class,

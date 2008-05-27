@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-public class PhysicalExportSystemView extends FacetedNavigationAbstractTest {
+public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest {
 
     private static final String FACETSELECTNODE = "facetselect";
     private static final String FACETSEARCHNODE = "facetsearch";
