@@ -17,13 +17,16 @@ package org.hippoecm.repository.decorating.client;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
+
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
 
@@ -43,7 +46,8 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
         }
     }
 
-    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException {
+    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
+                                                                                  NoSuchNodeTypeException, RepositoryException {
         try {
             return getFactory().getNodeIterator(this, remote.pendingChanges(node.getPath(), nodeType, prune));
         } catch (RemoteException ex) {
@@ -51,7 +55,8 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
         }
     }
 
-    public NodeIterator pendingChanges(Node node, String nodeType) throws RepositoryException {
+    public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
+                                                                          RepositoryException {
         return pendingChanges(node, nodeType, false);
     }
 

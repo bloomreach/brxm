@@ -41,7 +41,7 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
 
     public RemoteNode copy(String originalPath, String absPath) throws RepositoryException, RemoteException {
         try {
-            return getRemoteNode(session.copy(session.getRootNode().getNode(originalPath), absPath));
+            return getRemoteNode(session.copy(session.getRootNode().getNode(originalPath.substring(1)), absPath));
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
