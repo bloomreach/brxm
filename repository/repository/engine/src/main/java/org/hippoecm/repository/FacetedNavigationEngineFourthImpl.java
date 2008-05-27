@@ -142,7 +142,6 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
        */
 
       AuthorizationQuery authorizationQuery = new AuthorizationQuery(contextImpl.facetAuths,
-                                                                     facetsQueryMap ,
                                                                      nsMappings,
                                                                      (ServicingIndexingConfiguration)getIndexingConfig()
                                                                       );

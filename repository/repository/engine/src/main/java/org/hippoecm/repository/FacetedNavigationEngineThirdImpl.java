@@ -149,7 +149,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          */
 
         AuthorizationQuery authorizationQuery = new AuthorizationQuery(contextImpl.facetAuths,
-                   facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
+                    nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
         
         BooleanQuery searchQuery = new BooleanQuery(true);
 
@@ -205,6 +205,9 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                                 + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits()
                                 + " results");
                     }
+                    System.out.println("lucene query: " + searchQuery.toString() + " took "
+                            + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits()
+                            + " results");
                 }
             } else {
                 // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
@@ -216,6 +219,9 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     log.debug("lucene query: " + searchQuery.toString() + " took "
                             + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() + " results");
                 }
+                System.out.println("lucene query: " + searchQuery.toString() + " took "
+                        + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits()
+                        + " results");
             }
 
         } catch (IllegalNameException e) {
