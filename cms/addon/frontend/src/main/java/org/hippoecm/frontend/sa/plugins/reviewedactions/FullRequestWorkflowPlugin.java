@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.sa.plugins.reviewedactions;
 
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.Workflow;
@@ -23,7 +25,8 @@ import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    public FullRequestWorkflowPlugin() {
+    public FullRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
         addWorkflowAction("acceptRequest-dialog", "Approve and execute request", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 

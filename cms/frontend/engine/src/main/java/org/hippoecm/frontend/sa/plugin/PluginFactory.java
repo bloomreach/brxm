@@ -32,15 +32,15 @@ public class PluginFactory implements IClusterable {
     public PluginFactory() {
     }
 
-    public IPlugin createPlugin(IPluginConfig config) {
+    public IPlugin createPlugin(IPluginContext context, IPluginConfig config) {
         String className = config.getString(IPlugin.CLASSNAME);
         if (className != null) {
             try {
                 ClassLoader loader = ((UserSession) Session.get()).getClassLoader();
                 Class clazz = Class.forName(className, true, loader);
-                Class[] formalArgs = new Class[] {};
+                Class[] formalArgs = new Class[] { IPluginContext.class, IPluginConfig.class };
                 Constructor constructor = clazz.getConstructor(formalArgs);
-                Object[] actualArgs = new Object[] {};
+                Object[] actualArgs = new Object[] { context, config };
                 return (IPlugin) constructor.newInstance(actualArgs);
             } catch (Exception e) {
                 log.error(e.getMessage());

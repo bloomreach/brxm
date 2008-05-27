@@ -32,10 +32,10 @@ import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.IMessageListener;
 import org.hippoecm.frontend.sa.service.Message;
 import org.hippoecm.frontend.sa.service.render.ModelReference;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.service.topic.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,16 +58,14 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
     private TopicService topic;
     private int wflCount;
 
-    public WorkflowPlugin() {
+    public WorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        this.context = context;
+        this.config = config;
+
         workflows = new HashMap<String, IPluginControl>();
         models = new HashMap<String, TopicService>();
         wflCount = 0;
         topic = null;
-    }
-
-    public void start(IPluginContext context) {
-        this.context = context;
-        config = context.getProperties();
 
         if (config.get(CATEGORIES) != null) {
             categories = config.getStringArray(CATEGORIES);
@@ -82,21 +80,13 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
             log.warn("No categories ({}) defined for {}", CATEGORIES, factoryId);
         }
 
-        if (config.get(RenderPlugin.MODEL_ID) != null) {
-            topic = new TopicService(config.getString(RenderPlugin.MODEL_ID));
+        if (config.get(RenderService.MODEL_ID) != null) {
+            topic = new TopicService(config.getString(RenderService.MODEL_ID));
             topic.addListener(this);
             topic.init(context);
         } else {
             log.warn("");
         }
-    }
-
-    public void stop() {
-        if (topic != null) {
-            topic.destroy();
-            topic = null;
-        }
-        closeWorkflows();
     }
 
     public void select(JcrNodeModel model) {
@@ -125,6 +115,9 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
         }
     }
 
+    public void onConnect() {
+    }
+
     public void onMessage(Message message) {
         switch (message.getType()) {
         case ModelReference.SET_MODEL:
@@ -144,8 +137,8 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
         }
 
         IPluginConfig wflConfig = new JavaPluginConfig();
-        wflConfig.put(RenderPlugin.WICKET_ID, config.get(RenderPlugin.WICKET_ID));
-        wflConfig.put(RenderPlugin.DIALOG_ID, config.get(RenderPlugin.DIALOG_ID));
+        wflConfig.put(RenderService.WICKET_ID, config.get(RenderService.WICKET_ID));
+        wflConfig.put(RenderService.DIALOG_ID, config.get(RenderService.DIALOG_ID));
 
         String workflowId = config.getString(WORKFLOW_ID) + wflCount;
         String className = model.getWorkflowName();
@@ -158,7 +151,7 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
         wflConfig.put(VIEWER_ID, config.get(VIEWER_ID));
 
         String modelId = workflowId + ".model";
-        wflConfig.put(RenderPlugin.MODEL_ID, modelId);
+        wflConfig.put(RenderService.MODEL_ID, modelId);
 
         JavaClusterConfig clusterConfig = new JavaClusterConfig();
         clusterConfig.addPlugin(wflConfig);
@@ -166,6 +159,9 @@ public class WorkflowPlugin implements IPlugin, IMessageListener, IClusterable {
         TopicService modelTopic = new TopicService(modelId);
         modelTopic.addListener(new IMessageListener() {
             private static final long serialVersionUID = 1L;
+
+            public void onConnect() {
+            }
 
             public void onMessage(Message message) {
                 switch (message.getType()) {

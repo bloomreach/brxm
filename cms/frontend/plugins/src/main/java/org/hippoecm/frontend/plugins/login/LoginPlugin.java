@@ -29,14 +29,18 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.sa.Home;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 
 public class LoginPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    public LoginPlugin() {
+    public LoginPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         add(new SignInForm("signInForm"));
     }
 

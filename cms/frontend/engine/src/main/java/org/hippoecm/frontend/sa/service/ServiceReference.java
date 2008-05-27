@@ -17,7 +17,7 @@ package org.hippoecm.frontend.sa.service;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.Home;
-import org.hippoecm.frontend.sa.plugin.PluginManager;
+import org.hippoecm.frontend.sa.plugin.impl.PluginManager;
 
 public class ServiceReference<T extends IClusterable> implements IClusterable {
     private static final long serialVersionUID = 1L;

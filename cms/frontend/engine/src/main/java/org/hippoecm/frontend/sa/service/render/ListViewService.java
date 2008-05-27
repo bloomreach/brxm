@@ -40,7 +40,8 @@ public class ListViewService extends RenderService {
     private List<IRenderService> services;
     private ServiceTracker<IRenderService> tracker;
 
-    public ListViewService() {
+    public ListViewService(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
         services = new LinkedList<IRenderService>();
 
         final AbstractView view = new AbstractView("view", new ListDataProvider(services)) {
@@ -62,11 +63,7 @@ public class ListViewService extends RenderService {
             }
         };
         add(view);
-    }
 
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
-        super.init(context, properties);
         if (properties.get("item") != null) {
             tracker = new ServiceTracker<IRenderService>(IRenderService.class) {
                 private static final long serialVersionUID = 1L;
@@ -88,15 +85,6 @@ public class ListViewService extends RenderService {
         } else {
             log.warn("No item id configured");
         }
-    }
-
-    @Override
-    public void destroy() {
-        if (tracker != null) {
-            getPluginContext().unregisterTracker(tracker, getPluginConfig().getString("item"));
-            tracker = null;
-        }
-        super.destroy();
     }
 
     @Override

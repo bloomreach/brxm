@@ -27,11 +27,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.sa.service.ServiceTracker;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,16 +49,14 @@ public class TabsPlugin extends RenderPlugin {
     private ServiceTracker<IRenderService> tabsTracker;
     private int selectCount;
 
-    public TabsPlugin() {
+    public TabsPlugin(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
 
         tabs = new ArrayList<Tab>();
         add(new EmptyPanel("tabs"));
 
         selectCount = 0;
-    }
 
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
         tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
             private static final long serialVersionUID = 1L;
 
@@ -94,18 +92,6 @@ public class TabsPlugin extends RenderPlugin {
         if (tabs.size() > 0) {
             tabbedPanel = new TabbedPanel("tabs", this, tabs);
             replace(tabbedPanel);
-        }
-
-        super.init(context, properties);
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        getPluginContext().unregisterTracker(tabsTracker, getPluginConfig().getString(TAB_ID));
-        if (tabs.size() > 0) {
-            replace(new EmptyPanel("tabs"));
-            tabbedPanel = null;
         }
     }
 

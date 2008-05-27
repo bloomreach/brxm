@@ -23,7 +23,9 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +37,15 @@ public class BrowserPlugin extends RenderPlugin {
     protected Tree tree;
     protected AbstractTreeNode rootNode;
 
-    public BrowserPlugin() {
+    public BrowserPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         this.rootNode = new JcrTreeNode(new JcrNodeModel("/"));
 
         JcrTreeModel treeModel = new JcrTreeModel(rootNode);
         tree = newTree(treeModel);
         add(tree);
-        
+
         setModel(rootNode.getNodeModel());
     }
 

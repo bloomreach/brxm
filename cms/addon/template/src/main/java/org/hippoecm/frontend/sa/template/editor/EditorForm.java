@@ -26,12 +26,12 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.sa.service.ServiceTracker;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.ITemplateStore;
 import org.hippoecm.frontend.sa.template.ITypeStore;
@@ -125,8 +125,8 @@ public class EditorForm extends Form {
 
         if (type != null) {
             IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateStore.EDIT_MODE);
-            clusterConfig.put(RenderPlugin.DIALOG_ID, config.getString(RenderPlugin.DIALOG_ID));
-            clusterConfig.put(RenderPlugin.WICKET_ID, engineId + ".wicket.root");
+            clusterConfig.put(RenderService.DIALOG_ID, config.getString(RenderService.DIALOG_ID));
+            clusterConfig.put(RenderService.WICKET_ID, engineId + ".wicket.root");
             return engine.start(clusterConfig, model);
         } else {
             return null;

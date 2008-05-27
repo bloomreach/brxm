@@ -19,7 +19,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 
 public class BreadcrumbPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -27,7 +29,8 @@ public class BreadcrumbPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private String breadcrumb;
 
-    public BreadcrumbPlugin() {
+    public BreadcrumbPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
         add(new Label("breadcrumb", new PropertyModel(this, "breadcrumb")));
     }
 

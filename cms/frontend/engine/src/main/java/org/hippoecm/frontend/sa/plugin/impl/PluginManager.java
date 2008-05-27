@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin;
+package org.hippoecm.frontend.sa.plugin.impl;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,8 +23,9 @@ import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.Home;
+import org.hippoecm.frontend.sa.plugin.IPluginControl;
+import org.hippoecm.frontend.sa.plugin.PluginFactory;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.PluginContext;
 import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.ServiceReference;
 import org.slf4j.Logger;
@@ -72,16 +73,14 @@ public class PluginManager implements IClusterable {
     }
 
     public IPluginControl start(IPluginConfig config) {
-        final IPlugin plugin = factory.createPlugin(config);
-        if (plugin != null) {
-            PluginContext context = new PluginContext(page, config);
-            plugin.start(context);
-        }
+        final PluginContext context = new PluginContext(page);
+        /* IPlugin plugin = */ factory.createPlugin(context, config);
+        context.connect();
         return new IPluginControl() {
             private static final long serialVersionUID = 1L;
 
             public void stopPlugin() {
-                plugin.stop();
+                context.stop();
             }
         };
     }

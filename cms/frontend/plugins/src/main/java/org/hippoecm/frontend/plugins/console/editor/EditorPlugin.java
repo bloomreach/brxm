@@ -15,18 +15,22 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 
 public class EditorPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     private NodeEditor editor;
 
-    public EditorPlugin() {
+    public EditorPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         editor = new NodeEditor("editor");
         add(editor);
     }
-    
+
     @Override
     public void onModelChanged() {
         super.onModelChanged();

@@ -26,10 +26,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.sa.plugin.impl.ListViewPlugin;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.ListViewPlugin;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.FieldDescriptor;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
@@ -51,29 +51,19 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     private String fieldName;
     private TemplateController controller;
 
-    protected FieldPlugin() {
+    protected FieldPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
         controller = new TemplateController();
-    }
 
-    @Override
-    public void init(IPluginContext context, IPluginConfig config) {
         mode = config.getString(ITemplateEngine.MODE);
         fieldName = config.getString(FieldPlugin.FIELD);
-
-        super.init(context, config);
-    }
-
-    @Override
-    public void destroy() {
-        controller.stop();
-        super.destroy();
     }
 
     @Override
     public void onModelChanged() {
         super.onModelChanged();
 
-        ITemplateEngine engine = getTemplateEngine(); 
+        ITemplateEngine engine = getTemplateEngine();
         if (engine != null) {
             P model = (P) getModel();
             TypeDescriptor type = engine.getType(model);
@@ -120,7 +110,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     }
 
     protected ITemplateEngine getTemplateEngine() {
-        return getPluginContext().getService(getPluginConfig().getString(ITemplateEngine.ENGINE)); 
+        return getPluginContext().getService(getPluginConfig().getString(ITemplateEngine.ENGINE));
     }
 
     protected void configureTemplate(IClusterConfig config, C model) {
@@ -133,8 +123,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             }
         }
 
-        config.put(RenderPlugin.WICKET_ID, myConfig.getString(ITEM));
-        config.put(RenderPlugin.DIALOG_ID, myConfig.getString(RenderPlugin.DIALOG_ID));
+        config.put(RenderService.WICKET_ID, myConfig.getString(ITEM));
+        config.put(RenderService.DIALOG_ID, myConfig.getString(RenderService.DIALOG_ID));
     }
 
     private class TemplateController implements IClusterable {

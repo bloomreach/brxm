@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.sa.plugins.reviewedactions;
 
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
@@ -31,7 +32,8 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
 
     private static Logger log = LoggerFactory.getLogger(EditingReviewedActionsWorkflowPlugin.class);
 
-    public EditingReviewedActionsWorkflowPlugin() {
+    public EditingReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
         addWorkflowAction("save", "Save", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 

@@ -36,7 +36,8 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
-    public BasicReviewedActionsWorkflowPlugin() {
+    public BasicReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
         addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
@@ -44,7 +45,8 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                IViewService viewer = getPluginContext().getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
+                IViewService viewer = getPluginContext().getService(
+                        getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
                 if (viewer != null) {
                     viewer.view(new JcrNodeModel(docNode));
                 }
@@ -74,11 +76,6 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.requestDeletion();
             }
         });
-    }
-
-    @Override
-    public void init(IPluginContext context, IPluginConfig properties) {
-        super.init(context, properties);
     }
 
 }

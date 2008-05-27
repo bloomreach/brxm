@@ -16,11 +16,12 @@
 package org.hippoecm.frontend.plugins.logout;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutPlugin extends RenderPlugin {
@@ -29,18 +30,15 @@ public class LogoutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private String username;
 
-    public LogoutPlugin() {
+    public LogoutPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         UserSession session = (UserSession) getSession();
         ValueMap credentials = session.getCredentials();
         username = credentials.getString("username");
 
         add(new Label("username", new PropertyModel(this, "username")));
-        add(new EmptyPanel("logout-link"));
+        add(new LogoutLink("logout-link", context, config.getString(RenderService.DIALOG_ID)));
     }
-    
-    @Override
-    public void start(IPluginContext context) {
-        super.start(context);
-        replace(new LogoutLink("logout-link", context, getDialogService()));
-    }
+
 }

@@ -29,12 +29,15 @@ import org.hippoecm.frontend.sa.dialog.DialogLink;
 import org.hippoecm.frontend.sa.dialog.IDialogFactory;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 
 public class MenuPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
-    public MenuPlugin() {
+    public MenuPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         add(new EmptyPanel("node-dialog"));
         add(new EmptyPanel("delete-dialog"));
         add(new EmptyPanel("save-dialog"));
@@ -42,11 +45,7 @@ public class MenuPlugin extends RenderPlugin {
         add(new EmptyPanel("export-dialog"));
         add(new EmptyPanel("property-dialog"));
         add(new EmptyPanel("rename-dialog"));
-    }
 
-    @Override
-    public void start(IPluginContext context) {
-        super.start(context);
         IDialogService dialogService = getDialogService();
 
         IDialogFactory dialogFactory = new IDialogFactory() {

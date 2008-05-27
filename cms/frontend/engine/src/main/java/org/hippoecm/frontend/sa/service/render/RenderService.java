@@ -54,19 +54,18 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     private ModelReference modelRef;
     private IRenderService parent;
 
-    public RenderService() {
+    public RenderService(IPluginContext context, IPluginConfig properties) {
         super("id");
+
+        this.context = context;
+        this.config = properties;
+
         setOutputMarkupId(true);
         redraw = false;
 
         wicketId = "service.render";
 
         this.children = new HashMap<String, ExtensionPoint>();
-    }
-
-    protected void init(IPluginContext context, IPluginConfig properties) {
-        this.context = context;
-        this.config = properties;
 
         if (properties.getString(WICKET_ID) != null) {
             this.wicketServiceId = properties.getString(WICKET_ID);
@@ -85,10 +84,6 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
             log.warn("No model ({}) defined for service {}", MODEL_ID, wicketServiceId);
         }
 
-        for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
-            context.registerTracker(entry.getValue(), config.getString(entry.getKey()));
-        }
-
         if (config.getString(IPlugin.SERVICE_ID) != null) {
             serviceId = config.getString(IPlugin.SERVICE_ID);
             context.registerService(this, serviceId);
@@ -97,25 +92,6 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
         }
 
         context.registerService(this, wicketServiceId);
-    }
-
-    protected void destroy() {
-        IPluginContext context = getPluginContext();
-
-        if (serviceId != null) {
-            serviceId = null;
-            context.unregisterService(this, serviceId);
-        }
-
-        for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
-            context.unregisterTracker(entry.getValue(), config.getString(entry.getKey()));
-        }
-        context.unregisterService(this, wicketServiceId);
-
-        if (modelRef != null) {
-            modelRef.destroy();
-            modelRef = null;
-        }
     }
 
     // override model change methods
@@ -160,10 +136,12 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     protected void addExtensionPoint(final String extension) {
         ExtensionPoint extPt = new ExtensionPoint(extension);
         children.put(extension, extPt);
+        context.registerTracker(extPt, config.getString(extension));
         add(new EmptyPanel(extension));
     }
 
     protected void removeExtensionPoint(String name) {
+        context.unregisterTracker(children.get(name), config.getString(name));
         children.remove(name);
         replace(new EmptyPanel(name));
     }

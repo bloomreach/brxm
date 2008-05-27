@@ -62,6 +62,9 @@ public class ProviderReference implements IClusterable, IMessageListener {
 
     public void init(IPluginContext context) {
         topic.init(context);
+    }
+
+    public void onConnect() {
         topic.publish(new ProviderMessage(GET_PROVIDER, null));
     }
 
@@ -72,7 +75,7 @@ public class ProviderReference implements IClusterable, IMessageListener {
     public void setDataProvider(IDataProvider provider) {
         topic.publish(new ProviderMessage(SET_PROVIDER, provider));
     }
-    
+
     public void onMessage(Message message) {
         if (message instanceof ProviderMessage) {
             switch (message.getType()) {

@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin.impl;
+package org.hippoecm.frontend.sa.service.render;
 
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.service.render.RenderService;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
-public class RenderPlugin extends RenderService implements IPlugin {
+public class ListViewPlugin extends ListViewService implements IPlugin {
     private static final long serialVersionUID = 1L;
 
-    public void start(IPluginContext context) {
-        init(context, context.getProperties());
-    }
-
-    public void stop() {
-        destroy();
+    public ListViewPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
     }
 
 }

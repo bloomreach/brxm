@@ -32,7 +32,6 @@ import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
 import org.hippoecm.frontend.sa.service.IFactoryService;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.IViewService;
@@ -61,14 +60,12 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
     private Map<IModel, PluginEntry> editors;
     private int editCount;
 
-    public MultiEditorPlugin() {
+    public MultiEditorPlugin(IPluginContext context, IPluginConfig config) {
         editors = new HashMap<IModel, PluginEntry>();
         editCount = 0;
-    }
 
-    public void start(IPluginContext context) {
         this.context = context;
-        config = context.getProperties();
+        this.config = config;
 
         if (config.get(EDITOR_CLASS) != null) {
             editorClass = config.getString(EDITOR_CLASS);
@@ -116,8 +113,8 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IFactoryService
             editConfig.put(IPlugin.SERVICE_ID, editorId);
             editConfig.put(IPlugin.CLASSNAME, editorClass);
 
-            editConfig.put(RenderPlugin.WICKET_ID, config.get(RenderPlugin.WICKET_ID));
-            editConfig.put(RenderPlugin.DIALOG_ID, config.get(RenderPlugin.DIALOG_ID));
+            editConfig.put(RenderService.WICKET_ID, config.get(RenderService.WICKET_ID));
+            editConfig.put(RenderService.DIALOG_ID, config.get(RenderService.DIALOG_ID));
 
             String factoryId = editorId + ".factory";
             context.registerService(this, factoryId);

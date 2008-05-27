@@ -34,9 +34,8 @@ public class EditorPlugin extends EditorService implements IPlugin {
 
     private TitleDecorator title;
 
-    public void start(IPluginContext context) {
-        IPluginConfig properties = context.getProperties();
-        init(context, properties);
+    public EditorPlugin(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
 
         String decoratorId = getServiceId() + ".decorator";
         if (decoratorId != null) {
@@ -46,16 +45,6 @@ public class EditorPlugin extends EditorService implements IPlugin {
             title = null;
             log.warn("No decorator id was found");
         }
-    }
-
-    public void stop() {
-        IPluginContext context = getPluginContext();
-
-        if (title != null) {
-            context.unregisterService(title, getServiceId() + ".decorator");
-            title = null;
-        }
-        destroy();
     }
 
     class TitleDecorator implements ITitleDecorator, IClusterable {

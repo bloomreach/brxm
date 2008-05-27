@@ -23,6 +23,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
@@ -44,7 +46,8 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private String caption = "unknown document";
     private String stateSummary = "UNKNOWN";
 
-    public FullReviewedActionsWorkflowPlugin() {
+    public FullReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
         add(new Label("caption", new PropertyModel(this, "caption")));
 

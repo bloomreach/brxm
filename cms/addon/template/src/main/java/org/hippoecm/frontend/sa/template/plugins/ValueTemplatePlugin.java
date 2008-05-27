@@ -18,8 +18,9 @@ package org.hippoecm.frontend.sa.template.plugins;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.impl.RenderPlugin;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -30,10 +31,12 @@ public class ValueTemplatePlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(ValueTemplatePlugin.class);
 
-    public ValueTemplatePlugin() {
+    public ValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         add(new EmptyPanel("value"));
     }
-    
+
     @Override
     public void onModelChanged() {
         super.onModelChanged();

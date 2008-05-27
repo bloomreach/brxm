@@ -89,13 +89,15 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
         return windowRef.getService();
     }
 
-    // override to do any cleanup.
-    protected void closeDialog() {
+    protected final void closeDialog() {
         getDialogService().close();
+        onCloseDialog();
     }
 
     protected abstract void ok() throws Exception;
 
     protected abstract void cancel();
 
+    protected void onCloseDialog() {
+    }
 }
