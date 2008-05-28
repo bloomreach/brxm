@@ -23,18 +23,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
-
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.HierarchyManager;
@@ -57,11 +51,9 @@ import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-
+import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
-import org.hippoecm.repository.decorating.NodeDecorator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +109,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
                                                     getItemStateManager(),
                                                     ((RepositoryImpl)rep).getNamespaceRegistry(),
                                                     wsp.getName(),
-                                                    ((RepositoryImpl)rep).getNodeTypeRegistry());
+                                                    getNodeTypeManager());
             AccessManager accessMgr = (AccessManager) amConfig.newInstance();
             accessMgr.init(ctx);
             return accessMgr;
