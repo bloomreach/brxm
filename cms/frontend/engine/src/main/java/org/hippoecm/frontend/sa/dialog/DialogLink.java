@@ -29,7 +29,6 @@ public class DialogLink extends Panel {
     public DialogLink(String id, IModel linktext, final IDialogFactory dialogFactory, final IDialogService dialogService) {
         super(id);
 
-        final DialogWindow dialogWindow = new DialogWindow("dialog");
         final PageCreator pageCreator = new PageCreator() {
             private static final long serialVersionUID = 1L;
             public Page createPage() {
@@ -42,11 +41,10 @@ public class DialogLink extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                dialogWindow.show(pageCreator.createPage());
+                dialogService.show(pageCreator.createPage());
             }
         };
         
-        add(dialogWindow);
         add(link);
         link.add(new Label("dialog-link-text", linktext));
     }

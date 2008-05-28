@@ -17,7 +17,7 @@ package org.hippoecm.frontend.sa.dialog;
 
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 
-public class DialogService extends DialogWindow implements IDialogService {
+public class DialogService extends DialogWindow {
     private static final long serialVersionUID = 1L;
 
     private String wicketId;
