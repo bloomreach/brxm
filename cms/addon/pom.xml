@@ -50,8 +50,6 @@
     <module>xinha-frontend</module>
     <module>cms</module>
     <module>frontend</module>
-    
-    <module>mailsponge</module>
     <module>sample</module>    
     <module>defaultcontent</module>    
   </modules>
