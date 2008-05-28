@@ -35,16 +35,43 @@
       </subsection>
       <subsection name="Tags"> 
         <p>The following tags are available:</p> 
-        <ul>
-          <li>&lt;hst:content&gt;</li>
-          <li>&lt;hst:context&gt;</li>
-          <li>&lt;hst:include&gt;</li>
-          <li>&lt;hst:encodeURL&gt;</li>
-          <li>&lt;hst:documents&gt;</li>
-          <li>&lt;hst:articles&gt;</li>
-          <li>&lt;hst:news&gt;</li>
-          <li>&lt;hst:events&gt;</li>
-        </ul>
+        <table cellpadding="3" cellspacing="0">
+          <tr><th>Tag</th><th>Decription</th></tr>
+          <tr>
+            <td><pre>&lt;hst:content&gt;</pre></td>
+            <td>Gets the value of a property from a context object.</td>
+          </tr>
+          <tr>
+            <td><pre>&lt;hst:context&gt;</pre></td>
+            <td>Creates a new context objects from an existing one and a location.</td></tr>
+          <tr>
+            <td><pre>&lt;hst:include&gt;</pre></td>
+            <td>Includes in the page the output for a certain repository location, as found via 
+              the URL mapping functionality.</td></tr>
+          <tr>
+            <td><pre>&lt;hst:encodeURL&gt;</pre></td>
+            <td>Encodes a repository path location to a URL valid for URL mapping.</td></tr>
+          <tr>
+            <td><pre>&lt;hst:documents&gt;</pre></td>
+            <td>Shows a list of documents.</td></tr>
+          <tr>
+            <td><pre>&lt;hst:articles&gt;</pre></td>
+            <td>Shows a list of articles.</td></tr>
+          <tr>
+            <td><pre>&lt;hst:news&gt;</pre></td>
+            <td>Shows a list of news items.</td></tr>
+          <tr>
+            <td><pre>&lt;hst:events&gt;</pre></td>
+            <td>Shows a list of events.</td></tr>
+          <tr>
+            <td><pre>&lt;hst:menu&gt;</pre></td>
+            <td>Shows a dynamic menu as read from content in the repository.</td>
+          </tr>
+          <tr>
+            <td><pre>&lt;hst:siteMap&gt;</pre></td>
+            <td>Shows a dynamic site map as read from content in the repository.</td>
+          </tr>
+        </table>
         <p>No extensive documentation is available as the taglib is under development.</p> 
       </subsection>
     </section>
