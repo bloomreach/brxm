@@ -23,12 +23,17 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.VersionException;
 
 import javax.security.auth.Subject;
 
@@ -108,7 +113,8 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
             HippoAMContext ctx = new HippoAMContext( new File(((RepositoryImpl)rep).getConfig().getHomeDir()),
                                                     ((RepositoryImpl)rep).getFileSystem(),
                                                     subject,
-                                                    getItemStateManager().getAtticAwareHierarchyMgr(),
+                                                    hierMgr,
+                                                    getItemStateManager(),
                                                     ((RepositoryImpl)rep).getNamespaceRegistry(),
                                                     wsp.getName(),
                                                     ((RepositoryImpl)rep).getNodeTypeRegistry());

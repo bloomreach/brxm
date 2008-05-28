@@ -15,27 +15,33 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.Iterator;
+
 import javax.jcr.ReferentialIntegrityException;
 
 import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class HippoSessionItemStateManager extends SessionItemStateManager {
+public class HippoSessionItemStateManager extends SessionItemStateManager {
     protected final Logger log = LoggerFactory.getLogger(HippoSessionItemStateManager.class);
 
     HippoHierarchyManager wrappedHierMgr = null;
     HippoLocalItemStateManager localStateMgr;
+    NodeId rootNodeId;
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, SessionImpl session) {
         super(rootNodeId, manager, session);
+        this.rootNodeId = rootNodeId;
         this.localStateMgr = (HippoLocalItemStateManager) manager;
         if(wrappedHierMgr == null)
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
@@ -43,6 +49,7 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
 
     HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, XASessionImpl session) {
         super(rootNodeId, manager, session);
+        this.rootNodeId = rootNodeId;
         this.localStateMgr = (HippoLocalItemStateManager) manager;
         if(wrappedHierMgr == null)
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
@@ -82,5 +89,35 @@ class HippoSessionItemStateManager extends SessionItemStateManager {
     @Override
     public void stateDiscarded(ItemState discarded) {
         super.stateDiscarded(discarded);
+    }
+    
+    /**
+     * This is a hack for the missing method in the o.a.j.c.SessionItemStateManager.
+     * "return atticStore.get(id);" shold all that's needed, see getTransientItemState.
+     * @param id the item id
+     * @return the ItemState
+     * @throws NoSuchItemStateException when the item is not in the attic store
+     * @thorws ItemStateException when the item should be in the attic but cannot be found
+     */
+    public ItemState getAtticItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+        ItemState itemState = null;
+
+        if (!hasTransientItemStateInAttic(id)) {
+            throw new NoSuchItemStateException("Item state not found in attic: " + id);
+        }
+        // somehow we do have getTransientState but not getAtticState
+        // it is possible to get a list of all attic states from the root node
+        Iterator iter = getDescendantTransientItemStatesInAttic(rootNodeId);
+        while (iter.hasNext()) {
+            ItemState state = (ItemState) iter.next();
+            if (state.getId().equals(id)) {
+                itemState = state;
+                break;
+            }
+        }
+        if (itemState == null) {
+            throw new ItemStateException("Item state not found in attic, but the itemMgr thinks it is: " + id);
+        }
+        return itemState;
     }
 }
