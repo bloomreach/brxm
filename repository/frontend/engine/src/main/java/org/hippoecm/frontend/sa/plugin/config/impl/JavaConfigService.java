@@ -74,6 +74,22 @@ public class JavaConfigService implements IPluginConfigService {
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.dashboard.sa.DashboardPerspective");
+        config.put("wicket.id", "service.tab");
+        config.put("wicket.model", "service.dashboard.node");
+        config.put("service.pid", "service.dashboard");
+        config.put("perspective.title", "Dashboard");
+        plugins.addPlugin(config);
+        
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.browse.sa.BrowserPerspective");
+        config.put("wicket.id", "service.tab");
+        config.put("wicket.model", "service.browse.node");
+        config.put("service.pid", "service.browse");
+        config.put("perspective.title", "Browse");
+        plugins.addPlugin(config);
+        
+        config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
         config.put("wicket.id", "service.logout");
         config.put("wicket.model", "service.model");
@@ -149,7 +165,7 @@ public class JavaConfigService implements IPluginConfigService {
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.cms.browse.BrowserPerspective");
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.browse.sa.BrowserPerspective");
         config.put("service.pid", "service.browse");
         config.put("wicket.id", "service.tab");
         config.put("wicket.model", "service.browse.node");

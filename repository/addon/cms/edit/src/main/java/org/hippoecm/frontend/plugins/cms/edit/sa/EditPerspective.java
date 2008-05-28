@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.cms.browse;
+package org.hippoecm.frontend.plugins.cms.edit.sa;
 
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.sa.perspective.Perspective;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.perspective.Perspective;
+import org.hippoecm.frontend.sa.service.IViewService;
 
-public class BrowserPerspective extends Perspective {
+public class EditPerspective extends Perspective implements IViewService {
     private static final long serialVersionUID = 1L;
 
-    public BrowserPerspective(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    public EditPerspective(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
+    }
 
-        addExtensionPoint("browserBreadcrumbPlugin");
-        addExtensionPoint("browserPlugin");
-        addExtensionPoint("listPlugin");
-        addExtensionPoint("workflowsPlugin");
+    @Override
+    public void view(IModel model) {
+        // TODO Auto-generated method stub
     }
 }
