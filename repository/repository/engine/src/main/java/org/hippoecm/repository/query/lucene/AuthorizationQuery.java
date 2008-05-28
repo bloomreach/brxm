@@ -53,8 +53,15 @@ public class AuthorizationQuery {
 
     public AuthorizationQuery(Set<FacetAuthPrincipal> facetAuths,
             NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig) {
-        this.query = new BooleanQuery(true);
+        
+        this.query = initQuery(facetAuths,nsMappings,indexingConfig);
+     
+    }
 
+    private BooleanQuery initQuery(Set<FacetAuthPrincipal> facetAuths, NamespaceMappings nsMappings,
+            ServicingIndexingConfiguration indexingConfig) {
+        
+        BooleanQuery authQuery = new BooleanQuery(true);
         Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
         while (facetAuthsIt.hasNext()) {
             // TODO test for facetAuthPrincipal wether 'read' is bit is set to 1 in ROLE 
@@ -64,20 +71,32 @@ public class AuthorizationQuery {
             while (domainRulesIt.hasNext()) {
                 DomainRule domainRule = domainRulesIt.next();
                 Iterator<FacetRule> facetRuleIt = domainRule.getFacetRules().iterator();
-
                 BooleanQuery facetQuery = new BooleanQuery(true);
+                boolean hasMatchAllDocsQuery = false;
                 while (facetRuleIt.hasNext()) {
                     FacetRule facetRule = facetRuleIt.next();
-
                     Query q = getFacetRuleQuery(facetRule, indexingConfig, nsMappings);
                     if (q == null) {
                         continue;
                     }
+                    if(q instanceof MatchAllDocsQuery) {
+                        hasMatchAllDocsQuery = true;
+                    }
                     facetQuery.add(q, Occur.MUST);
                 }
-                query.add(facetQuery, Occur.SHOULD);
+                if(domainRule.getFacetRules().size() == 1 && hasMatchAllDocsQuery) {
+                   /*
+                    * we have a domain rule, with only one facetrule, a MatchAllDocsQuery: this means
+                    * visibility for every node. Return instantly with an empty boolean query
+                    */ 
+                    log.debug("found domain rule with only one facetrule which is a " +
+                    		"MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
+                    return new BooleanQuery(true);
+                }
+                authQuery.add(facetQuery, Occur.SHOULD);
             }
         }
+        return authQuery;
     }
 
     private Query getFacetRuleQuery(FacetRule facetRule, ServicingIndexingConfiguration indexingConfig,
