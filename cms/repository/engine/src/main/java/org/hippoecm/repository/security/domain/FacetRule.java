@@ -119,9 +119,10 @@ public class FacetRule implements Serializable {
         if (facetValue.equals(FacetAuthHelper.WILDCARD) && !equals) {
             throw new RepositoryException("Not-equals and wildcard value not allowed together.");
         }
-        if (facet.equalsIgnoreCase("nodetype") && !equals) {
-            throw new RepositoryException("Not-equals and wildcard value not allowed together.");
-        }
+        // for now, try allowing negating nodetype facetrule
+        //if (facet.equalsIgnoreCase("nodetype") && !equals) {
+        //    throw new RepositoryException("Not-equals and wildcard value not allowed together.");
+        //}
         
         value = facetValue;
         type = jcrType;
