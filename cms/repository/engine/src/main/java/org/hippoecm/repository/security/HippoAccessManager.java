@@ -19,6 +19,7 @@ import java.util.Arrays;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -45,6 +46,8 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.NameFactory;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
@@ -121,22 +124,22 @@ public class HippoAccessManager implements AccessManager {
     /**
      * Name of hippo:docucment, needed for document model checking 
      */
-    private final Name hippoDoc;
+    private Name hippoDoc;
 
     /**
      * Name of hippo:handle, needed for document model checking
      */
-    private final Name hippoHandle;
+    private Name hippoHandle;
 
     /**
      * Name of hippo:facetsearch, needed for document model checking
      */
-    private final Name hippoFacetSearch;
+    private Name hippoFacetSearch;
 
     /**
      * Name of hippo:facetselect, needed for document model checking
      */
-    private final Name hippoFacetSelect;
+    private Name hippoFacetSelect;
 
     /**
      * Root NodeId of current session
@@ -188,10 +191,6 @@ public class HippoAccessManager implements AccessManager {
         // create names from node types
         // TODO: get the names from somewhere else. The access manager doesn't have 
         // access to the nodetype registry, so the namespace conversion is hard coded.
-        hippoDoc = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_DOCUMENT));
-        hippoHandle = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_HANDLE));
-        hippoFacetSearch = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSEARCH));
-        hippoFacetSelect = FACTORY.create(NAMESPACE_URI, getLocalName(HippoNodeType.NT_FACETSELECT));
     }
 
     /**
@@ -217,6 +216,11 @@ public class HippoAccessManager implements AccessManager {
         // cache root NodeId
         rootNodeId = (NodeId) hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
 
+        hippoDoc = getNameFromJCRName(HippoNodeType.NT_DOCUMENT);
+        hippoHandle = getNameFromJCRName(HippoNodeType.NT_HANDLE);
+        hippoFacetSearch = getNameFromJCRName(HippoNodeType.NT_FACETSEARCH);
+        hippoFacetSelect = getNameFromJCRName(HippoNodeType.NT_FACETSELECT);
+        
         // we're done
         initialized = true;
     }
@@ -224,15 +228,34 @@ public class HippoAccessManager implements AccessManager {
     /**
      * Get the local part of the node type name string.
      * TODO: Remove this method when nodetype names are available
-     * @param nodeTypeName string with prefix, eg 'hippo:document'
+     * @param nodeType string with prefix, eg 'hippo:document'
      * @return the local part of the nodetype name
      */
-    private String getLocalName(String nodeTypeName) {
-        int i = nodeTypeName.indexOf(":");
+    private String getLocalName(String nodeType) {
+        int i = nodeType.indexOf(":");
         if (i < 0) {
-            return nodeTypeName;
+            return nodeType;
         }
-        return nodeTypeName.substring(i + 1);
+        return nodeType.substring(i + 1);
+    }
+    private String getURIName(String nodeType) {
+        int i = nodeType.indexOf(":");
+        if (i < 0) {
+            return "";
+        }
+        return nodeType.substring(0,i);
+    }
+    
+    private Name getNameFromJCRName(String jcrName) throws IllegalNameException, NamespaceException {
+        return NameParser.parse(jcrName, nsRes, FACTORY);
+    }
+    private String getJCRNameFromName(Name name) throws NamespaceException {
+        String uri = name.getNamespaceURI();
+        if (nsRes.getPrefix(uri).length() == 0) {
+            return name.getLocalName();
+        } else {
+            return nsRes.getPrefix(uri) + ":" + name.getLocalName();
+        }
     }
 
     /**
@@ -697,6 +720,7 @@ public class HippoAccessManager implements AccessManager {
     /** 
      * Helper function to check if a nodeState is of a node type or a
      * instance of the node type (sub class)
+     * TODO: Very expensive function, probably needs some caching
      * 
      * @param nodeState the node to check
      * @param nodeTypeName the node type name
@@ -704,31 +728,43 @@ public class HippoAccessManager implements AccessManager {
      * @throws NoSuchNodeTypeException 
      */
     private boolean isInstanceOfType(NodeState nodeState, String nodeType) {
-        Name nodeTypeName = FACTORY.create(nodeType);
-        if (nodeState.getNodeTypeName().equals(nodeTypeName)) {
-            if (log.isTraceEnabled()) {
-                log.trace("MATCH " + nodeState.getId() + " is of type: " + nodeTypeName);
-            }
-            return true;
-        }
         try {
+            // create NodeType of nodeState's primaryType
+            String nodeStateType = getJCRNameFromName(nodeState.getNodeTypeName());
+            
+            if (nodeStateType.equals(nodeType)) {
+                if (log.isTraceEnabled()) {
+                    log.trace("MATCH " + nodeState.getId() + " is of type: " + nodeType);
+                }
+                return true;
+            }
+            
+            // get iterator over all types
             NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
-            NodeType facetNt = ntMgr.getNodeType(nodeType);
+            
+            NodeType nodeStateNodeType = ntMgr.getNodeType(nodeStateType);
 
+            // iterate over All NodeTypes untill...
             while (allTypes.hasNext()) {
                 NodeType nt = allTypes.nextNodeType();
-                if (facetNt.equals(nt)) {
+                // the correct NodeType is found
+                if (nt.equals(nodeStateNodeType)) {
+                    // get all supertypes of the nodeState's primaryType's NodeType
                     NodeType[] superTypes = nt.getSupertypes();
-                    if (Arrays.asList(superTypes).contains(nodeState.getNodeTypeName())) {
+                    // check if one of the superTypes matches the nodeType
+                    if (Arrays.asList(superTypes).contains(nodeType)) {
                         return true;
                     }
                 }
             }
+        } catch (NamespaceException e) {
+            log.warn("NamespaceException while checking if " + nodeState.getId() + " isInstanceOf: " + nodeType);
+            log.debug("Error while checking isInstanceOf: {}", nodeType, e);
         } catch (NoSuchNodeTypeException e) {
-            log.warn("NoSuchNodeTypeException while checking isInstanceOf: " + nodeType);
+            log.warn("NoSuchNodeTypeException while checking if " + nodeState.getId() + "  isInstanceOf: " + nodeType);
             log.debug("Error while checking isInstanceOf: {}", nodeType, e);
         } catch (RepositoryException e) {
-            log.error("Error while checking isInstanceOf: " + nodeType,e);
+            log.error("Error while checking if " + nodeState.getId() + "  isInstanceOf: " + nodeType,e);
         }
         return false;
     }
