@@ -2,6 +2,7 @@ package org.hippoecm.repository.security;
 
 import java.io.File;
 
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.HierarchyManager;
@@ -25,9 +26,9 @@ public class HippoAMContext extends AMContext {
     private final static String SVN_ID = "$Id$";
 
     /**
-     * NodeTypeRegistry for resolving superclass node types
+     * NodeTypeManager for resolving superclass node types
      */
-    private final NodeTypeRegistry ntReg;
+    private final NodeTypeManager ntMgr;
     
     /**
      * SessionItemStateManager for fetching attic states
@@ -51,9 +52,9 @@ public class HippoAMContext extends AMContext {
                      SessionItemStateManager itemMgr,
                      NamespaceResolver nsResolver,
                      String workspaceName,
-                     NodeTypeRegistry ntReg) {
+                     NodeTypeManager ntMgr) {
         super(physicalHomeDir, fs, subject, hierMgr, nsResolver, workspaceName);
-        this.ntReg = ntReg;
+        this.ntMgr = ntMgr;
         this.itemMgr = itemMgr;
     }
 
@@ -62,8 +63,8 @@ public class HippoAMContext extends AMContext {
      *
      * @return the NodeTypeRegistry
      */
-    public NodeTypeRegistry getNodeTypeRegistry() {
-        return ntReg;
+    public NodeTypeManager getNodeTypeManager() {
+        return ntMgr;
     }
     
     /**

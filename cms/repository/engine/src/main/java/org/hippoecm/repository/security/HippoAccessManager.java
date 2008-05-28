@@ -15,7 +15,7 @@
  */
 package org.hippoecm.repository.security;
 
-import java.util.Iterator;
+import java.util.Arrays;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
@@ -23,14 +23,15 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.security.auth.Subject;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
@@ -98,9 +99,9 @@ public class HippoAccessManager implements AccessManager {
     private HippoSessionItemStateManager itemMgr;
 
     /**
-     * NodeTypeRegistry for resolving superclass node types
+     * NodeTypeManager for resolving superclass node types
      */
-    private NodeTypeRegistry ntReg;
+    private NodeTypeManager ntMgr;
 
     /**
      * NamespaceResolver
@@ -204,7 +205,7 @@ public class HippoAccessManager implements AccessManager {
         nsRes = context.getNamespaceResolver();
         hierMgr = (HippoHierarchyManager) context.getHierarchyManager();
         if (context instanceof HippoAMContext) {
-            ntReg = ((HippoAMContext) context).getNodeTypeRegistry();
+            ntMgr = ((HippoAMContext) context).getNodeTypeManager();
             itemMgr = (HippoSessionItemStateManager) ((HippoAMContext) context).getSessionItemStateManager();
         }
 
@@ -444,8 +445,7 @@ public class HippoAccessManager implements AccessManager {
         if (facetRule.getFacet().equalsIgnoreCase("nodetype")) {
             boolean match = false;
             log.trace("Checking node : {} for nodeType: {}", nodeState.getId(), facetRule);
-            Name valName = FACTORY.create(facetRule.getValue());
-            if (isInstanceOfType(nodeState, valName)) {
+            if (isInstanceOfType(nodeState, facetRule.getValue())) {
                 match = true;
                 log.trace("Found match : {} for nodeType: {}", nodeState.getId(), facetRule.getValue());
             } else if (hasMixinWithValue(nodeState, facetRule.getValue())) {
@@ -703,32 +703,32 @@ public class HippoAccessManager implements AccessManager {
      * @return boolean
      * @throws NoSuchNodeTypeException 
      */
-    private boolean isInstanceOfType(NodeState nodeState, Name nodeTypeName) {
+    private boolean isInstanceOfType(NodeState nodeState, String nodeType) {
+        Name nodeTypeName = FACTORY.create(nodeType);
         if (nodeState.getNodeTypeName().equals(nodeTypeName)) {
             if (log.isTraceEnabled()) {
                 log.trace("MATCH " + nodeState.getId() + " is of type: " + nodeTypeName);
             }
             return true;
         }
-        NodeTypeDef ntd;
         try {
-            ntd = ntReg.getNodeTypeDef(nodeState.getNodeTypeName());
+            NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
+            NodeType facetNt = ntMgr.getNodeType(nodeType);
 
-            Name[] names = ntd.getSupertypes();
-            for (Name n : names) {
-                if (log.isTraceEnabled()) {
-                    log.trace("CHECK " + nodeState.getId() + " " + n + " -> " + nodeTypeName);
-                }
-                if (n.equals(nodeTypeName)) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("MATCH " + nodeState.getId() + " is a instance of type: " + nodeTypeName);
+            while (allTypes.hasNext()) {
+                NodeType nt = allTypes.nextNodeType();
+                if (facetNt.equals(nt)) {
+                    NodeType[] superTypes = nt.getSupertypes();
+                    if (Arrays.asList(superTypes).contains(nodeState.getNodeTypeName())) {
+                        return true;
                     }
-                    return true;
                 }
             }
         } catch (NoSuchNodeTypeException e) {
-            log.warn("NodeTypeDef not found for node: {}, type: ", nodeState.getId(), nodeState.getNodeTypeName());
-            log.debug("NodeTypeDef not found", e);
+            log.warn("NoSuchNodeTypeException while checking isInstanceOf: " + nodeType);
+            log.debug("Error while checking isInstanceOf: {}", nodeType, e);
+        } catch (RepositoryException e) {
+            log.error("Error while checking isInstanceOf: " + nodeType,e);
         }
         return false;
     }
@@ -849,15 +849,13 @@ public class HippoAccessManager implements AccessManager {
      */
     private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, ItemStateException,
             NoSuchNodeTypeException {
-        if (ntReg == null) {
-            return null;
-        }
+        
         if (log.isTraceEnabled()) {
             log.trace("Checking " + nodeState.getId() + " ntn: " + nodeState.getNodeTypeName()
                     + " for being part of a document model.");
         }
         // check if this is already the root of a document
-        if (isInstanceOfType(nodeState, hippoDoc) || nodeState.getNodeTypeName().equals(hippoHandle)
+        if (isInstanceOfType(nodeState, HippoNodeType.NT_DOCUMENT) || nodeState.getNodeTypeName().equals(hippoHandle)
                 || nodeState.getNodeTypeName().equals(hippoFacetSearch)
                 || nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
             if (log.isDebugEnabled()) {
@@ -887,7 +885,7 @@ public class HippoAccessManager implements AccessManager {
                 }
                 return null;
             }
-            if (isInstanceOfType(nodeState, hippoDoc)) {
+            if (isInstanceOfType(nodeState, HippoNodeType.NT_DOCUMENT)) {
                 if (log.isDebugEnabled()) {
                     log.debug("MATCH hippoDoc: " + nodeState.getNodeTypeName());
                 }
