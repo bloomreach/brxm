@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.sa.dialog.DialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
@@ -25,8 +24,6 @@ import org.hippoecm.frontend.sa.service.render.RenderService;
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
-    private DialogService dialogService;
-
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         for (String extension : new String[] {
@@ -34,7 +31,7 @@ public class RootPlugin extends RenderPlugin {
         }) {
             addExtensionPoint(extension);
         }
-        dialogService = new DialogService();
+        DialogService dialogService = new DialogService();
         dialogService.init(context, config.getString(RenderService.DIALOG_ID), "dialog");
         add(dialogService);
     }
