@@ -85,7 +85,7 @@ public class Home extends LegacyPluginPage {
 
         String style = configFactory.getStyle();
         if (style != null) {
-        	add(HeaderContributor.forCss(style));
+            add(HeaderContributor.forCss(style));
         }
 
         add(rootPlugin);
@@ -99,5 +99,4 @@ public class Home extends LegacyPluginPage {
         }
         return session;
     }
-
 }

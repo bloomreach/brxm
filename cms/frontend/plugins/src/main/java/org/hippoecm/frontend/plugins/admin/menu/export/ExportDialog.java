@@ -45,89 +45,87 @@ import org.w3c.dom.Document;
  */
 @Deprecated
 public class ExportDialog extends AbstractDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ExportDialog(DialogWindow dialogWindow) {
-		super(dialogWindow);
+    public ExportDialog(DialogWindow dialogWindow) {
+        super(dialogWindow);
 
-		final JcrNodeModel nodeModel = dialogWindow.getNodeModel();
+        final JcrNodeModel nodeModel = dialogWindow.getNodeModel();
 
-		String path;
-		try {
-			path = nodeModel.getNode().getPath();
-		} catch (RepositoryException e) {
-			path = e.getMessage();
-		}
-		dialogWindow.setTitle("Export " + path);
+        String path;
+        try {
+            path = nodeModel.getNode().getPath();
+        } catch (RepositoryException e) {
+            path = e.getMessage();
+        }
+        dialogWindow.setTitle("Export " + path);
 
-		DownloadExportLink link = new DownloadExportLink("download-link", nodeModel);
-		link.add(new Label("download-link-text", "Download"));
-		add(link);
-		
-		final MultiLineLabel dump = new MultiLineLabel("dump", "");
-		//dump.setVisible(false);
-		dump.setOutputMarkupId(true);
-		add(dump);
-		
-		
-		AjaxLink viewLink = new AjaxLink("view-link", nodeModel) {
-			private static final long serialVersionUID = 1L;
+        DownloadExportLink link = new DownloadExportLink("download-link", nodeModel);
+        link.add(new Label("download-link-text", "Download"));
+        add(link);
+        
+        final MultiLineLabel dump = new MultiLineLabel("dump", "");
+        //dump.setVisible(false);
+        dump.setOutputMarkupId(true);
+        add(dump);
+        
+        AjaxLink viewLink = new AjaxLink("view-link", nodeModel) {
+                private static final long serialVersionUID = 1L;
+                
+                @Override
+                    public void onClick(AjaxRequestTarget target) {
+                    String export;
+                    try {
+                        Node node = nodeModel.getNode();
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        node.getSession().exportSystemView(node.getPath(), out, true, false);
+                        export = prettyPrint(out.toByteArray());
+                    } catch (Exception e) {
+                        export = e.getMessage();
+                    }
+                    dump.setModel(new Model(export));
+                    //dump.setVisible(true);
+                    target.addComponent(dump);
+                }
+            };
+        viewLink.add(new Label("view-link-text", "View"));
+        add(viewLink);
 
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				String export;
-				try {
-					Node node = nodeModel.getNode();
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					node.getSession().exportSystemView(node.getPath(), out,	true, false);
-					export = prettyPrint(out.toByteArray());
-				} catch (Exception e) {
-					export = e.getMessage();
-				}
-				dump.setModel(new Model(export));
-				//dump.setVisible(true);
-				target.addComponent(dump);
-			}
-		};
-		viewLink.add(new Label("view-link-text", "View"));
-		add(viewLink);
-		
-		cancel.setVisible(false);
-	}
+        cancel.setVisible(false);
+    }
 
-	@Override
-	public void ok() {
-		Channel channel = getChannel();
-		if (channel != null) {
-			Request request = channel.createRequest("select", getDialogWindow()
-					.getNodeModel());
-			channel.send(request);
-		}
-	}
+    @Override
+    public void ok() {
+        Channel channel = getChannel();
+        if (channel != null) {
+            Request request = channel.createRequest("select", getDialogWindow()
+                                                    .getNodeModel());
+            channel.send(request);
+        }
+    }
 
-	@Override
-	public void cancel() {
-	}
+    @Override
+    public void cancel() {
+    }
 
-	private String prettyPrint(byte[] bytes) throws Exception {
-		Source source = new StreamSource(new ByteArrayInputStream(bytes));
-		DOMResult result = new DOMResult();
-		TransformerFactory transformerFactory = TransformerFactory
-				.newInstance();
-		Transformer identityTransformer = transformerFactory.newTransformer();
-		identityTransformer.transform(source, result);
-		Document doc = (Document) result.getNode();
-
-		OutputFormat format = new OutputFormat(doc);
-		format.setEncoding("UTF-8");
-		format.setIndenting(true);
-		format.setIndent(2);
-		format.setLineWidth(80);
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		XMLSerializer xmlSerializer = new XMLSerializer(out, format);
-		xmlSerializer.serialize(doc);
-		return out.toString("UTF-8");
-	}
-
+    private String prettyPrint(byte[] bytes) throws Exception {
+        Source source = new StreamSource(new ByteArrayInputStream(bytes));
+        DOMResult result = new DOMResult();
+        TransformerFactory transformerFactory = TransformerFactory
+            .newInstance();
+        Transformer identityTransformer = transformerFactory.newTransformer();
+        identityTransformer.transform(source, result);
+        Document doc = (Document) result.getNode();
+        
+        OutputFormat format = new OutputFormat(doc);
+        format.setEncoding("UTF-8");
+        format.setIndenting(true);
+        format.setIndent(2);
+        format.setLineWidth(80);
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        XMLSerializer xmlSerializer = new XMLSerializer(out, format);
+        xmlSerializer.serialize(doc);
+        return out.toString("UTF-8");
+    }
 }

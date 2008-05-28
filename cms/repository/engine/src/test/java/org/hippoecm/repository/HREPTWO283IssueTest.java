@@ -59,7 +59,7 @@ public class HREPTWO283IssueTest extends TestCase {
         assertNotNull(result);
         assertTrue(result.isNodeType("hippo:baddocument"));
 
-	// Actual test for issue follows (assert should be assertFalse)
+        // Actual test for issue follows (assert should be assertFalse)
         assertTrue(result.isNodeType("mix:referenceable"));
     }
 }

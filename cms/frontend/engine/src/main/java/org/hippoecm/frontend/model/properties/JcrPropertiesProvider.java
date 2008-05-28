@@ -58,8 +58,8 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
                     for (int i = 0; i < count; i++) {
                         Property prop = it.nextProperty();
                         boolean isPrimaryType = prop.getName().equals("jcr:primaryType");
-						boolean isMixinTypes = prop.getName().equals("jcr:mixinTypes");
-						if (!isPrimaryType && !isMixinTypes) {
+                        boolean isMixinTypes = prop.getName().equals("jcr:mixinTypes");
+                        if (!isPrimaryType && !isMixinTypes) {
                             list.add(prop);
                         }
                     }

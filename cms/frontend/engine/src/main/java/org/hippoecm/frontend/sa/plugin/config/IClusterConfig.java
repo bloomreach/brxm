@@ -17,7 +17,6 @@ package org.hippoecm.frontend.sa.plugin.config;
 
 import java.util.List;
 
-
 public interface IClusterConfig extends IPluginConfig {
 
     public List<IPluginConfig> getPlugins();

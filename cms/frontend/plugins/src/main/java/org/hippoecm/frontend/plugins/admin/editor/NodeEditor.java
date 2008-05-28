@@ -59,7 +59,7 @@ public class NodeEditor extends Form implements INotificationListener {
             NodeType[] nodeTypes = model.getNode().getMixinNodeTypes();
             mixinTypes = new String();
             for (NodeType type : nodeTypes) {
-            	mixinTypes += type.getName() + ", ";
+                mixinTypes += type.getName() + ", ";
             }
             mixinTypes = StringUtils.substringBeforeLast(mixinTypes, ",");
             add(new Label("primarytype", new PropertyModel(this, "primaryType")));
@@ -111,7 +111,7 @@ public class NodeEditor extends Form implements INotificationListener {
                 NodeType[] nodeTypes = newModel.getNode().getMixinNodeTypes();
                 mixinTypes = new String();
                 for (NodeType type : nodeTypes) {
-                	mixinTypes += type.getName() + ", ";
+                    mixinTypes += type.getName() + ", ";
                 }
                 mixinTypes = StringUtils.substringBeforeLast(mixinTypes, ",");
             } catch (RepositoryException e) {

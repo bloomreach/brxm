@@ -44,22 +44,22 @@ public class ResetDialog extends AbstractDialog {
         Component message;
         JcrNodeModel nodeModel = dialogWindow.getNodeModel();
         try {
-        	NodeIterator it = nodeModel.getNode().pendingChanges();
+            NodeIterator it = nodeModel.getNode().pendingChanges();
             hasPendingChanges = it.hasNext();
             if (hasPendingChanges) {
-            	StringBuffer buf = new StringBuffer("Pending changes:\n");
-            	while (it.hasNext()) {
-            		Node node = it.nextNode();
-            		buf.append(node.getPath()).append("\n");
-            	}
+                StringBuffer buf = new StringBuffer("Pending changes:\n");
+                while (it.hasNext()) {
+                    Node node = it.nextNode();
+                    buf.append(node.getPath()).append("\n");
+                }
                 message = new MultiLineLabel("message", buf.toString());
             } else {
-            	message = new Label("message", "There are no pending changes");
-            	ok.setVisible(false);
+                message = new Label("message", "There are no pending changes");
+                ok.setVisible(false);
             }
         } catch (RepositoryException e) {
-        	message = new Label("message", "exception: " + e.getMessage());
-        	ok.setVisible(false);
+            message = new Label("message", "exception: " + e.getMessage());
+            ok.setVisible(false);
         }
         add(message);
     }
