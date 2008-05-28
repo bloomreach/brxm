@@ -49,10 +49,10 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         try {
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublished);
             versionWorkflow.version();
-	} catch(MappingException ex) {
+        } catch(MappingException ex) {
             System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             ex.printStackTrace(System.err);
-	    // FIXME: should log a warning here
+            // FIXME: should log a warning here
         } catch(RemoteException ex) {
             System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             ex.printStackTrace(System.err);
@@ -75,10 +75,10 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             try {
                 VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublished);
                 versionWorkflow.version();
-	    } catch(MappingException ex) {
+            } catch(MappingException ex) {
                 System.err.println(ex.getClass().getName()+": "+ex.getMessage());
                 ex.printStackTrace(System.err);
-	        // FIXME: should log a warning here
+                // FIXME: should log a warning here
             } catch(RemoteException ex) {
                 System.err.println(ex.getClass().getName()+": "+ex.getMessage());
                 ex.printStackTrace(System.err);
