@@ -40,15 +40,14 @@ public class Menu {
     static final Logger logger = LoggerFactory.getLogger(Menu.class);
 
     private final List<MenuItem> menuItems = new ArrayList<MenuItem>();
-    private final String id;
     
     /* Get menu object lazily from session. */
-    public static Menu getMenu(final HttpSession session, final String id, final String location) {
+    public static Menu getMenu(final HttpSession session, final String location) {
         
         Menu menu = (Menu) session.getAttribute(Menu.class.getName() + "." + location);
 
         if (menu == null) {
-            menu = new Menu(session, id, location);
+            menu = new Menu(session, location);
             session.setAttribute(Menu.class.getName() + "." + location, menu);
         }
         
@@ -58,16 +57,10 @@ public class Menu {
     /** 
      * Constructor.
      */
-    public Menu(HttpSession session, final String id, final String location) {
+    public Menu(HttpSession session, final String location) {
         super();
         
-        this.id = id;
-        
         createMenuItems(session, location);
-    }
-
-    public String getId() {
-        return id;
     }
 
     public List<MenuItem> getItems() {
@@ -112,8 +105,8 @@ public class Menu {
           
                 // on level 0, absence of the property means not to create one
                 // so only documents and folder with the flag up
-                if (node.hasProperty(HSTNodeTypes.PROPERTY_IS_MENU_ITEM)) {
-                    if (node.getProperty(HSTNodeTypes.PROPERTY_IS_MENU_ITEM).getBoolean()) {
+                if (node.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
+                    if (node.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
                         menuItems.add(new MenuItem(node, 0/*level*/));
                     }
                 }    

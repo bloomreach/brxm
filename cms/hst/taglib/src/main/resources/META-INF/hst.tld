@@ -129,27 +129,71 @@
     </attribute>
     <attribute>
       <description>The optional level indicating the starting level from which    
-        default output is generated.</description>
+        default output is generated. Defaults to 0.</description>
       <name>level</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
       <description>The optional depth indicating, in combination with the level 
-        attribute, the end level to which default output is generated.</description>
+        attribute, the end level to which default output is generated. 
+        Defaults to 1.</description>
       <name>depth</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-      <description>The optional id of this menu that reoccurs as id of the ul  
-        tag of the default output.</description>
+      <description>The optional id of this menu that reoccurs as id of the outer 
+        div tag of the default output. Also used as request attribute name 
+        for custom output. Defaults to 'hst-menu'.</description>
       <name>id</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
 
+  <tag>
+    <name>siteMap</name>
+    <tagclass>org.hippoecm.hst.taglib.SiteMapTag</tagclass>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>The optional name by which to get a context object from request.</description>
+      <name>context</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The optional location, relative to the context, pointing to the 
+        starting location where to search for site map items at level 0.</description>
+      <name>location</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The optional level indicating the starting level from which    
+        default output is generated. Defaults to 0.</description>
+      <name>level</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The optional depth indicating, in combination with the level 
+        attribute, the end level to which default output is generated.
+        Defaults to 3.</description>
+      <name>depth</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>The optional id of this site map that reoccurs as id of the   
+        outer div tag of the default output. Also used as request attribute name 
+        for custom output. Defaults to 'hst-sitemap'.</description>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
   <tag>
     <name>documents</name>
     <tagclass>org.hippoecm.hst.taglib.DocumentsTag</tagclass>

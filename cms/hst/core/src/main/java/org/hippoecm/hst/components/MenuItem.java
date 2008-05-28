@@ -47,8 +47,8 @@ public class MenuItem {
         this.level = level;
         try {
             String label;
-            if (node.hasProperty(HSTNodeTypes.PROPERTY_MENU_LABEL)) {
-                label = node.getProperty(HSTNodeTypes.PROPERTY_MENU_LABEL).getString();
+            if (node.hasProperty(HSTNodeTypes.HST_LABEL)) {
+                label = node.getProperty(HSTNodeTypes.HST_LABEL).getString();
             }
             else {
                 
@@ -105,7 +105,7 @@ public class MenuItem {
     // for debugging
     public String toString() {
         return super.toString() + "[level=" + level 
-                + ", path=" + path + ", name=" + label 
+                + ", path=" + path + ", label=" + label + ", active=" + active 
                 + ", menuItems=" + menuItems + "]";
     }
     
@@ -121,7 +121,7 @@ public class MenuItem {
                 
                 // on level higher than 0, absence of the property means to  
                 // create one if it concerns a document handle or folder 
-                if (!subNode.hasProperty(HSTNodeTypes.PROPERTY_IS_MENU_ITEM)) {
+                if (!subNode.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
 
                     // skip documents as there are multiple variants
                     if (subNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -135,7 +135,7 @@ public class MenuItem {
                 }
                 else {
                     // check flag
-                    if (subNode.getProperty(HSTNodeTypes.PROPERTY_IS_MENU_ITEM).getBoolean()) {
+                    if (subNode.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
                         menuItems.add(new MenuItem(subNode, this.getLevel() + 1));
                     }
                }
