@@ -40,6 +40,9 @@
         <sv:property sv:name="wicket.dialog" sv:type="String">
             <sv:value>service.dialog</sv:value>
         </sv:property>
+        <sv:property sv:name="tabsPlugin" sv:type="String">
+            <sv:value>service.tabs</sv:value>
+        </sv:property>
         <sv:property sv:name="logoutPlugin" sv:type="String">
             <sv:value>service.logout</sv:value>
         </sv:property>
@@ -58,6 +61,48 @@
         <sv:property sv:name="tabs" sv:type="String">
             <sv:value>service.tab</sv:value>
         </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="dashboardPerspective">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.sa.DashboardPerspective</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.tab</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>service.dashboard.node</sv:value>
+        </sv:property>        
+        <sv:property sv:name="service.pid" sv:type="String">
+            <sv:value>service.dashboard</sv:value>
+        </sv:property>
+        <sv:property sv:name="perspective.title" sv:type="String">
+            <sv:value>Dashboard</sv:value>
+        </sv:property>        
+    </sv:node>
+    
+    <sv:node sv:name="browserPerspective">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.cms.browse.sa.BrowserPerspective</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.tab</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>service.browse.node</sv:value>
+        </sv:property>        
+        <sv:property sv:name="service.pid" sv:type="String">
+            <sv:value>service.browse</sv:value>
+        </sv:property>
+        <sv:property sv:name="perspective.title" sv:type="String">
+            <sv:value>Browse</sv:value>
+        </sv:property>        
     </sv:node>
         
     <sv:node sv:name="logoutPlugin">

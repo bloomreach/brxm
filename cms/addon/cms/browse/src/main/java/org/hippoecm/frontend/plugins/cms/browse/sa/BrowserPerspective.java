@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.cms.edit;
+package org.hippoecm.frontend.plugins.cms.browse.sa;
 
-import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.sa.perspective.Perspective;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.perspective.Perspective;
-import org.hippoecm.frontend.sa.service.IViewService;
 
-/**
- * Panel representing the content panel for the first tab.
- */
-public class EditPerspective extends Perspective implements IViewService {
+public class BrowserPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
 
-    public EditPerspective(IPluginContext context, IPluginConfig properties) {
-        super(context, properties);
-    }
+    public BrowserPerspective(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
-    public void view(IModel model) {
-        // TODO Auto-generated method stub
-
+//        addExtensionPoint("browserBreadcrumbPlugin");
+//        addExtensionPoint("browserPlugin");
+//        addExtensionPoint("listPlugin");
+//        addExtensionPoint("workflowsPlugin");
     }
 }
