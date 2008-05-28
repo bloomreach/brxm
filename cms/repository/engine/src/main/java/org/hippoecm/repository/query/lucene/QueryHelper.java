@@ -34,6 +34,7 @@ public class QueryHelper {
     
     public static Query negateQuery(Query q){
         BooleanQuery negatedQuery = new BooleanQuery(true);
+        negatedQuery.add(new MatchAllDocsQuery(), Occur.MUST);
         negatedQuery.add(q, Occur.MUST_NOT);
         return negatedQuery;
     }

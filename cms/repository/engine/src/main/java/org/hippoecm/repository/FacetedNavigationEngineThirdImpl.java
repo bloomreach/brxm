@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
@@ -49,14 +51,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
-  implements FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl,
-             FacetedNavigationEngineThirdImpl.ContextImpl>
-{
+        implements
+        FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl, FacetedNavigationEngineThirdImpl.ContextImpl> {
     class QueryImpl extends FacetedNavigationEngine.Query {
         String xpath;
+
         public QueryImpl(String xpath) {
             this.xpath = xpath;
         }
+
         public String toString() {
             return xpath;
         }
@@ -65,20 +68,24 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     class ResultImpl extends FacetedNavigationEngine.Result {
         int length;
         Iterator<NodeId> iter = null;
+
         ResultImpl(int length, Set<NodeId> result) {
             this.length = length;
-            if(result!= null) {
+            if (result != null) {
                 this.iter = result.iterator();
             }
         }
+
         public int length() {
             return length;
         }
+
         public Iterator<NodeId> iterator() {
             return iter;
         }
+
         public String toString() {
-            return getClass().getName()+"[length="+length+"]";
+            return getClass().getName() + "[length=" + length + "]";
         }
     }
 
@@ -86,10 +93,17 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         Session session;
         String principal;
         Set<FacetAuthPrincipal> facetAuths;
-        ContextImpl(Session session, String principal, Set<FacetAuthPrincipal> facetAuths) {
+        AuthorizationQuery authorizationQuery;
+        NodeTypeManager ntMgr;
+
+        ContextImpl(Session session, String principal, Set<FacetAuthPrincipal> facetAuths, NodeTypeManager ntMgr)
+                throws RepositoryException {
             this.session = session;
             this.principal = principal;
             this.facetAuths = facetAuths;
+            this.ntMgr = ntMgr;
+            this.authorizationQuery = new AuthorizationQuery(facetAuths, getNamespaceMappings(),
+                    (ServicingIndexingConfiguration) getIndexingConfig(), ntMgr, session);
         }
     }
 
@@ -99,48 +113,55 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     public FacetedNavigationEngineThirdImpl() {
     }
 
-    public ContextImpl prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<QueryImpl> initialQueries, Session session) {
-        return new ContextImpl(session, principal, facetAuths);
+    public ContextImpl prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<QueryImpl> initialQueries,
+            Session session) throws RepositoryException {
+        NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
+        return new ContextImpl(session, principal, facetAuths, ntMgr);
     }
+
     public void unprepare(ContextImpl authorization) {
         // deliberate ignore
     }
-    public void reload(Map<Name,String[]> facetValues) {
+
+    public void reload(Map<Name, String[]> facetValues) {
         // deliberate ignore
     }
+
     public boolean requiresReload() {
         return false;
     }
+
     public boolean requiresNotify() {
         return false;
     }
-    public void notify(String docId, Map<Name,String[]> oldFacets, Map<Name,String[]> newFacets) {
+
+    public void notify(String docId, Map<Name, String[]> oldFacets, Map<Name, String[]> newFacets) {
         // deliberate ignore
     }
+
     public void purge() {
         // deliberate ignore
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
-                       Map<String,String> facetsQueryMap, QueryImpl openQuery,
-                       Map<String,Map<String,Count>> resultset,
-                       Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
-                       HitsRequested hitsRequested) throws UnsupportedOperationException
-    {
+            Map<String, String> facetsQueryMap, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
+            Map<Map<String, String>, Map<String, Map<String, Count>>> futureFacetsQueries, HitsRequested hitsRequested)
+            throws UnsupportedOperationException {
 
         NamespaceMappings nsMappings = getNamespaceMappings();
 
         /*
          * facetsQuery: get the query for the facets that are asked for
          */
-        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
+        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings,
+                (ServicingIndexingConfiguration) getIndexingConfig());
 
         /*
          * initialQuery: get the query for initialQuery
          */
         org.apache.lucene.search.Query initialLuceneQuery = null;
-        if(initialQuery != null && !initialQuery.xpath.equals("")) {
-            initialLuceneQuery = new FixedScoreTermQuery(new Term(ServicingFieldNames.HIPPO_PATH,initialQuery.xpath));
+        if (initialQuery != null && !initialQuery.xpath.equals("")) {
+            initialLuceneQuery = new FixedScoreTermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.xpath));
         }
 
         /*
@@ -148,66 +169,65 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          * is again a facetsQuery)
          */
 
-        AuthorizationQuery authorizationQuery = new AuthorizationQuery(contextImpl.facetAuths,
-                    nsMappings, (ServicingIndexingConfiguration)getIndexingConfig());
-        
         BooleanQuery searchQuery = new BooleanQuery(true);
 
-        if(facetsQuery.getQuery().clauses().size() > 0){
+        if (facetsQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
         }
         // TODO perhaps create cached user specific filter for authorisation to gain speed
-        if(authorizationQuery.getQuery().clauses().size() > 0){
-            searchQuery.add(authorizationQuery.getQuery(), Occur.MUST);
+        if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
+            searchQuery.add(contextImpl.authorizationQuery.getQuery(), Occur.MUST);
         }
 
-        if(initialLuceneQuery != null){
+        if (initialLuceneQuery != null) {
             searchQuery.add(initialLuceneQuery, Occur.MUST);
         }
 
         FacetResultCollector collector = null;
         IndexReader indexReader = null;
-        IndexSearcher searcher = null; ;
+        IndexSearcher searcher = null;
+        ;
         try {
             /*
              * if getIndexReader(true) you will also get version storage index which
              * cannot be used for facet searches, therefore set 'false'
-             */ 
-            //indexReader = getIndex().getIndexReader();
-            indexReader = getIndexReader(false);
+             */
+            //indexReader = getIndex().getIndexReader();indexReader = getIndexReader(false);
             searcher = new IndexSearcher(indexReader);
             searcher.setSimilarity(new FixedScoreSimilarity());
             // In principle, below, there is always one facet
-            if(resultset != null){
-                for(String facet : resultset.keySet()) {
+            if (resultset != null) {
+                for (String facet : resultset.keySet()) {
                     /*
                      * Nodes not having this facet, still should be counted if they are a hit
                      * in the query without this facet. Therefor, first get the count query without
                      * FacetPropExistsQuery.
                      */
+
+                    long start1 = System.currentTimeMillis();
                     int numHits = searcher.search(searchQuery).length();
+                    if (log.isDebugEnabled()) {
+                        log.debug("lucene query no collector took: \t" + (System.currentTimeMillis() - start1)
+                                + " ms for #" + numHits + ". Query: " + searchQuery.toString());
+                    }
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
                     FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, nsMappings,
-                                                            (ServicingIndexingConfiguration)getIndexingConfig());
+                            (ServicingIndexingConfiguration) getIndexingConfig());
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
                     long start = System.currentTimeMillis();
-                    collector = new FacetResultCollector(indexReader,
-                                                  nsMappings.translatePropertyName(NameFactoryImpl.getInstance().create(facet)),
-                                                  (facet != null ? resultset.get(facet) : null), hitsRequested, nsMappings);
+                    collector = new FacetResultCollector(indexReader, nsMappings.translatePropertyName(NameFactoryImpl
+                            .getInstance().create(facet)), (facet != null ? resultset.get(facet) : null),
+                            hitsRequested, nsMappings);
                     searcher.search(searchQuery, collector);
                     // set the numHits value
                     collector.setNumhits(numHits);
                     if (log.isDebugEnabled()) {
-                        log.debug("lucene query: " + searchQuery.toString() + " took "
-                                + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits()
-                                + " results");
+                        log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - start)
+                                + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
                     }
-                    System.out.println("lucene query: " + searchQuery.toString() + " took "
-                            + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits()
-                            + " results");
                 }
             } else {
                 // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
@@ -216,12 +236,9 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);
                 searcher.search(searchQuery, collector);
                 if (log.isDebugEnabled()) {
-                    log.debug("lucene query: " + searchQuery.toString() + " took "
-                            + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits() + " results");
+                    log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - start)
+                            + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
                 }
-                System.out.println("lucene query: " + searchQuery.toString() + " took "
-                        + (System.currentTimeMillis() - start) + " ms for " + collector.getNumhits()
-                        + " results");
             }
 
         } catch (IllegalNameException e) {
@@ -229,14 +246,14 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(searcher != null){
+            if (searcher != null) {
                 try {
                     searcher.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if(indexReader != null) {
+            if (indexReader != null) {
                 try {
                     indexReader.close();
                 } catch (IOException e) {
@@ -245,17 +262,17 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             }
         }
 
-        return this . new ResultImpl(collector.getNumhits(), collector.getHits());
+        return this.new ResultImpl(collector.getNumhits(), collector.getHits());
 
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-                       Map<String,String> facetsQuery, QueryImpl openQuery, HitsRequested hitsRequested) {
+            Map<String, String> facetsQuery, QueryImpl openQuery, HitsRequested hitsRequested) {
         return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, null, hitsRequested);
     }
 
     public QueryImpl parse(String query) {
-        return this . new QueryImpl(query);
+        return this.new QueryImpl(query);
     }
 
     @Override
@@ -264,5 +281,6 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         HippoSharedItemStateManager stateMgr = (HippoSharedItemStateManager) context.getItemStateManager();
         stateMgr.repository.setFacetedNavigationEngine(this);
         super.doInit();
+
     }
 }

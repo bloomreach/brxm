@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.spi.Name;
@@ -33,7 +34,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     this.upstream = upstream;
   }
 
-  public C prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<Q> initialQueries, Session session) {
+  public C prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<Q> initialQueries, Session session) throws RepositoryException {
     Context context = upstream.prepare(principal, facetAuths, initialQueries, session);
     return (C) context;
   }

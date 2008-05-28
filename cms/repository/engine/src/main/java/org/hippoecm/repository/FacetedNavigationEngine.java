@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.core.NodeId;
@@ -288,10 +289,11 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *                  than for equality and order.
      * @param authorizationQuery The authorization part used by the principal
      * @param initialQueries A list of initial queries later used in the #view methods
+     * @throws RepositoryException 
      * @see #unprepare(C)
      */
     
-    public C prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<Q> initialQueries, Session session);
+    public C prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<Q> initialQueries, Session session) throws RepositoryException;
 
     /**
      * This method is called when a user logouts from the system.
