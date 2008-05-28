@@ -37,7 +37,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 
-public class VersionWorkflowImpl implements VersionWorkflow {
+public class VersionWorkflowImpl extends Document implements VersionWorkflow {
 
     private static final long serialVersionUID = 1L;
     private Session userSession;
@@ -46,6 +46,37 @@ public class VersionWorkflowImpl implements VersionWorkflow {
     public VersionWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.subject = subject;
         this.userSession = userSession;
+    }
+
+    private boolean isSimilar(Node node) throws RepositoryException {
+        if (node.hasNode("jcr:frozenNode")) {
+            node = node.getNode("jcr:frozenNode");
+            try {
+                Node handle = subject.getParent();
+                if (handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
+                    Value[] discriminators = handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
+                    for (int i = 0; i < discriminators.length; i++) {
+                        String key = discriminators[i].getString();
+                        if (subject.hasProperty(key)) {
+                            if (!node.hasProperty(key) ||
+                                !node.getProperty(key).getString().equals(subject.getProperty(key).getString())) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            } catch (ItemNotFoundException ex) {
+                return true;
+            }
+            if (node.hasProperty("hippostd:state")) {
+                if (!node.getProperty("hippostd:state").getString().equals("published")) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
     }
 
     public Document version() throws WorkflowException, RepositoryException {
@@ -106,6 +137,7 @@ public class VersionWorkflowImpl implements VersionWorkflow {
             return listing;
         } else {
             boolean placeholder = true;
+            Calendar previous = null;
             Map<Calendar, Set<String>> listing = new TreeMap<Calendar, Set<String>>();
             VersionHistory handleHistory = handle.getVersionHistory();
             for (VersionIterator iter = handleHistory.getAllVersions(); iter.hasNext();) {
@@ -114,7 +146,8 @@ public class VersionWorkflowImpl implements VersionWorkflow {
                     for (NodeIterator children = handleVersion.getNode("jcr:frozenNode").getNodes(); children.hasNext();) {
                         Node child = children.nextNode();
                         if (child.isNodeType("nt:versionedChild")) {
-                            VersionHistory variantHistory = (VersionHistory) child.getSession().getNodeByUUID(child.getProperty("jcr:childVersionHistory").getString());
+                            String ref = child.getProperty("jcr:childVersionHistory").getString();
+                            VersionHistory variantHistory = (VersionHistory) child.getSession().getNodeByUUID(ref);
                             Set<String> labelsSet = new TreeSet<String>();
                             String[] labels = variantHistory.getVersionLabels();
                             for (int i = 0; i < labels.length; i++) {
@@ -123,11 +156,10 @@ public class VersionWorkflowImpl implements VersionWorkflow {
                             for (VersionIterator childIter = variantHistory.getAllVersions(); childIter.hasNext();) {
                                 Version version = childIter.nextVersion();
                                 if (!version.getName().equals("jcr:rootVersion")) {
-                                    Node variant = version.getNode("jcr:frozenNode");
-                                    if (variant.getProperty("hippostd:state").getString().equals("published")) {
-                                        // new Document(variant.getUUID()
+                                    if(isSimilar(version) && (previous == null || !previous.equals(version.getCreated()))) {
                                         listing.put(version.getCreated(), labelsSet);
                                         placeholder = false;
+                                        previous = version.getCreated();
                                     } else if (!placeholder) {
                                         placeholder = true;
                                         listing.put(version.getCreated(), labelsSet);
@@ -140,36 +172,6 @@ public class VersionWorkflowImpl implements VersionWorkflow {
             }
             return listing;
         }
-    }
-
-    private boolean isSimilar(Node node) throws RepositoryException {
-        if (node.hasNode("jcr:frozenNode")) {
-            node = node.getNode("jcr:frozenNode");
-            try {
-                Node handle = subject.getParent();
-                if (handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
-                    Value[] discriminators = handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-                    for (int i = 0; i < discriminators.length; i++) {
-                        if (subject.hasProperty(discriminators[i].getString())) {
-                            if (!node.hasProperty(discriminators[i].getString()) || !node.getProperty(discriminators[i].getString()).equals(subject.getProperty(discriminators[i].getString())))
-                                 {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            } catch (ItemNotFoundException ex) {
-                return true;
-            }
-            if (node.hasProperty("hippostd:state")) {
-                if (!node.getProperty("hippostd:state").getString().equals("published")) {
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
-        return true;
     }
 
     public Document retrieve(Calendar historic) throws WorkflowException, RepositoryException {
@@ -198,7 +200,8 @@ public class VersionWorkflowImpl implements VersionWorkflow {
                     for (NodeIterator children = handleVersion.getNode("jcr:frozenNode").getNodes(); children.hasNext();) {
                         Node child = children.nextNode();
                         if (child.isNodeType("nt:versionedChild")) {
-                            VersionHistory variantHistory = (VersionHistory) child.getSession().getNodeByUUID(child.getProperty("jcr:childVersionHistory").getString());
+                            String ref = child.getProperty("jcr:childVersionHistory").getString();
+                            VersionHistory variantHistory = (VersionHistory) child.getSession().getNodeByUUID(ref);
                             for (VersionIterator childIter = variantHistory.getAllVersions(); childIter.hasNext();) {
                                 Version version = childIter.nextVersion();
                                 if (!version.getName().equals("jcr:rootVersion")) {

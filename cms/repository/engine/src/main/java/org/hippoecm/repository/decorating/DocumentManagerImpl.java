@@ -123,6 +123,11 @@ public class DocumentManagerImpl
         if(transactional && !tx.isActive()) {
             try {
                 tx.begin();
+                if(uuid != null) {
+                    Node node = session.getNodeByUUID(uuid);
+                    if(!node.isCheckedOut())
+                        node.checkout();
+                }
                 pm.makePersistent(object);
                 tx.commit();
             } catch(JDODataStoreException ex) {

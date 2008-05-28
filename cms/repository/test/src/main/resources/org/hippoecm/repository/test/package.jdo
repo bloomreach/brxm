@@ -25,5 +25,9 @@
       <inheritance strategy="subclass-table"/>
       <field name="subfield" column="b"/>
     </class>
+    <class name="ChainingImpl" detachable="true" identity-type="datastore">
+      <inheritance strategy="subclass-table"/>
+      <field name="self" column="."/>
+    </class>
   </package>
 </jdo>

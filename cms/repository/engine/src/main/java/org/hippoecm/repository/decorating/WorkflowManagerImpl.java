@@ -150,6 +150,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         if (configuration == null) {
             return null;
         }
+        if (document == null) {
+            log.error("cannot retrieve workflow for non-existing document");
+            return null;
+        }
         try {
             Node node = session.getNodeByUUID(configuration);
             if (node.hasNode(category)) {
@@ -160,11 +164,21 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     if (workflowNode == null) {
                         continue;
                     }
-                    log.debug("matching document type against " +
-                              workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
+                    if(log.isDebugEnabled()) {
+                        log.debug("matching document type against " +
+                                  workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
+                    }
                     try {
-                        Class workflowClass = Class.forName(workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
-                        if (workflowClass.isAssignableFrom(document.getClass())) {
+                        Class documentClass = Class.forName(workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
+                        System.err.println("BERRY "+documentClass.getName()+" "+document.getClass());
+                        if (document.getIdentity() != null && session.getNodeByUUID(document.getIdentity()).isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
+                            log.debug("found workflow in category " + category + " for document");
+                            return workflowNode;
+                        }
+                        System.err.println("BERRY#1 "+document.getClass().isAssignableFrom(documentClass));
+                        System.err.println("BERRY#2 "+documentClass.isAssignableFrom(document.getClass()));
+                        // BERRY if (document.getClass().isAssignableFrom(workflowClass)) {
+                        if (documentClass.isAssignableFrom(document.getClass())) {
                             log.debug("found workflow in category " + category + " for document");
                             return workflowNode;
                         }
@@ -217,7 +231,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
         Node workflowNode = getWorkflowNode(category, item);
         if (workflowNode != null) {
             try {
-                String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+                String classname;
+                if(workflowNode.hasProperty(HippoNodeType.HIPPO_WORKFLOW))
+                    classname = workflowNode.getProperty(HippoNodeType.HIPPO_WORKFLOW).getString();
+                else
+                    classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
                 String uuid = null;
@@ -333,8 +351,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 synchronized (SessionDecorator.unwrap(rootSession)) {
                     Workflow workflow = null;
 
+                    String workflowClassName;
+                    if(workflowNode.hasProperty(HippoNodeType.HIPPO_WORKFLOW))
+                        workflowClassName = workflowNode.getProperty(HippoNodeType.HIPPO_WORKFLOW).getString();
+                    else
+                        workflowClassName = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                     try {
-                        Class workflowClass = Class.forName(workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
+                        Class workflowClass = Class.forName(workflowClassName);
                         Class[] interfaces = workflowClass.getInterfaces();
                         Vector vector = new Vector();
                         for (int i = 0; i < interfaces.length; i++) {
@@ -413,8 +436,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
                                             targetMethod.getName(), args, returnObject, path);
 
-                for(ListIterator iter = invocationChain.listIterator(); iter.hasNext(); ) {
-                    ((WorkflowInvocation)iter.next()).invoke();
+                while(!invocationChain.isEmpty()) {
+                    WorkflowInvocation current = invocationChain.remove(0);
+                    invocationIndex = invocationChain.listIterator();
+                    current.invoke();
                 }
 
                 return returnObject;
@@ -470,19 +495,18 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
-    class WorkflowAsynchronousHandler implements InvocationHandler {
+    private class WorkflowAsynchronousHandler implements InvocationHandler {
 
         Node workflowNode;
         Document workflowSubject;
 
         WorkflowAsynchronousHandler(Node workflowNode, Document document) {
             this.workflowNode = workflowNode;
-            this.workflowSubject = workflowSubject;
+            this.workflowSubject = document;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             invocationIndex.add(new WorkflowInvocation(workflowNode, workflowSubject, method, args));
-            invocationIndex.next();
             return null;
         }
     }
@@ -492,20 +516,24 @@ public class WorkflowManagerImpl implements WorkflowManager {
         Document workflowSubject;
         String uuid;
         Method method;
-        Object arguments;
+        Object[] arguments;
 
         WorkflowInvocation(Node workflowNode, Document workflowSubject, Method method, Object[] args) {
             this.workflowNode = workflowNode;
             this.workflowSubject = workflowSubject;
             this.method = method;
-            this.arguments = args.clone();
+            this.arguments = (args != null ? args.clone() : args);
         }
 
         Object invoke() throws RepositoryException {
             try {
                 Workflow workflow;
                 Session rootSession = documentManager.getSession();
-                String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+                String classname;
+                if(workflowNode.hasProperty(HippoNodeType.HIPPO_WORKFLOW))
+                    classname = workflowNode.getProperty(HippoNodeType.HIPPO_WORKFLOW).getString();
+                else
+                    classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
                 String uuid = null;
                 Node item = rootSession.getNodeByUUID(workflowSubject.getIdentity());
@@ -577,7 +605,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
-    class WorkflowContextImpl implements WorkflowContext {
+    private class WorkflowContextImpl implements WorkflowContext {
 
         WorkflowContextImpl() {
         }
@@ -587,8 +615,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
             return documentManager.getDocument(category, identifier);
         }
 
-        public Workflow getWorkflow(String category, Document document) throws MappingException, RepositoryException {
-            return getWorkflow(category, document);
+        public Workflow getWorkflow(String category, Document document) throws MappingException, WorkflowException, RepositoryException {
+            return WorkflowManagerImpl.this.getWorkflow(category, document);
         }
 
         public String getUsername() {
