@@ -40,10 +40,10 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
         super.setUp();
 
         Node node, root = session.getRootNode();
-	if(!root.hasNode("test"))
+        if(!root.hasNode("test"))
             node = root.addNode("test");
-	else
-	    node = root.getNode("test");
+        else
+            node = root.getNode("test");
         node = node.addNode("myarticle", "hippo:handle");
         node.addMixin("mix:referenceable");
         node = node.addNode("myarticle", "hippo:testdocument");
@@ -65,12 +65,12 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
     public void testReviewedAction() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node node, root = session.getRootNode();
         {
-	    Utilities.dump(getNode("test"));
-	    assertTrue(session.getRootNode().hasNode("test"));
-	    assertTrue(session.getRootNode().getNode("test").hasNode("myarticle"));
-	    assertTrue(session.getRootNode().getNode("test").getNode("myarticle").hasNode("myarticle"));
-	    assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
-	    assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
+            Utilities.dump(getNode("test"));
+            assertTrue(session.getRootNode().hasNode("test"));
+            assertTrue(session.getRootNode().getNode("test").hasNode("myarticle"));
+            assertTrue(session.getRootNode().getNode("test").getNode("myarticle").hasNode("myarticle"));
+            assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
+            assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
             node = getNode("test/myarticle/myarticle");
             FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             Document document = workflow.obtainEditableInstance();
@@ -109,18 +109,18 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
 
         // These steps would be taken by editor:
         {
-            node = getNode("test/myarticle/request");
+            node = getNode("test/myarticle/hippo:request");
             FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.rejectRequest("comma should be a point");
             session.save();
             session.refresh(true);
-            assertTrue(getNode("test/myarticle/request").getProperty("reason").getString().equals("comma should be a point"));
+            assertTrue(getNode("test/myarticle/hippo:request").getProperty("reason").getString().equals("comma should be a point"));
         }
 
         // steps taken by an author
         {
-            node = getNode("test/myarticle/request[@type='rejected']");
+            node = getNode("test/myarticle/hippo:request[@type='rejected']");
             BasicRequestWorkflow workflow = (BasicRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.cancelRequest();
@@ -154,7 +154,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
 
         // These steps would be taken by editor:
         {
-            node = getNode("test/myarticle/request[@type='publish']");
+            node = getNode("test/myarticle/hippo:request[@type='publish']");
             FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             workflow.acceptRequest();
             session.save();
@@ -204,7 +204,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
 
         // Test regarding Issue HREPTWO-688
         {  
-            Node node2 = getNode("test/myarticle/request[@type='delete']");
+            Node node2 = getNode("test/myarticle/hippo:request[@type='delete']");
             FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node2, "default");
             requestWorkflow.cancelRequest();
             session.save();

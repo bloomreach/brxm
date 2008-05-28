@@ -61,6 +61,7 @@
 [hippo:handle] > nt:unstructured
 - hippo:discriminator (string) multiple
 + * (hippo:document) = hippo:document multiple version
++ hippo:request (hippo:request) = hippo:request multiple ignore
 
 [hippo:hardhandle] > mix:versionable mixin
 
@@ -96,6 +97,7 @@
 + * (hippo:type) = hippo:type
 
 [hippo:workflow] > hippo:type
+- hippo:workflow (string)
 - hippo:renderer (string)
 - hippo:roles (string) multiple
 + hippo:types (hippo:types) = hippo:types mandatory autocreated

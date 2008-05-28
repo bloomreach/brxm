@@ -18,10 +18,13 @@ package org.hippoecm.repository.reviewedactions;
 import java.util.Date;
 import java.rmi.RemoteException;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
@@ -43,6 +46,22 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         ReviewedActionsWorkflowImpl.log.info("publication on document ");
         published = null;
         unpublished.setState(PublishableDocument.PUBLISHED);
+        try {
+            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublished);
+            versionWorkflow.version();
+	} catch(MappingException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
+	    // FIXME: should log a warning here
+        } catch(RemoteException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            throw new WorkflowException("Versioning of published document failed");
+        } catch(RepositoryException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
+            throw new WorkflowException("Versioning of published document failed");
+        }
     }
 
     public void depublish() throws WorkflowException {
@@ -53,7 +72,25 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                 unpublished.state = PublishableDocument.UNPUBLISHED;
             }
             published = null;
+            try {
+                VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublished);
+                versionWorkflow.version();
+	    } catch(MappingException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
+	        // FIXME: should log a warning here
+            } catch(RemoteException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
+                throw new WorkflowException("Versioning of published document failed");
+            } catch(RepositoryException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
+                throw new WorkflowException("Versioning of published document failed");
+            }
         } catch(CloneNotSupportedException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
             throw new WorkflowException("document is not a publishable document");
         }
     }
