@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standards.tabs;
+package org.hippoecm.frontend.plugins.standards.sa.tabs;
 
 import java.util.List;
 
@@ -29,24 +29,19 @@ public class TabbedPanel extends AjaxTabbedPanel {
 
     public TabbedPanel(String wicketId, TabsPlugin plugin, List<TabsPlugin.Tab> tabs) {
         super(wicketId, tabs);
-
         this.plugin = plugin;
-
         setOutputMarkupId(true);
         setVersioned(false);
     }
 
     @Override
-    protected WebMarkupContainer newLink(String linkId, final int index)
-    {
+    protected WebMarkupContainer newLink(String linkId, final int index) {
         final TabsPlugin.Tab tabbie = (TabsPlugin.Tab) getTabs().get(index);
-        return new AjaxFallbackLink(linkId)
-        {
-
+        return new AjaxFallbackLink(linkId) {
             private static final long serialVersionUID = 1L;
 
-            public void onClick(AjaxRequestTarget target)
-            {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
                 setSelectedTab(index);
                 plugin.onSelect(tabbie, target);
             }
