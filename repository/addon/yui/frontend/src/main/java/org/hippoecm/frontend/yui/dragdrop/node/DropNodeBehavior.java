@@ -5,6 +5,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 public class DropNodeBehavior extends NodeDragDropBehavior {
     private static final long serialVersionUID = 1L;
 
+    public DropNodeBehavior(String... groups) {
+        super(groups);
+    }
+
     @Override
     public void onDrop(AjaxRequestTarget target) {
     }
