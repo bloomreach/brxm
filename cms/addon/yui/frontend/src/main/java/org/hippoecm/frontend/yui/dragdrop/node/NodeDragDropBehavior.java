@@ -8,7 +8,6 @@ import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.util.collections.MiniMap;
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.yui.dragdrop.PluginDragDropBehavior;
 import org.slf4j.Logger;
@@ -22,10 +21,19 @@ public abstract class NodeDragDropBehavior extends PluginDragDropBehavior {
 
     private JcrNodeModel nodeModel;
 
+    /**
+     * DragDrop behavior will lookup JcrNodeModel getting it from the parent Plugin
+     * Belongs to 'drag_node' group by default, but can be overwritten by Plugin configuration 
+     * {@link PluginDragDropBehavior.onBind}
+     */
     public NodeDragDropBehavior() {
-        this(null);
+        super(null, NODE_DRAGDROP_GROUP);
     }
 
+    /**
+     * Belongs to 'drag_node' group by default, but can be overwritten by Plugin configuration 
+     * {@link PluginDragDropBehavior.onBind}
+     */
     public NodeDragDropBehavior(JcrNodeModel nodeModel) {
         this(nodeModel, NODE_DRAGDROP_GROUP);
     }
@@ -35,15 +43,17 @@ public abstract class NodeDragDropBehavior extends PluginDragDropBehavior {
         this.nodeModel = nodeModel;
     }
 
+    public NodeDragDropBehavior(String... groups) {
+        super(groups);
+    }
+
     public String getNodePath() {
         return getNodeModel().getItemModel().getPath();
     }
 
     protected JcrNodeModel getNodeModel() {
         if (nodeModel == null) {
-            IPluginModel pluginModel = getPlugin().getPluginModel();
-            if(pluginModel.getMapRepresentation().get("node") != null)
-                nodeModel = new JcrNodeModel(getPlugin().getPluginModel());
+            nodeModel = new JcrNodeModel(getPlugin().getPluginModel());
         }
         return nodeModel;
     }

@@ -39,6 +39,10 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
         return this;
     }
 
+    protected void clearGroups() {
+        groupNames.clear();
+    }
+
     public IBehavior setDebug(boolean debug) {
         this.debug = debug;
         return this;
@@ -108,12 +112,12 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
         String group = groupNames.size() > 0 ? groupNames.get(0) : "";
         variables.put("group", group);
         if (groupNames.size() > 1) {
-            StringBuffer buf = new StringBuffer();
-            buf.append("[");
+            StringBuilder buf = new StringBuilder(16 * groupNames.size());
+            buf.append('[');
             for (int i = 1; i < groupNames.size(); i++) {
                 if (i > 1)
-                    buf.append(",");
-                buf.append("'").append(groupNames.get(i)).append("'");
+                    buf.append(',');
+                buf.append('\'').append(groupNames.get(i)).append('\'');
             }
             buf.append("];");
             variables.put("moreGroups", buf.toString());
