@@ -9,6 +9,7 @@ import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
+import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 
 /**
@@ -29,6 +30,11 @@ public class HippoAMContext extends AMContext {
     private final NodeTypeRegistry ntReg;
     
     /**
+     * SessionItemStateManager for fetching attic states
+     */
+    private final SessionItemStateManager itemMgr;
+    
+    /**
      * Creates a new <code>AMContext</code>.
      *
      * @param physicalHomeDir the physical home directory
@@ -42,11 +48,13 @@ public class HippoAMContext extends AMContext {
                      FileSystem fs,
                      Subject subject,
                      HierarchyManager hierMgr,
+                     SessionItemStateManager itemMgr,
                      NamespaceResolver nsResolver,
                      String workspaceName,
                      NodeTypeRegistry ntReg) {
         super(physicalHomeDir, fs, subject, hierMgr, nsResolver, workspaceName);
         this.ntReg = ntReg;
+        this.itemMgr = itemMgr;
     }
 
     /**
@@ -56,5 +64,13 @@ public class HippoAMContext extends AMContext {
      */
     public NodeTypeRegistry getNodeTypeRegistry() {
         return ntReg;
+    }
+    
+    /**
+     * Returns the SessionItemStateManager associated with the user session
+     * @return the SessionItemStateManager
+     */
+    public SessionItemStateManager getSessionItemStateManager() {
+        return itemMgr;
     }
 }
