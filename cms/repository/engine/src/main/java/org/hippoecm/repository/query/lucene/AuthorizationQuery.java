@@ -168,7 +168,7 @@ public class AuthorizationQuery {
                 } else {
                     return QueryHelper.getNoHitsQuery();
                 }
-            } else if ("nodetype".equals(nodeNameString)) {
+            } else if ("nodetype".equalsIgnoreCase(nodeNameString)) {
                 Query q = getNodeTypeDescendantQuery(facetRule);
                 if (facetRule.isEqual()) {
                     return q;
