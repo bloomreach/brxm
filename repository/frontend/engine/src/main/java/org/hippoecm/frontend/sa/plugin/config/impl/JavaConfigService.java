@@ -1,3 +1,18 @@
+/*
+ * Copyright 2008 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.sa.plugin.config.impl;
 
 import java.util.HashMap;
@@ -44,15 +59,20 @@ public class JavaConfigService implements IPluginConfigService {
     private IClusterConfig initCms() {
         JavaClusterConfig plugins = new JavaClusterConfig();
 
-        // wrap legacy cms plugins
         IPluginConfig config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.root.sa.RootPlugin");
         config.put("wicket.id", "service.root");
-        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms");
-        config.put("legacy.plugin", "rootPlugin");
-
+        config.put("wicket.dialog", "service.dialog");
+        config.put("logoutPlugin", "service.logout");
         plugins.addPlugin(config);
 
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
+        config.put("wicket.id", "service.logout");
+        config.put("wicket.model", "service.model");
+        config.put("wicket.dialog", "service.logout.dialog");
+        plugins.addPlugin(config);
+        
         return plugins;
     }
 
