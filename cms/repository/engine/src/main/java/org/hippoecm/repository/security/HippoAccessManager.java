@@ -741,7 +741,6 @@ public class HippoAccessManager implements AccessManager {
             
             // get iterator over all types
             NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
-            
             NodeType nodeStateNodeType = ntMgr.getNodeType(nodeStateType);
 
             // iterate over All NodeTypes untill...
@@ -752,9 +751,11 @@ public class HippoAccessManager implements AccessManager {
                     // get all supertypes of the nodeState's primaryType's NodeType
                     NodeType[] superTypes = nt.getSupertypes();
                     // check if one of the superTypes matches the nodeType
-                    if (Arrays.asList(superTypes).contains(nodeType)) {
-                        return true;
-                    }
+                    for (NodeType type : superTypes) {
+                        if (type.getName().equals(nodeType)){
+                            return true;
+                        }   
+                    } 
                 }
             }
         } catch (NamespaceException e) {
