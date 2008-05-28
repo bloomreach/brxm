@@ -186,13 +186,13 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         FacetResultCollector collector = null;
         IndexReader indexReader = null;
         IndexSearcher searcher = null;
-        ;
         try {
             /*
              * if getIndexReader(true) you will also get version storage index which
              * cannot be used for facet searches, therefore set 'false'
              */
-            //indexReader = getIndex().getIndexReader();indexReader = getIndexReader(false);
+            //indexReader = getIndex().getIndexReader();
+            indexReader = getIndexReader(false);
             searcher = new IndexSearcher(indexReader);
             searcher.setSimilarity(new FixedScoreSimilarity());
             // In principle, below, there is always one facet
