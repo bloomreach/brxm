@@ -66,25 +66,24 @@ public class AuthorizationQuery {
     private SessionImpl session;
     private final static String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
 
-    public AuthorizationQuery(Set<FacetAuthPrincipal> facetAuths,
-            NamespaceMappings nsMappings, 
-            ServicingIndexingConfiguration indexingConfig, 
-            NodeTypeManager ntMgr, Session session) throws RepositoryException {
-        
+    public AuthorizationQuery(Set<FacetAuthPrincipal> facetAuths, NamespaceMappings nsMappings,
+            ServicingIndexingConfiguration indexingConfig, NodeTypeManager ntMgr, Session session)
+            throws RepositoryException {
+
         this.facetAuths = facetAuths;
         this.nsMappings = nsMappings;
         this.indexingConfig = indexingConfig;
         this.ntMgr = ntMgr;
-        if(!(session instanceof SessionImpl)){
+        if (!(session instanceof SessionImpl)) {
             throw new RepositoryException("Session is not an instance of o.a.j.core.SessionImpl");
         }
-        this.session = (SessionImpl)session;
+        this.session = (SessionImpl) session;
         this.query = initQuery();
-     
+
     }
 
     private BooleanQuery initQuery() {
-        
+
         BooleanQuery authQuery = new BooleanQuery(true);
         Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
         while (facetAuthsIt.hasNext()) {
@@ -103,18 +102,18 @@ public class AuthorizationQuery {
                     if (q == null) {
                         continue;
                     }
-                    if(q instanceof MatchAllDocsQuery) {
+                    if (q instanceof MatchAllDocsQuery) {
                         hasMatchAllDocsQuery = true;
                     }
                     facetQuery.add(q, Occur.MUST);
                 }
-                if(domainRule.getFacetRules().size() == 1 && hasMatchAllDocsQuery) {
-                   /*
-                    * we have a domain rule, with only one facetrule, a MatchAllDocsQuery: this means
-                    * visibility for every node. Return instantly with an empty boolean query
-                    */ 
-                    log.debug("found domain rule with only one facetrule which is a " +
-                    		"MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
+                if (domainRule.getFacetRules().size() == 1 && hasMatchAllDocsQuery) {
+                    /*
+                     * we have a domain rule, with only one facetrule, a MatchAllDocsQuery: this means
+                     * visibility for every node. Return instantly with an empty boolean query
+                     */
+                    log.debug("found domain rule with only one facetrule which is a "
+                            + "MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
                     return new BooleanQuery(true);
                 }
                 authQuery.add(facetQuery, Occur.SHOULD);
@@ -125,15 +124,15 @@ public class AuthorizationQuery {
 
     private Query getFacetRuleQuery(FacetRule facetRule) {
         switch (facetRule.getType()) {
-        case PropertyType.STRING: 
+        case PropertyType.STRING:
             Name nodeName = facetRule.getFacetName();
             try {
                 if (indexingConfig.isFacet(nodeName)) {
                     String internalFieldName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
                     String internalNameTerm = nsMappings.translatePropertyName(nodeName);
                     if (facetRule.getValue().equals("*")) {
-                        if(facetRule.isEqual()) {
-                            return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,internalNameTerm));
+                        if (facetRule.isEqual()) {
+                            return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
                         } else {
                             // * in combination with unequal should never return a hit (though should not be possible 
                             // to exist anyway )
@@ -141,11 +140,12 @@ public class AuthorizationQuery {
                         }
                     } else {
                         Query wq = new WildcardQuery(new Term(internalFieldName, facetRule.getValue() + "?"));
-                        if(facetRule.isEqual()) {
+                        if (facetRule.isEqual()) {
                             return wq;
                         } else {
                             BooleanQuery b = new BooleanQuery(false);
-                            Query propExists = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,internalNameTerm));
+                            Query propExists = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,
+                                    internalNameTerm));
                             b.add(propExists, Occur.MUST);
                             b.add(wq, Occur.MUST_NOT);
                             return b;
@@ -160,29 +160,29 @@ public class AuthorizationQuery {
                 log.error(e.toString());
             }
             break;
-        case PropertyType.NAME: 
+        case PropertyType.NAME:
             String nodeNameString = facetRule.getFacet();
             if (facetRule.getValue().equals("*")) {
-                if(facetRule.isEqual()) {
+                if (facetRule.isEqual()) {
                     return new MatchAllDocsQuery();
                 } else {
                     return QueryHelper.getNoHitsQuery();
                 }
             } else if ("nodetype".equals(nodeNameString)) {
                 Query q = getNodeTypeDescendantQuery(facetRule);
-                if(facetRule.isEqual()) {
+                if (facetRule.isEqual()) {
                     return q;
                 } else {
                     return QueryHelper.negateQuery(q);
                 }
             } else if (nodeNameString.equals("jcr:primaryType")) {
-                return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE,facetRule);
-                
+                return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule);
+
             } else if (nodeNameString.equals("jcr:mixinTypes")) {
-                return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE,facetRule);
+                return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule);
             } else {
-                log.error("hippo:facet must be either 'nodetype', 'jcr:primaryType' " +
-                		"or 'jcr:mixinTypes' when hippo:type = Name \n Ignoring facetrule");
+                log.error("hippo:facet must be either 'nodetype', 'jcr:primaryType' "
+                        + "or 'jcr:mixinTypes' when hippo:type = Name \n Ignoring facetrule");
             }
             break;
         }
@@ -197,13 +197,11 @@ public class AuthorizationQuery {
             NodeType base = ntMgr.getNodeType(session.getJCRName(baseName));
             if (base.isMixin()) {
                 // search for nodes where jcr:mixinTypes is set to this mixin
-                Term t = new Term(ServicingFieldNames.HIPPO_MIXINTYPE,
-                        getTermValue(facetRule.getValue()));
+                Term t = new Term(ServicingFieldNames.HIPPO_MIXINTYPE, getTermValue(facetRule.getValue()));
                 terms.add(t);
             } else {
                 // search for nodes where jcr:primaryType is set to this type
-                Term t = new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE,
-                        getTermValue(facetRule.getValue()));
+                Term t = new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE, getTermValue(facetRule.getValue()));
                 terms.add(t);
             }
 
@@ -218,21 +216,19 @@ public class AuthorizationQuery {
                     Term t;
                     if (nt.isMixin()) {
                         // search on jcr:mixinTypes
-                        t = new Term(ServicingFieldNames.HIPPO_MIXINTYPE,
-                                ntName);
+                        t = new Term(ServicingFieldNames.HIPPO_MIXINTYPE, ntName);
                     } else {
                         // search on jcr:primaryType
-                        t = new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE,
-                                ntName);
+                        t = new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE, ntName);
                     }
                     terms.add(t);
                 }
             }
 
         } catch (NoSuchNodeTypeException e) {
-           log.error("invalid nodetype" + e.getMessage() +"\n" +MESSAGE_ZEROMATCH_QUERY);
+            log.error("invalid nodetype" + e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
         } catch (RepositoryException e) {
-           log.error("invalid nodetype" + e.getMessage()+"\n" +MESSAGE_ZEROMATCH_QUERY);
+            log.error("invalid nodetype" + e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
         }
         if (terms.size() == 0) {
             // exception occured
@@ -246,22 +242,22 @@ public class AuthorizationQuery {
             }
             return b;
         }
-        
+
     }
 
     private Query getNodeTypeQuery(String luceneFieldName, FacetRule facetRule) {
         try {
-        String termValue = getTermValue(facetRule.getValue());
-        Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, termValue));
-        if(facetRule.isEqual()) {
-            return nodetypeQuery;
-        } else {
-            return QueryHelper.negateQuery(nodetypeQuery);
-        }
+            String termValue = getTermValue(facetRule.getValue());
+            Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, termValue));
+            if (facetRule.isEqual()) {
+                return nodetypeQuery;
+            } else {
+                return QueryHelper.negateQuery(nodetypeQuery);
+            }
         } catch (NamespaceException e) {
-            log.error(e.getMessage() +"\n" +MESSAGE_ZEROMATCH_QUERY);
+            log.error(e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
         } catch (IllegalArgumentException e) {
-            log.error(e.getMessage() +"\n" +MESSAGE_ZEROMATCH_QUERY);
+            log.error(e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
         }
         return QueryHelper.getNoHitsQuery();
     }
@@ -270,14 +266,14 @@ public class AuthorizationQuery {
         Name facetNodeType = NameFactoryImpl.getInstance().create(nameString);
         return nsMappings.getPrefix(facetNodeType.getNamespaceURI()) + ":" + facetNodeType.getLocalName();
     }
-    
+
     public BooleanQuery getQuery() {
         return query;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "authorisation query: " + query.toString();
     }
-    
+
 }
