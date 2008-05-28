@@ -21,6 +21,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public class ErrorDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
