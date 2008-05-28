@@ -33,10 +33,10 @@ public class SingledViewFacetSelectTest  extends TestCase {
     private static String[] contents = new String[] {
         "/test",                                                             "nt:unstructured",
         "/test/documents",                                                   "nt:unstructured",
-	"jcr:mixinTypes", "mix:referenceable",
+        "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles",                                          "nt:unstructured",
         "/test/documents/articles/foo",                                      "hippo:folder",
-	"jcr:mixinTypes", "mix:referenceable",
+        "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/foo/brave-new-world",                      "hippo:handle",
         "/test/documents/articles/foo/brave-new-world/brave-new-world",      "hippo:testdocument",
         "language","english",
@@ -53,7 +53,7 @@ public class SingledViewFacetSelectTest  extends TestCase {
         "/test/documents/articles/the-invisible-man/the-invisible-man",      "hippo:testdocument",
         "language","english",
         "/test/documents/articles/war-of-the-worlds",                        "hippo:handle",
-	"jcr:mixinTypes", "mix:referenceable",
+        "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
         "language","english",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/handle-below-document", "hippo:handle",
@@ -85,9 +85,9 @@ public class SingledViewFacetSelectTest  extends TestCase {
     };
 
     public void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
         build(session, contents);
-	session.save();
+        session.save();
     }
 
     @Test public void testFacetedSingledocumentView() throws Exception {
@@ -132,4 +132,4 @@ public class SingledViewFacetSelectTest  extends TestCase {
             this.singleView = singleView;
         }
     }
-    }
+}

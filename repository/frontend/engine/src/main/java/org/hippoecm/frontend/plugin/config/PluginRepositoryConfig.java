@@ -28,6 +28,7 @@ import org.hippoecm.frontend.plugin.parameters.ParameterValue;
 import org.hippoecm.frontend.plugin.parameters.RepositoryParameterValue;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,18 +44,18 @@ public class PluginRepositoryConfig implements PluginConfig {
     private String basePath;
     
     public PluginRepositoryConfig(String path) {
-    	if (!path.startsWith("/")) {
-    		path = "/" + path; 
-    	}
-    	this.basePath = path;
+        if (!path.startsWith("/")) {
+            path = "/" + path; 
+        }
+        this.basePath = path;
     }
 
     public PluginRepositoryConfig(Node baseNode) {
         try {
-			basePath = baseNode.getPath();
-		} catch (RepositoryException e) {
-			log.error(e.getMessage());
-		}
+            basePath = baseNode.getPath();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
     }
 
     public PluginDescriptor getPlugin(String pluginId) {

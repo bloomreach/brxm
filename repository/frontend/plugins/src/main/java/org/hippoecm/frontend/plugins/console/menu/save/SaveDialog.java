@@ -41,14 +41,14 @@ public class SaveDialog extends AbstractDialog {
         Component message;
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         try {
-        	NodeIterator it = nodeModel.getNode().pendingChanges();
+            NodeIterator it = nodeModel.getNode().pendingChanges();
             hasPendingChanges = it.hasNext();
             if (hasPendingChanges) {
-            	StringBuffer buf = new StringBuffer("Pending changes:\n");
-            	while (it.hasNext()) {
-            		Node node = it.nextNode();
-            		buf.append(node.getPath()).append("\n");
-            	}
+                StringBuffer buf = new StringBuffer("Pending changes:\n");
+                while (it.hasNext()) {
+                    Node node = it.nextNode();
+                    buf.append(node.getPath()).append("\n");
+                }
                 message = new MultiLineLabel("message", buf.toString());
             } else {
                 message = new Label("message", "There are no pending changes");

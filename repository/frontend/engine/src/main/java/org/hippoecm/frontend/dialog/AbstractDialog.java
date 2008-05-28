@@ -51,7 +51,7 @@ public abstract class AbstractDialog extends WebPage {
         
         String style =  new PluginConfigFactory().getStyle();
         if (style != null) {
-        	add(HeaderContributor.forCss(style));
+            add(HeaderContributor.forCss(style));
         }
 
         ok = new AjaxLink("ok") {

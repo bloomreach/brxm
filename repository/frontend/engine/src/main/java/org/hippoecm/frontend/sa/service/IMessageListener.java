@@ -19,7 +19,7 @@ import org.apache.wicket.IClusterable;
 
 public interface IMessageListener extends IClusterable {
 
-    void onConnect();
+    public void onConnect();
 
-    void onMessage(Message message);
+    public void onMessage(Message message);
 }
