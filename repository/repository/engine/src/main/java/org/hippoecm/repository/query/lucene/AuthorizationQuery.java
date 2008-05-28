@@ -90,7 +90,7 @@ public class AuthorizationQuery {
                     * visibility for every node. Return instantly with an empty boolean query
                     */ 
                     log.debug("found domain rule with only one facetrule which is a " +
-                    		"MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
+                              "MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
                     return new BooleanQuery(true);
                 }
                 authQuery.add(facetQuery, Occur.SHOULD);
@@ -159,7 +159,7 @@ public class AuthorizationQuery {
                 return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE,facetRule,nsMappings);
             } else {
                 log.error("hippo:facet must be either 'nodetype', 'jcr:primaryType' " +
-                		"or 'jcr:mixinTypes' when hippo:type = Name \n Ignoring facetrule");
+                          "or 'jcr:mixinTypes' when hippo:type = Name \n Ignoring facetrule");
             }
             break;
         }
