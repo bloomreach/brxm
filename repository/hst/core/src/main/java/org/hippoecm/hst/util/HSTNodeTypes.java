@@ -42,6 +42,7 @@ public final class HSTNodeTypes {
     public static final String HST_NODETYPE = "hst:nodetype";
 //    public static final String HST_PAGETYPE = "hst:pageType";
     public static final String HST_PAGEFILE = "hst:pageFile";
-    public static final String PROPERTY_IS_MENU_ITEM = "hst:isMenuItem";
-    public static final String PROPERTY_MENU_LABEL = "hst:menuLabel";
+    public static final String HST_SITE_ITEM = "hst:siteItem";
+    public static final String HST_SITE_ITEM_CHILDREN = "hst:siteItemChildren";
+    public static final String HST_LABEL = "hst:label";
 }

@@ -16,7 +16,6 @@
 package org.hippoecm.hst.taglib;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,26 +27,28 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.hippoecm.hst.components.Menu;
-import org.hippoecm.hst.components.MenuItem;
+import org.hippoecm.hst.components.SiteMap;
+import org.hippoecm.hst.components.SiteMapItem;
 import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.core.HSTConfiguration;
 import org.hippoecm.hst.core.URLPathTranslator;
 
 /**
- * Menu tag showing a dynamic menu from a certain location in the repository. 
+ * Site map tag showing a dynamic site map from a certain location in the 
+ * repository. 
  */
-public class MenuTag extends SimpleTagSupport {
+public class SiteMapTag extends SimpleTagSupport {
     
     private static final String DEFAULT_CONTEXT_NAME = "context";
     private static final String DEFAULT_LOCATION = "/";
-    private static final String DEFAULT_ID = "hst-menu";
+    private static final String DEFAULT_ID = "hst-sitemap";
     private static final Integer DEFAULT_LEVEL = new Integer(0);
-    private static final Integer DEFAULT_DEPTH = new Integer(1);
+    private static final Integer DEFAULT_DEPTH = new Integer(2);
     
-    private final String KEY_CONTEXT_NAME = "menutag.context.name";
-    private final String KEY_LOCATION = "menutag.location";
-    private final String KEY_DOCUMENT_VIEWFILE = "menutag.viewfile";
+    private final String KEY_CONTEXT_NAME = "sitemaptag.context.name";
+    private final String KEY_LOCATION = "sitemaptag.location";
+    private final String KEY_DOCUMENT_VIEWFILE = "sitemaptag.viewfile";
+    private final String KEY_DOCUMENT_DOCUMENT_LABEL_PROPERTIES = "sitemaptag.document.label.properties";
 
     private String contextName = null;
     private String location = null;
@@ -55,6 +56,7 @@ public class MenuTag extends SimpleTagSupport {
     private String id = null;
     private Integer level = null;
     private Integer depth = null;
+    private String[] documentLabelProperties = null;
 
     private URLPathTranslator urlPathTranslator;
 
@@ -113,20 +115,14 @@ public class MenuTag extends SimpleTagSupport {
                                             : loc + "/" + relativeLocation;
             }
  
-            Menu menu = Menu.getMenu(request.getSession(), location);
-            
-            // map decoded URL to active document path
-            String activePath = URLDecoder.decode(context.getRequestURI(), "UTF-8");
-            activePath = getURLPathTranslator(request).urlToDocumentPath(activePath);
-            
-            menu.setActive(activePath);
+            SiteMap siteMap = SiteMap.getSiteMap(request.getSession(), location, getDocumentLabelProperties());
             
             String viewFile = getViewFile();
             if (viewFile == null) {
-                doOutputDefault(menu, pageContext);
+                doOutputDefault(siteMap, pageContext);
             }
             else {
-                doOutputByInclude(menu, pageContext, viewFile);
+                doOutputByInclude(siteMap, pageContext, viewFile);
             }
         } 
         catch (ServletException ex) {
@@ -245,6 +241,33 @@ public class MenuTag extends SimpleTagSupport {
         return this.viewFile;
     }
 
+    /**
+     * Get optional properties for documents to set as label for site map items.
+     */
+    private String[] getDocumentLabelProperties() {
+        
+        // lazy (no setter)
+        if (this.documentLabelProperties == null) {
+        
+            // by configuration only
+            if (this.documentLabelProperties == null) {
+                HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
+
+                if (documentLabelProperties == null) {
+                    String documentLabelProperty = HSTConfiguration.get(request.getSession().getServletContext(), 
+                            KEY_DOCUMENT_DOCUMENT_LABEL_PROPERTIES, false/*not required*/);
+
+                    if (documentLabelProperty != null) {
+                        this.documentLabelProperties = documentLabelProperty.split(",");
+                    }
+                }
+            }    
+        }
+
+        // may return null 
+        return this.documentLabelProperties;
+    }
+
     private URLPathTranslator getURLPathTranslator(HttpServletRequest request) {
         
         // lazy
@@ -258,17 +281,17 @@ public class MenuTag extends SimpleTagSupport {
     }
 
     /** Output default HTML by configured or default properties */
-    private void doOutputDefault(Menu menu, PageContext pageContext) throws IOException, JspException {
+    private void doOutputDefault(SiteMap siteMap, PageContext pageContext) throws IOException, JspException {
         
         StringBuffer buffer = new StringBuffer();
 
-        writeDefaultOutput(buffer, menu.getItems(), 0/*currentLevel*/, pageContext);
+        writeDefaultOutput(buffer, siteMap.getDocuments(), siteMap.getFolders(), 0/*currentLevel*/, pageContext);
 
         pageContext.getOut().append(buffer);
     }
 
     /** Output by including (jsp) file */
-    private void doOutputByInclude(Menu menu, PageContext pageContext, String viewFile) 
+    private void doOutputByInclude(SiteMap siteMap, PageContext pageContext, String viewFile) 
                                 throws JspException, ServletException, IOException {
 
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
@@ -280,9 +303,9 @@ public class MenuTag extends SimpleTagSupport {
             throw new JspException("No dispatcher could be obtained for file " + viewFile);
         }
         
-        // set menu under id in the request for easy access, plus other tag 
+        // set site map under id in the request for easy access, plus other tag 
         // attributes 
-        request.setAttribute(getId(), menu);
+        request.setAttribute(getId(), siteMap);
         request.setAttribute(getId() + "-level", getLevel());
         request.setAttribute(getId() + "-depth", getDepth());
         
@@ -302,7 +325,8 @@ public class MenuTag extends SimpleTagSupport {
         }
     }
 
-    private void writeDefaultOutput(StringBuffer buffer, List<MenuItem> menuItems, int currentLevel, PageContext pageContext) {
+    private void writeDefaultOutput(StringBuffer buffer, List<SiteMapItem> documentItems, 
+            List<SiteMapItem> folderItems, int currentLevel, PageContext pageContext) {
             
         // check end level
         int endLevel = getLevel() + getDepth() - 1;
@@ -313,63 +337,113 @@ public class MenuTag extends SimpleTagSupport {
         // check (start) level
         if (getLevel() <= currentLevel) {
             
+            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+            HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+
             boolean isFirst = getLevel() == currentLevel;
             
             // loop
-            Iterator<MenuItem> iterator = menuItems.iterator();
-            if (iterator.hasNext()) {
+            Iterator<SiteMapItem> documents = documentItems.iterator();
+            Iterator<SiteMapItem> folders = folderItems.iterator();
+            
+            boolean doWriteDocuments = documents.hasNext(); 
+            boolean doWriteFolders = folders.hasNext(); 
+            
+            if (doWriteDocuments || doWriteFolders) {
 
-                HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-                HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
-
-                buffer.append("<ul");
                 if (isFirst) {
-                    buffer.append(" id=\"");
+                    buffer.append("<div id=\"");
                     buffer.append(getId());
-                    buffer.append("\"");
-                }    
-                buffer.append(">\n");
-                
-                // loop menu items for output
-                while (iterator.hasNext()) {
-                    MenuItem item = iterator.next();
-
-                    buffer.append("<li>");
-                    buffer.append("<a class=\"");
-                    buffer.append(item.isActive() ? "active" : "inactive");
-                    buffer.append("\" title=\"");
-                    buffer.append(item.getLabel());
-                    buffer.append("\" href=\"");
-                    buffer.append(encodePath(item.getPath(), request, response));
-                    buffer.append("\">");
-                    buffer.append(item.getLabel());
-                    buffer.append("</a>");
-                
-                    // recursion!
-                    writeDefaultOutput(buffer, item.getItems(), item.getLevel() + 1, pageContext);
-                
-                    buffer.append("</li>\n");
+                    buffer.append("\">\n");
                 }
                 
+                buffer.append("<ul class=\"level");
+                buffer.append(currentLevel);
+                buffer.append("\">\n");
+                
+                // loop folder items for output
+                if (doWriteFolders) {
+                    buffer.append("  <li class=\"folders\"><ul>\n");
+
+                    while (folders.hasNext()) {
+                        SiteMapItem folder = folders.next();
+    
+                        buffer.append("    <li class=\"folder\">");
+                        buffer.append("<a title=\"");
+                        buffer.append(folder.getLabel());
+                        buffer.append("\" href=\"");
+                        buffer.append(encodePath(folder.getPath(), request, response));
+                        buffer.append("\">");
+                        buffer.append(folder.getLabel());
+                        buffer.append("</a>\n");
+                    
+                        // recursion!
+                        writeDefaultOutput(buffer, folder.getDocuments(), folder.getFolders(), 
+                                folder.getLevel() + 1, pageContext);
+                    
+                        buffer.append("    </li>\n");
+                    }
+    
+
+                    buffer.append("  </ul></li>\n");
+                }
+
+                if (doWriteDocuments) {
+                    buffer.append("  <li class=\"documents\"><ul>\n");
+                
+                    // loop document items for output
+                    while (documents.hasNext()) {
+                        SiteMapItem document = documents.next();
+        
+                        buffer.append("    <li class=\"document\">");
+                        buffer.append("<a title=\"");
+                        buffer.append(document.getLabel());
+                        buffer.append("\" href=\"");
+                        buffer.append(encodePath(document.getPath(), request, response));
+                        buffer.append("\">");
+                        buffer.append(document.getLabel());
+                        buffer.append("</a>\n");
+                    
+                        // recursion!
+                        writeDefaultOutput(buffer, document.getDocuments(), document.getFolders(), 
+                                document.getLevel() + 1, pageContext);
+                    
+                        buffer.append("    </li>\n");
+                    }
+
+                    buffer.append("  </ul></li>\n");
+                }
+
                 buffer.append("</ul>\n");
+
+                if (isFirst) {
+                    buffer.append("</div>\n");
+                }
             }
         }
         else {
-            // not yet at start level so still loop menu items to find one 
-            // selected and recurse
-            Iterator<MenuItem> iterator = menuItems.iterator();
-            while (iterator.hasNext()) {
-                
-                MenuItem item = iterator.next();
             
-                if (item.isActive()) {
-                    
-                    // recursion!
-                    writeDefaultOutput(buffer, item.getItems(), item.getLevel() + 1, pageContext);
-                    
-                    return;
-                }
+            // not yet at start level so still loop items to find the right level
+            Iterator<SiteMapItem> folders = folderItems.iterator();
+            while (folders.hasNext()) {
+                
+                SiteMapItem folder = folders.next();
+            
+                // recursion!
+                writeDefaultOutput(buffer, folder.getDocuments(), folder.getFolders(), 
+                        folder.getLevel() + 1, pageContext);
             }
+
+            Iterator<SiteMapItem> documents = documentItems.iterator();
+            while (documents.hasNext()) {
+                
+                SiteMapItem document = documents.next();
+            
+                // recursion!
+                writeDefaultOutput(buffer, document.getDocuments(), document.getFolders(), 
+                        document.getLevel() + 1, pageContext);
+            }
+
         }
     }
 }
