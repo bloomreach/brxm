@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standards.tabs;
+package org.hippoecm.frontend.plugins.standards.sa.tabs;
+
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,7 +42,6 @@ public class TabsPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
 
     public static final String TAB_ID = "tabs";
-
     public static final int MAX_TAB_TITLE_LENGTH = 9;
 
     private TabbedPanel tabbedPanel;
@@ -60,6 +60,7 @@ public class TabsPlugin extends RenderPlugin {
         tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void onServiceAdded(IRenderService service, String name) {
                 // add the plugin
                 service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
@@ -73,6 +74,7 @@ public class TabsPlugin extends RenderPlugin {
                 redraw();
             }
 
+            @Override
             public void onRemoveService(IRenderService service, String name) {
                 Tab tabbie = findTabbie(service);
                 if (tabbie != null) {
@@ -124,10 +126,10 @@ public class TabsPlugin extends RenderPlugin {
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
         tabbie.select(true);
-/*        IFactoryService factory = tabbie.factoryTracker.getService();
-        if (factory != null) {
-            factory.delete(tabbie.renderer);
-        } */
+        /*        IFactoryService factory = tabbie.factoryTracker.getService();
+         if (factory != null) {
+         factory.delete(tabbie.renderer);
+         } */
     }
 
     private Tab findTabbie(IRenderService service) {
@@ -155,9 +157,9 @@ public class TabsPlugin extends RenderPlugin {
             // look for previously selected tab
             int lastCount = 0;
             Tab lastTab = null;
-            Iterator<Tab> tabs = tabbedPanel.getTabs().iterator();
-            while (tabs.hasNext()) {
-                Tab tabbie = tabs.next();
+            Iterator<Tab> tabIterator = tabbedPanel.getTabs().iterator();
+            while (tabIterator.hasNext()) {
+                Tab tabbie = tabIterator.next();
                 if (tabbie.lastSelected > lastCount) {
                     lastCount = tabbie.lastSelected;
                     lastTab = tabbie;

@@ -35,6 +35,9 @@ import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin.Tab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.standards.sa.tabs.* instead
+ */
 public class OnCloseDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 

@@ -63,7 +63,14 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.root.sa.RootPlugin");
         config.put("wicket.id", "service.root");
         config.put("wicket.dialog", "service.dialog");
+        config.put("tabsPlugin", "service.tabs");
         config.put("logoutPlugin", "service.logout");
+        plugins.addPlugin(config);
+
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.standards.sa.tabs.TabsPlugin");
+        config.put("wicket.id", "service.tabs");
+        config.put("tabs", "service.tab");
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig();
@@ -136,7 +143,7 @@ public class JavaConfigService implements IPluginConfigService {
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.standards.tabs.TabsPlugin");
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.standards.sa.tabs.TabsPlugin");
         config.put("wicket.id", "service.content");
         config.put("tabs", "service.tab");
         plugins.addPlugin(config);

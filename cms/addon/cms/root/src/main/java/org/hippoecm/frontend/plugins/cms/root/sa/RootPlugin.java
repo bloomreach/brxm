@@ -28,7 +28,7 @@ public class RootPlugin extends RenderPlugin {
         super(context, config);
         
         for (String extension : new String[] {
-                "logoutPlugin"
+                "logoutPlugin", "tabsPlugin"
             }) {
                 addExtensionPoint(extension);
             }

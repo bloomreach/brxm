@@ -46,12 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The TabsPlugin is an editor-aware container of plugins.  The tabs correspond
- * to child plugins (perspectives).  Tab switching is implemented by handling the
- * "edit" and "focus" requests.  The edit operation is sent as a notification
- * to the perspectives.  If one of those wishes to obtain focus, it can request it
- * by sending a "focus" request.
- *
+ * @deprecated use org.hippoecm.frontend.plugins.standards.sa.tabs.* instead
  */
 public class TabsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;

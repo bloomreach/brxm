@@ -27,7 +27,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 
 /**
- * 
+ * @deprecated use org.hippoecm.frontend.plugins.standards.sa.tabs.* instead
  */
 public class TabbedPanel extends org.apache.wicket.extensions.markup.html.tabs.TabbedPanel {
     private static final long serialVersionUID = 1L;
