@@ -78,7 +78,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     }
 
     void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,
-            org.apache.jackrabbit.core.SessionImpl session, Subject subject) {
+            org.apache.jackrabbit.core.SessionImpl session, Subject subject) throws RepositoryException {
         FacetedNavigationEngine<FacetedNavigationEngine.Query,FacetedNavigationEngine.Context> facetedEngine = getFacetedNavigationEngine();
         Set<FacetAuthPrincipal> principals = subject.getPrincipals(FacetAuthPrincipal.class);
         FacetedNavigationEngine.Context facetedContext;
