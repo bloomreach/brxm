@@ -162,7 +162,7 @@ public class VersionPane extends RenderPlugin {
     }
 
     private void browseVersion(int direction) {
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault());
+        DateFormat dateFormat = DateFormat.getDateTimeInstance();
         JcrNodeModel model = (JcrNodeModel) VersionPane.this.getModel();
         Object currentVersionObject = versionComponent.getModel().getObject();
         int currentVersion = (currentVersionObject instanceof Integer ? ((Integer) currentVersionObject).intValue()
