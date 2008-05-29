@@ -30,4 +30,7 @@
     <sv:property sv:name="hippo:members" sv:type="String">
         <sv:value>admin</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:description" sv:type="String">
+        <sv:value></sv:value>
+    </sv:property>
 </sv:node>

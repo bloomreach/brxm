@@ -34,4 +34,13 @@
       <sv:property sv:name="hippo:password" sv:type="String">
         <sv:value>$SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:firstname" sv:type="String">
+        <sv:value></sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:lastname" sv:type="String">
+        <sv:value></sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:email" sv:type="String">
+        <sv:value></sv:value>
+      </sv:property>
 </sv:node>
