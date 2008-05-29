@@ -50,19 +50,24 @@
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
       <version>${parent.version}</version>
     </dependency>
-
+    
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
+<!--    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
       <version>${org.slf4j.version}</version>
       <scope>runtime</scope>
-    </dependency>
+    </dependency>-->
 
     <dependency>
       <groupId>junit</groupId>
