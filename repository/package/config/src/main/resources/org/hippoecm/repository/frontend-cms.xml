@@ -24,7 +24,7 @@
     xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0">
 
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginfolder</sv:value>
+        <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
 
     <sv:node sv:name="rootPlugin">
@@ -36,6 +36,9 @@
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>service.root</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.skin" sv:type="String">
+            <sv:value>skin/style.css</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.dialog" sv:type="String">
             <sv:value>service.dialog</sv:value>

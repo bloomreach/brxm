@@ -23,7 +23,7 @@
 
 [frontend:plugin] > hippo:plugin
 
-[frontend:pluginfolder] > nt:base
+[frontend:plugincluster] > nt:base
 + * (frontend:plugin) = frontend:plugin
 
 /* BEGIN DEPRECATED */
