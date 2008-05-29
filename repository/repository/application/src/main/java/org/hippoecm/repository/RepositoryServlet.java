@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import sun.misc.BASE64Decoder;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoNode;
@@ -293,9 +294,9 @@ public class RepositoryServlet extends HttpServlet {
             StringTokenizer pathElts = new StringTokenizer(path, "/");
             while (pathElts.hasMoreTokens()) {
                 pathElt = pathElts.nextToken();
-                pathEltName = ISO9075Helper.decodeLocalName(pathElt);
+                pathEltName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(pathElt));
 
-                currentPath += "/" + pathElt;
+                currentPath += "/" + StringEscapeUtils.escapeHtml(pathElt);
                 writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/" + currentPath + "/\">/"
                         + pathEltName + "</a>");
             }
@@ -308,8 +309,8 @@ public class RepositoryServlet extends HttpServlet {
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
                 writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/"
-                        + child.getPath() + "/" + "\">");
-                String displayName = ISO9075Helper.decodeLocalName(((HippoNode) child).getDisplayName());
+                        + StringEscapeUtils.escapeHtml(child.getPath()) + "/" + "\">");
+                String displayName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(((HippoNode) child).getDisplayName()));
                 if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
                 } else {
