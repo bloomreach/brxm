@@ -24,6 +24,11 @@
                             <td><div wicket:id="document"></div></td>
                         </tr>
                         <tr>
+                            <td>Version</td>
+                            <td>:</td>
+                            <td><div wicket:id="version"></div></td>
+                        </tr>
+                        <tr>
                             <td>Created</td>
                             <td>:</td>
                             <td><div wicket:id="created"></div></td>
@@ -41,12 +46,13 @@
                     </table>
                 </td>
                 <td><ul><li><div wicket:id="restore">restore this version</div></li>
-                        <li><div wicket:id="compare"><!-- compare with other version --></div></li>
+                        <!-- <li><div wicket:id="compare">compare with other version</div></li> -->
+                        <li><div wicket:id="test">test</div></li> <!-- FIXME: this item to be removed after testing -->
                         <li><table><tr><td valign="middle"><div wicket:id="older">older</div></td><td>&nbsp;browse to&nbsp;<br/>version</td><td><div wicket:id="newer">newer</div></td></tr>
                 </table></li></ul></td>
             </tr>
             <tr>
-                <td colspan="2"><div wicket id="document"></div></td>
+                <td colspan="2"><div wicket:id="display"></div></td>
             </tr>
         </table>
     </wicket:panel>
