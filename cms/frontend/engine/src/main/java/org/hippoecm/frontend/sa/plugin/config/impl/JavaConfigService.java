@@ -80,6 +80,15 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("wicket.model", "service.dashboard.node");
         config.put("service.pid", "service.dashboard");
         config.put("perspective.title", "Dashboard");
+        config.put("legacyDashboard", "service.dashboard.legacy");
+        plugins.addPlugin(config);
+        
+        // Wrap legacy cms dashboard
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
+        config.put("wicket.id", "service.dashboard.legacy");                               
+        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
+        config.put("legacy.plugin", "dashboardPerspective");
         plugins.addPlugin(config);
         
         config = new JavaPluginConfig();
