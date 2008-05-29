@@ -126,8 +126,29 @@
         </sv:property>
         <sv:property sv:name="perspective.title" sv:type="String">
             <sv:value>Browse</sv:value>
+        </sv:property>
+        <sv:property sv:name="legacyBrowse" sv:type="String">
+            <sv:value>service.browse.legacy</sv:value>
         </sv:property>        
     </sv:node>
+    
+    <sv:node sv:name="legacyBrowse">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.sa.adapter.AdapterPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.browse.legacy</sv:value>
+        </sv:property>
+        <sv:property sv:name="legacy.base" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel</sv:value>
+        </sv:property>        
+        <sv:property sv:name="legacy.plugin" sv:type="String">
+            <sv:value>browsePerspective</sv:value>
+        </sv:property>
+    </sv:node>    
         
     <sv:node sv:name="logoutPlugin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
