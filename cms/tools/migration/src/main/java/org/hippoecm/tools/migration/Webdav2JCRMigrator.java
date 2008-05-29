@@ -163,14 +163,16 @@ public class Webdav2JCRMigrator implements Plugin {
                         + jcrWorkspace);
             }
 
+            // setup converter
+            documentConverter.setup(pluginConfig, session, httpClient);
+            
             // test and create target path
-            JCRHelper.checkAndCreatePath(session, jcrPath);
+            JCRHelper.checkAndCreatePath(session, jcrPath, documentConverter);
 
             // webdav
             createHttpClient(config);
 
-            // setup converter
-            documentConverter.setup(pluginConfig, session, httpClient);
+            
 
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
@@ -218,7 +220,7 @@ public class Webdav2JCRMigrator implements Plugin {
                 // create nt:unstructured nodes if they don't exist
                 if (!parent.hasNode(nodeName)) {
                     javax.jcr.Node n = parent.addNode(nodeName);
-                    n.addMixin("mix:referenceable");                
+                    documentConverter.setMixinsPlusProps(n);
                     }
             }
 
@@ -266,6 +268,11 @@ public class Webdav2JCRMigrator implements Plugin {
      * Logout from the JCR session
      */
     public void postprocess() {
+        try {
+            session.save();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
         session.logout();
     }
 

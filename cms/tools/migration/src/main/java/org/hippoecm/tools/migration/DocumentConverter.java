@@ -48,6 +48,12 @@ public interface DocumentConverter {
     void convertNodeToJCR(nl.hippo.webdav.batchprocessor.Node webdavNode, String nodeName, javax.jcr.Node parent)
             throws RepositoryException, ProcessingException, OperationOnDeletedNodeException, IOException;
 
+    /** 
+     * Sets the needed mixintypes and properties on created nodes which represent a 'folder'
+     */
+    
+    void setMixinsPlusProps(javax.jcr.Node node) throws  RepositoryException ;
+    
     /**
      * Get the JCR session
      * @return Session
