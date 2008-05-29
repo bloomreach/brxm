@@ -27,6 +27,7 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 /**
  * @deprecated use org.hippoecm.frontend.sa.plugin.error.ErrorPlugin instead
  */
+@Deprecated
 public class ExceptionPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
     private DialogWindow dialogWindow;

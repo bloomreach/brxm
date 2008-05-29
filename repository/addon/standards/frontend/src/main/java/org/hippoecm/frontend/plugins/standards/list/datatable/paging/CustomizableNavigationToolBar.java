@@ -26,6 +26,10 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.Model;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead
+ */
+@Deprecated
 public class CustomizableNavigationToolBar extends AbstractToolbar{
 
     private static final long serialVersionUID = 1L;

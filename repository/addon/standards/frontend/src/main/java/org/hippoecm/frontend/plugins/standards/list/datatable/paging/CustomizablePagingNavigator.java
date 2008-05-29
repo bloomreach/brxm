@@ -20,6 +20,10 @@ import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigation;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead
+ */
+@Deprecated
 public class CustomizablePagingNavigator extends AjaxPagingNavigator{
 
     private static final long serialVersionUID = 1;

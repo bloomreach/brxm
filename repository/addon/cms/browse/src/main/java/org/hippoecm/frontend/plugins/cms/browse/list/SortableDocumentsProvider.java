@@ -22,9 +22,14 @@ import java.util.List;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.JcrNodeModelComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
+ */
+@Deprecated
 public class SortableDocumentsProvider extends SortableDataProvider {
     private static final long serialVersionUID = 1L;
 

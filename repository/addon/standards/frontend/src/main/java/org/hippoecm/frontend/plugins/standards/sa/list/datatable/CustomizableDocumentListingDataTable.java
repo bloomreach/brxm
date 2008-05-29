@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.datatable;
+package org.hippoecm.frontend.plugins.standards.sa.list.datatable;
 
 import java.util.List;
 
@@ -28,13 +28,8 @@ import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugins.standards.list.datatable.paging.CustomizableNavigationToolBar;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead
- */
-@Deprecated
 public class CustomizableDocumentListingDataTable extends DataTable implements ICustomizableDocumentListingDataTable {
 
     private static final long serialVersionUID = 1L;
@@ -47,10 +42,10 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
     private final static int DEFAULT_VIEWSIZE = Integer.MAX_VALUE;
 
     private ISortableDataProvider dataProvider;
-    private JcrNodeModel selectedNode;
 
-    public CustomizableDocumentListingDataTable(String id, List/* <IColumn> */columns, ISortableDataProvider dataProvider, int rowsPerPage, boolean defaultsOn) {
-        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage, defaultsOn);
+    public CustomizableDocumentListingDataTable(String id, List/* <IColumn> */columns,
+            ISortableDataProvider dataProvider, int rowsPerPage, boolean defaultsOn) {
+        this(id, (IColumn[]) columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage, defaultsOn);
     }
 
     /**
@@ -65,46 +60,48 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
      * @param rowsPerPage
      *            number of rows per page
      */
-    public CustomizableDocumentListingDataTable(String id, IColumn[] columns, ISortableDataProvider dataProvider, int rowsPerPage, boolean defaultsOn) {
+    public CustomizableDocumentListingDataTable(String id, IColumn[] columns, ISortableDataProvider dataProvider,
+            int rowsPerPage, boolean defaultsOn) {
         super(id, columns, dataProvider, rowsPerPage);
         setOutputMarkupId(true);
         setVersioned(false);
         this.dataProvider = dataProvider;
-        if(defaultsOn) {
+        if (defaultsOn) {
             addTopColumnHeaders();
             addBottomPaging();
         }
     }
 
-    protected Item newRowItem(String id, int index, IModel model)
-    {
+    protected Item newRowItem(String id, int index, IModel model) {
         OddEvenItem item = new OddEvenItem(id, index, model);
-        
+
         // check if a node in the list has been selected, if yes append appropriate CSS class
+        JcrNodeModel selectedNode = (JcrNodeModel) getModel();
         if (selectedNode != null
                 && model instanceof JcrNodeModel
-                && selectedNode.equals((JcrNodeModel)model )) {
+                && (selectedNode.equals((JcrNodeModel) model) || selectedNode.getParentModel().equals(
+                        (JcrNodeModel) model))) {
             item.add(new AttributeAppender("class", new Model("selected"), " "));
         }
-        
+
         return item;
     }
-
 
     /* (non-Javadoc)
      * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging()
      */
-    public void addTopPaging(){
+    public void addTopPaging() {
         addTopPaging(DEFAULT_VIEWSIZE);
     }
+
     /* (non-Javadoc)
      * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addTopPaging(int viewSize)
      */
     public void addTopPaging(int viewSize) {
-        if(ajaxTopNavigationToolbar == null ) {
-            ajaxTopNavigationToolbar = new CustomizableNavigationToolBar(this,viewSize);
+        if (ajaxTopNavigationToolbar == null) {
+            ajaxTopNavigationToolbar = new CustomizableNavigationToolBar(this, viewSize);
         }
-        if(!this.contains(ajaxTopNavigationToolbar, true)) {
+        if (!this.contains(ajaxTopNavigationToolbar, true)) {
             super.addTopToolbar(ajaxTopNavigationToolbar);
         }
     }
@@ -113,10 +110,10 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
      * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addTopColumnHeaders()
      */
     public void addTopColumnHeaders() {
-        if(ajaxFallbackTopHeadersToolbar == null ) {
+        if (ajaxFallbackTopHeadersToolbar == null) {
             ajaxFallbackTopHeadersToolbar = new AjaxFallbackHeadersToolbar(this, dataProvider);
         }
-        if(!this.contains(ajaxFallbackTopHeadersToolbar, true)) {
+        if (!this.contains(ajaxFallbackTopHeadersToolbar, true)) {
             super.addTopToolbar(ajaxFallbackTopHeadersToolbar);
         }
     }
@@ -127,32 +124,28 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
     public void addBottomPaging() {
         addBottomPaging(DEFAULT_VIEWSIZE);
     }
+
     /* (non-Javadoc)
      * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addBottomPaging(int viewSize)
      */
     public void addBottomPaging(int viewSize) {
-        if(ajaxBottomNavigationToolbar == null ) {
-            ajaxBottomNavigationToolbar = new CustomizableNavigationToolBar(this,viewSize);
+        if (ajaxBottomNavigationToolbar == null) {
+            ajaxBottomNavigationToolbar = new CustomizableNavigationToolBar(this, viewSize);
         }
-        if(!this.contains(ajaxBottomNavigationToolbar, true)) {
+        if (!this.contains(ajaxBottomNavigationToolbar, true)) {
             super.addBottomToolbar(ajaxBottomNavigationToolbar);
         }
     }
-
 
     /* (non-Javadoc)
      * @see org.hippoecm.cmsprototype.frontend.plugins.generic.list.datatable.ICustomizableDocumentListingDataTable#addBottomColumnHeaders()
      */
     public void addBottomColumnHeaders() {
-        if(ajaxFallbackBottomHeadersToolbar == null ) {
+        if (ajaxFallbackBottomHeadersToolbar == null) {
             ajaxFallbackBottomHeadersToolbar = new AjaxFallbackHeadersToolbar(this, dataProvider);
         }
-        if(!this.contains(ajaxFallbackBottomHeadersToolbar, true)) {
+        if (!this.contains(ajaxFallbackBottomHeadersToolbar, true)) {
             super.addBottomToolbar(ajaxFallbackBottomHeadersToolbar);
         }
-    }
-
-    public void setSelectedNode(JcrNodeModel nodeModel) {
-        selectedNode = nodeModel;
     }
 }

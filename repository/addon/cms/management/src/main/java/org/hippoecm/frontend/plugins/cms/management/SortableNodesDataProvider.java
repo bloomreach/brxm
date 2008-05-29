@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.cms.browse.list.JcrNodeModelComparator;
+import org.hippoecm.frontend.model.JcrNodeModelComparator;
 
 public abstract class SortableNodesDataProvider extends SortableDataProvider implements FlushableSortableDataProvider {
     private static final long serialVersionUID = 1L;

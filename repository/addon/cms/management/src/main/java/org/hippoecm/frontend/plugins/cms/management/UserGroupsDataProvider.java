@@ -29,7 +29,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.cms.browse.list.JcrNodeModelComparator;
+import org.hippoecm.frontend.model.JcrNodeModelComparator;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoQuery;
 

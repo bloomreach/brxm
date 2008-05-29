@@ -28,6 +28,10 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
+ */
+@Deprecated
 public class DocumentListingPlugin extends AbstractListingPlugin {
 
     private static final long serialVersionUID = 1L;

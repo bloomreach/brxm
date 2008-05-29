@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list;
+package org.hippoecm.frontend.plugins.standards.sa.list;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
@@ -31,27 +34,26 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.PluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.model.JcrNodeModelComparator;
+import org.hippoecm.frontend.model.SortableDataAdapter;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead
- */
-@Deprecated
-public abstract class AbstractListingPlugin extends Plugin {
+public abstract class AbstractListingPlugin extends RenderPlugin {
 
     protected static final String LISTING_NODETYPE = "hippo:listing";
     protected static final String LISTINGPROPS_NODETYPE = "hippo:listingpropnode";
@@ -70,70 +72,74 @@ public abstract class AbstractListingPlugin extends Plugin {
     public static final int DEFAULT_PAGE_SIZE = 10;
     public static final int DEFAULT_VIEW_SIZE = 5;
 
+    //    public static final String PROVIDER_ID = "wicket.provider";
+
     public int pageSize = DEFAULT_PAGE_SIZE;
     public int viewSize = DEFAULT_VIEW_SIZE;
 
-    //FIXME: remove this 
     public static final String USER_PATH_PREFIX = "/hippo:configuration/hippo:users/";
 
     protected List<IStyledColumn> columns;
-    private CustomizableDocumentListingDataTable dataTable;
+    //    private ProviderReference providerRef;
+    private SortableDataAdapter<JcrNodeModel> provider;
+    private Map<String, Comparator<? super JcrNodeModel>> compare;
 
-    public AbstractListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
-        createTableColumns(pluginDescriptor, new JcrNodeModel(model));
+        compare = new HashMap<String, Comparator<? super JcrNodeModel>>();
+        compare.put("name", new JcrNodeModelComparator("name"));
+        compare.put(JcrConstants.JCR_PRIMARYTYPE, new JcrNodeModelComparator(JcrConstants.JCR_PRIMARYTYPE));
+        compare.put("state", new JcrNodeModelComparator("state"));
+        add(new EmptyPanel("table"));
+
+        createTableColumns();
+    }
+
+    public void setDataProvider(IDataProvider provider) {
+        this.provider = new SortableDataAdapter<JcrNodeModel>(provider, compare);
+        this.provider.setSort("name", true);
+
+        Component table = getTable("table", this.provider);
+        table.setModel(getModel());
+        replace(table);
+    }
+
+    public IDataProvider getDataProvider() {
+        return provider.getDataProvider();
     }
 
     @Override
-    public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(notification.getModel());
-            Node node = (Node) model.getNode();
-            boolean selectParentModel = false;
+    public void onModelChanged() {
+        super.onModelChanged();
+        // calculate list of node models
+        // FIXME: move into separate service
+        JcrNodeModel model = (JcrNodeModel) getModel();
+        List<JcrNodeModel> entries = new ArrayList<JcrNodeModel>();
+        Node node = (Node) model.getNode();
+        try {
             while (node != null) {
-                try {
-                    if (!node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType(HippoNodeType.NT_HANDLE)
-                            && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
-                            && !node.isNodeType(HippoNodeType.NT_REQUEST)) {
-                        break;
-                    } else {
-                        if (node.isNodeType(HippoNodeType.NT_DOCUMENT) || node.isNodeType(HippoNodeType.NT_REQUEST)) {
-                            selectParentModel = true;
-                        }
-                        node = node.getParent();
+                if (!node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType(HippoNodeType.NT_HANDLE)
+                        && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
+                        && !node.isNodeType(HippoNodeType.NT_REQUEST)) {
+                    NodeIterator childNodesIterator = node.getNodes();
+                    while (childNodesIterator.hasNext()) {
+                        entries.add(new JcrNodeModel(childNodesIterator.nextNode()));
                     }
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
+                    break;
                 }
+                node = node.getParent();
             }
 
-            List<String> entries = new ArrayList<String>();
-            try {
-                NodeIterator childNodesIterator = node.getNodes();
-                while (childNodesIterator.hasNext()) {
-                    entries.add(childNodesIterator.nextNode().getPath());
-                }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-            PluginModel listModel = new PluginModel();
-            listModel.put("entries", entries);
-            setModel(listModel);
-
-            //TODO: shouldn't getTable() always use getModel()/getPluginModel() 
-            //instead of passing the model as a parameters?
-            replace(dataTable = getTable(listModel));
-            if (selectParentModel) {
-                dataTable.setSelectedNode(model.getParentModel());
-            } else {
-                dataTable.setSelectedNode(model);
-            }
-            notification.getContext().addRefresh(this);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
         }
+        setDataProvider(new ListDataProvider(entries));
     }
 
-    public void createTableColumns(PluginDescriptor pluginDescriptor, JcrNodeModel model) {
+    // internals
+
+    public void createTableColumns() {
         UserSession session = (UserSession) Session.get();
         columns = new ArrayList<IStyledColumn>();
         String userPrefListingSettingsLocation = USER_PATH_PREFIX + session.getJcrSession().getUserID() + "/"
@@ -147,14 +153,14 @@ public abstract class AbstractListingPlugin extends Plugin {
 
             NodeIterator nodeIt = userPrefNode.getNodes();
             if (nodeIt.getSize() == 0) {
-                defaultColumns(pluginDescriptor);
+                defaultColumns();
             }
             while (nodeIt.hasNext()) {
                 Node n = nodeIt.nextNode();
                 if (n.hasProperty(COLUMNNAME_PROPERTY) && n.hasProperty(PROPERTYNAME_PROPERTY)) {
                     String columnName = n.getProperty(COLUMNNAME_PROPERTY).getString();
                     String propertyName = n.getProperty(PROPERTYNAME_PROPERTY).getString();
-                    columns.add(getNodeColumn(new Model(columnName), propertyName, getTopChannel()));
+                    columns.add(getNodeColumn(new Model(columnName), propertyName));
                 }
             }
         } catch (PathNotFoundException e) {
@@ -166,38 +172,36 @@ public abstract class AbstractListingPlugin extends Plugin {
                     Node userNode = ((Node) jcrSession.getItem(userNodeLocation));
                     // User doesn't have a user folder for this browse perspective yet
                     Node prefNode = createDefaultPrefNodeSetting(userNode);
-                    modifyDefaultPrefNode(prefNode, getTopChannel());
+                    modifyDefaultPrefNode(prefNode);
                     userNode.save();
                 }
             } catch (PathNotFoundException e1) {
                 logError(e1);
-                defaultColumns(pluginDescriptor);
+                defaultColumns();
             } catch (ItemExistsException e1) {
                 logError(e1);
-                defaultColumns(pluginDescriptor);
+                defaultColumns();
             } catch (VersionException e1) {
                 logError(e1);
-                defaultColumns(pluginDescriptor);
+                defaultColumns();
             } catch (ConstraintViolationException e1) {
                 logError(e1);
-                defaultColumns(pluginDescriptor);
+                defaultColumns();
             } catch (LockException e1) {
                 logError(e1);
-                defaultColumns(pluginDescriptor);
+                defaultColumns();
             } catch (ValueFormatException e1) {
                 logError(e1);
-                defaultColumns(pluginDescriptor);
+                defaultColumns();
             } catch (RepositoryException e1) {
                 logError(e1);
-                defaultColumns(pluginDescriptor);
+                defaultColumns();
             }
 
         } catch (RepositoryException e) {
             logError(e);
-            defaultColumns(pluginDescriptor);
+            defaultColumns();
         }
-        //FIXME: this should not be in this method..
-        add(dataTable = getTable(model));
     }
 
     private Node createDefaultPrefNodeSetting(Node listingNode) throws ItemExistsException, PathNotFoundException,
@@ -235,7 +239,6 @@ public abstract class AbstractListingPlugin extends Plugin {
     /**
      * Override this method in your subclass to change the default listing view
      * @param prefNode
-     * @param channel
      * @throws ItemExistsException
      * @throws PathNotFoundException
      * @throws NoSuchNodeTypeException
@@ -245,9 +248,9 @@ public abstract class AbstractListingPlugin extends Plugin {
      * @throws RepositoryException
      * @throws ValueFormatException
      */
-    protected void modifyDefaultPrefNode(Node prefNode, Channel channel) throws ItemExistsException,
-            PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
-            ConstraintViolationException, RepositoryException, ValueFormatException {
+    protected void modifyDefaultPrefNode(Node prefNode) throws ItemExistsException, PathNotFoundException,
+            NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException,
+            RepositoryException, ValueFormatException {
         // subclasses should override this if they want to change behavior
 
         Node pref = prefNode.addNode("name", LISTINGPROPS_NODETYPE);
@@ -262,16 +265,16 @@ public abstract class AbstractListingPlugin extends Plugin {
         pref.setProperty(COLUMNNAME_PROPERTY, "State");
         pref.setProperty(PROPERTYNAME_PROPERTY, "state");
 
-        columns.add(getNodeColumn(new Model("Name"), "name", channel));
-        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE, channel));
-        columns.add(getNodeColumn(new Model("State"), "state", channel));
+        columns.add(getNodeColumn(new Model("Name"), "name"));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE));
+        columns.add(getNodeColumn(new Model("State"), "state"));
 
     }
 
-    private void defaultColumns(PluginDescriptor pluginDescriptor) {
-        columns.add(getNodeColumn(new Model("Name"), "name", getTopChannel()));
-        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE, getTopChannel()));
-        columns.add(getNodeColumn(new Model("State"), "state", getTopChannel()));
+    private void defaultColumns() {
+        columns.add(getNodeColumn(new Model("Name"), "name"));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE));
+        columns.add(getNodeColumn(new Model("State"), "state"));
     }
 
     private void logError(Exception e1) {
@@ -285,12 +288,12 @@ public abstract class AbstractListingPlugin extends Plugin {
      * @param channel Channel
      * @return IStyledColumn
      */
-    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel channel) {
-        return new NodeColumn(model, propertyName, channel);
+    protected IStyledColumn getNodeColumn(Model model, String propertyName) {
+        return new NodeColumn(model, propertyName);
     }
 
-    //TODO: rename this to CustomizableListingDatatable?
-    protected abstract CustomizableDocumentListingDataTable getTable(IPluginModel model);
+    protected abstract Component getTable(String wicketId, ISortableDataProvider provider);
 
     protected abstract String getPluginUserPrefNodeName();
+
 }
