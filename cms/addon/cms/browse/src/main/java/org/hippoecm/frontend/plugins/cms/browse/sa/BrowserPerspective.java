@@ -25,11 +25,11 @@ public class BrowserPerspective extends Perspective {
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
         
-        addExtensionPoint("legacyBrowse");
+        //addExtensionPoint("legacyBrowse");
 
-//        addExtensionPoint("browserBreadcrumbPlugin");
-//        addExtensionPoint("browserPlugin");
-//        addExtensionPoint("listPlugin");
-//        addExtensionPoint("workflowsPlugin");
+        addExtensionPoint("browserBreadcrumbPlugin");
+        addExtensionPoint("browserPlugin");
+        addExtensionPoint("listPlugin");
+        addExtensionPoint("workflowsPlugin");
     }
 }

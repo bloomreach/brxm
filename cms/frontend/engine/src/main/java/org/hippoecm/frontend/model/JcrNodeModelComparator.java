@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.list;
+package org.hippoecm.frontend.model;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -25,7 +25,6 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 

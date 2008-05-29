@@ -26,6 +26,7 @@ import org.hippoecm.frontend.model.ExceptionModel;
 /**
  * @deprecated use org.hippoecm.frontend.sa.dialog.error.ErrorDialog instead
  */
+@Deprecated
 public class ExceptionDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 

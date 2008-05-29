@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.list;
+package org.hippoecm.frontend.plugins.cms.browse.sa.list;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugins.standards.list.NodeCell;
+import org.hippoecm.frontend.plugins.standards.sa.list.NodeCell;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
- */
-@Deprecated
 public class DocumentListingNodeCell extends NodeCell {
     private static final long serialVersionUID = 1L;
 
-    public DocumentListingNodeCell(String id, JcrNodeModel model, Channel channel, String nodePropertyName) {
-        super(id, model, channel, nodePropertyName);
+    private DocumentListingPlugin plugin;
+
+    public DocumentListingNodeCell(String id, JcrNodeModel model, String nodePropertyName, DocumentListingPlugin plugin) {
+        super(id, model, nodePropertyName);
+        this.plugin = plugin;
     }
 
+    @Override
+    protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
+        plugin.onSelect(model, target);
+    }
 }

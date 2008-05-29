@@ -40,7 +40,7 @@ public class JavaConfigService implements IPluginConfigService {
     }
     
     public IClusterConfig getDefaultCluster() {
-        return builtinConfigs.get("console");
+        return builtinConfigs.get("cms");
     }
 
     //privates
@@ -74,6 +74,8 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("tabs", "service.tab");
         plugins.addPlugin(config);
 
+        // Dashboard perspective
+        
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.dashboard.sa.DashboardPerspective");
         config.put("wicket.id", "service.tab");
@@ -83,30 +85,52 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("legacyDashboard", "service.dashboard.legacy");
         plugins.addPlugin(config);
         
-        // Wrap legacy cms dashboard
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
         config.put("wicket.id", "service.dashboard.legacy");                               
         config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
         config.put("legacy.plugin", "dashboardPerspective");
         plugins.addPlugin(config);
-        
+                
+        // Browse perspective
+
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.browse.sa.BrowserPerspective");
         config.put("wicket.id", "service.tab");
-        config.put("wicket.model", "service.browse.node");
-        config.put("service.pid", "service.browse");
+        config.put("wicket.model", "model.browse.node");
         config.put("perspective.title", "Browse");
-        config.put("legacyBrowse", "service.browse.legacy");
+        config.put("browserBreadcrumbPlugin", "service.browse.breadcrumb");
+        config.put("browserPlugin", "service.browse.tree");
+        config.put("listPlugin", "service.browse.list");
+        config.put("workflowsPlugin", "service.browse.workflows");
         plugins.addPlugin(config);
-        
-        // Wrap legacy cms browse
+
         config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
-        config.put("wicket.id", "service.browse.legacy");                               
-        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
-        config.put("legacy.plugin", "browsePerspective");
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.browser.BrowserPlugin");
+        config.put("wicket.id", "service.browse.tree");
+        config.put("wicket.model", "model.browse.node");
         plugins.addPlugin(config);
+
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.browse.sa.list.DocumentListingPlugin");
+        config.put("wicket.id", "service.browse.list");
+        config.put("wicket.model", "model.browse.node");
+        plugins.addPlugin(config);
+
+        config = new JavaPluginConfig();                                    
+        config.put("plugin.class", "org.hippoecm.frontend.sa.service.render.ListViewPlugin");
+        config.put("wicket.id", "service.browse.workflows");
+        config.put("item", "service.browse.workflows.workflow");
+        plugins.addPlugin(config);
+
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin");
+        config.put("workflow.viewer", "service.edit");
+        config.put("workflow.display", "workflows.id");
+        config.put("wicket.model", "model.browse.node");
+        config.put("workflow.categories", new String[] { "internal", "reviewed-action" });
+
+        // Management perspective
         
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.management.sa.ManagementPerspective");
@@ -117,13 +141,14 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("legacyManagement", "service.management.legacy");
         plugins.addPlugin(config);
         
-        //Wrap legacy cms management
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
         config.put("wicket.id", "service.management.legacy");                               
         config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
         config.put("legacy.plugin", "managementFilter");
         plugins.addPlugin(config);
+
+        // Logout
         
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
@@ -219,7 +244,7 @@ public class JavaConfigService implements IPluginConfigService {
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.sa.plugins.cms.browse.list.DocumentListingPlugin");
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.browse.sa.list.DocumentListingPlugin");
         config.put("wicket.id", "service.browse.list");
         config.put("wicket.model", "model.browse.node");
         plugins.addPlugin(config);
