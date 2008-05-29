@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.security;
 
-import java.util.Arrays;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
@@ -46,8 +44,6 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.NameFactory;
-import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
@@ -110,11 +106,6 @@ public class HippoAccessManager implements AccessManager {
      * NamespaceResolver
      */
     private NamespaceResolver nsRes;
-
-    /**
-     * NameFactory for create Names
-     */
-    private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
 
     /**
      * Hippo Namespace, TODO: move to better place
@@ -216,10 +207,10 @@ public class HippoAccessManager implements AccessManager {
         // cache root NodeId
         rootNodeId = (NodeId) hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
 
-        hippoDoc = getNameFromJCRName(HippoNodeType.NT_DOCUMENT);
-        hippoHandle = getNameFromJCRName(HippoNodeType.NT_HANDLE);
-        hippoFacetSearch = getNameFromJCRName(HippoNodeType.NT_FACETSEARCH);
-        hippoFacetSelect = getNameFromJCRName(HippoNodeType.NT_FACETSELECT);
+        hippoDoc = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_DOCUMENT);
+        hippoHandle = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_HANDLE);
+        hippoFacetSearch = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_FACETSEARCH);
+        hippoFacetSelect = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_FACETSELECT);
         
         // we're done
         initialized = true;
@@ -237,25 +228,6 @@ public class HippoAccessManager implements AccessManager {
             return nodeType;
         }
         return nodeType.substring(i + 1);
-    }
-    private String getURIName(String nodeType) {
-        int i = nodeType.indexOf(":");
-        if (i < 0) {
-            return "";
-        }
-        return nodeType.substring(0,i);
-    }
-    
-    private Name getNameFromJCRName(String jcrName) throws IllegalNameException, NamespaceException {
-        return NameParser.parse(jcrName, nsRes, FACTORY);
-    }
-    private String getJCRNameFromName(Name name) throws NamespaceException {
-        String uri = name.getNamespaceURI();
-        if (nsRes.getPrefix(uri).length() == 0) {
-            return name.getLocalName();
-        } else {
-            return nsRes.getPrefix(uri) + ":" + name.getLocalName();
-        }
     }
 
     /**
@@ -730,8 +702,8 @@ public class HippoAccessManager implements AccessManager {
     private boolean isInstanceOfType(NodeState nodeState, String nodeType) {
         try {
             // create NodeType of nodeState's primaryType
-            String nodeStateType = getJCRNameFromName(nodeState.getNodeTypeName());
-            
+            String nodeStateType = FacetAuthHelper.getJCRNameFromName(nsRes, nodeState.getNodeTypeName());
+
             if (nodeStateType.equals(nodeType)) {
                 if (log.isTraceEnabled()) {
                     log.trace("MATCH " + nodeState.getId() + " is of type: " + nodeType);
@@ -809,7 +781,8 @@ public class HippoAccessManager implements AccessManager {
                         }
                     } else if (iVal.getType() == PropertyType.NAME) {
                         log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getQName());
-                        if (iVal.getQName().toString().equals(rule.getValue())) {
+                        
+                        if (iVal.getQName().equals(rule.getValueName())) {
                             match = true;
                             break;
                         }
