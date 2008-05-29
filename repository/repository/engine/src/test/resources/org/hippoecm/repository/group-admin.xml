@@ -29,5 +29,6 @@
     </sv:property>
     <sv:property sv:name="hippo:members" sv:type="String">
         <sv:value>admin</sv:value>
+        <sv:value>workflowuser</sv:value>
     </sv:property>
 </sv:node>

@@ -28,44 +28,6 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <!--Roles configuration-->
-  <sv:node sv:name="roles">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>roles-config.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <!--User configuration-->
-  <sv:node sv:name="users">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>users-config.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <!--Group configuration-->
-  <sv:node sv:name="groups">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>groups-config.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration</sv:value>
-    </sv:property>
-  </sv:node>
 
   <!-- Test node types configuration -->
   <sv:node sv:name="test">
