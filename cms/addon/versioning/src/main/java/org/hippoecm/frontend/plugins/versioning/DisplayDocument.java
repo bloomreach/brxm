@@ -24,16 +24,20 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DisplayDocument extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -65,21 +69,34 @@ public class DisplayDocument extends RenderPlugin {
         if (model!=null) {
             Node document = model.getNode();
             try {
-                if (document.isNodeType(HippoNodeType.NT_DOCUMENT) || document.isNodeType("nt:frozenNode")) {
-                    Item primaryItem = document;
-                    try {
+                Item primaryItem = document;
+                try {
+                    if (document.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         do {
                             primaryItem = ((Node)primaryItem).getPrimaryItem();
                         } while (primaryItem.isNode());
                         String data = ((Property)primaryItem).getString();
                         content.setModel(new Model(data));
-                    } catch (ItemNotFoundException ex) {
-                        content.setModel(new Model("selected item has no default content to display"));
+                    } else if (document.isNodeType("nt:frozenNode")) {
+                        do {
+                            String primaryType = ((Node)primaryItem).getProperty("jcr:frozenPrimaryType").getString();
+                            NodeType nodeType = ((Node)primaryItem).getSession().getWorkspace().getNodeTypeManager().getNodeType(primaryType);
+                            if (((Node)primaryItem).hasProperty(nodeType.getPrimaryItemName()))
+                                primaryItem = ((Node)primaryItem).getProperty(nodeType.getPrimaryItemName());
+                            else
+                                primaryItem = ((Node)primaryItem).getNode(nodeType.getPrimaryItemName());
+                        } while (primaryItem.isNode());
+                        String data = ((Property)primaryItem).getString();
+                        content.setModel(new Model(data));
+                    } else {
+                        content.setModel(new Model("selected item is not a document"));
                     }
-                } else {
-                    content.setModel(new Model("selected item is not a document"));
+                } catch (ItemNotFoundException ex) {
+                    content.setModel(new Model("selected item has no default content to display"));
                 }
             } catch (RepositoryException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
                 content.setModel(new Model(""));
             }
         }
