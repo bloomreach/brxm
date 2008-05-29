@@ -15,11 +15,17 @@
  */
 package org.hippoecm.repository.security;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.NameFactory;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 
 /**
  * Help class for resolving facet auth principals from jcr nodes
@@ -32,23 +38,36 @@ public class FacetAuthHelper {
 
     /** The wildcard to match everything */
     public final static String WILDCARD = "*";
-  
+
+    /**
+     * NameFactory for create Names
+     */
+    private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
+    
     /**
      * Get the Name from the node type string short notation
      * @param session The session
-     * @param nodeTypeName The node type name
+     * @param jcrName The node type name
      * @return the name
      */
-    public static Name resolveName(Session session, String nodeTypeName) throws RepositoryException {
-        Name name;
-        int i = nodeTypeName.indexOf(":");
-        if (i > 0) {
-            name = NameFactoryImpl.getInstance().create(session.getNamespaceURI(nodeTypeName.substring(0, i)),
-                    nodeTypeName.substring(i + 1));
-        } else {
-            name = NameFactoryImpl.getInstance().create("", nodeTypeName);
-        }
-        return name;
+    public static Name getNameFromJCRName(Session session, String jcrName) throws IllegalNameException, NamespaceException {
+        return getNameFromJCRName(new SessionNamespaceResolver(session), jcrName);
     }
     
+    public static Name getNameFromJCRName(NamespaceResolver nsRes, String jcrName) throws IllegalNameException, NamespaceException {
+        return NameParser.parse(jcrName, nsRes, FACTORY);
+    }
+    
+    public static String getJCRNameFromName(Session session, Name name) throws NamespaceException {
+        return getJCRNameFromName(new SessionNamespaceResolver(session), name);
+    }
+    
+    public static String getJCRNameFromName(NamespaceResolver nsRes, Name name) throws NamespaceException {
+        String uri = name.getNamespaceURI();
+        if (nsRes.getPrefix(uri).length() == 0) {
+            return name.getLocalName();
+        } else {
+            return nsRes.getPrefix(uri) + ":" + name.getLocalName();
+        }
+    }
 }

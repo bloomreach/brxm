@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -34,7 +33,6 @@ import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -193,15 +191,14 @@ public class AuthorizationQuery {
     private Query getNodeTypeDescendantQuery(FacetRule facetRule) {
         List<Term> terms = new ArrayList<Term>();
         try {
-            Name baseName = NameFactoryImpl.getInstance().create(facetRule.getValue());
-            NodeType base = ntMgr.getNodeType(session.getJCRName(baseName));
+            NodeType base = ntMgr.getNodeType(facetRule.getValue());
             if (base.isMixin()) {
                 // search for nodes where jcr:mixinTypes is set to this mixin
-                Term t = new Term(ServicingFieldNames.HIPPO_MIXINTYPE, getTermValue(facetRule.getValue()));
+                Term t = new Term(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule.getValue());
                 terms.add(t);
             } else {
                 // search for nodes where jcr:primaryType is set to this type
-                Term t = new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE, getTermValue(facetRule.getValue()));
+                Term t = new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule.getValue());
                 terms.add(t);
             }
 
@@ -246,25 +243,13 @@ public class AuthorizationQuery {
     }
 
     private Query getNodeTypeQuery(String luceneFieldName, FacetRule facetRule) {
-        try {
-            String termValue = getTermValue(facetRule.getValue());
-            Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, termValue));
-            if (facetRule.isEqual()) {
-                return nodetypeQuery;
-            } else {
-                return QueryHelper.negateQuery(nodetypeQuery);
-            }
-        } catch (NamespaceException e) {
-            log.error(e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage() + "\n" + MESSAGE_ZEROMATCH_QUERY);
+        String termValue = facetRule.getValue();
+        Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, termValue));
+        if (facetRule.isEqual()) {
+            return nodetypeQuery;
+        } else {
+            return QueryHelper.negateQuery(nodetypeQuery);
         }
-        return QueryHelper.getNoHitsQuery();
-    }
-
-    private String getTermValue(String nameString) throws NamespaceException {
-        Name facetNodeType = NameFactoryImpl.getInstance().create(nameString);
-        return nsMappings.getPrefix(facetNodeType.getNamespaceURI()) + ":" + facetNodeType.getLocalName();
     }
 
     public BooleanQuery getQuery() {

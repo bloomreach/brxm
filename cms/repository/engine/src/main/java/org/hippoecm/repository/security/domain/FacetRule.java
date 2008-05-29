@@ -53,21 +53,12 @@ public class FacetRule implements Serializable {
     private final int type;
 
     /**
-     * The value of the type property indicating a string type
-     */
-    private static final String TYPE_STRING = "String";
-
-    /**
-     * The value of the type property indicating a name type
-     */
-    private static final String TYPE_NAME = "Name";
-    /**
      * The facet (property)
      */
     private final String facet;
     
     /**
-     * A Name representation of the facet
+     * The Name representation of the facet
      */
     private final Name facetName;
     
@@ -75,7 +66,12 @@ public class FacetRule implements Serializable {
      * The value to match the facet
      */
     private final String value;
-    
+
+    /**
+     * The Name representation of value to match the facet
+     */
+    private final Name valueName;
+        
     /**
      * If the match is equals or not equals
      */
@@ -98,39 +94,33 @@ public class FacetRule implements Serializable {
         // all properties are mandatory
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
         equals = node.getProperty(HippoNodeType.HIPPO_EQUALS).getBoolean();
-        String typeProp = node.getProperty(HippoNodeType.HIPPO_TYPE).getString();
-        
-        // resolve type and value, type is either String or Name
-        String facetValue = node.getProperty(HippoNodeType.HIPPO_VALUE).getString();
-        int jcrType = 0;
-        if (typeProp.equalsIgnoreCase(TYPE_STRING)) {
-            jcrType = PropertyType.STRING;
-        } else if (typeProp.equalsIgnoreCase(TYPE_NAME)) {
-            jcrType = PropertyType.NAME;
-            // resolve name to it's string representation except the wildcard (*)
-            if (!facetValue.equals(FacetAuthHelper.WILDCARD)) {
-                facetValue = FacetAuthHelper.resolveName(node.getSession(), node.getProperty(HippoNodeType.HIPPO_VALUE).getString()).toString();
-            }
-        } else {
-            throw new IllegalArgumentException("Unknown type: " + typeProp);
-        }
-        
+        type = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPO_TYPE).getString());
+        value = node.getProperty(HippoNodeType.HIPPO_VALUE).getString();
+
         // catch some illegal options
-        if (facetValue.equals(FacetAuthHelper.WILDCARD) && !equals) {
+        if (value.equals(FacetAuthHelper.WILDCARD) && !equals) {
             throw new RepositoryException("Not-equals and wildcard value not allowed together.");
         }
-        // for now, try allowing negating nodetype facetrule
-        //if (facet.equalsIgnoreCase("nodetype") && !equals) {
-        //    throw new RepositoryException("Not-equals and wildcard value not allowed together.");
-        //}
         
-        value = facetValue;
-        type = jcrType;
-
+        // if it's a name property set valueName
+        Name name = null;
+        if (type == PropertyType.NAME && !value.equals(FacetAuthHelper.WILDCARD)) {
+            name = FacetAuthHelper.getNameFromJCRName(node.getSession(), value);
+        }
+        valueName = name;
+        
         // Set the JCR Name for the facet (string)
-        facetName = FacetAuthHelper.resolveName(node.getSession(), facet);
+        facetName = FacetAuthHelper.getNameFromJCRName(node.getSession(), facet);
     }
 
+    /**
+     * Get the string representation of the facet
+     * @return the facet
+     */
+    public String getFacet() {
+        return facet;
+    }
+    
     /**
      * Get the name representation of the facet
      * @return the facet name
@@ -139,23 +129,22 @@ public class FacetRule implements Serializable {
     public Name getFacetName() {
         return facetName;
     }
-    
-    /**
-     * Get the string representation of the facet
-     * @return the facet
-     */
-    public String getFacet() {
-        return facet;
-    }
 
     /**
      * The value of the facet rule to match
-     * @return
+     * @return the value
      */
     public String getValue() {
         return value;
     }
-
+    
+    /**
+     * The Name of the value of the facet rule to match
+     * @return the value name if the type is Name else null
+     */
+    public Name getValueName() {
+        return valueName;
+    }
     /**
      * Check for equality or inequality
      * @return true if to rule has to check for equality
