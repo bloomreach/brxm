@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.root.sa;
 
+import org.apache.wicket.behavior.HeaderContributor;
 import org.hippoecm.frontend.sa.dialog.DialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
@@ -26,15 +27,17 @@ public class RootPlugin extends RenderPlugin {
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        for (String extension : new String[] { "logoutPlugin", "tabsPlugin" }) {
+            addExtensionPoint(extension);
+        }
+        DialogService dialogService = new DialogService();
+        dialogService.init(context, config.getString(RenderService.DIALOG_ID), "dialog");
+        add(dialogService);
         
-        for (String extension : new String[] {
-                "logoutPlugin", "tabsPlugin"
-            }) {
-                addExtensionPoint(extension);
-            }
-            DialogService dialogService = new DialogService();
-            dialogService.init(context, config.getString(RenderService.DIALOG_ID), "dialog");
-            add(dialogService);
+        if (config.getString(RenderService.SKIN_ID) != null) {
+            add(HeaderContributor.forCss(config.getString(RenderService.SKIN_ID)));
+        }
     }
 
 }

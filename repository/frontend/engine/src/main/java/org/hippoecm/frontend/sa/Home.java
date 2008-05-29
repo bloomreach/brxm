@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.sa;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.Main;
@@ -29,6 +31,7 @@ import org.hippoecm.frontend.sa.plugin.impl.PluginManager;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 
 public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService {
