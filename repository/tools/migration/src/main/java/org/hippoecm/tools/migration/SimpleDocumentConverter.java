@@ -55,7 +55,7 @@ public class SimpleDocumentConverter extends AbstractDocumentConverter implement
      * @throws RepositoryException
      */
     public void postSetupHook() throws RepositoryException {
-        authorBase = JCRHelper.checkAndCreatePath(getJcrSession(), AUTHOR_BASEPATH);
+        authorBase = JCRHelper.checkAndCreatePath(getJcrSession(), AUTHOR_BASEPATH, this);
     }
 
     /**
@@ -125,6 +125,10 @@ public class SimpleDocumentConverter extends AbstractDocumentConverter implement
             //JCRHelper.createPublishDocument(getJcrSession(), current, publicationDate);
         }
 
+    }
+
+    public void setMixinsPlusProps(Node node) throws  RepositoryException {
+        node.addMixin("mix:referenceable");
     }
 
 

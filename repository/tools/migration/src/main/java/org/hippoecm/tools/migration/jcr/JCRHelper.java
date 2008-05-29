@@ -29,6 +29,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.tools.migration.DocumentConverter;
 
 /**
  * JCR Helper methods for creating content in a JCR Repository
@@ -54,7 +55,7 @@ public class JCRHelper {
      * Check the JCR import root path and create the path if it doesn't exist
      * @throws RepositoryException
      */
-    public static Node checkAndCreatePath(Session session, String path) throws RepositoryException {
+    public static Node checkAndCreatePath(Session session, String path, DocumentConverter documentConverter) throws RepositoryException {
 
         if (path == null) {
             throw new IllegalArgumentException("Path cannot be null");
@@ -91,7 +92,8 @@ public class JCRHelper {
 
             // add node if it doesn't exist
             if (!current.hasNode(nodeName)) {
-                current.addNode(nodeName);
+                Node n = current.addNode(nodeName);
+                documentConverter.setMixinsPlusProps(n);
                 System.out.println("Added node for jcrPath: " + currentPath);
             }
             currentPath += "/" + nodeName;
