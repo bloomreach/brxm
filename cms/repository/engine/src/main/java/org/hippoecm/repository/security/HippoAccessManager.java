@@ -19,6 +19,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -638,6 +639,9 @@ public class HippoAccessManager implements AccessManager {
      * @throws ItemStateException when something goes wrong while fetching the state
      */
     public ItemState getState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+        if (id == null) {
+            throw new ItemStateException("ItemId cannot be null");
+        }
         if (itemMgr.hasItemState(id)) {
             return itemMgr.getItemState(id);
         }
@@ -648,6 +652,26 @@ public class HippoAccessManager implements AccessManager {
             return itemMgr.getAtticItemState(id);
         }
         throw new NoSuchItemStateException("Item state not found in normal, transient or attic: " + id);
+    }
+    
+    /**
+     * Get the NodeState of the parent from the nodeState in a transient and attic 
+     * safe manner. 
+     * @param nodeState
+     * @return the parent nodestate
+     * @throws NoSuchItemStateException when the state cannot be found
+     * @throws ItemStateException when something goes wrong while fetching the state
+     */
+    public NodeState getParentState(NodeState nodeState) throws NoSuchItemStateException, ItemStateException  {
+        if (rootNodeId.equals(nodeState.getId())) {
+            throw new NoSuchItemStateException("RootNode doesn't have a parent state.");
+        }
+        try {
+            // for nodeState's from the attic the parentId() is null, so use path resolving to find parent
+            return (NodeState) getState(hierMgr.resolveNodePath(hierMgr.getPath(nodeState.getId()).getAncestor(1)));
+        } catch (RepositoryException e) {
+            throw new NoSuchItemStateException("Unable to find parent nodeState of node: " + nodeState.getId(),e);
+        }
     }
 
     /**
@@ -876,7 +900,7 @@ public class HippoAccessManager implements AccessManager {
         // walk up in the hierarchy
         while (!rootNodeId.equals((NodeId) nodeState.getId())) {
             // shift one up in hierarchy
-            nodeState = (NodeState) getState(nodeState.getParentId());
+            nodeState = getParentState(nodeState);
             if (nodeState.getNodeTypeName().equals(hippoHandle)) {
                 if (log.isDebugEnabled()) {
                     log.debug("MATCH hippoHandle: " + nodeState.getNodeTypeName());
