@@ -23,6 +23,7 @@ import java.util.TreeSet;
 
 import java.rmi.RemoteException;
 
+import java.util.SortedMap;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -110,7 +111,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow {
         return new Document(primary.getUUID());
     }
 
-    public Map<Calendar, Set<String>> list() throws WorkflowException, RepositoryException {
+    public SortedMap<Calendar, Set<String>> list() throws WorkflowException, RepositoryException {
         Node handle = null;
         try {
             handle = subject.getParent();
@@ -121,7 +122,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow {
             // subject is root, deliberately ignore this exception
         }
         if (handle == null) {
-            Map<Calendar, Set<String>> listing = new TreeMap<Calendar, Set<String>>();
+            SortedMap<Calendar, Set<String>> listing = new TreeMap<Calendar, Set<String>>();
             VersionHistory versionHistory = subject.getVersionHistory();
             for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext();) {
                 Version version = iter.nextVersion();
@@ -138,7 +139,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow {
         } else {
             boolean placeholder = true;
             Calendar previous = null;
-            Map<Calendar, Set<String>> listing = new TreeMap<Calendar, Set<String>>();
+            SortedMap<Calendar, Set<String>> listing = new TreeMap<Calendar, Set<String>>();
             VersionHistory handleHistory = handle.getVersionHistory();
             for (VersionIterator iter = handleHistory.getAllVersions(); iter.hasNext();) {
                 Version handleVersion = iter.nextVersion();

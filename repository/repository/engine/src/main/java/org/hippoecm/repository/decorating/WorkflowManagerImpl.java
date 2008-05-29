@@ -170,14 +170,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     }
                     try {
                         Class documentClass = Class.forName(workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
-                        System.err.println("BERRY "+documentClass.getName()+" "+document.getClass());
                         if (document.getIdentity() != null && session.getNodeByUUID(document.getIdentity()).isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
                             log.debug("found workflow in category " + category + " for document");
                             return workflowNode;
                         }
-                        System.err.println("BERRY#1 "+document.getClass().isAssignableFrom(documentClass));
-                        System.err.println("BERRY#2 "+documentClass.isAssignableFrom(document.getClass()));
-                        // BERRY if (document.getClass().isAssignableFrom(workflowClass)) {
                         if (documentClass.isAssignableFrom(document.getClass())) {
                             log.debug("found workflow in category " + category + " for document");
                             return workflowNode;
