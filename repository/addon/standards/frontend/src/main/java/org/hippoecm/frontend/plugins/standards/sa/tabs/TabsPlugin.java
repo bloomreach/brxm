@@ -70,7 +70,6 @@ public class TabsPlugin extends RenderPlugin {
                     replace(tabbedPanel);
                 }
                 tabs.add(tabbie);
-                tabbie.select(true);
                 redraw();
             }
 

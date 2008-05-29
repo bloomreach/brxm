@@ -25,7 +25,9 @@ public class DashboardPerspective extends Perspective {
     public DashboardPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-//        addExtensionPoint("currentActivityPlugin");
-//        addExtensionPoint("todoPlugin");
+        // addExtensionPoint("currentActivityPlugin");
+        // addExtensionPoint("todoPlugin");
+
+        addExtensionPoint("legacyDashboard");
     }
 }
