@@ -28,6 +28,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
@@ -37,21 +38,16 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
-import javax.jcr.SimpleCredentials;
 
-import org.apache.jackrabbit.core.SessionImpl;
-import org.xml.sax.ContentHandler;
-
+import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.HierarchyResolverImpl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 /**
  * Simple workspace decorator.
@@ -80,14 +76,13 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
         this.workspace = workspace;
         documentManager = null;
         workflowManager = null;
+        rootSession = null;
 
         Repository repository = RepositoryDecorator.unwrap(session.getRepository());
-        rootSession = null;
         try {
             if(repository instanceof RepositoryImpl) {
-                SessionImpl sessionImpl = (SessionImpl) ((RepositoryImpl)repository).getRootSession(null);
                 rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(),
-                              sessionImpl.impersonate(new SimpleCredentials("", new char[] { })));
+                        SessionDecorator.unwrap(session.impersonate(new SimpleCredentials("workflowuser", new char[] { }))));
             }
         } catch(RepositoryException ex) {
             logger.warn("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
