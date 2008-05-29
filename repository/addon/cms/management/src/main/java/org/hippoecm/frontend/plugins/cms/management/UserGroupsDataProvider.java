@@ -1,3 +1,18 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.plugins.cms.management;
 
 import java.util.ArrayList;
@@ -23,13 +38,13 @@ public class UserGroupsDataProvider extends SortableDataProvider {
 
     private JcrNodeModel parentNodeModel;
     private List<JcrNodeModel> nodes;
-    
+
     public UserGroupsDataProvider(JcrNodeModel parentModel) {
         setSort("name", true);
         this.parentNodeModel = parentModel;
         nodes = getNodes();
     }
-    
+
     public Iterator<JcrNodeModel> iterator(int first, int count) {
         sortNodes();
         List<JcrNodeModel> list = Collections.unmodifiableList(nodes.subList(first, first + count));
@@ -37,45 +52,46 @@ public class UserGroupsDataProvider extends SortableDataProvider {
     }
 
     public IModel model(Object object) {
-        return (JcrNodeModel)object;
+        return (JcrNodeModel) object;
     }
 
     public int size() {
         return nodes.size();
     }
-    
+
     private List<JcrNodeModel> getNodes() {
         List<JcrNodeModel> list = new ArrayList<JcrNodeModel>();
         try {
             String username = parentNodeModel.getNode().getName();
-            
-            QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
-            HippoQuery query = (HippoQuery) queryManager.createQuery("//element(*, hippo:group)[jcr:contains(@hippo:members, '" + username + "')]", "xpath");
 
-            javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
+            QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+            HippoQuery query = (HippoQuery) queryManager.createQuery(
+                    "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + username + "')]", "xpath");
+
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             session.refresh(true);
             QueryResult result;
             result = query.execute();
 
             NodeIterator it = result.getNodes();
             while (it.hasNext()) {
-                JcrNodeModel modcheck = new JcrNodeModel(it.nextNode()); 
+                JcrNodeModel modcheck = new JcrNodeModel(it.nextNode());
                 list.add(modcheck);
             }
         } catch (RepositoryException e) {
             e.printStackTrace();
-        } 
+        }
         return list;
     }
-    
+
     private void sortNodes() {
         JcrNodeModelComparator jcrNodeModelComparator = new JcrNodeModelComparator(getSort().getProperty());
-        Collections.sort(nodes, jcrNodeModelComparator);       
+        Collections.sort(nodes, jcrNodeModelComparator);
         if (getSort().isAscending() == false) {
             Collections.reverse(nodes);
         }
     }
-    
+
     public void refresh() {
         nodes = getNodes();
         sortNodes();
