@@ -97,6 +97,15 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("wicket.model", "service.browse.node");
         config.put("service.pid", "service.browse");
         config.put("perspective.title", "Browse");
+        config.put("legacyBrowse", "service.browse.legacy");
+        plugins.addPlugin(config);
+        
+        // Wrap legacy cms browse
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
+        config.put("wicket.id", "service.browse.legacy");                               
+        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
+        config.put("legacy.plugin", "browsePerspective");
         plugins.addPlugin(config);
         
         config = new JavaPluginConfig();
