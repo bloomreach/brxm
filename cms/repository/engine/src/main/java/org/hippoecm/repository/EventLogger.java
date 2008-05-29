@@ -135,7 +135,8 @@ public class EventLogger {
                 logFolder.refresh(true);
 
             } catch (RepositoryException e) {
-                log.error("Event logging failed: " + e.getMessage(), e);
+                log.error("Failed logging event: [" +who + " -> " + className + "." + methodName + "] : " + e.getMessage());
+                log.debug("Event logging failed: " + e.getMessage(), e);
             }
         }
     }
