@@ -157,20 +157,39 @@ public class RepositoryLoginModule implements LoginModule {
             // set the Contexts
             createContexts();
 
-            // XXX: broken?
             // check for impersonation
             Object attr = creds.getAttribute(SecurityConstants.IMPERSONATOR_ATTRIBUTE);
             if (attr != null && attr instanceof Subject) {
-                principals.add(new SystemPrincipal());
-                log.debug("Impersonated as {}", creds.getUserID());
-                return true;
+                Subject impersonator = (Subject) attr;
+                
+                // anonymous cannot impersonate
+                if (!impersonator.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
+                    log.info("Denied Anymous impersonating as {}", creds.getUserID());
+                    return false;
+                }
+                
+                // check for valid user
+                if (impersonator.getPrincipals(UserPrincipal.class).isEmpty()) {
+                    log.info("Denied unknown user impersonating as {}", creds.getUserID());
+                    return false;
+                }
+                
+                Principal iup = (Principal) impersonator.getPrincipals(UserPrincipal.class).iterator().next();
+                String impersonarorId = iup.getName();
+                // TODO: check somehow if the user is allowed to imporsonate
+                
+                log.info("Impersonating as {} by {}", creds.getUserID(), impersonarorId);
+                setUserPrincipals(creds.getUserID());
+                setGroupPrincipals(creds.getUserID());
+                setFacetAuthPrincipals(creds.getUserID());
+                return !principals.isEmpty();
             }
 
             // check for anonymous login
             if (creds == null || creds.getUserID() == null) {
                 // authenticate as anonymous
                 principals.add(new AnonymousPrincipal());
-                log.debug("Authenticated as anonymous.");
+                log.info("Authenticated as anonymous.");
                 setUserPrincipals(null);
                 setGroupPrincipals(null);
                 setFacetAuthPrincipals(null);
@@ -179,13 +198,13 @@ public class RepositoryLoginModule implements LoginModule {
 
             log.debug("Trying to authenticate as {}", creds.getUserID());
             if (authenticate(creds.getUserID(), creds.getPassword())) {
-                log.debug("Authenticated as {}", creds.getUserID());
+                log.info("Authenticated as {}", creds.getUserID());
                 setUserPrincipals(creds.getUserID());
                 setGroupPrincipals(creds.getUserID());
                 setFacetAuthPrincipals(creds.getUserID());
                 return !principals.isEmpty();
             } else {
-                log.debug("NOT Authenticated as {}", creds.getUserID());
+                log.info("NOT Authenticated as {}", creds.getUserID());
                 // authentication failed: clean out state
                 principals.clear();
                 throw new FailedLoginException();
