@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @deprecated use org.hippoecm.frontend.plugins.standards.sa.tabs.* instead
  */
+@Deprecated
 public class TabsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
