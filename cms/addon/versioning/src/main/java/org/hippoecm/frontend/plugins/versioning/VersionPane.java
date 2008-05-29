@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.plugins.versioning;
+package org.hippoecm.frontend.plugins.versioning;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -55,8 +54,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VersionPane extends RenderPlugin {
+    private static final long serialVersionUID = 1L;
+
     static Logger log = LoggerFactory.getLogger(VersionPane.class);
-    
+
     Label documentComponent;
     Label versionComponent;
     Label createdComponent;
@@ -72,7 +73,7 @@ public class VersionPane extends RenderPlugin {
     public VersionPane(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.get(RenderPlugin.MODEL_ID)!=null) {
+        if (config.get(RenderPlugin.MODEL_ID) != null) {
             // FIXME: is there a model available to initialize the service with?
             subModel = new ModelService(config.getString("wicket.submodel"), null);
             subModel.init(context);
@@ -87,6 +88,8 @@ public class VersionPane extends RenderPlugin {
         add(expiredComponent = new Label("expired"));
         add(labeledComponent = new Label("labeled"));
         add(restoreComponent = new AjaxLink("restore") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 restoreVersion();
@@ -94,12 +97,14 @@ public class VersionPane extends RenderPlugin {
         });
 
         /*add(compareComponent = new AjaxLink("compare") {
-        @Override
-        public void onClick(AjaxRequestTarget target) {
-        }
-        });*/
+         @Override
+         public void onClick(AjaxRequestTarget target) {
+         }
+         });*/
 
         add(olderComponent = new AjaxLink("older") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 browseVersion(-1);
@@ -107,6 +112,8 @@ public class VersionPane extends RenderPlugin {
         });
 
         add(newerComponent = new AjaxLink("newer") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 browseVersion(+1);
@@ -114,6 +121,8 @@ public class VersionPane extends RenderPlugin {
         });
 
         add(newerComponent = new AjaxLink("test") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 test();
@@ -121,13 +130,11 @@ public class VersionPane extends RenderPlugin {
         });
     }
 
-    private void writeObject(ObjectOutputStream out)
-            throws IOException {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
     }
 
-    private void readObject(ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         log = LoggerFactory.getLogger(VersionPane.class);
     }
@@ -135,8 +142,8 @@ public class VersionPane extends RenderPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        JcrNodeModel model = (JcrNodeModel)getModel();
-        if (model!=null) {
+        JcrNodeModel model = (JcrNodeModel) getModel();
+        if (model != null) {
             try {
                 if (model.getNode().isNodeType("hippostd:document")) {
                     documentComponent.setModel(new Model(model.getNode().getName()));
@@ -156,75 +163,79 @@ public class VersionPane extends RenderPlugin {
 
     private void browseVersion(int direction) {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault());
-        JcrNodeModel model = (JcrNodeModel)VersionPane.this.getModel();
+        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getModel();
         Object currentVersionObject = versionComponent.getModel().getObject();
-        int currentVersion = (currentVersionObject instanceof Integer ? ((Integer)currentVersionObject).intValue() : -1);
-        if (model!=null) {
+        int currentVersion = (currentVersionObject instanceof Integer ? ((Integer) currentVersionObject).intValue()
+                : -1);
+        if (model != null) {
             Node document = model.getNode();
             try {
-                WorkflowManager workflowManager = ((HippoWorkspace)document.getSession().getWorkspace()).getWorkflowManager();
-                VersionWorkflow workflow = (VersionWorkflow)workflowManager.getWorkflow("versioning", document);
-                if (workflow!=null) {
+                WorkflowManager workflowManager = ((HippoWorkspace) document.getSession().getWorkspace())
+                        .getWorkflowManager();
+                VersionWorkflow workflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", document);
+                if (workflow != null) {
                     SortedMap<Calendar, Set<String>> versions = workflow.list();
-                    if (versions.size()==0)
+                    if (versions.size() == 0)
                         return;
                     Iterator iter = versions.entrySet().iterator();
-                    if (currentVersion<0)
+                    if (currentVersion < 0)
                         currentVersion = versions.size();
                     currentVersion += direction;
-                    if (currentVersion>=versions.size())
-                        currentVersion = versions.size()-1;
-                    if (currentVersion<0)
+                    if (currentVersion >= versions.size())
+                        currentVersion = versions.size() - 1;
+                    if (currentVersion < 0)
                         currentVersion = 0;
                     versionComponent.setModel(new Model(new Integer(currentVersion)));
-                    for (int i = 0; i<currentVersion; i++)
+                    for (int i = 0; i < currentVersion; i++)
                         iter.next();
-                    Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>)iter.next();
+                    Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
                     Date date = entry.getKey().getTime();
                     createdComponent.setModel(new Model(dateFormat.format(date)));
                     if (iter.hasNext()) {
-                        date = ((Map.Entry<Calendar, Set<String>>)iter.next()).getKey().getTime();
+                        date = ((Map.Entry<Calendar, Set<String>>) iter.next()).getKey().getTime();
                         expiredComponent.setModel(new Model((dateFormat.format(date))));
                     } else
                         expiredComponent.setModel(new Model("present"));
                     StringBuffer labels = new StringBuffer();
                     for (String label : entry.getValue()) {
-                        if (labels.length()>0)
+                        if (labels.length() > 0)
                             labels.append(", ");
                         labels.append(label);
                     }
                     labeledComponent.setModel(new Model(new String(labels)));
                     Document historicDocument = workflow.retrieve(entry.getKey());
-                    subModel.setModel(new JcrNodeModel(document.getSession().getNodeByUUID(historicDocument.getIdentity())));
+                    subModel.setModel(new JcrNodeModel(document.getSession().getNodeByUUID(
+                            historicDocument.getIdentity())));
                     redraw();
                 }
             } catch (WorkflowException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             } catch (RemoteException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
         }
     }
+
     // FIXME: to be removed after testing
     private void test() {
-        JcrNodeModel model = (JcrNodeModel)VersionPane.this.getModel();
-        if (model!=null) {
+        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getModel();
+        if (model != null) {
             Node document = model.getNode();
             try {
                 publish(edit(document));
             } catch (WorkflowException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             } catch (RemoteException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
         }
@@ -233,26 +244,25 @@ public class VersionPane extends RenderPlugin {
     private Node edit(Node node) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         FullReviewedActionsWorkflow publishwf;
         Document document;
-        Property prop;
 
         Session session = node.getSession();
         String path = node.getPath();
 
         // start edit
-        publishwf = (FullReviewedActionsWorkflow)getWorkflow(node, "reviewed-action");
+        publishwf = (FullReviewedActionsWorkflow) getWorkflow(node, "reviewed-action");
         document = publishwf.obtainEditableInstance();
         session.save();
         session.refresh(false);
 
         // edit
         node = session.getNodeByUUID(document.getIdentity());
-        node.setProperty("hippostd:content", node.getProperty("hippostd:content").getString()+"!");
+        node.setProperty("hippostd:content", node.getProperty("hippostd:content").getString() + "!");
         session.save();
         session.refresh(false);
 
         // commit edit
         node = session.getNodeByUUID(document.getIdentity());
-        publishwf = (FullReviewedActionsWorkflow)getWorkflow(node, "reviewed-action");
+        publishwf = (FullReviewedActionsWorkflow) getWorkflow(node, "reviewed-action");
         publishwf.commitEditableInstance();
         session.save();
         session.refresh(false);
@@ -263,17 +273,16 @@ public class VersionPane extends RenderPlugin {
     private void publish(Node node) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Session session = node.getSession();
         session.save();
-        FullReviewedActionsWorkflow publishwf = (FullReviewedActionsWorkflow)getWorkflow(node, "reviewed-action");
+        FullReviewedActionsWorkflow publishwf = (FullReviewedActionsWorkflow) getWorkflow(node, "reviewed-action");
         publishwf.publish();
         session.save();
         session.refresh(false);
     }
 
     protected Workflow getWorkflow(Node node, String category) throws RepositoryException {
-        HippoWorkspace wsp = (HippoWorkspace)node.getSession().getWorkspace();
+        HippoWorkspace wsp = (HippoWorkspace) node.getSession().getWorkspace();
         WorkflowManager workflowMgr = wsp.getWorkflowManager();
-        Node canonicalNode = ((HippoNode)node).getCanonicalNode();
+        Node canonicalNode = ((HippoNode) node).getCanonicalNode();
         return workflowMgr.getWorkflow(category, canonicalNode);
     }
 }
-

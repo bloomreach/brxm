@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.plugins.versioning;
+package org.hippoecm.frontend.plugins.versioning;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DisplayDocument extends RenderPlugin {
+    private static final long serialVersionUID = 1L;
+    
     static Logger log = LoggerFactory.getLogger(DisplayDocument.class);
     private Label content;
 
