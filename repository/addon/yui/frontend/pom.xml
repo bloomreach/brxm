@@ -45,7 +45,6 @@
     <dependency>
       <artifactId>wicketstuff-yui</artifactId>
       <groupId>org.wicketstuff</groupId>
-      <version>${parent.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
