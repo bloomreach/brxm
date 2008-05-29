@@ -42,6 +42,7 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     public static final String WICKET_ID = "wicket.id";
     public static final String MODEL_ID = "wicket.model";
     public static final String DIALOG_ID = "wicket.dialog";
+    public static final String SKIN_ID = "wicket.skin";
 
     private boolean redraw;
     private String serviceId;

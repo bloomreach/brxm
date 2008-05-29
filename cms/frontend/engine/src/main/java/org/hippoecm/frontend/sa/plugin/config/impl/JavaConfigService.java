@@ -63,6 +63,7 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.root.sa.RootPlugin");
         config.put("wicket.id", "service.root");
         config.put("wicket.dialog", "service.dialog");
+        config.put("wicket.skin", "skin/style.css");
         config.put("tabsPlugin", "service.tabs");
         config.put("logoutPlugin", "service.logout");
         plugins.addPlugin(config);
