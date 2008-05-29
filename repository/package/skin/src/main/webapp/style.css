@@ -288,3 +288,29 @@ body.dialog table.dialogbuttons tr td.okbutton a{padding: 5px;border: 1px solid 
 body.dialog table.dialogbuttons tr td.cancelbutton a{padding: 5px;border: 1px solid #333333; display: block; text-align: center; width: 100px;}
 body.dialog table.dialogbuttons tr td.okbutton a:hover{background: #f1f1f1; color: #666666; width: 100px}
 body.dialog table.dialogbuttons tr td.cancelbutton a:hover{background: #f1f1f1; color: #666666; width: 100px;}
+
+.addNodeWidget {
+  margin-bottom: 4px;
+}
+.addNodeWidget span{
+  cursor:pointer;
+  cursor:hand;
+  text-decoration: underline;
+}
+.addNodeWidget input{
+  border: 1px solid #18A4E2;
+  border: 1px solid #000;
+}
+
+.userGroupsList {
+  border: 2px solid #fff;
+  padding: 3px;
+}
+
+.inactiveNode {
+  opacity: 0.6;
+}
+
+.target {
+  border: 2px dashed #999 ! important;
+}
