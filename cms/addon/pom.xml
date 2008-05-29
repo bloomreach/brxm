@@ -48,9 +48,9 @@
     <module>reviewed-action</module>
     <module>xinha</module>
     <module>xinha-frontend</module>
+    <module>yui</module>
     <module>cms</module>
     <module>frontend</module>
-
     <module>sample</module>    
     <module>defaultcontent</module>
     <module>versioning</module>
