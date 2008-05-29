@@ -36,16 +36,11 @@ public class EditorPlugin extends RenderPlugin implements IViewService {
     }
 
     public void view(IModel model) {
-        setModel(model);
-    }
-
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
         if (form != null) {
             form.destroy();
         }
-        replace(form = new EditorForm("form", (JcrNodeModel) getModel(), this, getPluginContext(), getPluginConfig()));
+        replace(form = new EditorForm("form", (JcrNodeModel) model, this, getPluginContext(), getPluginConfig()));
+        focus(null);
     }
 
     @Override

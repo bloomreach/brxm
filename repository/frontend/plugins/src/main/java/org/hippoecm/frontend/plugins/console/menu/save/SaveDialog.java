@@ -27,19 +27,20 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 
 public class SaveDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private boolean hasPendingChanges;
-    private MenuPlugin plugin;
+    private IServiceReference<MenuPlugin> pluginRef;
 
     public SaveDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);    
-        this.plugin = plugin;
-        
+        super(context, dialogWindow);
+        this.pluginRef = context.getReference(plugin);
+
         Component message;
-        JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         try {
             NodeIterator it = nodeModel.getNode().pendingChanges();
             hasPendingChanges = it.hasNext();
@@ -63,7 +64,8 @@ public class SaveDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
+        MenuPlugin plugin = pluginRef.getService();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Node saveNode = nodeModel.getNode();
         if (hasPendingChanges) {
             while (saveNode.isNew()) {
@@ -71,13 +73,7 @@ public class SaveDialog extends AbstractDialog {
             }
             saveNode.save();
 
-//            Channel channel = getChannel();
-//            if (channel != null) {
-//                Request request = channel.createRequest("save", new JcrNodeModel(saveNode));
-//                channel.send(request);
-//                request = channel.createRequest("flush", new JcrNodeModel(saveNode));
-//                channel.send(request);
-//            }
+            plugin.flushNodeModel(new JcrNodeModel(saveNode));
         }
     }
 

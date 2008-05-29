@@ -30,7 +30,7 @@ public class EditorService extends RenderService implements IViewService {
     public EditorService(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
-        editor = new NodeEditor("editor", new JcrNodeModel("/"));
+        editor = new NodeEditor("editor", (JcrNodeModel) getModel());
         add(editor);
     }
 

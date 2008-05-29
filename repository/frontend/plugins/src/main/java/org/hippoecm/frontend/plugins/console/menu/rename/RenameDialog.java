@@ -24,6 +24,7 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -34,12 +35,12 @@ public class RenameDialog extends AbstractDialog {
 
     static final Logger log = LoggerFactory.getLogger(RenameDialog.class);
 
-    private MenuPlugin plugin;
+    private IServiceReference<MenuPlugin> pluginRef;
     private String name;
 
     public RenameDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
-        this.plugin = plugin;
+        this.pluginRef = context.getReference(plugin);
 
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         try {
@@ -57,6 +58,7 @@ public class RenameDialog extends AbstractDialog {
 
     @Override
     protected void ok() throws RepositoryException {
+        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         if (nodeModel.getParentModel() != null) {
@@ -72,15 +74,9 @@ public class RenameDialog extends AbstractDialog {
             Session jcrSession = ((UserSession) getSession()).getJcrSession();
             jcrSession.move(oldPath, newPath);
 
-//            Channel channel = getChannel();
-//            if(channel != null) {
-//                JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
-//                Request request = channel.createRequest("flush", parentModel);
-//                channel.send(request);
-//
-//                request = channel.createRequest("select", newNodeModel);
-//                channel.send(request);
-//            }
+            plugin.flushNodeModel(parentModel);
+            JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
+            plugin.setModel(newNodeModel);
         }
     }
 

@@ -17,7 +17,6 @@ package org.hippoecm.frontend.sa.plugin.editor;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
@@ -27,37 +26,23 @@ import org.hippoecm.frontend.service.editor.EditorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorPlugin extends EditorService implements IPlugin {
+public class EditorPlugin extends EditorService implements IPlugin, ITitleDecorator {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
-    private TitleDecorator title;
-
     public EditorPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
-
-        String decoratorId = getServiceId() + ".decorator";
-        if (decoratorId != null) {
-            title = new TitleDecorator();
-            context.registerService(title, decoratorId);
-        } else {
-            title = null;
-            log.warn("No decorator id was found");
-        }
     }
 
-    class TitleDecorator implements ITitleDecorator, IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        public String getTitle() {
-            JcrNodeModel model = (JcrNodeModel) getModel();
-            try {
-                return model.getNode().getDisplayName();
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-            return "";
+    public String getTitle() {
+        JcrNodeModel model = (JcrNodeModel) getModel();
+        try {
+            return model.getNode().getDisplayName();
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
+        return "";
     }
+
 }

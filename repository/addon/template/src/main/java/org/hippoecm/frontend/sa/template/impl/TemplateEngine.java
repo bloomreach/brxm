@@ -19,14 +19,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.sa.service.Message;
-import org.hippoecm.frontend.sa.service.render.ModelReference;
 import org.hippoecm.frontend.sa.service.render.RenderService;
-import org.hippoecm.frontend.sa.service.render.ModelReference.ModelMessage;
-import org.hippoecm.frontend.sa.service.topic.TopicService;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.ITemplateStore;
 import org.hippoecm.frontend.sa.template.ITypeStore;
@@ -45,10 +42,13 @@ public class TemplateEngine implements ITemplateEngine {
     private String serviceId;
     private int templateCount = 0;
 
-    public TemplateEngine(IPluginContext context, String serviceId, ITypeStore typeStore, ITemplateStore templateStore) {
+    public TemplateEngine(IPluginContext context, ITypeStore typeStore, ITemplateStore templateStore) {
         this.context = context;
         this.typeStore = typeStore;
         this.templateStore = templateStore;
+    }
+
+    public void setId(String serviceId) {
         this.serviceId = serviceId;
     }
 
@@ -77,18 +77,8 @@ public class TemplateEngine implements ITemplateEngine {
 
     public IPluginControl start(final IClusterConfig template, final IModel model) {
         String modelId = template.getString(RenderService.MODEL_ID);
-        final TopicService topic = new TopicService(modelId) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onPublish(Message message) {
-                switch (message.getType()) {
-                case ModelReference.GET_MODEL:
-                    publish(new ModelMessage(ModelReference.SET_MODEL, model));
-                }
-            }
-        };
-        topic.init(context);
+        ModelService modelService = new ModelService(modelId, model);
+        modelService.init(context);
 
         return context.start(template);
     }

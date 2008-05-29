@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.sa.template.plugins;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
@@ -34,25 +33,16 @@ public class ValueTemplatePlugin extends RenderPlugin {
     public ValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new EmptyPanel("value"));
-    }
-
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
-
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
-        IPluginConfig config = getPluginConfig();
-
         String mode = config.getString("mode");
         if (TemplateConfig.EDIT_MODE.equals(mode)) {
             TextFieldWidget widget = new TextFieldWidget("value", valueModel);
             if (config.getString("size") != null) {
                 widget.setSize(config.getString("size"));
             }
-            replace(widget);
+            add(widget);
         } else {
-            replace(new Label("value", valueModel));
+            add(new Label("value", valueModel));
         }
     }
 

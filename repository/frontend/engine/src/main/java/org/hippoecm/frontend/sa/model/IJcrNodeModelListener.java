@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.service;
+package org.hippoecm.frontend.sa.model;
 
-import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
-public interface IServiceTracker<S extends IClusterable> extends IClusterable {
+public interface IJcrNodeModelListener extends IModelListener {
 
-    void addService(S service, String name);
-
-    void removeService(S service, String name);
-
-    void updateService(S service, String name);
-
+    void onFlush(JcrNodeModel nodeModel);
 }

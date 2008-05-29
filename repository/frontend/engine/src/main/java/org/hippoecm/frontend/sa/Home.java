@@ -16,22 +16,20 @@
 package org.hippoecm.frontend.sa;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.sa.plugin.IServiceTracker;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaConfigService;
 import org.hippoecm.frontend.sa.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.sa.plugin.impl.PluginManager;
+import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.sa.service.IRenderService;
-import org.hippoecm.frontend.sa.service.IServiceTracker;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
-import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 
 public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService {
@@ -50,18 +48,28 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
         IPluginConfigService pluginConfigService = configFactory.getPluginConfigService();
         mgr.registerService(pluginConfigService, "service.plugin.config");
-        
+
+        // register JCR service to notify plugins of updates to the jcr tree
+        mgr.registerService(new JcrService(mgr), IJcrService.class.getName());
+
         IClusterConfig pluginCluster;
         if (sessionModel.getCredentials().equals(Main.DEFAULT_CREDENTIALS)) {
             pluginCluster = new JavaConfigService().getPlugins("login");
         } else {
             pluginCluster = pluginConfigService.getDefaultCluster();
         }
+
+        mgr.registerService(this, Home.class.getName());
+        String controlId = mgr.getReference(this).getServiceId();
         for (IPluginConfig plugin : pluginCluster.getPlugins()) {
-            mgr.start(plugin);
+            mgr.start(plugin, controlId);
         }
     }
-    
+
+    public Component getComponent() {
+        return this;
+    }
+
     public void render(PluginRequestTarget target) {
         if (root != null) {
             root.render(target);
@@ -85,6 +93,8 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         return null;
     }
 
+    // DO NOT CALL THIS METHOD
+    // Use the IPluginContext to access the plugin manager
     public final PluginManager getPluginManager() {
         return mgr;
     }
@@ -92,7 +102,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     public void addService(IRenderService service, String name) {
         root = service;
         root.bind(this, "root");
-        replace((Component) root);
+        replace(root.getComponent());
     }
 
     public void removeService(IRenderService service, String name) {

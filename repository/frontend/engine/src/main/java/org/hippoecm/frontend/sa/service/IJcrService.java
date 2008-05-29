@@ -16,30 +16,13 @@
 package org.hippoecm.frontend.sa.service;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.Home;
-import org.hippoecm.frontend.sa.plugin.impl.PluginManager;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class ServiceReference<T extends IClusterable> implements IClusterable {
-    private static final long serialVersionUID = 1L;
+// global service to broadcast repository changes
+public interface IJcrService extends IClusterable {
 
-    private Home page;
-    private int id;
+    // support for broadcasting JCR flush
 
-    public ServiceReference(Home page, int id) {
-        this.page = page;
-        this.id = id;
-    }
+    void flush(JcrNodeModel model);
 
-    public T getService() {
-        PluginManager mgr = page.getPluginManager();
-        return mgr.getService(this);
-    }
-
-    public Home getPage() {
-        return page;
-    }
-
-    public int getId() {
-        return id;
-    }
 }

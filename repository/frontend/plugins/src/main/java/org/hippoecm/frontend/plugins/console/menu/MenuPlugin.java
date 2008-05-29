@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.console.menu;
 
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.export.ExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
@@ -27,8 +28,10 @@ import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.DialogLink;
 import org.hippoecm.frontend.sa.dialog.IDialogFactory;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
+import org.hippoecm.frontend.sa.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 
 public class MenuPlugin extends RenderPlugin {
@@ -121,6 +124,13 @@ public class MenuPlugin extends RenderPlugin {
         //  
         //  
         //  
+    }
+
+    public void flushNodeModel(JcrNodeModel nodeModel) {
+        IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
+        if (jcrService != null) {
+            jcrService.flush(nodeModel);
+        }
     }
 
 }

@@ -27,16 +27,17 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 
 public class ResetDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private boolean hasPendingChanges;
-    private MenuPlugin plugin;
+    private IServiceReference<MenuPlugin> pluginRef;
 
     public ResetDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);    
-        this.plugin = plugin;
+        this.pluginRef = context.getReference(plugin);
         
         Component message;
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
@@ -63,20 +64,14 @@ public class ResetDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
+        MenuPlugin plugin = pluginRef.getService();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         // The actual JCR refresh
         nodeModel.getNode().refresh(false);
 
-//        Channel channel = getChannel();
-//        if (channel != null) {
-//            Request request = channel.createRequest("select", nodeModel);
-//            channel.send(request);
-//            if (hasPendingChanges) {
-//                request = channel.createRequest("flush", nodeModel.findRootModel());
-//                channel.send(request);
-//            }
-//        }
+        // Notify other plugins
+        plugin.flushNodeModel(nodeModel.getParentModel());
     }
 
     @Override

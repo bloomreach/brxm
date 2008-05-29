@@ -98,7 +98,7 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     public void select(JcrNodeModel nodeModel) {
-        IViewService view = getPluginContext().getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
+        IViewService view = getPluginContext().getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID), IViewService.class);
         if (view != null) {
             view.view(nodeModel);
         }

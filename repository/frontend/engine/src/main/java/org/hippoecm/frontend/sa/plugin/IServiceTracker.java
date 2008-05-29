@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.service;
+package org.hippoecm.frontend.sa.plugin;
 
 import org.apache.wicket.IClusterable;
 
-public interface IMessageListener extends IClusterable {
+public interface IServiceTracker<S extends IClusterable> extends IClusterable {
 
-    public void onConnect();
+    void addService(S service, String name);
 
-    public void onMessage(Message message);
+    void removeService(S service, String name);
+
+    void updateService(S service, String name);
+
 }

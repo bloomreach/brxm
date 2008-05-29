@@ -18,7 +18,6 @@ package org.hippoecm.frontend.sa.service.render;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
@@ -51,7 +50,7 @@ public class ListViewService extends RenderService {
             protected void populateItem(Item item) {
                 IRenderService renderer = (IRenderService) item.getModelObject();
                 renderer.bind(ListViewService.this, "item");
-                item.add((Component) renderer);
+                item.add(renderer.getComponent());
                 ListViewService.this.onAddRenderService(item, renderer);
             }
 

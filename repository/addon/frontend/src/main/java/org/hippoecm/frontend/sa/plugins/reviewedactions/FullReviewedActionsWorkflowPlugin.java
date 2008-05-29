@@ -60,7 +60,8 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                IViewService editor = getPluginContext().getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
+                IViewService editor = getPluginContext().getService(
+                        getPluginConfig().getString(WorkflowPlugin.VIEWER_ID), IViewService.class);
                 if (editor != null) {
                     editor.view(new JcrNodeModel(docNode));
                 }
@@ -151,11 +152,6 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.delete();
             }
         });
-    }
-
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
 
         WorkflowsModel model = (WorkflowsModel) getModel();
         try {
@@ -172,4 +168,5 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
         }
     }
+
 }

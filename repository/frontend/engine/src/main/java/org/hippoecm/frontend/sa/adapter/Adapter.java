@@ -33,7 +33,6 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IRenderService;
@@ -146,6 +145,10 @@ public class Adapter extends Panel implements IRenderService {
         return wicketId;
     }
 
+    public Component getComponent() {
+        return this;
+    }
+
     public void bind(IRenderService parent, String id) {
         this.parent = parent;
         wicketId = id;
@@ -156,10 +159,6 @@ public class Adapter extends Panel implements IRenderService {
 
     public IRenderService getParentService() {
         return parent;
-    }
-
-    public String getServiceId() {
-        return config.getString(IPlugin.SERVICE_ID);
     }
 
     public void render(PluginRequestTarget target) {

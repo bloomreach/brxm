@@ -15,9 +15,12 @@
  */
 package org.hippoecm.frontend.sa.service;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 
 public interface IRenderService extends IClusterable {
+
+    Component getComponent();
 
     void render(PluginRequestTarget target);
 
@@ -33,7 +36,4 @@ public interface IRenderService extends IClusterable {
 
     IRenderService getParentService();
 
-    // Service id that is used to register decorators
-
-    String getServiceId();
 }

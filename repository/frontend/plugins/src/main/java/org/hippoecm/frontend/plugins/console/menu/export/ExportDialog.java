@@ -38,16 +38,17 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 import org.w3c.dom.Document;
 
 public class ExportDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    private MenuPlugin plugin;
+    private IServiceReference<MenuPlugin> pluginRef;
     
     public ExportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);     
-        this.plugin = plugin;
+        this.pluginRef = context.getReference(plugin);
         
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         
@@ -63,7 +64,7 @@ public class ExportDialog extends AbstractDialog {
                 private static final long serialVersionUID = 1L;
                 
                 @Override
-                    public void onClick(AjaxRequestTarget target) {
+                public void onClick(AjaxRequestTarget target) {
                     String export;
                     try {
                         Node node = nodeModel.getNode();
@@ -82,22 +83,17 @@ public class ExportDialog extends AbstractDialog {
 
         cancel.setVisible(false);
     }
-    
+
     @Override
     public void ok() {
-//Channel channel = getChannel();
-//if (channel != null) {
-//Request request = channel.createRequest("select", getDialogWindow().getNodeModel());
-//channel.send(request);
-//}
     }
 
     @Override
     public void cancel() {
     }
-    
+ 
     public String getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) pluginRef.getService().getModel();
         String path;
         try {
             path = nodeModel.getNode().getPath();

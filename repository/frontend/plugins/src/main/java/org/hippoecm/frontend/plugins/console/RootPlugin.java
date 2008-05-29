@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.dialog.DialogService;
+import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
@@ -26,9 +28,17 @@ public class RootPlugin extends RenderPlugin {
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        for (String extension : new String[] {
-            "browserPlugin", "breadcrumbPlugin", "editorPlugin", "logoutPlugin", "menuPlugin"
-        }) {
+
+        if (config.getString(RenderPlugin.MODEL_ID) != null) {
+            String modelId = config.getString(RenderPlugin.MODEL_ID);
+            ModelService modelService = new ModelService(modelId, new JcrNodeModel("/"));
+            modelService.init(context);
+            // unregister: don't repaint root plugin when model changes.
+            context.unregisterService(this, modelId);
+        }
+
+        for (String extension : new String[] { "browserPlugin", "breadcrumbPlugin", "editorPlugin", "logoutPlugin",
+                "menuPlugin" }) {
             addExtensionPoint(extension);
         }
         DialogService dialogService = new DialogService();

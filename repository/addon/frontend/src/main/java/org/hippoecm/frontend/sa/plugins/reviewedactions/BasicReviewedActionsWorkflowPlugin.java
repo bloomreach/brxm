@@ -46,7 +46,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
                 IViewService viewer = getPluginContext().getService(
-                        getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
+                        getPluginConfig().getString(WorkflowPlugin.VIEWER_ID), IViewService.class);
                 if (viewer != null) {
                     viewer.view(new JcrNodeModel(docNode));
                 }

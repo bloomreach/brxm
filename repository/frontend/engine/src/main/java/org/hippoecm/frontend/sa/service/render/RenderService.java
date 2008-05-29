@@ -25,7 +25,8 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.model.IModelListener;
+import org.hippoecm.frontend.sa.model.IModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IRenderService;
@@ -34,7 +35,7 @@ import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class RenderService extends Panel implements ModelReference.IView, IRenderService {
+public abstract class RenderService extends Panel implements IModelListener, IRenderService {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RenderService.class);
@@ -45,19 +46,17 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     public static final String SKIN_ID = "wicket.skin";
 
     private boolean redraw;
-    private String serviceId;
     private String wicketServiceId;
     private String wicketId;
+    private String modelId;
 
     private IPluginContext context;
     private IPluginConfig config;
     private Map<String, ExtensionPoint> children;
-    private ModelReference modelRef;
     private IRenderService parent;
 
     public RenderService(IPluginContext context, IPluginConfig properties) {
-        super("id");
-
+        super("id", getPluginModel(context, properties));
         this.context = context;
         this.config = properties;
 
@@ -75,21 +74,12 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
         }
 
         if (properties.getString(MODEL_ID) != null) {
-            String modelId = properties.getString(MODEL_ID);
+            modelId = properties.getString(MODEL_ID);
             if (modelId != null) {
-                this.modelRef = new ModelReference(modelId, this);
-
-                modelRef.init(context);
+                context.registerService(this, modelId);
             }
         } else {
             log.warn("No model ({}) defined for service {}", MODEL_ID, wicketServiceId);
-        }
-
-        if (config.getString(IPlugin.SERVICE_ID) != null) {
-            serviceId = config.getString(IPlugin.SERVICE_ID);
-            context.registerService(this, serviceId);
-        } else {
-            log.warn("No unique service id ({}) defined", IPlugin.SERVICE_ID);
         }
 
         context.registerService(this, wicketServiceId);
@@ -98,22 +88,17 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     // override model change methods
 
     @Override
-    public void onModelChanged() {
-        super.onModelChanged();
-        redraw();
-    }
-
-    @Override
     public Component setModel(IModel model) {
-        if (modelRef != null) {
-            modelRef.setModel(model);
+        IModelService service = context.getService(modelId, IModelService.class);
+        if (service != null) {
+            service.setModel(model);
         }
-        updateModel(model);
         return this;
     }
 
-    public void updateModel(IModel model) {
+    public final void updateModel(IModel model) {
         super.setModel(model);
+        redraw();
     }
 
     // utility routines for subclasses
@@ -124,10 +109,6 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
 
     protected IPluginConfig getPluginConfig() {
         return config;
-    }
-
-    protected Object getProperty(String key) {
-        return config.get(key);
     }
 
     protected void redraw() {
@@ -148,10 +129,14 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
     }
 
     protected IDialogService getDialogService() {
-        return context.getService(config.getString(DIALOG_ID));
+        return context.getService(config.getString(DIALOG_ID), IDialogService.class);
     }
 
     // implement IRenderService
+
+    public Component getComponent() {
+        return this;
+    }
 
     public void render(PluginRequestTarget target) {
         if (redraw) {
@@ -192,8 +177,15 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
         return parent;
     }
 
-    public String getServiceId() {
-        return serviceId;
+    private static IModel getPluginModel(IPluginContext context, IPluginConfig properties) {
+        String modelId = properties.getString(MODEL_ID);
+        if (modelId != null) {
+            IModelService service = context.getService(modelId, IModelService.class);
+            if (service != null) {
+                return service.getModel();
+            }
+        }
+        return null;
     }
 
     private class ExtensionPoint extends ServiceTracker<IRenderService> {
@@ -215,7 +207,7 @@ public abstract class RenderService extends Panel implements ModelReference.IVie
         @Override
         public void onServiceAdded(IRenderService service, String name) {
             service.bind(RenderService.this, extension);
-            replace((Component) service);
+            replace(service.getComponent());
             list.add(service);
         }
 

@@ -47,14 +47,13 @@ import org.hippoecm.frontend.plugins.cms.browse.list.JcrNodeModelComparator;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugins.cms.browse.list.SortableDataAdapter;
-import org.hippoecm.frontend.sa.service.render.ProviderReference;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractListingPlugin extends RenderPlugin implements ProviderReference.IView {
+public abstract class AbstractListingPlugin extends RenderPlugin {
 
     protected static final String LISTING_NODETYPE = "hippo:listing";
     protected static final String LISTINGPROPS_NODETYPE = "hippo:listingpropnode";
@@ -97,14 +96,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Prov
         createTableColumns();
     }
 
-    // implement ProviderReference.IView
-
     public void setDataProvider(IDataProvider provider) {
-        //        providerRef.setDataProvider(provider);
-        updateDataProvider(provider);
-    }
-
-    public void updateDataProvider(IDataProvider provider) {
         this.provider = new SortableDataAdapter<JcrNodeModel>(provider, compare);
         this.provider.setSort("name", true);
 
@@ -130,15 +122,15 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Prov
                 if (!node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType(HippoNodeType.NT_HANDLE)
                         && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
                         && !node.isNodeType(HippoNodeType.NT_REQUEST)) {
+                    NodeIterator childNodesIterator = node.getNodes();
+                    while (childNodesIterator.hasNext()) {
+                        entries.add(new JcrNodeModel(childNodesIterator.nextNode()));
+                    }
                     break;
                 }
                 node = node.getParent();
             }
 
-            NodeIterator childNodesIterator = node.getNodes();
-            while (childNodesIterator.hasNext()) {
-                entries.add(new JcrNodeModel(childNodesIterator.nextNode()));
-            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }

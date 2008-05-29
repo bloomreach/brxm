@@ -21,8 +21,8 @@ import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.service.ServiceReference;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
@@ -42,7 +42,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     private String title;
     private WorkflowsModel model;
-    private ServiceReference<AbstractWorkflowPlugin> pluginRef;
+    private IServiceReference<AbstractWorkflowPlugin> pluginRef;
 
     public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, String title) {
         super(plugin.getPluginContext(), dialogWindow);

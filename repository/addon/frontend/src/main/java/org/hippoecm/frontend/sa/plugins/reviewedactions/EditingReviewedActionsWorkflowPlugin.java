@@ -56,9 +56,10 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
 
     private void close() {
         IPluginContext context = getPluginContext();
-        IViewService viewer = context.getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID));
+        IViewService viewer = context.getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID), IViewService.class);
         if (viewer != null) {
-            IFactoryService factory = context.getService(viewer.getServiceId());
+            String serviceId = context.getReference(viewer).getServiceId();
+            IFactoryService factory = context.getService(serviceId, IFactoryService.class);
             if (factory != null) {
                 factory.delete(viewer);
             }

@@ -26,6 +26,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.session.SessionClassLoader;
 import org.hippoecm.frontend.session.WorkflowManagerDecorator;
 import org.hippoecm.repository.HippoRepository;
@@ -74,7 +75,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
     public ValueMap getCredentials() {
         return credentials;
     }
-    
+
     public Session getSession() {
         try {
             Session session = (Session) getObject();
@@ -140,12 +141,12 @@ public class JcrSessionModel extends LoadableDetachableModel {
         }
         return result;
     }
-    
+
     /**
      * Helper method for logging
      * @return ip address of client
      */
     private String getRemoteAddr() {
-        return ((WebRequestCycle)RequestCycle.get()).getWebRequest().getHttpServletRequest().getRemoteAddr();
+        return ((WebRequestCycle) RequestCycle.get()).getWebRequest().getHttpServletRequest().getRemoteAddr();
     }
 }
