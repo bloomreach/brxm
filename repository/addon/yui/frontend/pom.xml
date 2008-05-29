@@ -53,7 +53,20 @@
       <version>${parent.version}</version>
     </dependency>
   </dependencies>
-
+  
+  <repositories>
+    <repository>
+      <id>wicket-snaps</id>
+      <url>http://wicketstuff.org/maven/repository</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>
