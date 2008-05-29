@@ -198,7 +198,8 @@
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
-[hippo:parameters] > nt:base 
+[hippo:parameters] > nt:base
+- * (boolean) 
 - * (string) multiple
 
 [hippo:plugin] > nt:unstructured
