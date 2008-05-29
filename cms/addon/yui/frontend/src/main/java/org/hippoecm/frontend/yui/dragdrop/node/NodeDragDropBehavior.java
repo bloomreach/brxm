@@ -79,14 +79,14 @@ public abstract class NodeDragDropBehavior extends PluginDragDropBehavior {
     }
 
     public String getLabel() {
-        if (getNodeModel() != null) {
+        if (getNodeModel() != null && getNodeModel().getNode() != null) {
             try {
                 return getNodeModel().getNode().getDisplayName();
             } catch (RepositoryException e) {
                 log.error("Error getting displayName for node [" + getNodePath() + "]", e);
             }
         }
-        return null;
+        return getPlugin().getMarkupId();
     }
 
 }
