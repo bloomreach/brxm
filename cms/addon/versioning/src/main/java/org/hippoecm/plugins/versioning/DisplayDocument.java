@@ -45,7 +45,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class DisplayDocument extends RenderPlugin
         implements IPlugin, IMessageListener, IClusterable {
-
     static Logger log = LoggerFactory.getLogger(DisplayDocument.class);
     private IPluginContext context;
     private IPluginConfig config;
@@ -57,7 +56,7 @@ public class DisplayDocument extends RenderPlugin
         this.context = context;
         this.config = config;
 
-        if (config.get(RenderPlugin.MODEL_ID) != null) {
+        if (config.get(RenderPlugin.MODEL_ID)!=null) {
             topic = new TopicService(config.getString(RenderPlugin.MODEL_ID));
             topic.addListener(this);
             topic.init(context);
@@ -92,21 +91,21 @@ public class DisplayDocument extends RenderPlugin
 
     public void onModelChanged() {
         super.onModelChanged();
-        JcrNodeModel model = (JcrNodeModel) getModel();
-        if (model != null) {
+        JcrNodeModel model = (JcrNodeModel)getModel();
+        if (model!=null) {
             Node document = model.getNode();
             try {
-                if (document.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                if (document.isNodeType(HippoNodeType.NT_DOCUMENT) || document.isNodeType("nt:frozenNode")) {
                     Item primaryItem = document;
                     try {
                         do {
-                            primaryItem = ((Node) primaryItem).getPrimaryItem();
+                            primaryItem = ((Node)primaryItem).getPrimaryItem();
                         } while (primaryItem.isNode());
+                        String data = ((Property)primaryItem).getString();
+                        content.setModel(new Model(data));
                     } catch (ItemNotFoundException ex) {
                         content.setModel(new Model("selected item has no default content to display"));
                     }
-                    String data = ((Property) primaryItem).getString();
-                    content.setModel(new Model(data));
                 } else {
                     content.setModel(new Model("selected item is not a document"));
                 }

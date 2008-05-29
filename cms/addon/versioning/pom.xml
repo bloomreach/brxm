@@ -39,6 +39,28 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/versioning</url>
   </scm>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-api</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- FIXME: to be removed after testing -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>
@@ -95,19 +117,5 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
 
 </project>

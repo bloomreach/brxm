@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
@@ -125,8 +126,19 @@ public class DocumentManagerImpl
                 tx.begin();
                 if(uuid != null) {
                     Node node = session.getNodeByUUID(uuid);
-                    if(!node.isCheckedOut())
+                    if(!node.isCheckedOut()) {
                         node.checkout();
+			try {
+			    Node parent = node.getParent();
+			    if(parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+			        if(!parent.isCheckedOut()) {
+				    parent.checkout();
+				}
+			    }
+                        } catch(ItemNotFoundException ex)  {
+			    // no parent as this is root node, ignore.
+			}
+		    }
                 }
                 pm.makePersistent(object);
                 tx.commit();
