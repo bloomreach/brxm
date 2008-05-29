@@ -48,6 +48,7 @@ public class EditorPlugin extends Plugin {
                 form.destroy();
                 replace(form = new EditorForm("form", nodeModel, this));
                 notification.getContext().addRefresh(this);
+                setPluginModel(nodeModel);
             }
         }
         super.receive(notification);
