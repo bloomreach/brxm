@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.sa.service;
 
-public interface ITitleDecorator {
+import org.apache.wicket.IClusterable;
+
+public interface ITitleDecorator extends IClusterable {
 
     String getTitle();
 }

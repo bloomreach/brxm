@@ -142,6 +142,7 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("plugin.class", "org.hippoecm.frontend.plugins.console.RootPlugin");
         config.put("wicket.id", "service.root");
         config.put("wicket.dialog", "service.dialog");
+        config.put("wicket.model", "service.model");
         config.put("browserPlugin", "service.browser");
         config.put("breadcrumbPlugin", "service.breadcrumb");
         config.put("editorPlugin", "service.editor");
@@ -202,9 +203,8 @@ public class JavaConfigService implements IPluginConfigService {
 
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.browse.sa.BrowserPerspective");
-        config.put("service.pid", "service.browse");
         config.put("wicket.id", "service.tab");
-        config.put("wicket.model", "service.browse.node");
+        config.put("wicket.model", "model.browse.node");
         config.put("perspective.title", "browse");
         config.put("browserBreadcrumbPlugin", "service.browse.breadcrumb");
         config.put("browserPlugin", "service.browse.tree");
@@ -245,12 +245,11 @@ public class JavaConfigService implements IPluginConfigService {
         config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.sa.plugin.editor.MultiEditorPlugin");
         config.put("editor.class", "org.hippoecm.frontend.sa.template.editor.EditorPlugin");
-        config.put("service.pid", "service.edit");
+        config.put("editor.id", "service.edit");
         config.put("wicket.dialog", "service.dialog");
 
-        // instance properties
+        // instance properties (model is set dynamically)
         config.put("wicket.id", "service.tab");
-        config.put("editor", "editor.id");
         plugins.addPlugin(config);
 
         return plugins;

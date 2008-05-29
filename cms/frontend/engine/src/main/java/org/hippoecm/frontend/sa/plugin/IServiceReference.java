@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.service;
+package org.hippoecm.frontend.sa.plugin;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
 
-public interface IViewService<T extends IModel> extends IClusterable {
+public interface IServiceReference<T extends IClusterable> extends IClusterable {
 
-    void view(T model);
+    T getService();
+
+    String getServiceId();
+
 }

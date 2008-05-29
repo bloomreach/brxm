@@ -32,6 +32,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
     public BreadcrumbPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         add(new Label("breadcrumb", new PropertyModel(this, "breadcrumb")));
+        onModelChanged();
     }
 
     @Override

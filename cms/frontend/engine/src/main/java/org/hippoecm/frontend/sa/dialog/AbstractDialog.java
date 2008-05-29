@@ -21,8 +21,8 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
-import org.hippoecm.frontend.sa.service.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
 
     protected AjaxLink ok;
     protected AjaxLink cancel;
-    private ServiceReference<IDialogService> windowRef;
+    private IServiceReference<IDialogService> windowRef;
 
     private String exception = "";
 

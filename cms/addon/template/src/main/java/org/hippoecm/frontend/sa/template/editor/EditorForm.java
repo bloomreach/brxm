@@ -18,12 +18,10 @@ package org.hippoecm.frontend.sa.template.editor;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
@@ -66,29 +64,29 @@ public class EditorForm extends Form {
         // FIXME: make this configurable
         setMaxSize(Bytes.megabytes(5));
 
-        engineId = config.getString(IPlugin.SERVICE_ID) + ".engine";
         ITypeStore typeStore = new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT);
         ITemplateStore templateConfig = new JcrTemplateStore();
-        engine = new TemplateEngine(context, engineId, typeStore, templateConfig);
-        context.registerService(engine, engineId);
+        engine = new TemplateEngine(context, typeStore, templateConfig);
+        context.registerService(engine, ITemplateEngine.class.getName());
+        engineId = context.getReference(engine).getServiceId();
+        engine.setId(engineId);
 
         fields = new LinkedList<IRenderService>();
         fieldTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void onRemoveService(IRenderService service, String name) {
                 replace(new EmptyPanel("template"));
                 service.unbind();
                 fields.remove(service);
             }
 
+            @Override
             public void onServiceAdded(IRenderService service, String name) {
                 service.bind(parent, "template");
-                replace((Component) service);
+                replace(service.getComponent());
                 fields.add(service);
-            }
-
-            public void onServiceChanged(IRenderService service, String name) {
             }
         };
         context.registerTracker(fieldTracker, engineId + ".wicket.root");
@@ -97,7 +95,7 @@ public class EditorForm extends Form {
     }
 
     public void destroy() {
-        context.unregisterService(engine, config.getString(ITemplateEngine.ENGINE));
+        context.unregisterService(engine, ITemplateEngine.class.getName());
         context.unregisterTracker(fieldTracker, engineId + ".wicket.root");
         if (template != null) {
             template.stopPlugin();

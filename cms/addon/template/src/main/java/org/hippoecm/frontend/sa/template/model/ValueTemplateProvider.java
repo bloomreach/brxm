@@ -50,6 +50,7 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
         return descriptor;
     }
 
+    @Override
     public void addNew() {
         load();
 
@@ -97,6 +98,7 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
         }
     }
 
+    @Override
     public void remove(JcrPropertyValueModel model) {
         load();
         Iterator<JcrPropertyValueModel> iterator = elements.iterator();
@@ -143,6 +145,7 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
         }
     }
 
+    @Override
     public void moveUp(JcrPropertyValueModel model) {
         log.error("reordering values is not supported");
     }

@@ -19,8 +19,6 @@ import org.apache.wicket.IClusterable;
 
 public interface IPlugin extends IClusterable {
 
-    String SERVICE_ID = "service.pid";
-
     String CLASSNAME = "plugin.class";
 
 }

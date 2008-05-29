@@ -13,56 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.versioning;
+package org.hippoecm.plugins.versioning;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
-import org.hippoecm.frontend.sa.service.IMessageListener;
-import org.hippoecm.frontend.sa.service.Message;
-import org.hippoecm.frontend.sa.service.render.ModelReference;
-import org.hippoecm.frontend.sa.service.topic.TopicService;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DisplayDocument extends RenderPlugin
-        implements IPlugin, IMessageListener, IClusterable {
+public class DisplayDocument extends RenderPlugin {
     static Logger log = LoggerFactory.getLogger(DisplayDocument.class);
-    private IPluginContext context;
-    private IPluginConfig config;
-    private TopicService topic;
     private Label content;
 
     public DisplayDocument(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        this.context = context;
-        this.config = config;
-
-        if (config.get(RenderPlugin.MODEL_ID)!=null) {
-            topic = new TopicService(config.getString(RenderPlugin.MODEL_ID));
-            topic.addListener(this);
-            topic.init(context);
-        } else {
-            log.warn("");
-        }
 
         add(content = new Label("content"));
     }
@@ -78,17 +56,7 @@ public class DisplayDocument extends RenderPlugin
         log = LoggerFactory.getLogger(DisplayDocument.class);
     }
 
-    public void onMessage(Message message) {
-        switch (message.getType()) {
-            case ModelReference.SET_MODEL:
-                // setModel((JcrNodeModel) ((ModelReference.ModelMessage) message).getModel());
-                break;
-        }
-    }
-
-    public void onConnect() {
-    }
-
+    @Override
     public void onModelChanged() {
         super.onModelChanged();
         JcrNodeModel model = (JcrNodeModel)getModel();

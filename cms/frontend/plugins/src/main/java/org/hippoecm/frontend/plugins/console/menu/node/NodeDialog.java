@@ -24,44 +24,39 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
-public class NodeDialog extends AbstractDialog implements ITitleDecorator{
+public class NodeDialog extends AbstractDialog implements ITitleDecorator {
     private static final long serialVersionUID = 1L;
 
     private String name;
     private String type = "nt:unstructured";
-    
-    private MenuPlugin plugin;
+
+    private IServiceReference<MenuPlugin> pluginRef;
 
     public NodeDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);     
-        this.plugin = plugin;
-        
+        super(context, dialogWindow);
+        this.pluginRef = context.getReference(plugin);
+
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
         add(new TextFieldWidget("type", new PropertyModel(this, "type")));
     }
 
     @Override
     public void ok() throws RepositoryException {
+        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Node node = nodeModel.getNode().addNode(getName(), getType());
+
         plugin.setModel(new JcrNodeModel(node));
-        
-//        Channel channel = getChannel();
-//        if(channel != null) {
-//            Request request = channel.createRequest("flush", nodeModel);
-//            channel.send(request);
-//            request = channel.createRequest("select", newModel);
-//            channel.send(request);
-//        }
+        plugin.flushNodeModel(nodeModel);
     }
 
     @Override
     public void cancel() {
     }
-    
 
     public String getTitle() {
         return "Add a new Node";

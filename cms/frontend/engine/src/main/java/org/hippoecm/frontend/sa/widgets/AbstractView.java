@@ -34,6 +34,7 @@ public abstract class AbstractView extends DataView {
         setItemReuseStrategy(new ReuseIfModelsEqualStrategy() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public Iterator getItems(final IItemFactory factory, final Iterator newModels, final Iterator existingItems) {
                 List<IModel> models = new LinkedList<IModel>();
                 while (newModels.hasNext()) {

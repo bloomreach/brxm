@@ -20,11 +20,11 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.service.ServiceReference;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 
 public class ExceptionDialog extends WebPage {
     private static final long serialVersionUID = 1L;
-    private ServiceReference<IDialogService> windowRef;
+    private IServiceReference<IDialogService> windowRef;
 
     public ExceptionDialog(IPluginContext context, IDialogService dialogService, String exception) {
         windowRef = context.getReference(dialogService);

@@ -51,6 +51,7 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
         return descriptor;
     }
 
+    @Override
     public void addNew() {
         load();
 
@@ -63,6 +64,7 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
         }
     }
 
+    @Override
     public void remove(JcrNodeModel model) {
         load();
         Iterator<JcrNodeModel> iterator = elements.iterator();
@@ -91,6 +93,7 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
         }
     }
 
+    @Override
     public void moveUp(JcrNodeModel model) {
         load();
         Iterator<JcrNodeModel> iterator = elements.iterator();
@@ -111,7 +114,9 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
                 elements = null;
                 return;
             }
-            predecessor.detach();
+            if (predecessor != null) {
+                predecessor.detach();
+            }
             predecessor = currentModel;
         }
         if (predecessor != null) {

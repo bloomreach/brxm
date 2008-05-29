@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.versioning;
+package org.hippoecm.plugins.versioning;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -31,27 +31,17 @@ import java.util.SortedMap;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-
 import javax.jcr.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
-
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
-import org.hippoecm.frontend.sa.service.IMessageListener;
-import org.hippoecm.frontend.sa.service.Message;
-import org.hippoecm.frontend.sa.service.render.ModelReference;
-import org.hippoecm.frontend.sa.service.render.ModelReference.ModelMessage;
-import org.hippoecm.frontend.sa.service.topic.TopicService;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -61,14 +51,12 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class VersionPane extends RenderPlugin
-        implements IPlugin, IMessageListener, IClusterable {
+public class VersionPane extends RenderPlugin {
     static Logger log = LoggerFactory.getLogger(VersionPane.class);
-    private IPluginContext context;
-    private IPluginConfig config;
-    private TopicService topic;
-    private TopicService subtopic;
+    
     Label documentComponent;
     Label versionComponent;
     Label createdComponent;
@@ -79,18 +67,15 @@ public class VersionPane extends RenderPlugin
     AjaxLink compareComponent;
     AjaxLink olderComponent;
     AjaxLink newerComponent;
+    ModelService subModel;
 
     public VersionPane(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        this.context = context;
-        this.config = config;
 
         if (config.get(RenderPlugin.MODEL_ID)!=null) {
-            topic = new TopicService(config.getString(RenderPlugin.MODEL_ID));
-            topic.addListener(this);
-            topic.init(context);
-            subtopic = new TopicService(config.getString("wicket.submodel"));
-            subtopic.init(context);
+            // FIXME: is there a model available to initialize the service with?
+            subModel = new ModelService(config.getString("wicket.submodel"), null);
+            subModel.init(context);
         } else {
             log.warn("");
         }
@@ -147,17 +132,7 @@ public class VersionPane extends RenderPlugin
         log = LoggerFactory.getLogger(VersionPane.class);
     }
 
-    public void onMessage(Message message) {
-        switch (message.getType()) {
-            case ModelReference.SET_MODEL:
-                // setModel((JcrNodeModel) ((ModelReference.ModelMessage) message).getModel());
-                break;
-        }
-    }
-
-    public void onConnect() {
-    }
-
+    @Override
     public void onModelChanged() {
         super.onModelChanged();
         JcrNodeModel model = (JcrNodeModel)getModel();
@@ -166,7 +141,7 @@ public class VersionPane extends RenderPlugin
                 if (model.getNode().isNodeType("hippostd:document")) {
                     documentComponent.setModel(new Model(model.getNode().getName()));
                     versionComponent.setModel(new Model("current"));
-                    subtopic.publish(new ModelMessage(ModelReference.SET_MODEL, new JcrNodeModel(model.getNode())));
+                    subModel.setModel(new JcrNodeModel(model.getNode()));
                     createdComponent.setModel(new Model(""));
                     expiredComponent.setModel(new Model(""));
                     labeledComponent.setModel(new Model(""));
@@ -220,7 +195,7 @@ public class VersionPane extends RenderPlugin
                     }
                     labeledComponent.setModel(new Model(new String(labels)));
                     Document historicDocument = workflow.retrieve(entry.getKey());
-                    subtopic.publish(new ModelMessage(ModelReference.SET_MODEL, new JcrNodeModel(document.getSession().getNodeByUUID(historicDocument.getIdentity()))));
+                    subModel.setModel(new JcrNodeModel(document.getSession().getNodeByUUID(historicDocument.getIdentity())));
                     redraw();
                 }
             } catch (WorkflowException ex) {

@@ -46,9 +46,11 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        updateProvider();
+
         String caption = config.getString("caption");
         add(new Label("name", caption));
-        add(new Label("add", ""));
+        add(createAddLink());
     }
 
     @Override
@@ -67,13 +69,13 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     @Override
     public void onModelChanged() {
-        super.onModelChanged();
+        updateProvider();
         replace(createAddLink());
     }
 
     @Override
     protected void onAddRenderService(Item item, IRenderService renderer) {
-        final JcrPropertyValueModel model = (JcrPropertyValueModel) ((Component) renderer).getModel();
+        final JcrPropertyValueModel model = (JcrPropertyValueModel) renderer.getComponent().getModel();
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;

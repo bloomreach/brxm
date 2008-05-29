@@ -19,18 +19,16 @@ import java.util.List;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.sa.service.IServiceTracker;
-import org.hippoecm.frontend.sa.service.ServiceReference;
 
 public interface IPluginContext {
 
     IPluginControl start(IClusterConfig cluster);
-    
-    <T extends IClusterable> T getService(String name);
 
-    <T extends IClusterable> List<T> getServices(String name);
+    <T extends IClusterable> T getService(String name, Class<T> clazz);
 
-    <T extends IClusterable> ServiceReference<T> getReference(T service);
+    <T extends IClusterable> List<T> getServices(String name, Class<T> clazz);
+
+    <T extends IClusterable> IServiceReference<T> getReference(T service);
 
     /**
      * Registers a service with the given name.

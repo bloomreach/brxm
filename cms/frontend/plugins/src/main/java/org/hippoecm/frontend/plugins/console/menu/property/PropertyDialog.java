@@ -39,6 +39,7 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -54,11 +55,11 @@ public class PropertyDialog extends AbstractDialog {
     private Boolean isMultiple = Boolean.FALSE;
     private String type;
     
-    private MenuPlugin plugin;
+    private IServiceReference<MenuPlugin> pluginRef;
 
     public PropertyDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);     
-        this.plugin = plugin;
+        this.pluginRef = context.getReference(plugin);
         
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
             private static final long serialVersionUID = 1L;
@@ -95,6 +96,7 @@ public class PropertyDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
+        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         Value jcrValue = getJcrValue();
@@ -106,12 +108,6 @@ public class PropertyDialog extends AbstractDialog {
         } else {
             nodeModel.getNode().setProperty(name, jcrValue);
         }
-
-//        Channel channel = getChannel();
-//        if (channel != null) {
-//            Request request = channel.createRequest("select", nodeModel);
-//            channel.send(request);
-//        }
     }
 
     @Override

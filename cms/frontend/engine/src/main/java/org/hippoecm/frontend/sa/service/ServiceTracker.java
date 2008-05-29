@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.sa.service;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.sa.plugin.IServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

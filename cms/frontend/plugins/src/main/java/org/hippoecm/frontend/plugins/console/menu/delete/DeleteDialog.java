@@ -23,20 +23,22 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
 
 public class DeleteDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    private MenuPlugin plugin;
+    private IServiceReference<MenuPlugin> pluginRef;
     
     public DeleteDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);    
-        this.plugin = plugin;
+        this.pluginRef = context.getReference(plugin);
         add(new Label("message", getTitle()));
     }
 
     @Override
     public void ok() throws RepositoryException {
+        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         JcrNodeModel parentModel = nodeModel.getParentModel();
 
@@ -46,13 +48,8 @@ public class DeleteDialog extends AbstractDialog {
         //set the parent model as current model
         plugin.setModel(parentModel);
         
-//        Channel channel = getChannel();
-//        if (channel != null) {
-//            Request request = channel.createRequest("flush", parentModel.findRootModel());
-//            channel.send(request);
-//            request = channel.createRequest("select", parentModel);
-//            channel.send(request);
-//        }
+        //flush the JCR tree
+        plugin.flushNodeModel(parentModel.findRootModel());
     }
 
     @Override
@@ -60,6 +57,7 @@ public class DeleteDialog extends AbstractDialog {
     }
 
     public String getTitle() {
+        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         String title;
         try {

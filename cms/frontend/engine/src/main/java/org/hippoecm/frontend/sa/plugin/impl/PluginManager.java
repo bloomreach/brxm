@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.sa.plugin.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,11 +24,10 @@ import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.sa.Home;
-import org.hippoecm.frontend.sa.plugin.IPluginControl;
-import org.hippoecm.frontend.sa.plugin.PluginFactory;
+import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
+import org.hippoecm.frontend.sa.plugin.IServiceTracker;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.IServiceTracker;
-import org.hippoecm.frontend.sa.service.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +35,8 @@ public class PluginManager implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
+
+    public static final String SERVICES = "services.";
 
     private static class RefCount implements IClusterable {
         private static final long serialVersionUID = 1L;
@@ -72,45 +74,45 @@ public class PluginManager implements IClusterable {
         nextReferenceId = 0;
     }
 
-    public IPluginControl start(IPluginConfig config) {
-        final PluginContext context = new PluginContext(page);
-        /* IPlugin plugin = */ factory.createPlugin(context, config);
-        context.connect();
-        return new IPluginControl() {
-            private static final long serialVersionUID = 1L;
-
-            public void stopPlugin() {
-                context.stop();
-            }
-        };
+    public PluginContext start(IPluginConfig config, String controlId) {
+        final PluginContext context = new PluginContext(page, controlId);
+        IPlugin plugin = factory.createPlugin(context, config);
+        context.connect(plugin);
+        return context;
     }
-    
-    public <T extends IClusterable> T getService(String name) {
+
+    public <T extends IClusterable> T getService(String name, Class<T> clazz) {
         List<IClusterable> list = services.get(name);
-        if(list != null && list.size() > 0) {
-            return (T) list.get(0);
+        if (list != null && list.size() > 0) {
+            for (IClusterable service : list) {
+                if (clazz.isInstance(service)) {
+                    return (T) service;
+                }
+            }
         }
         return null;
     }
 
-    public <T extends IClusterable> List<T> getServices(String name) {
-        return (List<T>) services.get(name);
+    public <T extends IClusterable> List<T> getServices(String name, Class<T> clazz) {
+        List<IClusterable> list = services.get(name);
+        List<T> result = new ArrayList<T>(list.size());
+        if (list != null && list.size() > 0) {
+            for (IClusterable service : list) {
+                if (clazz.isInstance(service)) {
+                    result.add((T) service);
+                }
+            }
+        }
+        return result;
     }
 
-    public <T extends IClusterable> ServiceReference<T> getReference(T service) {
-        ServiceReference<T> ref = internalGetReference(service);
-        if (ref == null) {
+    public <T extends IClusterable> IServiceReference<T> getReference(T service) {
+        Map.Entry<Integer, RefCount> entry = internalGetReference(service);
+        if (entry == null) {
             log.warn("Referenced service was not registered");
+            return null;
         }
-        return ref;
-    }
-
-    public <T extends IClusterable> T getService(ServiceReference<T> reference) {
-        RefCount refCount = referenced.get(new Integer(reference.getId()));
-        if (refCount == null) {
-            log.warn("Referenced service is no longer registered");
-        }
-        return (T) refCount.service;
+        return new ServiceReference<T>(page, SERVICES + entry.getKey());
     }
 
     public void registerService(IClusterable service, String name) {
@@ -121,28 +123,18 @@ public class PluginManager implements IClusterable {
             log.info("registering " + service + " as " + name);
         }
 
-        List<IClusterable> list = services.get(name);
-        if (list == null) {
-            list = new LinkedList<IClusterable>();
-            services.put(name, list);
-        }
-        list.add(service);
+        Map.Entry<Integer, RefCount> entry = internalGetReference(service);
+        if (entry == null) {
+            Integer id = new Integer(nextReferenceId++);
+            referenced.put(id, new RefCount(service));
 
-        ServiceReference<IClusterable> ref = internalGetReference(service);
-        if (ref == null) {
-            referenced.put(new Integer(nextReferenceId++), new RefCount(service));
+            String serviceId = SERVICES + id;
+            internalRegisterService(service, serviceId);
         } else {
-            referenced.get(new Integer(ref.getId())).addRef();
+            entry.getValue().addRef();
         }
 
-        List<IServiceTracker> notify = listeners.get(name);
-        if (notify != null) {
-            Iterator<IServiceTracker> iter = notify.iterator();
-            while (iter.hasNext()) {
-                IServiceTracker tracker = iter.next();
-                tracker.addService(service, name);
-            }
-        }
+        internalRegisterService(service, name);
     }
 
     public void unregisterService(IClusterable service, String name) {
@@ -155,24 +147,14 @@ public class PluginManager implements IClusterable {
 
         List<IClusterable> list = services.get(name);
         if (list != null) {
-            List<IServiceTracker> notify = listeners.get(name);
-            if (notify != null) {
-                Iterator<IServiceTracker> iter = notify.iterator();
-                while (iter.hasNext()) {
-                    IServiceTracker tracker = iter.next();
-                    tracker.removeService(service, name);
-                }
-            }
+            internalUnregisterService(service, name);
 
-            list.remove(service);
-            if (list.isEmpty()) {
-                services.remove(name);
-            }
-
-            ServiceReference<IClusterable> ref = internalGetReference(service);
-            RefCount refCount = referenced.get(new Integer(ref.getId()));
-            if (refCount.release()) {
-                referenced.remove(new Integer(ref.getId()));
+            Map.Entry<Integer, RefCount> entry = internalGetReference(service);
+            if (entry.getValue().release()) {
+                Integer id = entry.getKey();
+                String serviceId = SERVICES + id;
+                internalUnregisterService(service, serviceId);
+                referenced.remove(id);
             }
         } else {
             log.error("unregistering a service that wasn't registered.");
@@ -225,10 +207,53 @@ public class PluginManager implements IClusterable {
         }
     }
 
-    private <T extends IClusterable> ServiceReference<T> internalGetReference(T service) {
+    <T extends IClusterable> T getService(ServiceReference<T> ref) {
+        List<IClusterable> list = services.get(ref.getServiceId());
+        if(list.size() > 0) {
+            return (T) list.get(0);
+        }
+        return null;
+    }
+    
+    private void internalRegisterService(IClusterable service, String name) {
+        List<IClusterable> list = services.get(name);
+        if (list == null) {
+            list = new LinkedList<IClusterable>();
+            services.put(name, list);
+        }
+        list.add(service);
+
+        List<IServiceTracker> notify = listeners.get(name);
+        if (notify != null) {
+            Iterator<IServiceTracker> iter = notify.iterator();
+            while (iter.hasNext()) {
+                IServiceTracker tracker = iter.next();
+                tracker.addService(service, name);
+            }
+        }
+    }
+
+    private void internalUnregisterService(IClusterable service, String name) {
+        List<IServiceTracker> notify = listeners.get(name);
+        if (notify != null) {
+            Iterator<IServiceTracker> iter = notify.iterator();
+            while (iter.hasNext()) {
+                IServiceTracker tracker = iter.next();
+                tracker.removeService(service, name);
+            }
+        }
+
+        List<IClusterable> list = services.get(name);
+        list.remove(service);
+        if (list.isEmpty()) {
+            services.remove(name);
+        }
+    }
+
+    private <T extends IClusterable> Map.Entry<Integer, RefCount> internalGetReference(T service) {
         for (Map.Entry<Integer, RefCount> entry : referenced.entrySet()) {
             if (entry.getValue().service == service) {
-                return new ServiceReference<T>(page, entry.getKey().intValue());
+                return entry;
             }
         }
         return null;
