@@ -1,3 +1,18 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.plugins.cms.management;
 
 import java.util.ArrayList;
@@ -12,10 +27,8 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -32,46 +45,46 @@ public class GroupUsersListPlugin extends QueryListPlugin {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(GroupUsersListPlugin.class);
-    
+
     private JcrNodeModel rootModel;
-    
+
     //TODO: can I throw a repository exception here, or should I throw an invalid arg exception?
     public GroupUsersListPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin)
             throws RepositoryException {
         super(pluginDescriptor, model, parentPlugin);
-        
+
         ItemModel itemModel = (ItemModel) model;
         rootModel = itemModel.getNodeModel();
-        
+
         String caption = pluginDescriptor.getParameter("caption").getStrings().get(0);
         add(new Label("listLabel", new Model(caption)));
 
         add(new DropNodeBehavior());
         add(new SimpleAttributeModifier("class", "userGroupsList"));
     }
-    
+
     @Override
     protected FlushableSortableDataProvider createDataProvider() {
-        return new SortableNodesDataProvider("name"){
+        return new SortableNodesDataProvider("name") {
 
             @Override
             protected List<JcrNodeModel> createNodes() {
                 List<JcrNodeModel> list = new ArrayList<JcrNodeModel>();
                 String usersPath = "/hippo:configuration/hippo:users/";
-                
+
                 //this method is called by super constructor so work around
-                HippoNode groupNode = null; 
-                if(rootModel == null) {//our own constructor hasn't finished yet
+                HippoNode groupNode = null;
+                if (rootModel == null) {//our own constructor hasn't finished yet
                     ItemModel itemModel = (ItemModel) getModel();
                     groupNode = itemModel.getNodeModel().getNode();
                 } else {
                     groupNode = rootModel.getNode();
                 }
                 try {
-                    if(groupNode.hasProperty("hippo:members")) {
+                    if (groupNode.hasProperty("hippo:members")) {
                         Property property = groupNode.getProperty("hippo:members");
                         Value[] values = property.getValues();
-                        for(Value value : values) {
+                        for (Value value : values) {
                             list.add(new JcrNodeModel(usersPath + value.getString()));
                         }
                     }

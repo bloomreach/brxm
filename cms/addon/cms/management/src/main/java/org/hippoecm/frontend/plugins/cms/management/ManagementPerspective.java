@@ -16,11 +16,8 @@
 package org.hippoecm.frontend.plugins.cms.management;
 
 import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
 
 /**
  * Panel representing the content panel for the first tab.

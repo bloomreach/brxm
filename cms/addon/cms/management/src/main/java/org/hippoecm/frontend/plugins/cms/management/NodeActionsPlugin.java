@@ -1,19 +1,25 @@
+/*
+ * Copyright 2007 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.frontend.plugins.cms.management;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -26,24 +32,26 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NodeActionsPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(NodeActionsPlugin.class);
 
     private static final String ACTION_OK = "ok";
     private static final String ACTION_CANCEL = "cancel";
 
     private static final List<String> builtin = new ArrayList<String>();
-    
-    static
-    {
+
+    static {
         builtin.add(ACTION_OK);
         builtin.add(ACTION_CANCEL);
     }
-    
+
     private JcrNodeModel nodeModel;
 
     public NodeActionsPlugin(final PluginDescriptor pluginDescriptor, final IPluginModel model,
@@ -70,7 +78,7 @@ public class NodeActionsPlugin extends Plugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        if(builtin.contains(operation)) {
+                        if (builtin.contains(operation)) {
                             onBuiltinAction(target, operation);
                         } else {
                             Channel top = getTopChannel();
@@ -85,7 +93,7 @@ public class NodeActionsPlugin extends Plugin {
         };
         add(actionsView);
     }
-    
+
     private void onBuiltinAction(AjaxRequestTarget target, String operation) {
         if (operation.equals(ACTION_OK)) {
             try {
@@ -94,48 +102,10 @@ public class NodeActionsPlugin extends Plugin {
                 Request request = getTopChannel().createRequest("flush", new JcrNodeModel(parentNode));
                 getTopChannel().send(request);
                 request.getContext().apply(target);
-                
-            } catch (AccessDeniedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (ItemExistsException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (ConstraintViolationException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (InvalidItemStateException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (ReferentialIntegrityException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (VersionException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (LockException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (NoSuchNodeTypeException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (ItemNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error("An error occured while executing ACTION_OK", e);
             }
-            //            try {
-            //                Node parentNode = newNode.getNode().getParent();
-            //                parentNode.save();
-            //
-            //                notification.getContext().addRefresh(listContainer);
-            //            } catch (PathNotFoundException e) {
-            //                log.error("Node with path [" + nodePath + "] not found.", e);
-            //            } catch (RepositoryException e) {
-            //                log.error("Repository exception while trying to save node [" + nodePath + "]", e);
-            //            }
         } else if (operation.equals(ACTION_CANCEL)) {
             HippoNode node = nodeModel.getNode();
             if (node.isNew()) {
@@ -145,34 +115,10 @@ public class NodeActionsPlugin extends Plugin {
                     Request request = getTopChannel().createRequest("flush", new JcrNodeModel(parentNode));
                     getTopChannel().send(request);
                     request.getContext().apply(target);
-                } catch (VersionException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (LockException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (ConstraintViolationException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
                 } catch (RepositoryException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    log.error("An error occured while executing ACTION_CANCEL", e);
                 }
             }
-            //            
-            //            try {
-            //                JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
-            //                HippoNode node = nodeModel.getNode();
-            //                if (node.isNew()) {
-            //                    node.remove();
-            //                    //should this be persisted?
-            //                    notification.getContext().addRefresh(listContainer);
-            //                }
-            //            } catch (PathNotFoundException e) {
-            //                log.error("Node with path [" + nodePath + "] not found.", e);
-            //            } catch (RepositoryException e) {
-            //                log.error("Repository exception while trying to save node [" + nodePath + "]", e);
-            //            }
         }
     }
 
