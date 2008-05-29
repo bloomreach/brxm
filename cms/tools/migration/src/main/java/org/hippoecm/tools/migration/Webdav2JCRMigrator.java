@@ -202,9 +202,13 @@ public class Webdav2JCRMigrator implements Plugin {
         }
         
         try {
+            javax.jcr.Node parent = null;
+            try {
+                parent = (javax.jcr.Node) session.getItem(jcrParentPath);
+            } catch (PathNotFoundException e) {
+                parent = JCRHelper.checkAndCreatePath(session, jcrParentPath, documentConverter);
+            }
             
-            javax.jcr.Node parent = (javax.jcr.Node) session.getItem(jcrParentPath);
-
             if (!webdavNode.isCollection()) {
                 // Add content property
                 try {
