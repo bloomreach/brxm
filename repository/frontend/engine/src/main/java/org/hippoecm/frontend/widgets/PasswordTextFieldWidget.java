@@ -23,7 +23,7 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget {
 
     public PasswordTextFieldWidget(String id, IModel model) {
         super(id, model);
-        addFormField(new PasswordTextField("widget", this.getModel()));
+        addFormField(new PasswordTextField("widget", this.getModel()).setResetPassword(false));
     }
 
 }
