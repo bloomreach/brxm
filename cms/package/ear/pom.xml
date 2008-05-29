@@ -191,6 +191,12 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-cms-management</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
     
     <!-- default content addon -->
     <dependency>
