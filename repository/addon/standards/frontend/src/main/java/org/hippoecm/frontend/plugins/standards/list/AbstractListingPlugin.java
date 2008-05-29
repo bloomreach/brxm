@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standards.list;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.ItemExistsException;
@@ -32,12 +31,12 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -45,6 +44,7 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +71,7 @@ public abstract class AbstractListingPlugin extends Plugin {
     public int pageSize = DEFAULT_PAGE_SIZE;
     public int viewSize = DEFAULT_VIEW_SIZE;
 
+    //FIXME: remove this 
     public static final String USER_PATH_PREFIX = "/hippo:configuration/hippo:users/";
 
     protected List<IStyledColumn> columns;
@@ -78,7 +79,8 @@ public abstract class AbstractListingPlugin extends Plugin {
 
     public AbstractListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
-        this.createTableColumns(pluginDescriptor, (JcrNodeModel) getPluginModel());
+
+        createTableColumns(pluginDescriptor, new JcrNodeModel(model));
     }
 
     @Override
@@ -86,14 +88,15 @@ public abstract class AbstractListingPlugin extends Plugin {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel model = new JcrNodeModel(notification.getModel());
             Node node = (Node) model.getNode();
-            boolean selectParentModel = false; 
+            boolean selectParentModel = false;
             while (node != null) {
                 try {
                     if (!node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType(HippoNodeType.NT_HANDLE)
-                            && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE) && !node.isNodeType(HippoNodeType.NT_REQUEST)) {
+                            && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
+                            && !node.isNodeType(HippoNodeType.NT_REQUEST)) {
                         break;
                     } else {
-                        if(node.isNodeType(HippoNodeType.NT_DOCUMENT) || node.isNodeType(HippoNodeType.NT_REQUEST)) {
+                        if (node.isNodeType(HippoNodeType.NT_DOCUMENT) || node.isNodeType(HippoNodeType.NT_REQUEST)) {
                             selectParentModel = true;
                         }
                         node = node.getParent();
@@ -115,11 +118,14 @@ public abstract class AbstractListingPlugin extends Plugin {
             PluginModel listModel = new PluginModel();
             listModel.put("entries", entries);
             setModel(listModel);
+
+            //TODO: shouldn't getTable() always use getModel()/getPluginModel() 
+            //instead of passing the model as a parameters?
             replace(dataTable = getTable(listModel));
-            if(selectParentModel) {
+            if (selectParentModel) {
                 dataTable.setSelectedNode(model.getParentModel());
             } else {
-                dataTable.setSelectedNode(model);  
+                dataTable.setSelectedNode(model);
             }
             notification.getContext().addRefresh(this);
         }
@@ -188,6 +194,7 @@ public abstract class AbstractListingPlugin extends Plugin {
             logError(e);
             defaultColumns(pluginDescriptor);
         }
+        //FIXME: this should not be in this method..
         add(dataTable = getTable(model));
     }
 
@@ -280,6 +287,7 @@ public abstract class AbstractListingPlugin extends Plugin {
         return new NodeColumn(model, propertyName, channel);
     }
 
+    //TODO: rename this to CustomizableListingDatatable?
     protected abstract CustomizableDocumentListingDataTable getTable(IPluginModel model);
 
     protected abstract String getPluginUserPrefNodeName();
