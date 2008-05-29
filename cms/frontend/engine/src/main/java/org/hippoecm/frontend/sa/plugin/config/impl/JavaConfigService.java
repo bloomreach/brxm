@@ -109,6 +109,23 @@ public class JavaConfigService implements IPluginConfigService {
         plugins.addPlugin(config);
         
         config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.management.sa.ManagementPerspective");
+        config.put("wicket.id", "service.tab");
+        config.put("wicket.model", "service.management.node");
+        config.put("service.pid", "service.management");
+        config.put("perspective.title", "Management");
+        config.put("legacyManagement", "service.management.legacy");
+        plugins.addPlugin(config);
+        
+        //Wrap legacy cms management
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.sa.adapter.AdapterPlugin");
+        config.put("wicket.id", "service.management.legacy");                               
+        config.put("legacy.base", "/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel");
+        config.put("legacy.plugin", "managementFilter");
+        plugins.addPlugin(config);
+        
+        config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.logout.LogoutPlugin");
         config.put("wicket.id", "service.logout");
         config.put("wicket.model", "service.model");
