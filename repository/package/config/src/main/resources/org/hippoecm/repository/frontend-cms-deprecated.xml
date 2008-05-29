@@ -221,6 +221,144 @@
             </sv:node>
           </sv:node>           
         </sv:node>
+        
+        <sv:node sv:name="managementFilter">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:frontendplugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:renderer" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.standards.filter.FilterPlugin</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:parameters">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:parameters</sv:value>
+            </sv:property>
+            <sv:property sv:name="handle" sv:type="String">
+              <sv:value>select</sv:value>
+              <sv:value>flush</sv:value>
+              <sv:value>drop</sv:value>
+            </sv:property>
+            <sv:property sv:name="title" sv:type="String">
+              <sv:value>Management</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="panel">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:frontendplugin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:renderer" sv:type="String">
+              <sv:value>org.hippoecm.frontend.plugins.cms.management.ManagementPerspective</sv:value>
+            </sv:property>
+            <sv:node sv:name="managementPlugin">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:frontendplugin</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:renderer" sv:type="String">
+                <sv:value>org.hippoecm.frontend.plugins.cms.management.ManagementPlugin</sv:value>
+              </sv:property>
+              <sv:node sv:name="listUsersPlugin">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:frontendplugin</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:renderer" sv:type="String">
+                  <sv:value>org.hippoecm.frontend.plugins.cms.management.ListNodesPlugin</sv:value>
+                </sv:property>
+                <sv:node sv:name="hippo:parameters">
+                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:parameters</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="parentNodePath" sv:type="String">
+                    <sv:value>/hippo:configuration/hippo:users</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="label" sv:type="String">
+                    <sv:value>New user</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="nodeType" sv:type="String">
+                    <sv:value>hippo:user</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="dd-groups" sv:type="String">
+                    <sv:value>add-user-to-group</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="dd-groups-overwrite" sv:type="Boolean">
+                    <sv:value>true</sv:value>
+                  </sv:property>
+                </sv:node>  
+              </sv:node>
+              <sv:node sv:name="listGroupsPlugin">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:frontendplugin</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:renderer" sv:type="String">
+                  <sv:value>org.hippoecm.frontend.plugins.cms.management.ListNodesPlugin</sv:value>
+                </sv:property>
+                <sv:node sv:name="hippo:parameters">
+                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:parameters</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="parentNodePath" sv:type="String">
+                    <sv:value>/hippo:configuration/hippo:groups</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="nodeType" sv:type="String">
+                    <sv:value>hippo:group</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="label" sv:type="String">
+                    <sv:value>New group</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="dd-groups" sv:type="String">
+                    <sv:value>add-group-to-user</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="dd-groups-overwrite" sv:type="Boolean">
+                    <sv:value>true</sv:value>
+                  </sv:property>
+                </sv:node>  
+              </sv:node>
+              <sv:node sv:name="listDomainsPlugin">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:frontendplugin</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:renderer" sv:type="String">
+                  <sv:value>org.hippoecm.frontend.plugins.cms.management.ListNodesPlugin</sv:value>
+                </sv:property>
+                <sv:node sv:name="hippo:parameters">
+                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:parameters</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="parentNodePath" sv:type="String">
+                    <sv:value>/hippo:configuration/hippo:domains</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="label" sv:type="String">
+                    <sv:value>New domain</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="nodeType" sv:type="String">
+                    <sv:value>hippo:domain</sv:value>
+                  </sv:property>
+                </sv:node>  
+              </sv:node>
+              <sv:node sv:name="listRolesPlugin">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:frontendplugin</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:renderer" sv:type="String">
+                  <sv:value>org.hippoecm.frontend.plugins.cms.management.ListNodesPlugin</sv:value>
+                </sv:property>
+                <sv:node sv:name="hippo:parameters">
+                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:parameters</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="parentNodePath" sv:type="String">
+                    <sv:value>/hippo:configuration/hippo:roles</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="label" sv:type="String">
+                    <sv:value>New role</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="nodeType" sv:type="String">
+                    <sv:value>hippo:role</sv:value>
+                  </sv:property>
+                </sv:node>  
+              </sv:node>
+            </sv:node>  
+          </sv:node>
+        </sv:node>
 
         <sv:node sv:name="browsePerspective">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
