@@ -115,7 +115,7 @@
           <sv:value>hippo:template</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.ValueTemplatePlugin</sv:value>
+          <sv:value>org.hippoecm.frontend.plugins.template.BooleanValueTemplatePlugin</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -480,6 +480,49 @@
       </sv:node>
     </sv:node>
 
+  </sv:node>
+  <!-- end CssSize type -->
+  
+  <!--  Password type -->
+  <sv:node sv:name="Password">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:templatetype</sv:value>
+    </sv:property>
+    
+    <sv:node sv:name="hippo:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:node" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>String</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    
+    <sv:node sv:name="hippo:template">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:template">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:template</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:type" sv:type="String">
+          <sv:value>String</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:renderer" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.template.PasswordValueTemplatePlugin</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    
   </sv:node>
   <!-- end CssSize type -->
 
