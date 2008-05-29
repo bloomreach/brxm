@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.plugins.versioning;
+package org.hippoecm.frontend.plugins.versioning;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
