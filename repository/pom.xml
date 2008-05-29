@@ -80,6 +80,7 @@
     <xerces.version>2.8.1</xerces.version>
     <cglib.version>2.1_3</cglib.version>
     <lucene.version>2.2.0</lucene.version>
+    <wicketstuff-yui.version>1.3.0-SNAPSHOT</wicketstuff-yui.version>
   </properties>
 
   <licenses>
@@ -275,6 +276,13 @@
       <url>http://maven.openqa.org</url>
       <layout>default</layout>
       <snapshots><enabled>false</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
+    </repository>
+    <repository>
+      <id>wicketstuff</id>
+      <name>Wicketstuff repository</name>
+      <url>http://wicketstuff.org/maven/repository</url>
+      <snapshots><enabled>true</enabled></snapshots>
       <releases><enabled>true</enabled></releases>
     </repository>
   </repositories>
@@ -559,6 +567,11 @@
             <artifactId>geronimo-spec-jta</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <artifactId>wicketstuff-yui</artifactId>
+        <groupId>org.wicketstuff</groupId>
+        <version>${wicketstuff-yui.version}</version>
       </dependency>
 
       <!-- Testing needs a JTA implementation -->
