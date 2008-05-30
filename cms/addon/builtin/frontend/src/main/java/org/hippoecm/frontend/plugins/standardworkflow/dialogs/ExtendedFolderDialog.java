@@ -24,16 +24,12 @@ import java.util.TreeMap;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.PropertyModel;
-
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -42,10 +38,10 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.PrototypeWorkflow;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class ExtendedFolderDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 

@@ -32,7 +32,7 @@ public class AdapterPlugin implements IPlugin, IViewService {
 
     public AdapterPlugin(IPluginContext context, IPluginConfig config) {
         this.config = config;
-        this.serviceId = config.getString("service.pid");
+        this.serviceId = config.getString("wicket.viewer");
 
         IPluginConfig rootConfig = new JavaPluginConfig();
         rootConfig.put("legacy.base", config.getString("legacy.base"));
@@ -42,14 +42,13 @@ public class AdapterPlugin implements IPlugin, IViewService {
         adapter = new Adapter();
         adapter.init(context, rootConfig);
 
-        context.registerService(this, serviceId);
+        if (serviceId != null) {
+            context.registerService(this, serviceId);
+        }
     }
 
     public void view(IModel model) {
         adapter.setModel(model);
     }
 
-    public String getServiceId() {
-        return config.getString("service.pid");
-    }
 }

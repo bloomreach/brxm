@@ -56,6 +56,8 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
                 return new ExtendedFolderDialog(PrototypeWorkflowPlugin.this, dialogService);
             }
         }, getDialogService()));
+
+        onModelChanged();
     }
 
     @Override

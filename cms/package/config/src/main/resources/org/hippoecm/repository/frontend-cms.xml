@@ -227,7 +227,7 @@
       <sv:value>org.hippoecm.frontend.sa.service.render.ListViewPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workfows</sv:value>
+      <sv:value>service.browse.workflows</sv:value>
     </sv:property>
     <sv:property sv:name="item" sv:type="String">
       <sv:value>service.browse.workflows.workflow</sv:value>
@@ -241,19 +241,43 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.viewer" sv:type="String">
+    <sv:property sv:name="workflow.viewer" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.display" sv:type="String">
-      <sv:value>workflows.id</sv:value>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.workflows.workflow</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>model.browse.node</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.id" sv:type="String">
+      <sv:value>workflows.id</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>internal</sv:value>
       <sv:value>reviewed-action</sv:value>
     </sv:property>        
+  </sv:node>
+  
+  <sv:node sv:name="editorPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.edit.sa.MultiEditorPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.sa.template.editor.EditorPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>service.edit</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.dialog" sv:type="String">
+      <sv:value>service.dialog</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.tab</sv:value>
+    </sv:property>
   </sv:node>
   
     <sv:node sv:name="managementPerspective">

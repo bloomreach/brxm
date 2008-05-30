@@ -122,6 +122,9 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     public void registerTracker(IServiceTracker listener, String name) {
+        if(name == null) {
+            log.error("listener name is null");
+        }
         List<IServiceTracker> list = listeners.get(name);
         if (list == null) {
             list = new LinkedList<IServiceTracker>();

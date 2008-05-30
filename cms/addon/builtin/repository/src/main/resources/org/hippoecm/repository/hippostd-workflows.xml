@@ -96,7 +96,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.PrototypeWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.PrototypeWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.sa.plugins.standardworkflow.PrototypeWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow to create a document</sv:value>
