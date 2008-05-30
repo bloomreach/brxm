@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standards.sa.perspective;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.plugin.IPlugin;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
@@ -32,26 +30,22 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
     public static final String TITLE = "perspective.title";
     public static final String PLUGINS = "perspective.plugins";
 
-    private List<IPlugin> plugins;
     private String title = "title";
+    private ModelService modelService;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        plugins = new LinkedList<IPlugin>();
         if (config.getString(TITLE) != null) {
             title = config.getString(TITLE);
         }
-        
-        // TODO: uncomment this when IPluginConfigService.getPlugins(String key)
-        // actually uses the key, currently it returns ALL configured IPluginConfigs
-        
-//        IPluginConfigService pluginConfigService = getPluginContext().getService("service.plugin.config");
-//        for (IPluginConfig config : pluginConfigService.getPlugins(PLUGINS)) {
-//            IPlugin plugin = context.start(config); 
-//            plugins.add(plugin);
-//            plugin.start(context);
-//        }
+
+        if (config.getString(RenderPlugin.MODEL_ID) != null) {
+            modelService = new ModelService(config.getString(RenderPlugin.MODEL_ID), new JcrNodeModel("/"));
+            modelService.init(context);
+            // unregister self, perspective doesn't need model
+            context.registerService(this, RenderPlugin.MODEL_ID);
+        }
     }
 
     // ITitleDecorator
@@ -63,7 +57,7 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
     // IViewService
 
     public void view(IModel model) {
-        setModel(model);
+        modelService.setModel(model);
     }
 
 }
