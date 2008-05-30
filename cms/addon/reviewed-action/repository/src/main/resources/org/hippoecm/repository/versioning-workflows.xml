@@ -56,4 +56,40 @@
             </sv:node>
         </sv:node>
     </sv:node>
+    <sv:node sv:name="revert">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:workflow</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:nodetype" sv:type="String">
+            <sv:value>nt:frozenNode</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:classname" sv:type="String">
+            <sv:value>org.hippoecm.repository.api.Document</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:workflow" sv:type="String">
+            <sv:value>org.hippoecm.repository.standardworkflow.VersionWorkflowImpl</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:display" sv:type="String">
+            <sv:value>Versioning workflow</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:types">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:types</sv:value>
+            </sv:property>
+            <sv:node sv:name="org.hippoecm.repository.api.Document">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:type</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:nodetype" sv:type="String">
+                    <sv:value>hippo:document</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:classname" sv:type="String">
+                    <sv:value>org.hippoecm.repository.api.Document</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:display" sv:type="String">
+                    <sv:value>Document</sv:value>
+                </sv:property>
+            </sv:node>
+        </sv:node>
+    </sv:node>
 </sv:node>
