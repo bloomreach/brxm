@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
@@ -56,6 +59,7 @@ import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.hippoecm.repository.security.principals.RolePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,7 +162,6 @@ public class HippoAccessManager implements AccessManager {
     /**
      * Flag wheter current user is a regular user
      */
-    @SuppressWarnings("unused")
     private boolean isUser;
 
     /**
@@ -166,6 +169,14 @@ public class HippoAccessManager implements AccessManager {
      */
     private boolean isSystem;
 
+    /**
+     * The userId of the logged in user
+     */
+    private String userId;
+
+    private List<String> groupIds = new ArrayList<String>();
+    private List<String> currentDomainRoleIds = new ArrayList<String>(); 
+    
     /**
      * The logger
      */
@@ -201,10 +212,26 @@ public class HippoAccessManager implements AccessManager {
         }
 
         // Shortcuts for checks
-        isAnonymous = !subject.getPrincipals(AnonymousPrincipal.class).isEmpty();
-        isUser = !subject.getPrincipals(UserPrincipal.class).isEmpty();
         isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
+        isUser = !subject.getPrincipals(UserPrincipal.class).isEmpty();
+        isAnonymous = !subject.getPrincipals(AnonymousPrincipal.class).isEmpty();
 
+        // prefetch userId
+        if (isSystem) {
+            userId = subject.getPrincipals(SystemPrincipal.class).iterator().next().getName();
+        } else if (isUser) {
+            userId = subject.getPrincipals(UserPrincipal.class).iterator().next().getName();
+        } else if (isAnonymous) {
+            userId = subject.getPrincipals(AnonymousPrincipal.class).iterator().next().getName();
+        } else {
+            userId = "";
+        }
+        
+        // prefetch groupId's
+        for (GroupPrincipal gp : subject.getPrincipals(GroupPrincipal.class)) {
+            groupIds.add(gp.getName());
+        }
+        
         // cache root NodeId
         rootNodeId = (NodeId) hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
 
@@ -399,6 +426,9 @@ public class HippoAccessManager implements AccessManager {
         log.trace("Checking if node : {} is in domain of {}", nodeState.getId(), fap);
         boolean isInDomain = false;
 
+        currentDomainRoleIds.clear();
+        currentDomainRoleIds.addAll(fap.getRoles());
+        
         // check is node matches ONE of the domain rules
         for (DomainRule domainRule : fap.getRules()) {
 
@@ -790,26 +820,48 @@ public class HippoAccessManager implements AccessManager {
 
             for (InternalValue iVal : iVals) {
                 // types must match
-                if (iVal.getType() == rule.getType()) {
+                if (iVal.getType() != rule.getType()) {
+                    continue;
+                }
 
-                    // WILDCARD match
-                    if (FacetAuthHelper.WILDCARD.equals(rule.getValue())) {
-                        match = true;
+                // WILDCARD match
+                if (FacetAuthHelper.WILDCARD.equals(rule.getValue())) {
+                    match = true;
+                }
+
+                if (iVal.getType() == PropertyType.STRING) {
+                    log.trace("Checking facet rule: {} (string) -> {}", rule, iVal.getString());
+                    
+                    // expander matches
+                    if (FacetAuthHelper.EXPANDER_USER.equals(rule.getValue())) {
+                        if (isUser && userId.equals(iVal.getString())) {
+                            match = true;
+                            break;
+                        }
                     }
-
-                    if (iVal.getType() == PropertyType.STRING) {
-                        log.trace("Checking facet rule: {} (string) -> {}", rule, iVal.getString());
-                        if (iVal.getString().equals(rule.getValue())) {
+                    if (FacetAuthHelper.EXPANDER_GROUP.equals(rule.getValue())) {
+                        if (isUser && groupIds.contains(iVal.getString())) {
                             match = true;
                             break;
                         }
-                    } else if (iVal.getType() == PropertyType.NAME) {
-                        log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getQName());
-                        
-                        if (iVal.getQName().equals(rule.getValueName())) {
+                    }
+                    if (FacetAuthHelper.EXPANDER_ROLE.equals(rule.getValue())) {
+                        if (isUser && currentDomainRoleIds.contains(iVal.getString())) {
                             match = true;
                             break;
                         }
+                    }
+                    
+                    if (iVal.getString().equals(rule.getValue())) {
+                        match = true;
+                        break;
+                    }
+                } else if (iVal.getType() == PropertyType.NAME) {
+                    log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getQName());
+                    
+                    if (iVal.getQName().equals(rule.getValueName())) {
+                        match = true;
+                        break;
                     }
                 }
             }
