@@ -133,6 +133,9 @@
       <sv:property sv:name="workflowsPlugin" sv:type="String">
         <sv:value>service.browse.workflows</sv:value>
       </sv:property>        
+      <sv:property sv:name="versionPlugin" sv:type="String">
+        <sv:value>service.browse.version</sv:value>
+      </sv:property>        
     </sv:node>
   
   <sv:node sv:name="breadcrumbPlugin">
@@ -177,6 +180,39 @@
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>model.browse.node</sv:value>
+    </sv:property>        
+  </sv:node>
+  
+  <sv:node sv:name="versioningPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.versioning.VersionPane</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.version</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.node</sv:value>
+    </sv:property>        
+    <sv:property sv:name="wicket.submodel" sv:type="String">
+      <sv:value>version.model</sv:value>
+    </sv:property>        
+  </sv:node>
+
+  <sv:node sv:name="displayPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.versioning.DisplayDocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.version.view</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>version.model</sv:value>
     </sv:property>        
   </sv:node>
   
