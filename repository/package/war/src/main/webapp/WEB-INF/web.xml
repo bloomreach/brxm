@@ -35,10 +35,6 @@
             <param-name>applicationClassName</param-name>
             <param-value>org.hippoecm.frontend.Main</param-value>
         </init-param>
-        <init-param>
-            <param-name>config</param-name>
-            <param-value>builtin</param-value>
-        </init-param>        
     </filter>
     
     <!--Builtin console-->
@@ -51,7 +47,7 @@
         </init-param>
         <init-param>
             <param-name>config</param-name>
-            <param-value>console</param-value>
+            <param-value>builtin</param-value>
         </init-param>
     </filter>
     
