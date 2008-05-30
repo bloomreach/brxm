@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
@@ -46,13 +47,14 @@ import org.hippoecm.repository.query.lucene.FixedScoreTermQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         implements
         FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl, FacetedNavigationEngineThirdImpl.ContextImpl> {
+    
+    
     class QueryImpl extends FacetedNavigationEngine.Query {
         String xpath;
 
@@ -91,18 +93,18 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     class ContextImpl extends FacetedNavigationEngine.Context {
         Session session;
-        String principal;
-        Set<FacetAuthPrincipal> facetAuths;
+        String userId;
+        Subject subject;
         AuthorizationQuery authorizationQuery;
         NodeTypeManager ntMgr;
 
-        ContextImpl(Session session, String principal, Set<FacetAuthPrincipal> facetAuths, NodeTypeManager ntMgr)
+        ContextImpl(Session session, String userId, Subject subject, NodeTypeManager ntMgr)
                 throws RepositoryException {
             this.session = session;
-            this.principal = principal;
-            this.facetAuths = facetAuths;
+            this.userId = userId;
+            this.subject = subject;
             this.ntMgr = ntMgr;
-            this.authorizationQuery = new AuthorizationQuery(facetAuths, getNamespaceMappings(),
+            this.authorizationQuery = new AuthorizationQuery(subject, getNamespaceMappings(),
                     (ServicingIndexingConfiguration) getIndexingConfig(), ntMgr, session);
         }
     }
@@ -113,10 +115,10 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     public FacetedNavigationEngineThirdImpl() {
     }
 
-    public ContextImpl prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<QueryImpl> initialQueries,
+    public ContextImpl prepare(String userId, Subject subject, List<QueryImpl> initialQueries,
             Session session) throws RepositoryException {
         NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
-        return new ContextImpl(session, principal, facetAuths, ntMgr);
+        return new ContextImpl(session, userId, subject, ntMgr);
     }
 
     public void unprepare(ContextImpl authorization) {
@@ -228,6 +230,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                         log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - start)
                                 + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
                     }
+                   
                 }
             } else {
                 // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
@@ -239,6 +242,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - start)
                             + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
                 }
+                 
             }
 
         } catch (IllegalNameException e) {

@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
@@ -293,7 +294,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @see #unprepare(C)
      */
     
-    public C prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<Q> initialQueries, Session session) throws RepositoryException;
+    public C prepare(String userId, Subject subject, List<Q> initialQueries, Session session) throws RepositoryException;
 
     /**
      * This method is called when a user logouts from the system.
