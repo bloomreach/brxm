@@ -20,6 +20,7 @@ import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.sa.service.render.ListViewPlugin;
 import org.hippoecm.frontend.sa.service.render.ListViewService;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
@@ -36,17 +37,36 @@ public class JcrTemplateStore implements ITemplateStore {
         if (type.getName().equals("defaultcontent:article")) {
             JavaClusterConfig template = new JavaClusterConfig();
             template.put(RenderService.MODEL_ID, "{template}.model");
-            template.put("item", "{template}.item");
+            template.put("field", "{template}.field");
+            template.put("title", "{template}.title");
+            template.put("introduction", "{template}.introduction");
 
             IPluginConfig plugin = new JavaPluginConfig();
+            plugin.put(IPlugin.CLASSNAME, ListViewPlugin.class.getName());
+            plugin.put(RenderService.WICKET_ID, "template:" + RenderService.WICKET_ID);
+            plugin.put(ListViewService.ITEM, "template:field");
+            template.addPlugin(plugin);
+
+            plugin = new JavaPluginConfig();
             plugin.put(IPlugin.CLASSNAME, PropertyFieldPlugin.class.getName());
             plugin.put(ITemplateEngine.MODE, mode);
             plugin.put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
             plugin.put(FieldPlugin.FIELD, "title");
-            plugin.put(ListViewService.ITEM, "template:item");
-            plugin.put(RenderService.WICKET_ID, "template:" + RenderService.WICKET_ID);
+            plugin.put(ListViewService.ITEM, "template:title");
+            plugin.put(RenderService.WICKET_ID, "template:field");
             plugin.put(RenderService.MODEL_ID, "template:" + RenderService.MODEL_ID);
-            plugin.put("template." + RenderService.WICKET_ID, "template:item");
+            plugin.put("template." + RenderService.WICKET_ID, "template:title");
+            template.addPlugin(plugin);
+
+            plugin = new JavaPluginConfig();
+            plugin.put(IPlugin.CLASSNAME, PropertyFieldPlugin.class.getName());
+            plugin.put(ITemplateEngine.MODE, mode);
+            plugin.put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
+            plugin.put(FieldPlugin.FIELD, "introduction");
+            plugin.put(ListViewService.ITEM, "template:introduction");
+            plugin.put(RenderService.WICKET_ID, "template:field");
+            plugin.put(RenderService.MODEL_ID, "template:" + RenderService.MODEL_ID);
+            plugin.put("template." + RenderService.WICKET_ID, "template:introduction");
             template.addPlugin(plugin);
 
             return template;
@@ -64,8 +84,26 @@ public class JcrTemplateStore implements ITemplateStore {
             template.addPlugin(plugin);
 
             return template;
+        } else if (type.getName().equals("Html")) {
+            JavaClusterConfig template = new JavaClusterConfig();
+            template.addOverride(RenderService.WICKET_ID);
+            template.put(RenderService.MODEL_ID, "{template}.model");
+
+            IPluginConfig plugin = new JavaPluginConfig();
+            plugin.put(IPlugin.CLASSNAME, "org.hippoecm.frontend.xinha.sa.XinhaPlugin");
+            plugin.put(ITemplateEngine.ENGINE, "template:" + ITemplateEngine.ENGINE);
+            plugin.put(ITemplateEngine.MODE, mode);
+            plugin.put(RenderService.WICKET_ID, "template:" + RenderService.WICKET_ID);
+            plugin.put(RenderService.MODEL_ID, "template:" + RenderService.MODEL_ID);
+            plugin.put("Xinha.plugins", new String[] { "AutoSave", "CustomLinker" });
+            plugin.put("AutoSave", new String[] { "timeoutLength=1500" });
+            plugin.put("Xinha.config.toolbar", new String[] { "popupeditor", "createlink", "formatblock", "bold",
+                    "italic", "underline" });
+            plugin.put("Xinha.skin", "xp-blue");
+            template.addPlugin(plugin);
+
+            return template;
         }
         return new JavaClusterConfig();
     }
-
 }

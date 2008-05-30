@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.sa;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.Main;
@@ -30,6 +31,7 @@ import org.hippoecm.frontend.sa.plugin.impl.PluginManager;
 import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
+import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 
 public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService {
@@ -60,9 +62,24 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         }
 
         mgr.registerService(this, Home.class.getName());
-        String controlId = mgr.getReference(this).getServiceId();
+        String serviceId = mgr.getReference(this).getServiceId();
+        ServiceTracker<IBehavior> tracker = new ServiceTracker<IBehavior>(IBehavior.class) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onServiceAdded(IBehavior behavior, String name) {
+                add(behavior);
+            }
+            
+            @Override
+            public void onRemoveService(IBehavior behavior, String name) {
+                remove(behavior);
+            }
+        };
+        mgr.registerTracker(tracker, serviceId);
+        
         for (IPluginConfig plugin : pluginCluster.getPlugins()) {
-            mgr.start(plugin, controlId);
+            mgr.start(plugin, serviceId);
         }
     }
 
