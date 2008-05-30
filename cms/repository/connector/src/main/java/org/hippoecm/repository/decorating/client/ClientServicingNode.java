@@ -26,6 +26,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.rmi.client.ClientNode;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
+import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
@@ -48,7 +49,8 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
     }
     public Node getCanonicalNode() throws RepositoryException {
         try {
-            return getNode(getSession(), remote.getCanonicalNode());
+            RemoteNode remoteCanonical = remote.getCanonicalNode();
+            return ( remoteCanonical == null ? null : getNode(getSession(), remoteCanonical));
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
