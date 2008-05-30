@@ -30,3 +30,12 @@
 [hippostd:publishable] mixin
 - hippostd:state (string) mandatory copy < 'draft', 'unpublished', 'published', 'stale'
 - hippostd:username (string) copy
+
+[hippostd:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
+- hippostd:content (string) primary mandatory
+
+[hippostd:resource] > hippo:document, hippostd:languageable
++ hippostd:content (nt:resource) = nt:resource primary mandatory
+
+[hippostd:folder] > hippo:document
++ * = hippostd:folder
