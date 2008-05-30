@@ -39,6 +39,9 @@
         <sv:property sv:name="wicket.dialog" sv:type="String">
             <sv:value>service.dialog</sv:value>
         </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>service.model</sv:value>
+        </sv:property>
         <sv:property sv:name="browserPlugin" sv:type="String">
             <sv:value>service.browser</sv:value>
         </sv:property>
