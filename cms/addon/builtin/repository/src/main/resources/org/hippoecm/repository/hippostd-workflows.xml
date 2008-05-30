@@ -48,6 +48,9 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:namespace</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>admin</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
     </sv:property>
@@ -70,6 +73,9 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>admin</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>
     </sv:property>
@@ -91,6 +97,9 @@
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:prototyped</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>author</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.PrototypeWorkflowImpl</sv:value>

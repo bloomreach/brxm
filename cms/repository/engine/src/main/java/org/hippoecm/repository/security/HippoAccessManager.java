@@ -284,13 +284,18 @@ public class HippoAccessManager implements AccessManager {
         if (isSystem) {
             return true;
         }
-        // special hippo node types
-        if (canAccessHippoNode(nodeState, permissions)) {
-            return true;
-        }
         // no facetAuths -> not allowed...
         if (subject.getPrincipals(FacetAuthPrincipal.class).isEmpty()) {
             return false;
+        }
+        // special hippo node types
+        if (isWorkflowConfig(nodeState)) {
+            nodeState = getWorkflowNode(nodeState);
+            if (nodeState != null) {
+                return checkFacetAuth(nodeState, permissions);
+            } else {
+                return false;
+            }
         }
         // check for facet auuthorization
         if (checkFacetAuth(nodeState, permissions)) {
@@ -306,61 +311,66 @@ public class HippoAccessManager implements AccessManager {
         return false;
     }
 
-    /**
-     * Allow access to some special HippoNodes based on the node type, 
-     * TODO: checks shouldn't use manual NodeType parsing
-     * TODO: this function is only used for the workflow checks and should be remove
-     *       when the workflow is handled better.
-     * @param nodeState the state of the node to check
-     * @param permissions the (bitset) of the permissions
-     * @return true if the user is allowed the requested permissions on the node
-     * @throws RepositoryException
-     * @throws ItemStateException
-     * @throws NoSuchItemStateException
-     */
-    protected boolean canAccessHippoNode(NodeState nodeState, int permissions) throws RepositoryException,
-            NoSuchItemStateException, ItemStateException {
+    private boolean isWorkflowConfig(NodeState nodeState) {
+        // create NodeType of nodeState's primaryType
         if (log.isTraceEnabled()) {
-            log.trace("Checking [" + pString(permissions) + "] for: " + nodeState.getId());
+            log.trace("Checking if node: " + nodeState.getId() + " is part of workflow config");
         }
-
-        //-----------------------  read access -------------------//
-        if (permissions != READ) {
+        String nodeStateType;
+        try {
+            nodeStateType = FacetAuthHelper.getJCRNameFromName(nsRes, nodeState.getNodeTypeName());
+        } catch (NamespaceException e) {
             return false;
         }
-
-        // check namespace
-        String namespaceURI = nodeState.getNodeTypeName().getNamespaceURI();
-        String localName = nodeState.getNodeTypeName().getLocalName();
-        if (!namespaceURI.equals(NAMESPACE_URI)) {
-            return false;
+        if (nodeStateType.equals(HippoNodeType.NT_TYPE)) {
+            return true;
         }
-
-        // FIXME: make more generic
-        // Special cases for worlkflow configuration based on roles.
-        // Workflow subentries are granted by permissions on the parent.
-        // Current (hard coded structure:
-        // hippo:configuration->hippo:workflows->workflowPlugin->[workflowName]->hippo:types->[workflow]
-        // primaryType workflowName -> hippo:workflow
-        // primaryType workflow -> hippo:type
-        if (localName.equals(getLocalName(HippoNodeType.NT_TYPE))) {
-            // shift one up in hierarchy
-            nodeState = (NodeState) getState(nodeState.getParentId());
-            nodeState = (NodeState) getState(nodeState.getParentId());
-            localName = nodeState.getNodeTypeName().getLocalName();
+        if (nodeStateType.equals(HippoNodeType.NT_TYPES)) {
+            return true;
         }
-        if (localName.equals(getLocalName(HippoNodeType.NT_TYPES))) {
-            // shift one up in hierarchy
-            nodeState = (NodeState) getState(nodeState.getParentId());
-            localName = nodeState.getNodeTypeName().getLocalName();
+        if (nodeStateType.equals(HippoNodeType.NT_WORKFLOW)) {
+            return true;
         }
-        if (localName.equals(getLocalName(HippoNodeType.NT_WORKFLOW))) {
-            return checkWorkflow(nodeState, permissions);
-        }
-
-        // else deny..
         return false;
     }
+    
+    private NodeState getWorkflowNode(NodeState nodeState) {
+        if (log.isTraceEnabled()) {
+            log.trace("Fetching workflow node from node: " + nodeState.getId());
+        }
+        String nodeStateType;
+        try {
+            // Workflow subentries are granted by permissions on the parent.
+            // Current (hard coded structure:
+            // hippo:configuration->hippo:workflows->workflowPlugin->[workflowName]->hippo:types->[workflow]
+            // primaryType workflowName -> hippo:workflow
+            // primaryType workflow -> hippo:type
+            nodeStateType = FacetAuthHelper.getJCRNameFromName(nsRes, nodeState.getNodeTypeName());
+            if (nodeStateType.equals(HippoNodeType.NT_WORKFLOW)) {
+                return nodeState;
+            }
+            if (nodeStateType.equals(HippoNodeType.NT_TYPES)) {
+                return getParentState(nodeState);
+            }
+            if (nodeStateType.equals(HippoNodeType.NT_TYPE)) {
+                return getParentState(getParentState(nodeState));
+            }
+        } catch (NoSuchItemStateException e) {
+            log.error("NoSuchItemStateException while fetching workflow node from id: " + nodeState.getId());
+            log.debug("NoSuchItemStateException: ", e);
+            return null;
+        } catch (ItemStateException e) {
+            log.error("ItemStateException while fetching workflow node from id: " + nodeState.getId());
+            log.debug("NoSuchItemStateException: ", e);
+            return null;
+        } catch (NamespaceException e) {
+            log.error("NamespaceException while fetching workflow node from id: " + nodeState.getId());
+            log.debug("NoSuchItemStateException: ", e);
+            return null;
+        }
+        return null;
+    }
+
 
     /**
      * Check wheter the node can be accessed with the requested permissins based on the 
@@ -495,66 +505,6 @@ public class HippoAccessManager implements AccessManager {
         return false;
     }
 
-    /**
-     * Check for (read) permissions on workflow configuration based on roles
-     * @throws RepositoryException
-     */
-    protected boolean checkWorkflow(NodeState nodeState, int permissions) throws RepositoryException {
-        // only allow read access to the workflow configuration
-        if (permissions != READ) {
-            return false;
-        }
-
-        // check if node has the required property
-        Name name = NameFactoryImpl.getInstance().create(NAMESPACE_URI, getLocalName(HippoNodeType.HIPPO_ROLES));
-
-        if (log.isTraceEnabled()) {
-            log.trace("Checking [" + pString(permissions) + "] for hippo role: " + nodeState.getNodeId() + " in prop "
-                    + name);
-        }
-        if (nodeState.hasPropertyName(name)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Found [" + pString(permissions) + "] property hippo role: " + name);
-            }
-            HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), name);
-            try {
-                // check if the property has a required value
-                PropertyState state = (PropertyState) getState(propertyId);
-                InternalValue[] iVals = state.getValues();
-                for (InternalValue iVal : iVals) {
-                    if (iVal.getType() != PropertyType.STRING) {
-                        continue;
-                    }
-                    for (RolePrincipal principal : subject.getPrincipals(RolePrincipal.class)) {
-                        String val = principal.getName();
-                        if (log.isTraceEnabled()) {
-                            log.trace("Checking [" + pString(permissions) + "] nodeVal->roleVal: " + iVal.getString()
-                                    + "->" + val);
-                        }
-                        if (iVal.getString().equals(val)) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found match [" + pString(permissions) + "] nodeVal->roleVal: "
-                                        + iVal.getString() + "->" + val);
-                            }
-                            // found a match!
-                            return true;
-                        }
-                    }
-                }
-                // no valid value found
-                return false;
-            } catch (NoSuchItemStateException e) {
-                //e.printStackTrace();
-                return false;
-            } catch (ItemStateException e) {
-                //e.printStackTrace();
-                return false;
-            }
-        } else {
-            // node doesn't have the hippo roles property
-            return false;
-        }
-    }
 
     /**
      * Check if a user has the requested permissions on the item.

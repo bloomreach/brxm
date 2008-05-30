@@ -57,7 +57,18 @@
             <sv:value>editor</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:role" sv:type="String">
-            <sv:value>jcrall</sv:value>
+            <sv:value>editor</sv:value>
+        </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:authrole">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:authrole</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:groups" sv:type="String">
+            <sv:value>author</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:role" sv:type="String">
+            <sv:value>author</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

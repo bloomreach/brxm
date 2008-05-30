@@ -49,7 +49,7 @@
       <sv:value>hippo:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>editor</sv:value>
+      <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:remodel</sv:value>
