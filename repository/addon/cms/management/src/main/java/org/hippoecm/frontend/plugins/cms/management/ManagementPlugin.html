@@ -15,30 +15,33 @@
 -->iss
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <tr>
-      <td class="gridside">
-        <div class="pluginbox">
-          <h2 style="text-indent: 0px; padding-top:2px; padding-left:4px;">Users</h2>   
-          <div class="padding" wicket:id="listUsersPlugin">[ ListUsersPlugin ]</div>
+        <div id="left" class="panelcontainer">
+          <h2><span class="userman"></span></h2>
+        <div class="panel">
+             
+          <div wicket:id="listUsersPlugin">[ ListUsersPlugin ]</div>
         </div>
-        <div class="pluginbox">
-          <h2 style="text-indent: 0px; padding-top:2px; padding-left:4px;">Groups</h2>   
-          <div class="padding" wicket:id="listGroupsPlugin">[ ListGroupsPlugin ]</div>
+          <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+        <div class="panel">
+             
+          <div wicket:id="listGroupsPlugin">[ ListGroupsPlugin ]</div>
         </div>
-        <div class="pluginbox">
-          <h2 style="text-indent: 0px; padding-top:2px; padding-left:4px;">Domains</h2>   
-          <div class="padding" wicket:id="listDomainsPlugin">[ ListDomainsPlugin ]</div>
+          <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+        <div class="panel">
+             
+          <div wicket:id="listDomainsPlugin">[ ListDomainsPlugin ]</div>
         </div>
-        <div class="pluginbox">
-          <h2 style="text-indent: 0px; padding-top:2px; padding-left:4px;">Roles</h2>   
-          <div class="padding" wicket:id="listRolesPlugin">[ ListRolesPlugin ]</div>
+          <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+        <div class="panel">
+             
+          <div wicket:id="listRolesPlugin">[ ListRolesPlugin ]</div>
         </div>
-      </td>
-      <td rowspan="1" class="gridmiddle" style="background: #e1e1e1;">
-        <form style="padding: 8px;" wicket:id="form">
+        </div>
+        <div id="wideright" class="panelcontainer">
+        <h2><span class="userman"></span></h2>
+        <form wicket:id="form">
           <div class="templateeditor" style="background: white" wicket:id="template">[ template goes here ]</div>
          </form>
-      </td>                
-    </tr>
+        </div>
   </wicket:panel>
 </html>
