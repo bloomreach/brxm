@@ -39,6 +39,15 @@ public class FacetAuthHelper {
     /** The wildcard to match everything */
     public final static String WILDCARD = "*";
 
+    /** Epander for user */
+    public final static String EXPANDER_USER = "__user__";
+
+    /** Epander for group */
+    public final static String EXPANDER_GROUP = "__group__";
+    
+    /** Epander for role */
+    public final static String EXPANDER_ROLE = "__role__";
+
     /**
      * NameFactory for create Names
      */
