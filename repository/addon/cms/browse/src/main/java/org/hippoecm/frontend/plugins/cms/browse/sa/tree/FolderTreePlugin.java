@@ -52,9 +52,8 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
             private static final long serialVersionUID = 1L;
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                // FIXME
-                //AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
-                //FolderTreePlugin.this.onSelect(treeNodeModel, target);
+                AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
+                FolderTreePlugin.this.setModel(treeNodeModel.getNodeModel());
             }
         };
         add(tree);
@@ -63,8 +62,35 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        // TODO Auto-generated method stub
-        
+        AbstractTreeNode node = rootNode.getTreeModel().lookup(nodeModel);
+        if (node != null) {
+            node.markReload();
+            node.getTreeModel().nodeStructureChanged(node);
+            redraw();
+        }
+    }
+
+    @Override
+    public void onModelChanged() {
+        super.onModelChanged();
+
+        JcrNodeModel model = (JcrNodeModel) getModel();
+        AbstractTreeNode node = null;
+        while (model != null) {
+            node = rootNode.getTreeModel().lookup(model);
+
+            if (node != null) {
+                TreeNode parentNode = (AbstractTreeNode) node.getParent();
+                while (parentNode != null && !tree.getTreeState().isNodeExpanded(parentNode)) {
+                    tree.getTreeState().expandNode(parentNode);
+                    parentNode = parentNode.getParent();
+                }
+                tree.getTreeState().selectNode(node, true);
+                redraw();
+                break;
+            }
+            model = model.getParentModel();
+        }
     }
 
 }
