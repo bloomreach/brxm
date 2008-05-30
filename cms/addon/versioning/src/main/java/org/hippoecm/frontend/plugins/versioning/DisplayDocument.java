@@ -40,9 +40,8 @@ import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class DisplayDocument extends RenderPlugin {
-    private static final long serialVersionUID = 1L;
-    
-    static Logger log = LoggerFactory.getLogger(DisplayDocument.class);
+    transient Logger log = LoggerFactory.getLogger(DisplayDocument.class);
+
     private Label content;
 
     public DisplayDocument(IPluginContext context, IPluginConfig config) {
