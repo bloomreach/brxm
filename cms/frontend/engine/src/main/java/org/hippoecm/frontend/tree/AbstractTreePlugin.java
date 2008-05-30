@@ -30,6 +30,10 @@ import org.hippoecm.frontend.plugin.channel.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
+ */
+@Deprecated
 public abstract class AbstractTreePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

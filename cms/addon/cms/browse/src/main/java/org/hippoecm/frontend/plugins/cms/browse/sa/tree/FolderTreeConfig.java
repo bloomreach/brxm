@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse;
+package org.hippoecm.frontend.plugins.cms.browse.sa.tree;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.HippoNodeType;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
- */
-@Deprecated
 public class FolderTreeConfig implements IClusterable {
     private static final long serialVersionUID = 1L;
 
@@ -47,18 +42,27 @@ public class FolderTreeConfig implements IClusterable {
     // shortcut paths shown as root folders + the name how to show them
     private Map<String, String> shortCutInfo;
 
-    public FolderTreeConfig(Map<String, ParameterValue> parameters) {
+    public FolderTreeConfig(IPluginConfig config) {
         shortCutInfo = new HashMap<String, String>();
         shortCutInfo.put("/hippo:namespaces", "document types");
 
         ignoreNodesBelowPath = new String[] { };
 
-        ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system", "/hippo:configuration",
-                "/hippo:namespaces" }));
-        List<String> ignored = parameters.get("ignored").getStrings();
-        for (String path : ignored) {
-            ignorePaths.add(path);
-        }
+        ignorePaths = new HashSet<String>(Arrays.asList(new String[] { 
+                "/jcr:system", "/hippo:configuration", "/hippo:namespaces" }));
+
+// FIXME: IPluginConfig doesn't support multivalue properties.
+        ignorePaths.add("/preview");
+        ignorePaths.add("/live");
+        ignorePaths.add("/hippo:namespaces/system");
+        ignorePaths.add("/hippo:namespaces/hippo");
+        ignorePaths.add("/hippo:namespaces/hippostd");
+        ignorePaths.add("/hippo:namespaces/hst");
+        ignorePaths.add("/hippo:namespaces/reporting");
+//        List<String> ignored = parameters.get("ignored").getStrings();
+//        for (String path : ignored) {
+//            ignorePaths.add(path);
+//        }
     }
 
     public String getShortcut(String path) {

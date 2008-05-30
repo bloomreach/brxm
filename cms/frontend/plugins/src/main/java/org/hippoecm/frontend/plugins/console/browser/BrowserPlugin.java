@@ -28,6 +28,7 @@ import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.tree.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

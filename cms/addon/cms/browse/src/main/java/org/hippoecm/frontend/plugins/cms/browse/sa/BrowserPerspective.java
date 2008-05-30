@@ -27,7 +27,7 @@ public class BrowserPerspective extends Perspective {
         
         //addExtensionPoint("legacyBrowse");
 
-        addExtensionPoint("browserBreadcrumbPlugin");
+        addExtensionPoint("breadcrumbPlugin");
         addExtensionPoint("browserPlugin");
         addExtensionPoint("listPlugin");
         addExtensionPoint("workflowsPlugin");
