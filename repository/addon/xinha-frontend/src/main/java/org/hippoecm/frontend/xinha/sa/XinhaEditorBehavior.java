@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.frontend.xinha;
+package org.hippoecm.frontend.xinha.sa;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -25,48 +26,24 @@ import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.hippoecm.frontend.sa.Home;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 
-@Deprecated
 class XinhaEditorBehavior extends AbstractHeaderContributor {
     private static final long serialVersionUID = 1L;
 
     protected static final String SINGLE_QUOTE = "'";
 
-    private Page page;
-    private Set<XinhaPlugin.Configuration> configurations;
+    private IPluginContext context;
+    //    private Set<XinhaPlugin.Configuration> configurations;
 
     Pattern numbers = Pattern.compile("\\d*");
     Pattern functions = Pattern.compile("(\\w+)\\.(\\w+)");
 
-    XinhaEditorBehavior(Page page) {
-        configurations = new HashSet<XinhaPlugin.Configuration>();
-        this.page = page;
-        page.add(this);
-    }
-
-    void register(XinhaPlugin.Configuration conf) {
-        configurations.add(conf);
-    }
-
-    /**
-     * Remove configuration from behavior, if no more configurations left, remove behavior from page
-     * @param conf Configuration to be removed
-     */
-    void unregister(XinhaPlugin.Configuration conf) {
-        if (configurations.contains(conf)) {
-            configurations.remove(conf);
-            if (configurations.size() == 0) {
-                for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
-                    IBehavior behavior = (IBehavior) iter.next();
-                    if (behavior == this) {
-                        page.remove(this);
-                    }
-                }
-            }
-        }
+    XinhaEditorBehavior(IPluginContext context) {
+        this.context = context;
     }
 
     private String serialize2JS(String value) {
@@ -82,11 +59,16 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
         return SINGLE_QUOTE + value.replaceAll(SINGLE_QUOTE, "\\\\" + SINGLE_QUOTE) + SINGLE_QUOTE;
     }
 
+    @Override
     public final IHeaderContributor[] getHeaderContributors() {
         return null;
     }
 
     IHeaderContributor[] getHeaderContributorsPartly() {
+
+        final Page page = context.getService(Home.class.getName(), Home.class);
+        final List<XinhaPlugin.Configuration> configurations = context.getServices(XinhaPlugin.Configuration.class
+                .getName(), XinhaPlugin.Configuration.class);
 
         return new IHeaderContributor[] {
 

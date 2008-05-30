@@ -83,7 +83,7 @@ public class ListViewService extends RenderService {
                     redraw();
                 }
             };
-            context.registerTracker(tracker, properties.getString("item"));
+            context.registerTracker(tracker, properties.getString(ITEM));
         } else {
             log.warn("No item id configured");
         }

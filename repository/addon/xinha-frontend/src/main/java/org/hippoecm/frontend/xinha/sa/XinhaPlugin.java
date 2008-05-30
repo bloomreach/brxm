@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.frontend.xinha;
+package org.hippoecm.frontend.xinha.sa;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,30 +28,30 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.hippoecm.frontend.model.IPluginModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
-import org.hippoecm.frontend.template.model.TemplateModel;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.PluginRequestTarget;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.sa.template.ITemplateEngine;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
-public class XinhaPlugin extends Plugin {
+public class XinhaPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(XinhaPlugin.class);
@@ -63,39 +62,71 @@ public class XinhaPlugin extends Plugin {
     private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
             "/hippo:configuration", "/hippo:namespaces" }));
 
-    private JcrPropertyValueModel valueModel;
-
+    private String mode;
     private String content;
     private TextArea editor;
     private Configuration configuration;
-    private XinhaEditorBehavior sharedBehavior;
     private AbstractDefaultAjaxBehavior postBehavior;
 
-    public XinhaPlugin(PluginDescriptor pluginDescriptor, final IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
+    public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
+        super(context, config);
 
-        TemplateModel model = (TemplateModel) getPluginModel();
-        valueModel = model.getJcrPropertyValueModel();
+        mode = config.getString(ITemplateEngine.MODE);
 
+        if ("edit".equals(mode)) {
+            createEditor(config);
+        } else {
+            add(editor = new TextArea("editor", new Model("Viewing not yet supported")));
+        }
+
+        configuration = new Configuration(config);
+        context.registerService(configuration, Configuration.class.getName());
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public void onBeforeRender() {
+        configuration.setName(editor.getMarkupId());
+        configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
+        configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+        super.onBeforeRender();
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        Page page = (Page) findParent(Page.class);
+        if (page == null) {
+            // FIXME: add logic to clean up on the client (delete Xinha.config)
+            editor.setMarkupId("xinha" + new Integer(Session.get().nextSequenceValue()));
+        }
+        super.render(target);
+    }
+
+    private void createEditor(final IPluginConfig config) {
+        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         editor = new TextArea("value", valueModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onComponentTag(final ComponentTag tag) {
-                PluginDescriptor descriptor = getDescriptor();
                 StringBuilder sb = new StringBuilder();
-                ParameterValue value = descriptor.getParameter("width");
-                if (value != null) {
+                String width = config.getString("width");
+                if (width != null) {
                     sb.append("width: ");
-                    if (value.getStrings().size() > 0)
-                        sb.append(value.getStrings().get(0));
+                    sb.append(width);
                     sb.append(";");
                 }
-                value = descriptor.getParameter("height");
-                if (value != null) {
+                String height = config.getString("height");
+                if (height != null) {
                     sb.append("height: ");
-                    if (value.getStrings().size() > 0)
-                        sb.append(value.getStrings().get(0));
+                    sb.append(width);
                     sb.append(";");
                 }
                 if (sb.length() > 0) {
@@ -127,9 +158,8 @@ public class XinhaPlugin extends Plugin {
                     StringBuilder sb = new StringBuilder();
 
                     //custom browsing
-                    Node pluginNode = (Node) pluginModel.getObject();
                     try {
-                        javax.jcr.Session session = pluginNode.getSession();
+                        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
                         Item item = session.getItem(browse);
                         if (item.isNode()) {
                             Node itemNode = (Node) item;
@@ -170,60 +200,6 @@ public class XinhaPlugin extends Plugin {
 
         add(this.new XinhaHeaderContributor());
         add(editor);
-
-        //on tab-switch a new configuration is created while an existing on is in the sharedBehaviour
-        //does provide a way to change configurations dynamically without implementing cache
-        configuration = new Configuration(pluginDescriptor.getParameters());
-
-        Page page = getPluginPage();
-        for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
-            IBehavior behavior = (IBehavior) iter.next();
-            if (behavior instanceof XinhaEditorBehavior) {
-                sharedBehavior = (XinhaEditorBehavior) behavior;
-                break;
-            }
-        }
-        if (sharedBehavior == null) {
-            sharedBehavior = new XinhaEditorBehavior(page);
-        }
-        sharedBehavior.register(configuration);
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    @Override
-    public void onBeforeRender() {
-        configuration.setName(editor.getMarkupId());
-        configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
-        configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
-        super.onBeforeRender();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (sharedBehavior != null) {
-            sharedBehavior.unregister(configuration);
-            sharedBehavior = null;
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void receive(Notification notification) {
-        if ("focus".equals(notification.getOperation())) {
-            String plugin = (String) notification.getModel().getMapRepresentation().get("plugin");
-            if (!getPluginPath().startsWith(plugin)) {
-                // FIXME: add logic to clean up on the client (delete Xinha.config)
-                editor.setMarkupId("xinha" + new Integer(Session.get().nextSequenceValue()));
-            }
-        }
-        super.receive(notification);
     }
 
     //Move this to editorBehaviour?
@@ -232,11 +208,16 @@ public class XinhaPlugin extends Plugin {
 
         @Override
         public final IHeaderContributor[] getHeaderContributors() {
-            if (sharedBehavior != null) {
-                return sharedBehavior.getHeaderContributorsPartly();
-            } else {
-                return null;
+            IPluginContext context = getPluginContext();
+
+            // make sure a shared behavior exists
+            XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
+                    XinhaEditorBehavior.class);
+            if (sharedBehavior == null) {
+                sharedBehavior = new XinhaEditorBehavior(context);
+                context.registerService(sharedBehavior, XinhaEditorBehavior.class.getName());
             }
+            return sharedBehavior.getHeaderContributorsPartly();
         }
     }
 
@@ -255,49 +236,61 @@ public class XinhaPlugin extends Plugin {
         private List<String> styleSheets;
         private String skin;
 
-        public Configuration(Map<String, ParameterValue> parameters) {
+        public Configuration(IPluginConfig config) {
+            toolbarItems = new ArrayList();
+            String[] values = config.getStringArray(XINHA_TOOLBAR);
+            if (values != null) {
+                for (String item : values) {
+                    toolbarItems.add(item);
+                }
+            }
 
-            for (String paramKey : parameters.keySet()) {
+            styleSheets = new ArrayList();
+            values = config.getStringArray(XINHA_CSS);
+            if (values != null) {
+                for (String item : values) {
+                    styleSheets.add(item);
+                }
+            }
+
+            skin = config.getString(XINHA_SKIN);
+
+            values = config.getStringArray(XINHA_PLUGINS);
+            if (values != null) {
+                for (String pluginName : values) {
+                    PluginConfiguration pluginConfig = new PluginConfiguration(pluginName);
+                    String[] pluginProperties = config.getStringArray(pluginName);
+                    if (pluginProperties != null) {
+                        for (String pluginProperty : pluginProperties) {
+                            pluginConfig.addProperty(pluginProperty);
+                        }
+                    }
+                    addPluginConfiguration(pluginConfig);
+                }
+            }
+
+            /*
+             * FIXME: there is no way to obtain the keys from the IPluginConfig
+             * 
+            for (String paramKey : config.keySet()) {
                 if (paramKey.startsWith(XINHA_PREFIX)) {
                     List<String> paramValues = parameters.get(paramKey).getStrings();
-                    if (paramKey.equals(XINHA_TOOLBAR)) {
-                        toolbarItems = paramValues;
-                    } else if (paramKey.equals(XINHA_CSS)) {
-                        styleSheets = paramValues;
-                    } else if (paramKey.equals(XINHA_SKIN)) {
-                        skin = paramValues.get(0);
-                    } else if (paramKey.equals(XINHA_PLUGINS)) {
-                        for (String pluginName : paramValues) {
-                            PluginConfiguration pluginConfig = new PluginConfiguration(pluginName);
-                            ParameterValue pluginParameter = parameters.get(pluginName);
-                            if (pluginParameter != null) {
-                                List<String> pluginProperties = pluginParameter.getStrings();
-                                if (pluginProperties != null) {
-                                    for (String pluginProperty : pluginProperties) {
-                                        pluginConfig.addProperty(pluginProperty);
-                                    }
-                                }
-                            }
-                            addPluginConfiguration(pluginConfig);
-                        }
-                    } else {
-                        for (String propertyValue : paramValues) {
-                            int equalsIndex = propertyValue.indexOf("=");
-                            if (equalsIndex > -1) {
-                                addProperty(propertyValue.substring(0, equalsIndex), propertyValue
-                                        .substring(equalsIndex + 1));
+                    for (String propertyValue : paramValues) {
+                        int equalsIndex = propertyValue.indexOf("=");
+                        if (equalsIndex > -1) {
+                            addProperty(propertyValue.substring(0, equalsIndex), propertyValue
+                                    .substring(equalsIndex + 1));
+                        } else {
+                            String propertyKey = paramKey.substring(XINHA_CONFIG_PREFIX.length());
+                            if (getProperties().containsKey(propertyKey)) {
+                                addProperty(propertyKey, getProperty(propertyKey) + "," + propertyValue);
                             } else {
-                                String propertyKey = paramKey.substring(XINHA_CONFIG_PREFIX.length());
-                                if (getProperties().containsKey(propertyKey)) {
-                                    addProperty(propertyKey, getProperty(propertyKey) + "," + propertyValue);
-                                } else {
-                                    addProperty(propertyKey, propertyValue);
-                                }
+                                addProperty(propertyKey, propertyValue);
                             }
                         }
                     }
                 }
-            }
+            } */
         }
 
         public List<String> getToolbarItems() {
@@ -355,7 +348,7 @@ public class XinhaPlugin extends Plugin {
         }
     }
 
-    class BaseConfiguration implements Serializable {
+    class BaseConfiguration implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         //id

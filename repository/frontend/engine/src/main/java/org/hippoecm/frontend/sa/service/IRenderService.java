@@ -24,6 +24,7 @@ public interface IRenderService extends IClusterable {
 
     void render(PluginRequestTarget target);
 
+    // travels up the hierarchy
     void focus(IRenderService child);
 
     // Rendering hierarchy management
