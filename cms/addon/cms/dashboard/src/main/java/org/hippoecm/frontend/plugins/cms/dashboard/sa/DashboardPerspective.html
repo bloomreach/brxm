@@ -15,20 +15,25 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-<!--
-        <table class="gridroot">
-            <tr>
-                <td class="gridside" style="width: 50%">
-                    <div class="pluginbox" wicket:id="currentActivityPlugin">Whats going on</div>
-                    <div class="pluginbox">Whats going on</div>
-                </td>
-                <td class="gridside" style="width: 50%">
-                    <div class="pluginbox">Todo</div>
-                    <div class="pluginbox" wicket:id="todoPlugin">Todo</div>
-                </td>
-            </tr>
-        </table>
--->
+  <!--  
+        <wicket:panel>
+            
+            <div class="panelcontainer" id="left">
+                <h2><span class="history">History</span></h2>
+                <div class="panel nopadding">
+                    <div class="plugin" wicket:id="currentActivityPlugin">Whats going on</div>
+                </div>
+            </div>
+            
+            <div class="panelcontainer" id="right">
+                <h2><span class="task">Todo</span></h2>
+                <div class="panel">
+                    <div class="plugin" wicket:id="todoPlugin">Todo</div>
+                </div>
+            </div>
+            
+        </wicket:panel>
+        -->
         <div wicket:id="legacyDashboard"></div>
     </wicket:panel>
 </html>
