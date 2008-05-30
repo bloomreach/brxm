@@ -262,3 +262,43 @@ ul.tabs li.tab1 a { background-image: url('images/browse.gif')}
 
 ul.tabs li a.close {position: absolute; right: 40px; top: 1px; background: url('images/closetab.gif') no-repeat center center; padding: 7px; height: 14px; text-indent: -9999px}
 ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
+
+/* CMS Management perspective */
+div.pluginbox {background: white url("images/pluginheaderback.gif") repeat-x; vertical-align: top; height: 180px; width:200px;}
+div.pluginbox h2{display: block; margin-top: 0px; background-position: center right; background-repeat: no-repeat;height: 29px; margin-bottom: 0px; font-size: 11px;}
+div.pluginbox div.padding{padding: 15px;}
+
+
+.addNodeWidget {
+  margin-bottom: 4px;
+}
+.addNodeWidget span{
+  cursor:pointer;
+  cursor:hand;
+  text-decoration: underline;
+}
+.addNodeWidget input{
+  border: 1px solid #18A4E2;
+  border: 1px solid #000;
+}
+
+.userGroupsList {
+  border: 2px solid #fff;
+  padding: 3px;
+}
+
+.inactiveNode {
+  opacity: 0.6;
+}
+
+.target {
+  border: 2px dashed #999 ! important;
+}
+
+.managementPlugin div.templateeditor  {
+  width: 800px;
+}
+
+.managementPlugin div.templateeditor input {
+  width: 160px;
+}
