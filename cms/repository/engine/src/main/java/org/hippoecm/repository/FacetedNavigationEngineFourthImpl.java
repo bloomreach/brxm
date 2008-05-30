@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SearchManager;
@@ -83,11 +84,11 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
   class ContextImpl extends FacetedNavigationEngine.Context {
     Session session;
     String principal;
-    Set<FacetAuthPrincipal> facetAuths;
-    ContextImpl(Session session, String principal, Set<FacetAuthPrincipal> facetAuths) {
+    Subject subject;
+    ContextImpl(Session session, String principal, Subject subject) {
       this.session = session;
       this.principal = principal;
-      this.facetAuths = facetAuths;
+      this.subject = subject;
     }
   }
 
@@ -97,8 +98,8 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
       this.tfvCache = new WeakHashMap<IndexReader, Map<String,Map<Integer, String[]>>>();
   }
 
-  public ContextImpl prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<QueryImpl> initialQueries, Session session) {
-    return new ContextImpl(session, principal, facetAuths);
+  public ContextImpl prepare(String principal, Subject subject, List<QueryImpl> initialQueries, Session session) {
+    return new ContextImpl(session, principal, subject);
   }
   public void unprepare(ContextImpl authorization) {
     // deliberate ignore

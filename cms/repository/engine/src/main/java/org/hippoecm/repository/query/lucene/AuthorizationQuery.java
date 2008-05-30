@@ -28,6 +28,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
@@ -40,9 +41,11 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.hippoecm.repository.security.FacetAuthHelper;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,14 +64,18 @@ public class AuthorizationQuery {
     private NamespaceMappings nsMappings;
     private ServicingIndexingConfiguration indexingConfig;
     private Set<FacetAuthPrincipal> facetAuths;
+    private Set<GroupPrincipal> groupPrincipals;
+    private Subject subject;
     private SessionImpl session;
     private final static String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
 
-    public AuthorizationQuery(Set<FacetAuthPrincipal> facetAuths, NamespaceMappings nsMappings,
+    public AuthorizationQuery(Subject subject, NamespaceMappings nsMappings,
             ServicingIndexingConfiguration indexingConfig, NodeTypeManager ntMgr, Session session)
             throws RepositoryException {
 
-        this.facetAuths = facetAuths;
+        this.subject = subject;
+        this.facetAuths = subject.getPrincipals(FacetAuthPrincipal.class);
+        this.groupPrincipals  = subject.getPrincipals(GroupPrincipal.class);
         this.nsMappings = nsMappings;
         this.indexingConfig = indexingConfig;
         this.ntMgr = ntMgr;
@@ -96,7 +103,7 @@ public class AuthorizationQuery {
                 boolean hasMatchAllDocsQuery = false;
                 while (facetRuleIt.hasNext()) {
                     FacetRule facetRule = facetRuleIt.next();
-                    Query q = getFacetRuleQuery(facetRule);
+                    Query q = getFacetRuleQuery(facetRule, facetAuthPrincipal.getRoles());
                     if (q == null) {
                         continue;
                     }
@@ -120,7 +127,7 @@ public class AuthorizationQuery {
         return authQuery;
     }
 
-    private Query getFacetRuleQuery(FacetRule facetRule) {
+    private Query getFacetRuleQuery(FacetRule facetRule, Set<String> roles) {
         switch (facetRule.getType()) {
         case PropertyType.STRING:
             Name nodeName = facetRule.getFacetName();
@@ -128,7 +135,7 @@ public class AuthorizationQuery {
                 if (indexingConfig.isFacet(nodeName)) {
                     String internalFieldName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
                     String internalNameTerm = nsMappings.translatePropertyName(nodeName);
-                    if (facetRule.getValue().equals("*")) {
+                    if (facetRule.getValue().equals(FacetAuthHelper.WILDCARD)) {
                         if (facetRule.isEqual()) {
                             return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
                         } else {
@@ -136,7 +143,47 @@ public class AuthorizationQuery {
                             // to exist anyway )
                             return QueryHelper.getNoHitsQuery();
                         }
-                    } else {
+                    } 
+                    else if (facetRule.getValue().equals(FacetAuthHelper.EXPANDER_USER)) {
+                        if (facetRule.isEqual()) {
+                            return new TermQuery(new Term(internalFieldName, session.getUserID()));
+                        } else {
+                            return  QueryHelper.negateQuery(new TermQuery(new Term(internalFieldName, session.getUserID())));
+                        }
+                    }
+                    else if (facetRule.getValue().equals(FacetAuthHelper.EXPANDER_ROLE)) {
+                        // boolean Or query of roles
+                        if(roles.size() == 0) {
+                            return QueryHelper.getNoHitsQuery();
+                        }
+                        BooleanQuery b = new BooleanQuery(true);
+                        for(String role : roles) {
+                            Term term = new Term(internalFieldName,role);
+                            b.add(new TermQuery(term), Occur.SHOULD);
+                        }
+                        if (facetRule.isEqual()) {
+                            return b;
+                        } else {
+                            return QueryHelper.negateQuery(b);
+                        }
+                    }
+                    else if (facetRule.getValue().equals(FacetAuthHelper.EXPANDER_GROUP)) {
+                     // boolean OR query of groups
+                        if(groupPrincipals.isEmpty()) {
+                            return QueryHelper.getNoHitsQuery();
+                        }
+                        BooleanQuery b = new BooleanQuery(true);
+                        for(GroupPrincipal groupPrincipal : groupPrincipals) {
+                            Term term = new Term(internalFieldName,groupPrincipal.getName());
+                            b.add(new TermQuery(term), Occur.SHOULD);
+                        }
+                        if (facetRule.isEqual()) {
+                            return b;
+                        } else {
+                            return QueryHelper.negateQuery(b);
+                        }
+                    }
+                    else {
                         Query wq = new WildcardQuery(new Term(internalFieldName, facetRule.getValue() + "?"));
                         if (facetRule.isEqual()) {
                             return wq;

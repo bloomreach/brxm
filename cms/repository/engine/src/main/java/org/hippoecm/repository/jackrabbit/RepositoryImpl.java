@@ -52,6 +52,7 @@ import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,9 +81,8 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,
             org.apache.jackrabbit.core.SessionImpl session, Subject subject) throws RepositoryException {
         FacetedNavigationEngine<FacetedNavigationEngine.Query,FacetedNavigationEngine.Context> facetedEngine = getFacetedNavigationEngine();
-        Set<FacetAuthPrincipal> principals = subject.getPrincipals(FacetAuthPrincipal.class);
         FacetedNavigationEngine.Context facetedContext;
-        facetedContext = facetedEngine.prepare(session.getUserID(), principals, null, session);
+        facetedContext = facetedEngine.prepare(session.getUserID(), subject, null, session);
         stateMgr.initialize(session.getNamespaceResolver(), session.getHierarchyManager(), facetedEngine,
                 facetedContext);
     }

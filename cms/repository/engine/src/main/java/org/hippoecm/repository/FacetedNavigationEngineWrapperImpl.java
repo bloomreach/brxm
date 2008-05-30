@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
@@ -34,8 +35,8 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     this.upstream = upstream;
   }
 
-  public C prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<Q> initialQueries, Session session) throws RepositoryException {
-    Context context = upstream.prepare(principal, facetAuths, initialQueries, session);
+  public C prepare(String principal, Subject subject, List<Q> initialQueries, Session session) throws RepositoryException {
+    Context context = upstream.prepare(principal, subject, initialQueries, session);
     return (C) context;
   }
 

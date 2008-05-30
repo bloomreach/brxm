@@ -29,6 +29,7 @@ import javax.jcr.Value;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
@@ -67,15 +68,15 @@ public class FacetedNavigationEngineFirstImpl
     class ContextImpl extends FacetedNavigationEngine.Context {
         Session session;
         String principal;
-        Set<FacetAuthPrincipal> facetAuths;
-        ContextImpl(Session session, String principal, Set<FacetAuthPrincipal> facetAuths) {
+        Subject subject;
+        ContextImpl(Session session, String principal, Subject subject) {
             this.session = session;
             this.principal = principal;
-            this.facetAuths = facetAuths;
+            this.subject = subject;
         }
         public String toString() {
             StringBuffer sb = null;
-            if(facetAuths != null) {
+            if(subject != null) {
                 sb.append("+authorization-query+");
             } else
                 sb = new StringBuffer("(null)");
@@ -92,9 +93,9 @@ public class FacetedNavigationEngineFirstImpl
     public FacetedNavigationEngineFirstImpl() {
     }
 
-    public ContextImpl prepare(String principal, Set<FacetAuthPrincipal> facetAuths, List<QueryImpl> initialQueries,
+    public ContextImpl prepare(String userId, Subject subject, List<QueryImpl> initialQueries,
                                Session session) {
-        return new ContextImpl(session, principal, facetAuths);
+        return new ContextImpl(session, userId, subject);
     }
 
     public void unprepare(ContextImpl authorization) {
