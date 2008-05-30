@@ -134,13 +134,10 @@ public class VersionPane extends RenderPlugin {
     public void onModelChanged() {
         super.onModelChanged();
         JcrNodeModel model = (JcrNodeModel)getModel();
-        System.err.println("BERRY onModelChanged#0");
         if (model!=null) {
-            System.err.println("BERRY onModelChanged#1");
             try {
                 Node modelNode = model.getNode();
                 if (model.getNode().isNodeType("hippo:handle")) {
-                    System.err.println("BERRY onModelChanged#2");
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
@@ -154,7 +151,6 @@ public class VersionPane extends RenderPlugin {
                     }
                 }
                 if (modelNode.isNodeType("hippostd:document")) {
-                    System.err.println("BERRY onModelChanged#3");
                     documentComponent.setModel(new Model(modelNode.getName()));
                     versionComponent.setModel(new Model("current"));
                     subModel.setModel(new JcrNodeModel(modelNode));
