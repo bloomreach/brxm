@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.decorating.server;
 
+import javax.jcr.Node;
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
@@ -39,7 +40,8 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
 
     public RemoteNode getCanonicalNode() throws RepositoryException, RemoteException {
         try {
-            return getRemoteNode(node.getCanonicalNode());
+            Node result = node.getCanonicalNode();
+            return (result == null ? null : getRemoteNode(result));
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
