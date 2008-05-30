@@ -30,11 +30,11 @@
 
   <jsp:include page="navigation.jsp"/>
 
-	<hst:context var="docs" value="../../../documents">
+	<hst:context var="docs" location="../../../documents">
     	<h4>Context: <hst:content context="docs" property="_path"/></h4>
   		<ul>
 	    <c:forEach var="handle" items="${docs}">
-		  <hst:context var="item" context="handle" value="${handle._name}">
+		  <hst:context var="item" context="handle" location="${handle._name}">
 		      <li>
 		      <a href="<hst:encodeURL context="docs" value="${item._path}"/>">${item._path}</a>
 		      </li>

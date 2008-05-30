@@ -33,10 +33,10 @@
     <h3>${context._path}</h3>
 
     <div id="left">
-	  <hst:context var="docs" value="../../../documents">
+	  <hst:context var="docs" location="../../../documents">
         <h4><hst:content context="docs" property="_path"/></h4>
 	    <c:forEach var="handle" items="${docs}">
-		  <hst:context var="item" context="handle" value="${handle._name}">
+		  <hst:context var="item" context="handle" location="${handle._name}">
 		  	<hst:content context="item" property="hstsample:title"/><br/>
 		  </hst:context>
 	    </c:forEach>
@@ -52,7 +52,7 @@
 
     <h4>${defaultContext._path}/${defaultContext.events._name}</h4>
 	   	<hst:events context="defaultContext"/>
-    </div>
+   </div>
 
   </div>
 </body></html>
