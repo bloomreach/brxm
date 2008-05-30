@@ -23,7 +23,6 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -32,10 +31,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
@@ -50,8 +53,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VersionPane extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -159,6 +160,43 @@ public class VersionPane extends RenderPlugin {
     }
 
     private void restoreVersion() {
+        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getModel();
+        Object currentVersionObject = versionComponent.getModel().getObject();
+        int currentVersion = (currentVersionObject instanceof Integer ? ((Integer) currentVersionObject).intValue()
+                : -1);
+        if (model != null) {
+            Node document = model.getNode();
+            try {
+                WorkflowManager workflowManager = ((HippoWorkspace) document.getSession().getWorkspace())
+                        .getWorkflowManager();
+                VersionWorkflow workflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", document);
+                if (workflow != null) {
+                    SortedMap<Calendar, Set<String>> versions = workflow.list();
+                    if (versions.size() == 0)
+                        return;
+                    Iterator iter = versions.entrySet().iterator();
+                    if (currentVersion < 0 || currentVersion >= versions.size())
+                        return;
+                    for (int i = 0; i < currentVersion; i++)
+                        iter.next();
+                    Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
+                    Document historicDocument = workflow.retrieve(entry.getKey());
+                    Node frozenNode = document.getSession().getNodeByUUID(historicDocument.getIdentity());
+                    workflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", frozenNode);
+                    workflow.revert();
+                    redraw();
+                }
+            } catch (WorkflowException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (RemoteException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            } catch (RepositoryException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
+        }
     }
 
     private void browseVersion(int direction) {
