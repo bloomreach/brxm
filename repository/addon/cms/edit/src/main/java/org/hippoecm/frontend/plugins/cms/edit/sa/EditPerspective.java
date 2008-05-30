@@ -15,21 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit.sa;
 
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.sa.perspective.Perspective;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.IViewService;
 
-public class EditPerspective extends Perspective implements IViewService {
+public class EditPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
 
     public EditPerspective(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
-    }
 
-    @Override
-    public void view(IModel model) {
-        // TODO Auto-generated method stub
+        for (String extension : new String[] { "editor", "editingBreadcrumbPlugin" }) {
+            addExtensionPoint(extension);
+        }
     }
 }

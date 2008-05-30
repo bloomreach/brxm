@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugin.editor;
+package org.hippoecm.frontend.plugins.cms.edit.sa;
 
 import java.util.HashMap;
 import java.util.Map;

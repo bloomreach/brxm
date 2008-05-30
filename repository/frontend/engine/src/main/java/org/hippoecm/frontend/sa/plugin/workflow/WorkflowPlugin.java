@@ -46,7 +46,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
     private static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
 
     public static final String CATEGORIES = "workflow.categories";
-    public static final String WORKFLOW_ID = "workflow.display";
+    public static final String WORKFLOW_ID = "workflow.id";
     public static final String VIEWER_ID = "workflow.viewer";
 
     private IPluginContext context;
@@ -129,10 +129,6 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
         wflConfig.put(RenderService.DIALOG_ID, config.get(RenderService.DIALOG_ID));
 
         String className = model.getWorkflowName();
-        // FIXME: temporary hack to have old and new arch work side-by-side
-        if (className.startsWith("org.hippoecm.frontend")) {
-            className = "org.hippoecm.frontend.sa" + className.substring("org.hippoecm.frontend".length());
-        }
         wflConfig.put(IPlugin.CLASSNAME, className);
         wflConfig.put(VIEWER_ID, config.get(VIEWER_ID));
 
@@ -162,7 +158,9 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
         for (Map.Entry<String, IPluginControl> entry : workflows.entrySet()) {
             String controlId = entry.getKey();
 
-            context.unregisterService(this, controlId + ".factory");
+            // unregister as the factory for the render service
+            IRenderService renderer = context.getService(controlId, IRenderService.class);
+            context.registerService(this, context.getReference(renderer).getServiceId());
 
             entry.getValue().stopPlugin();
         }

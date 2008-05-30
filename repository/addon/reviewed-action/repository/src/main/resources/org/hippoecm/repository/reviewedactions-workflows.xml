@@ -34,7 +34,7 @@
             <sv:value>Reviewed actions workflow</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullReviewedActionsWorkflowPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.sa.plugins.reviewedactions.FullReviewedActionsWorkflowPlugin</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:types">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -87,7 +87,7 @@
             <sv:value>Author Reviewed actions workflow</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicReviewedActionsWorkflowPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.sa.plugins.reviewedactions.BasicReviewedActionsWorkflowPlugin</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:types">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -137,7 +137,7 @@
             <sv:value>Reviewed requests workflow</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.reviewedactions.FullRequestWorkflowPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.sa.plugins.reviewedactions.FullRequestWorkflowPlugin</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:types">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -190,7 +190,7 @@
             <sv:value>Author Reviewed requests workflow</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.reviewedactions.BasicRequestWorkflowPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.sa.plugins.reviewedactions.BasicRequestWorkflowPlugin</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:types">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
