@@ -99,14 +99,20 @@ public class JavaConfigService implements IPluginConfigService {
         config.put("wicket.id", "service.tab");
         config.put("wicket.model", "model.browse.node");
         config.put("perspective.title", "Browse");
-        config.put("browserBreadcrumbPlugin", "service.browse.breadcrumb");
+        config.put("breadcrumbPlugin", "service.browse.breadcrumb");
         config.put("browserPlugin", "service.browse.tree");
         config.put("listPlugin", "service.browse.list");
         config.put("workflowsPlugin", "service.browse.workflows");
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig();
-        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.browser.BrowserPlugin");
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.breadcrumb.BreadcrumbPlugin");
+        config.put("wicket.id", "service.browse.breadcrumb");
+        config.put("wicket.model", "model.browse.node");
+        plugins.addPlugin(config);
+        
+        config = new JavaPluginConfig();
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.cms.browse.sa.tree.FolderTreePlugin");
         config.put("wicket.id", "service.browse.tree");
         config.put("wicket.model", "model.browse.node");
         plugins.addPlugin(config);

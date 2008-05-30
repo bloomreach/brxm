@@ -30,8 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A tree containing nodes of type FolderTreeNode
+ * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
  */
+@Deprecated
 public class FolderTreePlugin extends AbstractTreePlugin {
     private static final long serialVersionUID = 1L;
 

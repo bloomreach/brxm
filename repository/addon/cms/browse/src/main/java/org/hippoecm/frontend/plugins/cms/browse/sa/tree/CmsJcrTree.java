@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse;
+package org.hippoecm.frontend.plugins.cms.browse.sa.tree;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
@@ -34,10 +34,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
- */
-@Deprecated
 public class CmsJcrTree extends JcrTree {
 
     static final Logger log = LoggerFactory.getLogger(CmsJcrTree.class);
@@ -159,14 +155,15 @@ public class CmsJcrTree extends JcrTree {
             /**
              * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
              */
+            @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
 
                 final String cssClassInner;
                 boolean isRootNode = false;
 
-                TreeNode parent = node.getParent();
-                String cssClassOuter = (parent == null || parent.getChildAt(parent.getChildCount() - 1).equals(node)) ? "junction-last"
+                TreeNode parentNode = node.getParent();
+                String cssClassOuter = (parentNode == null || parentNode.getChildAt(parentNode.getChildCount() - 1).equals(node)) ? "junction-last"
                         : "junction";
 
                 try {

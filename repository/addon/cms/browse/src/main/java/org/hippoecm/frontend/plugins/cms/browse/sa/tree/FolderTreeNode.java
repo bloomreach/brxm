@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse;
+package org.hippoecm.frontend.plugins.cms.browse.sa.tree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,6 @@ import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
- */
-@Deprecated
 public class FolderTreeNode extends AbstractTreeNode {
     private static final String ROOT_NODE_DISPLAYNAME = "CMS space";
 

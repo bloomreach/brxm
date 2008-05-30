@@ -23,6 +23,10 @@ import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.channel.Request;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
+ */
+@Deprecated
 public class BrowserPerspective extends Plugin {
     private static final long serialVersionUID = 1L;
 
