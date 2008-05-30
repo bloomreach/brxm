@@ -1,3 +1,18 @@
+/*
+ * Copyright 2007-2008 Hippo.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.hst.jcr;
 
 import java.util.Map;
@@ -40,10 +55,10 @@ public class JCRConnector {
                 wrapper = new SessionWrapper(HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_ADRESS),
                                              HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_USERNAME),
                                              HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_PASSWORD));
-// FIXME turn on storing the JCRSession if caching in JCR is working                                                             
-//              httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
+                httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;
             }
+            wrapper.refresh(httpSession);
         } catch (LoginException e) {
             logger.error("Failed to login to repository", e);
         } catch (RepositoryException e) {
@@ -157,24 +172,23 @@ public class JCRConnector {
 
     private static class SessionWrapper implements HttpSessionBindingListener {
         Session jcrSession;
+        long lastRefreshed;
 
-        SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {
-// FIXME set debug back to info when this wrapper is again stored in session                
-//            logger.debug("connecting to repository at " + location + " as " + username);
+        SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {              
+        logger.info("connecting to repository at " + location + " as " + username);
 
             HippoRepositoryFactory.setDefaultRepository(location);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             try {
                 jcrSession = repository.login(username, (password != null ? password.toCharArray() : null));
 
-// FIXME set debug back to info when this wrapper is again stored in session                
-//                logger.debug("logged in as " + username);
+                logger.info("logged in as " + username);
             } catch(LoginException ex) {
                 logger.warn("login as " + username + " failed, trying as anonymous.");
                 jcrSession = repository.login();
-// FIXME set debug back to info when this wrapper is again stored in session                
-                logger.debug("logged in as anonymous");
+                logger.info("logged in as anonymous");
             }
+            lastRefreshed = System.currentTimeMillis();
         }
 
         public void valueBound(HttpSessionBindingEvent event) {
@@ -184,6 +198,15 @@ public class JCRConnector {
         public void valueUnbound(HttpSessionBindingEvent event) {
             jcrSession.logout();
             logger.debug("Unbound JCR session from HTTP session");
+        }
+
+        void refresh(HttpSession httpSession) throws RepositoryException {
+            if(httpSession.getMaxInactiveInterval() >= 0 &&
+               System.currentTimeMillis() - lastRefreshed >= httpSession.getMaxInactiveInterval()*1000L) {
+                jcrSession.refresh(false); // NOTICE: never keep changes
+                logger.info("refreshing session");
+                lastRefreshed = System.currentTimeMillis();
+            }
         }
     }
 }
