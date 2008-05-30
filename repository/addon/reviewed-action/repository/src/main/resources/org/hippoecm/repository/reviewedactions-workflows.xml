@@ -27,6 +27,9 @@
         <sv:property sv:name="hippo:nodetype" sv:type="String">
             <sv:value>hippostd:publishable</sv:value>
         </sv:property>
+        <sv:property sv:name="hippo:roles" sv:type="String">
+            <sv:value>editor</sv:value>
+        </sv:property>
         <sv:property sv:name="hippo:classname" sv:type="String">
             <sv:value>org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl</sv:value>
         </sv:property>
@@ -129,6 +132,9 @@
         </sv:property>
         <sv:property sv:name="hippo:nodetype" sv:type="String">
             <sv:value>hippo:request</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:roles" sv:type="String">
+            <sv:value>editor</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:classname" sv:type="String">
             <sv:value>org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl</sv:value>
