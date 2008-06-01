@@ -65,7 +65,6 @@ public class AuthorizationQuery {
     private ServicingIndexingConfiguration indexingConfig;
     private Set<FacetAuthPrincipal> facetAuths;
     private Set<GroupPrincipal> groupPrincipals;
-    private Subject subject;
     private SessionImpl session;
     private final static String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
 
@@ -73,7 +72,6 @@ public class AuthorizationQuery {
             ServicingIndexingConfiguration indexingConfig, NodeTypeManager ntMgr, Session session)
             throws RepositoryException {
 
-        this.subject = subject;
         this.facetAuths = subject.getPrincipals(FacetAuthPrincipal.class);
         this.groupPrincipals  = subject.getPrincipals(GroupPrincipal.class);
         this.nsMappings = nsMappings;
