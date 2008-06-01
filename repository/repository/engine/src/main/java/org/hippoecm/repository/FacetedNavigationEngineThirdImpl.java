@@ -110,7 +110,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     }
 
     /** The logger instance for this class */
-    private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngineThirdImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngine.class);
 
     public FacetedNavigationEngineThirdImpl() {
     }
