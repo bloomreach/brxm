@@ -56,7 +56,9 @@ public class AuthorizationFilter extends Filter{
                     BitSet bits = authFilter.bits(indexReader);
                     cachedAuthorizationBitSetsMap.put(cachekey, new CachedAuthorizationBitSet(bits , indexReader.maxDoc()));
                     this.authorized = bits;
-                    log.debug("authorization BitSet creation took: " + (System.currentTimeMillis() - start) + " ms.");
+                    log.debug("authorization BitSet creation took: " + (System.currentTimeMillis() - start) + " ms for query : " + authQuery.toString());
+                    System.out.println("authorization BitSet creation took: " + (System.currentTimeMillis() - start) + " ms for query : " + authQuery.toString());
+                    
                 } else {
                     log.debug("Valid cached authorization BitSet found");
                     this.authorized = cachedAuthorizationBitSetsMap.get(cachekey).getBitSet();

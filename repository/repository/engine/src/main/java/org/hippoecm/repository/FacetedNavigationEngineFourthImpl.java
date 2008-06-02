@@ -35,9 +35,12 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Weight;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.query.lucene.AuthorizationFilter;
@@ -45,12 +48,14 @@ import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
+import org.hippoecm.repository.query.lucene.FacetsQueryFilter;
 import org.hippoecm.repository.query.lucene.FixedScoreSimilarity;
 import org.hippoecm.repository.query.lucene.FixedScoreTermQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.query.lucene.caching.CachedAuthorizationBitSet;
+import org.hippoecm.repository.query.lucene.caching.CachedQueryBitSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +121,8 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
     @SuppressWarnings("unchecked")
     private Map<String, CachedAuthorizationBitSet> cachedAuthorizationBitSetsMap = new LRUMap(50);
 
+    private Map<String, CachedQueryBitSet> cachedQueryBitSetsMap = new LRUMap(500);
+
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngine.class);
 
@@ -165,6 +172,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
          */
         FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings,
                 (ServicingIndexingConfiguration) getIndexingConfig());
+        
 
         /*
          * initialQuery: get the query for initialQuery
@@ -199,9 +207,18 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
             /*
              * authorizationFilter: get the filter for the nodes the person is allowed to see
              */
-             
             Filter authorizationFilter = new AuthorizationFilter(indexReader, contextImpl.authorizationQuery, cachedAuthorizationBitSetsMap);
         
+            /*
+             * authorizationFilter: get the filter for the nodes the person is allowed to see
+             */
+            Filter facetsQueryFilter = new FacetsQueryFilter(indexReader, facetsQuery.getQuery(), cachedQueryBitSetsMap);
+            //BooleanClause[] clauses = facetsQuery.getQuery().getClauses();
+            //for(BooleanClause bc : clauses) {
+            //    bc.getQuery().toString();
+            //}
+            
+            
             searcher = new IndexSearcher(indexReader);
             searcher.setSimilarity(new FixedScoreSimilarity());
             // In principle, below, there is always one facet
@@ -219,6 +236,8 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                         log.debug("lucene query no collector took: \t" + (System.currentTimeMillis() - start1)
                                 + " ms for #" + numHits + ". Query: " + searchQuery.toString());
                     }
+                    System.out.println("lucene query no collector took: \t" + (System.currentTimeMillis() - start1)
+                            + " ms for #" + numHits + ". Query: " + searchQuery.toString());
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
@@ -231,12 +250,17 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                             .getInstance().create(facet)), (facet != null ? resultset.get(facet) : null),
                             hitsRequested, nsMappings);
                     searcher.search(searchQuery,authorizationFilter, collector);
+                    
+                    
                     // set the numHits value
                     collector.setNumhits(numHits);
                     if (log.isDebugEnabled()) {
-                        log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - start)
+                        log.debug("lucene query with collector1 took: \t" + (System.currentTimeMillis() - start)
                                 + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
                     }
+
+                    System.out.println("lucene query with collector1 took: \t" + (System.currentTimeMillis() - start)
+                            + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
 
                 }
             } else {
@@ -246,9 +270,12 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                 collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);
                 searcher.search(searchQuery, authorizationFilter, collector);
                 if (log.isDebugEnabled()) {
-                    log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - start)
+                    log.debug("lucene query with collector2 took: \t" + (System.currentTimeMillis() - start)
                             + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
                 }
+
+                System.out.println("lucene query with collector2 took: \t" + (System.currentTimeMillis() - start)
+                        + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
 
             }
 
