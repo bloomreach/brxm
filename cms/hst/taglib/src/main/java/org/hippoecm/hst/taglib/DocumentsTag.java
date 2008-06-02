@@ -404,9 +404,17 @@ public class DocumentsTag extends SimpleTagSupport {
         Iterator documents = context.entrySet().iterator();
         int counter = 0;
         while (documents.hasNext() && (counter < getMaxDocuments().intValue())) {
-            Context documentContext = (Context) documents.next();
             
-            request.setAttribute(getContextName(), documentContext);
+            Context documentHandle = (Context) documents.next();
+            
+            // get first subnode of the handle
+            Iterator handleIterator = documentHandle.entrySet().iterator();
+            if (!handleIterator.hasNext()) {
+                continue;
+            }
+
+            // set document context in request
+            request.setAttribute(getContextName(), handleIterator.next());
 
             // do include
             RequestDispatcher dispatcher = request.getRequestDispatcher(documentViewFile);
