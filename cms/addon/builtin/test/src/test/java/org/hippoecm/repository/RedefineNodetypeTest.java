@@ -17,7 +17,6 @@ package org.hippoecm.repository;
 
 import java.util.HashMap;
 
-import java.io.File;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
@@ -41,25 +40,9 @@ import static org.junit.Assert.*;
 
 public class RedefineNodetypeTest extends TestCase {
 
-    static private void delete(File path) {
-        if(path.exists()) {
-            if(path.isDirectory()) {
-                File[] files = path.listFiles();
-                for(int i=0; i<files.length; i++)
-                    delete(files[i]);
-            }
-            path.delete();
-        }
-    }
-
     @Before
     public void setUp() throws Exception {
-        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
-        for(int i=0; i<files.length; i++) {
-            File file = new File(files[i]);
-            delete(file);
-        }
-        super.setUp();
+        super.setUp(true);
     }
 
     @After

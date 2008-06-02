@@ -46,7 +46,7 @@ public class VersioningWorkflowTest extends TestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(true);
 
         Node node, root = session.getRootNode();
 
