@@ -44,10 +44,12 @@ public class MenuTag extends SimpleTagSupport {
     private static final String DEFAULT_ID = "hst-menu";
     private static final Integer DEFAULT_LEVEL = new Integer(0);
     private static final Integer DEFAULT_DEPTH = new Integer(1);
+    private static final String[] DEFAULT_DOCUMENT_EXCLUDE_NAMES = new String[]{"index"};
     
     private final String KEY_CONTEXT_NAME = "menutag.context.name";
     private final String KEY_LOCATION = "menutag.location";
     private final String KEY_DOCUMENT_VIEWFILE = "menutag.viewfile";
+    private final String KEY_DOCUMENT_DOCUMENT_EXCLUDE_NAMES = "menutag.document.exclude.names";
 
     private String contextName = null;
     private String location = null;
@@ -55,6 +57,7 @@ public class MenuTag extends SimpleTagSupport {
     private String id = null;
     private Integer level = null;
     private Integer depth = null;
+    private String[] documentExcludeNames = null;
 
     private URLPathTranslator urlPathTranslator;
 
@@ -113,7 +116,7 @@ public class MenuTag extends SimpleTagSupport {
                                             : loc + "/" + relativeLocation;
             }
  
-            Menu menu = Menu.getMenu(request.getSession(), location);
+            Menu menu = Menu.getMenu(request.getSession(), location, getDocumentExcludeNames());
             
             // map decoded URL to active document path
             String activePath = URLDecoder.decode(context.getRequestURI(), "UTF-8");
@@ -245,7 +248,38 @@ public class MenuTag extends SimpleTagSupport {
         return this.viewFile;
     }
 
-    private URLPathTranslator getURLPathTranslator(HttpServletRequest request) {
+    /**
+     * Get optional names for documents to exclude as site map items.
+     */
+    private String[] getDocumentExcludeNames() {
+        
+        // lazy (no setter)
+        if (this.documentExcludeNames  == null) {
+        
+            // by configuration 
+            if (this.documentExcludeNames  == null) {
+                HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
+    
+                if (documentExcludeNames  == null) {
+                    String excludeNames = HSTConfiguration.get(request.getSession().getServletContext(), 
+                            KEY_DOCUMENT_DOCUMENT_EXCLUDE_NAMES, false/*not required*/);
+    
+                    if (excludeNames != null) {
+                        this.documentExcludeNames = excludeNames.split(",");
+                    }
+                }
+            }    
+
+            // by default 
+            if (this.documentExcludeNames  == null) {
+                this.documentExcludeNames = DEFAULT_DOCUMENT_EXCLUDE_NAMES;
+            }
+        }
+    
+        return this.documentExcludeNames;
+    }
+
+   private URLPathTranslator getURLPathTranslator(HttpServletRequest request) {
         
         // lazy
         if (urlPathTranslator == null) {

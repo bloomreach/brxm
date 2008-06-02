@@ -40,7 +40,8 @@ public class SiteMapItem {
     /**
      * Constructor.
      */
-    public SiteMapItem(final Node node, final int level, final String[] documentLabelProperties) {
+    public SiteMapItem(final Node node, final int level,
+            final String[] excludedDocumentNames,  final String[] documentLabelProperties) {
         super();
         
         this.level = level;
@@ -52,7 +53,7 @@ public class SiteMapItem {
             throw new IllegalStateException(re);
         }
         
-        createSubItems(node, documentLabelProperties);
+        createSubItems(node, excludedDocumentNames, documentLabelProperties);
     }
 
     public List<SiteMapItem> getDocuments() {
@@ -98,7 +99,7 @@ public class SiteMapItem {
                     
                     for (int i = 0; i < documentLabelProperties.length; i++) {
                         String property = documentLabelProperties[i];
-                        if (document.hasProperty(property)) {
+                        if (document.hasProperty(property.trim())) {
                             return document.getProperty(property).getString();
                         }
                     }
@@ -114,7 +115,8 @@ public class SiteMapItem {
         return label;
     }
 
-    private void createSubItems(final Node node, final String[] documentLabelProperties) {
+    private void createSubItems(final Node node, final String[] excludedDocumentNames, 
+            final String[] documentLabelProperties) {
         try {
             // creating site map sub items may be specifically turned off
             if (node.hasProperty(HSTNodeTypes.HST_SITE_ITEM_CHILDREN)) {
@@ -129,27 +131,55 @@ public class SiteMapItem {
                 
                 Node subNode = (Node) subNodes.next();
                 
-                // site map items may be specifically turned off
-                if (subNode.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
-                    if (!subNode.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
-                        continue;
-                    }
-                }
-                
-                // skip documents as there are multiple variants
+                // skip real documents as there are multiple variants
                 if (subNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     continue;
                 }
 
-                // add handle as document
-                if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    documents.add(new SiteMapItem(subNode, this.getLevel() + 1, documentLabelProperties));
+                // treat handle as document
+                else if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+
+                    // site map items may be specifically turned on or off
+                    if (subNode.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
+                        if (!subNode.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
+                            continue;
+                        }
+
+                        documents.add(new SiteMapItem(subNode, this.getLevel() + 1, 
+                                excludedDocumentNames, documentLabelProperties));
+                    }
+                    else {
+                        // hide document nodes by default names
+                        if (excludedDocumentNames != null) {
+                            boolean skip = false;
+                            int i = 0;
+                            while ((i < excludedDocumentNames.length) && !skip) {
+                                skip = excludedDocumentNames[i].trim().equals(subNode.getName());
+                                i++;
+                            }
+                            if (skip) {
+                                continue;
+                            }
+                        }
+                        
+                        documents.add(new SiteMapItem(subNode, this.getLevel() + 1, 
+                                excludedDocumentNames, documentLabelProperties));
+                    }    
                 }
 
-                // folders
+                // folder
                 else if (subNode.isNodeType(HippoNodeType.NT_UNSTRUCTURED)
                       || subNode.isNodeType("nt:unstructured")) {
-                    folders.add(new SiteMapItem(subNode, this.getLevel() + 1, documentLabelProperties));
+
+                    // site map items may be specifically turned off
+                    if (subNode.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
+                        if (!subNode.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
+                            continue;
+                        }
+                    }
+                    
+                    folders.add(new SiteMapItem(subNode, this.getLevel() + 1, 
+                            excludedDocumentNames, documentLabelProperties));
                 }
             }
         } 

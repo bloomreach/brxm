@@ -44,11 +44,13 @@ public class SiteMapTag extends SimpleTagSupport {
     private static final String DEFAULT_ID = "hst-sitemap";
     private static final Integer DEFAULT_LEVEL = new Integer(0);
     private static final Integer DEFAULT_DEPTH = new Integer(2);
+    private static final String[] DEFAULT_DOCUMENT_EXCLUDE_NAMES = new String[]{"index"};
     
     private final String KEY_CONTEXT_NAME = "sitemaptag.context.name";
     private final String KEY_LOCATION = "sitemaptag.location";
     private final String KEY_DOCUMENT_VIEWFILE = "sitemaptag.viewfile";
     private final String KEY_DOCUMENT_DOCUMENT_LABEL_PROPERTIES = "sitemaptag.document.label.properties";
+    private final String KEY_DOCUMENT_DOCUMENT_EXCLUDE_NAMES = "sitemaptag.document.exclude.names";
 
     private String contextName = null;
     private String location = null;
@@ -57,6 +59,7 @@ public class SiteMapTag extends SimpleTagSupport {
     private Integer level = null;
     private Integer depth = null;
     private String[] documentLabelProperties = null;
+    private String[] documentExcludeNames = null;
 
     private URLPathTranslator urlPathTranslator;
 
@@ -115,7 +118,8 @@ public class SiteMapTag extends SimpleTagSupport {
                                             : loc + "/" + relativeLocation;
             }
  
-            SiteMap siteMap = SiteMap.getSiteMap(request.getSession(), location, getDocumentLabelProperties());
+            SiteMap siteMap = SiteMap.getSiteMap(request.getSession(), location, 
+                    getDocumentExcludeNames(), getDocumentLabelProperties());
             
             String viewFile = getViewFile();
             if (viewFile == null) {
@@ -199,19 +203,6 @@ public class SiteMapTag extends SimpleTagSupport {
         return this.level;
     }
     
-    private Integer getDepth() {
-        
-        // lazy, or set by setter (first)
-        if (this.depth == null) {
-
-            // second by default
-            this.depth = DEFAULT_DEPTH;
-        }
-        
-        return this.depth;
-    }
-    
-   
     private String getViewFile() {
         
         // lazy (no setter)
@@ -220,7 +211,7 @@ public class SiteMapTag extends SimpleTagSupport {
             // by configuration only
             if (this.viewFile == null) {
                 HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
-
+    
                 // first try key postfixed by .id
                 String viewFile = HSTConfiguration.get(request.getSession().getServletContext(), 
                             KEY_DOCUMENT_VIEWFILE + "." + getId(), false/*not required*/);
@@ -236,9 +227,53 @@ public class SiteMapTag extends SimpleTagSupport {
                 }
             }    
         }
-
+    
         // may return null, the hardcoded view will be output 
         return this.viewFile;
+    }
+
+    private Integer getDepth() {
+        
+        // lazy, or set by setter (first)
+        if (this.depth == null) {
+
+            // second by default
+            this.depth = DEFAULT_DEPTH;
+        }
+        
+        return this.depth;
+    }
+    
+   
+    /**
+     * Get optional names for documents to exclude as site map items.
+     */
+    private String[] getDocumentExcludeNames() {
+        
+        // lazy (no setter)
+        if (this.documentExcludeNames  == null) {
+        
+            // by configuration 
+            if (this.documentExcludeNames  == null) {
+                HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
+    
+                if (documentExcludeNames  == null) {
+                    String excludeNames = HSTConfiguration.get(request.getSession().getServletContext(), 
+                            KEY_DOCUMENT_DOCUMENT_EXCLUDE_NAMES, false/*not required*/);
+    
+                    if (excludeNames != null) {
+                        this.documentExcludeNames = excludeNames.split(",");
+                    }
+                }
+            }    
+
+            // by default 
+            if (this.documentExcludeNames  == null) {
+                this.documentExcludeNames = DEFAULT_DOCUMENT_EXCLUDE_NAMES;
+            }
+        }
+    
+        return this.documentExcludeNames;
     }
 
     /**
@@ -254,11 +289,11 @@ public class SiteMapTag extends SimpleTagSupport {
                 HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
 
                 if (documentLabelProperties == null) {
-                    String documentLabelProperty = HSTConfiguration.get(request.getSession().getServletContext(), 
+                    String labelProperties = HSTConfiguration.get(request.getSession().getServletContext(), 
                             KEY_DOCUMENT_DOCUMENT_LABEL_PROPERTIES, false/*not required*/);
 
-                    if (documentLabelProperty != null) {
-                        this.documentLabelProperties = documentLabelProperty.split(",");
+                    if (labelProperties != null) {
+                        this.documentLabelProperties = labelProperties.split(",");
                     }
                 }
             }    
