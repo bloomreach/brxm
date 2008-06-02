@@ -24,6 +24,8 @@
 [frontend:plugin] > hippo:plugin
 
 [frontend:plugincluster] > nt:base
+- frontend:overrides (string) multiple
+- * (string)
 + * (frontend:plugin) = frontend:plugin
 
 /* BEGIN DEPRECATED */

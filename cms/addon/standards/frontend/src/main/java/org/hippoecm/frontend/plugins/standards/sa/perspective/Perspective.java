@@ -23,9 +23,13 @@ import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.ITitleDecorator;
 import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Perspective extends RenderPlugin implements ITitleDecorator, IViewService {
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(Perspective.class);
 
     public static final String TITLE = "perspective.title";
     public static final String PLUGINS = "perspective.plugins";
@@ -45,6 +49,12 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
             modelService.init(context);
             // unregister self, perspective doesn't need model
             context.registerService(this, RenderPlugin.MODEL_ID);
+        } else {
+            log.error("no model service specified");
+        }
+
+        if (config.getString(IViewService.VIEWER_ID) != null) {
+            context.registerService(this, config.getString(IViewService.VIEWER_ID));
         }
     }
 
@@ -57,7 +67,9 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
     // IViewService
 
     public void view(IModel model) {
-        modelService.setModel(model);
+        if (modelService != null) {
+            modelService.setModel(model);
+        }
     }
 
 }

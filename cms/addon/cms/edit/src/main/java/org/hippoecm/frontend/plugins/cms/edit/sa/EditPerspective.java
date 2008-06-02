@@ -25,7 +25,7 @@ public class EditPerspective extends Perspective {
     public EditPerspective(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
-        for (String extension : new String[] { "editor", "editingBreadcrumbPlugin" }) {
+        for (String extension : new String[] { "editorPlugin", "workflowPlugin" }) {
             addExtensionPoint(extension);
         }
     }

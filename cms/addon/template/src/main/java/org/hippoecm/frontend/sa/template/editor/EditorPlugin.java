@@ -15,39 +15,38 @@
  */
 package org.hippoecm.frontend.sa.template.editor;
 
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 
-public class EditorPlugin extends RenderPlugin implements IViewService {
+public class EditorPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     private EditorForm form;
 
     public EditorPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
-        add(new Form("form"));
-        form = null;
-    }
-
-    public void view(IModel model) {
-        if (form != null) {
-            form.destroy();
-        }
-        replace(form = new EditorForm("form", (JcrNodeModel) model, this, getPluginContext(), getPluginConfig()));
+        add(form = newForm());
         focus(null);
     }
 
+    @Override
+    public void onModelChanged() {
+        form.destroy();
+        replace(form = newForm());
+    }
+    
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
         if (form != null) {
             form.render(target);
         }
+    }
+
+    protected EditorForm newForm() {
+        return new EditorForm("form", (JcrNodeModel) getModel(), this, getPluginContext(), getPluginConfig());
     }
 }
