@@ -33,6 +33,7 @@ public class ContentTag extends SimpleTagSupport {
 
     private String contextName;
     private String property;
+    private String variable;
 
     /** String setter for the tag attribute 'property'. */
     public void setProperty(String property) {
@@ -42,6 +43,11 @@ public class ContentTag extends SimpleTagSupport {
     /** Setter for the tag attribute 'context'. */
     public void setContext(String contextName) {
         this.contextName = contextName;
+    }
+
+    /** Setter for the tag attribute 'var'. */
+    public void setVar(String variable) {
+        this.variable = variable;
     }
 
     @Override
@@ -60,7 +66,7 @@ public class ContentTag extends SimpleTagSupport {
         
         // need it!
         if (context == null) {
-            throw new JspException("No context found in request by attribute name '" + contextName + "'.");
+            return;
         }
 
         // get, check and write property
@@ -76,9 +82,19 @@ public class ContentTag extends SimpleTagSupport {
                  + " by property " + this.property + " is not a property but a Context");
         }
             
+        String propertyAsString = new PropertyFormatter(request).format(property);
+
         try {
-            String propertyAsString = new PropertyFormatter(request).format(property);
-            pageContext.getOut().append(propertyAsString);
+
+            // normally, write out
+            if (this.variable == null) {
+                pageContext.getOut().append(propertyAsString);
+            }
+            
+            // ..or set as request attribute if given
+            else {
+                request.setAttribute(variable, propertyAsString);
+            }
         } catch (IOException ioe) {
             throw new JspException(ioe);
         }
