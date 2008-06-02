@@ -43,12 +43,14 @@ public class DocumentsTag extends SimpleTagSupport {
     
     private static final String DEFAULT_CONTEXT_NAME = "context";
     private static final Integer DEFAULT_MAX_DOCUMENTS = new Integer(5);
+    private static final String[] DEFAULT_DOCUMENT_EXCLUDE_NAMES = new String[] {"index"};
     
     private final String KEY_CONTEXT_NAME = getConfigurationKeyPrefix() + ".context.name";
     private final String KEY_LOCATION = getConfigurationKeyPrefix() + ".location";
     private final String KEY_MAX_DOCUMENTS = getConfigurationKeyPrefix() + ".max.documents";
     private final String KEY_DOCUMENT_PROPERTIES = getConfigurationKeyPrefix() + ".document.properties";
     private final String KEY_DOCUMENT_PROPERTY_TYPES = getConfigurationKeyPrefix() + ".document.property.types";
+    private final String KEY_DOCUMENT_EXCLUDE_NAMES = getConfigurationKeyPrefix() + ".document.exclude.names";
     private final String KEY_DOCUMENT_VIEWFILE = getConfigurationKeyPrefix() + ".document.viewfile";
 
     private static final String CSS_CLASS_LIST = "hst-list";
@@ -62,6 +64,7 @@ public class DocumentsTag extends SimpleTagSupport {
     private Integer maxDocuments = null;
     private String[] documentProperties = null;
     private String[] documentPropertyTypes = null;
+    private String[] documentExcludeNames = null;
     private String documentViewFile = null;
 
     /** Setter for the tag attribute 'context'. */
@@ -262,6 +265,28 @@ public class DocumentsTag extends SimpleTagSupport {
         return this.documentPropertyTypes;
     }
     
+    private String[] getDocumentExcludeNames() {
+        
+        // lazy (no setter)
+        if (this.documentExcludeNames == null) {
+
+            // first by configuration
+            HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
+            String excludeNamesString = HSTConfiguration.get(request.getSession().getServletContext(), 
+                        KEY_DOCUMENT_EXCLUDE_NAMES, false/*not required*/);
+            if (excludeNamesString != null) {
+                this.documentExcludeNames = excludeNamesString.split(",");
+            }    
+
+            // second by default
+            if (this.documentExcludeNames == null) {
+                this.documentExcludeNames = DEFAULT_DOCUMENT_EXCLUDE_NAMES;    
+            }
+        }    
+        
+        return this.documentExcludeNames;
+    }
+    
     private String getDocumentViewFile() {
         
         // lazy (no setter)
@@ -319,6 +344,11 @@ public class DocumentsTag extends SimpleTagSupport {
             
             Context documentContext = (Context) handleIterator.next();
 
+            // check the excluded names
+            if (inExcludeNames((String) documentContext.get("_name"))) {
+                continue;
+            }
+            
             buffer.append("  <div class=\"");
             buffer.append(CSS_CLASS_DOCUMENT);
             buffer.append("\">\n");
@@ -396,10 +426,10 @@ public class DocumentsTag extends SimpleTagSupport {
     @SuppressWarnings("unchecked")
     private void doOutputByIncludes(Context context, PageContext pageContext, String documentViewFile) 
                                 throws JspException, ServletException, IOException {
-
+    
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
-
+    
         // loop subcontexts representing subnodes
         Iterator documents = context.entrySet().iterator();
         int counter = 0;
@@ -412,10 +442,17 @@ public class DocumentsTag extends SimpleTagSupport {
             if (!handleIterator.hasNext()) {
                 continue;
             }
+    
+            Context documentContext = (Context) handleIterator.next();
+
+            // check the excluded names
+            if (inExcludeNames((String) documentContext.get("_name"))) {
+                continue;
+            }
 
             // set document context in request
-            request.setAttribute(getContextName(), handleIterator.next());
-
+            request.setAttribute(getContextName(), documentContext);
+    
             // do include
             RequestDispatcher dispatcher = request.getRequestDispatcher(documentViewFile);
             if (dispatcher == null) {
@@ -425,5 +462,18 @@ public class DocumentsTag extends SimpleTagSupport {
             
             counter++;
         }
+    }
+
+    private boolean inExcludeNames(String name) {
+        
+        String[] excludeNames = getDocumentExcludeNames();
+        
+        for (int i = 0; i < excludeNames.length; i++) {
+            if (excludeNames[i].equals(name)){
+                return true;
+            }
+        }
+        
+        return false;
     }
 }
