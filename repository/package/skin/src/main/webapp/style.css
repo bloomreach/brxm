@@ -62,18 +62,27 @@ padding: 10px;
 .panelcontainer{border: 1px solid white; background: white;}
 .panel h2{background: white url("images/pluginheaderback.gif") repeat-x;}
 .panelcontainer h2{display: block; margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/pluginheaderback.gif") repeat-x;}
-.panel{padding: 10px; min-height: 150px; position: relative;}
+.panel{padding-top: 5px; position: relative;}
 .nopadding{padding: 0px}
 
 
-#left{width: 222px; float: left; min-height: 700px;}
-#right{width: 222px; float: right; min-height: 700px;}
-#center{margin-left: 228px; margin-right: 228px; min-height: 700px; position: relative; max-height: 700px;}
-#wideright{width: 787px; height: 351px}
+#left{width: 222px; float: left; min-height: 506px; max-height: 506px; }
+#lefthalf{width: 504px; float: left; min-height: 506px; max-height: 506px;}
+#righthalf{width: 504px; float: right; min-height: 506px; max-height: 506px;}
 
+#right{width: 222px; float: right; min-height: 506px; max-height: 506px; overflow: auto}
+#center{margin-left: 228px; margin-right: 228px; min-height: 506px; position: relative;}
+#wideright{width: 787px; height: 351px; float: right; min-height: 506px;}
+
+a.fauxbutton{background: url("images/fauxbutton.gif") center center; display: block; width: 100px; height: 18px; text-align: center; padding-top: 3px; color: black; margin-bottom: 5px; margin-left: 5px;}
+
+.scrolllist{overflow: auto; height: 80px; padding: 2px;}
 
 .panelhead{background: #f2f2f2; width: 100%;}
 .panelhead td{padding: 10px;}
+
+div.slidercontrol a {background: url("images/sliderback.gif") repeat-x; height: 8px; width: 100%; text-align: center; display: block}
+div.slidercontrol a:hover{cursor: s-resize}
 
 h3.documentlabel{font-size: 18px; font-weight: normal; color: #666666; margin-right: 15px; float: left;}
 h4{font-weight: normal; color: #a2a2a2; float: left; margin-right: 5px;}
@@ -114,11 +123,12 @@ input[type="submit"] {
 a { color: #18a4e2 }
 
 .Tree {
-   margin:0px;
+margin:0px;
 border: none;
-margin-top: -8px;
- 
+overflow: auto; 
+width: 223px;
 }
+.tree .wicket-tree{width: 222px; margin: 0px}
 .tree .wicket-tree .row a { color: #18a4e2 }
 .tree .wicket-tree .row-selected a { color: white; }
 .tree .wicket-tree .row-selected { background: #4b82c6; }
@@ -177,7 +187,11 @@ width:20%;
 span.templateactions ul{padding: 15px;}
 div.templateeditor h3{font-size: 14px;}
 div.fields div div div div div div{border-bottom: 1px dotted #f1f1f1}
-
+.templateeditor{
+margin:5px;
+max-height:467px;
+overflow:auto;
+}
 table.htmlarea tr td{border: 1px solid #d7d7d7}
 table.htmlarea tr td table tr td{border: none}
 table.htmlarea tr td select{margin-top: 4px;}
@@ -221,7 +235,7 @@ tr.even td { }
 tr.odd td { padding: 5px; }
 
 .Doclist table tr td a{color: black}
-.Doclist{height: 400px; overflow: scroll}
+.Doclist{ height: 253px; overflow: auto}
 
 .dataview{width: 100%}
 .dataview thead tr.navigation td { padding: 5px; }
@@ -263,12 +277,6 @@ ul.tabs li.tab1 a { background-image: url('images/browse.gif')}
 ul.tabs li a.close {position: absolute; right: 40px; top: 1px; background: url('images/closetab.gif') no-repeat center center; padding: 7px; height: 14px; text-indent: -9999px}
 ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 
-/* CMS Management perspective */
-div.pluginbox {background: white url("images/pluginheaderback.gif") repeat-x; vertical-align: top; height: 180px; width:200px;}
-div.pluginbox h2{display: block; margin-top: 0px; background-position: center right; background-repeat: no-repeat;height: 29px; margin-bottom: 0px; font-size: 11px;}
-div.pluginbox div.padding{padding: 15px;}
-
-
 .addNodeWidget {
   margin-bottom: 4px;
 }
@@ -292,13 +300,7 @@ div.pluginbox div.padding{padding: 15px;}
 }
 
 .target {
-  border: 2px dashed #999 ! important;
+  border: 2px dashed red ! important;
 }
 
-.managementPlugin div.templateeditor  {
-  width: 800px;
-}
 
-.managementPlugin div.templateeditor input {
-  width: 160px;
-}
