@@ -30,7 +30,7 @@ import org.hippoecm.repository.api.WorkflowException;
 public interface VersionWorkflow extends Workflow {
     public Document version()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public Document revert()
+    public Document revert(Calendar historic)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public SortedMap<Calendar,Set<String>> list()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;

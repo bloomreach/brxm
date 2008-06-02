@@ -128,17 +128,17 @@ public class DocumentManagerImpl
                     Node node = session.getNodeByUUID(uuid);
                     if(!node.isCheckedOut()) {
                         node.checkout();
-			try {
-			    Node parent = node.getParent();
-			    if(parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-			        if(!parent.isCheckedOut()) {
-				    parent.checkout();
-				}
-			    }
+                        try {
+                            Node parent = node.getParent();
+                            if(parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                if(!parent.isCheckedOut()) {
+                                    parent.checkout();
+                                }
+                            }
                         } catch(ItemNotFoundException ex)  {
-			    // no parent as this is root node, ignore.
-			}
-		    }
+                            // no parent as this is root node, ignore.
+                        }
+                    }
                 }
                 pm.makePersistent(object);
                 tx.commit();

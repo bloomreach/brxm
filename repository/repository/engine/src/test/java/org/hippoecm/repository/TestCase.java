@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository;
 
+import java.io.File;
+
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -60,6 +62,25 @@ public abstract class TestCase
     public TestCase() {
     }
 
+    static private void delete(File path) {
+        if(path.exists()) {
+            if(path.isDirectory()) {
+                File[] files = path.listFiles();
+                for(int i=0; i<files.length; i++)
+                    delete(files[i]);
+            }
+            path.delete();
+        }
+    }
+
+    static private void clear() {
+        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
+        for(int i=0; i<files.length; i++) {
+            File file = new File(files[i]);
+            delete(file);
+        }
+    }
+
     static public void setRepository(HippoRepository repository) {
         external = repository;
     }
@@ -67,10 +88,21 @@ public abstract class TestCase
     @BeforeClass public static void setUpClass() throws Exception {
     }
 
+    protected static void setUpClass(boolean clearRepository) throws Exception {
+        if(clearRepository)
+            clear();
+    }
+
     @AfterClass public static void tearDownClass() throws Exception {
     }
 
     @Before public void setUp() throws Exception {
+        setUp(false);
+    }
+
+    protected void setUp(boolean clearRepository) throws Exception {
+        if(clearRepository)
+            clear();
         if (external != null) {
             server = external;
         } else {

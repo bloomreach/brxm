@@ -73,7 +73,6 @@ public class VersionPane extends RenderPlugin {
         super(context, config);
 
         if (config.get(RenderPlugin.MODEL_ID)!=null) {
-            // FIXME: is there a model available to initialize the service with?
             subModel = new ModelService(config.getString("wicket.submodel"), null);
             subModel.init(context);
         } else {
@@ -201,10 +200,7 @@ public class VersionPane extends RenderPlugin {
                     for (int i = 0; i<currentVersion; i++)
                         iter.next();
                     Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>)iter.next();
-                    Document historicDocument = workflow.retrieve(entry.getKey());
-                    Node frozenNode = document.getSession().getNodeByUUID(historicDocument.getIdentity());
-                    workflow = (VersionWorkflow)workflowManager.getWorkflow("versioning", frozenNode);
-                    workflow.revert();
+                    workflow.revert(entry.getKey());
                     redraw();
                 }
             } catch (WorkflowException ex) {
@@ -223,9 +219,8 @@ public class VersionPane extends RenderPlugin {
     private void browseVersion(int direction) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance();
         JcrNodeModel model = (JcrNodeModel)VersionPane.this.getModel();
-        Object currentVersionObject = versionComponent.getModel().getObject();
-        int currentVersion = (currentVersionObject instanceof Integer ? ((Integer)currentVersionObject).intValue()
-                : -1);
+        Object currentVersionObj = versionComponent.getModel().getObject();
+        int currentVersion = (currentVersionObj instanceof Integer ? ((Integer)currentVersionObj).intValue() : -1);
         if (model!=null) {
             Node modelNode = model.getNode();
             try {
