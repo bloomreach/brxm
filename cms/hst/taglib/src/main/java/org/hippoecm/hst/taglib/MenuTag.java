@@ -48,8 +48,8 @@ public class MenuTag extends SimpleTagSupport {
     
     private final String KEY_CONTEXT_NAME = "menutag.context.name";
     private final String KEY_LOCATION = "menutag.location";
-    private final String KEY_DOCUMENT_VIEWFILE = "menutag.viewfile";
-    private final String KEY_DOCUMENT_DOCUMENT_EXCLUDE_NAMES = "menutag.document.exclude.names";
+    private final String KEY_VIEWFILE = "menutag.viewfile";
+    private final String KEY_DOCUMENT_EXCLUDE_NAMES = "menutag.document.exclude.names";
 
     private String contextName = null;
     private String location = null;
@@ -230,12 +230,12 @@ public class MenuTag extends SimpleTagSupport {
 
                 // first try key postfixed by .id
                 String viewFile = HSTConfiguration.get(request.getSession().getServletContext(), 
-                            KEY_DOCUMENT_VIEWFILE + "." + getId(), false/*not required*/);
+                            KEY_VIEWFILE + "." + getId(), false/*not required*/);
                 
                 // then by general key
                 if (viewFile == null) {
                     viewFile = HSTConfiguration.get(request.getSession().getServletContext(), 
-                            KEY_DOCUMENT_VIEWFILE, false/*not required*/);
+                            KEY_VIEWFILE, false/*not required*/);
                 }
                 
                 if (viewFile != null) {
@@ -262,7 +262,7 @@ public class MenuTag extends SimpleTagSupport {
     
                 if (documentExcludeNames  == null) {
                     String excludeNames = HSTConfiguration.get(request.getSession().getServletContext(), 
-                            KEY_DOCUMENT_DOCUMENT_EXCLUDE_NAMES, false/*not required*/);
+                            KEY_DOCUMENT_EXCLUDE_NAMES, false/*not required*/);
     
                     if (excludeNames != null) {
                         this.documentExcludeNames = excludeNames.split(",");
