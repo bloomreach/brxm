@@ -41,7 +41,7 @@ public class MenuItem {
     /**
      * Constructor.
      */
-    public MenuItem(final Node node, final int level) {
+    public MenuItem(final Node node, final int level, final String[] excludedDocumentNames) {
         super();
         
         this.level = level;
@@ -66,7 +66,7 @@ public class MenuItem {
             throw new IllegalStateException(re);
         }
         
-        createMenuItems(node);
+        createMenuItems(node, excludedDocumentNames);
     }
 
     public List<MenuItem> getItems() {
@@ -109,7 +109,7 @@ public class MenuItem {
                 + ", menuItems=" + menuItems + "]";
     }
     
-    private void createMenuItems(final Node node) {
+    private void createMenuItems(final Node node, final String[] excludedDocumentNames) {
         
         try {
            
@@ -120,23 +120,43 @@ public class MenuItem {
                 Node subNode = (Node) subNodes.next();
                 
                 // on level higher than 0, absence of the property means to  
-                // create one if it concerns a document handle or folder 
+                // create one if it concerns a document handle or folder
                 if (!subNode.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
 
-                    // skip documents as there are multiple variants
+                    // skip real documents as there are multiple variants
                     if (subNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         continue;
                     }
                     
-                    if (subNode.isNodeType(HippoNodeType.NT_UNSTRUCTURED)
+                    // treat handle as document
+                    else if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+
+                        // hide document nodes by default names
+                        if (excludedDocumentNames != null) {
+                            boolean skip = false;
+                            int i = 0;
+                            while ((i < excludedDocumentNames.length) && !skip) {
+                                skip = excludedDocumentNames[i].trim().equals(subNode.getName());
+                                i++;
+                            }
+                            if (skip) {
+                                continue;
+                            }
+                        }    
+
+                        menuItems.add(new MenuItem(subNode, this.getLevel() + 1, excludedDocumentNames));
+                    }
+                    
+                    // folder
+                    else if (subNode.isNodeType(HippoNodeType.NT_UNSTRUCTURED)
                           || subNode.isNodeType("nt:unstructured")) {
-                        menuItems.add(new MenuItem(subNode, this.getLevel() + 1));
+                        menuItems.add(new MenuItem(subNode, this.getLevel() + 1, excludedDocumentNames));
                     }
                 }
                 else {
                     // check flag
                     if (subNode.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
-                        menuItems.add(new MenuItem(subNode, this.getLevel() + 1));
+                        menuItems.add(new MenuItem(subNode, this.getLevel() + 1, excludedDocumentNames));
                     }
                }
             }

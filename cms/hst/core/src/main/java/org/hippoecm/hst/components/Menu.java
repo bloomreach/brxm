@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.util.HSTNodeTypes;
 import org.hippoecm.hst.jcr.JCRConnector;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +42,19 @@ public class Menu {
 
     private final List<MenuItem> menuItems = new ArrayList<MenuItem>();
     
-    /* Get menu object lazily from session. */
-    public static Menu getMenu(final HttpSession session, final String location) {
+    /* Get menu object lazily from session.
+     *
+     * @param session the HTTP session
+     * @param location absolute path in the repository from where to generate a site map
+     * @param excludedDocumentNames optional names of documents that are not
+     *      included in the site map
+     */
+    public static Menu getMenu(final HttpSession session, final String location, final String[] excludedDocumentNames) {
         
         Menu menu = (Menu) session.getAttribute(Menu.class.getName() + "." + location);
 
         if (menu == null) {
-            menu = new Menu(session, location);
+            menu = new Menu(session, location, excludedDocumentNames);
             session.setAttribute(Menu.class.getName() + "." + location, menu);
         }
         
@@ -57,10 +64,10 @@ public class Menu {
     /** 
      * Constructor.
      */
-    public Menu(HttpSession session, final String location) {
+    public Menu(HttpSession session, final String location, final String[] excludedDocumentNames) {
         super();
         
-        createMenuItems(session, location);
+        createMenuItems(session, location, excludedDocumentNames);
     }
 
     public List<MenuItem> getItems() {
@@ -76,7 +83,8 @@ public class Menu {
         }
     }
 
-    private void createMenuItems(final HttpSession session, final String location) {
+    private void createMenuItems(final HttpSession session, final String location,
+            final String[] excludedDocumentNames) {
         
         Session jcrSession = JCRConnector.getJCRSession(session);
         
@@ -103,13 +111,18 @@ public class Menu {
                 
                 Node node = (Node) nodes.next();
           
-                // on level 0, absence of the property means not to create one
-                // so only documents and folder with the flag up
+                // skip real documents as there are multiple variants
+                if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    continue;
+                }
+
+                // on level 0, absence of the property means not to create a 
+                // menu item, so only documents and folders with the flag up
                 if (node.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
                     if (node.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
-                        menuItems.add(new MenuItem(node, 0/*level*/));
+                        menuItems.add(new MenuItem(node, 0/*level*/, excludedDocumentNames));
                     }
-                }    
+                }
             }
         } 
         catch (RepositoryException re) {

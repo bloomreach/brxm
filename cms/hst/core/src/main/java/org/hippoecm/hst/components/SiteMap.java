@@ -40,20 +40,22 @@ public class SiteMap {
     private final SiteMapItem baseItem;
        
     /** 
-     * Get menu object lazily from session. 
+     * Get site map object lazily from session. 
      *
      * @param session the HTTP session
      * @param location absolute path in the repository from where to generate a site map
+     * @param excludedDocumentNames optional names of documents that are not
+     *      included in the site map
      * @param documentLabelProperties optional properties for documents to set 
      *      as label for site map items 
      */
     public static SiteMap getSiteMap(final HttpSession session, final String location, 
-            final String[] documentLabelProperties) {
+            final String[] excludedDocumentNames, final String[] documentLabelProperties) {
         
         SiteMap siteMap = (SiteMap) session.getAttribute(SiteMap.class.getName() + "." + location);
 
         if (siteMap == null) {
-            siteMap = new SiteMap(session, location, documentLabelProperties);
+            siteMap = new SiteMap(session, location, excludedDocumentNames, documentLabelProperties);
             session.setAttribute(SiteMap.class.getName() + "." + location, siteMap);
         }
         
@@ -63,10 +65,11 @@ public class SiteMap {
     /** 
      * Constructor.
      */
-    public SiteMap(final HttpSession session, final String location, final String[] documentLabelProperties) {
+    public SiteMap(final HttpSession session, final String location, 
+                final String[] excludedDocumentNames, final String[] documentLabelProperties) {
         super();
 
-        this.baseItem = createBaseItem(session, location, documentLabelProperties);
+        this.baseItem = createBaseItem(session, location, excludedDocumentNames, documentLabelProperties);
     }
 
     @SuppressWarnings("unchecked")
@@ -80,7 +83,7 @@ public class SiteMap {
     }
 
     private SiteMapItem createBaseItem(final HttpSession session, final String location,
-            final String[] documentLabelProperties) {
+            final String[] excludedDocumentNames, final String[] documentLabelProperties) {
         
         Session jcrSession = JCRConnector.getJCRSession(session);
         
@@ -101,7 +104,8 @@ public class SiteMap {
 
             // set base item level at -1 so the first level of items to be
             // gotten is 0, similar to the Menu component 
-            return new SiteMapItem(jcrSession.getRootNode().getNode(path), -1/*level*/, documentLabelProperties);
+            return new SiteMapItem(jcrSession.getRootNode().getNode(path), -1/*level*/, 
+                    excludedDocumentNames, documentLabelProperties);
         } 
         catch (RepositoryException re) {
             throw new IllegalStateException(re);
