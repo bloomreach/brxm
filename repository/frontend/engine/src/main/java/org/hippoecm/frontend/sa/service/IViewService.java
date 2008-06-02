@@ -20,5 +20,7 @@ import org.apache.wicket.model.IModel;
 
 public interface IViewService<T extends IModel> extends IClusterable {
 
+    String VIEWER_ID = "viewer.id";
+
     void view(T model);
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
@@ -44,7 +45,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             while (children.hasNext()) {
                 Node child = children.nextNode();
                 addPlugin(new JcrPluginConfig(new JcrNodeModel(child)));
-             }
+            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
@@ -54,9 +55,23 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         configs.add(config);
     }
 
-
     public List<IPluginConfig> getPlugins() {
         return configs;
+    }
+
+    public List<String> getOverrides() {
+        List<String> result = new LinkedList<String>();
+        try {
+            Node node = getNodeModel().getNode();
+            if (node.hasProperty("frontend:overrides")) {
+                for (Value value : node.getProperty("frontend:overrides").getValues()) {
+                    result.add(value.getString());
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return result;
     }
 
 }

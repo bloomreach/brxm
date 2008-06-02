@@ -36,6 +36,7 @@ import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.sa.service.IRenderService;
+import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,6 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
 
     public static final String CATEGORIES = "workflow.categories";
     public static final String WORKFLOW_ID = "workflow.id";
-    public static final String VIEWER_ID = "workflow.viewer";
 
     private IPluginContext context;
     private IPluginConfig config;
@@ -130,7 +130,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
 
         String className = model.getWorkflowName();
         wflConfig.put(IPlugin.CLASSNAME, className);
-        wflConfig.put(VIEWER_ID, config.get(VIEWER_ID));
+        wflConfig.put(IViewService.VIEWER_ID, config.get(IViewService.VIEWER_ID));
 
         JavaClusterConfig clusterConfig = new JavaClusterConfig();
         clusterConfig.addPlugin(wflConfig);

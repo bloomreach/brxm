@@ -14,12 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="cms" 
-    xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-    xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
-    xmlns:jcr="http://www.jcp.org/jcr/1.0"
-    xmlns:mix="http://www.jcp.org/jcr/mix/1.0" 
-    xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+<sv:node sv:name="cms" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.0"
     xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
     xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0">
 
@@ -78,7 +75,7 @@
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>service.dashboard.node</sv:value>
-        </sv:property>        
+        </sv:property>
         <sv:property sv:name="perspective.title" sv:type="String">
             <sv:value>Dashboard</sv:value>
         </sv:property>
@@ -99,12 +96,12 @@
         </sv:property>
         <sv:property sv:name="legacy.base" sv:type="String">
             <sv:value>/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel</sv:value>
-        </sv:property>        
+        </sv:property>
         <sv:property sv:name="legacy.plugin" sv:type="String">
             <sv:value>dashboardPerspective</sv:value>
         </sv:property>
-    </sv:node>    
-  
+    </sv:node>
+
     <sv:node sv:name="browserPerspective">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -117,169 +114,169 @@
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>model.browse.node</sv:value>
-        </sv:property>        
+        </sv:property>
         <sv:property sv:name="perspective.title" sv:type="String">
             <sv:value>Browse</sv:value>
         </sv:property>
-      <sv:property sv:name="breadcrumbPlugin" sv:type="String">
-        <sv:value>service.browse.breadcrumb</sv:value>
-        </sv:property>        
-      <sv:property sv:name="browserPlugin" sv:type="String">
-        <sv:value>service.browse.tree</sv:value>
-      </sv:property>        
-      <sv:property sv:name="listPlugin" sv:type="String">
-        <sv:value>service.browse.list</sv:value>
-      </sv:property>        
-      <sv:property sv:name="workflowsPlugin" sv:type="String">
-        <sv:value>service.browse.workflows</sv:value>
-      </sv:property>        
-      <sv:property sv:name="versionPlugin" sv:type="String">
-        <sv:value>service.browse.version</sv:value>
-      </sv:property>        
+        <sv:property sv:name="breadcrumbPlugin" sv:type="String">
+            <sv:value>service.browse.breadcrumb</sv:value>
+        </sv:property>
+        <sv:property sv:name="browserPlugin" sv:type="String">
+            <sv:value>service.browse.tree</sv:value>
+        </sv:property>
+        <sv:property sv:name="listPlugin" sv:type="String">
+            <sv:value>service.browse.list</sv:value>
+        </sv:property>
+        <sv:property sv:name="workflowsPlugin" sv:type="String">
+            <sv:value>service.browse.workflows</sv:value>
+        </sv:property>
+        <sv:property sv:name="versionPlugin" sv:type="String">
+            <sv:value>service.browse.version</sv:value>
+        </sv:property>
     </sv:node>
-  
-  <sv:node sv:name="breadcrumbPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.console.breadcrumb.BreadcrumbPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.breadcrumb</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>        
-  </sv:node>
 
-  <sv:node sv:name="browserPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.sa.tree.FolderTreePlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.tree</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>        
-  </sv:node>
-  
-  <sv:node sv:name="listPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.sa.list.DocumentListingPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.list</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>        
-  </sv:node>
-  
-  <sv:node sv:name="versioningPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.versioning.VersionPane</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.version</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>        
-    <sv:property sv:name="wicket.submodel" sv:type="String">
-      <sv:value>version.model</sv:value>
-    </sv:property>  
-    <sv:property sv:name="display" sv:type="String">
-      <sv:value>service.browse.version.view</sv:value>
-    </sv:property>              
-  </sv:node>
+    <sv:node sv:name="breadcrumbPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.console.breadcrumb.BreadcrumbPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.browse.breadcrumb</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>model.browse.node</sv:value>
+        </sv:property>
+    </sv:node>
 
-  <sv:node sv:name="displayPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.versioning.DisplayDocument</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.version.view</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>version.model</sv:value>
-    </sv:property>        
-  </sv:node>
-  
-  <sv:node sv:name="workflowListPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.service.render.ListViewPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows</sv:value>
-    </sv:property>
-    <sv:property sv:name="item" sv:type="String">
-      <sv:value>service.browse.workflows.workflow</sv:value>
-    </sv:property>        
-  </sv:node>
-  
-  <sv:node sv:name="workflowPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.viewer" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflows.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.categories" sv:type="String">
-      <sv:value>internal</sv:value>
-      <sv:value>reviewed-action</sv:value>
-    </sv:property>        
-  </sv:node>
-  
-  <sv:node sv:name="editorPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.edit.sa.MultiEditorPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.template.editor.EditorPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.dialog" sv:type="String">
-      <sv:value>service.dialog</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-  </sv:node>
-  
+    <sv:node sv:name="browserPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.cms.browse.sa.tree.FolderTreePlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.browse.tree</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>model.browse.node</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="listPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.cms.browse.sa.list.DocumentListingPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.browse.list</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>model.browse.node</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="versioningPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.versioning.VersionPane</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.browse.version</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>model.browse.node</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.submodel" sv:type="String">
+            <sv:value>version.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="display" sv:type="String">
+            <sv:value>service.browse.version.view</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="displayPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.versioning.DisplayDocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.browse.version.view</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>version.model</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="workflowListPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.sa.service.render.ListViewPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.browse.workflows</sv:value>
+        </sv:property>
+        <sv:property sv:name="item" sv:type="String">
+            <sv:value>service.browse.workflows.workflow</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="workflowPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.browse.workflows.workflow</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>model.browse.node</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewer.id" sv:type="String">
+            <sv:value>service.edit</sv:value>
+        </sv:property>
+        <sv:property sv:name="workflow.id" sv:type="String">
+            <sv:value>workflows.id</sv:value>
+        </sv:property>
+        <sv:property sv:name="workflow.categories" sv:type="String">
+            <sv:value>internal</sv:value>
+            <sv:value>reviewed-action</sv:value>
+        </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="editorPlugin">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.cms.edit.sa.MultiEditorPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="cluster.name" sv:type="String">
+            <sv:value>cms-editor</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewer.id" sv:type="String">
+            <sv:value>service.edit</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.dialog" sv:type="String">
+            <sv:value>service.dialog</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>service.tab</sv:value>
+        </sv:property>
+    </sv:node>
+
     <sv:node sv:name="managementPerspective">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -292,15 +289,15 @@
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>service.management.node</sv:value>
-        </sv:property>        
+        </sv:property>
         <sv:property sv:name="perspective.title" sv:type="String">
             <sv:value>Management</sv:value>
         </sv:property>
         <sv:property sv:name="legacyManagement" sv:type="String">
             <sv:value>service.management.legacy</sv:value>
-        </sv:property>        
+        </sv:property>
     </sv:node>
-    
+
     <sv:node sv:name="legacyManagement">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -313,12 +310,12 @@
         </sv:property>
         <sv:property sv:name="legacy.base" sv:type="String">
             <sv:value>/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel</sv:value>
-        </sv:property>        
+        </sv:property>
         <sv:property sv:name="legacy.plugin" sv:type="String">
             <sv:value>managementFilter</sv:value>
         </sv:property>
-    </sv:node>    
-        
+    </sv:node>
+
     <sv:node sv:name="logoutPlugin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>

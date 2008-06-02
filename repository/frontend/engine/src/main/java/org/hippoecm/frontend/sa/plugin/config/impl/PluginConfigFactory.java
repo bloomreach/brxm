@@ -20,13 +20,16 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class PluginConfigFactory {
+public class PluginConfigFactory implements IClusterable {
+    private static final long serialVersionUID = 1L;
 
     private IPluginConfigService pluginConfigService;
 
@@ -38,16 +41,30 @@ public class PluginConfigFactory {
             String basePath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
             Node baseNode = (Node) session.getItem(basePath);
 
+            final IPluginConfigService baseService;
             if (config == null && baseNode.hasNodes()) {
                 Node configNode = baseNode.getNodes().nextNode();
-                pluginConfigService = new JcrConfigService(new JcrNodeModel(baseNode), configNode.getName());
+                baseService = new JcrConfigService(new JcrNodeModel(baseNode), configNode.getName());
             } else if (baseNode.hasNode(config)) {
-                pluginConfigService = new JcrConfigService(new JcrNodeModel(baseNode), config);
-
+                baseService = new JcrConfigService(new JcrNodeModel(baseNode), config);
             } else {
                 //Fall back to builtin configuration
-                pluginConfigService = new JavaConfigService();
+                baseService = new JavaConfigService();
             }
+
+            pluginConfigService = new IPluginConfigService() {
+                private static final long serialVersionUID = 1L;
+
+                private int count = 0;
+
+                public IClusterConfig getDefaultCluster() {
+                    return new ClusterConfigDecorator(baseService.getDefaultCluster(), "config.cluster." + (count++));
+                }
+
+                public IClusterConfig getPlugins(String key) {
+                    return new ClusterConfigDecorator(baseService.getPlugins(key), "config.cluster." + (count++));
+                }
+            };
         } catch (RepositoryException e) {
             //Fall back to builtin configuration
             pluginConfigService = new JavaConfigService();

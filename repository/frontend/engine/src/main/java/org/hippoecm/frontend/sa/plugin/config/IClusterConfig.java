@@ -19,6 +19,8 @@ import java.util.List;
 
 public interface IClusterConfig extends IPluginConfig {
 
-    public List<IPluginConfig> getPlugins();
+    List<IPluginConfig> getPlugins();
 
+    // FIXME: is this method necessary?
+    List<String> getOverrides();
 }

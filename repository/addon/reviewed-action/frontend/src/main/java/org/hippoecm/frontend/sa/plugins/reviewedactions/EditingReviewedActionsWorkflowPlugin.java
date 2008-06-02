@@ -19,7 +19,6 @@ import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
-import org.hippoecm.frontend.sa.plugin.workflow.WorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IFactoryService;
 import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.repository.api.Workflow;
@@ -56,7 +55,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
 
     private void close() {
         IPluginContext context = getPluginContext();
-        IViewService viewer = context.getService(getPluginConfig().getString(WorkflowPlugin.VIEWER_ID), IViewService.class);
+        IViewService viewer = context.getService(getPluginConfig().getString(IViewService.VIEWER_ID), IViewService.class);
         if (viewer != null) {
             String serviceId = context.getReference(viewer).getServiceId();
             IFactoryService factory = context.getService(serviceId, IFactoryService.class);
