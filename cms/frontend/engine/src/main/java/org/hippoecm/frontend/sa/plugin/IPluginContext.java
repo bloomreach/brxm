@@ -18,9 +18,10 @@ package org.hippoecm.frontend.sa.plugin;
 import java.util.List;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 
-public interface IPluginContext {
+public interface IPluginContext extends IDetachable {
 
     IPluginControl start(IClusterConfig cluster);
 

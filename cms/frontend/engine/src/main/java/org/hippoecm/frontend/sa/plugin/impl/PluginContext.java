@@ -46,28 +46,37 @@ public class PluginContext implements IPluginContext, IClusterable {
             this.contexts = contexts;
         }
 
+        void detach() {
+            for (PluginContext context : contexts) {
+                context.detach();
+            }
+        }
+
         public void stopPlugin() {
             for (PluginContext context : contexts) {
                 context.stop();
             }
+            children.remove(this);
         }
     }
 
     private Home page;
+    private String controlId;
+    private IPluginConfig config;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker>> listeners;
-    private List<IPluginControl> children;
+    private List<PluginControl> children;
     private boolean initializing = true;
-    private String controlId;
     private transient PluginManager manager = null;
 
-    public PluginContext(Home page, String controlId) {
+    public PluginContext(Home page, String controlId, IPluginConfig config) {
         this.page = page;
         this.controlId = controlId;
+        this.config = config;
 
         this.services = new HashMap<String, List<IClusterable>>();
         this.listeners = new HashMap<String, List<IServiceTracker>>();
-        this.children = new LinkedList<IPluginControl>();
+        this.children = new LinkedList<PluginControl>();
     }
 
     public IPluginControl start(IClusterConfig cluster) {
@@ -122,7 +131,7 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     public void registerTracker(IServiceTracker listener, String name) {
-        if(name == null) {
+        if (name == null) {
             log.error("listener name is null");
         }
         List<IServiceTracker> list = listeners.get(name);
@@ -143,6 +152,13 @@ public class PluginContext implements IPluginContext, IClusterable {
             if (!initializing) {
                 getManager().unregisterTracker(listener, name);
             }
+        }
+    }
+
+    public void detach() {
+        config.detach();
+        for (PluginControl control : children) {
+            control.detach();
         }
     }
 
@@ -186,10 +202,10 @@ public class PluginContext implements IPluginContext, IClusterable {
         }
         services = new HashMap<String, List<IClusterable>>();
 
-        for (IPluginControl control : children) {
+        IPluginControl[] controls = children.toArray(new IPluginControl[children.size()]);
+        for (IPluginControl control : controls) {
             control.stopPlugin();
         }
-        children = new LinkedList<IPluginControl>();
     }
 
 }

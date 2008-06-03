@@ -75,7 +75,7 @@ public class PluginManager implements IClusterable {
     }
 
     public PluginContext start(IPluginConfig config, String controlId) {
-        final PluginContext context = new PluginContext(page, controlId);
+        final PluginContext context = new PluginContext(page, controlId, config);
         IPlugin plugin = factory.createPlugin(context, config);
         context.connect(plugin);
         return context;

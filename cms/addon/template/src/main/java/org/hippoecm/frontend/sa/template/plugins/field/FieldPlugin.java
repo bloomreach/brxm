@@ -33,7 +33,6 @@ import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.FieldDescriptor;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
-import org.hippoecm.frontend.sa.template.impl.JavaTemplateConfig;
 import org.hippoecm.frontend.sa.template.model.AbstractProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,14 +71,18 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         if (engine != null) {
             P model = (P) getModel();
             TypeDescriptor type = engine.getType(model);
-            field = type.getField(fieldName);
-            if (field != null) {
-                TypeDescriptor subType = engine.getType(field.getType());
-                controller.stop();
-                provider = newProvider(field, subType, model);
-                controller.start(provider);
+            if (type != null) {
+                field = type.getField(fieldName);
+                if (field != null) {
+                    TypeDescriptor subType = engine.getType(field.getType());
+                    controller.stop();
+                    provider = newProvider(field, subType, model);
+                    controller.start(provider);
+                } else {
+                    log.warn("Unknown field {} in type {}", field, type.getName());
+                }
             } else {
-                log.warn("Unknown field {} in type {}", field, type.getName());
+                log.warn("Unable to obtain type descriptor for {}", model);
             }
         } else {
             log.warn("No engine found to display new model");
@@ -122,7 +125,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     protected void configureTemplate(IClusterConfig config, C model) {
         final IPluginConfig myConfig = getPluginConfig();
 
-        for (String property : ((JavaTemplateConfig) config).getOverrides()) {
+        for (String property : config.getOverrides()) {
             Object value = myConfig.get("template." + property);
             if (value != null) {
                 config.put(property, value);

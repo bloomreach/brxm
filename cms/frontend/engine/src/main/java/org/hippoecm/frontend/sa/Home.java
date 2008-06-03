@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.sa;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IServiceTracker;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
@@ -39,6 +43,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
     private PluginManager mgr;
     private IRenderService root;
+    private List<IPluginContext> contexts;
 
     public Home() {
         add(new EmptyPanel("root"));
@@ -70,16 +75,18 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
             public void onServiceAdded(IBehavior behavior, String name) {
                 add(behavior);
             }
-            
+
             @Override
             public void onRemoveService(IBehavior behavior, String name) {
                 remove(behavior);
             }
         };
         mgr.registerTracker(tracker, serviceId);
-        
-        for (IPluginConfig plugin : pluginCluster.getPlugins()) {
-            mgr.start(plugin, serviceId);
+
+        List<IPluginConfig> configs = pluginCluster.getPlugins();
+        contexts = new ArrayList<IPluginContext>(configs.size());
+        for (IPluginConfig plugin : configs) {
+            contexts.add(mgr.start(plugin, serviceId));
         }
     }
 
@@ -129,6 +136,14 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     }
 
     public void updateService(IRenderService service, String name) {
+    }
+
+    @Override
+    public void onDetach() {
+        for (IPluginContext context : contexts) {
+            context.detach();
+        }
+        super.onDetach();
     }
 
 }

@@ -23,9 +23,9 @@ import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
-import org.hippoecm.frontend.sa.template.ITemplateStore;
 import org.hippoecm.frontend.sa.template.ITypeStore;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
 import org.slf4j.Logger;
@@ -38,14 +38,11 @@ public class TemplateEngine implements ITemplateEngine {
 
     private IPluginContext context;
     private ITypeStore typeStore;
-    private ITemplateStore templateStore;
     private String serviceId;
-    private int templateCount = 0;
 
-    public TemplateEngine(IPluginContext context, ITypeStore typeStore, ITemplateStore templateStore) {
+    public TemplateEngine(IPluginContext context, ITypeStore typeStore) {
         this.context = context;
         this.typeStore = typeStore;
-        this.templateStore = templateStore;
     }
 
     public void setId(String serviceId) {
@@ -71,15 +68,18 @@ public class TemplateEngine implements ITemplateEngine {
     }
 
     public IClusterConfig getTemplate(TypeDescriptor type, String mode) {
-        String templateId = serviceId + "." + (templateCount++);
-        return new JavaTemplateConfig(templateStore.getTemplate(type, mode), serviceId, templateId);
+        IPluginConfigService configService = context.getService("service.plugin.config", IPluginConfigService.class);
+        IClusterConfig cluster = configService.getPlugins("template/" + type.getName() + "/" + mode);
+        cluster.put(ITemplateEngine.ENGINE, serviceId);
+        return cluster;
     }
 
-    public IPluginControl start(final IClusterConfig template, final IModel model) {
+    public IPluginControl start(IClusterConfig template, IModel model) {
         String modelId = template.getString(RenderService.MODEL_ID);
         ModelService modelService = new ModelService(modelId, model);
         modelService.init(context);
 
         return context.start(template);
     }
+
 }

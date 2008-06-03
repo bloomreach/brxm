@@ -15,7 +15,8 @@
  */
 package org.hippoecm.frontend.sa.plugin.config;
 
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.value.IValueMap;
 
-public interface IPluginConfig extends IValueMap {
+public interface IPluginConfig extends IValueMap, IDetachable {
 }

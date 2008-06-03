@@ -31,10 +31,8 @@ import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.sa.service.ServiceTracker;
 import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
-import org.hippoecm.frontend.sa.template.ITemplateStore;
 import org.hippoecm.frontend.sa.template.ITypeStore;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
-import org.hippoecm.frontend.sa.template.config.JcrTemplateStore;
 import org.hippoecm.frontend.sa.template.config.JcrTypeStore;
 import org.hippoecm.frontend.sa.template.impl.TemplateEngine;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
@@ -65,8 +63,7 @@ public class EditorForm extends Form {
         setMaxSize(Bytes.megabytes(5));
 
         ITypeStore typeStore = new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT);
-        ITemplateStore templateConfig = new JcrTemplateStore();
-        engine = new TemplateEngine(context, typeStore, templateConfig);
+        engine = new TemplateEngine(context, typeStore);
         context.registerService(engine, ITemplateEngine.class.getName());
         engineId = context.getReference(engine).getServiceId();
         engine.setId(engineId);
@@ -122,7 +119,7 @@ public class EditorForm extends Form {
         TypeDescriptor type = engine.getType(model);
 
         if (type != null) {
-            IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateStore.EDIT_MODE);
+            IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
             clusterConfig.put(RenderService.DIALOG_ID, config.getString(RenderService.DIALOG_ID));
             clusterConfig.put(RenderService.WICKET_ID, engineId + ".wicket.root");
             return engine.start(clusterConfig, model);

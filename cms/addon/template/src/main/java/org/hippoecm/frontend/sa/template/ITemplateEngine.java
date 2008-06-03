@@ -28,6 +28,8 @@ public interface ITemplateEngine extends IClusterable {
 
     String MODE = "mode";
 
+    String EDIT_MODE = "edit";
+
     TypeDescriptor getType(String type);
 
     TypeDescriptor getType(IModel model);

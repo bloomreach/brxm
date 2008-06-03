@@ -149,7 +149,7 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(177, 3).append(path).toHashCode();
+        return new HashCodeBuilder(177, 3).append(getPath()).toHashCode();
     }
 
     private static String normalizePath(String path) {
