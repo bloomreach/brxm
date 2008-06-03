@@ -106,6 +106,11 @@ public class URLPathTranslator {
      */
     public String documentPathToURL(final Session jcrSession, final String documentPath) {
 
+        if ((documentPath == null) || (documentPath.indexOf("://") > -1)) {
+            // not a valid document path (outer link)
+            return documentPath;
+        }
+
         String url;
 
         if (documentPath.startsWith(this.repositoryBaseLocation)) {
@@ -139,7 +144,7 @@ public class URLPathTranslator {
                 } catch (RepositoryException re) {
                     throw new IllegalStateException("unexpected error getting node by path " 
                             + checkPath, re);
-                }
+                 }
             } 
             
             // reverse url
