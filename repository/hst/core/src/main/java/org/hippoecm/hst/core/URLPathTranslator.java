@@ -56,8 +56,8 @@ public class URLPathTranslator {
     /**
      * Constructor.
      */
-    public URLPathTranslator(final String contextPath, final Context context) {
-        this(contextPath, context.getURLBasePath(),
+    public URLPathTranslator(final Context context) {
+        this(context.getContextPath(), context.getURLBasePath(),
                 context.getBaseLocation(), context.getContentBaseLocation());
     }
 
