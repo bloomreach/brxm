@@ -359,20 +359,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-          <source>1.5</source>
-          <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-            <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
-            <link>http://lucene.zones.apache.org:8080/hudson/job/Lucene-Nightly/javadoc/index.html</link>
-          </links>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
@@ -624,6 +610,13 @@
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
           </links>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+               <report>javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
       <plugin>
         <inherited>true</inherited>
