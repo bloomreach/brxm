@@ -44,12 +44,12 @@ public class ItemModel extends NodeModelWrapper implements IPluginModel {
     public ItemModel(IPluginModel model) {
         super(new JcrNodeModel(model));
         Map<String, Object> map = model.getMapRepresentation();
-        this.descriptor = new ItemDescriptor((Map) map.get("item"));
+        this.descriptor = (ItemDescriptor) map.get("item");
     }
 
     public Map<String, Object> getMapRepresentation() {
         Map<String, Object> map = getNodeModel().getMapRepresentation();
-        map.put("item", descriptor.getMapRepresentation());
+        map.put("item", descriptor);
         return map;
     }
 
