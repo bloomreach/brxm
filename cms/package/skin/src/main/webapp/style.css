@@ -131,6 +131,7 @@ input[type="submit"] {
 .yui-layout-hd h2 span.task, .panelcontainer h2 span.task{background-image: url("images/boxheadingtask.gif")}
 .yui-layout-hd h2 span.edititem, .panelcontainer h2 span.edititem{background-image: url("images/edititem.gif")}
 .yui-layout-hd h2 span.previewlabel, .panelcontainer h2 span.previewlabel{background-image: url("images/preview.gif")}
+.yui-layout-hd h2 span.userman, .panelcontainer h2 span.userman{background-image: url("images/userman.gif")}
 
 
 a { color: #18a4e2 }
@@ -320,11 +321,14 @@ overflow: auto;
 
 .userGroupsList h3{display: none}
 
-.templatedetails div.fields table tr td ul li h3{font-size: 11px; font-weight: bold; padding-top: 2px; padding-bottom: 2px; background: #9d9d9d; display: block; width: 98%; color: white; padding-left:3px;}
-.templatedetails div.fields table tr td ul li{padding: 3px; background: #c5c5c5; margin: 2px;}
+.templatedetails div.fields table tr td ul li h3{font-size: 11px; font-weight: bold; padding-top: 2px; padding-bottom: 2px; background: #9d9d9d; display: block; color: white; padding-left:3px;}
+.templatedetails div.fields table tr td ul li{padding: 3px; background: #c5c5c5; margin-bottom: 6px;}
 .templatedetails div.fields table tr td{vertical-align: top}
 
-.template details div.fields div div div div div div{border-bottom: none} margin-top: 5px;}
+.templatedetails div.fields table tr td ul li ul li span a{display: none}
+
+.templatedetails div.fields div div div {margin-bottom: 5px;}
+.templatedetails div.fields div div div div div div{border-bottom: none}
 .templatedetails div.fields input{width: 120px;} 
 
 .inactiveNode {
