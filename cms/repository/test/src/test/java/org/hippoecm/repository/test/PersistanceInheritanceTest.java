@@ -24,8 +24,10 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import junit.framework.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
+import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.DocumentManager;
@@ -35,20 +37,13 @@ public class PersistanceInheritanceTest extends TestCase
 {
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    private HippoRepository server;
-    private Session session;
-
+    @Before
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        super.setUp();
         Node node, root = session.getRootNode();
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery("documents/$name", Query.XPATH);
+        Query query = queryManager.createQuery("test/$name", Query.XPATH);
         node = query.storeAsNode("/hippo:configuration/hippo:documents/test");
         String statement = node.getProperty("jcr:statement").getString();
         String language = node.getProperty("jcr:language").getString();
@@ -70,9 +65,9 @@ public class PersistanceInheritanceTest extends TestCase
 
         session.save();
 
-        if(root.hasNode("documents"))
-            root.getNode("documents").remove();
-        node = root.addNode("documents");
+        if(root.hasNode("test"))
+            root.getNode("test").remove();
+        node = root.addNode("test");
         node = node.addNode("mydocument", "hippo:testdocument");
         node.addMixin("hippo:harddocument");
         node.setProperty("a", "1");
@@ -81,14 +76,17 @@ public class PersistanceInheritanceTest extends TestCase
         session.save();
     }
 
+    @After
     public void tearDown() throws Exception {
-        // TODO fix removal of "hippo:configuration", see HREPTWO-936
-        //session.getRootNode().getNode("hippo:configuration").remove();
-        session.getRootNode().getNode("documents").remove();
-        session.save();
-        server.close();
+        if(session.getRootNode().hasNode("hippo:configuration/hippo:documents") &&
+           session.getRootNode().hasNode("hippo:configuration/hippo:documents/test")) {
+             session.getRootNode().getNode("hippo:configuration/hippo:documents/test").remove();
+        }
+        session.getRootNode().getNode("test").remove();
+        super.tearDown();
     }
 
+    @Test
     public void testInheritance() throws RepositoryException {
         HippoWorkspace wsp = (HippoWorkspace)(session.getWorkspace());
         DocumentManager dmngr = wsp.getDocumentManager();
