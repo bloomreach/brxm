@@ -80,8 +80,11 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
             Node node = session.getRootNode().getNode(path);
             if (node != null) {
                 NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TEMPLATE);
-                if (nodes.hasNext()) {
-                    return nodes.nextNode();
+                while (nodes.hasNext()) {
+                    Node template = nodes.nextNode();
+                    if (template.isNodeType(HippoNodeType.NT_TEMPLATE)) {
+                        return template;
+                    }
                 }
             }
         } catch (RepositoryException ex) {
