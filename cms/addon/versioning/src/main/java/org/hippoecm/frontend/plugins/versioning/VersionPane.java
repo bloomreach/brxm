@@ -164,10 +164,9 @@ public class VersionPane extends RenderPlugin {
 
     private void restoreVersion() {
         JcrNodeModel model = (JcrNodeModel)VersionPane.this.getModel();
-        Object currentVersionObject = versionComponent.getModel().getObject();
-        int currentVersion = (currentVersionObject instanceof Integer ? ((Integer)currentVersionObject).intValue()
-                : -1);
         if (model!=null) {
+            Object currentVersionObject = versionComponent.getModel().getObject();
+            int currentVersion = (currentVersionObject instanceof Integer ? ((Integer)currentVersionObject).intValue() : -1);
             Node modelNode = model.getNode();
             try {
                 if (model.getNode().isNodeType("hippo:handle")) {
@@ -219,9 +218,9 @@ public class VersionPane extends RenderPlugin {
     private void browseVersion(int direction) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance();
         JcrNodeModel model = (JcrNodeModel)VersionPane.this.getModel();
-        Object currentVersionObj = versionComponent.getModel().getObject();
-        int currentVersion = (currentVersionObj instanceof Integer ? ((Integer)currentVersionObj).intValue() : -1);
         if (model!=null) {
+            Object currentVersionObj = versionComponent.getModel().getObject();
+            int currentVersion = (currentVersionObj instanceof Integer ? ((Integer)currentVersionObj).intValue() : -1);
             Node modelNode = model.getNode();
             try {
                 if (model.getNode().isNodeType("hippo:handle")) {
