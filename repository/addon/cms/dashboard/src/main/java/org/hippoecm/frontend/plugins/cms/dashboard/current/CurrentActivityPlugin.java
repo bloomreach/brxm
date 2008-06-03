@@ -34,16 +34,16 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CurrentActivityPlugin extends Plugin {
+public class CurrentActivityPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
@@ -51,10 +51,9 @@ public class CurrentActivityPlugin extends Plugin {
     static final Pattern jcrPath = Pattern.compile("(/[\\w\\s]+)+(\\[\\d+\\])?");
     static DateFormat df;
 
-    public CurrentActivityPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
-
-        if (!(model instanceof IDataProvider)) {
+    public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        if (!(getModel() instanceof IDataProvider)) {
             throw new IllegalArgumentException("CurrentActivityPlugin needs an IDataProvider as Plugin model.");
         }
 
@@ -63,8 +62,7 @@ public class CurrentActivityPlugin extends Plugin {
         df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
         df.setTimeZone(tz);
 
-        add(new Label("header", "What's going on"));
-        add(new CurrentActivityView("view", model));
+        add(new CurrentActivityView("view", getModel()));
     }
 
     private class CurrentActivityView extends RefreshingView {
@@ -76,7 +74,7 @@ public class CurrentActivityPlugin extends Plugin {
 
         @Override
         protected Iterator getItemModels() {
-            IDataProvider dataProvider = (IDataProvider) getPluginModel();
+            IDataProvider dataProvider = (IDataProvider) getModel();
             return dataProvider.iterator(0, 0);
         }
 
@@ -93,7 +91,7 @@ public class CurrentActivityPlugin extends Plugin {
                 // Add even/odd row css styling
                 item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                     private static final long serialVersionUID = 1L;
-
+                    @Override
                     public Object getObject() {
                         return (item.getIndex() % 2 == 1) ? "even" : "odd";
                     }
@@ -148,7 +146,7 @@ public class CurrentActivityPlugin extends Plugin {
                     path = sourceVariant;
                 }
                 if (path != null) {
-                    item.add(new BrowseLink("docpath", path, getTopChannel()));
+                    item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "docpath", path));
                     return;
                 }
 
@@ -156,7 +154,7 @@ public class CurrentActivityPlugin extends Plugin {
                 if (sourceVariant != null) {
                     String handle = StringUtils.substringBeforeLast(sourceVariant, "/");
                     if (session.itemExists(handle)) {
-                        item.add(new BrowseLink("docpath", handle, getTopChannel()));
+                        item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "docpath", handle));
                         return;
                     }
                 }
