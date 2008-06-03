@@ -33,8 +33,8 @@ public class DocumentPathReplacer  {
     /**
      * Constructor
      */
-    DocumentPathReplacer(final String contextPath, final String urlBasePath, final String repositoryBaseLocation) {
-        this.urlPathTranslator = new URLPathTranslator(contextPath, urlBasePath, repositoryBaseLocation);
+    DocumentPathReplacer(final Context context) {
+        this.urlPathTranslator = new URLPathTranslator(context.getContextPath(), context);
     }
     
     /**

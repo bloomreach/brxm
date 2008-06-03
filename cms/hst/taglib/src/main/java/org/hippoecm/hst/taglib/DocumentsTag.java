@@ -366,7 +366,7 @@ public class DocumentsTag extends SimpleTagSupport {
                         // create lazily within method
                         if (urlPathTranslator == null) {
                             String contextPath = request.getContextPath();
-                            urlPathTranslator = new URLPathTranslator(contextPath, context.getURLBasePath(), context.getBaseLocation());
+                            urlPathTranslator = new URLPathTranslator(contextPath, context);
                         }   
 
                         String translatedURL = urlPathTranslator.documentPathToURL(documentContext.getLocation());
