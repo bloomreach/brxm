@@ -88,7 +88,7 @@ div.domainsico div ul li.icolistsmall { background-image: url("images/domain_ico
 
 a.fauxbutton{background: url("images/fauxbutton.gif") center center; display: block; width: 100px; height: 18px; text-align: center; padding-top: 3px; color: black; margin-bottom: 5px; margin-left: 5px;}
 
-.scrolllist{overflow: auto; height: 78px; padding: 2px; background-color: white}
+.scrolllist{overflow: auto; height: 80px; padding: 2px; background-color: white}
 
 .panelhead{background: #f2f2f2; width: 100%;}
 .panelhead td{padding: 10px;}
@@ -98,7 +98,7 @@ div.slidercontrol a:hover{cursor: s-resize}
 
 h3.documentlabel{font-size: 18px; font-weight: normal; color: #666666; margin-right: 15px; float: left;}
 h4{font-weight: normal; color: #a2a2a2; float: left; margin-right: 5px;}
-.preview {padding: 15px; height: 175px; overflow: scroll}
+.preview {padding: 15px; height: 118px; overflow: scroll}
 
 .gray{color: #666666} 
 .panelgray{background: #d2d2d2}
