@@ -13,6 +13,5 @@ public interface ReportingNodeTypes {
     public static final String PARAMETER_VALUES = "reporting:parametervalues";
     public static final String LIMIT = "reporting:limit";
     public static final String OFFSET = "reporting:offset";
-    public static final String PLUGIN = "hippo:frontendplugin";
-    public static final String RENDERER = "hippo:frontendplugin/hippo:renderer";
+    public static final String PLUGIN = "frontend:plugin";
 }

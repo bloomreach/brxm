@@ -26,59 +26,57 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TodoPlugin extends Plugin {
+public class TodoPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TodoPlugin.class);
 
-    public TodoPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
-
-        if (!(model instanceof IDataProvider)) {
+    public TodoPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        if (!(getModel() instanceof IDataProvider)) {
             throw new IllegalArgumentException("TodoPlugin needs an IDataProvider as Plugin model.");
         }
-
-        add(new Label("header", "Todo"));
-        add(new TodoView("view", model));
+        add(new TodoView("view", getModel()));
     }
 
     private class TodoView extends RefreshingView {
         private static final long serialVersionUID = 1L;
 
-        public TodoView(String id, IPluginModel model) {
+        public TodoView(String id, IModel model) {
             super(id, model);
         }
 
         @Override
         protected Iterator getItemModels() {
-            IDataProvider dataProvider = (IDataProvider) getPluginModel();
+            IDataProvider dataProvider = (IDataProvider) getModel();
             return dataProvider.iterator(0, 0);
         }
 
         @Override
         protected void populateItem(final Item item) {
-            Node requestNode = (Node) item.getModelObject();
-            String path;
-            try {
-                path = requestNode.getPath();
-                item.add(new BrowseLink("request", path, getTopChannel()));
-            } catch (RepositoryException e) {
-                item.add(new Label("request", e.getMessage()));
-            }           
             item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
-
+                @Override
                 public Object getObject() {
                     return (item.getIndex() % 2 == 1) ? "even" : "odd";
                 }
             }));
+
+            try {
+                Node node = (Node) item.getModelObject();
+                String path = node.getPath();
+                item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", path));
+            } catch (RepositoryException e) {
+                item.add(new Label("request", e.getMessage()));
+            }
         }
     }
 

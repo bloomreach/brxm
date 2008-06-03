@@ -42,7 +42,7 @@
     </sv:property>
   </sv:node>
 
-  <!-- Type definitions for the template editor -->
+  <!-- Type definitions for the template editor 
   <sv:node sv:name="reporting-types">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -57,5 +57,5 @@
       <sv:value>/hippo:namespaces</sv:value>
     </sv:property>
   </sv:node>
-
+  -->
 </sv:node>

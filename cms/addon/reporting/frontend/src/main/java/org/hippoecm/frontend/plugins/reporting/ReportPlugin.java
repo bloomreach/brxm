@@ -20,45 +20,65 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginFactory;
-import org.hippoecm.frontend.plugin.config.PluginConfig;
-import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
+import org.hippoecm.frontend.sa.model.ModelService;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JavaClusterConfig;
+import org.hippoecm.frontend.sa.plugin.config.impl.JcrPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReportPlugin extends Plugin {
+public class ReportPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ReportPlugin.class);
 
-    public ReportPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public ReportPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
         Node reportNode = getReportNode();
         if (reportNode == null) {
-            setPluginModel(model);
-            add(new Label("report", "Failed to  create report: cannot locate report node"));            
+            add(new Label("report", "Failed to  create report: cannot locate report node"));
         } else {
-            setPluginModel(new ReportModel(new JcrNodeModel(reportNode)));
-            Plugin report = createReport("report", reportNode);
-            if (report == null) {
-                add(new Label("report", "Failed to  create report: cannot create report plugin"));
+            String modelId = config.getString("report.resultset.model");
+            ReportModel reportModel = new ReportModel(new JcrNodeModel(reportNode));
+            ModelService modelService = new ModelService(modelId, reportModel);
+            modelService.init(context);
+
+            addExtensionPoint("report");
+            IClusterConfig renderer = getReportRenderer(reportNode);
+            if (renderer != null) {
+                context.start(renderer);
             } else {
-                add(report);
-                return;
+                add(new Label("report", "Failed to  create report: cannot create report plugin"));
             }
         }
     }
 
     // privates
 
+    private IClusterConfig getReportRenderer(Node reportNode) {
+        JavaClusterConfig clusterConfig;
+        try {
+            Node rendererNode = reportNode.getNode(ReportingNodeTypes.PLUGIN);
+            JcrNodeModel rendererNodeModel = new JcrNodeModel(rendererNode);
+            IPluginConfig pluginConfig = new JcrPluginConfig(rendererNodeModel);
+            clusterConfig = new JavaClusterConfig();
+            clusterConfig.addPlugin(pluginConfig);
+
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+            clusterConfig = null;
+        }
+        return clusterConfig;
+    }
+
     private Node getReportNode() {
-        String reportId = getDescriptor().getParameter("report").getStrings().get(0);
+        String reportId = getPluginConfig().getString("report.input.node");
         Node node;
         try {
             if (reportId != null) {
@@ -77,13 +97,4 @@ public class ReportPlugin extends Plugin {
         return node;
     }
 
-    private Plugin createReport(String id, Node reportNode) {
-        PluginConfig pluginConfig = new PluginRepositoryConfig(reportNode);
-        PluginDescriptor pluginDescriptor = pluginConfig.getPlugin(ReportingNodeTypes.PLUGIN);
-        pluginDescriptor.setWicketId(id);
-        
-        ReportModel reportModel = new ReportModel(new JcrNodeModel(reportNode));
-        PluginFactory pluginFactory = new PluginFactory(getPluginManager());
-        return pluginFactory.createPlugin(pluginDescriptor, reportModel, this);
-    }
 }

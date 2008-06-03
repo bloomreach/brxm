@@ -24,8 +24,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
@@ -36,17 +37,18 @@ public class BrowseLink extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(BrowseLink.class);
 
-    public BrowseLink(String id, String docPath, final Channel channel) {
+    public BrowseLink(final IPluginContext context, final IPluginConfig config, String id, String docPath) {
         super(id, new Model(docPath));
 
         final JcrNodeModel variant = new JcrNodeModel(docPath);
-
         AjaxLink link = new AjaxLink("link", variant) {
             private static final long serialVersionUID = 1L;
+            @Override
             public void onClick(AjaxRequestTarget target) {
-                Request request = channel.createRequest("browse", variant);
-                channel.send(request);
-                request.getContext().apply(target);
+                String linkTo = config.getString("link.to");
+                IViewService viewService = context.getService(linkTo, IViewService.class);
+                viewService.view(variant);
+                
             }
         };
         add(link);

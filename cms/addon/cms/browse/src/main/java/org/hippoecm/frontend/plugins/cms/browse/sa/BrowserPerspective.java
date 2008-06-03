@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.sa;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.sa.perspective.Perspective;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
@@ -25,12 +26,16 @@ public class BrowserPerspective extends Perspective {
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
         
-        //addExtensionPoint("legacyBrowse");
-
         addExtensionPoint("breadcrumbPlugin");
         addExtensionPoint("browserPlugin");
         addExtensionPoint("listPlugin");
         addExtensionPoint("workflowsPlugin");
         addExtensionPoint("versionPlugin");
+    }
+    
+    @Override
+    public void view(IModel model) {
+        super.view(model);
+        focus(null);
     }
 }

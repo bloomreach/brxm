@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugins.standards.sa.perspective.Perspective;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
-/**
- * Panel representing the content panel for the first tab.
- */
-public class DashboardPerspective extends Plugin {
+public class DashboardPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
 
-    public DashboardPerspective(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public DashboardPerspective(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        addExtensionPoint("currentActivityPlugin");
+        addExtensionPoint("todoPlugin");
     }
-
 }
