@@ -94,6 +94,12 @@ public abstract class TestCase
     }
 
     @AfterClass public static void tearDownClass() throws Exception {
+        tearDownClass(false);
+    }
+
+    public static void tearDownClass(boolean clearRepository) throws Exception {
+        if(clearRepository)
+            clear();
     }
 
     @Before public void setUp() throws Exception {
@@ -116,6 +122,10 @@ public abstract class TestCase
     }
 
     @After public void tearDown() throws Exception {
+        tearDown(false);
+    }
+
+    public void tearDown(boolean clearRepository) throws Exception {
         if (session != null) {
             session.refresh(false);
             if (session.getRootNode().hasNode("test")) {
@@ -126,6 +136,8 @@ public abstract class TestCase
         if (external == null && server != null) {
             server.close();
         }
+        if(clearRepository)
+            clear();
     }
 
     protected void build(Session session, String[] contents) throws RepositoryException {
