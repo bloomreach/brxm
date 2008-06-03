@@ -25,6 +25,7 @@ import org.hippoecm.frontend.template.model.ItemProvider;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.repository.api.HippoNodeType;
 
+//SA port: not necessary, ListViewPlugin does the same
 public class NodeTemplatePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

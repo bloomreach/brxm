@@ -25,6 +25,8 @@ import org.hippoecm.frontend.widgets.PasswordTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// port me!
+// (not necessary for defaultcontent, i.e. lower prio)
 public class BooleanValueTemplatePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

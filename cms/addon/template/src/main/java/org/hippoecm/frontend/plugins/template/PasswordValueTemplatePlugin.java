@@ -24,6 +24,7 @@ import org.hippoecm.frontend.widgets.PasswordTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// SA port: used in management perspective, lower prio
 public class PasswordValueTemplatePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

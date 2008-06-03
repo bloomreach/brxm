@@ -33,6 +33,7 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// SA port: this class doesn't seem to be used; low prio
 public class FacetJcrPropertyValueGroupProvider extends NodeModelWrapper implements IDataProvider {
     static final Logger log = LoggerFactory.getLogger(FacetJcrPropertyValueGroupProvider.class);
 

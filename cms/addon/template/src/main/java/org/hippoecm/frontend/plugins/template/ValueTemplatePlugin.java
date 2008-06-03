@@ -27,6 +27,7 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class ValueTemplatePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
