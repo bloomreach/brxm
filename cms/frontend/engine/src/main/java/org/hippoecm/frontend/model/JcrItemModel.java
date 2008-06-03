@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 import javax.jcr.Item;
 import javax.jcr.RepositoryException;
 
@@ -126,6 +129,13 @@ public class JcrItemModel extends LoadableDetachableModel {
             }
         }
         super.detach();
+    }
+
+    private void writeObject(ObjectOutputStream output) throws IOException {
+        if (isAttached()) {
+            log.warn("Undetached JcrItemModel " + getPath());
+        }
+        output.defaultWriteObject();
     }
 
     // override Object

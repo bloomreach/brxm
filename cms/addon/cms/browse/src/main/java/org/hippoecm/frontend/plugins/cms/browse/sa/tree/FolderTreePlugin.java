@@ -69,7 +69,7 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
             redraw();
         }
     }
-
+    
     @Override
     public void onModelChanged() {
         super.onModelChanged();
