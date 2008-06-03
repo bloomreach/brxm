@@ -45,6 +45,8 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// SA port: port me! 
+// used in template list (i.e. could be added to template) 
 public class HippoQueryTemplatePlugin extends Plugin {
     private static final long serialVersionUID = 1L;
    

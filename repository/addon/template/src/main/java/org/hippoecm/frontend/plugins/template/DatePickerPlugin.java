@@ -24,6 +24,8 @@ import org.hippoecm.frontend.widgets.DateFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//port me!
+//(used by defaultcontent)
 public class DatePickerPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
