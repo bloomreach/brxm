@@ -17,30 +17,33 @@
   <wicket:panel>
         <div id="left" class="panelcontainer">
           <h2><span class="userman"></span></h2>
-        <div class="panel">
+          <div class="panel panelgray usersico">
              
           <div wicket:id="listUsersPlugin">[ ListUsersPlugin ]</div>
         </div>
           <div class="slidercontrol"><a href="#">&nbsp;</a></div>
-        <div class="panel">
+          <div class="panel panelgray groupsico">
              
           <div wicket:id="listGroupsPlugin">[ ListGroupsPlugin ]</div>
         </div>
           <div class="slidercontrol"><a href="#">&nbsp;</a></div>
-        <div class="panel">
+          <div class="panel panelgray domainsico">
              
           <div wicket:id="listDomainsPlugin">[ ListDomainsPlugin ]</div>
         </div>
           <div class="slidercontrol"><a href="#">&nbsp;</a></div>
-        <div class="panel">
+          <div class="panel panelgray">
              
           <div wicket:id="listRolesPlugin">[ ListRolesPlugin ]</div>
         </div>
         </div>
         <div id="wideright" class="panelcontainer">
-        <h2><span class="userman"></span></h2>
+          <div class="usertitle"><h3>User management</h3>
+          <h4>This title is temporarily static</h4></div>
+        
+        
         <form wicket:id="form">
-          <div class="templateeditor" style="background: white" wicket:id="template">[ template goes here ]</div>
+          <div class="templatedetails" wicket:id="template">[ template goes here ]</div>
          </form>
         </div>
   </wicket:panel>
