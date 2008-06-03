@@ -34,7 +34,7 @@ public class DocumentPathReplacer  {
      * Constructor
      */
     DocumentPathReplacer(final Context context) {
-        this.urlPathTranslator = new URLPathTranslator(context.getContextPath(), context);
+        this.urlPathTranslator = new URLPathTranslator(context);
     }
     
     /**

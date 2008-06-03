@@ -88,7 +88,7 @@ public class URLMappingContextFilter extends ContextFilter {
             relativeURL = relativeURL.substring(request.getContextPath().length());
         }
 
-        URLPathTranslator urlPathTranslator = new URLPathTranslator(request.getContextPath(), context);
+        URLPathTranslator urlPathTranslator = new URLPathTranslator(context);
         String documentPath = urlPathTranslator.urlToDocumentPath(relativeURL);
 
         // set translated location 
