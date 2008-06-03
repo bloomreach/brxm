@@ -20,9 +20,10 @@ import java.util.Map;
 
 import javax.swing.tree.DefaultTreeModel;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class JcrTreeModel extends DefaultTreeModel {
+public class JcrTreeModel extends DefaultTreeModel implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     private Map registry;
@@ -62,4 +63,10 @@ public class JcrTreeModel extends DefaultTreeModel {
         return (AbstractTreeNode) registry.get(key);
     }
 
+    public void detach() {
+        for(Map.Entry<String, AbstractTreeNode> entry : ((Map<String, AbstractTreeNode>) registry).entrySet()) {
+            entry.getValue().detach();
+        }
+    }
+    
 }

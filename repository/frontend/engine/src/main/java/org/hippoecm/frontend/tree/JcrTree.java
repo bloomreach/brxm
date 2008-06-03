@@ -29,8 +29,12 @@ public abstract class JcrTree extends Tree {
 
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
 
+    private JcrTreeModel treeModel;
+
     public JcrTree(String id, JcrTreeModel treeModel) {
         super(id, treeModel);
+
+        this.treeModel = treeModel;
 
         setLinkType(LinkType.AJAX);
 
@@ -38,6 +42,12 @@ public abstract class JcrTree extends Tree {
         treeState.setAllowSelectMultiple(false);
         treeState.collapseAll();
         treeState.expandNode((TreeNode) treeModel.getRoot());
+    }
+
+    @Override
+    public void onDetach() {
+        treeModel.detach();
+        super.onDetach();
     }
 
     @Override
