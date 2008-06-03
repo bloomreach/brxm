@@ -82,7 +82,8 @@ public class PersistanceInheritanceTest extends TestCase
     }
 
     public void tearDown() throws Exception {
-        session.getRootNode().getNode("hippo:configuration").remove();
+        // TODO fix removal of "hippo:configuration", see HREPTWO-936
+        //session.getRootNode().getNode("hippo:configuration").remove();
         session.getRootNode().getNode("documents").remove();
         session.save();
         server.close();
